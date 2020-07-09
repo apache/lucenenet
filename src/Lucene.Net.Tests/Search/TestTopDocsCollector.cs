@@ -3,26 +3,25 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -33,8 +32,8 @@ namespace Lucene.Net.Search
     {
         private sealed class MyTopsDocCollector : TopDocsCollector<ScoreDoc>
         {
-            internal int Idx = 0;
-            internal int @base = 0;
+            private int idx = 0;
+            private int @base = 0;
 
             public MyTopsDocCollector(int size)
                 : base(new HitQueue(size, false))
@@ -68,7 +67,7 @@ namespace Lucene.Net.Search
             public override void Collect(int doc)
             {
                 ++TotalHits;
-                m_pq.InsertWithOverflow(new ScoreDoc(doc + @base, Scores[Idx++]));
+                m_pq.InsertWithOverflow(new ScoreDoc(doc + @base, scores[idx++]));
             }
 
             public override void SetNextReader(AtomicReaderContext context)
@@ -81,25 +80,22 @@ namespace Lucene.Net.Search
                 // Don't do anything. Assign scores in random
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool AcceptsDocsOutOfOrder => true;
         }
 
         // Scores array to be used by MyTopDocsCollector. If it is changed, MAX_SCORE
         // must also change.
-        private static readonly float[] Scores = new float[] { 0.7767749f, 1.7839992f, 8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, 8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f, 2.9655676f, 6.953706f, 5.383931f, 6.9916306f, 8.365894f, 7.888485f, 8.723962f, 3.1796896f, 0.39971232f, 1.3077754f, 6.8489285f, 9.17561f, 5.060466f, 7.9793315f, 8.601509f, 4.1858315f, 0.28146625f };
+        private static readonly float[] scores = new float[] { 0.7767749f, 1.7839992f, 8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, 8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f, 2.9655676f, 6.953706f, 5.383931f, 6.9916306f, 8.365894f, 7.888485f, 8.723962f, 3.1796896f, 0.39971232f, 1.3077754f, 6.8489285f, 9.17561f, 5.060466f, 7.9793315f, 8.601509f, 4.1858315f, 0.28146625f };
 
         private const float MAX_SCORE = 9.17561f;
 
-        private Directory Dir;
-        private IndexReader Reader;
+        private Directory dir;
+        private IndexReader reader;
 
         private TopDocsCollector<ScoreDoc> DoSearch(int numResults)
         {
             Query q = new MatchAllDocsQuery();
-            IndexSearcher searcher = NewSearcher(Reader);
+            IndexSearcher searcher = NewSearcher(reader);
             TopDocsCollector<ScoreDoc> tdc = new MyTopsDocCollector(numResults);
             searcher.Search(q, tdc);
             return tdc;
@@ -112,26 +108,26 @@ namespace Lucene.Net.Search
 
             // populate an index with 30 documents, this should be enough for the test.
             // The documents have no content - the test uses MatchAllDocsQuery().
-            Dir = NewDirectory();
+            dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Dir);
+                Random, dir);
             for (int i = 0; i < 30; i++)
             {
                 writer.AddDocument(new Document());
             }
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Dir.Dispose();
-            Dir = null;
+            reader.Dispose();
+            dir.Dispose();
+            dir = null;
             base.TearDown();
         }
 

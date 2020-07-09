@@ -7,6 +7,23 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
@@ -15,24 +32,6 @@ namespace Lucene.Net.Search
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IOContext = Lucene.Net.Store.IOContext;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
@@ -48,16 +47,16 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestBoolean2 : LuceneTestCase
     {
-        private static IndexSearcher Searcher;
-        private static IndexSearcher BigSearcher;
-        private static IndexReader Reader;
-        private static IndexReader LittleReader;
+        private static IndexSearcher searcher;
+        private static IndexSearcher bigSearcher;
+        private static IndexReader reader;
+        private static IndexReader littleReader;
         private static int NUM_EXTRA_DOCS = 6000;
 
         public const string field = "field";
-        private static Directory Directory;
-        private static Directory Dir2;
-        private static int MulFactor;
+        private static Directory directory;
+        private static Directory dir2;
+        private static int mulFactor;
 
         /// <summary>
         /// LUCENENET specific
@@ -68,25 +67,25 @@ namespace Lucene.Net.Search
         {
             base.BeforeClass();
 
-            Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
-            for (int i = 0; i < DocFields.Length; i++)
+            directory = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            for (int i = 0; i < docFields.Length; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField(field, DocFields[i], Field.Store.NO));
+                doc.Add(NewTextField(field, docFields[i], Field.Store.NO));
                 writer.AddDocument(doc);
             }
             writer.Dispose();
-            LittleReader = DirectoryReader.Open(Directory);
-            Searcher = NewSearcher(LittleReader);
+            littleReader = DirectoryReader.Open(directory);
+            searcher = NewSearcher(littleReader);
             // this is intentionally using the baseline sim, because it compares against bigSearcher (which uses a random one)
-            Searcher.Similarity = new DefaultSimilarity();
+            searcher.Similarity = new DefaultSimilarity();
 
             // Make big index
-            Dir2 = new MockDirectoryWrapper(Random, new RAMDirectory(Directory, IOContext.DEFAULT));
+            dir2 = new MockDirectoryWrapper(Random, new RAMDirectory(directory, IOContext.DEFAULT));
 
             // First multiply small test index:
-            MulFactor = 1;
+            mulFactor = 1;
             int docCount = 0;
             if (VERBOSE)
             {
@@ -98,19 +97,19 @@ namespace Lucene.Net.Search
                 {
                     Console.WriteLine("\nTEST: cycle...");
                 }
-                Directory copy = new MockDirectoryWrapper(Random, new RAMDirectory(Dir2, IOContext.DEFAULT));
+                Directory copy = new MockDirectoryWrapper(Random, new RAMDirectory(dir2, IOContext.DEFAULT));
                 RandomIndexWriter w = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
-                    Random, Dir2);
+                    Random, dir2);
                 w.AddIndexes(copy);
                 docCount = w.MaxDoc;
                 w.Dispose();
-                MulFactor *= 2;
+                mulFactor *= 2;
             } while (docCount < 3000);
 
-            RandomIndexWriter riw = new RandomIndexWriter(Random, Dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
+            RandomIndexWriter riw = new RandomIndexWriter(Random, dir2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             Document doc_ = new Document();
             doc_.Add(NewTextField("field2", "xxx", Field.Store.NO));
             for (int i = 0; i < NUM_EXTRA_DOCS / 2; i++)
@@ -123,40 +122,40 @@ namespace Lucene.Net.Search
             {
                 riw.AddDocument(doc_);
             }
-            Reader = riw.GetReader();
-            BigSearcher = NewSearcher(Reader);
+            reader = riw.GetReader();
+            bigSearcher = NewSearcher(reader);
             riw.Dispose();
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Reader.Dispose();
-            LittleReader.Dispose();
-            Dir2.Dispose();
-            Directory.Dispose();
-            Searcher = null;
-            Reader = null;
-            LittleReader = null;
-            Dir2 = null;
-            Directory = null;
-            BigSearcher = null;
+            reader.Dispose();
+            littleReader.Dispose();
+            dir2.Dispose();
+            directory.Dispose();
+            searcher = null;
+            reader = null;
+            littleReader = null;
+            dir2 = null;
+            directory = null;
+            bigSearcher = null;
             base.AfterClass();
         }
 
-        private static string[] DocFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3" };
+        private static readonly string[] docFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3" };
 
         public virtual void QueriesTest(Query query, int[] expDocNrs)
         {
             TopScoreDocCollector collector = TopScoreDocCollector.Create(1000, false);
-            Searcher.Search(query, null, collector);
+            searcher.Search(query, null, collector);
             ScoreDoc[] hits1 = collector.GetTopDocs().ScoreDocs;
 
             collector = TopScoreDocCollector.Create(1000, true);
-            Searcher.Search(query, null, collector);
+            searcher.Search(query, null, collector);
             ScoreDoc[] hits2 = collector.GetTopDocs().ScoreDocs;
 
-            Assert.AreEqual(MulFactor * collector.TotalHits, BigSearcher.Search(query, 1).TotalHits);
+            Assert.AreEqual(mulFactor * collector.TotalHits, bigSearcher.Search(query, 1).TotalHits);
 
             CheckHits.CheckHitsQuery(query, hits1, hits2, expDocNrs);
         }
@@ -266,25 +265,25 @@ namespace Lucene.Net.Search
             query.Add(new TermQuery(new Term(field, "zz")), Occur.SHOULD);
 
             int[] expDocNrs = new int[] { 2, 3 };
-            Similarity oldSimilarity = Searcher.Similarity;
+            Similarity oldSimilarity = searcher.Similarity;
             try
             {
-                Searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper(this);
+                searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper(this);
                 QueriesTest(query, expDocNrs);
             }
             finally
             {
-                Searcher.Similarity = oldSimilarity;
+                searcher.Similarity = oldSimilarity;
             }
         }
 
         private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
         {
-            private readonly TestBoolean2 OuterInstance;
+            private readonly TestBoolean2 outerInstance;
 
             public DefaultSimilarityAnonymousInnerClassHelper(TestBoolean2 outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override float Coord(int overlap, int maxOverlap)
@@ -318,30 +317,30 @@ namespace Lucene.Net.Search
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
-                        Random, q1, Searcher); // baseline sim
+                        Random, q1, searcher); // baseline sim
                     try
                     {
                         // a little hackish, QueryUtils.check is too costly to do on bigSearcher in this loop.
-                        Searcher.Similarity = BigSearcher.Similarity; // random sim
+                        searcher.Similarity = bigSearcher.Similarity; // random sim
                         QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                             this,
 #endif
-                            Random, q1, Searcher);
+                            Random, q1, searcher);
                     }
                     finally
                     {
-                        Searcher.Similarity = new DefaultSimilarity(); // restore
+                        searcher.Similarity = new DefaultSimilarity(); // restore
                     }
 
                     TopFieldCollector collector = TopFieldCollector.Create(sort, 1000, false, true, true, true);
 
-                    Searcher.Search(q1, null, collector);
+                    searcher.Search(q1, null, collector);
                     ScoreDoc[] hits1 = collector.GetTopDocs().ScoreDocs;
 
                     collector = TopFieldCollector.Create(sort, 1000, false, true, true, false);
 
-                    Searcher.Search(q1, null, collector);
+                    searcher.Search(q1, null, collector);
                     ScoreDoc[] hits2 = collector.GetTopDocs().ScoreDocs;
                     tot += hits2.Length;
                     CheckHits.CheckEqual(q1, hits1, hits2);
@@ -349,8 +348,8 @@ namespace Lucene.Net.Search
                     BooleanQuery q3 = new BooleanQuery();
                     q3.Add(q1, Occur.SHOULD);
                     q3.Add(new PrefixQuery(new Term("field2", "b")), Occur.SHOULD);
-                    TopDocs hits4 = BigSearcher.Search(q3, 1);
-                    Assert.AreEqual(MulFactor * collector.TotalHits + NUM_EXTRA_DOCS / 2, hits4.TotalHits);
+                    TopDocs hits4 = bigSearcher.Search(q3, 1);
+                    Assert.AreEqual(mulFactor * collector.TotalHits + NUM_EXTRA_DOCS / 2, hits4.TotalHits);
                 }
             }
             catch (Exception)
@@ -365,14 +364,14 @@ namespace Lucene.Net.Search
 
         // used to set properties or change every BooleanQuery
         // generated from randBoolQuery.
-        public interface Callback
+        public interface ICallback
         {
             void PostCreate(BooleanQuery q);
         }
 
         // Random rnd is passed in so that the exact same random query may be created
         // more than once.
-        public static BooleanQuery RandBoolQuery(Random rnd, bool allowMust, int level, string field, string[] vals, Callback cb)
+        public static BooleanQuery RandBoolQuery(Random rnd, bool allowMust, int level, string field, string[] vals, ICallback cb)
         {
             BooleanQuery current = new BooleanQuery(rnd.Next() < 0);
             for (int i = 0; i < rnd.Next(vals.Length) + 1; i++)

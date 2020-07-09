@@ -8,27 +8,26 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Store
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
@@ -45,10 +44,10 @@ namespace Lucene.Net.Store
     [TestFixture]
     public class TestRAMDirectory : LuceneTestCase
     {
-        private DirectoryInfo IndexDir = null;
+        private DirectoryInfo indexDir = null;
 
         // add enough document so that the index will be larger than RAMDirectory.READ_BUFFER_SIZE
-        private readonly int DocsToAdd = 500;
+        private readonly int docsToAdd = 500;
 
         // setup the index
         [SetUp]
@@ -59,19 +58,19 @@ namespace Lucene.Net.Store
             string tempDir = Path.GetTempPath();
             if (tempDir == null)
                 throw new IOException("java.io.tmpdir undefined, cannot run test");
-            IndexDir = new DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
+            indexDir = new DirectoryInfo(Path.Combine(tempDir, "RAMDirIndex"));
 
-            Directory dir = NewFSDirectory(IndexDir);
+            Directory dir = NewFSDirectory(indexDir);
             IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.CREATE));
             // add some documents
             Document doc = null;
-            for (int i = 0; i < DocsToAdd; i++)
+            for (int i = 0; i < docsToAdd; i++)
             {
                 doc = new Document();
                 doc.Add(NewStringField("content", English.Int32ToEnglish(i).Trim(), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Assert.AreEqual(DocsToAdd, writer.MaxDoc);
+            Assert.AreEqual(docsToAdd, writer.MaxDoc);
             writer.Dispose();
             dir.Dispose();
         }
@@ -79,7 +78,7 @@ namespace Lucene.Net.Store
         [Test]
         public virtual void TestRAMDirectoryMem()
         {
-            Directory dir = NewFSDirectory(IndexDir);
+            Directory dir = NewFSDirectory(indexDir);
             MockDirectoryWrapper ramDir = new MockDirectoryWrapper(Random, new RAMDirectory(dir, NewIOContext(Random)));
 
             // close the underlaying directory
@@ -90,13 +89,13 @@ namespace Lucene.Net.Store
 
             // open reader to test document count
             IndexReader reader = DirectoryReader.Open(ramDir);
-            Assert.AreEqual(DocsToAdd, reader.NumDocs);
+            Assert.AreEqual(docsToAdd, reader.NumDocs);
 
             // open search zo check if all doc's are there
             IndexSearcher searcher = NewSearcher(reader);
 
             // search for all documents
-            for (int i = 0; i < DocsToAdd; i++)
+            for (int i = 0; i < docsToAdd; i++)
             {
                 Document doc = searcher.Doc(i);
                 Assert.IsTrue(doc.GetField("content") != null);
@@ -106,13 +105,13 @@ namespace Lucene.Net.Store
             reader.Dispose();
         }
 
-        private readonly int NumThreads = 10;
-        private readonly int DocsPerThread = 40;
+        private readonly int numThreads = 10;
+        private readonly int docsPerThread = 40;
 
         [Test]
         public virtual void TestRAMDirectorySize()
         {
-            Directory dir = NewFSDirectory(IndexDir);
+            Directory dir = NewFSDirectory(indexDir);
             MockDirectoryWrapper ramDir = new MockDirectoryWrapper(Random, new RAMDirectory(dir, NewIOContext(Random)));
             dir.Dispose();
 
@@ -121,17 +120,17 @@ namespace Lucene.Net.Store
 
             Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.GetRecomputedSizeInBytes());
 
-            ThreadJob[] threads = new ThreadJob[NumThreads];
-            for (int i = 0; i < NumThreads; i++)
+            ThreadJob[] threads = new ThreadJob[numThreads];
+            for (int i = 0; i < numThreads; i++)
             {
                 int num = i;
                 threads[i] = new ThreadAnonymousInnerClassHelper(this, writer, num);
             }
-            for (int i = 0; i < NumThreads; i++)
+            for (int i = 0; i < numThreads; i++)
             {
                 threads[i].Start();
             }
-            for (int i = 0; i < NumThreads; i++)
+            for (int i = 0; i < numThreads; i++)
             {
                 threads[i].Join();
             }
@@ -144,27 +143,27 @@ namespace Lucene.Net.Store
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestRAMDirectory OuterInstance;
+            private readonly TestRAMDirectory outerInstance;
 
-            private IndexWriter Writer;
-            private int Num;
+            private readonly IndexWriter writer;
+            private readonly int num;
 
             public ThreadAnonymousInnerClassHelper(TestRAMDirectory outerInstance, IndexWriter writer, int num)
             {
-                this.OuterInstance = outerInstance;
-                this.Writer = writer;
-                this.Num = num;
+                this.outerInstance = outerInstance;
+                this.writer = writer;
+                this.num = num;
             }
 
             public override void Run()
             {
-                for (int j = 1; j < OuterInstance.DocsPerThread; j++)
+                for (int j = 1; j < outerInstance.docsPerThread; j++)
                 {
                     Document doc = new Document();
-                    doc.Add(NewStringField("sizeContent", English.Int32ToEnglish(Num * OuterInstance.DocsPerThread + j).Trim(), Field.Store.YES));
+                    doc.Add(NewStringField("sizeContent", English.Int32ToEnglish(num * outerInstance.docsPerThread + j).Trim(), Field.Store.YES));
                     try
                     {
-                        Writer.AddDocument(doc);
+                        writer.AddDocument(doc);
                     }
                     catch (IOException e)
                     {
@@ -178,9 +177,9 @@ namespace Lucene.Net.Store
         public override void TearDown()
         {
             // cleanup
-            if (IndexDir != null && IndexDir.Exists)
+            if (indexDir != null && indexDir.Exists)
             {
-                RmDir(IndexDir);
+                RmDir(indexDir);
             }
             base.TearDown();
         }

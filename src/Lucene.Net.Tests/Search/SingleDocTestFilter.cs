@@ -23,20 +23,20 @@ namespace Lucene.Net.Search
 
     public class SingleDocTestFilter : Filter
     {
-        private int Doc;
+        private readonly int doc;
 
         public SingleDocTestFilter(int doc)
         {
-            this.Doc = doc;
+            this.doc = doc;
         }
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             FixedBitSet bits = new FixedBitSet(context.Reader.MaxDoc);
-            bits.Set(Doc);
-            if (acceptDocs != null && !acceptDocs.Get(Doc))
+            bits.Set(doc);
+            if (acceptDocs != null && !acceptDocs.Get(doc))
             {
-                bits.Clear(Doc);
+                bits.Clear(doc);
             }
             return bits;
         }

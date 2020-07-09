@@ -7,30 +7,29 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -45,19 +44,19 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestDocTermOrdsRangeFilter : LuceneTestCase
     {
-        protected internal IndexSearcher Searcher1;
-        protected internal IndexSearcher Searcher2;
-        private IndexReader Reader;
-        private Directory Dir;
-        protected internal string FieldName;
+        protected internal IndexSearcher searcher1;
+        protected internal IndexSearcher searcher2;
+        private IndexReader reader;
+        private Directory dir;
+        protected internal string fieldName;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
-            FieldName = Random.NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
+            dir = NewDirectory();
+            fieldName = Random.NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             List<string> terms = new List<string>();
             int num = AtLeast(200);
             for (int i = 0; i < num; i++)
@@ -68,11 +67,11 @@ namespace Lucene.Net.Search
                 for (int j = 0; j < numTerms; j++)
                 {
                     string s = TestUtil.RandomUnicodeString(Random);
-                    doc.Add(NewStringField(FieldName, s, Field.Store.NO));
+                    doc.Add(NewStringField(fieldName, s, Field.Store.NO));
                     // if the default codec doesn't support sortedset, we will uninvert at search time
                     if (DefaultCodecSupportsSortedSet)
                     {
-                        doc.Add(new SortedSetDocValuesField(FieldName, new BytesRef(s)));
+                        doc.Add(new SortedSetDocValuesField(fieldName, new BytesRef(s)));
                     }
                     terms.Add(s);
                 }
@@ -96,17 +95,17 @@ namespace Lucene.Net.Search
                 writer.DeleteDocuments(new Term("id", Convert.ToString(Random.Next(num))));
             }
 
-            Reader = writer.GetReader();
-            Searcher1 = NewSearcher(Reader);
-            Searcher2 = NewSearcher(Reader);
+            reader = writer.GetReader();
+            searcher1 = NewSearcher(reader);
+            searcher2 = NewSearcher(reader);
             writer.Dispose();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Dir.Dispose();
+            reader.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
@@ -137,12 +136,12 @@ namespace Lucene.Net.Search
         /// </summary>
         protected internal virtual void AssertSame(BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
         {
-            Query docValues = new ConstantScoreQuery(DocTermOrdsRangeFilter.NewBytesRefRange(FieldName, lowerVal, upperVal, includeLower, includeUpper));
-            MultiTermQuery inverted = new TermRangeQuery(FieldName, lowerVal, upperVal, includeLower, includeUpper);
+            Query docValues = new ConstantScoreQuery(DocTermOrdsRangeFilter.NewBytesRefRange(fieldName, lowerVal, upperVal, includeLower, includeUpper));
+            MultiTermQuery inverted = new TermRangeQuery(fieldName, lowerVal, upperVal, includeLower, includeUpper);
             inverted.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
 
-            TopDocs invertedDocs = Searcher1.Search(inverted, 25);
-            TopDocs docValuesDocs = Searcher2.Search(docValues, 25);
+            TopDocs invertedDocs = searcher1.Search(inverted, 25);
+            TopDocs docValuesDocs = searcher2.Search(docValues, 25);
 
             CheckHits.CheckEqual(inverted, invertedDocs.ScoreDocs, docValuesDocs.ScoreDocs);
         }

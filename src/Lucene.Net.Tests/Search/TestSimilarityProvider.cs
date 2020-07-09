@@ -5,6 +5,23 @@ using System;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -14,24 +31,6 @@ namespace Lucene.Net.Search
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
     using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;
@@ -44,18 +43,18 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestSimilarityProvider : LuceneTestCase
     {
-        private Directory Directory;
-        private DirectoryReader Reader;
-        private IndexSearcher Searcher;
+        private Directory directory;
+        private DirectoryReader reader;
+        private IndexSearcher searcher;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Directory = NewDirectory();
+            directory = NewDirectory();
             PerFieldSimilarityWrapper sim = new ExampleSimilarityProvider(this);
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetSimilarity(sim);
-            RandomIndexWriter iw = new RandomIndexWriter(Random, Directory, iwc);
+            RandomIndexWriter iw = new RandomIndexWriter(Random, directory, iwc);
             Document doc = new Document();
             Field field = NewTextField("foo", "", Field.Store.NO);
             doc.Add(field);
@@ -68,17 +67,17 @@ namespace Lucene.Net.Search
             field.SetStringValue("jumps over lazy brown dog");
             field2.SetStringValue("jumps over lazy brown dog");
             iw.AddDocument(doc);
-            Reader = iw.GetReader();
+            reader = iw.GetReader();
             iw.Dispose();
-            Searcher = NewSearcher(Reader);
-            Searcher.Similarity = sim;
+            searcher = NewSearcher(reader);
+            searcher.Similarity = sim;
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Directory.Dispose();
+            reader.Dispose();
+            directory.Dispose();
             base.TearDown();
         }
 
@@ -87,7 +86,7 @@ namespace Lucene.Net.Search
         {
             // sanity check of norms writer
             // TODO: generalize
-            AtomicReader slow = SlowCompositeReaderWrapper.Wrap(Reader);
+            AtomicReader slow = SlowCompositeReaderWrapper.Wrap(reader);
             NumericDocValues fooNorms = slow.GetNormValues("foo");
             NumericDocValues barNorms = slow.GetNormValues("bar");
             for (int i = 0; i < slow.MaxDoc; i++)
@@ -96,47 +95,47 @@ namespace Lucene.Net.Search
             }
 
             // sanity check of searching
-            TopDocs foodocs = Searcher.Search(new TermQuery(new Term("foo", "brown")), 10);
+            TopDocs foodocs = searcher.Search(new TermQuery(new Term("foo", "brown")), 10);
             Assert.IsTrue(foodocs.TotalHits > 0);
-            TopDocs bardocs = Searcher.Search(new TermQuery(new Term("bar", "brown")), 10);
+            TopDocs bardocs = searcher.Search(new TermQuery(new Term("bar", "brown")), 10);
             Assert.IsTrue(bardocs.TotalHits > 0);
             Assert.IsTrue(foodocs.ScoreDocs[0].Score < bardocs.ScoreDocs[0].Score);
         }
 
         private class ExampleSimilarityProvider : PerFieldSimilarityWrapper
         {
-            private readonly TestSimilarityProvider OuterInstance;
+            private readonly TestSimilarityProvider outerInstance;
 
             public ExampleSimilarityProvider(TestSimilarityProvider outerInstance)
             {
-                this.OuterInstance = outerInstance;
-                Sim1 = new Sim1(OuterInstance);
-                Sim2 = new Sim2(OuterInstance);
+                this.outerInstance = outerInstance;
+                sim1 = new Sim1(outerInstance);
+                sim2 = new Sim2(outerInstance);
             }
 
-            private Similarity Sim1;
-            private Similarity Sim2;
+            private readonly Similarity sim1;
+            private readonly Similarity sim2;
 
             public override Similarity Get(string field)
             {
                 if (field.Equals("foo", StringComparison.Ordinal))
                 {
-                    return Sim1;
+                    return sim1;
                 }
                 else
                 {
-                    return Sim2;
+                    return sim2;
                 }
             }
         }
 
         private class Sim1 : TFIDFSimilarity
         {
-            private readonly TestSimilarityProvider OuterInstance;
+            private readonly TestSimilarityProvider outerInstance;
 
             public Sim1(TestSimilarityProvider outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override long EncodeNormValue(float f)
@@ -187,11 +186,11 @@ namespace Lucene.Net.Search
 
         private class Sim2 : TFIDFSimilarity
         {
-            private readonly TestSimilarityProvider OuterInstance;
+            private readonly TestSimilarityProvider outerInstance;
 
             public Sim2(TestSimilarityProvider outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override long EncodeNormValue(float f)

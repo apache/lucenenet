@@ -6,25 +6,24 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Similarities
 {
-    using Directory = Lucene.Net.Store.Directory;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
@@ -42,15 +41,15 @@ namespace Lucene.Net.Search.Similarities
     [TestFixture]
     public class TestSimilarity2 : LuceneTestCase
     {
-        internal IList<Similarity> Sims;
+        internal IList<Similarity> sims;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Sims = new List<Similarity>();
-            Sims.Add(new DefaultSimilarity());
-            Sims.Add(new BM25Similarity());
+            sims = new List<Similarity>();
+            sims.Add(new DefaultSimilarity());
+            sims.Add(new BM25Similarity());
             // TODO: not great that we dup this all with TestSimilarityBase
             foreach (BasicModel basicModel in TestSimilarityBase.BASIC_MODELS)
             {
@@ -58,7 +57,7 @@ namespace Lucene.Net.Search.Similarities
                 {
                     foreach (Normalization normalization in TestSimilarityBase.NORMALIZATIONS)
                     {
-                        Sims.Add(new DFRSimilarity(basicModel, afterEffect, normalization));
+                        sims.Add(new DFRSimilarity(basicModel, afterEffect, normalization));
                     }
                 }
             }
@@ -68,13 +67,13 @@ namespace Lucene.Net.Search.Similarities
                 {
                     foreach (Normalization normalization in TestSimilarityBase.NORMALIZATIONS)
                     {
-                        Sims.Add(new IBSimilarity(distribution, lambda, normalization));
+                        sims.Add(new IBSimilarity(distribution, lambda, normalization));
                     }
                 }
             }
-            Sims.Add(new LMDirichletSimilarity());
-            Sims.Add(new LMJelinekMercerSimilarity(0.1f));
-            Sims.Add(new LMJelinekMercerSimilarity(0.7f));
+            sims.Add(new LMDirichletSimilarity());
+            sims.Add(new LMJelinekMercerSimilarity(0.1f));
+            sims.Add(new LMJelinekMercerSimilarity(0.7f));
         }
 
         /// <summary>
@@ -94,7 +93,7 @@ namespace Lucene.Net.Search.Similarities
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
-            foreach (Similarity sim in Sims)
+            foreach (Similarity sim in sims)
             {
                 @is.Similarity = sim;
                 Assert.AreEqual(0, @is.Search(new TermQuery(new Term("foo", "bar")), 10).TotalHits);
@@ -121,7 +120,7 @@ namespace Lucene.Net.Search.Similarities
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
-            foreach (Similarity sim in Sims)
+            foreach (Similarity sim in sims)
             {
                 @is.Similarity = sim;
                 BooleanQuery query = new BooleanQuery(true);
@@ -151,7 +150,7 @@ namespace Lucene.Net.Search.Similarities
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
-            foreach (Similarity sim in Sims)
+            foreach (Similarity sim in sims)
             {
                 @is.Similarity = sim;
                 BooleanQuery query = new BooleanQuery(true);
@@ -184,7 +183,7 @@ namespace Lucene.Net.Search.Similarities
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
-            foreach (Similarity sim in Sims)
+            foreach (Similarity sim in sims)
             {
                 @is.Similarity = sim;
                 BooleanQuery query = new BooleanQuery(true);
@@ -217,7 +216,7 @@ namespace Lucene.Net.Search.Similarities
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
-            foreach (Similarity sim in Sims)
+            foreach (Similarity sim in sims)
             {
                 @is.Similarity = sim;
                 BooleanQuery query = new BooleanQuery(true);
@@ -251,7 +250,7 @@ namespace Lucene.Net.Search.Similarities
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
-            foreach (Similarity sim in Sims)
+            foreach (Similarity sim in sims)
             {
                 @is.Similarity = sim;
                 BooleanQuery query = new BooleanQuery(true);
@@ -285,7 +284,7 @@ namespace Lucene.Net.Search.Similarities
             iw.Dispose();
             IndexSearcher @is = NewSearcher(ir);
 
-            foreach (Similarity sim in Sims)
+            foreach (Similarity sim in sims)
             {
                 @is.Similarity = sim;
                 SpanTermQuery s1 = new SpanTermQuery(new Term("foo", "bar"));

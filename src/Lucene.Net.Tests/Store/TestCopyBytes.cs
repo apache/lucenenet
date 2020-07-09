@@ -176,21 +176,21 @@ namespace Lucene.Net.Store
 
         internal class CopyThread : ThreadJob
         {
-            internal readonly IndexInput Src;
-            internal readonly IndexOutput Dst;
+            private readonly IndexInput src;
+            private readonly IndexOutput dst;
 
             internal CopyThread(IndexInput src, IndexOutput dst)
             {
-                this.Src = src;
-                this.Dst = dst;
+                this.src = src;
+                this.dst = dst;
             }
 
             public override void Run()
             {
                 try
                 {
-                    Dst.CopyBytes(Src, Src.Length - 100);
-                    Dst.Dispose();
+                    dst.CopyBytes(src, src.Length - 100);
+                    dst.Dispose();
                 }
                 catch (IOException ex)
                 {

@@ -7,6 +7,23 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Spans
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
@@ -18,24 +35,6 @@ namespace Lucene.Net.Search.Spans
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using ReaderUtil = Lucene.Net.Index.ReaderUtil;
@@ -45,9 +44,9 @@ namespace Lucene.Net.Search.Spans
     [TestFixture]
     public class TestSpans : LuceneTestCase
     {
-        private IndexSearcher Searcher;
-        private IndexReader Reader;
-        private Directory Directory;
+        private IndexSearcher searcher;
+        private IndexReader reader;
+        private Directory directory;
 
         public const string field = "field";
 
@@ -55,28 +54,28 @@ namespace Lucene.Net.Search.Spans
         public override void SetUp()
         {
             base.SetUp();
-            Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
-            for (int i = 0; i < DocFields.Length; i++)
+            directory = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            for (int i = 0; i < docFields.Length; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField(field, DocFields[i], Field.Store.YES));
+                doc.Add(NewTextField(field, docFields[i], Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
-            Searcher = NewSearcher(Reader);
+            searcher = NewSearcher(reader);
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Directory.Dispose();
+            reader.Dispose();
+            directory.Dispose();
             base.TearDown();
         }
 
-        private string[] DocFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3", "u2 u2 u1", "u2 xx u2 u1", "u2 u2 xx u1", "u2 xx u2 yy u1", "u2 xx u1 u2", "u2 u1 xx u2", "u1 u2 xx u2", "t1 t2 t1 t3 t2 t3", "s2 s1 s1 xx xx s2 xx s2 xx s1 xx xx xx xx xx s2 xx" };
+        private readonly string[] docFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3", "u2 u2 u1", "u2 xx u2 u1", "u2 u2 xx u1", "u2 xx u2 yy u1", "u2 xx u1 u2", "u2 u1 xx u2", "u1 u2 xx u2", "t1 t2 t1 t3 t2 t3", "s2 s1 s1 xx xx s2 xx s2 xx s1 xx xx xx xx xx s2 xx" };
 
         public virtual SpanTermQuery MakeSpanTermQuery(string text)
         {
@@ -89,7 +88,7 @@ namespace Lucene.Net.Search.Spans
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, query, field, Searcher, results);
+                Random, query, field, searcher, results);
         }
 
         private void OrderedSlopTest3SQ(SpanQuery q1, SpanQuery q2, SpanQuery q3, int slop, int[] expectedDocs)
@@ -204,7 +203,7 @@ namespace Lucene.Net.Search.Spans
             bool ordered = true;
             int slop = 1;
             SpanNearQuery snq = new SpanNearQuery(new SpanQuery[] { MakeSpanTermQuery("t1"), MakeSpanTermQuery("t2"), MakeSpanTermQuery("t3") }, slop, ordered);
-            Spans spans = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, snq);
+            Spans spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, snq);
 
             Assert.IsTrue(spans.Next(), "first range");
             Assert.AreEqual(11, spans.Doc, "first doc");
@@ -225,7 +224,7 @@ namespace Lucene.Net.Search.Spans
             //See http://www.gossamer-threads.com/lists/lucene/java-dev/52270 for discussion about this test
             SpanNearQuery snq;
             snq = new SpanNearQuery(new SpanQuery[] { MakeSpanTermQuery("u1"), MakeSpanTermQuery("u2") }, 0, false);
-            Spans spans = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, snq);
+            Spans spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, snq);
             Assert.IsTrue(spans.Next(), "Does not have next and it should");
             Assert.AreEqual(4, spans.Doc, "doc");
             Assert.AreEqual(1, spans.Start, "start");
@@ -254,7 +253,7 @@ namespace Lucene.Net.Search.Spans
 
             SpanNearQuery u1u2 = new SpanNearQuery(new SpanQuery[] { MakeSpanTermQuery("u1"), MakeSpanTermQuery("u2") }, 0, false);
             snq = new SpanNearQuery(new SpanQuery[] { u1u2, MakeSpanTermQuery("u2") }, 1, false);
-            spans = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, snq);
+            spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, snq);
             Assert.IsTrue(spans.Next(), "Does not have next and it should");
             Assert.AreEqual(4, spans.Doc, "doc");
             Assert.AreEqual(0, spans.Start, "start");
@@ -311,7 +310,7 @@ namespace Lucene.Net.Search.Spans
             {
                 sqa[i] = MakeSpanTermQuery(terms[i]);
             }
-            return MultiSpansWrapper.Wrap(Searcher.TopReaderContext, new SpanOrQuery(sqa));
+            return MultiSpansWrapper.Wrap(searcher.TopReaderContext, new SpanOrQuery(sqa));
         }
 
         private void TstNextSpans(Spans spans, int doc, int start, int end)
@@ -411,7 +410,7 @@ namespace Lucene.Net.Search.Spans
         {
             bool ordered = true;
             int slop = 1;
-            IndexReaderContext topReaderContext = Searcher.TopReaderContext;
+            IndexReaderContext topReaderContext = searcher.TopReaderContext;
             IList<AtomicReaderContext> leaves = topReaderContext.Leaves;
             int subIndex = ReaderUtil.SubIndex(11, leaves);
             for (int i = 0, c = leaves.Count; i < c; i++)
@@ -420,18 +419,18 @@ namespace Lucene.Net.Search.Spans
 
                 Similarity sim = new DefaultSimilarityAnonymousInnerClassHelper(this);
 
-                Similarity oldSim = Searcher.Similarity;
+                Similarity oldSim = searcher.Similarity;
                 Scorer spanScorer;
                 try
                 {
-                    Searcher.Similarity = sim;
+                    searcher.Similarity = sim;
                     SpanNearQuery snq = new SpanNearQuery(new SpanQuery[] { MakeSpanTermQuery("t1"), MakeSpanTermQuery("t2") }, slop, ordered);
 
-                    spanScorer = Searcher.CreateNormalizedWeight(snq).GetScorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
+                    spanScorer = searcher.CreateNormalizedWeight(snq).GetScorer(ctx, ((AtomicReader)ctx.Reader).LiveDocs);
                 }
                 finally
                 {
-                    Searcher.Similarity = oldSim;
+                    searcher.Similarity = oldSim;
                 }
                 if (i == subIndex)
                 {
@@ -449,11 +448,11 @@ namespace Lucene.Net.Search.Spans
 
         private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
         {
-            private readonly TestSpans OuterInstance;
+            private readonly TestSpans outerInstance;
 
             public DefaultSimilarityAnonymousInnerClassHelper(TestSpans outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override float SloppyFreq(int distance)
@@ -580,7 +579,7 @@ namespace Lucene.Net.Search.Spans
             SpanTermQuery iq = new SpanTermQuery(new Term(field, include));
             SpanTermQuery eq = new SpanTermQuery(new Term(field, exclude));
             SpanNotQuery snq = new SpanNotQuery(iq, eq, pre, post);
-            Spans spans = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, snq);
+            Spans spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, snq);
 
             int i = 0;
             while (spans.Next())

@@ -5,30 +5,29 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
@@ -38,17 +37,17 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestBooleanOr : LuceneTestCase
     {
-        private static string FIELD_T = "T";
-        private static string FIELD_C = "C";
+        private const string FIELD_T = "T";
+        private const string FIELD_C = "C";
 
-        private TermQuery T1 = new TermQuery(new Term(FIELD_T, "files"));
-        private TermQuery T2 = new TermQuery(new Term(FIELD_T, "deleting"));
-        private TermQuery C1 = new TermQuery(new Term(FIELD_C, "production"));
-        private TermQuery C2 = new TermQuery(new Term(FIELD_C, "optimize"));
+        private readonly TermQuery t1 = new TermQuery(new Term(FIELD_T, "files"));
+        private readonly TermQuery t2 = new TermQuery(new Term(FIELD_T, "deleting"));
+        private readonly TermQuery c1 = new TermQuery(new Term(FIELD_C, "production"));
+        private readonly TermQuery c2 = new TermQuery(new Term(FIELD_C, "optimize"));
 
-        private IndexSearcher Searcher = null;
-        private Directory Dir;
-        private IndexReader Reader;
+        private IndexSearcher searcher = null;
+        private Directory dir;
+        private IndexReader reader;
 
         private int Search(Query q)
         {
@@ -56,17 +55,17 @@ namespace Lucene.Net.Search
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, q, Searcher);
-            return Searcher.Search(q, null, 1000).TotalHits;
+                Random, q, searcher);
+            return searcher.Search(q, null, 1000).TotalHits;
         }
 
         [Test]
         public virtual void TestElements()
         {
-            Assert.AreEqual(1, Search(T1));
-            Assert.AreEqual(1, Search(T2));
-            Assert.AreEqual(1, Search(C1));
-            Assert.AreEqual(1, Search(C2));
+            Assert.AreEqual(1, Search(t1));
+            Assert.AreEqual(1, Search(t2));
+            Assert.AreEqual(1, Search(c1));
+            Assert.AreEqual(1, Search(c2));
         }
 
         /// <summary>
@@ -77,10 +76,10 @@ namespace Lucene.Net.Search
         public virtual void TestFlat()
         {
             BooleanQuery q = new BooleanQuery();
-            q.Add(new BooleanClause(T1, Occur.SHOULD));
-            q.Add(new BooleanClause(T2, Occur.SHOULD));
-            q.Add(new BooleanClause(C1, Occur.SHOULD));
-            q.Add(new BooleanClause(C2, Occur.SHOULD));
+            q.Add(new BooleanClause(t1, Occur.SHOULD));
+            q.Add(new BooleanClause(t2, Occur.SHOULD));
+            q.Add(new BooleanClause(c1, Occur.SHOULD));
+            q.Add(new BooleanClause(c2, Occur.SHOULD));
             Assert.AreEqual(1, Search(q));
         }
 
@@ -92,11 +91,11 @@ namespace Lucene.Net.Search
         public virtual void TestParenthesisMust()
         {
             BooleanQuery q3 = new BooleanQuery();
-            q3.Add(new BooleanClause(T1, Occur.SHOULD));
-            q3.Add(new BooleanClause(T2, Occur.SHOULD));
+            q3.Add(new BooleanClause(t1, Occur.SHOULD));
+            q3.Add(new BooleanClause(t2, Occur.SHOULD));
             BooleanQuery q4 = new BooleanQuery();
-            q4.Add(new BooleanClause(C1, Occur.MUST));
-            q4.Add(new BooleanClause(C2, Occur.MUST));
+            q4.Add(new BooleanClause(c1, Occur.MUST));
+            q4.Add(new BooleanClause(c2, Occur.MUST));
             BooleanQuery q2 = new BooleanQuery();
             q2.Add(q3, Occur.SHOULD);
             q2.Add(q4, Occur.SHOULD);
@@ -111,11 +110,11 @@ namespace Lucene.Net.Search
         public virtual void TestParenthesisMust2()
         {
             BooleanQuery q3 = new BooleanQuery();
-            q3.Add(new BooleanClause(T1, Occur.SHOULD));
-            q3.Add(new BooleanClause(T2, Occur.SHOULD));
+            q3.Add(new BooleanClause(t1, Occur.SHOULD));
+            q3.Add(new BooleanClause(t2, Occur.SHOULD));
             BooleanQuery q4 = new BooleanQuery();
-            q4.Add(new BooleanClause(C1, Occur.SHOULD));
-            q4.Add(new BooleanClause(C2, Occur.SHOULD));
+            q4.Add(new BooleanClause(c1, Occur.SHOULD));
+            q4.Add(new BooleanClause(c2, Occur.SHOULD));
             BooleanQuery q2 = new BooleanQuery();
             q2.Add(q3, Occur.SHOULD);
             q2.Add(q4, Occur.MUST);
@@ -130,11 +129,11 @@ namespace Lucene.Net.Search
         public virtual void TestParenthesisShould()
         {
             BooleanQuery q3 = new BooleanQuery();
-            q3.Add(new BooleanClause(T1, Occur.SHOULD));
-            q3.Add(new BooleanClause(T2, Occur.SHOULD));
+            q3.Add(new BooleanClause(t1, Occur.SHOULD));
+            q3.Add(new BooleanClause(t2, Occur.SHOULD));
             BooleanQuery q4 = new BooleanQuery();
-            q4.Add(new BooleanClause(C1, Occur.SHOULD));
-            q4.Add(new BooleanClause(C2, Occur.SHOULD));
+            q4.Add(new BooleanClause(c1, Occur.SHOULD));
+            q4.Add(new BooleanClause(c2, Occur.SHOULD));
             BooleanQuery q2 = new BooleanQuery();
             q2.Add(q3, Occur.SHOULD);
             q2.Add(q4, Occur.SHOULD);
@@ -147,14 +146,14 @@ namespace Lucene.Net.Search
             base.SetUp();
 
             //
-            Dir = NewDirectory();
+            dir = NewDirectory();
 
             //
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Dir);
+                Random, dir);
 
             //
             Document d = new Document();
@@ -164,17 +163,17 @@ namespace Lucene.Net.Search
             //
             writer.AddDocument(d);
 
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             //
-            Searcher = NewSearcher(Reader);
+            searcher = NewSearcher(reader);
             writer.Dispose();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Dir.Dispose();
+            reader.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
@@ -225,18 +224,18 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly TestBooleanOr OuterInstance;
+            private readonly TestBooleanOr outerInstance;
 
             private BulkScorer scorer;
-            private FixedBitSet Hits;
-            private AtomicInt32 End;
+            private readonly FixedBitSet hits;
+            private readonly AtomicInt32 end;
 
             public CollectorAnonymousInnerClassHelper(TestBooleanOr outerInstance, BulkScorer scorer, FixedBitSet hits, AtomicInt32 end)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.scorer = scorer;
-                this.Hits = hits;
-                this.End = end;
+                this.hits = hits;
+                this.end = end;
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
@@ -245,18 +244,15 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Assert.IsTrue(doc < End, "collected doc=" + doc + " beyond max=" + End);
-                Hits.Set(doc);
+                Assert.IsTrue(doc < end, "collected doc=" + doc + " beyond max=" + end);
+                hits.Set(doc);
             }
 
             public virtual void SetScorer(Scorer scorer)
             {
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
         }
     }
 }

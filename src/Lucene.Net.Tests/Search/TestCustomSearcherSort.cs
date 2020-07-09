@@ -40,9 +40,9 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestCustomSearcherSort : LuceneTestCase
     {
-        private Directory Index = null;
-        private IndexReader Reader;
-        private Query Query = null;
+        private Directory index = null;
+        private IndexReader reader;
+        private Query query = null;
 
         // reduced from 20000 to 2000 to speed up test...
         private int INDEX_SIZE;
@@ -55,12 +55,12 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
             INDEX_SIZE = AtLeast(2000);
-            Index = NewDirectory();
+            index = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                LuceneTestCase.Random, Index);
+                LuceneTestCase.Random, index);
             RandomGen random = new RandomGen(this, Random);
             for (int i = 0; i < INDEX_SIZE; ++i) // don't decrease; if to low the
             {
@@ -79,16 +79,16 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField("mandant", Convert.ToString(i % 3), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
-            Query = new TermQuery(new Term("content", "test"));
+            query = new TermQuery(new Term("content", "test"));
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Index.Dispose();
+            reader.Dispose();
+            index.Dispose();
             base.TearDown();
         }
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
             // log("Run testFieldSortCustomSearcher");
             // define the sort criteria
             Sort custSort = new Sort(new SortField("publicationDate_", SortFieldType.STRING), SortField.FIELD_SCORE);
-            IndexSearcher searcher = new CustomSearcher(this, Reader, 2);
+            IndexSearcher searcher = new CustomSearcher(this, reader, 2);
             // search and check hits
             MatchHits(searcher, custSort);
         }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search
             // log("Run testFieldSortSingleSearcher");
             // define the sort criteria
             Sort custSort = new Sort(new SortField("publicationDate_", SortFieldType.STRING), SortField.FIELD_SCORE);
-            IndexSearcher searcher = new CustomSearcher(this, Reader, 2);
+            IndexSearcher searcher = new CustomSearcher(this, reader, 2);
             // search and check hits
             MatchHits(searcher, custSort);
         }
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search
         private void MatchHits(IndexSearcher searcher, Sort sort)
         {
             // make a query without sorting first
-            ScoreDoc[] hitsByRank = searcher.Search(Query, null, int.MaxValue).ScoreDocs;
+            ScoreDoc[] hitsByRank = searcher.Search(query, null, int.MaxValue).ScoreDocs;
             CheckHits(hitsByRank, "Sort by rank: "); // check for duplicates
             IDictionary<int?, int?> resultMap = new JCG.SortedDictionary<int?, int?>();
             // store hits in TreeMap - TreeMap does not allow duplicates; existing
@@ -136,7 +136,7 @@ namespace Lucene.Net.Search
             }
 
             // now make a query using the sort criteria
-            ScoreDoc[] resultSort = searcher.Search(Query, null, int.MaxValue, sort).ScoreDocs;
+            ScoreDoc[] resultSort = searcher.Search(query, null, int.MaxValue, sort).ScoreDocs;
             CheckHits(resultSort, "Sort by custom criteria: "); // check for duplicates
 
             // besides the sorting both sets of hits must be identical
@@ -211,22 +211,22 @@ namespace Lucene.Net.Search
 
         public class CustomSearcher : IndexSearcher
         {
-            private readonly TestCustomSearcherSort OuterInstance;
+            private readonly TestCustomSearcherSort outerInstance;
 
-            internal int Switcher;
+            internal int switcher;
 
             public CustomSearcher(TestCustomSearcherSort outerInstance, IndexReader r, int switcher)
                 : base(r)
             {
-                this.OuterInstance = outerInstance;
-                this.Switcher = switcher;
+                this.outerInstance = outerInstance;
+                this.switcher = switcher;
             }
 
             public override TopFieldDocs Search(Query query, Filter filter, int nDocs, Sort sort)
             {
                 BooleanQuery bq = new BooleanQuery();
                 bq.Add(query, Occur.MUST);
-                bq.Add(new TermQuery(new Term("mandant", Convert.ToString(Switcher))), Occur.MUST);
+                bq.Add(new TermQuery(new Term("mandant", Convert.ToString(switcher))), Occur.MUST);
                 return base.Search(bq, filter, nDocs, sort);
             }
 
@@ -234,35 +234,30 @@ namespace Lucene.Net.Search
             {
                 BooleanQuery bq = new BooleanQuery();
                 bq.Add(query, Occur.MUST);
-                bq.Add(new TermQuery(new Term("mandant", Convert.ToString(Switcher))), Occur.MUST);
+                bq.Add(new TermQuery(new Term("mandant", Convert.ToString(switcher))), Occur.MUST);
                 return base.Search(bq, filter, nDocs);
             }
         }
 
         private class RandomGen
         {
-            private readonly TestCustomSearcherSort OuterInstance;
+            private readonly TestCustomSearcherSort outerInstance;
 
             internal RandomGen(TestCustomSearcherSort outerInstance, Random random)
             {
-                this.OuterInstance = outerInstance;
-                this.Random = random;
+                this.outerInstance = outerInstance;
+                this.random = random;
                 @base = new DateTime(1980, 1, 1);
             }
 
-            internal Random Random;
+            internal Random random;
 
             // we use the default Locale/TZ since LuceneTestCase randomizes it
             internal DateTime @base;
 
             // Just to generate some different Lucene Date strings
             internal virtual string LuceneDate
-            {
-                get
-                {
-                    return DateTools.TimeToString((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + Random.Next() - int.MinValue, DateTools.Resolution.DAY);
-                }
-            }
+                => DateTools.TimeToString((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + random.Next() - int.MinValue, DateTools.Resolution.DAY);
         }
     }
 }

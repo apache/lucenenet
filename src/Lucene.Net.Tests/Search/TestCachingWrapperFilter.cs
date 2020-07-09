@@ -6,6 +6,23 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
@@ -16,24 +33,6 @@ namespace Lucene.Net.Search
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SerialMergeScheduler = Lucene.Net.Index.SerialMergeScheduler;
@@ -44,21 +43,21 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestCachingWrapperFilter : LuceneTestCase
     {
-        internal Directory Dir;
-        internal DirectoryReader Ir;
-        internal IndexSearcher @is;
-        internal RandomIndexWriter Iw;
+        private Directory dir;
+        private DirectoryReader ir;
+        private IndexSearcher @is;
+        private RandomIndexWriter iw;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
-            Iw = new RandomIndexWriter(
+            dir = NewDirectory();
+            iw = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Dir);
+                Random, dir);
             Document doc = new Document();
             Field idField = new StringField("id", "", Field.Store.NO);
             doc.Add(idField);
@@ -66,34 +65,34 @@ namespace Lucene.Net.Search
             for (int i = 0; i < 500; i++)
             {
                 idField.SetStringValue(Convert.ToString(i));
-                Iw.AddDocument(doc);
+                iw.AddDocument(doc);
             }
             // delete 20 of them
             for (int i = 0; i < 20; i++)
             {
-                Iw.DeleteDocuments(new Term("id", Convert.ToString(Random.Next(Iw.MaxDoc))));
+                iw.DeleteDocuments(new Term("id", Convert.ToString(Random.Next(iw.MaxDoc))));
             }
-            Ir = Iw.GetReader();
-            @is = NewSearcher(Ir);
+            ir = iw.GetReader();
+            @is = NewSearcher(ir);
         }
 
         [TearDown]
         public override void TearDown()
         {
-            IOUtils.Dispose(Iw, Ir, Dir);
+            IOUtils.Dispose(iw, ir, dir);
             base.TearDown();
         }
 
         private void AssertFilterEquals(Filter f1, Filter f2)
         {
             Query query = new MatchAllDocsQuery();
-            TopDocs hits1 = @is.Search(query, f1, Ir.MaxDoc);
-            TopDocs hits2 = @is.Search(query, f2, Ir.MaxDoc);
+            TopDocs hits1 = @is.Search(query, f1, ir.MaxDoc);
+            TopDocs hits2 = @is.Search(query, f2, ir.MaxDoc);
             Assert.AreEqual(hits1.TotalHits, hits2.TotalHits);
             CheckHits.CheckEqual(query, hits1.ScoreDocs, hits2.ScoreDocs);
             // now do it again to confirm caching works
-            TopDocs hits3 = @is.Search(query, f1, Ir.MaxDoc);
-            TopDocs hits4 = @is.Search(query, f2, Ir.MaxDoc);
+            TopDocs hits3 = @is.Search(query, f1, ir.MaxDoc);
+            TopDocs hits4 = @is.Search(query, f2, ir.MaxDoc);
             Assert.AreEqual(hits3.TotalHits, hits4.TotalHits);
             CheckHits.CheckEqual(query, hits3.ScoreDocs, hits4.ScoreDocs);
         }
@@ -139,7 +138,7 @@ namespace Lucene.Net.Search
         {
             for (int i = 0; i < 10; i++)
             {
-                int id = Random.Next(Ir.MaxDoc);
+                int id = Random.Next(ir.MaxDoc);
                 Query query = new TermQuery(new Term("id", Convert.ToString(id)));
                 Filter expected = new QueryWrapperFilter(query);
                 Filter actual = new CachingWrapperFilter(expected);
@@ -154,7 +153,7 @@ namespace Lucene.Net.Search
         {
             for (int i = 0; i < 10; i++)
             {
-                int id_start = Random.Next(Ir.MaxDoc - 1);
+                int id_start = Random.Next(ir.MaxDoc - 1);
                 int id_end = id_start + 1;
                 Query query = TermRangeQuery.NewStringRange("id", Convert.ToString(id_start), Convert.ToString(id_end), true, true);
                 Filter expected = new QueryWrapperFilter(query);
@@ -233,14 +232,14 @@ namespace Lucene.Net.Search
 
         private class FilterAnonymousInnerClassHelper : Filter
         {
-            private readonly TestCachingWrapperFilter OuterInstance;
+            private readonly TestCachingWrapperFilter outerInstance;
 
-            private AtomicReaderContext Context;
+            private AtomicReaderContext context;
 
             public FilterAnonymousInnerClassHelper(TestCachingWrapperFilter outerInstance, AtomicReaderContext context)
             {
-                this.OuterInstance = outerInstance;
-                this.Context = context;
+                this.outerInstance = outerInstance;
+                this.context = context;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
@@ -275,14 +274,14 @@ namespace Lucene.Net.Search
 
         private class FilterAnonymousInnerClassHelper2 : Filter
         {
-            private readonly TestCachingWrapperFilter OuterInstance;
+            private readonly TestCachingWrapperFilter outerInstance;
 
-            private AtomicReaderContext Context;
+            private AtomicReaderContext context;
 
             public FilterAnonymousInnerClassHelper2(TestCachingWrapperFilter outerInstance, AtomicReaderContext context)
             {
-                this.OuterInstance = outerInstance;
-                this.Context = context;
+                this.outerInstance = outerInstance;
+                this.context = context;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
@@ -292,11 +291,11 @@ namespace Lucene.Net.Search
 
             private class DocIdSetAnonymousInnerClassHelper : DocIdSet
             {
-                private readonly FilterAnonymousInnerClassHelper2 OuterInstance;
+                private readonly FilterAnonymousInnerClassHelper2 outerInstance;
 
                 public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper2 outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 public override DocIdSetIterator GetIterator()
@@ -366,11 +365,11 @@ namespace Lucene.Net.Search
 
         private class FilterAnonymousInnerClassHelper3 : Filter
         {
-            private readonly TestCachingWrapperFilter OuterInstance;
+            private readonly TestCachingWrapperFilter outerInstance;
 
             public FilterAnonymousInnerClassHelper3(TestCachingWrapperFilter outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)

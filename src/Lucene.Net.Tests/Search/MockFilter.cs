@@ -23,22 +23,22 @@ namespace Lucene.Net.Search
 
     public class MockFilter : Filter
     {
-        private bool WasCalled_Renamed;
+        private bool wasCalled;
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            WasCalled_Renamed = true;
+            wasCalled = true;
             return new FixedBitSet(context.Reader.MaxDoc);
         }
 
         public virtual void Clear()
         {
-            WasCalled_Renamed = false;
+            wasCalled = false;
         }
 
         public virtual bool WasCalled()
         {
-            return WasCalled_Renamed;
+            return wasCalled;
         }
     }
 }

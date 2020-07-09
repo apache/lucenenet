@@ -7,27 +7,26 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search.Spans
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -47,10 +46,10 @@ namespace Lucene.Net.Search.Spans
     public class TestSpansAdvanced : LuceneTestCase
     {
         // location to the index
-        protected internal Directory MDirectory;
+        protected internal Directory mDirectory;
 
-        protected internal IndexReader Reader;
-        protected internal IndexSearcher Searcher;
+        protected internal IndexReader reader;
+        protected internal IndexSearcher searcher;
 
         // field names in the index
         private const string FIELD_ID = "ID";
@@ -65,30 +64,30 @@ namespace Lucene.Net.Search.Spans
         {
             base.SetUp();
             // create test index
-            MDirectory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, MDirectory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
+            mDirectory = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, mDirectory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
             AddDocument(writer, "1", "I think it should work.");
             AddDocument(writer, "2", "I think it should work.");
             AddDocument(writer, "3", "I think it should work.");
             AddDocument(writer, "4", "I think it should work.");
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
-            Searcher = NewSearcher(Reader);
-            Searcher.Similarity = new DefaultSimilarity();
+            searcher = NewSearcher(reader);
+            searcher.Similarity = new DefaultSimilarity();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            if (Reader != null)
+            if (reader != null)
             {
-                Reader.Dispose();
+                reader.Dispose();
             }
 
-            if (MDirectory != null)
+            if (mDirectory != null)
             {
-                MDirectory.Dispose();
-                MDirectory = null;
+                mDirectory.Dispose();
+                mDirectory = null;
             }
             base.TearDown();
         }
@@ -113,7 +112,7 @@ namespace Lucene.Net.Search.Spans
         [Test]
         public virtual void TestBooleanQueryWithSpanQueries()
         {
-            DoTestBooleanQueryWithSpanQueries(Searcher, 0.3884282f);
+            DoTestBooleanQueryWithSpanQueries(searcher, 0.3884282f);
         }
 
         /// <summary>

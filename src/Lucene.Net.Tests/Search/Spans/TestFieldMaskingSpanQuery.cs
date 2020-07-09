@@ -7,29 +7,28 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Spans
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
@@ -53,9 +52,9 @@ namespace Lucene.Net.Search.Spans
             return NewTextField(name, value, Field.Store.NO);
         }
 
-        protected internal static IndexSearcher Searcher;
-        protected internal static Directory Directory;
-        protected internal static IndexReader Reader;
+        protected internal static IndexSearcher searcher;
+        protected internal static Directory directory;
+        protected internal static IndexReader reader;
 
         /// <summary>
         /// LUCENENET specific
@@ -66,8 +65,8 @@ namespace Lucene.Net.Search.Spans
         {
             base.BeforeClass();
 
-            Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            directory = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
             writer.AddDocument(Doc(new Field[] { GetField("id", "0"), GetField("gender", "male"), GetField("first", "james"), GetField("last", "jones") }));
 
@@ -78,19 +77,19 @@ namespace Lucene.Net.Search.Spans
             writer.AddDocument(Doc(new Field[] { GetField("id", "3"), GetField("gender", "female"), GetField("first", "lisa"), GetField("last", "jones"), GetField("gender", "male"), GetField("first", "bob"), GetField("last", "costas") }));
 
             writer.AddDocument(Doc(new Field[] { GetField("id", "4"), GetField("gender", "female"), GetField("first", "sally"), GetField("last", "smith"), GetField("gender", "female"), GetField("first", "linda"), GetField("last", "dixit"), GetField("gender", "male"), GetField("first", "bubba"), GetField("last", "jones") }));
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
-            Searcher = NewSearcher(Reader);
+            searcher = NewSearcher(reader);
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Searcher = null;
-            Reader.Dispose();
-            Reader = null;
-            Directory.Dispose();
-            Directory = null;
+            searcher = null;
+            reader.Dispose();
+            reader = null;
+            directory.Dispose();
+            directory = null;
             base.AfterClass();
         }
 
@@ -100,7 +99,7 @@ namespace Lucene.Net.Search.Spans
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, q, null, Searcher, docs);
+                Random, q, null, searcher, docs);
         }
 
         [Test]
@@ -108,7 +107,7 @@ namespace Lucene.Net.Search.Spans
         {
             SpanQuery q = new FieldMaskingSpanQuery(new SpanTermQuery(new Term("last", "sally")), "first");
             q.Boost = 8.7654321f;
-            SpanQuery qr = (SpanQuery)Searcher.Rewrite(q);
+            SpanQuery qr = (SpanQuery)searcher.Rewrite(q);
 
             QueryUtils.CheckEqual(q, qr);
 
@@ -123,7 +122,7 @@ namespace Lucene.Net.Search.Spans
             // mask an anon SpanQuery class that rewrites to something else.
             SpanQuery q = new FieldMaskingSpanQuery(new SpanTermQueryAnonymousInnerClassHelper(this, new Term("last", "sally")), "first");
 
-            SpanQuery qr = (SpanQuery)Searcher.Rewrite(q);
+            SpanQuery qr = (SpanQuery)searcher.Rewrite(q);
 
             QueryUtils.CheckUnequal(q, qr);
 
@@ -134,12 +133,12 @@ namespace Lucene.Net.Search.Spans
 
         private class SpanTermQueryAnonymousInnerClassHelper : SpanTermQuery
         {
-            private readonly TestFieldMaskingSpanQuery OuterInstance;
+            private readonly TestFieldMaskingSpanQuery outerInstance;
 
             public SpanTermQueryAnonymousInnerClassHelper(TestFieldMaskingSpanQuery outerInstance, Term term)
                 : base(term)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override Query Rewrite(IndexReader reader)
@@ -154,7 +153,7 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q1 = new SpanTermQuery(new Term("last", "smith"));
             SpanQuery q2 = new SpanTermQuery(new Term("last", "jones"));
             SpanQuery q = new SpanNearQuery(new SpanQuery[] { q1, new FieldMaskingSpanQuery(q2, "last") }, 1, true);
-            Query qr = Searcher.Rewrite(q);
+            Query qr = searcher.Rewrite(q);
 
             QueryUtils.CheckEqual(q, qr);
 
@@ -221,7 +220,7 @@ namespace Lucene.Net.Search.Spans
         [Test]
         public virtual void TestSimple2()
         {
-            AssumeTrue("Broken scoring: LUCENE-3723", Searcher.Similarity is TFIDFSimilarity);
+            AssumeTrue("Broken scoring: LUCENE-3723", searcher.Similarity is TFIDFSimilarity);
             SpanQuery q1 = new SpanTermQuery(new Term("gender", "female"));
             SpanQuery q2 = new SpanTermQuery(new Term("last", "smith"));
             SpanQuery q = new SpanNearQuery(new SpanQuery[] { q1, new FieldMaskingSpanQuery(q2, "gender") }, -1, false);
@@ -238,7 +237,7 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = new SpanOrQuery(q1, new FieldMaskingSpanQuery(q2, "gender"));
             Check(q, new int[] { 0, 1, 2, 3, 4 });
 
-            Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
+            Spans span = MultiSpansWrapper.Wrap(searcher.TopReaderContext, q);
 
             Assert.AreEqual(true, span.Next());
             Assert.AreEqual(s(0, 0, 1), s(span));
@@ -281,8 +280,8 @@ namespace Lucene.Net.Search.Spans
             Check(qA, new int[] { 0, 1, 2, 4 });
             Check(qB, new int[] { 0, 1, 2, 4 });
 
-            Spans spanA = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, qA);
-            Spans spanB = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, qB);
+            Spans spanA = MultiSpansWrapper.Wrap(searcher.TopReaderContext, qA);
+            Spans spanB = MultiSpansWrapper.Wrap(searcher.TopReaderContext, qB);
 
             while (spanA.Next())
             {
@@ -295,7 +294,7 @@ namespace Lucene.Net.Search.Spans
         [Test]
         public virtual void TestSpans2()
         {
-            AssumeTrue("Broken scoring: LUCENE-3723", Searcher.Similarity is TFIDFSimilarity);
+            AssumeTrue("Broken scoring: LUCENE-3723", searcher.Similarity is TFIDFSimilarity);
             SpanQuery qA1 = new SpanTermQuery(new Term("gender", "female"));
             SpanQuery qA2 = new SpanTermQuery(new Term("first", "james"));
             SpanQuery qA = new SpanOrQuery(qA1, new FieldMaskingSpanQuery(qA2, "gender"));
@@ -303,7 +302,7 @@ namespace Lucene.Net.Search.Spans
             SpanQuery q = new SpanNearQuery(new SpanQuery[] { new FieldMaskingSpanQuery(qA, "id"), new FieldMaskingSpanQuery(qB, "id") }, -1, false);
             Check(q, new int[] { 0, 1, 2, 3 });
 
-            Spans span = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, q);
+            Spans span = MultiSpansWrapper.Wrap(searcher.TopReaderContext, q);
 
             Assert.AreEqual(true, span.Next());
             Assert.AreEqual(s(0, 0, 1), s(span));

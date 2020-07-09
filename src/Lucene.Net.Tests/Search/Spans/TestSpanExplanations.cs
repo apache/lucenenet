@@ -19,8 +19,6 @@ namespace Lucene.Net.Search.Spans
      * limitations under the License.
      */
 
-    using Lucene.Net.Search;
-
     /// <summary>
     /// TestExplanations subclass focusing on span queries
     /// </summary>

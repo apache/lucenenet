@@ -8,6 +8,23 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -15,24 +32,6 @@ namespace Lucene.Net.Search
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MultiFields = Lucene.Net.Index.MultiFields;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -116,28 +115,28 @@ namespace Lucene.Net.Search
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestSameScoresWithThreads OuterInstance;
+            private readonly TestSameScoresWithThreads outerInstance;
 
-            private IndexSearcher s;
-            private IDictionary<BytesRef, TopDocs> Answers;
-            private CountdownEvent StartingGun;
+            private readonly IndexSearcher s;
+            private readonly IDictionary<BytesRef, TopDocs> answers;
+            private readonly CountdownEvent startingGun;
 
             public ThreadAnonymousInnerClassHelper(TestSameScoresWithThreads outerInstance, IndexSearcher s, IDictionary<BytesRef, TopDocs> answers, CountdownEvent startingGun)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.s = s;
-                this.Answers = answers;
-                this.StartingGun = startingGun;
+                this.answers = answers;
+                this.startingGun = startingGun;
             }
 
             public override void Run()
             {
                 try
                 {
-                    StartingGun.Wait();
+                    startingGun.Wait();
                     for (int i = 0; i < 20; i++)
                     {
-                        IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(Answers);
+                        IList<KeyValuePair<BytesRef, TopDocs>> shuffled = new List<KeyValuePair<BytesRef, TopDocs>>(answers);
                         shuffled.Shuffle(Random);
                         foreach (KeyValuePair<BytesRef, TopDocs> ent in shuffled)
                         {

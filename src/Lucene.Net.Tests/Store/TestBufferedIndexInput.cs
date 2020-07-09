@@ -8,39 +8,35 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Store
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OpenMode = Lucene.Net.Index.OpenMode;
-    using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using Term = Lucene.Net.Index.Term;
     using TermQuery = Lucene.Net.Search.TermQuery;
-    using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
     public class TestBufferedIndexInput : LuceneTestCase
@@ -137,14 +133,14 @@ namespace Lucene.Net.Store
             }
         }
 
-        private byte[] Buffer = new byte[10];
+        private byte[] buffer = new byte[10];
 
         private void CheckReadBytes(IndexInput input, int size, int pos)
         {
             // Just to see that "offset" is treated properly in readBytes(), we
             // add an arbitrary offset at the beginning of the array
             int offset = size % 10; // arbitrary
-            Buffer = ArrayUtil.Grow(Buffer, offset + size);
+            buffer = ArrayUtil.Grow(buffer, offset + size);
             Assert.AreEqual(pos, input.GetFilePointer());
             long left = TEST_FILE_LENGTH - input.GetFilePointer();
             if (left <= 0)
@@ -155,11 +151,11 @@ namespace Lucene.Net.Store
             {
                 size = (int)left;
             }
-            input.ReadBytes(Buffer, offset, size);
+            input.ReadBytes(buffer, offset, size);
             Assert.AreEqual(pos + size, input.GetFilePointer());
             for (int i = 0; i < size; i++)
             {
-                Assert.AreEqual(Byten(pos + i), (byte)Buffer[offset + i], "pos=" + i + " filepos=" + (pos + i));
+                Assert.AreEqual(Byten(pos + i), (byte)buffer[offset + i], "pos=" + i + " filepos=" + (pos + i));
             }
         }
 
@@ -224,14 +220,14 @@ namespace Lucene.Net.Store
 
         private class MyBufferedIndexInput : BufferedIndexInput
         {
-            internal long Pos;
-            internal long Len;
+            private long pos;
+            private readonly long len;
 
             public MyBufferedIndexInput(long len)
                 : base("MyBufferedIndexInput(len=" + len + ")", BufferedIndexInput.BUFFER_SIZE)
             {
-                this.Len = len;
-                this.Pos = 0;
+                this.len = len;
+                this.pos = 0;
             }
 
             public MyBufferedIndexInput()
@@ -244,23 +240,20 @@ namespace Lucene.Net.Store
             {
                 for (int i = offset; i < offset + length; i++)
                 {
-                    b[i] = Byten(Pos++);
+                    b[i] = Byten(pos++);
                 }
             }
 
             protected override void SeekInternal(long pos)
             {
-                this.Pos = pos;
+                this.pos = pos;
             }
 
             protected override void Dispose(bool disposing)
             {
             }
 
-            public override long Length
-            {
-                get { return Len; }
-            }
+            public override long Length => len;
         }
 
         [Test]
@@ -284,7 +277,7 @@ namespace Lucene.Net.Store
                     writer.AddDocument(doc);
                 }
 
-                dir.AllIndexInputs.Clear();
+                dir.allIndexInputs.Clear();
 
                 IndexReader reader = DirectoryReader.Open(writer, true);
                 var aaa = new Term("content", "aaa");
@@ -327,26 +320,24 @@ namespace Lucene.Net.Store
 
         private class MockFSDirectory : BaseDirectory
         {
-            internal readonly IList<IndexInput> AllIndexInputs = new List<IndexInput>();
-
-            private Random Rand;
-
-            private Directory Dir;
+            internal readonly IList<IndexInput> allIndexInputs = new List<IndexInput>();
+            private readonly Random rand;
+            private readonly Directory dir;
 
             public MockFSDirectory(DirectoryInfo path, Random rand)
             {
-                this.Rand = rand;
+                this.rand = rand;
                 SetLockFactory(NoLockFactory.GetNoLockFactory());
-                Dir = new SimpleFSDirectory(path, null);
+                dir = new SimpleFSDirectory(path, null);
             }
 
             public virtual void TweakBufferSizes()
             {
                 //int count = 0;
-                foreach (IndexInput ip in AllIndexInputs)
+                foreach (IndexInput ip in allIndexInputs)
                 {
                     BufferedIndexInput bii = (BufferedIndexInput)ip;
-                    int bufferSize = 1024 + Math.Abs(Rand.Next() % 32768);
+                    int bufferSize = 1024 + Math.Abs(rand.Next() % 32768);
                     bii.SetBufferSize(bufferSize);
                     //count++;
                 }
@@ -357,48 +348,48 @@ namespace Lucene.Net.Store
             {
                 // Make random changes to buffer size
                 //bufferSize = 1+Math.abs(rand.nextInt() % 10);
-                IndexInput f = Dir.OpenInput(name, context);
-                AllIndexInputs.Add(f);
+                IndexInput f = dir.OpenInput(name, context);
+                allIndexInputs.Add(f);
                 return f;
             }
 
             public override IndexOutput CreateOutput(string name, IOContext context)
             {
-                return Dir.CreateOutput(name, context);
+                return dir.CreateOutput(name, context);
             }
 
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
                 {
-                    Dir.Dispose();
+                    dir.Dispose();
                 }
             }
 
             public override void DeleteFile(string name)
             {
-                Dir.DeleteFile(name);
+                dir.DeleteFile(name);
             }
 
             [Obsolete("this method will be removed in 5.0")]
             public override bool FileExists(string name)
             {
-                return Dir.FileExists(name);
+                return dir.FileExists(name);
             }
 
             public override string[] ListAll()
             {
-                return Dir.ListAll();
+                return dir.ListAll();
             }
 
             public override void Sync(ICollection<string> names)
             {
-                Dir.Sync(names);
+                dir.Sync(names);
             }
 
             public override long FileLength(string name)
             {
-                return Dir.FileLength(name);
+                return dir.FileLength(name);
             }
         }
     }

@@ -1,34 +1,31 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
-using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Store
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -38,7 +35,7 @@ namespace Lucene.Net.Store
     [TestFixture]
     public class TestWindowsMMap : LuceneTestCase
     {
-        private const string Alphabet = "abcdefghijklmnopqrstuvwzyz";
+        private const string ALPHABET = "abcdefghijklmnopqrstuvwzyz";
 
         [SetUp]
         public override void SetUp()
@@ -53,7 +50,7 @@ namespace Lucene.Net.Store
             for (int cx = 0; cx < tl; cx++)
             {
                 int c = Random.Next(25);
-                sb.Append(Alphabet.Substring(c, 1));
+                sb.Append(ALPHABET.Substring(c, 1));
             }
             return sb.ToString();
         }

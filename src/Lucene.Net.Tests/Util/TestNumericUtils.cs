@@ -8,22 +8,22 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
 {
-    /// <summary>
-    /// Licensed to the Apache Software Foundation (ASF) under one or more
-    /// contributor license agreements.  See the NOTICE file distributed with
-    /// this work for additional information regarding copyright ownership.
-    /// The ASF licenses this file to You under the Apache License, Version 2.0
-    /// (the "License"); you may not use this file except in compliance with
-    /// the License.  You may obtain a copy of the License at
-    ///
-    ///     http://www.apache.org/licenses/LICENSE-2.0
-    ///
-    /// Unless required by applicable law or agreed to in writing, software
-    /// distributed under the License is distributed on an "AS IS" BASIS,
-    /// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    /// See the License for the specific language governing permissions and
-    /// limitations under the License.
-    /// </summary>
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     [TestFixture]
     public class TestNumericUtils : LuceneTestCase
@@ -281,34 +281,34 @@ namespace Lucene.Net.Util
 
         private class LongRangeBuilderAnonymousInnerClassHelper : NumericUtils.Int64RangeBuilder
         {
-            private readonly TestNumericUtils OuterInstance;
+            private readonly TestNumericUtils outerInstance;
 
-            private long Lower;
-            private long Upper;
-            private bool UseBitSet;
-            private Int64BitSet Bits;
-            private IEnumerator<long> NeededBounds;
-            private IEnumerator<int> NeededShifts;
+            private readonly long lower;
+            private readonly long upper;
+            private readonly bool useBitSet;
+            private readonly Int64BitSet bits;
+            private readonly IEnumerator<long> neededBounds;
+            private readonly IEnumerator<int> neededShifts;
 
             public LongRangeBuilderAnonymousInnerClassHelper(TestNumericUtils outerInstance, long lower, long upper, bool useBitSet, Int64BitSet bits, IEnumerator<long> neededBounds, IEnumerator<int> neededShifts)
             {
-                this.OuterInstance = outerInstance;
-                this.Lower = lower;
-                this.Upper = upper;
-                this.UseBitSet = useBitSet;
-                this.Bits = bits;
-                this.NeededBounds = neededBounds;
-                this.NeededShifts = neededShifts;
+                this.outerInstance = outerInstance;
+                this.lower = lower;
+                this.upper = upper;
+                this.useBitSet = useBitSet;
+                this.bits = bits;
+                this.neededBounds = neededBounds;
+                this.neededShifts = neededShifts;
             }
 
             public override void AddRange(long min, long max, int shift)
             {
-                Assert.IsTrue(min >= Lower && min <= Upper && max >= Lower && max <= Upper, "min, max should be inside bounds");
-                if (UseBitSet)
+                Assert.IsTrue(min >= lower && min <= upper && max >= lower && max <= upper, "min, max should be inside bounds");
+                if (useBitSet)
                 {
                     for (long l = min; l <= max; l++)
                     {
-                        Assert.IsFalse(Bits.GetAndSet(l - Lower), "ranges should not overlap");
+                        Assert.IsFalse(bits.GetAndSet(l - lower), "ranges should not overlap");
                         // extra exit condition to prevent overflow on MAX_VALUE
                         if (l == max)
                         {
@@ -316,7 +316,7 @@ namespace Lucene.Net.Util
                         }
                     }
                 }
-                if (NeededBounds == null || NeededShifts == null)
+                if (neededBounds == null || neededShifts == null)
                 {
                     return;
                 }
@@ -324,12 +324,12 @@ namespace Lucene.Net.Util
                 min ^= unchecked((long)0x8000000000000000L);
                 max ^= unchecked((long)0x8000000000000000L);
                 //System.out.println("0x"+Long.toHexString(min>>>shift)+"L,0x"+Long.toHexString(max>>>shift)+"L)/*shift="+shift+"*/,");
-                NeededShifts.MoveNext();
-                Assert.AreEqual(NeededShifts.Current, shift, "shift");
-                NeededBounds.MoveNext();
-                Assert.AreEqual(NeededBounds.Current, (long)((ulong)min >> shift), "inner min bound");
-                NeededBounds.MoveNext();
-                Assert.AreEqual(NeededBounds.Current, (long)((ulong)max >> shift), "inner max bound");
+                neededShifts.MoveNext();
+                Assert.AreEqual(neededShifts.Current, shift, "shift");
+                neededBounds.MoveNext();
+                Assert.AreEqual(neededBounds.Current, (long)((ulong)min >> shift), "inner min bound");
+                neededBounds.MoveNext();
+                Assert.AreEqual(neededBounds.Current, (long)((ulong)max >> shift), "inner max bound");
             }
         }
 
@@ -476,34 +476,34 @@ namespace Lucene.Net.Util
 
         private class IntRangeBuilderAnonymousInnerClassHelper : NumericUtils.Int32RangeBuilder
         {
-            private readonly TestNumericUtils OuterInstance;
+            private readonly TestNumericUtils outerInstance;
 
-            private int Lower;
-            private int Upper;
-            private bool UseBitSet;
-            private FixedBitSet Bits;
-            private IEnumerator<int> NeededBounds;
-            private IEnumerator<int> NeededShifts;
+            private readonly int lower;
+            private readonly int upper;
+            private readonly bool useBitSet;
+            private readonly FixedBitSet bits;
+            private readonly IEnumerator<int> neededBounds;
+            private readonly IEnumerator<int> neededShifts;
 
             public IntRangeBuilderAnonymousInnerClassHelper(TestNumericUtils outerInstance, int lower, int upper, bool useBitSet, FixedBitSet bits, IEnumerator<int> neededBounds, IEnumerator<int> neededShifts)
             {
-                this.OuterInstance = outerInstance;
-                this.Lower = lower;
-                this.Upper = upper;
-                this.UseBitSet = useBitSet;
-                this.Bits = bits;
-                this.NeededBounds = neededBounds;
-                this.NeededShifts = neededShifts;
+                this.outerInstance = outerInstance;
+                this.lower = lower;
+                this.upper = upper;
+                this.useBitSet = useBitSet;
+                this.bits = bits;
+                this.neededBounds = neededBounds;
+                this.neededShifts = neededShifts;
             }
 
             public override void AddRange(int min, int max, int shift)
             {
-                Assert.IsTrue(min >= Lower && min <= Upper && max >= Lower && max <= Upper, "min, max should be inside bounds");
-                if (UseBitSet)
+                Assert.IsTrue(min >= lower && min <= upper && max >= lower && max <= upper, "min, max should be inside bounds");
+                if (useBitSet)
                 {
                     for (int i = min; i <= max; i++)
                     {
-                        Assert.IsFalse(Bits.GetAndSet(i - Lower), "ranges should not overlap");
+                        Assert.IsFalse(bits.GetAndSet(i - lower), "ranges should not overlap");
                         // extra exit condition to prevent overflow on MAX_VALUE
                         if (i == max)
                         {
@@ -511,7 +511,7 @@ namespace Lucene.Net.Util
                         }
                     }
                 }
-                if (NeededBounds == null)
+                if (neededBounds == null)
                 {
                     return;
                 }
@@ -519,12 +519,12 @@ namespace Lucene.Net.Util
                 min ^= unchecked((int)0x80000000);
                 max ^= unchecked((int)0x80000000);
                 //System.out.println("0x"+Integer.toHexString(min>>>shift)+",0x"+Integer.toHexString(max>>>shift)+")/*shift="+shift+"*/,");
-                NeededShifts.MoveNext();
-                Assert.AreEqual(NeededShifts.Current, shift, "shift");
-                NeededBounds.MoveNext();
-                Assert.AreEqual(NeededBounds.Current, (int)((uint)min >> shift), "inner min bound");
-                NeededBounds.MoveNext();
-                Assert.AreEqual(NeededBounds.Current, (int)((uint)max >> shift), "inner max bound");
+                neededShifts.MoveNext();
+                Assert.AreEqual(neededShifts.Current, shift, "shift");
+                neededBounds.MoveNext();
+                Assert.AreEqual(neededBounds.Current, (int)((uint)min >> shift), "inner min bound");
+                neededBounds.MoveNext();
+                Assert.AreEqual(neededBounds.Current, (int)((uint)max >> shift), "inner max bound");
             }
         }
 

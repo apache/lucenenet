@@ -7,27 +7,26 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -41,7 +40,7 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestBooleanMinShouldMatch : LuceneTestCase
     {
-        private static Directory Index;
+        private static Directory index;
         private static IndexReader r;
         private static IndexSearcher s;
 
@@ -56,12 +55,12 @@ namespace Lucene.Net.Search
 
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 
-            Index = NewDirectory();
+            index = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Index);
+                Random, index);
 
             for (int i = 0; i < data.Length; i++)
             {
@@ -87,8 +86,8 @@ namespace Lucene.Net.Search
             s = null;
             r.Dispose();
             r = null;
-            Index.Dispose();
-            Index = null;
+            index.Dispose();
+            index = null;
             base.AfterClass();
         }
 
@@ -346,7 +345,7 @@ namespace Lucene.Net.Search
             int maxLev = 4;
 
             // callback object to set a random setMinimumNumberShouldMatch
-            TestBoolean2.Callback minNrCB = new CallbackAnonymousInnerClassHelper(this, field, vals);
+            TestBoolean2.ICallback minNrCB = new CallbackAnonymousInnerClassHelper(this, field, vals);
 
             // increase number of iterations for more complete testing
             int num = AtLeast(20);
@@ -384,18 +383,18 @@ namespace Lucene.Net.Search
             // System.out.println("Total hits:"+tot);
         }
 
-        private class CallbackAnonymousInnerClassHelper : TestBoolean2.Callback
+        private class CallbackAnonymousInnerClassHelper : TestBoolean2.ICallback
         {
-            private readonly TestBooleanMinShouldMatch OuterInstance;
+            private readonly TestBooleanMinShouldMatch outerInstance;
 
-            private string Field;
-            private string[] Vals;
+            private readonly string field;
+            private readonly string[] vals;
 
             public CallbackAnonymousInnerClassHelper(TestBooleanMinShouldMatch outerInstance, string field, string[] vals)
             {
-                this.OuterInstance = outerInstance;
-                this.Field = field;
-                this.Vals = vals;
+                this.outerInstance = outerInstance;
+                this.field = field;
+                this.vals = vals;
             }
 
             public virtual void PostCreate(BooleanQuery q)
@@ -413,7 +412,7 @@ namespace Lucene.Net.Search
                 if (Random.NextBoolean())
                 {
                     // also add a random negation
-                    Term randomTerm = new Term(Field, Vals[Random.Next(Vals.Length)]);
+                    Term randomTerm = new Term(field, vals[Random.Next(vals.Length)]);
                     q.Add(new TermQuery(randomTerm), Occur.MUST_NOT);
                 }
             }
@@ -477,11 +476,11 @@ namespace Lucene.Net.Search
 
         private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
         {
-            private readonly TestBooleanMinShouldMatch OuterInstance;
+            private readonly TestBooleanMinShouldMatch outerInstance;
 
             public DefaultSimilarityAnonymousInnerClassHelper(TestBooleanMinShouldMatch outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override float Coord(int overlap, int maxOverlap)
@@ -514,11 +513,11 @@ namespace Lucene.Net.Search
 
         private class DefaultSimilarityAnonymousInnerClassHelper2 : DefaultSimilarity
         {
-            private readonly TestBooleanMinShouldMatch OuterInstance;
+            private readonly TestBooleanMinShouldMatch outerInstance;
 
             public DefaultSimilarityAnonymousInnerClassHelper2(TestBooleanMinShouldMatch outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override float Coord(int overlap, int maxOverlap)

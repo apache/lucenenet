@@ -10,28 +10,27 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using Field = Field;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
@@ -224,7 +223,7 @@ namespace Lucene.Net.Search
                 }
 
                 // Compute expected results:
-                var expected = f.MatchValues.ToList();
+                var expected = f.matchValues.ToList();
                 
                 expected.Sort(Comparer<BytesRef>.Create((a,b) =>
                     {
@@ -325,17 +324,17 @@ namespace Lucene.Net.Search
 
         private class RandomFilter : Filter
         {
-            private readonly Random Random;
-            private readonly float Density;
-            private readonly IList<BytesRef> DocValues;
-            public readonly IList<BytesRef> MatchValues = new SynchronizedList<BytesRef>();
+            private readonly Random random;
+            private readonly float density;
+            private readonly IList<BytesRef> docValues;
+            public readonly IList<BytesRef> matchValues = new SynchronizedList<BytesRef>();
 
             // density should be 0.0 ... 1.0
             public RandomFilter(Random random, float density, IList<BytesRef> docValues)
             {
-                this.Random = random;
-                this.Density = density;
-                this.DocValues = docValues;
+                this.random = random;
+                this.density = density;
+                this.docValues = docValues;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
@@ -346,11 +345,11 @@ namespace Lucene.Net.Search
                 FixedBitSet bits = new FixedBitSet(maxDoc);
                 for (int docID = 0; docID < maxDoc; docID++)
                 {
-                    if ((float)Random.NextDouble() <= Density && (acceptDocs == null || acceptDocs.Get(docID)))
+                    if ((float)random.NextDouble() <= density && (acceptDocs == null || acceptDocs.Get(docID)))
                     {
                         bits.Set(docID);
                         //System.out.println("  acc id=" + idSource.Get(docID) + " docID=" + docID + " id=" + idSource.Get(docID) + " v=" + docValues.Get(idSource.Get(docID)).Utf8ToString());
-                        MatchValues.Add(DocValues[idSource.Get(docID)]);
+                        matchValues.Add(docValues[idSource.Get(docID)]);
                     }
                 }
 

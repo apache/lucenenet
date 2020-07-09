@@ -8,6 +8,23 @@ using BitSet = J2N.Collections.BitSet;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
@@ -20,23 +37,6 @@ namespace Lucene.Net.Search
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
@@ -53,18 +53,18 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestFilteredQuery : LuceneTestCase
     {
-        private IndexSearcher Searcher;
-        private IndexReader Reader;
-        private Directory Directory;
-        private Query Query;
-        private Filter Filter;
+        private IndexSearcher searcher;
+        private IndexReader reader;
+        private Directory directory;
+        private Query query;
+        private Filter filter;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            directory = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
 
             Document doc = new Document();
             doc.Add(NewTextField("field", "one two three four five", Field.Store.YES));
@@ -91,13 +91,13 @@ namespace Lucene.Net.Search
             // blindly accepts that docID in any sub-segment
             writer.ForceMerge(1);
 
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
 
-            Searcher = NewSearcher(Reader);
+            searcher = NewSearcher(reader);
 
-            Query = new TermQuery(new Term("field", "three"));
-            Filter = NewStaticFilterB();
+            query = new TermQuery(new Term("field", "three"));
+            filter = NewStaticFilterB();
         }
 
         // must be static for serialization tests
@@ -134,8 +134,8 @@ namespace Lucene.Net.Search
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Directory.Dispose();
+            reader.Dispose();
+            directory.Dispose();
             base.TearDown();
         }
 
@@ -150,56 +150,56 @@ namespace Lucene.Net.Search
 
         private void TFilteredQuery(bool useRandomAccess)
         {
-            Query filteredquery = new FilteredQuery(Query, Filter, RandomFilterStrategy(Random, useRandomAccess));
-            ScoreDoc[] hits = Searcher.Search(filteredquery, null, 1000).ScoreDocs;
+            Query filteredquery = new FilteredQuery(query, filter, RandomFilterStrategy(Random, useRandomAccess));
+            ScoreDoc[] hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             Assert.AreEqual(1, hits[0].Doc);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, filteredquery, Searcher);
+                Random, filteredquery, searcher);
 
-            hits = Searcher.Search(filteredquery, null, 1000, new Sort(new SortField("sorter", SortFieldType.STRING))).ScoreDocs;
+            hits = searcher.Search(filteredquery, null, 1000, new Sort(new SortField("sorter", SortFieldType.STRING))).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             Assert.AreEqual(1, hits[0].Doc);
 
-            filteredquery = new FilteredQuery(new TermQuery(new Term("field", "one")), Filter, RandomFilterStrategy(Random, useRandomAccess));
-            hits = Searcher.Search(filteredquery, null, 1000).ScoreDocs;
+            filteredquery = new FilteredQuery(new TermQuery(new Term("field", "one")), filter, RandomFilterStrategy(Random, useRandomAccess));
+            hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, filteredquery, Searcher);
+                Random, filteredquery, searcher);
 
-            filteredquery = new FilteredQuery(new MatchAllDocsQuery(), Filter, RandomFilterStrategy(Random, useRandomAccess));
-            hits = Searcher.Search(filteredquery, null, 1000).ScoreDocs;
+            filteredquery = new FilteredQuery(new MatchAllDocsQuery(), filter, RandomFilterStrategy(Random, useRandomAccess));
+            hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, filteredquery, Searcher);
+                Random, filteredquery, searcher);
 
-            filteredquery = new FilteredQuery(new TermQuery(new Term("field", "x")), Filter, RandomFilterStrategy(Random, useRandomAccess));
-            hits = Searcher.Search(filteredquery, null, 1000).ScoreDocs;
+            filteredquery = new FilteredQuery(new TermQuery(new Term("field", "x")), filter, RandomFilterStrategy(Random, useRandomAccess));
+            hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             Assert.AreEqual(3, hits[0].Doc);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, filteredquery, Searcher);
+                Random, filteredquery, searcher);
 
-            filteredquery = new FilteredQuery(new TermQuery(new Term("field", "y")), Filter, RandomFilterStrategy(Random, useRandomAccess));
-            hits = Searcher.Search(filteredquery, null, 1000).ScoreDocs;
+            filteredquery = new FilteredQuery(new TermQuery(new Term("field", "y")), filter, RandomFilterStrategy(Random, useRandomAccess));
+            hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, filteredquery, Searcher);
+                Random, filteredquery, searcher);
 
             // test boost
             Filter f = NewStaticFilterA();
@@ -249,8 +249,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void AssertScoreEquals(Query q1, Query q2)
         {
-            ScoreDoc[] hits1 = Searcher.Search(q1, null, 1000).ScoreDocs;
-            ScoreDoc[] hits2 = Searcher.Search(q2, null, 1000).ScoreDocs;
+            ScoreDoc[] hits1 = searcher.Search(q1, null, 1000).ScoreDocs;
+            ScoreDoc[] hits2 = searcher.Search(q2, null, 1000).ScoreDocs;
 
             Assert.AreEqual(hits1.Length, hits2.Length);
 
@@ -275,14 +275,14 @@ namespace Lucene.Net.Search
         {
             TermRangeQuery rq = TermRangeQuery.NewStringRange("sorter", "b", "d", true, true);
 
-            Query filteredquery = new FilteredQuery(rq, Filter, RandomFilterStrategy(Random, useRandomAccess));
-            ScoreDoc[] hits = Searcher.Search(filteredquery, null, 1000).ScoreDocs;
+            Query filteredquery = new FilteredQuery(rq, filter, RandomFilterStrategy(Random, useRandomAccess));
+            ScoreDoc[] hits = searcher.Search(filteredquery, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, filteredquery, Searcher);
+                Random, filteredquery, searcher);
         }
 
         [Test]
@@ -301,13 +301,13 @@ namespace Lucene.Net.Search
             bq.Add(query, Occur.MUST);
             query = new FilteredQuery(new TermQuery(new Term("field", "one")), new SingleDocTestFilter(1), RandomFilterStrategy(Random, useRandomAccess));
             bq.Add(query, Occur.MUST);
-            ScoreDoc[] hits = Searcher.Search(bq, null, 1000).ScoreDocs;
+            ScoreDoc[] hits = searcher.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(0, hits.Length);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, query, Searcher);
+                Random, query, searcher);
         }
 
         [Test]
@@ -326,13 +326,13 @@ namespace Lucene.Net.Search
             bq.Add(query, Occur.SHOULD);
             query = new FilteredQuery(new TermQuery(new Term("field", "one")), new SingleDocTestFilter(1), RandomFilterStrategy(Random, useRandomAccess));
             bq.Add(query, Occur.SHOULD);
-            ScoreDoc[] hits = Searcher.Search(bq, null, 1000).ScoreDocs;
+            ScoreDoc[] hits = searcher.Search(bq, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, query, Searcher);
+                Random, query, searcher);
         }
 
         // Make sure BooleanQuery, which does out-of-order
@@ -352,13 +352,13 @@ namespace Lucene.Net.Search
             Query query = new FilteredQuery(bq, new SingleDocTestFilter(0), RandomFilterStrategy(Random, useRandomAccess));
             bq.Add(new TermQuery(new Term("field", "one")), Occur.SHOULD);
             bq.Add(new TermQuery(new Term("field", "two")), Occur.SHOULD);
-            ScoreDoc[] hits = Searcher.Search(query, 1000).ScoreDocs;
+            ScoreDoc[] hits = searcher.Search(query, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, query, Searcher);
+                Random, query, searcher);
         }
 
         [Test]
@@ -373,23 +373,23 @@ namespace Lucene.Net.Search
         private void TChainedFilters(bool useRandomAccess)
         {
             Query query = new FilteredQuery(new FilteredQuery(new MatchAllDocsQuery(), new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "three")))), RandomFilterStrategy(Random, useRandomAccess)), new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "four")))), RandomFilterStrategy(Random, useRandomAccess));
-            ScoreDoc[] hits = Searcher.Search(query, 10).ScoreDocs;
+            ScoreDoc[] hits = searcher.Search(query, 10).ScoreDocs;
             Assert.AreEqual(2, hits.Length);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, query, Searcher);
+                Random, query, searcher);
 
             // one more:
             query = new FilteredQuery(query, new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("field", "five")))), RandomFilterStrategy(Random, useRandomAccess));
-            hits = Searcher.Search(query, 10).ScoreDocs;
+            hits = searcher.Search(query, 10).ScoreDocs;
             Assert.AreEqual(1, hits.Length);
             QueryUtils.Check(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, query, Searcher);
+                Random, query, searcher);
         }
 
         [Test]
@@ -463,7 +463,7 @@ namespace Lucene.Net.Search
             fq.Query.Boost = innerBoost;
 
             // check the class and boosts of rewritten query
-            Query rewritten = Searcher.Rewrite(fq);
+            Query rewritten = searcher.Rewrite(fq);
             Assert.IsTrue(clazz.IsInstanceOfType(rewritten), "is not instance of " + clazz.Name);
             if (rewritten is FilteredQuery)
             {
@@ -553,14 +553,14 @@ namespace Lucene.Net.Search
 
         private class FilterAnonymousInnerClassHelper3 : Filter
         {
-            private readonly TestFilteredQuery OuterInstance;
+            private readonly TestFilteredQuery outerInstance;
 
-            private IndexReader Reader;
+            private IndexReader reader;
 
             public FilterAnonymousInnerClassHelper3(TestFilteredQuery outerInstance, IndexReader reader)
             {
-                this.OuterInstance = outerInstance;
-                this.Reader = reader;
+                this.outerInstance = outerInstance;
+                this.reader = reader;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
@@ -583,25 +583,25 @@ namespace Lucene.Net.Search
 
             private class DocIdSetAnonymousInnerClassHelper : DocIdSet
             {
-                private readonly FilterAnonymousInnerClassHelper3 OuterInstance;
+                private readonly FilterAnonymousInnerClassHelper3 outerInstance;
 
-                private bool NullBitset;
-                private AtomicReader Reader;
-                private BitSet BitSet;
+                private readonly bool nullBitset;
+                private readonly AtomicReader reader;
+                private readonly BitSet bitSet;
 
                 public DocIdSetAnonymousInnerClassHelper(FilterAnonymousInnerClassHelper3 outerInstance, bool nullBitset, AtomicReader reader, BitSet bitSet)
                 {
-                    this.OuterInstance = outerInstance;
-                    this.NullBitset = nullBitset;
-                    this.Reader = reader;
-                    this.BitSet = bitSet;
+                    this.outerInstance = outerInstance;
+                    this.nullBitset = nullBitset;
+                    this.reader = reader;
+                    this.bitSet = bitSet;
                 }
 
                 public override IBits Bits
                 {
                     get
                     {
-                        if (NullBitset)
+                        if (nullBitset)
                         {
                             return null;
                         }
@@ -611,29 +611,26 @@ namespace Lucene.Net.Search
 
                 private class BitsAnonymousInnerClassHelper : IBits
                 {
-                    private readonly DocIdSetAnonymousInnerClassHelper OuterInstance;
+                    private readonly DocIdSetAnonymousInnerClassHelper outerInstance;
 
                     public BitsAnonymousInnerClassHelper(DocIdSetAnonymousInnerClassHelper outerInstance)
                     {
-                        this.OuterInstance = outerInstance;
+                        this.outerInstance = outerInstance;
                     }
 
                     public bool Get(int index)
                     {
-                        Assert.IsTrue(OuterInstance.BitSet.Get(index), "filter was called for a non-matching doc");
-                        return OuterInstance.BitSet.Get(index);
+                        Assert.IsTrue(outerInstance.bitSet.Get(index), "filter was called for a non-matching doc");
+                        return outerInstance.bitSet.Get(index);
                     }
 
-                    public int Length
-                    {
-                        get { return OuterInstance.BitSet.Length; }
-                    }
+                    public int Length => outerInstance.bitSet.Length;
                 }
 
                 public override DocIdSetIterator GetIterator()
                 {
-                    Assert.IsTrue(NullBitset, "iterator should not be called if bitset is present");
-                    return Reader.GetTermDocsEnum(new Term("field", "0"));
+                    Assert.IsTrue(nullBitset, "iterator should not be called if bitset is present");
+                    return reader.GetTermDocsEnum(new Term("field", "0"));
                 }
             }
         }
@@ -675,14 +672,14 @@ namespace Lucene.Net.Search
 
         private class FilterAnonymousInnerClassHelper4 : Filter
         {
-            private readonly TestFilteredQuery OuterInstance;
+            private readonly TestFilteredQuery outerInstance;
 
-            private bool QueryFirst;
+            private readonly bool queryFirst;
 
             public FilterAnonymousInnerClassHelper4(TestFilteredQuery outerInstance, bool queryFirst)
             {
-                this.OuterInstance = outerInstance;
-                this.QueryFirst = queryFirst;
+                this.outerInstance = outerInstance;
+                this.queryFirst = queryFirst;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
@@ -692,24 +689,21 @@ namespace Lucene.Net.Search
 
             private class DocIdSetAnonymousInnerClassHelper2 : DocIdSet
             {
-                private readonly FilterAnonymousInnerClassHelper4 OuterInstance;
+                private readonly FilterAnonymousInnerClassHelper4 outerInstance;
 
-                private AtomicReaderContext Context;
+                private readonly AtomicReaderContext context;
 
                 public DocIdSetAnonymousInnerClassHelper2(FilterAnonymousInnerClassHelper4 outerInstance, AtomicReaderContext context)
                 {
-                    this.OuterInstance = outerInstance;
-                    this.Context = context;
+                    this.outerInstance = outerInstance;
+                    this.context = context;
                 }
 
-                public override IBits Bits
-                {
-                    get { return null; }
-                }
+                public override IBits Bits => null;
 
                 public override DocIdSetIterator GetIterator()
                 {
-                    DocsEnum termDocsEnum = ((AtomicReader)Context.Reader).GetTermDocsEnum(new Term("field", "0"));
+                    DocsEnum termDocsEnum = ((AtomicReader)context.Reader).GetTermDocsEnum(new Term("field", "0"));
                     if (termDocsEnum == null)
                     {
                         return null;
@@ -719,14 +713,14 @@ namespace Lucene.Net.Search
 
                 private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
                 {
-                    private readonly DocIdSetAnonymousInnerClassHelper2 OuterInstance;
+                    private readonly DocIdSetAnonymousInnerClassHelper2 outerInstance;
 
-                    private DocsEnum TermDocsEnum;
+                    private readonly DocsEnum termDocsEnum;
 
                     public DocIdSetIteratorAnonymousInnerClassHelper(DocIdSetAnonymousInnerClassHelper2 outerInstance, DocsEnum termDocsEnum)
                     {
-                        this.OuterInstance = outerInstance;
-                        this.TermDocsEnum = termDocsEnum;
+                        this.outerInstance = outerInstance;
+                        this.termDocsEnum = termDocsEnum;
                     }
 
                     internal bool nextCalled;
@@ -734,26 +728,23 @@ namespace Lucene.Net.Search
 
                     public override int NextDoc()
                     {
-                        Assert.IsTrue(nextCalled || advanceCalled ^ !OuterInstance.OuterInstance.QueryFirst, "queryFirst: " + OuterInstance.OuterInstance.QueryFirst + " advanced: " + advanceCalled + " next: " + nextCalled);
+                        Assert.IsTrue(nextCalled || advanceCalled ^ !outerInstance.outerInstance.queryFirst, "queryFirst: " + outerInstance.outerInstance.queryFirst + " advanced: " + advanceCalled + " next: " + nextCalled);
                         nextCalled = true;
-                        return TermDocsEnum.NextDoc();
+                        return termDocsEnum.NextDoc();
                     }
 
-                    public override int DocID
-                    {
-                        get { return TermDocsEnum.DocID; }
-                    }
+                    public override int DocID => termDocsEnum.DocID;
 
                     public override int Advance(int target)
                     {
-                        Assert.IsTrue(advanceCalled || nextCalled ^ OuterInstance.OuterInstance.QueryFirst, "queryFirst: " + OuterInstance.OuterInstance.QueryFirst + " advanced: " + advanceCalled + " next: " + nextCalled);
+                        Assert.IsTrue(advanceCalled || nextCalled ^ outerInstance.outerInstance.queryFirst, "queryFirst: " + outerInstance.outerInstance.queryFirst + " advanced: " + advanceCalled + " next: " + nextCalled);
                         advanceCalled = true;
-                        return TermDocsEnum.Advance(target);
+                        return termDocsEnum.Advance(target);
                     }
 
                     public override long GetCost()
                     {
-                        return TermDocsEnum.GetCost();
+                        return termDocsEnum.GetCost();
                     }
                 }
             }

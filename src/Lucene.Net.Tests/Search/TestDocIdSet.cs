@@ -8,25 +8,25 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using Field = Field;
     using IBits = Lucene.Net.Util.IBits;
@@ -76,14 +76,14 @@ namespace Lucene.Net.Search
 
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {
-            private readonly TestDocIdSet OuterInstance;
+            private readonly TestDocIdSet outerInstance;
 
-            private int Maxdoc;
+            private readonly int maxdoc;
 
             public DocIdSetAnonymousInnerClassHelper(TestDocIdSet outerInstance, int maxdoc)
             {
-                this.OuterInstance = outerInstance;
-                this.Maxdoc = maxdoc;
+                this.outerInstance = outerInstance;
+                this.maxdoc = maxdoc;
             }
 
             public override DocIdSetIterator GetIterator()
@@ -93,25 +93,22 @@ namespace Lucene.Net.Search
 
             private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
             {
-                private readonly DocIdSetAnonymousInnerClassHelper OuterInstance;
+                private readonly DocIdSetAnonymousInnerClassHelper outerInstance;
 
                 public DocIdSetIteratorAnonymousInnerClassHelper(DocIdSetAnonymousInnerClassHelper outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                     docid = -1;
                 }
 
                 internal int docid;
 
-                public override int DocID
-                {
-                    get { return docid; }
-                }
+                public override int DocID => docid;
 
                 public override int NextDoc()
                 {
                     docid++;
-                    return docid < OuterInstance.Maxdoc ? docid : (docid = NO_MORE_DOCS);
+                    return docid < outerInstance.maxdoc ? docid : (docid = NO_MORE_DOCS);
                 }
 
                 public override int Advance(int target)
@@ -128,12 +125,12 @@ namespace Lucene.Net.Search
 
         private class FilteredDocIdSetAnonymousInnerClassHelper : FilteredDocIdSet
         {
-            private readonly TestDocIdSet OuterInstance;
+            private readonly TestDocIdSet outerInstance;
 
             public FilteredDocIdSetAnonymousInnerClassHelper(TestDocIdSet outerInstance, DocIdSet innerSet)
                 : base(innerSet)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected override bool Match(int docid)
@@ -173,11 +170,11 @@ namespace Lucene.Net.Search
 
         private class FilterAnonymousInnerClassHelper : Filter
         {
-            private readonly TestDocIdSet OuterInstance;
+            private readonly TestDocIdSet outerInstance;
 
             public FilterAnonymousInnerClassHelper(TestDocIdSet outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
@@ -215,11 +212,11 @@ namespace Lucene.Net.Search
 
         private class FilterAnonymousInnerClassHelper2 : Filter
         {
-            private readonly TestDocIdSet OuterInstance;
+            private readonly TestDocIdSet outerInstance;
 
             public FilterAnonymousInnerClassHelper2(TestDocIdSet outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
@@ -230,11 +227,11 @@ namespace Lucene.Net.Search
 
             private class DocIdSetAnonymousInnerClassHelper2 : DocIdSet
             {
-                private readonly FilterAnonymousInnerClassHelper2 OuterInstance;
+                private readonly FilterAnonymousInnerClassHelper2 outerInstance;
 
                 public DocIdSetAnonymousInnerClassHelper2(FilterAnonymousInnerClassHelper2 outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 public override DocIdSetIterator GetIterator()
@@ -245,12 +242,12 @@ namespace Lucene.Net.Search
 
             private class FilteredDocIdSetAnonymousInnerClassHelper2 : FilteredDocIdSet
             {
-                private readonly FilterAnonymousInnerClassHelper2 OuterInstance;
+                private readonly FilterAnonymousInnerClassHelper2 outerInstance;
 
                 public FilteredDocIdSetAnonymousInnerClassHelper2(FilterAnonymousInnerClassHelper2 outerInstance, DocIdSet innerNullIteratorSet)
                     : base(innerNullIteratorSet)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 protected override bool Match(int docid)

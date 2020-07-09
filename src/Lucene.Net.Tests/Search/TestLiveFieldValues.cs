@@ -11,6 +11,23 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -19,24 +36,6 @@ namespace Lucene.Net.Search
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using Int32Field = Int32Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using StringField = StringField;
     using Term = Lucene.Net.Index.Term;
@@ -133,35 +132,35 @@ namespace Lucene.Net.Search
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private IndexWriter w;
-            private SearcherManager Mgr;
-            private int? Missing;
-            private LiveFieldValues<IndexSearcher, int?> Rt;
-            private CountdownEvent StartingGun;
-            private int Iters;
-            private int IdCount;
-            private double ReopenChance;
-            private double DeleteChance;
-            private double AddChance;
-            private int t;
-            private int ThreadID;
-            private Random ThreadRandom;
+            private readonly IndexWriter w;
+            private readonly SearcherManager mgr;
+            private readonly int? missing;
+            private readonly LiveFieldValues<IndexSearcher, int?> rt;
+            private readonly CountdownEvent startingGun;
+            private readonly int iters;
+            private readonly int idCount;
+            private readonly double reopenChance;
+            private readonly double deleteChance;
+            private readonly double addChance;
+            private readonly int t;
+            private readonly int threadID;
+            private readonly Random threadRandom;
 
             public ThreadAnonymousInnerClassHelper(IndexWriter w, SearcherManager mgr, int? missing, LiveFieldValues<IndexSearcher, int?> rt, CountdownEvent startingGun, int iters, int idCount, double reopenChance, double deleteChance, double addChance, int t, int threadID, Random threadRandom)
             {
                 this.w = w;
-                this.Mgr = mgr;
-                this.Missing = missing;
-                this.Rt = rt;
-                this.StartingGun = startingGun;
-                this.Iters = iters;
-                this.IdCount = idCount;
-                this.ReopenChance = reopenChance;
-                this.DeleteChance = deleteChance;
-                this.AddChance = addChance;
+                this.mgr = mgr;
+                this.missing = missing;
+                this.rt = rt;
+                this.startingGun = startingGun;
+                this.iters = iters;
+                this.idCount = idCount;
+                this.reopenChance = reopenChance;
+                this.deleteChance = deleteChance;
+                this.addChance = addChance;
                 this.t = t;
-                this.ThreadID = threadID;
-                this.ThreadRandom = threadRandom;
+                this.threadID = threadID;
+                this.threadRandom = threadRandom;
             }
 
             public override void Run()
@@ -171,21 +170,21 @@ namespace Lucene.Net.Search
                     IDictionary<string, int?> values = new Dictionary<string, int?>();
                     IList<string> allIDs = new SynchronizedList<string>();
 
-                    StartingGun.Wait();
-                    for (int iter = 0; iter < Iters; iter++)
+                    startingGun.Wait();
+                    for (int iter = 0; iter < iters; iter++)
                     {
                         // Add/update a document
                         Document doc = new Document();
                         // Threads must not update the same id at the
                         // same time:
-                        if (ThreadRandom.NextDouble() <= AddChance)
+                        if (threadRandom.NextDouble() <= addChance)
                         {
-                            string id = string.Format(CultureInfo.InvariantCulture, "{0}_{1:X4}", ThreadID, ThreadRandom.Next(IdCount));
-                            int field = ThreadRandom.Next(int.MaxValue);
+                            string id = string.Format(CultureInfo.InvariantCulture, "{0}_{1:X4}", threadID, threadRandom.Next(idCount));
+                            int field = threadRandom.Next(int.MaxValue);
                             doc.Add(new StringField("id", id, Field.Store.YES));
                             doc.Add(new Int32Field("field", (int)field, Field.Store.YES));
                             w.UpdateDocument(new Term("id", id), doc);
-                            Rt.Add(id, field);
+                            rt.Add(id, field);
                             if (!values.ContainsKey(id))//Key didn't exist before
                             {
                                 allIDs.Add(id);
@@ -193,47 +192,47 @@ namespace Lucene.Net.Search
                             values[id] = field;
                         }
 
-                        if (allIDs.Count > 0 && ThreadRandom.NextDouble() <= DeleteChance)
+                        if (allIDs.Count > 0 && threadRandom.NextDouble() <= deleteChance)
                         {
-                            string randomID = allIDs[ThreadRandom.Next(allIDs.Count)];
+                            string randomID = allIDs[threadRandom.Next(allIDs.Count)];
                             w.DeleteDocuments(new Term("id", randomID));
-                            Rt.Delete(randomID);
-                            values[randomID] = Missing;
+                            rt.Delete(randomID);
+                            values[randomID] = missing;
                         }
 
-                        if (ThreadRandom.NextDouble() <= ReopenChance || Rt.Count > 10000)
+                        if (threadRandom.NextDouble() <= reopenChance || rt.Count > 10000)
                         {
                             //System.out.println("refresh @ " + rt.Size());
-                            Mgr.MaybeRefresh();
+                            mgr.MaybeRefresh();
                             if (VERBOSE)
                             {
-                                IndexSearcher s = Mgr.Acquire();
+                                IndexSearcher s = mgr.Acquire();
                                 try
                                 {
                                     Console.WriteLine("TEST: reopen " + s);
                                 }
                                 finally
                                 {
-                                    Mgr.Release(s);
+                                    mgr.Release(s);
                                 }
                                 Console.WriteLine("TEST: " + values.Count + " values");
                             }
                         }
 
-                        if (ThreadRandom.Next(10) == 7)
+                        if (threadRandom.Next(10) == 7)
                         {
-                            Assert.AreEqual(null, Rt.Get("foo"));
+                            Assert.AreEqual(null, rt.Get("foo"));
                         }
 
                         if (allIDs.Count > 0)
                         {
-                            string randomID = allIDs[ThreadRandom.Next(allIDs.Count)];
+                            string randomID = allIDs[threadRandom.Next(allIDs.Count)];
                             int? expected = values[randomID];
-                            if (expected == Missing)
+                            if (expected == missing)
                             {
                                 expected = null;
                             }
-                            Assert.AreEqual(expected, Rt.Get(randomID), "id=" + randomID);
+                            Assert.AreEqual(expected, rt.Get(randomID), "id=" + randomID);
                         }
                     }
                 }

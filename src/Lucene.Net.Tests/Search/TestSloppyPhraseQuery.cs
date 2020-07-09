@@ -7,30 +7,29 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
     using IndexReader = Lucene.Net.Index.IndexReader;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
@@ -41,7 +40,7 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestSloppyPhraseQuery : LuceneTestCase
     {
-        private static Regex SPACES = new Regex(" +", RegexOptions.Compiled);
+        private static readonly Regex SPACES = new Regex(" +", RegexOptions.Compiled);
 
         private const string S_1 = "A A A";
         private const string S_2 = "A 1 2 3 A 4 5 6 A";
@@ -181,7 +180,7 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(reader);
             MaxFreqCollector c = new MaxFreqCollector();
             searcher.Search(query, c);
-            Assert.AreEqual(expectedNumResults, c.TotalHits, "slop: " + slop + "  query: " + query + "  doc: " + doc + "  Wrong number of hits");
+            Assert.AreEqual(expectedNumResults, c.totalHits, "slop: " + slop + "  query: " + query + "  doc: " + doc + "  Wrong number of hits");
 
             //QueryUtils.Check(query,searcher);
             writer.Dispose();
@@ -190,7 +189,7 @@ namespace Lucene.Net.Search
 
             // returns the max Scorer.Freq() found, because even though norms are omitted, many index stats are different
             // with these different tokens/distributions/lengths.. otherwise this test is very fragile.
-            return c.Max;
+            return c.max;
         }
 
         private static Document MakeDocument(string docText)
@@ -218,29 +217,26 @@ namespace Lucene.Net.Search
 
         internal class MaxFreqCollector : ICollector
         {
-            internal float Max;
-            internal int TotalHits;
-            internal Scorer Scorer_Renamed;
+            internal float max;
+            internal int totalHits;
+            internal Scorer scorer;
 
             public virtual void SetScorer(Scorer scorer)
             {
-                this.Scorer_Renamed = scorer;
+                this.scorer = scorer;
             }
 
             public virtual void Collect(int doc)
             {
-                TotalHits++;
-                Max = Math.Max(Max, Scorer_Renamed.Freq);
+                totalHits++;
+                max = Math.Max(max, scorer.Freq);
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
         /// <summary>
@@ -257,11 +253,11 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly TestSloppyPhraseQuery OuterInstance;
+            private readonly TestSloppyPhraseQuery outerInstance;
 
             public CollectorAnonymousInnerClassHelper(TestSloppyPhraseQuery outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             internal Scorer scorer;
@@ -282,10 +278,7 @@ namespace Lucene.Net.Search
                 // do nothing
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
         // LUCENE-3215

@@ -5,21 +5,21 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net.Search
 {
     /*
-             * Licensed to the Apache Software Foundation (ASF) under one or more
-             * contributor license agreements.  See the NOTICE file distributed with
-             * this work for additional information regarding copyright ownership.
-             * The ASF licenses this file to You under the Apache License, Version 2.0
-             * (the "License"); you may not use this file except in compliance with
-             * the License.  You may obtain a copy of the License at
-             *
-             *     http://www.apache.org/licenses/LICENSE-2.0
-             *
-             * Unless required by applicable law or agreed to in writing, software
-             * distributed under the License is distributed on an "AS IS" BASIS,
-             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-             * See the License for the specific language governing permissions and
-             * limitations under the License.
-             */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -41,15 +41,9 @@ namespace Lucene.Net.Search
                 return 0;
             }
 
-            public override int Freq
-            {
-                get { return 0; }
-            }
+            public override int Freq => 0;
 
-            public override int DocID
-            {
-                get { return 0; }
-            }
+            public override int DocID => 0;
 
             public override int NextDoc()
             {
@@ -69,11 +63,11 @@ namespace Lucene.Net.Search
 
         private class NoOpCollector : ICollector
         {
-            internal readonly bool AcceptDocsOutOfOrder;
+            private readonly bool acceptDocsOutOfOrder;
 
             public NoOpCollector(bool acceptDocsOutOfOrder)
             {
-                this.AcceptDocsOutOfOrder = acceptDocsOutOfOrder;
+                this.acceptDocsOutOfOrder = acceptDocsOutOfOrder;
             }
 
             public virtual void SetScorer(Scorer scorer)
@@ -88,10 +82,7 @@ namespace Lucene.Net.Search
             {
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return AcceptDocsOutOfOrder; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => acceptDocsOutOfOrder;
         }
 
         [Test]
@@ -115,11 +106,11 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly TestCachingCollector OuterInstance;
+            private readonly TestCachingCollector outerInstance;
 
             public CollectorAnonymousInnerClassHelper(TestCachingCollector outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 prevDocID = -1;
             }
 
@@ -139,10 +130,7 @@ namespace Lucene.Net.Search
                 prevDocID = doc;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
         [Test]

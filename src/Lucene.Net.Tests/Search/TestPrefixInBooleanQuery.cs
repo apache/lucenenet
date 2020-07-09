@@ -4,25 +4,24 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
-    using Directory = Lucene.Net.Store.Directory;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
@@ -43,9 +42,9 @@ namespace Lucene.Net.Search
     public class TestPrefixInBooleanQuery : LuceneTestCase
     {
         private const string FIELD = "name";
-        private static Directory Directory;
-        private static IndexReader Reader;
-        private static IndexSearcher Searcher;
+        private static Directory directory;
+        private static IndexReader reader;
+        private static IndexSearcher searcher;
 
         /// <summary>
         /// LUCENENET specific
@@ -56,12 +55,12 @@ namespace Lucene.Net.Search
         {
             base.BeforeClass();
 
-            Directory = NewDirectory();
+            directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Directory);
+                Random, directory);
 
             Document doc = new Document();
             Field field = NewStringField(FIELD, "meaninglessnames", Field.Store.NO);
@@ -84,19 +83,19 @@ namespace Lucene.Net.Search
             field.SetStringValue("tangfulin");
             writer.AddDocument(doc);
 
-            Reader = writer.GetReader();
-            Searcher = NewSearcher(Reader);
+            reader = writer.GetReader();
+            searcher = NewSearcher(reader);
             writer.Dispose();
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Searcher = null;
-            Reader.Dispose();
-            Reader = null;
-            Directory.Dispose();
-            Directory = null;
+            searcher = null;
+            reader.Dispose();
+            reader = null;
+            directory.Dispose();
+            directory = null;
 
             base.AfterClass();
         }
@@ -105,14 +104,14 @@ namespace Lucene.Net.Search
         public virtual void TestPrefixQuery()
         {
             Query query = new PrefixQuery(new Term(FIELD, "tang"));
-            Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
+            Assert.AreEqual(2, searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
         }
 
         [Test]
         public virtual void TestTermQuery()
         {
             Query query = new TermQuery(new Term(FIELD, "tangfulin"));
-            Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
+            Assert.AreEqual(2, searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
         }
 
         [Test]
@@ -121,7 +120,7 @@ namespace Lucene.Net.Search
             BooleanQuery query = new BooleanQuery();
             query.Add(new TermQuery(new Term(FIELD, "tangfulin")), Occur.SHOULD);
             query.Add(new TermQuery(new Term(FIELD, "notexistnames")), Occur.SHOULD);
-            Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
+            Assert.AreEqual(2, searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
         }
 
         [Test]
@@ -130,7 +129,7 @@ namespace Lucene.Net.Search
             BooleanQuery query = new BooleanQuery();
             query.Add(new PrefixQuery(new Term(FIELD, "tang")), Occur.SHOULD);
             query.Add(new TermQuery(new Term(FIELD, "notexistnames")), Occur.SHOULD);
-            Assert.AreEqual(2, Searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
+            Assert.AreEqual(2, searcher.Search(query, null, 1000).TotalHits, "Number of matched documents");
         }
     }
 }

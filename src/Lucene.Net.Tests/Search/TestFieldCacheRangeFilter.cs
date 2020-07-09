@@ -8,21 +8,21 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net.Search
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
@@ -72,18 +72,18 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestRangeFilterId()
         {
-            IndexReader reader = SignedIndexReader;
+            IndexReader reader = signedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
-            int medId = ((MaxId - MinId) / 2);
+            int medId = ((maxId - minId) / 2);
 
-            string minIP = Pad(MinId);
-            string maxIP = Pad(MaxId);
+            string minIP = Pad(minId);
+            string maxIP = Pad(maxId);
             string medIP = Pad(medId);
 
             int numDocs = reader.NumDocs;
 
-            Assert.AreEqual(numDocs, 1 + MaxId - MinId, "num of docs");
+            Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));
@@ -102,10 +102,10 @@ namespace Lucene.Net.Search
             Assert.AreEqual(numDocs - 2, result.Length, "all but ends");
 
             result = search.Search(q, FieldCacheRangeFilter.NewStringRange("id", medIP, maxIP, T, T), numDocs).ScoreDocs;
-            Assert.AreEqual(1 + MaxId - medId, result.Length, "med and up");
+            Assert.AreEqual(1 + maxId - medId, result.Length, "med and up");
 
             result = search.Search(q, FieldCacheRangeFilter.NewStringRange("id", minIP, medIP, T, T), numDocs).ScoreDocs;
-            Assert.AreEqual(1 + medId - MinId, result.Length, "up to med");
+            Assert.AreEqual(1 + medId - minId, result.Length, "up to med");
 
             // unbounded id
 
@@ -125,10 +125,10 @@ namespace Lucene.Net.Search
             Assert.AreEqual(numDocs - 1, result.Length, "not max, but down");
 
             result = search.Search(q, FieldCacheRangeFilter.NewStringRange("id", medIP, maxIP, T, F), numDocs).ScoreDocs;
-            Assert.AreEqual(MaxId - medId, result.Length, "med and up, not max");
+            Assert.AreEqual(maxId - medId, result.Length, "med and up, not max");
 
             result = search.Search(q, FieldCacheRangeFilter.NewStringRange("id", minIP, medIP, F, T), numDocs).ScoreDocs;
-            Assert.AreEqual(medId - MinId, result.Length, "not min, up to med");
+            Assert.AreEqual(medId - minId, result.Length, "not min, up to med");
 
             // very small sets
 
@@ -156,15 +156,15 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterRand()
         {
-            IndexReader reader = SignedIndexReader;
+            IndexReader reader = signedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
-            string minRP = Pad(SignedIndexDir.MinR);
-            string maxRP = Pad(SignedIndexDir.MaxR);
+            string minRP = Pad(signedIndexDir.minR);
+            string maxRP = Pad(signedIndexDir.maxR);
 
             int numDocs = reader.NumDocs;
 
-            Assert.AreEqual(numDocs, 1 + MaxId - MinId, "num of docs");
+            Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));
@@ -220,16 +220,16 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterShorts()
         {
-            IndexReader reader = SignedIndexReader;
+            IndexReader reader = signedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
             int numDocs = reader.NumDocs;
-            int medId = ((MaxId - MinId) / 2);
-            short? minIdO = Convert.ToInt16((short)MinId);
-            short? maxIdO = Convert.ToInt16((short)MaxId);
+            int medId = ((maxId - minId) / 2);
+            short? minIdO = Convert.ToInt16((short)minId);
+            short? maxIdO = Convert.ToInt16((short)maxId);
             short? medIdO = Convert.ToInt16((short)medId);
 
-            Assert.AreEqual(numDocs, 1 + MaxId - MinId, "num of docs");
+            Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));
@@ -249,10 +249,10 @@ namespace Lucene.Net.Search
             Assert.AreEqual(numDocs - 2, result.Length, "all but ends");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt16Range("id", medIdO, maxIdO, T, T), numDocs).ScoreDocs;
-            Assert.AreEqual(1 + MaxId - medId, result.Length, "med and up");
+            Assert.AreEqual(1 + maxId - medId, result.Length, "med and up");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt16Range("id", minIdO, medIdO, T, T), numDocs).ScoreDocs;
-            Assert.AreEqual(1 + medId - MinId, result.Length, "up to med");
+            Assert.AreEqual(1 + medId - minId, result.Length, "up to med");
 
             // unbounded id
 
@@ -272,10 +272,10 @@ namespace Lucene.Net.Search
             Assert.AreEqual(numDocs - 1, result.Length, "not max, but down");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt16Range("id", medIdO, maxIdO, T, F), numDocs).ScoreDocs;
-            Assert.AreEqual(MaxId - medId, result.Length, "med and up, not max");
+            Assert.AreEqual(maxId - medId, result.Length, "med and up, not max");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt16Range("id", minIdO, medIdO, F, T), numDocs).ScoreDocs;
-            Assert.AreEqual(medId - MinId, result.Length, "not min, up to med");
+            Assert.AreEqual(medId - minId, result.Length, "not min, up to med");
 
             // very small sets
 
@@ -312,16 +312,16 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterInts()
         {
-            IndexReader reader = SignedIndexReader;
+            IndexReader reader = signedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
             int numDocs = reader.NumDocs;
-            int medId = ((MaxId - MinId) / 2);
-            int? minIdO = Convert.ToInt32(MinId);
-            int? maxIdO = Convert.ToInt32(MaxId);
+            int medId = ((maxId - minId) / 2);
+            int? minIdO = Convert.ToInt32(minId);
+            int? maxIdO = Convert.ToInt32(maxId);
             int? medIdO = Convert.ToInt32(medId);
 
-            Assert.AreEqual(numDocs, 1 + MaxId - MinId, "num of docs");
+            Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));
@@ -341,10 +341,10 @@ namespace Lucene.Net.Search
             Assert.AreEqual(numDocs - 2, result.Length, "all but ends");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt32Range("id", medIdO, maxIdO, T, T), numDocs).ScoreDocs;
-            Assert.AreEqual(1 + MaxId - medId, result.Length, "med and up");
+            Assert.AreEqual(1 + maxId - medId, result.Length, "med and up");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt32Range("id", minIdO, medIdO, T, T), numDocs).ScoreDocs;
-            Assert.AreEqual(1 + medId - MinId, result.Length, "up to med");
+            Assert.AreEqual(1 + medId - minId, result.Length, "up to med");
 
             // unbounded id
 
@@ -364,10 +364,10 @@ namespace Lucene.Net.Search
             Assert.AreEqual(numDocs - 1, result.Length, "not max, but down");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt32Range("id", medIdO, maxIdO, T, F), numDocs).ScoreDocs;
-            Assert.AreEqual(MaxId - medId, result.Length, "med and up, not max");
+            Assert.AreEqual(maxId - medId, result.Length, "med and up, not max");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt32Range("id", minIdO, medIdO, F, T), numDocs).ScoreDocs;
-            Assert.AreEqual(medId - MinId, result.Length, "not min, up to med");
+            Assert.AreEqual(medId - minId, result.Length, "not min, up to med");
 
             // very small sets
 
@@ -403,16 +403,16 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterLongs()
         {
-            IndexReader reader = SignedIndexReader;
+            IndexReader reader = signedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
             int numDocs = reader.NumDocs;
-            int medId = ((MaxId - MinId) / 2);
-            long? minIdO = Convert.ToInt64(MinId);
-            long? maxIdO = Convert.ToInt64(MaxId);
+            int medId = ((maxId - minId) / 2);
+            long? minIdO = Convert.ToInt64(minId);
+            long? maxIdO = Convert.ToInt64(maxId);
             long? medIdO = Convert.ToInt64(medId);
 
-            Assert.AreEqual(numDocs, 1 + MaxId - MinId, "num of docs");
+            Assert.AreEqual(numDocs, 1 + maxId - minId, "num of docs");
 
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));
@@ -432,10 +432,10 @@ namespace Lucene.Net.Search
             Assert.AreEqual(numDocs - 2, result.Length, "all but ends");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt64Range("id", medIdO, maxIdO, T, T), numDocs).ScoreDocs;
-            Assert.AreEqual(1 + MaxId - medId, result.Length, "med and up");
+            Assert.AreEqual(1 + maxId - medId, result.Length, "med and up");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt64Range("id", minIdO, medIdO, T, T), numDocs).ScoreDocs;
-            Assert.AreEqual(1 + medId - MinId, result.Length, "up to med");
+            Assert.AreEqual(1 + medId - minId, result.Length, "up to med");
 
             // unbounded id
 
@@ -455,10 +455,10 @@ namespace Lucene.Net.Search
             Assert.AreEqual(numDocs - 1, result.Length, "not max, but down");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt64Range("id", medIdO, maxIdO, T, F), numDocs).ScoreDocs;
-            Assert.AreEqual(MaxId - medId, result.Length, "med and up, not max");
+            Assert.AreEqual(maxId - medId, result.Length, "med and up, not max");
 
             result = search.Search(q, FieldCacheRangeFilter.NewInt64Range("id", minIdO, medIdO, F, T), numDocs).ScoreDocs;
-            Assert.AreEqual(medId - MinId, result.Length, "not min, up to med");
+            Assert.AreEqual(medId - minId, result.Length, "not min, up to med");
 
             // very small sets
 
@@ -496,12 +496,12 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterFloats()
         {
-            IndexReader reader = SignedIndexReader;
+            IndexReader reader = signedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
             int numDocs = reader.NumDocs;
-            float? minIdO = Convert.ToSingle(MinId + .5f);
-            float? medIdO = Convert.ToSingle((float)minIdO + ((MaxId - MinId)) / 2.0f);
+            float? minIdO = Convert.ToSingle(minId + .5f);
+            float? medIdO = Convert.ToSingle((float)minIdO + ((maxId - minId)) / 2.0f);
 
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));
@@ -525,12 +525,12 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestFieldCacheRangeFilterDoubles()
         {
-            IndexReader reader = SignedIndexReader;
+            IndexReader reader = signedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
             int numDocs = reader.NumDocs;
-            double? minIdO = Convert.ToDouble(MinId + .5);
-            double? medIdO = Convert.ToDouble((float)minIdO + ((MaxId - MinId)) / 2.0);
+            double? minIdO = Convert.ToDouble(minId + .5);
+            double? medIdO = Convert.ToDouble((float)minIdO + ((maxId - minId)) / 2.0);
 
             ScoreDoc[] result;
             Query q = new TermQuery(new Term("body", "body"));

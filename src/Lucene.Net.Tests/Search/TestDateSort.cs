@@ -1,9 +1,25 @@
 using Lucene.Net.Documents;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using DateTools = DateTools;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -11,24 +27,6 @@ namespace Lucene.Net.Search
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Term = Lucene.Net.Index.Term;
 
     /// <summary>
@@ -41,20 +39,20 @@ namespace Lucene.Net.Search
         private const string TEXT_FIELD = "text";
         private const string DATE_TIME_FIELD = "dateTime";
 
-        private Directory Directory;
-        private IndexReader Reader;
+        private Directory directory;
+        private IndexReader reader;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
             // Create an index writer.
-            Directory = NewDirectory();
+            directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Directory);
+                Random, directory);
 
             // oldest doc:
             // Add the first document.  text = "Document 1"  dateTime = Oct 10 03:25:22 EDT 2007
@@ -69,22 +67,22 @@ namespace Lucene.Net.Search
             // Add the fifth document.  text = "Document 5"  dateTime = Oct 12 13:25:43 EDT 2007
             writer.AddDocument(CreateDocument("Document 5", 1192209943000L));
 
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Directory.Dispose();
+            reader.Dispose();
+            directory.Dispose();
             base.TearDown();
         }
 
         [Test]
         public virtual void TestReverseDateSort()
         {
-            IndexSearcher searcher = NewSearcher(Reader);
+            IndexSearcher searcher = NewSearcher(reader);
 
             Sort sort = new Sort(new SortField(DATE_TIME_FIELD, SortFieldType.STRING, true));
             Query query = new TermQuery(new Term(TEXT_FIELD, "document"));

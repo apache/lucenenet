@@ -1,6 +1,9 @@
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
+using NUnit.Framework;
 using System;
+using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -23,9 +26,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using Lucene.Net.Analysis;
-    using NUnit.Framework;
-    using System.IO;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -171,11 +171,11 @@ namespace Lucene.Net.Search
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
         {
-            private readonly TestPositionIncrement OuterInstance;
+            private readonly TestPositionIncrement outerInstance;
 
             public AnalyzerAnonymousInnerClassHelper(TestPositionIncrement outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
@@ -185,12 +185,12 @@ namespace Lucene.Net.Search
 
             private class TokenizerAnonymousInnerClassHelper : Tokenizer
             {
-                private readonly AnalyzerAnonymousInnerClassHelper OuterInstance;
+                private readonly AnalyzerAnonymousInnerClassHelper outerInstance;
 
                 public TokenizerAnonymousInnerClassHelper(AnalyzerAnonymousInnerClassHelper outerInstance, TextReader reader)
                     : base(reader)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                     TOKENS = new string[] { "1", "2", "3", "4", "5" };
                     INCREMENTS = new int[] { 1, 2, 1, 0, 1 };
                     i = 0;

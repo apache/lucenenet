@@ -1,8 +1,10 @@
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
+using System.IO;
 
 namespace Lucene.Net.Search.Payloads
 {
@@ -23,8 +25,6 @@ namespace Lucene.Net.Search.Payloads
      * limitations under the License.
      */
 
-    using Lucene.Net.Analysis;
-    using System.IO;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
@@ -45,9 +45,9 @@ namespace Lucene.Net.Search.Payloads
     ///
     public class PayloadHelper
     {
-        private byte[] PayloadField = new byte[] { 1 };
-        private byte[] PayloadMultiField1 = new byte[] { 2 };
-        private byte[] PayloadMultiField2 = new byte[] { 4 };
+        private readonly byte[] payloadField = new byte[] { 1 };
+        private readonly byte[] payloadMultiField1 = new byte[] { 2 };
+        private readonly byte[] payloadMultiField2 = new byte[] { 4 };
         public const string NO_PAYLOAD_FIELD = "noPayloadField";
         public const string MULTI_FIELD = "multiField";
         public const string FIELD = "field";
@@ -56,56 +56,56 @@ namespace Lucene.Net.Search.Payloads
 
         public sealed class PayloadAnalyzer : Analyzer
         {
-            private readonly PayloadHelper OuterInstance;
+            private readonly PayloadHelper outerInstance;
 
             public PayloadAnalyzer(PayloadHelper outerInstance)
                 : base(PER_FIELD_REUSE_STRATEGY)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result, fieldName));
+                return new TokenStreamComponents(result, new PayloadFilter(outerInstance, result, fieldName));
             }
         }
 
         public sealed class PayloadFilter : TokenFilter
         {
-            private readonly PayloadHelper OuterInstance;
+            private readonly PayloadHelper outerInstance;
 
-            internal readonly string FieldName;
-            internal int NumSeen = 0;
-            internal readonly IPayloadAttribute PayloadAtt;
+            internal readonly string fieldName;
+            internal int numSeen = 0;
+            internal readonly IPayloadAttribute payloadAtt;
 
             public PayloadFilter(PayloadHelper outerInstance, TokenStream input, string fieldName)
                 : base(input)
             {
-                this.OuterInstance = outerInstance;
-                this.FieldName = fieldName;
-                PayloadAtt = AddAttribute<IPayloadAttribute>();
+                this.outerInstance = outerInstance;
+                this.fieldName = fieldName;
+                payloadAtt = AddAttribute<IPayloadAttribute>();
             }
 
             public override bool IncrementToken()
             {
                 if (m_input.IncrementToken())
                 {
-                    if (FieldName.Equals(FIELD, StringComparison.Ordinal))
+                    if (fieldName.Equals(FIELD, StringComparison.Ordinal))
                     {
-                        PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadField);
+                        payloadAtt.Payload = new BytesRef(outerInstance.payloadField);
                     }
-                    else if (FieldName.Equals(MULTI_FIELD, StringComparison.Ordinal))
+                    else if (fieldName.Equals(MULTI_FIELD, StringComparison.Ordinal))
                     {
-                        if (NumSeen % 2 == 0)
+                        if (numSeen % 2 == 0)
                         {
-                            PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadMultiField1);
+                            payloadAtt.Payload = new BytesRef(outerInstance.payloadMultiField1);
                         }
                         else
                         {
-                            PayloadAtt.Payload = new BytesRef(OuterInstance.PayloadMultiField2);
+                            payloadAtt.Payload = new BytesRef(outerInstance.payloadMultiField2);
                         }
-                        NumSeen++;
+                        numSeen++;
                     }
                     return true;
                 }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Payloads
             public override void Reset()
             {
                 base.Reset();
-                this.NumSeen = 0;
+                this.numSeen = 0;
             }
         }
 
