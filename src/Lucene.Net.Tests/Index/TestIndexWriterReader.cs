@@ -1444,5 +1444,5 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 #endif
-            }
-        }
+    }
+}

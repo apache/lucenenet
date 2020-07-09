@@ -8,30 +8,29 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
@@ -96,9 +95,9 @@ namespace Lucene.Net.Index
             writer.DeleteDocuments(new Term("id", "2"));
             writer.Flush(false, false);
             fsmp = (RangeMergePolicy)writer.Config.MergePolicy;
-            fsmp.DoMerge = true;
-            fsmp.Start = 0;
-            fsmp.Length = 2;
+            fsmp.doMerge = true;
+            fsmp.start = 0;
+            fsmp.length = 2;
             writer.MaybeMerge();
 
             Assert.AreEqual(2, writer.SegmentCount);
@@ -135,7 +134,7 @@ namespace Lucene.Net.Index
             /// // we cause a merge to happen
             /// fsmp.doMerge = true;
             /// fsmp.start = 0;
-            /// fsmp.Length = 2;
+            /// fsmp.length = 2;
             /// System.out.println("maybeMerge "+writer.SegmentInfos);
             ///
             /// SegmentInfo info0 = writer.SegmentInfos.Info(0);
@@ -206,9 +205,9 @@ namespace Lucene.Net.Index
             writer.DeleteDocuments(delterm);
             //System.out.println("segdels3:" + writer.docWriter.deletesToString());
 
-            fsmp.DoMerge = true;
-            fsmp.Start = 1;
-            fsmp.Length = 2;
+            fsmp.doMerge = true;
+            fsmp.start = 1;
+            fsmp.length = 2;
             writer.MaybeMerge();
 
             // deletes for info1, the newly created segment from the
@@ -271,18 +270,18 @@ namespace Lucene.Net.Index
 
         public class RangeMergePolicy : MergePolicy
         {
-            private readonly TestPerSegmentDeletes OuterInstance;
+            private readonly TestPerSegmentDeletes outerInstance;
 
-            internal bool DoMerge = false;
-            internal int Start;
-            internal int Length;
+            internal bool doMerge = false;
+            internal int start;
+            internal int length;
 
-            internal readonly bool UseCompoundFile_Renamed;
+            internal readonly bool useCompoundFile;
 
             internal RangeMergePolicy(TestPerSegmentDeletes outerInstance, bool useCompoundFile)
             {
-                this.OuterInstance = outerInstance;
-                this.UseCompoundFile_Renamed = useCompoundFile;
+                this.outerInstance = outerInstance;
+                this.useCompoundFile = useCompoundFile;
             }
 
             protected override void Dispose(bool disposing)
@@ -292,11 +291,11 @@ namespace Lucene.Net.Index
             public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
             {
                 MergeSpecification ms = new MergeSpecification();
-                if (DoMerge)
+                if (doMerge)
                 {
-                    OneMerge om = new OneMerge(segmentInfos.AsList().SubList(Start, Start + Length));
+                    OneMerge om = new OneMerge(segmentInfos.AsList().SubList(start, start + length));
                     ms.Add(om);
-                    DoMerge = false;
+                    doMerge = false;
                     return ms;
                 }
                 return null;
@@ -314,7 +313,7 @@ namespace Lucene.Net.Index
 
             public override bool UseCompoundFile(SegmentInfos segments, SegmentCommitInfo newSegment)
             {
-                return UseCompoundFile_Renamed;
+                return useCompoundFile;
             }
         }
     }

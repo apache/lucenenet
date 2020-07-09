@@ -1,28 +1,26 @@
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using System.IO;
-
     /*
-                 * Licensed to the Apache Software Foundation (ASF) under one or more
-                 * contributor license agreements.  See the NOTICE file distributed with
-                 * this work for additional information regarding copyright ownership.
-                 * The ASF licenses this file to You under the Apache License, Version 2.0
-                 * (the "License"); you may not use this file except in compliance with
-                 * the License.  You may obtain a copy of the License at
-                 *
-                 *     http://www.apache.org/licenses/LICENSE-2.0
-                 *
-                 * Unless required by applicable law or agreed to in writing, software
-                 * distributed under the License is distributed on an "AS IS" BASIS,
-                 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-                 * See the License for the specific language governing permissions and
-                 * limitations under the License.
-                 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -31,19 +29,19 @@ namespace Lucene.Net.Index
     {
         private class TwoPhaseCommitImpl : ITwoPhaseCommit
         {
-            internal static bool CommitCalled = false;
-            internal readonly bool FailOnPrepare;
-            internal readonly bool FailOnCommit;
-            internal readonly bool FailOnRollback;
-            internal bool RollbackCalled = false;
-            internal IDictionary<string, string> PrepareCommitData = null;
-            internal IDictionary<string, string> CommitData = null;
+            internal static bool commitCalled = false;
+            internal readonly bool failOnPrepare;
+            internal readonly bool failOnCommit;
+            internal readonly bool failOnRollback;
+            internal bool rollbackCalled = false;
+            internal IDictionary<string, string> prepareCommitData = null;
+            internal IDictionary<string, string> commitData = null;
 
             public TwoPhaseCommitImpl(bool failOnPrepare, bool failOnCommit, bool failOnRollback)
             {
-                this.FailOnPrepare = failOnPrepare;
-                this.FailOnCommit = failOnCommit;
-                this.FailOnRollback = failOnRollback;
+                this.failOnPrepare = failOnPrepare;
+                this.failOnCommit = failOnCommit;
+                this.failOnRollback = failOnRollback;
             }
 
             public void PrepareCommit()
@@ -53,9 +51,9 @@ namespace Lucene.Net.Index
 
             public virtual void PrepareCommit(IDictionary<string, string> commitData)
             {
-                this.PrepareCommitData = commitData;
-                Assert.IsFalse(CommitCalled, "commit should not have been called before all prepareCommit were");
-                if (FailOnPrepare)
+                this.prepareCommitData = commitData;
+                Assert.IsFalse(commitCalled, "commit should not have been called before all prepareCommit were");
+                if (failOnPrepare)
                 {
                     throw new IOException("failOnPrepare");
                 }
@@ -68,9 +66,9 @@ namespace Lucene.Net.Index
 
             public virtual void Commit(IDictionary<string, string> commitData)
             {
-                this.CommitData = commitData;
-                CommitCalled = true;
-                if (FailOnCommit)
+                this.commitData = commitData;
+                commitCalled = true;
+                if (failOnCommit)
                 {
                     throw new Exception("failOnCommit");
                 }
@@ -78,8 +76,8 @@ namespace Lucene.Net.Index
 
             public void Rollback()
             {
-                RollbackCalled = true;
-                if (FailOnRollback)
+                rollbackCalled = true;
+                if (failOnRollback)
                 {
                     throw new Exception("failOnRollback");
                 }
@@ -90,7 +88,7 @@ namespace Lucene.Net.Index
         public override void SetUp()
         {
             base.SetUp();
-            TwoPhaseCommitImpl.CommitCalled = false; // reset count before every test
+            TwoPhaseCommitImpl.commitCalled = false; // reset count before every test
         }
 
         [Test]
@@ -139,7 +137,7 @@ namespace Lucene.Net.Index
                 // if any failure happened, ensure that rollback was called on all.
                 foreach (TwoPhaseCommitImpl tpc in objects)
                 {
-                    Assert.IsTrue(tpc.RollbackCalled, "rollback was not called while a failure occurred during the 2-phase commit");
+                    Assert.IsTrue(tpc.rollbackCalled, "rollback was not called while a failure occurred during the 2-phase commit");
                 }
             }
         }

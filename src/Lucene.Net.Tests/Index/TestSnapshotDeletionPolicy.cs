@@ -10,29 +10,28 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using FieldType = FieldType;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TextField = TextField;
 
@@ -81,7 +80,7 @@ namespace Lucene.Net.Index
                 // create dummy document to trigger commit.
                 writer.AddDocument(new Document());
                 writer.Commit();
-                Snapshots.Add(sdp.Snapshot());
+                snapshots.Add(sdp.Snapshot());
             }
         }
 
@@ -97,7 +96,7 @@ namespace Lucene.Net.Index
         {
             for (int i = 0; i < numSnapshots; i++)
             {
-                IndexCommit snapshot = Snapshots[i];
+                IndexCommit snapshot = snapshots[i];
                 CheckMaxDoc(snapshot, i + 1);
                 CheckSnapshotExists(dir, snapshot);
                 if (checkIndexCommitSame)
@@ -111,14 +110,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal IList<IndexCommit> Snapshots;
+        protected internal IList<IndexCommit> snapshots;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            this.Snapshots = new List<IndexCommit>();
+            this.snapshots = new List<IndexCommit>();
         }
 
         [Test]
@@ -185,9 +184,9 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private long StopTime;
-            private IndexWriter Writer;
-            private readonly Func<string, string, FieldType, Field> _newFieldFunc;
+            private readonly long stopTime;
+            private readonly IndexWriter writer;
+            private readonly Func<string, string, FieldType, Field> newFieldFunc;
 
             /// <param name="newFieldFunc">
             /// LUCENENET specific
@@ -196,9 +195,9 @@ namespace Lucene.Net.Index
             /// </param>
             public ThreadAnonymousInnerClassHelper(long stopTime, IndexWriter writer, Func<string, string, FieldType, Field> newFieldFunc)
             {
-                this.StopTime = stopTime;
-                this.Writer = writer;
-                _newFieldFunc = newFieldFunc;
+                this.stopTime = stopTime;
+                this.writer = writer;
+                this.newFieldFunc = newFieldFunc;
             }
 
             public override void Run()
@@ -208,14 +207,14 @@ namespace Lucene.Net.Index
                 customType.StoreTermVectors = true;
                 customType.StoreTermVectorPositions = true;
                 customType.StoreTermVectorOffsets = true;
-                doc.Add(_newFieldFunc("content", "aaa", customType));
+                doc.Add(newFieldFunc("content", "aaa", customType));
                 do
                 {
                     for (int i = 0; i < 27; i++)
                     {
                         try
                         {
-                            Writer.AddDocument(doc);
+                            writer.AddDocument(doc);
                         }
                         catch (Exception t)
                         {
@@ -226,7 +225,7 @@ namespace Lucene.Net.Index
                         {
                             try
                             {
-                                Writer.Commit();
+                                writer.Commit();
                             }
                             catch (Exception e)
                             {
@@ -246,7 +245,7 @@ namespace Lucene.Net.Index
 //                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
 //                    }
 //#endif
-                } while (Environment.TickCount < StopTime);
+                } while (Environment.TickCount < stopTime);
             }
         }
 
@@ -291,7 +290,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal byte[] Buffer = new byte[4096];
+        internal byte[] buffer = new byte[4096];
 
         private void ReadFile(Directory dir, string name)
         {
@@ -303,15 +302,15 @@ namespace Lucene.Net.Index
                 while (bytesLeft > 0)
                 {
                     int numToRead;
-                    if (bytesLeft < Buffer.Length)
+                    if (bytesLeft < buffer.Length)
                     {
                         numToRead = (int)bytesLeft;
                     }
                     else
                     {
-                        numToRead = Buffer.Length;
+                        numToRead = buffer.Length;
                     }
-                    input.ReadBytes(Buffer, 0, numToRead, false);
+                    input.ReadBytes(buffer, 0, numToRead, false);
                     bytesLeft -= numToRead;
                 }
                 // Don't do this in your real backups!  this is just
@@ -344,7 +343,7 @@ namespace Lucene.Net.Index
             AssertSnapshotExists(dir, sdp, numSnapshots, true);
 
             // open a reader on a snapshot - should succeed.
-            DirectoryReader.Open(Snapshots[0]).Dispose();
+            DirectoryReader.Open(snapshots[0]).Dispose();
 
             // open a new IndexWriter w/ no snapshots to keep and assert that all snapshots are gone.
             sdp = DeletionPolicy;
@@ -397,29 +396,29 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
-            private readonly TestSnapshotDeletionPolicy OuterInstance;
+            private readonly TestSnapshotDeletionPolicy outerInstance;
 
-            private IndexWriter Writer;
-            private SnapshotDeletionPolicy Sdp;
-            private IndexCommit[] Snapshots;
-            private int FinalI;
+            private readonly IndexWriter writer;
+            private readonly SnapshotDeletionPolicy sdp;
+            private readonly IndexCommit[] snapshots;
+            private readonly int finalI;
 
             public ThreadAnonymousInnerClassHelper2(TestSnapshotDeletionPolicy outerInstance, IndexWriter writer, SnapshotDeletionPolicy sdp, IndexCommit[] snapshots, int finalI)
             {
-                this.OuterInstance = outerInstance;
-                this.Writer = writer;
-                this.Sdp = sdp;
-                this.Snapshots = snapshots;
-                this.FinalI = finalI;
+                this.outerInstance = outerInstance;
+                this.writer = writer;
+                this.sdp = sdp;
+                this.snapshots = snapshots;
+                this.finalI = finalI;
             }
 
             public override void Run()
             {
                 try
                 {
-                    Writer.AddDocument(new Document());
-                    Writer.Commit();
-                    Snapshots[FinalI] = Sdp.Snapshot();
+                    writer.AddDocument(new Document());
+                    writer.Commit();
+                    snapshots[finalI] = sdp.Snapshot();
                 }
                 catch (Exception e)
                 {
@@ -440,7 +439,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             // now open the writer on "snapshot0" - make sure it succeeds
-            writer = new IndexWriter(dir, GetConfig(Random, sdp).SetIndexCommit(Snapshots[0]));
+            writer = new IndexWriter(dir, GetConfig(Random, sdp).SetIndexCommit(snapshots[0]));
             // this does the actual rollback
             writer.Commit();
             writer.DeleteUnusedFiles();
@@ -448,7 +447,7 @@ namespace Lucene.Net.Index
             writer.Dispose();
 
             // but 'snapshot1' files will still exist (need to release snapshot before they can be deleted).
-            string segFileName = Snapshots[1].SegmentsFileName;
+            string segFileName = snapshots[1].SegmentsFileName;
             Assert.IsTrue(SlowFileExists(dir, segFileName), "snapshot files should exist in the directory: " + segFileName);
 
             dir.Dispose();
@@ -468,8 +467,8 @@ namespace Lucene.Net.Index
             writer.Commit();
 
             // Release
-            string segFileName = Snapshots[0].SegmentsFileName;
-            sdp.Release(Snapshots[0]);
+            string segFileName = snapshots[0].SegmentsFileName;
+            sdp.Release(snapshots[0]);
             writer.DeleteUnusedFiles();
             writer.Dispose();
             Assert.IsFalse(SlowFileExists(dir, segFileName), "segments file should not be found in dirctory: " + segFileName);

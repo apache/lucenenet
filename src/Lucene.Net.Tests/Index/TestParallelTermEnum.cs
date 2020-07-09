@@ -5,6 +5,23 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -12,42 +29,24 @@ namespace Lucene.Net.Index
     using Document = Documents.Document;
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
     public class TestParallelTermEnum : LuceneTestCase
     {
-        private AtomicReader Ir1;
-        private AtomicReader Ir2;
-        private Directory Rd1;
-        private Directory Rd2;
+        private AtomicReader ir1;
+        private AtomicReader ir2;
+        private Directory rd1;
+        private Directory rd2;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
             Document doc;
-            Rd1 = NewDirectory();
-            IndexWriter iw1 = new IndexWriter(Rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            rd1 = NewDirectory();
+            IndexWriter iw1 = new IndexWriter(rd1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             doc = new Document();
             doc.Add(NewTextField("field1", "the quick brown fox jumps", Field.Store.YES));
@@ -55,8 +54,8 @@ namespace Lucene.Net.Index
             iw1.AddDocument(doc);
 
             iw1.Dispose();
-            Rd2 = NewDirectory();
-            IndexWriter iw2 = new IndexWriter(Rd2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            rd2 = NewDirectory();
+            IndexWriter iw2 = new IndexWriter(rd2, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             doc = new Document();
             doc.Add(NewTextField("field1", "the fox jumps over the lazy dog", Field.Store.YES));
@@ -65,17 +64,17 @@ namespace Lucene.Net.Index
 
             iw2.Dispose();
 
-            this.Ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(Rd1));
-            this.Ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(Rd2));
+            this.ir1 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(rd1));
+            this.ir2 = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(rd2));
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Ir1.Dispose();
-            Ir2.Dispose();
-            Rd1.Dispose();
-            Rd2.Dispose();
+            ir1.Dispose();
+            ir2.Dispose();
+            rd1.Dispose();
+            rd2.Dispose();
             base.TearDown();
         }
 
@@ -100,7 +99,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void Test1()
         {
-            ParallelAtomicReader pr = new ParallelAtomicReader(Ir1, Ir2);
+            ParallelAtomicReader pr = new ParallelAtomicReader(ir1, ir2);
 
             IBits liveDocs = pr.LiveDocs;
 

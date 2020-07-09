@@ -10,30 +10,29 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
     using Field = Field;
     using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
@@ -42,20 +41,20 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestTransactions : LuceneTestCase
     {
-        private static volatile bool DoFail;
+        private static volatile bool doFail;
 
         private class RandomFailure : Failure
         {
-            private readonly TestTransactions OuterInstance;
+            private readonly TestTransactions outerInstance;
 
             public RandomFailure(TestTransactions outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (TestTransactions.DoFail && Random.Next() % 10 <= 3)
+                if (TestTransactions.doFail && Random.Next() % 10 <= 3)
                 {
                     throw new IOException("now failing randomly but on purpose");
                 }
@@ -64,15 +63,15 @@ namespace Lucene.Net.Index
 
         private abstract class TimedThread : ThreadJob
         {
-            internal volatile bool Failed;
+            internal volatile bool failed;
             internal static float RUN_TIME_MSEC = AtLeast(500);
-            internal TimedThread[] AllThreads;
+            internal TimedThread[] allThreads;
 
             public abstract void DoWork();
 
             internal TimedThread(TimedThread[] threads)
             {
-                this.AllThreads = threads;
+                this.allThreads = threads;
             }
 
             public override void Run()
@@ -94,15 +93,15 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine(Thread.CurrentThread + ": exc");
                     Console.Error.WriteLine(e.StackTrace);
-                    Failed = true;
+                    failed = true;
                 }
             }
 
             internal virtual bool AnyErrors()
             {
-                for (int i = 0; i < AllThreads.Length; i++)
+                for (int i = 0; i < allThreads.Length; i++)
                 {
-                    if (AllThreads[i] != null && AllThreads[i].Failed)
+                    if (allThreads[i] != null && allThreads[i].failed)
                     {
                         return true;
                     }
@@ -164,7 +163,7 @@ namespace Lucene.Net.Index
                 Update(writer1);
                 Update(writer2);
 
-                DoFail = true;
+                doFail = true;
                 try
                 {
                     lock (@lock)
@@ -196,7 +195,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    DoFail = false;
+                    doFail = false;
                 }
 
                 writer1.Dispose();
@@ -295,7 +294,7 @@ namespace Lucene.Net.Index
             [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler1,
             [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler2)
         {
-            Console.WriteLine("Start test");
+            Console.WriteLine("start test");
             // we cant use non-ramdir on windows, because this test needs to double-write.
             MockDirectoryWrapper dir1 = new MockDirectoryWrapper(Random, new RAMDirectory());
             MockDirectoryWrapper dir2 = new MockDirectoryWrapper(Random, new RAMDirectory());
@@ -337,7 +336,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < numThread; i++)
             {
-                Assert.IsTrue(!threads[i].Failed);
+                Assert.IsTrue(!threads[i].failed);
             }
             dir1.Dispose();
             dir2.Dispose();

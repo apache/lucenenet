@@ -302,14 +302,14 @@ namespace Lucene.Net.Index
         }
 
 #pragma warning disable 612, 618
-        internal static readonly Encoding Utf8 = IOUtils.CHARSET_UTF_8;
+        internal static readonly Encoding utf8 = IOUtils.CHARSET_UTF_8;
 #pragma warning restore 612, 618
 
         private void GenerateRandomData(byte[] data)
         {
             // this test needs the random data to be valid unicode
             string s = TestUtil.RandomFixedByteLengthUnicodeString(Random, data.Length);
-            var b = s.GetBytes(Utf8);
+            var b = s.GetBytes(utf8);
             Debug.Assert(b.Length == data.Length);
             System.Buffer.BlockCopy(b, 0, data, 0, b.Length);
         }
@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
         /// </summary>
         private class PayloadAnalyzer : Analyzer
         {
-            internal readonly IDictionary<string, PayloadData> FieldToData = new Dictionary<string, PayloadData>();
+            internal readonly IDictionary<string, PayloadData> fieldToData = new Dictionary<string, PayloadData>();
 
             public PayloadAnalyzer()
                 : base(PER_FIELD_REUSE_STRATEGY)
@@ -393,13 +393,13 @@ namespace Lucene.Net.Index
 
             internal virtual void SetPayloadData(string field, byte[] data, int offset, int length)
             {
-                FieldToData[field] = new PayloadData(data, offset, length);
+                fieldToData[field] = new PayloadData(data, offset, length);
             }
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 PayloadData payload;
-                FieldToData.TryGetValue(fieldName, out payload);
+                fieldToData.TryGetValue(fieldName, out payload);
                 Tokenizer ts = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream tokenStream = (payload != null) ? (TokenStream)new PayloadFilter(ts, payload.Data, payload.Offset, payload.Length) : ts;
                 return new TokenStreamComponents(ts, tokenStream);
@@ -407,9 +407,9 @@ namespace Lucene.Net.Index
 
             internal class PayloadData
             {
-                internal byte[] Data;
-                internal int Offset;
-                internal int Length;
+                internal byte[] Data { get; private set; }
+                internal int Offset { get; private set; }
+                internal int Length { get; private set; }
 
                 internal PayloadData(byte[] data, int offset, int length)
                 {
@@ -425,22 +425,22 @@ namespace Lucene.Net.Index
         /// </summary>
         private class PayloadFilter : TokenFilter
         {
-            internal byte[] Data;
-            internal int Length;
-            internal int Offset;
-            internal int StartOffset;
-            internal IPayloadAttribute PayloadAtt;
-            internal ICharTermAttribute TermAttribute;
+            private readonly byte[] data;
+            private readonly int length;
+            private int offset;
+            private readonly int startOffset;
+            private readonly IPayloadAttribute payloadAtt;
+            private readonly ICharTermAttribute termAttribute;
 
             public PayloadFilter(TokenStream @in, byte[] data, int offset, int length)
                 : base(@in)
             {
-                this.Data = data;
-                this.Length = length;
-                this.Offset = offset;
-                this.StartOffset = offset;
-                PayloadAtt = AddAttribute<IPayloadAttribute>();
-                TermAttribute = AddAttribute<ICharTermAttribute>();
+                this.data = data;
+                this.length = length;
+                this.offset = offset;
+                this.startOffset = offset;
+                payloadAtt = AddAttribute<IPayloadAttribute>();
+                termAttribute = AddAttribute<ICharTermAttribute>();
             }
 
             public sealed override bool IncrementToken()
@@ -452,15 +452,15 @@ namespace Lucene.Net.Index
                 }
 
                 // Some values of the same field are to have payloads and others not
-                if (Offset + Length <= Data.Length && !TermAttribute.ToString().EndsWith("NO PAYLOAD", StringComparison.Ordinal))
+                if (offset + length <= data.Length && !termAttribute.ToString().EndsWith("NO PAYLOAD", StringComparison.Ordinal))
                 {
-                    BytesRef p = new BytesRef(Data, Offset, Length);
-                    PayloadAtt.Payload = p;
-                    Offset += Length;
+                    BytesRef p = new BytesRef(data, offset, length);
+                    payloadAtt.Payload = p;
+                    offset += length;
                 }
                 else
                 {
-                    PayloadAtt.Payload = null;
+                    payloadAtt.Payload = null;
                 }
 
                 return true;
@@ -469,7 +469,7 @@ namespace Lucene.Net.Index
             public override void Reset()
             {
                 base.Reset();
-                this.Offset = StartOffset;
+                this.offset = startOffset;
             }
         }
 
@@ -522,31 +522,31 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestPayloads OuterInstance;
+            private readonly TestPayloads outerInstance;
 
-            private int NumDocs;
-            private Lucene.Net.Index.TestPayloads.ByteArrayPool Pool;
-            private IndexWriter Writer;
-            private string Field;
+            private readonly int numDocs;
+            private readonly ByteArrayPool pool;
+            private readonly IndexWriter writer;
+            private readonly string field;
 
-            public ThreadAnonymousInnerClassHelper(TestPayloads outerInstance, int numDocs, Lucene.Net.Index.TestPayloads.ByteArrayPool pool, IndexWriter writer, string field)
+            public ThreadAnonymousInnerClassHelper(TestPayloads outerInstance, int numDocs, ByteArrayPool pool, IndexWriter writer, string field)
             {
-                this.OuterInstance = outerInstance;
-                this.NumDocs = numDocs;
-                this.Pool = pool;
-                this.Writer = writer;
-                this.Field = field;
+                this.outerInstance = outerInstance;
+                this.numDocs = numDocs;
+                this.pool = pool;
+                this.writer = writer;
+                this.field = field;
             }
 
             public override void Run()
             {
                 try
                 {
-                    for (int j = 0; j < NumDocs; j++)
+                    for (int j = 0; j < numDocs; j++)
                     {
                         Document d = new Document();
-                        d.Add(new TextField(Field, new PoolingPayloadTokenStream(OuterInstance, Pool)));
-                        Writer.AddDocument(d);
+                        d.Add(new TextField(field, new PoolingPayloadTokenStream(outerInstance, pool)));
+                        writer.AddDocument(d);
                     }
                 }
                 catch (Exception e)
@@ -560,38 +560,38 @@ namespace Lucene.Net.Index
 
         private class PoolingPayloadTokenStream : TokenStream
         {
-            private readonly TestPayloads OuterInstance;
+            private readonly TestPayloads outerInstance;
 
-            private byte[] Payload;
-            internal bool First;
-            internal ByteArrayPool Pool;
-            internal string Term;
+            private readonly byte[] payload;
+            private bool first;
+            private readonly ByteArrayPool pool;
+            private readonly string term;
 
-            internal ICharTermAttribute TermAtt;
-            internal IPayloadAttribute PayloadAtt;
+            private readonly ICharTermAttribute termAtt;
+            private readonly IPayloadAttribute payloadAtt;
 
             internal PoolingPayloadTokenStream(TestPayloads outerInstance, ByteArrayPool pool)
             {
-                this.OuterInstance = outerInstance;
-                this.Pool = pool;
-                Payload = pool.Get();
-                OuterInstance.GenerateRandomData(Payload);
-                Term = Encoding.UTF8.GetString(Payload);
-                First = true;
-                PayloadAtt = AddAttribute<IPayloadAttribute>();
-                TermAtt = AddAttribute<ICharTermAttribute>();
+                this.outerInstance = outerInstance;
+                this.pool = pool;
+                payload = pool.Get();
+                this.outerInstance.GenerateRandomData(payload);
+                term = Encoding.UTF8.GetString(payload);
+                first = true;
+                payloadAtt = AddAttribute<IPayloadAttribute>();
+                termAtt = AddAttribute<ICharTermAttribute>();
             }
 
             public sealed override bool IncrementToken()
             {
-                if (!First)
+                if (!first)
                 {
                     return false;
                 }
-                First = false;
+                first = false;
                 ClearAttributes();
-                TermAtt.Append(Term);
-                PayloadAtt.Payload = new BytesRef(Payload);
+                termAtt.Append(term);
+                payloadAtt.Payload = new BytesRef(payload);
                 return true;
             }
 
@@ -599,21 +599,21 @@ namespace Lucene.Net.Index
             {
                 if (disposing)
                 {
-                    Pool.Release(Payload);
+                    pool.Release(payload);
                 }
             }
         }
 
         private class ByteArrayPool
         {
-            internal readonly IList<byte[]> Pool;
+            internal readonly IList<byte[]> pool;
 
             internal ByteArrayPool(int capacity, int size)
             {
-                Pool = new List<byte[]>();
+                pool = new List<byte[]>();
                 for (int i = 0; i < capacity; i++)
                 {
-                    Pool.Add(new byte[size]);
+                    pool.Add(new byte[size]);
                 }
             }
 
@@ -621,8 +621,8 @@ namespace Lucene.Net.Index
             {
                 lock (this) // TODO use BlockingCollection / BCL datastructures instead
                 {
-                    var retArray = Pool[0];
-                    Pool.RemoveAt(0);
+                    var retArray = pool[0];
+                    pool.RemoveAt(0);
                     return retArray;
                 }
             }
@@ -631,7 +631,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    Pool.Add(b);
+                    pool.Add(b);
                 }
             }
 
@@ -641,7 +641,7 @@ namespace Lucene.Net.Index
                 {
                     lock (this)
                     {
-                        return Pool.Count;
+                        return pool.Count;
                     }
                 }
             }

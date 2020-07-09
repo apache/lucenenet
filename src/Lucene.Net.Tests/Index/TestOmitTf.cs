@@ -8,21 +8,21 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net.Index
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
@@ -101,12 +101,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static readonly FieldType OmitType = new FieldType(TextField.TYPE_NOT_STORED);
-        private static readonly FieldType NormalType = new FieldType(TextField.TYPE_NOT_STORED);
+        private static readonly FieldType omitType = new FieldType(TextField.TYPE_NOT_STORED);
+        private static readonly FieldType normalType = new FieldType(TextField.TYPE_NOT_STORED);
 
         static TestOmitTf()
         {
-            OmitType.IndexOptions = IndexOptions.DOCS_ONLY;
+            omitType.IndexOptions = IndexOptions.DOCS_ONLY;
         }
 
         // Tests whether the DocumentWriter correctly enable the
@@ -120,11 +120,11 @@ namespace Lucene.Net.Index
             Document d = new Document();
 
             // this field will have Tf
-            Field f1 = NewField("f1", "this field has term freqs", NormalType);
+            Field f1 = NewField("f1", "this field has term freqs", normalType);
             d.Add(f1);
 
             // this field will NOT have Tf
-            Field f2 = NewField("f2", "this field has NO Tf in all docs", OmitType);
+            Field f2 = NewField("f2", "this field has NO Tf in all docs", omitType);
             d.Add(f2);
 
             writer.AddDocument(d);
@@ -134,10 +134,10 @@ namespace Lucene.Net.Index
             d = new Document();
 
             // Reverse
-            f1 = NewField("f1", "this field has term freqs", OmitType);
+            f1 = NewField("f1", "this field has term freqs", omitType);
             d.Add(f1);
 
-            f2 = NewField("f2", "this field has NO Tf in all docs", NormalType);
+            f2 = NewField("f2", "this field has NO Tf in all docs", normalType);
             d.Add(f2);
 
             writer.AddDocument(d);
@@ -167,11 +167,11 @@ namespace Lucene.Net.Index
             Document d = new Document();
 
             // this field will have Tf
-            Field f1 = NewField("f1", "this field has term freqs", NormalType);
+            Field f1 = NewField("f1", "this field has term freqs", normalType);
             d.Add(f1);
 
             // this field will NOT have Tf
-            Field f2 = NewField("f2", "this field has NO Tf in all docs", OmitType);
+            Field f2 = NewField("f2", "this field has NO Tf in all docs", omitType);
             d.Add(f2);
 
             for (int i = 0; i < 30; i++)
@@ -184,10 +184,10 @@ namespace Lucene.Net.Index
             d = new Document();
 
             // Reverese
-            f1 = NewField("f1", "this field has term freqs", OmitType);
+            f1 = NewField("f1", "this field has term freqs", omitType);
             d.Add(f1);
 
-            f2 = NewField("f2", "this field has NO Tf in all docs", NormalType);
+            f2 = NewField("f2", "this field has NO Tf in all docs", normalType);
             d.Add(f2);
 
             for (int i = 0; i < 30; i++)
@@ -221,11 +221,11 @@ namespace Lucene.Net.Index
             Document d = new Document();
 
             // this field will have Tf
-            Field f1 = NewField("f1", "this field has term freqs", NormalType);
+            Field f1 = NewField("f1", "this field has term freqs", normalType);
             d.Add(f1);
 
             // this field will NOT have Tf
-            Field f2 = NewField("f2", "this field has NO Tf in all docs", OmitType);
+            Field f2 = NewField("f2", "this field has NO Tf in all docs", omitType);
             d.Add(f2);
 
             for (int i = 0; i < 5; i++)
@@ -275,7 +275,7 @@ namespace Lucene.Net.Index
             lmp.NoCFSRatio = 0.0;
             Document d = new Document();
 
-            Field f1 = NewField("f1", "this field has term freqs", OmitType);
+            Field f1 = NewField("f1", "this field has term freqs", omitType);
             d.Add(f1);
 
             for (int i = 0; i < 30; i++)
@@ -322,10 +322,10 @@ namespace Lucene.Net.Index
                 Document doc = new Document();
                 sb.Append(term).Append(" ");
                 string content = sb.ToString();
-                Field noTf = NewField("noTf", content + (i % 2 == 0 ? "" : " notf"), OmitType);
+                Field noTf = NewField("noTf", content + (i % 2 == 0 ? "" : " notf"), omitType);
                 doc.Add(noTf);
 
-                Field tf = NewField("tf", content + (i % 2 == 0 ? " tf" : ""), NormalType);
+                Field tf = NewField("tf", content + (i % 2 == 0 ? " tf" : ""), normalType);
                 doc.Add(tf);
 
                 writer.AddDocument(doc);
@@ -399,11 +399,11 @@ namespace Lucene.Net.Index
 
         private class CountingHitCollectorAnonymousInnerClassHelper : CountingHitCollector
         {
-            private readonly TestOmitTf OuterInstance;
+            private readonly TestOmitTf outerInstance;
 
             public CountingHitCollectorAnonymousInnerClassHelper(TestOmitTf outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             private Scorer scorer;
@@ -424,11 +424,11 @@ namespace Lucene.Net.Index
 
         private class CountingHitCollectorAnonymousInnerClassHelper2 : CountingHitCollector
         {
-            private readonly TestOmitTf OuterInstance;
+            private readonly TestOmitTf outerInstance;
 
             public CountingHitCollectorAnonymousInnerClassHelper2(TestOmitTf outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             private Scorer scorer;
@@ -449,11 +449,11 @@ namespace Lucene.Net.Index
 
         private class CountingHitCollectorAnonymousInnerClassHelper3 : CountingHitCollector
         {
-            private readonly TestOmitTf OuterInstance;
+            private readonly TestOmitTf outerInstance;
 
             public CountingHitCollectorAnonymousInnerClassHelper3(TestOmitTf outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             private Scorer scorer;
@@ -475,11 +475,11 @@ namespace Lucene.Net.Index
 
         private class CountingHitCollectorAnonymousInnerClassHelper4 : CountingHitCollector
         {
-            private readonly TestOmitTf OuterInstance;
+            private readonly TestOmitTf outerInstance;
 
             public CountingHitCollectorAnonymousInnerClassHelper4(TestOmitTf outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             private Scorer scorer;
@@ -501,11 +501,11 @@ namespace Lucene.Net.Index
 
         private class CountingHitCollectorAnonymousInnerClassHelper5 : CountingHitCollector
         {
-            private readonly TestOmitTf OuterInstance;
+            private readonly TestOmitTf outerInstance;
 
             public CountingHitCollectorAnonymousInnerClassHelper5(TestOmitTf outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override sealed void Collect(int doc)
@@ -517,14 +517,14 @@ namespace Lucene.Net.Index
 
         public class CountingHitCollector : ICollector
         {
-            internal static int Count_Renamed = 0;
-            internal static int Sum_Renamed = 0;
-            internal int DocBase = -1;
+            internal static int count = 0;
+            internal static int sum = 0;
+            internal int docBase = -1;
 
             internal CountingHitCollector()
             {
-                Count_Renamed = 0;
-                Sum_Renamed = 0;
+                count = 0;
+                sum = 0;
             }
 
             public virtual void SetScorer(Scorer scorer)
@@ -533,35 +533,20 @@ namespace Lucene.Net.Index
 
             public virtual void Collect(int doc)
             {
-                Count_Renamed++;
-                Sum_Renamed += doc + DocBase; // use it to avoid any possibility of being merged away
+                count++;
+                sum += doc + docBase; // use it to avoid any possibility of being merged away
             }
 
-            public static int Count
-            {
-                get
-                {
-                    return Count_Renamed;
-                }
-            }
+            public static int Count => count;
 
-            public static int Sum
-            {
-                get
-                {
-                    return Sum_Renamed;
-                }
-            }
+            public static int Sum => sum;
 
             public virtual void SetNextReader(AtomicReaderContext context)
             {
-                DocBase = context.DocBase;
+                docBase = context.DocBase;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
         /// <summary>

@@ -6,28 +6,27 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Occur = Lucene.Net.Search.Occur;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -35,14 +34,14 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestParallelAtomicReader : LuceneTestCase
     {
-        private IndexSearcher Parallel_Renamed, Single_Renamed;
-        private Directory Dir, Dir1, Dir2;
+        private IndexSearcher parallel, single;
+        private Directory dir, dir1, dir2;
 
         [Test]
         public virtual void TestQueries()
         {
-            Single_Renamed = Single(Random);
-            Parallel_Renamed = Parallel(Random);
+            single = Single(Random);
+            parallel = Parallel(Random);
 
             QueryTest(new TermQuery(new Term("f1", "v1")));
             QueryTest(new TermQuery(new Term("f1", "v2")));
@@ -58,16 +57,16 @@ namespace Lucene.Net.Index
             bq1.Add(new TermQuery(new Term("f4", "v1")), Occur.MUST);
             QueryTest(bq1);
 
-            Single_Renamed.IndexReader.Dispose();
-            Single_Renamed = null;
-            Parallel_Renamed.IndexReader.Dispose();
-            Parallel_Renamed = null;
-            Dir.Dispose();
-            Dir = null;
-            Dir1.Dispose();
-            Dir1 = null;
-            Dir2.Dispose();
-            Dir2 = null;
+            single.IndexReader.Dispose();
+            single = null;
+            parallel.IndexReader.Dispose();
+            parallel = null;
+            dir.Dispose();
+            dir = null;
+            dir1.Dispose();
+            dir1 = null;
+            dir2.Dispose();
+            dir2 = null;
         }
 
         [Test]
@@ -273,14 +272,14 @@ namespace Lucene.Net.Index
 
         private void QueryTest(Query query)
         {
-            ScoreDoc[] parallelHits = Parallel_Renamed.Search(query, null, 1000).ScoreDocs;
-            ScoreDoc[] singleHits = Single_Renamed.Search(query, null, 1000).ScoreDocs;
+            ScoreDoc[] parallelHits = parallel.Search(query, null, 1000).ScoreDocs;
+            ScoreDoc[] singleHits = single.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(parallelHits.Length, singleHits.Length);
             for (int i = 0; i < parallelHits.Length; i++)
             {
                 Assert.AreEqual(parallelHits[i].Score, singleHits[i].Score, 0.001f);
-                Document docParallel = Parallel_Renamed.Doc(parallelHits[i].Doc);
-                Document docSingle = Single_Renamed.Doc(singleHits[i].Doc);
+                Document docParallel = parallel.Doc(parallelHits[i].Doc);
+                Document docSingle = single.Doc(singleHits[i].Doc);
                 Assert.AreEqual(docParallel.Get("f1"), docSingle.Get("f1"));
                 Assert.AreEqual(docParallel.Get("f2"), docSingle.Get("f2"));
                 Assert.AreEqual(docParallel.Get("f3"), docSingle.Get("f3"));
@@ -291,8 +290,8 @@ namespace Lucene.Net.Index
         // Fields 1-4 indexed together:
         private IndexSearcher Single(Random random)
         {
-            Dir = NewDirectory();
-            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)));
+            dir = NewDirectory();
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)));
             Document d1 = new Document();
             d1.Add(NewTextField("f1", "v1", Field.Store.YES));
             d1.Add(NewTextField("f2", "v1", Field.Store.YES));
@@ -307,16 +306,16 @@ namespace Lucene.Net.Index
             w.AddDocument(d2);
             w.Dispose();
 
-            DirectoryReader ir = DirectoryReader.Open(Dir);
+            DirectoryReader ir = DirectoryReader.Open(dir);
             return NewSearcher(ir);
         }
 
         // Fields 1 & 2 in one index, 3 & 4 in other, with ParallelReader:
         private IndexSearcher Parallel(Random random)
         {
-            Dir1 = GetDir1(random);
-            Dir2 = GetDir2(random);
-            ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(Dir1)), SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(Dir2)));
+            dir1 = GetDir1(random);
+            dir2 = GetDir2(random);
+            ParallelAtomicReader pr = new ParallelAtomicReader(SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir1)), SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir2)));
             TestUtil.CheckReader(pr);
             return NewSearcher(pr);
         }

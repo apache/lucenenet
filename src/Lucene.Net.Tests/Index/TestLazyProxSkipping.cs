@@ -44,22 +44,22 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestLazyProxSkipping : LuceneTestCase
     {
-        private IndexSearcher Searcher;
-        private int SeeksCounter = 0;
+        private IndexSearcher searcher;
+        private int seeksCounter = 0;
 
-        private string Field = "tokens";
-        private string Term1 = "xx";
-        private string Term2 = "yy";
-        private string Term3 = "zz";
+        private string field = "tokens";
+        private string term1 = "xx";
+        private string term2 = "yy";
+        private string term3 = "zz";
 
         private class SeekCountingDirectory : MockDirectoryWrapper
         {
-            private readonly TestLazyProxSkipping OuterInstance;
+            private readonly TestLazyProxSkipping outerInstance;
 
             public SeekCountingDirectory(TestLazyProxSkipping outerInstance, Directory @delegate)
                 : base(Random, @delegate)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override IndexInput OpenInput(string name, IOContext context)
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
                 if (name.EndsWith(".prx", StringComparison.Ordinal) || name.EndsWith(".pos", StringComparison.Ordinal))
                 {
                     // we decorate the proxStream with a wrapper class that allows to count the number of calls of seek()
-                    ii = new SeeksCountingStream(OuterInstance, ii);
+                    ii = new SeeksCountingStream(outerInstance, ii);
                 }
                 return ii;
             }
@@ -78,7 +78,10 @@ namespace Lucene.Net.Index
         {
             int numDocs = 500;
 
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader2) =>
+            {
+                return new TokenStreamComponents(new MockTokenizer(reader2, MockTokenizer.WHITESPACE, true));
+            });
             Directory directory = new SeekCountingDirectory(this, new RAMDirectory());
             // note: test explicitly disables payloads
             IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false)));
@@ -90,20 +93,20 @@ namespace Lucene.Net.Index
                 if (i % (numDocs / numHits) == 0)
                 {
                     // add a document that matches the query "term1 term2"
-                    content = this.Term1 + " " + this.Term2;
+                    content = this.term1 + " " + this.term2;
                 }
                 else if (i % 15 == 0)
                 {
                     // add a document that only contains term1
-                    content = this.Term1 + " " + this.Term1;
+                    content = this.term1 + " " + this.term1;
                 }
                 else
                 {
                     // add a document that contains term2 but not term 1
-                    content = this.Term3 + " " + this.Term2;
+                    content = this.term3 + " " + this.term2;
                 }
 
-                doc.Add(NewTextField(this.Field, content, Documents.Field.Store.YES));
+                doc.Add(NewTextField(this.field, content, Documents.Field.Store.YES));
                 writer.AddDocument(doc);
             }
 
@@ -113,51 +116,36 @@ namespace Lucene.Net.Index
 
             SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(directory));
 
-            this.Searcher = NewSearcher(reader);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestLazyProxSkipping OuterInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestLazyProxSkipping outerInstance)
-            {
-                this.OuterInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, true));
-            }
+            this.searcher = NewSearcher(reader);
         }
 
         private ScoreDoc[] Search()
         {
             // create PhraseQuery "term1 term2" and search
             PhraseQuery pq = new PhraseQuery();
-            pq.Add(new Term(this.Field, this.Term1));
-            pq.Add(new Term(this.Field, this.Term2));
-            return this.Searcher.Search(pq, null, 1000).ScoreDocs;
+            pq.Add(new Term(this.field, this.term1));
+            pq.Add(new Term(this.field, this.term2));
+            return this.searcher.Search(pq, null, 1000).ScoreDocs;
         }
 
         private void PerformTest(int numHits)
         {
             CreateIndex(numHits);
-            this.SeeksCounter = 0;
+            this.seeksCounter = 0;
             ScoreDoc[] hits = Search();
             // verify that the right number of docs was found
             Assert.AreEqual(numHits, hits.Length);
 
             // check if the number of calls of seek() does not exceed the number of hits
-            Assert.IsTrue(this.SeeksCounter > 0);
-            Assert.IsTrue(this.SeeksCounter <= numHits + 1, "seeksCounter=" + this.SeeksCounter + " numHits=" + numHits);
-            Searcher.IndexReader.Dispose();
+            Assert.IsTrue(this.seeksCounter > 0);
+            Assert.IsTrue(this.seeksCounter <= numHits + 1, "seeksCounter=" + this.seeksCounter + " numHits=" + numHits);
+            searcher.IndexReader.Dispose();
         }
 
         [Test]
         public virtual void TestLazySkipping()
         {
-            string fieldFormat = TestUtil.GetPostingsFormat(this.Field);
+            string fieldFormat = TestUtil.GetPostingsFormat(this.field);
             AssumeFalse("this test cannot run with Memory postings format", fieldFormat.Equals("Memory", StringComparison.Ordinal));
             AssumeFalse("this test cannot run with Direct postings format", fieldFormat.Equals("Direct", StringComparison.Ordinal));
             AssumeFalse("this test cannot run with SimpleText postings format", fieldFormat.Equals("SimpleText", StringComparison.Ordinal));
@@ -176,14 +164,14 @@ namespace Lucene.Net.Index
             for (int i = 0; i < 10; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField(this.Field, "a b", Documents.Field.Store.YES));
+                doc.Add(NewTextField(this.field, "a b", Documents.Field.Store.YES));
                 writer.AddDocument(doc);
             }
 
             writer.Dispose();
             IndexReader reader = DirectoryReader.Open(directory);
 
-            DocsAndPositionsEnum tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), this.Field, new BytesRef("b"));
+            DocsAndPositionsEnum tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), this.field, new BytesRef("b"));
 
             for (int i = 0; i < 10; i++)
             {
@@ -192,7 +180,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(tp.NextPosition(), 1);
             }
 
-            tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), this.Field, new BytesRef("a"));
+            tp = MultiFields.GetTermPositionsEnum(reader, MultiFields.GetLiveDocs(reader), this.field, new BytesRef("a"));
 
             for (int i = 0; i < 10; i++)
             {
@@ -208,54 +196,51 @@ namespace Lucene.Net.Index
         // of invocations of seek()
         internal class SeeksCountingStream : IndexInput
         {
-            private readonly TestLazyProxSkipping OuterInstance;
+            private readonly TestLazyProxSkipping outerInstance;
 
-            internal IndexInput Input;
+            internal IndexInput input;
 
             internal SeeksCountingStream(TestLazyProxSkipping outerInstance, IndexInput input)
                 : base("SeekCountingStream(" + input + ")")
             {
-                this.OuterInstance = outerInstance;
-                this.Input = input;
+                this.outerInstance = outerInstance;
+                this.input = input;
             }
 
             public override byte ReadByte()
             {
-                return this.Input.ReadByte();
+                return this.input.ReadByte();
             }
 
             public override void ReadBytes(byte[] b, int offset, int len)
             {
-                this.Input.ReadBytes(b, offset, len);
+                this.input.ReadBytes(b, offset, len);
             }
 
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
                 {
-                    this.Input.Dispose();
+                    this.input.Dispose();
                 }
             }
 
             public override long GetFilePointer()
             {
-                return this.Input.GetFilePointer();
+                return this.input.GetFilePointer();
             }
 
             public override void Seek(long pos)
             {
-                OuterInstance.SeeksCounter++;
-                this.Input.Seek(pos);
+                outerInstance.seeksCounter++;
+                this.input.Seek(pos);
             }
 
-            public override long Length
-            {
-                get { return this.Input.Length; }
-            }
+            public override long Length => this.input.Length;
 
             public override object Clone()
             {
-                return new SeeksCountingStream(OuterInstance, (IndexInput)this.Input.Clone());
+                return new SeeksCountingStream(outerInstance, (IndexInput)this.input.Clone());
             }
         }
     }
