@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Th
             AssureMatchVersion();
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

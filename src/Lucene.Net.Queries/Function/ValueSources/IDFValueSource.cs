@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 using System.Collections;
 
 namespace Lucene.Net.Queries.Function.ValueSources
@@ -48,7 +49,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             TFIDFSimilarity sim = AsTFIDF(searcher.Similarity, m_field);
             if (sim == null)
             {
-                throw new System.NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
+                throw new NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }
             int docfreq = searcher.IndexReader.DocFreq(new Term(m_indexedField, m_indexedBytes));
             float idf = sim.Idf(docfreq, searcher.IndexReader.MaxDoc);

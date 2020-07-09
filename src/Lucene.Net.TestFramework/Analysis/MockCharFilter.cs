@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
@@ -39,7 +40,7 @@ namespace Lucene.Net.Analysis
             this.remainder = remainder;
             if (remainder < 0 || remainder >= 10)
             {
-                throw new System.ArgumentException("invalid remainder parameter (must be 0..10): " + remainder);
+                throw new ArgumentException("invalid remainder parameter (must be 0..10): " + remainder);
             }
         }
 

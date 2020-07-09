@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Ar
                 TokenFilterFactory("ArabicNormalization", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Ar
                 TokenFilterFactory("Arabicstem", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }
@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Ar
                 CharFilterFactory("Persian", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Ar
                 TokenizerFactory("ArabicLetter", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

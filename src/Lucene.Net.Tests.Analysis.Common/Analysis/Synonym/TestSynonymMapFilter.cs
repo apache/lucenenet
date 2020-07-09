@@ -1207,7 +1207,7 @@ namespace Lucene.Net.Analysis.Synonym
                 new SynonymFilter(tokenizer, (new SynonymMap.Builder(true)).Build(), true);
                 fail("did not hit expected exception");
             }
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
             {
                 // expected
                 assertEquals("fst must be non-null", iae.Message);

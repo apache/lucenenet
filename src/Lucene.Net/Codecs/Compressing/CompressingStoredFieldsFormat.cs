@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Codecs.Compressing
 {
     /*
@@ -94,7 +96,7 @@ namespace Lucene.Net.Codecs.Compressing
             this.compressionMode = compressionMode;
             if (chunkSize < 1)
             {
-                throw new System.ArgumentException("chunkSize must be >= 1");
+                throw new ArgumentException("chunkSize must be >= 1");
             }
             this.chunkSize = chunkSize;
         }

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Wikipedia
@@ -44,7 +45,7 @@ namespace Lucene.Net.Analysis.Wikipedia
                 TokenizerFactory("Wikipedia", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Cjk
         {
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

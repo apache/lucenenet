@@ -41,11 +41,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (min < 0)
             {
-                throw new System.ArgumentOutOfRangeException("minimum length must be greater than or equal to zero");
+                throw new ArgumentOutOfRangeException("minimum length must be greater than or equal to zero");
             }
             if (min > max)
             {
-                throw new System.ArgumentOutOfRangeException("maximum length must not be greater than minimum length");
+                throw new ArgumentOutOfRangeException("maximum length must not be greater than minimum length");
             }
             this.min = min;
             this.max = max;

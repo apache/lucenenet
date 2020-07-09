@@ -160,7 +160,7 @@ namespace Lucene.Net.Analysis.Util
             }
             catch (Exception e)
             {
-                assertTrue(e is System.ArgumentException);
+                assertTrue(e is ArgumentException);
             }
 
             // clone()

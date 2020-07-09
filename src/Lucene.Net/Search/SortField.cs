@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -63,7 +64,7 @@ namespace Lucene.Net.Search
                 {
                     if (value != STRING_FIRST && value != STRING_LAST)
                     {
-                        throw new System.ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
+                        throw new ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
                     }
                 }
 #pragma warning disable 612, 618
@@ -71,7 +72,7 @@ namespace Lucene.Net.Search
 #pragma warning restore 612, 618
                     && type != SortFieldType.INT32 && type != SortFieldType.SINGLE && type != SortFieldType.INT64 && type != SortFieldType.DOUBLE)
                 {
-                    throw new System.ArgumentException("Missing value only works for numeric or STRING types");
+                    throw new ArgumentException("Missing value only works for numeric or STRING types");
                 }
                 this.m_missingValue = value;
             }
@@ -158,7 +159,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                throw new System.ArgumentException("Parser instance does not subclass existing numeric parser from FieldCache (got " + parser + ")");
+                throw new ArgumentException("Parser instance does not subclass existing numeric parser from FieldCache (got " + parser + ")");
             }
 
             this.reverse = reverse;
@@ -208,12 +209,12 @@ namespace Lucene.Net.Search
         //    {
         //        if (value != STRING_FIRST && value != STRING_LAST)
         //        {
-        //            throw new System.ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
+        //            throw new ArgumentException("For STRING type, missing value must be either STRING_FIRST or STRING_LAST");
         //        }
         //    }
         //    else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
         //    {
-        //        throw new System.ArgumentException("Missing value only works for numeric or STRING types");
+        //        throw new ArgumentException("Missing value only works for numeric or STRING types");
         //    }
         //    this.missingValue = value;
         //}
@@ -249,7 +250,7 @@ namespace Lucene.Net.Search
             {
                 if (type != SortFieldType.SCORE && type != SortFieldType.DOC)
                 {
-                    throw new System.ArgumentException("field can only be null when type is SCORE or DOC");
+                    throw new ArgumentException("field can only be null when type is SCORE or DOC");
                 }
             }
             else
@@ -482,7 +483,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="searcher"> <see cref="IndexSearcher"/> to use during rewriting </param>
         /// <returns> New rewritten <see cref="SortField"/>, or <c>this</c> if nothing has changed. </returns>
-        /// <exception cref="System.IO.IOException"> Can be thrown by the rewriting </exception>
+        /// <exception cref="IOException"> Can be thrown by the rewriting </exception>
         public virtual SortField Rewrite(IndexSearcher searcher)
         {
             return this;

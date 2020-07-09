@@ -150,7 +150,7 @@ namespace Lucene.Net.Replicator
                 replicator.Publish(old);
                 fail("should have failed to publish an older revision");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }

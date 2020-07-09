@@ -56,13 +56,13 @@ namespace Lucene.Net.Index
                 }
                 // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
                 // in Lucene, we need to catch it here to be on the safe side.
-                catch (System.IO.DirectoryNotFoundException)
+                catch (DirectoryNotFoundException)
                 {
                 }
             }
             // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
             // in Lucene, we need to catch it here to be on the safe side.
-            catch (System.IO.DirectoryNotFoundException)
+            catch (DirectoryNotFoundException)
             {
                 try
                 {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
                 }
                 // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
                 // in Lucene, we need to catch it here to be on the safe side.
-                catch (System.IO.DirectoryNotFoundException)
+                catch (DirectoryNotFoundException)
                 {
                 }
             }

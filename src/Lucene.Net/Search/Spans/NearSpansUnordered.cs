@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
@@ -280,7 +281,7 @@ namespace Lucene.Net.Search.Spans
         /// <summary>
         /// WARNING: The List is not necessarily in order of the the positions </summary>
         /// <returns> Collection of <see cref="T:byte[]"/> payloads </returns>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public override ICollection<byte[]> GetPayload()
         {
             var matchPayload = new JCG.HashSet<byte[]>();

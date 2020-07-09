@@ -175,7 +175,7 @@ namespace Lucene.Net.Analysis.NGram
             if (!version.OnOrAfter(LuceneVersion.LUCENE_44))
 #pragma warning restore 612, 618
             {
-                throw new System.ArgumentException("This class only works with Lucene 4.4+. To emulate the old (broken) behavior of NGramTokenizer, use Lucene43NGramTokenizer/Lucene43EdgeNGramTokenizer");
+                throw new ArgumentException("This class only works with Lucene 4.4+. To emulate the old (broken) behavior of NGramTokenizer, use Lucene43NGramTokenizer/Lucene43EdgeNGramTokenizer");
             }
 #pragma warning disable 612, 618
             charUtils = version.OnOrAfter(LuceneVersion.LUCENE_44) ?
@@ -183,11 +183,11 @@ namespace Lucene.Net.Analysis.NGram
                 CharacterUtils.GetInstance(version) : CharacterUtils.GetJava4Instance(version);
             if (minGram < 1)
             {
-                throw new System.ArgumentException("minGram must be greater than zero");
+                throw new ArgumentException("minGram must be greater than zero");
             }
             if (minGram > maxGram)
             {
-                throw new System.ArgumentException("minGram must not be greater than maxGram");
+                throw new ArgumentException("minGram must not be greater than maxGram");
             }
             termAtt = AddAttribute<ICharTermAttribute>();
             posIncAtt = AddAttribute<IPositionIncrementAttribute>();

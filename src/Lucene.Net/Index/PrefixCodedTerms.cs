@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
                 {
                     input = new RAMInputStream("PrefixCodedTermsIterator", buffer);
                 }
-                catch (System.IO.IOException e)
+                catch (IOException e)
                 {
                     throw new Exception(e.ToString(), e);
                 }

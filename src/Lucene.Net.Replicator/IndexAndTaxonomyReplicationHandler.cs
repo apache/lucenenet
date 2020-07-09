@@ -59,7 +59,7 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Constructor with the given index directory and callback to notify when the indexes were updated.
         /// </summary>
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         public IndexAndTaxonomyReplicationHandler(Directory indexDirectory, Directory taxonomyDirectory, Func<bool?> callback)
         {
             this.indexDirectory = indexDirectory;

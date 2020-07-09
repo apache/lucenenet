@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
@@ -47,7 +48,7 @@ namespace Lucene.Net.Analysis.Core
             AssureMatchVersion();
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

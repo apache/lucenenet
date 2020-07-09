@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
@@ -48,7 +50,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             if (startOffset < 0 || endOffset < startOffset)
             {
-                throw new System.ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset);
+                throw new ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset);
             }
 
             this.startOffset = startOffset;

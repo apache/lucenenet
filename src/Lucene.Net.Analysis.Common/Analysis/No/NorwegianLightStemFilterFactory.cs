@@ -56,11 +56,11 @@ namespace Lucene.Net.Analysis.No
             }
             else
             {
-                throw new System.ArgumentException("invalid variant: " + variant);
+                throw new ArgumentException("invalid variant: " + variant);
             }
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

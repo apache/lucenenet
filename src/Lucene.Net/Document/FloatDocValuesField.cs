@@ -1,4 +1,5 @@
 using J2N;
+using System;
 
 namespace Lucene.Net.Documents
 {
@@ -40,7 +41,7 @@ namespace Lucene.Net.Documents
         /// Creates a new DocValues field with the specified 32-bit <see cref="float"/> value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 32-bit <see cref="float"/> value </param>
-        /// <exception cref="System.ArgumentNullException"> if the field name is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if the field name is <c>null</c> </exception>
         public SingleDocValuesField(string name, float value)
             : base(name, BitConversion.SingleToInt32Bits(value))
         {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Documents
 
         public override void SetInt64Value(long value)
         {
-            throw new System.ArgumentException("cannot change value type from System.Single to System.Int64");
+            throw new ArgumentException("cannot change value type from System.Single to System.Int64");
         }
     }
 }

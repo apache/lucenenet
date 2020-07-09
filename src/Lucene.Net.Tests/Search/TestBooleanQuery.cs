@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // okay

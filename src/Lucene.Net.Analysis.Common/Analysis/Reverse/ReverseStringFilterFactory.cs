@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Reverse
@@ -41,7 +42,7 @@ namespace Lucene.Net.Analysis.Reverse
             AssureMatchVersion();
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

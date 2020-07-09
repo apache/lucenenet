@@ -253,13 +253,13 @@ namespace Lucene.Net.Search
             public override int TermCountCutoff
             {
                 get => base.TermCountCutoff; // LUCENENET specific - adding getter for API consistency check
-                set => throw new System.NotSupportedException("Please create a private instance");
+                set => throw new NotSupportedException("Please create a private instance");
             }
 
             public override double DocCountPercent
             {
                 get => base.DocCountPercent; // LUCENENET specific - adding getter for API consistency check
-                set => throw new System.NotSupportedException("Please create a private instance");
+                set => throw new NotSupportedException("Please create a private instance");
             }
         }
 
@@ -271,7 +271,7 @@ namespace Lucene.Net.Search
         {
             if (field == null)
             {
-                throw new System.ArgumentException("field must not be null");
+                throw new ArgumentException("field must not be null");
             }
             this.m_field = field;
         }

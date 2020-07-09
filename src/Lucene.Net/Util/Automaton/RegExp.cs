@@ -3,6 +3,7 @@ using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -610,7 +611,7 @@ namespace Lucene.Net.Util.Automaton
                         {
                             aa = automaton_provider.GetAutomaton(s);
                         }
-                        catch (System.IO.IOException e)
+                        catch (IOException e)
                         {
                             throw new ArgumentException(e.ToString(), e);
                         }
@@ -917,7 +918,7 @@ namespace Lucene.Net.Util.Automaton
         {
             if (from > to)
             {
-                throw new System.ArgumentException("invalid range: from (" + from + ") cannot be > to (" + to + ")");
+                throw new ArgumentException("invalid range: from (" + from + ") cannot be > to (" + to + ")");
             }
             RegExp r = new RegExp();
             r.kind = Kind.REGEXP_CHAR_RANGE;

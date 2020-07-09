@@ -1648,7 +1648,7 @@ namespace Lucene.Net.Index
 
                 if (!(reader is SegmentReader))
                 {
-                    throw new System.ArgumentException("the reader must be a SegmentReader or composite reader containing only SegmentReaders");
+                    throw new ArgumentException("the reader must be a SegmentReader or composite reader containing only SegmentReaders");
                 }
 
                 SegmentCommitInfo info = ((SegmentReader)reader).SegmentInfo;
@@ -1884,7 +1884,7 @@ namespace Lucene.Net.Index
             EnsureOpen();
             if (!globalFieldNumberMap.Contains(field, DocValuesType.NUMERIC))
             {
-                throw new System.ArgumentException("can only update existing numeric-docvalues fields!");
+                throw new ArgumentException("can only update existing numeric-docvalues fields!");
             }
             try
             {
@@ -1930,7 +1930,7 @@ namespace Lucene.Net.Index
             EnsureOpen();
             if (!globalFieldNumberMap.Contains(field, DocValuesType.BINARY))
             {
-                throw new System.ArgumentException("can only update existing binary-docvalues fields!");
+                throw new ArgumentException("can only update existing binary-docvalues fields!");
             }
             try
             {
@@ -2304,7 +2304,7 @@ namespace Lucene.Net.Index
                             Exception t = merge.Exception;
                             if (t != null)
                             {
-                                throw new System.IO.IOException("background merge hit exception: " + merge.SegString(directory), t);
+                                throw new IOException("background merge hit exception: " + merge.SegString(directory), t);
                             }
                         }
 
@@ -2940,11 +2940,11 @@ namespace Lucene.Net.Index
             {
                 if (dups.Contains(dirs[i]))
                 {
-                    throw new System.ArgumentException("Directory " + dirs[i] + " appears more than once");
+                    throw new ArgumentException("Directory " + dirs[i] + " appears more than once");
                 }
                 if (dirs[i] == directory)
                 {
-                    throw new System.ArgumentException("Cannot add directory to itself");
+                    throw new ArgumentException("Cannot add directory to itself");
                 }
                 dups.Add(dirs[i]);
             }
@@ -3403,7 +3403,7 @@ namespace Lucene.Net.Index
             {
                 currentCodec.SegmentInfoFormat.SegmentInfoWriter.Write(trackingDir, newInfo, fis, context);
             }
-            catch (System.NotSupportedException /*uoe*/)
+            catch (NotSupportedException /*uoe*/)
             {
 #pragma warning disable 612, 618
                 if (currentCodec is Lucene3xCodec)
@@ -5113,7 +5113,7 @@ namespace Lucene.Net.Index
                         filesToRemove = CreateCompoundFile(infoStream, directory, checkAbort, merge.info.Info, context);
                         success = true;
                     }
-                    catch (System.IO.IOException ioe)
+                    catch (IOException ioe)
                     {
                         lock (this)
                         {
@@ -5730,7 +5730,7 @@ namespace Lucene.Net.Index
                     checkAbort.Work(directory.FileLength(file));
                 }
             }
-            catch (System.IO.IOException ex)
+            catch (IOException ex)
             {
                 prior = ex;
             }
@@ -5912,7 +5912,7 @@ namespace Lucene.Net.Index
             //}
             // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
             // in Lucene, we need to catch it here to be on the safe side.
-            catch (System.IO.DirectoryNotFoundException)
+            catch (DirectoryNotFoundException)
             {
                 return false;
             }

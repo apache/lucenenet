@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.QueryParsers.Classic
@@ -19,113 +20,113 @@ namespace Lucene.Net.QueryParsers.Classic
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-	
-	/// <summary>
+    
+    /// <summary>
     /// An efficient implementation of JavaCC's <see cref="ICharStream"/> interface.  
     /// <para/>
     /// Note that
-	/// this does not do line-number counting, but instead keeps track of the
-	/// character position of the token in the input, as required by Lucene's <see cref="Lucene.Net.Analysis.Token" />
-	/// API.
-	/// </summary>
-	public sealed class FastCharStream : ICharStream
-	{
-		internal char[] buffer = null;
-		
-		internal int bufferLength = 0; // end of valid chars
-		internal int bufferPosition = 0; // next char to read
-		
-		internal int tokenStart = 0; // offset in buffer
-		internal int bufferStart = 0; // position in file of buffer
-		
-		internal System.IO.TextReader input; // source of chars
+    /// this does not do line-number counting, but instead keeps track of the
+    /// character position of the token in the input, as required by Lucene's <see cref="Lucene.Net.Analysis.Token" />
+    /// API.
+    /// </summary>
+    public sealed class FastCharStream : ICharStream
+    {
+        internal char[] buffer = null;
+        
+        internal int bufferLength = 0; // end of valid chars
+        internal int bufferPosition = 0; // next char to read
+        
+        internal int tokenStart = 0; // offset in buffer
+        internal int bufferStart = 0; // position in file of buffer
+        
+        internal TextReader input; // source of chars
 
         /// <summary>
-        /// Constructs from a <see cref="System.IO.TextReader"/>. 
+        /// Constructs from a <see cref="TextReader"/>. 
         /// </summary>
-        public FastCharStream(System.IO.TextReader r)
-		{
-			input = r;
-		}
-		
-		public char ReadChar()
-		{
-			if (bufferPosition >= bufferLength)
-				Refill();
-			return buffer[bufferPosition++];
-		}
-		
-		private void  Refill()
-		{
-			int newPosition = bufferLength - tokenStart;
-			
-			if (tokenStart == 0)
-			{
-				// token won't fit in buffer
-				if (buffer == null)
-				{
-					// first time: alloc buffer
-					buffer = new char[2048];
-				}
-				else if (bufferLength == buffer.Length)
-				{
-					// grow buffer
-					char[] newBuffer = new char[buffer.Length * 2];
-					Array.Copy(buffer, 0, newBuffer, 0, bufferLength);
-					buffer = newBuffer;
-				}
-			}
-			else
-			{
-				// shift token to front
-				Array.Copy(buffer, tokenStart, buffer, 0, newPosition);
-			}
-			
-			bufferLength = newPosition; // update state
-			bufferPosition = newPosition;
-			bufferStart += tokenStart;
-			tokenStart = 0;
-			
-			int charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
-			if (charsRead <= 0)
-				throw new System.IO.IOException("read past eof");
-			else
-				bufferLength += charsRead;
-		}
-		
-		public char BeginToken()
-		{
-			tokenStart = bufferPosition;
-			return ReadChar();
-		}
-		
-		public void  BackUp(int amount)
-		{
-			bufferPosition -= amount;
-		}
+        public FastCharStream(TextReader r)
+        {
+            input = r;
+        }
+        
+        public char ReadChar()
+        {
+            if (bufferPosition >= bufferLength)
+                Refill();
+            return buffer[bufferPosition++];
+        }
+        
+        private void  Refill()
+        {
+            int newPosition = bufferLength - tokenStart;
+            
+            if (tokenStart == 0)
+            {
+                // token won't fit in buffer
+                if (buffer == null)
+                {
+                    // first time: alloc buffer
+                    buffer = new char[2048];
+                }
+                else if (bufferLength == buffer.Length)
+                {
+                    // grow buffer
+                    char[] newBuffer = new char[buffer.Length * 2];
+                    Array.Copy(buffer, 0, newBuffer, 0, bufferLength);
+                    buffer = newBuffer;
+                }
+            }
+            else
+            {
+                // shift token to front
+                Array.Copy(buffer, tokenStart, buffer, 0, newPosition);
+            }
+            
+            bufferLength = newPosition; // update state
+            bufferPosition = newPosition;
+            bufferStart += tokenStart;
+            tokenStart = 0;
+            
+            int charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
+            if (charsRead <= 0)
+                throw new IOException("read past eof");
+            else
+                bufferLength += charsRead;
+        }
+        
+        public char BeginToken()
+        {
+            tokenStart = bufferPosition;
+            return ReadChar();
+        }
+        
+        public void  BackUp(int amount)
+        {
+            bufferPosition -= amount;
+        }
 
-	    public string Image => new string(buffer, tokenStart, bufferPosition - tokenStart);
+        public string Image => new string(buffer, tokenStart, bufferPosition - tokenStart);
 
         public char[] GetSuffix(int len)
-		{
-			char[] value = new char[len];
-			Array.Copy(buffer, bufferPosition - len, value, 0, len);
-			return value;
-		}
-		
-		public void Done()
-		{
-			try
-			{
-				input.Dispose();
-			}
-			catch (System.IO.IOException e)
-			{
-				Console.Error.WriteLine("Caught: " + e + "; ignoring.");
-			}
-		}
+        {
+            char[] value = new char[len];
+            Array.Copy(buffer, bufferPosition - len, value, 0, len);
+            return value;
+        }
+        
+        public void Done()
+        {
+            try
+            {
+                input.Dispose();
+            }
+            catch (IOException e)
+            {
+                Console.Error.WriteLine("Caught: " + e + "; ignoring.");
+            }
+        }
 
-	    public int Column => bufferStart + bufferPosition;
+        public int Column => bufferStart + bufferPosition;
 
         public int Line => 1;
 

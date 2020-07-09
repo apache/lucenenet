@@ -224,7 +224,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             if (!matchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
             {
-                throw new System.ArgumentException("This class only works with Lucene 4.8+. To emulate the old (broken) behavior of WordDelimiterFilter, use Lucene47WordDelimiterFilter");
+                throw new ArgumentException("This class only works with Lucene 4.8+. To emulate the old (broken) behavior of WordDelimiterFilter, use Lucene47WordDelimiterFilter");
             }
             this.flags = configurationFlags;
             this.protWords = protWords;

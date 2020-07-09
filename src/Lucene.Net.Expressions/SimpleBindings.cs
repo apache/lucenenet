@@ -123,7 +123,7 @@ namespace Lucene.Net.Expressions
         }
 
         /// <summary>Traverses the graph of bindings, checking there are no cycles or missing references</summary>
-        /// <exception cref="System.ArgumentException">if the bindings is inconsistent</exception>
+        /// <exception cref="ArgumentException">if the bindings is inconsistent</exception>
         public void Validate()
         {
             foreach (object o in map.Values)

@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Pattern
             replaceAll = "all".Equals(Get(args, "replace", new string[] { "all", "first" }, "all"), StringComparison.Ordinal);
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

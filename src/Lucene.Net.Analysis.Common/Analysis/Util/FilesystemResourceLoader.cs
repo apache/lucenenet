@@ -4,21 +4,21 @@ using System.IO;
 namespace Lucene.Net.Analysis.Util
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Simple <see cref="IResourceLoader"/> that opens resource files
@@ -73,11 +73,11 @@ namespace Lucene.Net.Analysis.Util
             // flag to true, so we use the Directory object to check the path explicitly.
             if (baseDirectory != null && !Directory.Exists(baseDirectory.FullName))
             {
-                throw new System.ArgumentException("baseDirectory is not a directory or null");
+                throw new ArgumentException("baseDirectory is not a directory or null");
             }
             if (@delegate == null)
             {
-                throw new System.ArgumentException("delegate ResourceLoader may not be null");
+                throw new ArgumentException("delegate ResourceLoader may not be null");
             }
 
             this.baseDirectory = baseDirectory;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Util
                 FileInfo file = null;
 
                 // First try absolute.
-                if (System.IO.File.Exists(resource))
+                if (File.Exists(resource))
                 {
                     file = new FileInfo(resource);
                 }
@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     // Try as a relative path
                     var fullPath = System.IO.Path.GetFullPath(resource);
-                    if (System.IO.File.Exists(fullPath))
+                    if (File.Exists(fullPath))
                     {
                         file = new FileInfo(fullPath);
                     }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Analysis.Util
                     {
                         // Try to combine with the base directory
                         string based = System.IO.Path.Combine(baseDirectory.FullName, resource);
-                        if (System.IO.File.Exists(based))
+                        if (File.Exists(based))
                         {
                             file = new FileInfo(based);
                         }

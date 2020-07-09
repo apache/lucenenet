@@ -272,7 +272,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                throw new System.ArgumentException("fileName \"" + fileName + "\" is not a segments file");
+                throw new ArgumentException("fileName \"" + fileName + "\" is not a segments file");
             }
         }
 

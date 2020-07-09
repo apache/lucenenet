@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
             {
                 if (value < 1)
                 {
-                    throw new System.ArgumentException("maxClauseCount must be >= 1");
+                    throw new ArgumentException("maxClauseCount must be >= 1");
                 }
                 BooleanQuery.maxClauseCount = value;
             }

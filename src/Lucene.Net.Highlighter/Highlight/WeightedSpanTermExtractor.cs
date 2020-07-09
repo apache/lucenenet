@@ -8,6 +8,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Highlight
@@ -61,7 +62,7 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         /// <param name="query"><see cref="Query"/> to extract Terms from</param>
         /// <param name="terms">Map to place created <see cref="WeightedSpanTerm"/>s in</param>
-        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         protected virtual void Extract(Query query, IDictionary<string, WeightedSpanTerm> terms)
         {
             if (query is BooleanQuery)
@@ -242,7 +243,7 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         /// <param name="terms"><see cref="T:IDictionary{string, WeightedSpanTerm}"/> to place created <see cref="WeightedSpanTerm"/>s in</param>
         /// <param name="spanQuery"><see cref="SpanQuery"/> to extract Terms from</param>
-        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         protected virtual void ExtractWeightedSpanTerms(IDictionary<string, WeightedSpanTerm> terms, SpanQuery spanQuery)
         {
             ISet<string> fieldNames;
@@ -343,7 +344,7 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         /// <param name="terms"><see cref="T:IDictionary{string, WeightedSpanTerm}"/> to place created <see cref="WeightedSpanTerm"/>s in</param>
         /// <param name="query"><see cref="Query"/> to extract Terms from</param>
-        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         protected virtual void ExtractWeightedTerms(IDictionary<string, WeightedSpanTerm> terms, Query query)
         {
             var nonWeightedTerms = new JCG.HashSet<Term>();
@@ -455,7 +456,7 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="query"><see cref="Query"/> that caused hit</param>
         /// <param name="tokenStream"><see cref="Analysis.TokenStream"/> of text to be highlighted</param>
         /// <returns>Map containing <see cref="WeightedSpanTerm"/>s</returns>
-        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public virtual IDictionary<string, WeightedSpanTerm> GetWeightedSpanTerms(Query query, TokenStream tokenStream)
         {
             return GetWeightedSpanTerms(query, tokenStream, null);
@@ -469,7 +470,7 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="tokenStream"><see cref="Analysis.TokenStream"/> of text to be highlighted</param>
         /// <param name="fieldName">restricts Term's used based on field name</param>
         /// <returns>Map containing <see cref="WeightedSpanTerm"/>s</returns>
-        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public virtual IDictionary<string, WeightedSpanTerm> GetWeightedSpanTerms(Query query, TokenStream tokenStream,
                                                                           string fieldName)
         {
@@ -505,7 +506,7 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="fieldName">restricts Term's used based on field name</param>
         /// <param name="reader">to use for scoring</param>
         /// <returns>Map of <see cref="WeightedSpanTerm"/>s with quasi tf/idf scores</returns>
-        /// <exception cref="System.IO.IOException">If there is a low-level I/O error</exception>
+        /// <exception cref="IOException">If there is a low-level I/O error</exception>
         public virtual IDictionary<string, WeightedSpanTerm> GetWeightedSpanTermsWithScores(
             Query query, TokenStream tokenStream, string fieldName, IndexReader reader)
         {

@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("Truncate", TruncateTokenFilterFactory.PREFIX_LENGTH_KEY, "5", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameter(s):"));
             }
@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("Truncate", TruncateTokenFilterFactory.PREFIX_LENGTH_KEY, "-5");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains(TruncateTokenFilterFactory.PREFIX_LENGTH_KEY + " parameter must be a positive number: -5"));
             }

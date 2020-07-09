@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -39,7 +41,7 @@ namespace Lucene.Net.Search
         /// non-<code>null</code> ones.</description></item>
         /// </list>
         /// </summary>
-        /// <exception cref="System.ArgumentException">
+        /// <exception cref="ArgumentException">
         ///           if either 0 collectors were input, or all collectors are
         ///           <c>null</c>. </exception>
         public static ICollector Wrap(params ICollector[] collectors)
@@ -58,7 +60,7 @@ namespace Lucene.Net.Search
 
             if (n == 0)
             {
-                throw new System.ArgumentException("At least 1 collector must not be null");
+                throw new ArgumentException("At least 1 collector must not be null");
             }
             else if (n == 1)
             {

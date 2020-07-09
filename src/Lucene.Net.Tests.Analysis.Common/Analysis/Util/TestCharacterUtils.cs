@@ -183,7 +183,7 @@ namespace Lucene.Net.Analysis.Util
                 CharacterUtils.NewCharacterBuffer(1);
                 fail("length must be >= 2");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
             }
         }

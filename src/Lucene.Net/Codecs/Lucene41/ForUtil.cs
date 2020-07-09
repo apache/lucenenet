@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -153,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <param name="data">     The data to write. </param>
         /// <param name="encoded">  A buffer to use to encode data. </param>
         /// <param name="out">      The destination output. </param>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         internal void WriteBlock(int[] data, byte[] encoded, IndexOutput @out)
         {
             if (IsAllEqual(data))
@@ -183,7 +184,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <param name="in">        The input to use to read data. </param>
         /// <param name="encoded">   A buffer that can be used to store encoded data. </param>
         /// <param name="decoded">   Where to write decoded data. </param>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         internal void ReadBlock(IndexInput @in, byte[] encoded, int[] decoded)
         {
             int numBits = @in.ReadByte();
@@ -210,7 +211,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// Skip the next block of data.
         /// </summary>
         /// <param name="in">      The input where to read data. </param>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         internal void SkipBlock(IndexInput @in)
         {
             int numBits = @in.ReadByte();

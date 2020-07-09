@@ -478,14 +478,14 @@ namespace Lucene.Net.Index
                 Assert.Fail("expected FileNotFoundException/NoSuchFileException");
             }
 #pragma warning disable 168
-            catch (System.IO.FileNotFoundException /*| NoSuchFileException*/ e)
+            catch (FileNotFoundException /*| NoSuchFileException*/ e)
 #pragma warning restore 168
             {
                 // expected
             }
             // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
             // in Lucene, we need to catch it here to be on the safe side.
-            catch (System.IO.DirectoryNotFoundException)
+            catch (DirectoryNotFoundException)
             {
                 // expected
             }
@@ -499,14 +499,14 @@ namespace Lucene.Net.Index
                 Assert.Fail("expected FileNotFoundException/NoSuchFileException");
             }
 #pragma warning disable 168
-            catch (System.IO.FileNotFoundException /*| NoSuchFileException*/ e)
+            catch (FileNotFoundException /*| NoSuchFileException*/ e)
 #pragma warning restore 168
             {
                 // expected
             }
             // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
             // in Lucene, we need to catch it here to be on the safe side.
-            catch (System.IO.DirectoryNotFoundException)
+            catch (DirectoryNotFoundException)
             {
                 // expected
             }
@@ -1163,7 +1163,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("did not hit exception");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
 #pragma warning restore 168
             {
                 // expected

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -168,7 +169,7 @@ namespace Lucene.Net.Index
             {
                 if (docValueType != DocValuesType.NONE && docValueType != value)
                 {
-                    throw new System.ArgumentException("cannot change DocValues type from " + docValueType + " to " + value + " for field \"" + Name + "\"");
+                    throw new ArgumentException("cannot change DocValues type from " + docValueType + " to " + value + " for field \"" + Name + "\"");
                 }
                 docValueType = value;
                 Debug.Assert(CheckConsistency());
@@ -202,7 +203,7 @@ namespace Lucene.Net.Index
             {
                 if (normType != DocValuesType.NONE && normType != value)
                 {
-                    throw new System.ArgumentException("cannot change Norm type from " + normType + " to " + value + " for field \"" + Name + "\"");
+                    throw new ArgumentException("cannot change Norm type from " + normType + " to " + value + " for field \"" + Name + "\"");
                 }
                 normType = value;
                 Debug.Assert(CheckConsistency());

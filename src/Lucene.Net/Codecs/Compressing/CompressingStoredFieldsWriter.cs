@@ -297,7 +297,7 @@ namespace Lucene.Net.Codecs.Compressing
                         bits = NUMERIC_DOUBLE;
                         break;
                     default:
-                        throw new System.ArgumentException("cannot store numeric type " + field.NumericType);
+                        throw new ArgumentException("cannot store numeric type " + field.NumericType);
                 }
 
                 @string = null;
@@ -317,7 +317,7 @@ namespace Lucene.Net.Codecs.Compressing
                     @string = field.GetStringValue();
                     if (@string == null)
                     {
-                        throw new System.ArgumentException("field " + field.Name + " is stored but does not have BinaryValue, StringValue nor NumericValue");
+                        throw new ArgumentException("field " + field.Name + " is stored but does not have BinaryValue, StringValue nor NumericValue");
                     }
                 }
             }

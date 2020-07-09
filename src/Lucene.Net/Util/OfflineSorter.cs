@@ -77,12 +77,12 @@ namespace Lucene.Net.Util
             {
                 if (bytes > int.MaxValue)
                 {
-                    throw new System.ArgumentException("Buffer too large for Java (" + (int.MaxValue / MB) + "mb max): " + bytes);
+                    throw new ArgumentException("Buffer too large for Java (" + (int.MaxValue / MB) + "mb max): " + bytes);
                 }
 
                 if (bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
                 {
-                    throw new System.ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + bytes);
+                    throw new ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + bytes);
                 }
 
                 this.bytes = (int)bytes;
@@ -228,12 +228,12 @@ namespace Lucene.Net.Util
             InitializeInstanceFields();
             if (ramBufferSize.bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
             {
-                throw new System.ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + ramBufferSize.bytes);
+                throw new ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + ramBufferSize.bytes);
             }
 
             if (maxTempfiles < 2)
             {
-                throw new System.ArgumentException("maxTempFiles must be >= 2");
+                throw new ArgumentException("maxTempFiles must be >= 2");
             }
 
             this.ramBufferSize = ramBufferSize;

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Compound
@@ -54,7 +55,7 @@ namespace Lucene.Net.Analysis.Compound
             onlyLongestMatch = GetBoolean(args, "onlyLongestMatch", true);
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

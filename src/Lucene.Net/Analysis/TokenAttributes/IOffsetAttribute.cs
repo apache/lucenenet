@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <summary>
         /// Set the starting and ending offset.
         /// </summary>
-        /// <exception cref="System.ArgumentException"> If <paramref name="startOffset"/> or <paramref name="endOffset"/>
+        /// <exception cref="ArgumentException"> If <paramref name="startOffset"/> or <paramref name="endOffset"/>
         ///         are negative, or if <paramref name="startOffset"/> is greater than
         ///         <paramref name="endOffset"/> </exception>
         /// <seealso cref="StartOffset"/>

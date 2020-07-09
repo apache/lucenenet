@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Documents
@@ -64,7 +65,7 @@ namespace Lucene.Net.Documents
         /// Creates a new un-stored <see cref="TextField"/> with <see cref="TextReader"/> value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="reader"> <see cref="TextReader"/> value </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="reader"/> is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="reader"/> is <c>null</c> </exception>
         public TextField(string name, TextReader reader)
             : base(name, reader, TYPE_NOT_STORED)
         {
@@ -75,7 +76,7 @@ namespace Lucene.Net.Documents
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="string"/> value </param>
         /// <param name="store"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
         public TextField(string name, string value, Store store)
             : base(name, value, store == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
@@ -85,7 +86,7 @@ namespace Lucene.Net.Documents
         /// Creates a new un-stored <see cref="TextField"/> with <see cref="TokenStream"/> value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="stream"> <see cref="TokenStream"/> value </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="stream"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="stream"/> is <c>null</c>. </exception>
         public TextField(string name, TokenStream stream)
             : base(name, stream, TYPE_NOT_STORED)
         {

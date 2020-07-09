@@ -41,7 +41,7 @@ namespace Lucene.Net.Index.Sorter
         {
             if (sort.NeedsScores)
             {
-                throw new System.ArgumentException("Cannot sort an index with a Sort that refers to the relevance score");
+                throw new ArgumentException("Cannot sort an index with a Sort that refers to the relevance score");
             }
             this.sort = sort;
         }
@@ -331,25 +331,25 @@ namespace Lucene.Net.Index.Sorter
 
             public override float GetScore()
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
-            public override int Freq => throw new System.NotSupportedException();
+            public override int Freq => throw new NotSupportedException();
 
-            public override int DocID => throw new System.NotSupportedException();
+            public override int DocID => throw new NotSupportedException();
 
             public override int NextDoc()
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
             public override int Advance(int target)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
             public override long GetCost()
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
         }
     }

@@ -269,7 +269,7 @@ namespace Lucene.Net.Analysis.Synonym
             this.fst = synonyms.Fst;
             if (fst == null)
             {
-                throw new System.ArgumentException("fst must be non-null");
+                throw new ArgumentException("fst must be non-null");
             }
             this.fstReader = fst.GetBytesReader();
 

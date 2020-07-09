@@ -1,6 +1,7 @@
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
@@ -83,7 +84,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             Debug.Assert(field.Number != -1);
             if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
-                throw new System.NotSupportedException("this codec cannot index offsets");
+                throw new NotSupportedException("this codec cannot index offsets");
             }
             //System.out.println("w field=" + field.Name + " storePayload=" + field.storePayloads + " number=" + field.number);
             return new PreFlexTermsWriter(this, field);

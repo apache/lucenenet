@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (keysAndValues.Length % 2 == 1)
             {
-                throw new System.ArgumentException("invalid keysAndValues map");
+                throw new ArgumentException("invalid keysAndValues map");
             }
             string previous;
             IDictionary<string, string> args = new Dictionary<string, string>();
@@ -77,9 +77,9 @@ namespace Lucene.Net.Analysis.Util
             catch (TargetInvocationException e)
             {
                 // to simplify tests that check for illegal parameters
-                if (e.InnerException is System.ArgumentException)
+                if (e.InnerException is ArgumentException)
                 {
-                    throw (System.ArgumentException)e.InnerException;
+                    throw (ArgumentException)e.InnerException;
                 }
                 else
                 {

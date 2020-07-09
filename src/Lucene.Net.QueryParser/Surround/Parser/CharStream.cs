@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Lucene.Net.QueryParsers.Surround.Parser
 {
@@ -39,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// <summary> 
         /// Returns the next character from the selected input.  The method
         /// of selecting the input is the responsibility of the class
-        /// implementing this interface.  Can throw any <see cref="System.IO.IOException"/>.
+        /// implementing this interface.  Can throw any <see cref="IOException"/>.
         /// </summary>
         char ReadChar();
 

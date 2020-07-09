@@ -1,5 +1,6 @@
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 
@@ -242,7 +243,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0 || value > Info.DocCount)
                 {
-                    throw new System.ArgumentException("invalid delCount=" + value + " (docCount=" + Info.DocCount + ")");
+                    throw new ArgumentException("invalid delCount=" + value + " (docCount=" + Info.DocCount + ")");
                 }
                 this.delCount = value;
             }

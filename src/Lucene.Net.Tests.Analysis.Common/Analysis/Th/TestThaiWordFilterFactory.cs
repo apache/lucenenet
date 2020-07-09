@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Th
                 TokenFilterFactory("ThaiWord", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

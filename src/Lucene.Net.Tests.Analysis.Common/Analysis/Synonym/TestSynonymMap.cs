@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.Synonym
                 SlowSynonymFilterFactory.ParseRules(rules, synMap, "=>", ",", true, null);
                 fail("IllegalArgumentException must be thrown.");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
             }
         }

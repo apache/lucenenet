@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.NGram
                 new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, 0, 0);
 #pragma warning restore 612, 618
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 gotException = true;
             }
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.NGram
                 new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, 2, 1);
 #pragma warning restore 612, 618
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 gotException = true;
             }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.NGram
                 new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, input, EdgeNGramTokenFilter.Side.FRONT, -1, 2);
 #pragma warning restore 612, 618
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 gotException = true;
             }

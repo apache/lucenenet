@@ -378,7 +378,7 @@ namespace Lucene.Net.Codecs.Memory
                 int numTerms = (int) termsIn.Count;
                 if (numTerms == -1)
                 {
-                    throw new System.ArgumentException("codec does not provide Terms.size()");
+                    throw new ArgumentException("codec does not provide Terms.size()");
                 }
                 terms = new TermAndSkip[numTerms];
                 termOffsets = new int[1 + numTerms];
@@ -1781,12 +1781,12 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override SeekStatus SeekCeil(BytesRef term)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
 
                 public override void SeekExact(long ord)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
             }
         }

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Facet
@@ -72,7 +73,7 @@ namespace Lucene.Net.Facet
             this.Dim = dim;
             if (path.Length == 0)
             {
-                throw new System.ArgumentException("path must have at least one element");
+                throw new ArgumentException("path must have at least one element");
             }
             this.Path = path;
         }
@@ -91,7 +92,7 @@ namespace Lucene.Net.Facet
         {
             if (string.IsNullOrEmpty(label))
             {
-                throw new System.ArgumentException("empty or null components not allowed; got: " + label);
+                throw new ArgumentException("empty or null components not allowed; got: " + label);
             }
         }
     }

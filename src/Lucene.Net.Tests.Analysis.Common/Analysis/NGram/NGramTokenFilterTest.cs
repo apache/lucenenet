@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.NGram
             {
                 new NGramTokenFilter(TEST_VERSION_CURRENT, input, 2, 1);
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 gotException = true;
             }
@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.NGram
             {
                 new NGramTokenFilter(TEST_VERSION_CURRENT, input, 0, 1);
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 gotException = true;
             }

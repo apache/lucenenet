@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Analysis.Miscellaneous
+﻿using System;
+
+namespace Lucene.Net.Analysis.Miscellaneous
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -61,7 +63,7 @@
         {
             if (maxTokenCount < 1)
             {
-                throw new System.ArgumentOutOfRangeException("maxTokenCount must be greater than zero");
+                throw new ArgumentOutOfRangeException("maxTokenCount must be greater than zero");
             }
             this.maxTokenCount = maxTokenCount;
             this.consumeAllTokens = consumeAllTokens;

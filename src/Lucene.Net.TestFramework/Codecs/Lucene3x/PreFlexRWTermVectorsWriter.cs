@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             lastFieldName = info.Name;
             if (payloads)
             {
-                throw new System.NotSupportedException("3.x codec does not support payloads on vectors!");
+                throw new NotSupportedException("3.x codec does not support payloads on vectors!");
             }
             this.positions = positions;
             this.offsets = offsets;

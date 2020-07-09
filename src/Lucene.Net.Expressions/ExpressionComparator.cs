@@ -4,6 +4,7 @@ using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Expressions
 {
@@ -55,7 +56,7 @@ namespace Lucene.Net.Expressions
                 context["scorer"] = scorer;
                 scores = source.GetValues(context, readerContext);
             }
-            catch (System.IO.IOException e)
+            catch (IOException e)
             {
                 throw new Exception(e.ToString(), e);
             }

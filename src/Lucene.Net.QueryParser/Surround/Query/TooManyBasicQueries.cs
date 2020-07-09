@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
@@ -31,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    public class TooManyBasicQueries : System.IO.IOException
+    public class TooManyBasicQueries : IOException
     {
         public TooManyBasicQueries(int maxBasicQueries)
             : base("Exceeded maximum of " + maxBasicQueries + " basic queries.")

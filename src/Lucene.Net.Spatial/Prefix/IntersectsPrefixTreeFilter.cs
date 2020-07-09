@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
 using Lucene.Net.Util;
 using Spatial4n.Core.Shapes;
+using System.IO;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -58,7 +59,7 @@ namespace Lucene.Net.Spatial.Prefix
             return h;
         }
 
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             return new VisitorTemplateAnonymousHelper(this, context, acceptDocs, hasIndexedLeaves).GetDocIdSet();

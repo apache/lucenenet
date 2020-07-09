@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Standard
                 TokenizerFactory("UAX29URLEmail", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Analysis.Standard
                 TokenizerFactory("UAX29URLEmail", "maxTokenLength", "-1").Create(new StringReader("hello"));
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("maxTokenLength must be greater than zero"));
             }

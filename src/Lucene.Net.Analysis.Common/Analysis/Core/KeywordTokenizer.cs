@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Core
@@ -48,7 +49,7 @@ namespace Lucene.Net.Analysis.Core
 
             if (bufferSize <= 0)
             {
-                throw new System.ArgumentException("bufferSize must be > 0");
+                throw new ArgumentException("bufferSize must be > 0");
             }
             termAtt.ResizeBuffer(bufferSize);
         }
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analysis.Core
 
             if (bufferSize <= 0)
             {
-                throw new System.ArgumentException("bufferSize must be > 0");
+                throw new ArgumentException("bufferSize must be > 0");
             }
             termAtt.ResizeBuffer(bufferSize);
         }

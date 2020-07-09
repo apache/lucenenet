@@ -276,7 +276,7 @@ namespace Lucene.Net.Search.Suggest
         /// Persist the constructed lookup data to a directory. Optional operation. </summary>
         /// <param name="output"> <see cref="DataOutput"/> to write the data to. </param>
         /// <returns> true if successful, false if unsuccessful or not supported. </returns>
-        /// <exception cref="System.IO.IOException"> when fatal IO error occurs. </exception>
+        /// <exception cref="IOException"> when fatal IO error occurs. </exception>
         public abstract bool Store(DataOutput output);
 
         /// <summary>
@@ -284,7 +284,7 @@ namespace Lucene.Net.Search.Suggest
         /// Optional operation. </summary>
         /// <param name="input"> the <see cref="DataInput"/> to load the lookup data. </param>
         /// <returns> true if completed successfully, false if unsuccessful or not supported. </returns>
-        /// <exception cref="System.IO.IOException"> when fatal IO error occurs. </exception>
+        /// <exception cref="IOException"> when fatal IO error occurs. </exception>
         public abstract bool Load(DataInput input);
 
         /// <summary>

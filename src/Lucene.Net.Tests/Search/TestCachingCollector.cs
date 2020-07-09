@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
                 Assert.Fail("should have failed if an in-order Collector was given to replay(), " + "while CachingCollector was initialized with out-of-order collection");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // ok

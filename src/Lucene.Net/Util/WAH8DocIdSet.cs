@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace Lucene.Net.Util
@@ -123,7 +124,7 @@ namespace Lucene.Net.Util
             switch (docIdSets.Count)
             {
                 case 0:
-                    throw new System.ArgumentException("There must be at least one set to intersect");
+                    throw new ArgumentException("There must be at least one set to intersect");
                 case 1:
                     return docIdSets.First();
             }
@@ -297,7 +298,7 @@ namespace Lucene.Net.Util
             {
                 if (indexInterval < MIN_INDEX_INTERVAL)
                 {
-                    throw new System.ArgumentException("indexInterval must be >= " + MIN_INDEX_INTERVAL);
+                    throw new ArgumentException("indexInterval must be >= " + MIN_INDEX_INTERVAL);
                 }
                 this.indexInterval = indexInterval;
                 return this;
@@ -349,7 +350,7 @@ namespace Lucene.Net.Util
                 {
                     WriteHeader(reverse, clean, dirtyWords.Length);
                 }
-                catch (System.IO.IOException cannotHappen)
+                catch (IOException cannotHappen)
                 {
                     throw new InvalidOperationException(cannotHappen.ToString(), cannotHappen); // LUCENENET NOTE: This was AssertionError in Lucene
                 }
@@ -525,7 +526,7 @@ namespace Lucene.Net.Util
             {
                 if (docID <= lastDocID)
                 {
-                    throw new System.ArgumentException("Doc ids must be added in-order, got " + docID + " which is <= lastDocID=" + lastDocID);
+                    throw new ArgumentException("Doc ids must be added in-order, got " + docID + " which is <= lastDocID=" + lastDocID);
                 }
                 int wordNum = WordNum(docID);
                 if (this.wordNum == -1)

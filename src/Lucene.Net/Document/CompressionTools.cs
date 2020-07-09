@@ -24,7 +24,7 @@ namespace Lucene.Net.Documents
     /// <summary>
     /// Simple utility class providing static methods to
     /// compress and decompress binary data for stored fields.
-    /// this class uses the <see cref="System.IO.Compression.DeflateStream"/>
+    /// this class uses the <see cref="DeflateStream"/>
     /// class to compress and decompress.
     /// </summary>
     public class CompressionTools

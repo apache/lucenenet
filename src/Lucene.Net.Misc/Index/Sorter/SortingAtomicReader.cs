@@ -758,7 +758,7 @@ namespace Lucene.Net.Index.Sorter
             }
             if (reader.MaxDoc != docMap.Count)
             {
-                throw new System.ArgumentException("reader.MaxDoc should be equal to docMap.Count, got" + reader.MaxDoc + " != " + docMap.Count);
+                throw new ArgumentException("reader.MaxDoc should be equal to docMap.Count, got" + reader.MaxDoc + " != " + docMap.Count);
             }
             Debug.Assert(Sorter.IsConsistent(docMap));
             return new SortingAtomicReader(reader, docMap);

@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Synonym
                 // final synset in the file
                 AddInternal(synset, synsetSize);
             }
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
             {
                 throw new Exception("Invalid synonym rule at line " + lineNumber.ToString(), e);
             }

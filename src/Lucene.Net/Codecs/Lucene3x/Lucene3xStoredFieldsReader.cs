@@ -1,7 +1,6 @@
-using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
-using System.Reflection;
+using System.IO;
 using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -243,7 +242,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Closes the underlying <see cref="Lucene.Net.Store.IndexInput"/> streams.
         /// This means that the Fields values will not be accessible.
         /// </summary>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         protected override void Dispose(bool disposing)
         {
             if (disposing)

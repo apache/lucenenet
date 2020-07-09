@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -38,7 +39,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <para/>
         /// The default value is one.
         /// </summary>
-        /// <exception cref="System.ArgumentException"> if value
+        /// <exception cref="ArgumentException"> if value
         ///         is set to zero or negative. </exception>
         int PositionLength { set; get; }
     }

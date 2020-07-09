@@ -245,7 +245,7 @@ namespace Lucene.Net.Facet
         {
             if (sort == null)
             {
-                throw new System.ArgumentException("sort must not be null");
+                throw new ArgumentException("sort must not be null");
             }
             return (TopFieldDocs)DoSearch(searcher, null, q, filter, n, sort, false, false, fc);
         }
@@ -258,7 +258,7 @@ namespace Lucene.Net.Facet
         {
             if (sort == null)
             {
-                throw new System.ArgumentException("sort must not be null");
+                throw new ArgumentException("sort must not be null");
             }
             return (TopFieldDocs)DoSearch(searcher, null, q, filter, n, sort, doDocScores, doMaxScore, fc);
         }
@@ -289,7 +289,7 @@ namespace Lucene.Net.Facet
         {
             if (sort == null)
             {
-                throw new System.ArgumentException("sort must not be null");
+                throw new ArgumentException("sort must not be null");
             }
             return DoSearch(searcher, after, q, filter, n, sort, false, false, fc);
         }
@@ -302,7 +302,7 @@ namespace Lucene.Net.Facet
         {
             if (sort == null)
             {
-                throw new System.ArgumentException("sort must not be null");
+                throw new ArgumentException("sort must not be null");
             }
             return DoSearch(searcher, after, q, filter, n, sort, doDocScores, doMaxScore, fc);
         }
@@ -324,7 +324,7 @@ namespace Lucene.Net.Facet
 
             if (after != null && after.Doc >= limit)
             {
-                throw new System.ArgumentException("after.doc exceeds the number of documents in the reader: after.doc=" + after.Doc + " limit=" + limit);
+                throw new ArgumentException("after.doc exceeds the number of documents in the reader: after.doc=" + after.Doc + " limit=" + limit);
             }
 
 
@@ -334,7 +334,7 @@ namespace Lucene.Net.Facet
                 {
                     // TODO: if we fix type safety of TopFieldDocs we can
                     // remove this
-                    throw new System.ArgumentException("after must be a FieldDoc; got " + after);
+                    throw new ArgumentException("after must be a FieldDoc; got " + after);
                 }
                 const bool fillFields = true;
                 var hitsCollector = TopFieldCollector.Create(sort, n, (FieldDoc)after, fillFields, doDocScores, doMaxScore, false);

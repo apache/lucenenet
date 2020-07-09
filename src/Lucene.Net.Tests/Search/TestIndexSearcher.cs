@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
                 Assert.Fail("should have hit IllegalArgumentException when searchAfter exceeds maxDoc");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // ok

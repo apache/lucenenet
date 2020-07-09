@@ -27,6 +27,8 @@
  * this SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System.IO;
+
 namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
@@ -42,7 +44,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         /// <param name="name"> Automaton name. </param>
         /// <returns> Automaton. </returns>
-        /// <exception cref="System.IO.IOException"> If errors occur. </exception>
+        /// <exception cref="IOException"> If errors occur. </exception>
         Automaton GetAutomaton(string name);
     }
 }

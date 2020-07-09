@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis.Sinks
             // check that sink has correct factory
             if (!GetAttributeFactory().Equals(sink.GetAttributeFactory()))
             {
-                throw new System.ArgumentException("The supplied sink is not compatible to this tee");
+                throw new ArgumentException("The supplied sink is not compatible to this tee");
             }
             // add eventually missing attribute impls to the existing sink
             for (var it = CloneAttributes().GetAttributeImplsEnumerator(); it.MoveNext();)

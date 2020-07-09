@@ -179,7 +179,7 @@ namespace Lucene.Net.Util
             if (minTargetSize < 0)
             {
                 // catch usage that accidentally overflows int
-                throw new System.ArgumentException("invalid array size " + minTargetSize);
+                throw new ArgumentException("invalid array size " + minTargetSize);
             }
 
             if (minTargetSize == 0)

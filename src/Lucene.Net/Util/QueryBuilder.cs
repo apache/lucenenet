@@ -87,7 +87,7 @@ namespace Lucene.Net.Util
         {
             if (@operator != Occur.SHOULD && @operator != Occur.MUST)
             {
-                throw new System.ArgumentException("invalid operator: only SHOULD or MUST are allowed");
+                throw new ArgumentException("invalid operator: only SHOULD or MUST are allowed");
             }
             return CreateFieldQuery(analyzer, @operator, field, queryText, false, 0);
         }
@@ -130,7 +130,7 @@ namespace Lucene.Net.Util
         {
             if (float.IsNaN(fraction) || fraction < 0 || fraction > 1)
             {
-                throw new System.ArgumentException("fraction should be >= 0 and <= 1");
+                throw new ArgumentException("fraction should be >= 0 and <= 1");
             }
 
             // TODO: wierd that BQ equals/rewrite/scorer doesn't handle this?
@@ -234,13 +234,13 @@ namespace Lucene.Net.Util
                             hasMoreTokens = buffer.IncrementToken();
                         }
                     }
-                    catch (System.IO.IOException)
+                    catch (IOException)
                     {
                         // ignore
                     }
                 }
             }
-            catch (System.IO.IOException e)
+            catch (IOException e)
             {
                 throw new Exception("Error analyzing query text", e);
             }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Util
                     Debug.Assert(hasNext == true);
                     termAtt.FillBytesRef();
                 }
-                catch (System.IO.IOException)
+                catch (IOException)
                 {
                     // safe to ignore, because we know the number of tokens
                 }
@@ -292,7 +292,7 @@ namespace Lucene.Net.Util
                                     Debug.Assert(hasNext == true);
                                     termAtt.FillBytesRef();
                                 }
-                                catch (System.IO.IOException)
+                                catch (IOException)
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Util
                                     Debug.Assert(hasNext == true);
                                     termAtt.FillBytesRef();
                                 }
-                                catch (System.IO.IOException)
+                                catch (IOException)
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
@@ -361,7 +361,7 @@ namespace Lucene.Net.Util
                                     positionIncrement = posIncrAtt.PositionIncrement;
                                 }
                             }
-                            catch (System.IO.IOException)
+                            catch (IOException)
                             {
                                 // safe to ignore, because we know the number of tokens
                             }
@@ -412,7 +412,7 @@ namespace Lucene.Net.Util
                                 positionIncrement = posIncrAtt.PositionIncrement;
                             }
                         }
-                        catch (System.IO.IOException)
+                        catch (IOException)
                         {
                             // safe to ignore, because we know the number of tokens
                         }

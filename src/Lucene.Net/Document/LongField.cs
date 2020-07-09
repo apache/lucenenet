@@ -195,7 +195,7 @@ namespace Lucene.Net.Documents
         {
             if (type.NumericType != Documents.NumericType.INT64)
             {
-                throw new System.ArgumentException("type.NumericType must be NumericType.INT64 but got " + type.NumericType);
+                throw new ArgumentException("type.NumericType must be NumericType.INT64 but got " + type.NumericType);
             }
             FieldsData = new Int64(value);
         }

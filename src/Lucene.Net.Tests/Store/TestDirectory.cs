@@ -146,7 +146,7 @@ namespace Lucene.Net.Store
                             }
                             // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
                             // in Lucene, we need to catch it here to be on the safe side.
-                            catch (System.IO.DirectoryNotFoundException)
+                            catch (DirectoryNotFoundException)
                             {
                             }
                             catch (IOException e)
@@ -416,7 +416,7 @@ namespace Lucene.Net.Store
                 //}
                 //// LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
                 //// in Lucene, we need to catch it here to be on the safe side.
-                //catch (System.IO.DirectoryNotFoundException)
+                //catch (DirectoryNotFoundException)
                 //{
                 //    // ok
                 //}

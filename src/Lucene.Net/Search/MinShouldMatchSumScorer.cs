@@ -89,11 +89,11 @@ namespace Lucene.Net.Search
 
             if (minimumNrMatchers <= 0)
             {
-                throw new System.ArgumentException("Minimum nr of matchers must be positive");
+                throw new ArgumentException("Minimum nr of matchers must be positive");
             }
             if (numScorers <= 1)
             {
-                throw new System.ArgumentException("There must be at least 2 subScorers");
+                throw new ArgumentException("There must be at least 2 subScorers");
             }
 
             this.mm = minimumNrMatchers;

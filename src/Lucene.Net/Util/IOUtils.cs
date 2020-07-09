@@ -500,7 +500,7 @@ namespace Lucene.Net.Util
         {
             if (th != null)
             {
-                if (th is System.IO.IOException)
+                if (th is IOException)
                 {
                     throw th;
                 }

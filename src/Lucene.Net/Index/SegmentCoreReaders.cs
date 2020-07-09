@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
 
             if (termsIndexDivisor == 0)
             {
-                throw new System.ArgumentException("indexDivisor must be < 0 (don't load terms index) or greater than 0 (got 0)");
+                throw new ArgumentException("indexDivisor must be < 0 (don't load terms index) or greater than 0 (got 0)");
             }
 
             Codec codec = si.Info.Codec;

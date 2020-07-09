@@ -235,15 +235,15 @@ namespace Lucene.Net.Index.Memory
         {
             if (fieldName == null)
             {
-                throw new System.ArgumentException("fieldName must not be null");
+                throw new ArgumentException("fieldName must not be null");
             }
             if (text == null)
             {
-                throw new System.ArgumentException("text must not be null");
+                throw new ArgumentException("text must not be null");
             }
             if (analyzer == null)
             {
-                throw new System.ArgumentException("analyzer must not be null");
+                throw new ArgumentException("analyzer must not be null");
             }
 
             TokenStream stream;
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index.Memory
             // TODO: deprecate & move this method into AnalyzerUtil?
             if (keywords == null)
             {
-                throw new System.ArgumentException("keywords must not be null");
+                throw new ArgumentException("keywords must not be null");
             }
 
             return new TokenStreamAnonymousInnerClassHelper<T>(this, keywords);
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index.Memory
                 T obj = iter.Current;
                 if (obj == null)
                 {
-                    throw new System.ArgumentException("keyword must not be null");
+                    throw new ArgumentException("keyword must not be null");
                 }
 
                 string term = obj.ToString();
@@ -388,15 +388,15 @@ namespace Lucene.Net.Index.Memory
             {
                 if (fieldName == null)
                 {
-                    throw new System.ArgumentException("fieldName must not be null");
+                    throw new ArgumentException("fieldName must not be null");
                 }
                 if (stream == null)
                 {
-                    throw new System.ArgumentException("token stream must not be null");
+                    throw new ArgumentException("token stream must not be null");
                 }
                 if (boost <= 0.0f)
                 {
-                    throw new System.ArgumentException("boost factor must be greater than 0.0");
+                    throw new ArgumentException("boost factor must be greater than 0.0");
                 }
                 int numTokens = 0;
                 int numOverlapTokens = 0;
@@ -532,7 +532,7 @@ namespace Lucene.Net.Index.Memory
         {
             if (query == null)
             {
-                throw new System.ArgumentException("query must not be null");
+                throw new ArgumentException("query must not be null");
             }
 
             IndexSearcher searcher = CreateSearcher();

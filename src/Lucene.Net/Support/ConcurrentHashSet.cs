@@ -140,9 +140,9 @@ namespace Lucene.Net.Support
         /// <param name="capacity">The initial number of elements that the <see
         /// cref="ConcurrentHashSet{T}"/>
         /// can contain.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="concurrencyLevel"/> is
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="concurrencyLevel"/> is
         /// less than 1.</exception>
-        /// <exception cref="T:System.ArgumentOutOfRangeException"> <paramref name="capacity"/> is less than
+        /// <exception cref="ArgumentOutOfRangeException"> <paramref name="capacity"/> is less than
         /// 0.</exception>
         public ConcurrentHashSet(int concurrencyLevel, int capacity)
             : this(concurrencyLevel, capacity, false, null)
@@ -159,7 +159,7 @@ namespace Lucene.Net.Support
         /// cref="T:System.Collections.IEnumerable{T}"/> whose elements are copied to
         /// the new
         /// <see cref="ConcurrentHashSet{T}"/>.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="collection"/> is a null reference.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is a null reference.</exception>
         public ConcurrentHashSet(IEnumerable<T> collection)
             : this(collection, null)
         {
@@ -190,7 +190,7 @@ namespace Lucene.Net.Support
         /// <see cref="ConcurrentHashSet{T}"/>.</param>
         /// <param name="comparer">The <see cref="T:System.Collections.Generic.IEqualityComparer{T}"/>
         /// implementation to use when comparing items.</param>
-        /// <exception cref="T:System.ArgumentNullException"><paramref name="collection"/> is a null reference
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is a null reference
         /// (Nothing in Visual Basic).
         /// </exception>
         public ConcurrentHashSet(IEnumerable<T> collection, IEqualityComparer<T> comparer)
@@ -214,10 +214,10 @@ namespace Lucene.Net.Support
         /// <see cref="ConcurrentHashSet{T}"/>.</param>
         /// <param name="comparer">The <see cref="T:System.Collections.Generic.IEqualityComparer{T}"/> implementation to use 
         /// when comparing items.</param>
-        /// <exception cref="T:System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         /// <paramref name="collection"/> is a null reference.
         /// </exception>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="concurrencyLevel"/> is less than 1.
         /// </exception>
         public ConcurrentHashSet(int concurrencyLevel, IEnumerable<T> collection, IEqualityComparer<T> comparer)
@@ -240,7 +240,7 @@ namespace Lucene.Net.Support
         /// can contain.</param>
         /// <param name="comparer">The <see cref="T:System.Collections.Generic.IEqualityComparer{T}"/>
         /// implementation to use when comparing items.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="concurrencyLevel"/> is less than 1. -or-
         /// <paramref name="capacity"/> is less than 0.
         /// </exception>

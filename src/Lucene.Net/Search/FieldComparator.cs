@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -168,7 +169,7 @@ namespace Lucene.Net.Search
         /// <returns> The comparer to use for this segment; most
         ///   comparers can just return "this" to reuse the same
         ///   comparer across segments </returns>
-        /// <exception cref="System.IO.IOException"> If there is a low-level IO error </exception>
+        /// <exception cref="IOException"> If there is a low-level IO error </exception>
         public abstract override FieldComparer SetNextReader(AtomicReaderContext context);
 
         /// <summary>
@@ -295,7 +296,7 @@ namespace Lucene.Net.Search
         /// <returns> The comparer to use for this segment; most
         ///   comparers can just return "this" to reuse the same
         ///   comparer across segments </returns>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public abstract FieldComparer SetNextReader(AtomicReaderContext context);
 
         /// <summary>

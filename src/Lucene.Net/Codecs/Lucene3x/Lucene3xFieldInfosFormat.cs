@@ -31,6 +31,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override FieldInfosReader FieldInfosReader => reader;
 
-        public override FieldInfosWriter FieldInfosWriter => throw new System.NotSupportedException("this codec can only be used for reading");
+        public override FieldInfosWriter FieldInfosWriter => throw new NotSupportedException("this codec can only be used for reading");
     }
 }

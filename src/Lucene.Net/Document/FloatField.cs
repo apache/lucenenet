@@ -184,7 +184,7 @@ namespace Lucene.Net.Documents
         {
             if (type.NumericType != Documents.NumericType.SINGLE)
             {
-                throw new System.ArgumentException("type.NumericType must be NumericType.SINGLE but got " + type.NumericType);
+                throw new ArgumentException("type.NumericType must be NumericType.SINGLE but got " + type.NumericType);
             }
             FieldsData = new Single(value);
         }

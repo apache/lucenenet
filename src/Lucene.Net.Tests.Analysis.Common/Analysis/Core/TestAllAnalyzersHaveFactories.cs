@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Core
                         }
                         assertSame(c, instance.Create(new StringReader("")).GetType());
                     }
-                    catch (System.ArgumentException e)
+                    catch (ArgumentException e)
                     {
                         if (e.InnerException is MissingMethodException)
                         {
@@ -165,7 +165,7 @@ namespace Lucene.Net.Analysis.Core
                             assertSame(c, createdClazz);
                         }
                     }
-                    catch (System.ArgumentException e)
+                    catch (ArgumentException e)
                     {
                         if (e.InnerException is MissingMethodException)
                         {
@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis.Core
                             assertSame(c, createdClazz);
                         }
                     }
-                    catch (System.ArgumentException e)
+                    catch (ArgumentException e)
                     {
                         if (e.InnerException is MissingMethodException)
                         {

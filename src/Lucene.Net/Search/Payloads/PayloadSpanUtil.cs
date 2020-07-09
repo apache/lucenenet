@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Payloads
@@ -55,7 +56,7 @@ namespace Lucene.Net.Search.Payloads
         /// </summary>
         /// <param name="query"> rewritten query </param>
         /// <returns> payloads Collection </returns>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual ICollection<byte[]> GetPayloadsForQuery(Query query)
         {
             var payloads = new List<byte[]>();

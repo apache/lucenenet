@@ -2,6 +2,7 @@
 using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Lucene.Net.Benchmarks.Quality.Utils
@@ -45,7 +46,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
         /// <param name="searcher">access to the index.</param>
         /// <param name="docid">ID of doc whose name is needed.</param>
         /// <returns>the name of the input doc as extracted from the index.</returns>
-        /// <exception cref="System.IO.IOException">if cannot extract the doc name from the index.</exception>
+        /// <exception cref="IOException">if cannot extract the doc name from the index.</exception>
         public virtual string DocName(IndexSearcher searcher, int docid)
         {
             IList<string> name = new List<string>();

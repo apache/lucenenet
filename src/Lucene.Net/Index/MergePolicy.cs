@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.CompilerServices;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
@@ -524,7 +525,7 @@ namespace Lucene.Net.Index
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
-        public class MergeAbortedException : System.IO.IOException
+        public class MergeAbortedException : IOException
         {
             /// <summary>
             /// Create a <see cref="MergeAbortedException"/>. </summary>
@@ -758,7 +759,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0 || value > 1.0)
                 {
-                    throw new System.ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + value);
+                    throw new ArgumentException("noCFSRatio must be 0.0 to 1.0 inclusive; got " + value);
                 }
                 this.m_noCFSRatio = value;
             }
@@ -780,7 +781,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0)
                 {
-                    throw new System.ArgumentException("maxCFSSegmentSizeMB must be >=0 (got " + value + ")");
+                    throw new ArgumentException("maxCFSSegmentSizeMB must be >=0 (got " + value + ")");
                 }
                 value *= 1024 * 1024;
                 this.m_maxCFSSegmentSize = (value > long.MaxValue) ? long.MaxValue : (long)value;

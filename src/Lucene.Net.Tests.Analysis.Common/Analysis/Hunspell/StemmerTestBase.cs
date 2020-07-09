@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Hunspell
         {
             if (dictionaries.Length == 0)
             {
-                throw new System.ArgumentException("there must be at least one dictionary");
+                throw new ArgumentException("there must be at least one dictionary");
             }
 
             System.IO.Stream affixStream = typeof(StemmerTestBase).getResourceAsStream(affix);

@@ -1,6 +1,7 @@
 using Lucene.Net.Codecs;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -52,15 +53,15 @@ namespace Lucene.Net.Index
         {
             if (docID < pending.Count)
             {
-                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
+                throw new ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
             }
             if (value == null)
             {
-                throw new System.ArgumentException("field \"" + fieldInfo.Name + "\": null value not allowed");
+                throw new ArgumentException("field \"" + fieldInfo.Name + "\": null value not allowed");
             }
             if (value.Length > (ByteBlockPool.BYTE_BLOCK_SIZE - 2))
             {
-                throw new System.ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" is too large, must be <= " + (ByteBlockPool.BYTE_BLOCK_SIZE - 2));
+                throw new ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" is too large, must be <= " + (ByteBlockPool.BYTE_BLOCK_SIZE - 2));
             }
 
             // Fill in any holes:

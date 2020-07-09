@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override Compressor NewCompressor()
             {
-                return new DeflateCompressor(System.IO.Compression.CompressionLevel.Optimal);
+                return new DeflateCompressor(CompressionLevel.Optimal);
             }
 
             public override Decompressor NewDecompressor()

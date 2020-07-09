@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
@@ -299,10 +300,10 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override void SeekExact(long ord)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
 
-                public override long Ord => throw new System.NotSupportedException();
+                public override long Ord => throw new NotSupportedException();
             }
 
 
@@ -517,7 +518,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 /// <summary>
                 /// Lazily accumulate meta data, when we got a accepted term. </summary>
-                /// <exception cref="System.IO.IOException"/>
+                /// <exception cref="IOException"/>
                 internal void LoadMetaData()
                 {
                     FST.Arc<FSTTermOutputs.TermData> last, next;

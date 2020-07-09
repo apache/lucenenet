@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
 
                 public override object Clone()
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
             }
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
                     }
                     if (attClass.IsSubclassOf(typeof(CharTermAttribute)))
                     {
-                        throw new System.ArgumentException("no");
+                        throw new ArgumentException("no");
                     }
                     return @delegate.CreateAttributeInstance<T>();
                 }

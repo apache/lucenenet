@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
@@ -99,7 +100,7 @@ namespace Lucene.Net.Util.Fst
         [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual T Merge(T first, T second)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
     }
 }

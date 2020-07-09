@@ -59,7 +59,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
             if (tfit.HasContexts)
             {
-                throw new System.ArgumentException("this suggester doesn't support contexts");
+                throw new ArgumentException("this suggester doesn't support contexts");
             }
             count = 0;
             trie = new JaspellTernarySearchTrie { MatchAlmostDiff = editDistance };
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         {
             if (contexts != null)
             {
-                throw new System.ArgumentException("this suggester doesn't support contexts");
+                throw new ArgumentException("this suggester doesn't support contexts");
             }
             List<LookupResult> res = new List<LookupResult>();
             IList<string> list;

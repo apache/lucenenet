@@ -184,12 +184,12 @@ namespace Lucene.Net.Collation
 
 			if (language == null)
 			{
-				throw new System.ArgumentException("Language is required");
+				throw new ArgumentException("Language is required");
 			}
 
 			if (language != null && country == null && variant != null)
 			{
-				throw new System.ArgumentException("To specify variant, country is required");
+				throw new ArgumentException("To specify variant, country is required");
 			}
 
 			if (country != null && variant != null)

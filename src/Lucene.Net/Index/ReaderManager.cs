@@ -1,4 +1,5 @@
 using Lucene.Net.Search;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -48,7 +49,7 @@ namespace Lucene.Net.Index
         ///          performance by passing <c>false</c>. See
         ///          <see cref="DirectoryReader.OpenIfChanged(DirectoryReader, IndexWriter, bool)"/>.
         /// </param>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
         public ReaderManager(IndexWriter writer, bool applyAllDeletes)
         {
             Current = DirectoryReader.Open(writer, applyAllDeletes);
@@ -58,7 +59,7 @@ namespace Lucene.Net.Index
         /// Creates and returns a new <see cref="ReaderManager"/> from the given <see cref="Directory"/>. </summary>
         /// <param name="dir"> the directory to open the <see cref="DirectoryReader"/> on.
         /// </param>
-        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
         public ReaderManager(Directory dir)
         {
             Current = DirectoryReader.Open(dir);

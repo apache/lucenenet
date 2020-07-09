@@ -101,14 +101,14 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 if (string.IsNullOrEmpty(comp))
                 {
-                    throw new System.ArgumentException("empty or null components not allowed: " + Arrays.ToString(Components));
+                    throw new ArgumentException("empty or null components not allowed: " + Arrays.ToString(Components));
                 }
                 len += comp.Length;
             }
             len += Components.Length - 1; // add separators
             if (len > MAX_CATEGORY_PATH_LENGTH)
             {
-                throw new System.ArgumentException("category path exceeds maximum allowed path length: max=" + MAX_CATEGORY_PATH_LENGTH + " len=" + len + " path=" + Arrays.ToString(Components).Substring(0, 30) + "...");
+                throw new ArgumentException("category path exceeds maximum allowed path length: max=" + MAX_CATEGORY_PATH_LENGTH + " len=" + len + " path=" + Arrays.ToString(Components).Substring(0, 30) + "...");
             }
         }
 

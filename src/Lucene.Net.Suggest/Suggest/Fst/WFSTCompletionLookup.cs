@@ -137,13 +137,13 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             if (contexts != null)
             {
-                throw new System.ArgumentException("this suggester doesn't support contexts");
+                throw new ArgumentException("this suggester doesn't support contexts");
             }
             Debug.Assert(num > 0);
 
             if (onlyMorePopular)
             {
-                throw new System.ArgumentException("this suggester only works with onlyMorePopular=false");
+                throw new ArgumentException("this suggester only works with onlyMorePopular=false");
             }
 
             if (fst == null)
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             if (value < 0 || value > int.MaxValue)
             {
-                throw new System.NotSupportedException("cannot encode value: " + value);
+                throw new NotSupportedException("cannot encode value: " + value);
             }
             return int.MaxValue - (int)value;
         }

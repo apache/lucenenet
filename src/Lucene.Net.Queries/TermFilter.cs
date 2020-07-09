@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Queries
 {
@@ -33,11 +34,11 @@ namespace Lucene.Net.Queries
         {
             if (term == null)
             {
-                throw new System.ArgumentException("Term must not be null");
+                throw new ArgumentException("Term must not be null");
             }
             else if (term.Field == null)
             {
-                throw new System.ArgumentException("Field must not be null");
+                throw new ArgumentException("Field must not be null");
             }
             this.term = term;
         }

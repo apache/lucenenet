@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -66,7 +67,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
 #pragma warning restore 168
             {
                 // expected

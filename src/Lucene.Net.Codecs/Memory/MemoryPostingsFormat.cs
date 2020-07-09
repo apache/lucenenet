@@ -886,12 +886,12 @@ namespace Lucene.Net.Codecs.Memory
             public override void SeekExact(long ord)
             {
                 // NOTE: we could add this...
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
             public override long Ord => throw
                 // NOTE: we could add this...
-                new System.NotSupportedException();
+                new NotSupportedException();
         }
 
         private sealed class TermsReader : Terms

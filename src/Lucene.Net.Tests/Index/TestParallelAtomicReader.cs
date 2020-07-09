@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("didn't get exptected exception: indexes don't have same number of documents");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // expected exception
@@ -192,7 +192,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("didn't get expected exception: indexes don't have same number of documents");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // expected exception
@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("didn't get expected exception: need a non-empty main-reader array");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
 #pragma warning restore 168
             {
                 // pass

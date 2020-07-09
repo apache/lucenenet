@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Position
         {
             if (positionIncrement < 0)
             {
-                throw new System.ArgumentException("positionIncrement may not be negative");
+                throw new ArgumentException("positionIncrement may not be negative");
             }
             this.positionIncrement = positionIncrement;
             posIncrAtt = AddAttribute<IPositionIncrementAttribute>();

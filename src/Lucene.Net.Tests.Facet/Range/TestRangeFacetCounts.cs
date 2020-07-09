@@ -116,7 +116,7 @@ namespace Lucene.Net.Facet.Range
                 new Int64Range("useless", 7, true, 6, true);
                 fail("did not hit expected exception");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Facet.Range
                 new Int64Range("useless", 7, true, 7, false);
                 fail("did not hit expected exception");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Facet.Range
                 new DoubleRange("useless", 7.0, true, 6.0, true);
                 fail("did not hit expected exception");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Facet.Range
                 new DoubleRange("useless", 7.0, true, 7.0, false);
                 fail("did not hit expected exception");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }
@@ -1144,12 +1144,12 @@ namespace Lucene.Net.Facet.Range
 
             public override bool Equals(object o)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
             public override int GetHashCode()
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
             public override string GetDescription()

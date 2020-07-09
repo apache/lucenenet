@@ -47,7 +47,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <exception cref="DirectoryNotFoundException"> if the directory is not prepared for any
         ///         write operations (such as <see cref="CreateOutput(string, IOContext)"/>). </exception>
-        /// <exception cref="System.IO.IOException"> in case of other IO errors </exception>
+        /// <exception cref="IOException"> in case of other IO errors </exception>
         public abstract string[] ListAll();
 
         /// <summary>
@@ -64,13 +64,13 @@ namespace Lucene.Net.Store
         /// Returns the length of a file in the directory. this method follows the
         /// following contract:
         /// <list>
-        ///     <item><description>Throws <see cref="System.IO.FileNotFoundException"/>
+        ///     <item><description>Throws <see cref="FileNotFoundException"/>
         ///         if the file does not exist.</description></item>
         ///     <item><description>Returns a value &gt;=0 if the file exists, which specifies its length.</description></item>
         /// </list>
         /// </summary>
         /// <param name="name"> the name of the file for which to return the length. </param>
-        /// <exception cref="System.IO.IOException"> if there was an IO error while retrieving the file's
+        /// <exception cref="IOException"> if there was an IO error while retrieving the file's
         ///         length. </exception>
         public abstract long FileLength(string name);
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Store
         /// the only <see cref="Directory"/> implementations that respect this
         /// parameter are <see cref="FSDirectory"/> and 
         /// <see cref="CompoundFileDirectory"/>.
-        /// <para/>Throws <see cref="System.IO.FileNotFoundException"/>
+        /// <para/>Throws <see cref="FileNotFoundException"/>
         /// if the file does not exist.
         /// </summary>
         public abstract IndexInput OpenInput(string name, IOContext context);

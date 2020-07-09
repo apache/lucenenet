@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Util
             // it is used throughout Lucene.
             //if (luceneMatchVersion == null)
             //{
-            //    throw new System.ArgumentException("Configuration Error: Factory '" + this.GetType().FullName + "' needs a 'luceneMatchVersion' parameter");
+            //    throw new ArgumentException("Configuration Error: Factory '" + this.GetType().FullName + "' needs a 'luceneMatchVersion' parameter");
             //}
         }
 
@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Util
             string s;
             if (!args.TryGetValue(name, out s))
             {
-                throw new System.ArgumentException("Configuration Error: missing parameter '" + name + "'");
+                throw new ArgumentException("Configuration Error: missing parameter '" + name + "'");
             }
             args.Remove(name);
             return s;
@@ -183,7 +183,7 @@ namespace Lucene.Net.Analysis.Util
                         }
                     }
                 }
-                throw new System.ArgumentException("Configuration Error: '" + name + "' value must be one of " +
+                throw new ArgumentException("Configuration Error: '" + name + "' value must be one of " +
                                                    allowedValues);
             }
         }
@@ -261,7 +261,7 @@ namespace Lucene.Net.Analysis.Util
                 args.Remove(name);
                 if (s.Length != 1)
                 {
-                    throw new System.ArgumentException(name + " should be a char. \"" + s + "\" is invalid");
+                    throw new ArgumentException(name + " should be a char. \"" + s + "\" is invalid");
                 }
                 else
                 {
@@ -312,7 +312,7 @@ namespace Lucene.Net.Analysis.Util
             }
             catch (Exception e)
             {
-                throw new System.ArgumentException("Configuration Error: '" + name + "' can not be parsed in " + this.GetType().Name, e);
+                throw new ArgumentException("Configuration Error: '" + name + "' can not be parsed in " + this.GetType().Name, e);
             }
         }
 
@@ -339,7 +339,7 @@ namespace Lucene.Net.Analysis.Util
                 }
                 catch (Exception e)
                 {
-                    throw new System.ArgumentException("Configuration Error: '" + name + "' can not be parsed in " + this.GetType().Name, e);
+                    throw new ArgumentException("Configuration Error: '" + name + "' can not be parsed in " + this.GetType().Name, e);
                 }
             }
             return defaultVal;

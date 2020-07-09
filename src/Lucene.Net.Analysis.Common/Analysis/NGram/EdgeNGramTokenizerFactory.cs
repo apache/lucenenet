@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.NGram
             side = Get(args, "side", EdgeNGramTokenFilter.Side.FRONT.ToString());
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.NGram
                 EdgeNGramTokenFilter.Side sideEnum;
                 if (!Enum.TryParse(this.side, true, out sideEnum))
                 {
-                    throw new System.ArgumentException(typeof(EdgeNGramTokenizer).Name + " does not support backward n-grams as of Lucene 4.4");
+                    throw new ArgumentException(typeof(EdgeNGramTokenizer).Name + " does not support backward n-grams as of Lucene 4.4");
                 }
                 return new EdgeNGramTokenizer(m_luceneMatchVersion, input, minGramSize, maxGramSize);
             }

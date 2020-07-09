@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // ok
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // ok
@@ -355,7 +355,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // ok
@@ -371,7 +371,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // ok
@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have succeeded to set maxBufferedDeleteTerms to 0");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // this is expected
@@ -395,7 +395,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have succeeded to set maxBufferedDocs to 1");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // this is expected
@@ -410,7 +410,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have succeeded to disable maxBufferedDocs when ramBufferSizeMB is disabled as well");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // this is expected
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have succeeded to disable ramBufferSizeMB when maxBufferedDocs is disabled as well");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // this is expected
@@ -437,7 +437,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have succeeded to set termsIndexDivisor to 0");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // this is expected
@@ -451,7 +451,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have succeeded to set termsIndexDivisor to < -1");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // this is expected
@@ -463,7 +463,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have succeeded to set RAMPerThreadHardLimitMB to >= 2048");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // this is expected
@@ -475,7 +475,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should not have succeeded to set RAMPerThreadHardLimitMB to 0");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // this is expected
@@ -491,7 +491,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // ok

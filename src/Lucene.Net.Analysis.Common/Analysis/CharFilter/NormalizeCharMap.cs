@@ -101,11 +101,11 @@ namespace Lucene.Net.Analysis.CharFilters
             {
                 if (match.Length == 0)
                 {
-                    throw new System.ArgumentException("cannot match the empty string");
+                    throw new ArgumentException("cannot match the empty string");
                 }
                 if (pendingPairs.ContainsKey(match))
                 {
-                    throw new System.ArgumentException("match \"" + match + "\" was already added");
+                    throw new ArgumentException("match \"" + match + "\" was already added");
                 }
                 pendingPairs[match] = replacement;
             }

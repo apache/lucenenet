@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -97,7 +98,7 @@ namespace Lucene.Net.Index
                 ordB = terms.Ord;
             }
 #pragma warning disable 168
-            catch (System.NotSupportedException uoe)
+            catch (NotSupportedException uoe)
 #pragma warning restore 168
             {
                 // ok -- codec is not required to support ord

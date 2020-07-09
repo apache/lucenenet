@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -456,7 +457,7 @@ namespace Lucene.Net.Index
             /// <param name="owner"> a cache key </param>
             /// <param name="subs"> <see cref="TermsEnum"/>s that support <see cref="TermsEnum.Ord"/>. They need
             ///             not be dense (e.g. can be FilteredTermsEnums). </param>
-            /// <exception cref="System.IO.IOException"> if an I/O error occurred. </exception>
+            /// <exception cref="IOException"> if an I/O error occurred. </exception>
             public OrdinalMap(object owner, TermsEnum[] subs)
             {
                 // create the ordinal mappings by pulling a termsenum over each sub's

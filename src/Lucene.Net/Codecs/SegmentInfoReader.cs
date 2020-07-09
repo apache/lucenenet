@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Lucene.Net.Codecs
 {
     /*
@@ -42,7 +44,7 @@ namespace Lucene.Net.Codecs
         /// <param name="segmentName"> Name of the segment to read. </param>
         /// <param name="context"> IO context. </param>
         /// <returns> Infos instance to be populated with data. </returns>
-        /// <exception cref="System.IO.IOException"> If an I/O error occurs. </exception>
+        /// <exception cref="IOException"> If an I/O error occurs. </exception>
         public abstract SegmentInfo Read(Directory directory, string segmentName, IOContext context);
     }
 }

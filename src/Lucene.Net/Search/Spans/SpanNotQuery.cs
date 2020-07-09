@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Spans
 
             if (include.Field != null && exclude.Field != null && !include.Field.Equals(exclude.Field, StringComparison.Ordinal))
             {
-                throw new System.ArgumentException("Clauses must have same field.");
+                throw new ArgumentException("Clauses must have same field.");
             }
         }
 

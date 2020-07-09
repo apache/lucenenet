@@ -253,7 +253,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetSpecificValue("a");
                 fail("should have hit exc");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }
@@ -263,7 +263,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 facets.GetTopChildren(10, "a");
                 fail("should have hit exc");
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
                 // expected
             }

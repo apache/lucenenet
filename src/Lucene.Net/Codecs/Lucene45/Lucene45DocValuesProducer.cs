@@ -3,6 +3,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Codecs.Lucene45
 {
@@ -491,7 +492,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = 0;
                     result.Length = buffer.Length;
                 }
-                catch (System.IO.IOException e)
+                catch (IOException e)
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -562,7 +563,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = 0;
                     result.Length = length;
                 }
-                catch (System.IO.IOException e)
+                catch (IOException e)
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -841,7 +842,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     @in.Seek(offset + (index >> 3));
                     return (@in.ReadByte() & (1 << (index & 7))) != 0;
                 }
-                catch (System.IO.IOException e)
+                catch (IOException e)
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1020,7 +1021,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = term.Offset;
                     result.Length = term.Length;
                 }
-                catch (System.IO.IOException e)
+                catch (IOException e)
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1044,7 +1045,7 @@ namespace Lucene.Net.Codecs.Lucene45
                         return -termsEnum.Ord - 1;
                     }
                 }
-                catch (System.IO.IOException bogus)
+                catch (IOException bogus)
                 {
                     throw new Exception(bogus.ToString(), bogus);
                 }
@@ -1056,7 +1057,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 {
                     return GetTermsEnum((IndexInput)data.Clone());
                 }
-                catch (System.IO.IOException e)
+                catch (IOException e)
                 {
                     throw new Exception(e.ToString(), e);
                 }
@@ -1217,18 +1218,18 @@ namespace Lucene.Net.Codecs.Lucene45
 
                 public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-                public override int DocFreq => throw new System.NotSupportedException();
+                public override int DocFreq => throw new NotSupportedException();
 
                 public override long TotalTermFreq => -1;
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
             }
         }

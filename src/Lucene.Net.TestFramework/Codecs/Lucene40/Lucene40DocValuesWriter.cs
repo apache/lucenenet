@@ -183,7 +183,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 if (b.Length > Lucene40DocValuesFormat.MAX_BINARY_FIELD_LENGTH)
                 {
-                    throw new System.ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " + Lucene40DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
+                    throw new ArgumentException("DocValuesField \"" + field.Name + "\" is too large, must be <= " + Lucene40DocValuesFormat.MAX_BINARY_FIELD_LENGTH);
                 }
                 minLength = Math.Min(minLength, b.Length);
                 maxLength = Math.Max(maxLength, b.Length);
@@ -609,7 +609,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            throw new System.NotSupportedException("Lucene 4.0 does not support SortedSet docvalues");
+            throw new NotSupportedException("Lucene 4.0 does not support SortedSet docvalues");
         }
 
         protected override void Dispose(bool disposing)

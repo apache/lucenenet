@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -23,9 +24,9 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Used by <see cref="MockDirectoryWrapper"/> to create an output stream that
-    /// will throw an <see cref="System.IO.IOException"/> on fake disk full, track max
+    /// will throw an <see cref="IOException"/> on fake disk full, track max
     /// disk space actually used, and maybe throw random
-    /// <see cref="System.IO.IOException"/>s.
+    /// <see cref="IOException"/>s.
     /// </summary>
     public class MockIndexOutputWrapper : IndexOutput
     {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Store
             // If MockRAMDir crashed since we were opened, then don't write anything
             if (dir.crashed)
             {
-                throw new System.IO.IOException("MockDirectoryWrapper was crashed; cannot write to " + name);
+                throw new IOException("MockDirectoryWrapper was crashed; cannot write to " + name);
             }
         }
 
@@ -98,7 +99,7 @@ namespace Lucene.Net.Store
                   Console.WriteLine(Thread.CurrentThread.Name + ": MDW: now throw fake disk full");
                   (new Exception()).printStackTrace(System.out);
                 }*/
-                throw new System.IO.IOException(message);
+                throw new IOException(message);
             }
         }
 

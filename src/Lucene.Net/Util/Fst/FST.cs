@@ -246,7 +246,7 @@ namespace Lucene.Net.Util.Fst
 
             if (maxBlockBits < 1 || maxBlockBits > 30)
             {
-                throw new System.ArgumentException("maxBlockBits should be 1 .. 30; got " + maxBlockBits);
+                throw new ArgumentException("maxBlockBits should be 1 .. 30; got " + maxBlockBits);
             }
 
             // NOTE: only reads most recent format; we don't have
@@ -1092,7 +1092,7 @@ namespace Lucene.Net.Util.Fst
                 // this was a fake inserted "final" arc
                 if (arc.NextArc <= 0)
                 {
-                    throw new System.ArgumentException("cannot readNextArc when arc.isLast()=true");
+                    throw new ArgumentException("cannot readNextArc when arc.isLast()=true");
                 }
                 return ReadFirstRealTargetArc(arc.NextArc, arc, @in);
             }
@@ -1670,7 +1670,7 @@ namespace Lucene.Net.Util.Fst
 
             if (nodeAddress == null)
             {
-                throw new System.ArgumentException("this FST was not built with willPackFST=true");
+                throw new ArgumentException("this FST was not built with willPackFST=true");
             }
 
             FST.Arc<T> arc = new FST.Arc<T>();

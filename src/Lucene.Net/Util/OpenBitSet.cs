@@ -121,7 +121,7 @@ namespace Lucene.Net.Util
         {
             if (numWords > bits.Length)
             {
-                throw new System.ArgumentException("numWords cannot exceed bits.length");
+                throw new ArgumentException("numWords cannot exceed bits.length");
             }
             this.m_bits = bits;
             this.m_wlen = numWords;

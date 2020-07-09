@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -113,18 +114,18 @@ namespace Lucene.Net.Index
 
         public override long Ord => currentOrd;
 
-        public override int DocFreq => throw new System.NotSupportedException();
+        public override int DocFreq => throw new NotSupportedException();
 
         public override long TotalTermFreq => -1;
 
         public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;

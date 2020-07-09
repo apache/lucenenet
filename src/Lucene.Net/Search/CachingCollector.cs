@@ -97,16 +97,16 @@ namespace Lucene.Net.Search
 
             public override int Advance(int target)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
             public override int DocID => doc;
 
-            public override int Freq => throw new System.NotSupportedException();
+            public override int Freq => throw new NotSupportedException();
 
             public override int NextDoc()
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
             public override long GetCost()
@@ -519,7 +519,7 @@ namespace Lucene.Net.Search
 
             if (!other.AcceptsDocsOutOfOrder && this.m_other.AcceptsDocsOutOfOrder)
             {
-                throw new System.ArgumentException("cannot replay: given collector does not support " + "out-of-order collection, while the wrapped collector does. " + "Therefore cached documents may be out-of-order.");
+                throw new ArgumentException("cannot replay: given collector does not support " + "out-of-order collection, while the wrapped collector does. " + "Therefore cached documents may be out-of-order.");
             }
 
             //System.out.println("CC: replay totHits=" + (upto + base));

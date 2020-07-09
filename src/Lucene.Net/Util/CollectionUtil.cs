@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
                 // LUCENENET NOTE: All ILists in .NET are random access (only IEnumerable is forward-only)
                 //if (!(list is RandomAccess))
                 //{
-                //  throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
+                //  throw new ArgumentException("CollectionUtil can only sort random access lists in-place.");
                 //}
                 
                 this.list = list;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Util
                 // LUCENENET NOTE: All ILists in .NET are random access (only IEnumerable is forward-only)
                 //if (!(list is RandomAccess))
                 //{
-                //  throw new System.ArgumentException("CollectionUtil can only sort random access lists in-place.");
+                //  throw new ArgumentException("CollectionUtil can only sort random access lists in-place.");
                 //}
                 this.list = list;
                 this.comp = comp;

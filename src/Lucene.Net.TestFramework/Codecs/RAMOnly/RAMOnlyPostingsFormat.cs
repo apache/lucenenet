@@ -252,7 +252,7 @@ namespace Lucene.Net.Codecs.RAMOnly
             {
                 if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                 {
-                    throw new System.NotSupportedException("this codec cannot index offsets");
+                    throw new NotSupportedException("this codec cannot index offsets");
                 }
                 RAMField ramField = new RAMField(field.Name, field);
                 postings.fieldToTerms[field.Name] = ramField;

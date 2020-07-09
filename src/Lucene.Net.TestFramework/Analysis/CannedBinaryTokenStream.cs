@@ -1,6 +1,8 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using System;
 using System.Runtime.CompilerServices;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.Analysis
 {
@@ -96,7 +98,7 @@ namespace Lucene.Net.Analysis
 
         public override object Clone()
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
     }
 

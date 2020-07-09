@@ -4,6 +4,7 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -87,7 +88,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(0, terms.Ord);
             }
 #pragma warning disable 168
-            catch (System.NotSupportedException uoe)
+            catch (NotSupportedException uoe)
 #pragma warning restore 168
             {
                 // ok -- codec is not required to support this op

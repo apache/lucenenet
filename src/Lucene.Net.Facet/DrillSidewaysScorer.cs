@@ -66,7 +66,7 @@ namespace Lucene.Net.Facet
         {
             if (maxDoc != int.MaxValue)
             {
-                throw new System.ArgumentException("maxDoc must be System.Int32.MaxValue");
+                throw new ArgumentException("maxDoc must be System.Int32.MaxValue");
             }
             //if (DEBUG) {
             //  System.out.println("\nscore: reader=" + context.reader());
@@ -734,7 +734,7 @@ namespace Lucene.Net.Facet
 
             public override int Advance(int target)
             {
-                throw new System.NotSupportedException("FakeScorer doesn't support advance(int)");
+                throw new NotSupportedException("FakeScorer doesn't support advance(int)");
             }
 
             public override int DocID => outerInstance.collectDocID;
@@ -743,7 +743,7 @@ namespace Lucene.Net.Facet
 
             public override int NextDoc()
             {
-                throw new System.NotSupportedException("FakeScorer doesn't support nextDoc()");
+                throw new NotSupportedException("FakeScorer doesn't support nextDoc()");
             }
 
             public override float GetScore()
@@ -761,7 +761,7 @@ namespace Lucene.Net.Facet
                 return new[] { new Scorer.ChildScorer(outerInstance.baseScorer, "MUST") };
             }
 
-            public override Weight Weight => throw new System.NotSupportedException();
+            public override Weight Weight => throw new NotSupportedException();
         }
 
         internal class DocsAndCost : IComparable<DocsAndCost>

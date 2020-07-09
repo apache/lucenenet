@@ -1,5 +1,6 @@
 using J2N.Text;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -230,7 +231,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
 #pragma warning disable 168
-            catch (System.ArgumentOutOfRangeException iobe)
+            catch (ArgumentOutOfRangeException iobe)
 #pragma warning restore 168
             {
             }
@@ -241,7 +242,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
 #pragma warning disable 168
-            catch (System.ArgumentOutOfRangeException iobe)
+            catch (ArgumentOutOfRangeException iobe)
 #pragma warning restore 168
             {
             }
@@ -258,7 +259,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
 #pragma warning disable 168
-            catch (System.ArgumentOutOfRangeException iobe)
+            catch (ArgumentOutOfRangeException iobe)
 #pragma warning restore 168
             {
             }
@@ -269,7 +270,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
 #pragma warning disable 168
-            catch (System.ArgumentOutOfRangeException iobe)
+            catch (ArgumentOutOfRangeException iobe)
 #pragma warning restore 168
             {
             }
@@ -285,7 +286,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
 #pragma warning disable 168
-            catch (System.ArgumentOutOfRangeException iobe)
+            catch (ArgumentOutOfRangeException iobe)
 #pragma warning restore 168
             {
             }
@@ -296,7 +297,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
 #pragma warning disable 168
-            catch (System.ArgumentOutOfRangeException iobe)
+            catch (ArgumentOutOfRangeException iobe)
 #pragma warning restore 168
             {
             }
@@ -408,7 +409,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 var _ = t[-1];
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
-            catch (System.ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
             }
 
@@ -417,7 +418,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 var _ = t[4];
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
-            catch (System.ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
             }
 
@@ -426,7 +427,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Subsequence(0, 5 - 0); // LUCENENET: Corrected 2nd parameter of Subsequence
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
-            catch (System.ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
             }
 
@@ -435,7 +436,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 t.Subsequence(5, 0 - 5); // LUCENENET: Corrected 2nd parameter of Subsequence
                 Assert.Fail("Should throw ArgumentOutOfRangeException");
             }
-            catch (System.ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
             }
         }

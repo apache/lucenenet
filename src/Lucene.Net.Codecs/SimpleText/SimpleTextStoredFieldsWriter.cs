@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         NewLine();
                         break;
                     default:
-                        throw new System.ArgumentException("cannot store numeric type " + field.NumericType);
+                        throw new ArgumentException("cannot store numeric type " + field.NumericType);
                 }
             }
             else

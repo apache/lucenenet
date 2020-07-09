@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
         {
             if (docID < 0 || docID >= maxDoc)
             {
-                throw new System.ArgumentException("docID must be >= 0 and < maxDoc=" + maxDoc + " (got docID=" + docID + ")");
+                throw new ArgumentException("docID must be >= 0 and < maxDoc=" + maxDoc + " (got docID=" + docID + ")");
             }
             return ReaderUtil.SubIndex(docID, this.starts);
         }
@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
         {
             if (readerIndex < 0 || readerIndex >= subReaders.Length)
             {
-                throw new System.ArgumentException("readerIndex must be >= 0 and < getSequentialSubReaders().size()");
+                throw new ArgumentException("readerIndex must be >= 0 and < getSequentialSubReaders().size()");
             }
             return this.starts[readerIndex];
         }

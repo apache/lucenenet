@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using NUnit.Framework;
 using Lucene.Net.Analysis.Util;
+using System;
 
 namespace Lucene.Net.Analysis.Pt
 {
@@ -45,7 +46,7 @@ namespace Lucene.Net.Analysis.Pt
                 TokenFilterFactory("PortugueseStem", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

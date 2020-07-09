@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
                     w.AddDocument(doc);
                     Assert.Fail("Did not get an exception from adding a monster term");
                 }
-                catch (System.ArgumentException e)
+                catch (ArgumentException e)
                 {
                     string maxLengthMsg = Convert.ToString(IndexWriter.MAX_TERM_LENGTH);
                     string msg = e.Message;

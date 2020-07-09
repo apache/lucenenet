@@ -1692,7 +1692,7 @@ namespace Lucene.Net.Search
             {
                 if (ord < 0)
                 {
-                    throw new System.ArgumentException("ord must be >=0 (got ord=" + ord + ")");
+                    throw new ArgumentException("ord must be >=0 (got ord=" + ord + ")");
                 }
                 bytes.Fill(ret, termOrdToBytesOffset.Get(ord));
             }

@@ -1,24 +1,25 @@
 using J2N.IO;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Replicator
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// <summary>
     /// Token for a replication session, for guaranteeing that source replicated
@@ -53,7 +54,7 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Constructor which deserializes from the given <see cref="IDataInput"/>.
         /// </summary>
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         public SessionToken(IDataInput reader)
         {
             Id = reader.ReadUTF();
@@ -80,7 +81,7 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Constructor with the given <paramref name="id"/> and <paramref name="revision"/>.
         /// </summary>
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         public SessionToken(string id, IRevision revision)
         {
             Id = id;
@@ -91,7 +92,7 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Serialize the token data for communication between server and client.
         /// </summary>
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         public void Serialize(DataOutputStream writer)
         {
             writer.WriteUTF(Id);

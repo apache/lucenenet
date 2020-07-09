@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Standard;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using TokenizerFactory = Lucene.Net.Analysis.Util.TokenizerFactory;
@@ -44,11 +44,11 @@ namespace Lucene.Net.Analysis.Standard
             maxTokenLength = GetInt32(args, "maxTokenLength", StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH);
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 
-        public override Tokenizer Create(Net.Util.AttributeSource.AttributeFactory factory, System.IO.TextReader input)
+        public override Tokenizer Create(Net.Util.AttributeSource.AttributeFactory factory, TextReader input)
         {
             ClassicTokenizer tokenizer = new ClassicTokenizer(m_luceneMatchVersion, factory, input);
             tokenizer.MaxTokenLength = maxTokenLength;

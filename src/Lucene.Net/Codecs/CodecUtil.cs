@@ -2,6 +2,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Codecs
 {
@@ -70,13 +71,13 @@ namespace Lucene.Net.Codecs
         /// <param name="codec"> String to identify this file. It should be simple ASCII,
         ///              less than 128 characters in length. </param>
         /// <param name="version"> Version number </param>
-        /// <exception cref="System.IO.IOException"> If there is an I/O error writing to the underlying medium. </exception>
+        /// <exception cref="IOException"> If there is an I/O error writing to the underlying medium. </exception>
         public static void WriteHeader(DataOutput @out, string codec, int version)
         {
             BytesRef bytes = new BytesRef(codec);
             if (bytes.Length != codec.Length || bytes.Length >= 128)
             {
-                throw new System.ArgumentException("codec must be simple ASCII, less than 128 characters in length [got " + codec + "]");
+                throw new ArgumentException("codec must be simple ASCII, less than 128 characters in length [got " + codec + "]");
             }
             @out.WriteInt32(CODEC_MAGIC);
             @out.WriteString(codec);
@@ -118,7 +119,7 @@ namespace Lucene.Net.Codecs
         ///         than <paramref name="minVersion"/>. </exception>
         /// <exception cref="Index.IndexFormatTooNewException"> If the actual version is greater
         ///         than <paramref name="maxVersion"/>. </exception>
-        /// <exception cref="System.IO.IOException"> If there is an I/O error reading from the underlying medium. </exception>
+        /// <exception cref="IOException"> If there is an I/O error reading from the underlying medium. </exception>
         /// <seealso cref="WriteHeader(DataOutput, string, int)"/>
         public static int CheckHeader(DataInput @in, string codec, int minVersion, int maxVersion)
         {
@@ -126,7 +127,7 @@ namespace Lucene.Net.Codecs
             int actualHeader = @in.ReadInt32();
             if (actualHeader != CODEC_MAGIC)
             {
-                throw new System.IO.IOException("codec header mismatch: actual header=" + actualHeader + " vs expected header=" + CODEC_MAGIC + " (resource: " + @in + ")");
+                throw new IOException("codec header mismatch: actual header=" + actualHeader + " vs expected header=" + CODEC_MAGIC + " (resource: " + @in + ")");
             }
             return CheckHeaderNoMagic(@in, codec, minVersion, maxVersion);
         }
@@ -142,17 +143,17 @@ namespace Lucene.Net.Codecs
             string actualCodec = @in.ReadString();
             if (!actualCodec.Equals(codec, StringComparison.Ordinal))
             {
-                throw new System.IO.IOException("codec mismatch: actual codec=" + actualCodec + " vs expected codec=" + codec + " (resource: " + @in + ")");
+                throw new IOException("codec mismatch: actual codec=" + actualCodec + " vs expected codec=" + codec + " (resource: " + @in + ")");
             }
 
             int actualVersion = @in.ReadInt32();
             if (actualVersion < minVersion)
             {
-                throw new System.IO.IOException("Version: " + actualVersion + " is not supported. Minimum Version number is " + minVersion + ".");
+                throw new IOException("Version: " + actualVersion + " is not supported. Minimum Version number is " + minVersion + ".");
             }
             if (actualVersion > maxVersion)
             {
-                throw new System.IO.IOException("Version: " + actualVersion + " is not supported. Maximum Version number is " + maxVersion + ".");
+                throw new IOException("Version: " + actualVersion + " is not supported. Maximum Version number is " + maxVersion + ".");
             }
 
             return actualVersion;
@@ -177,7 +178,7 @@ namespace Lucene.Net.Codecs
         /// </list>
         /// </summary>
         /// <param name="out"> Output stream </param>
-        /// <exception cref="System.IO.IOException"> If there is an I/O error writing to the underlying medium. </exception>
+        /// <exception cref="IOException"> If there is an I/O error writing to the underlying medium. </exception>
         public static void WriteFooter(IndexOutput @out)
         {
             @out.WriteInt32(FOOTER_MAGIC);
@@ -198,7 +199,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Validates the codec footer previously written by <see cref="WriteFooter(IndexOutput)"/>. </summary>
         /// <returns> Actual checksum value. </returns>
-        /// <exception cref="System.IO.IOException"> If the footer is invalid, if the checksum does not match,
+        /// <exception cref="IOException"> If the footer is invalid, if the checksum does not match,
         ///                     or if <paramref name="in"/> is not properly positioned before the footer
         ///                     at the end of the stream. </exception>
         public static long CheckFooter(ChecksumIndexInput @in)
@@ -208,11 +209,11 @@ namespace Lucene.Net.Codecs
             long expectedChecksum = @in.ReadInt64();
             if (expectedChecksum != actualChecksum)
             {
-                throw new System.IO.IOException("checksum failed (hardware problem?) : expected=" + expectedChecksum.ToString("x") + " actual=" + actualChecksum.ToString("x") + " (resource=" + @in + ")");
+                throw new IOException("checksum failed (hardware problem?) : expected=" + expectedChecksum.ToString("x") + " actual=" + actualChecksum.ToString("x") + " (resource=" + @in + ")");
             }
             if (@in.GetFilePointer() != @in.Length)
             {
-                throw new System.IO.IOException("did not read all bytes from file: read " + @in.GetFilePointer() + " vs size " + @in.Length + " (resource: " + @in + ")");
+                throw new IOException("did not read all bytes from file: read " + @in.GetFilePointer() + " vs size " + @in.Length + " (resource: " + @in + ")");
             }
             return actualChecksum;
         }
@@ -220,7 +221,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Returns (but does not validate) the checksum previously written by <see cref="CheckFooter(ChecksumIndexInput)"/>. </summary>
         /// <returns> actual checksum value </returns>
-        /// <exception cref="System.IO.IOException"> If the footer is invalid. </exception>
+        /// <exception cref="IOException"> If the footer is invalid. </exception>
         public static long RetrieveChecksum(IndexInput @in)
         {
             @in.Seek(@in.Length - FooterLength());
@@ -233,13 +234,13 @@ namespace Lucene.Net.Codecs
             int magic = @in.ReadInt32();
             if (magic != FOOTER_MAGIC)
             {
-                throw new System.IO.IOException("codec footer mismatch: actual footer=" + magic + " vs expected footer=" + FOOTER_MAGIC + " (resource: " + @in + ")");
+                throw new IOException("codec footer mismatch: actual footer=" + magic + " vs expected footer=" + FOOTER_MAGIC + " (resource: " + @in + ")");
             }
 
             int algorithmID = @in.ReadInt32();
             if (algorithmID != 0)
             {
-                throw new System.IO.IOException("codec footer mismatch: unknown algorithmID: " + algorithmID);
+                throw new IOException("codec footer mismatch: unknown algorithmID: " + algorithmID);
             }
         }
 
@@ -251,7 +252,7 @@ namespace Lucene.Net.Codecs
         {
             if (@in.GetFilePointer() != @in.Length)
             {
-                throw new System.IO.IOException("did not read all bytes from file: read " + @in.GetFilePointer() + " vs size " + @in.Length + " (resource: " + @in + ")");
+                throw new IOException("did not read all bytes from file: read " + @in.GetFilePointer() + " vs size " + @in.Length + " (resource: " + @in + ")");
             }
         }
 

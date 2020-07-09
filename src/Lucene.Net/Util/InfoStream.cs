@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
                 {
                     if (value == null)
                     {
-                        throw new System.ArgumentException("Cannot set InfoStream default implementation to null. " + "To disable logging use InfoStream.NO_OUTPUT");
+                        throw new ArgumentException("Cannot set InfoStream default implementation to null. " + "To disable logging use InfoStream.NO_OUTPUT");
                     }
                     defaultInfoStream = value;
                 }

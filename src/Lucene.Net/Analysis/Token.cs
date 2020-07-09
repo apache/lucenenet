@@ -248,7 +248,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Gets or Sets the position increment (the distance from the prior term). The default value is one.
         /// </summary>
-        /// <exception cref="System.ArgumentException"> if value is set to a negative value. </exception>
+        /// <exception cref="ArgumentException"> if value is set to a negative value. </exception>
         /// <seealso cref="IPositionIncrementAttribute"/>
         public virtual int PositionIncrement
         {
@@ -257,7 +257,7 @@ namespace Lucene.Net.Analysis
             {
                 if (value < 0)
                 {
-                    throw new System.ArgumentException("Increment must be zero or greater: " + value);
+                    throw new ArgumentException("Increment must be zero or greater: " + value);
                 }
                 this.positionIncrement = value;
             }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Analysis
         /// <para/>
         /// The default value is one.
         /// </summary>
-        /// <exception cref="System.ArgumentException"> if value
+        /// <exception cref="ArgumentException"> if value
         ///         is set to zero or negative. </exception>
         /// <seealso cref="IPositionLengthAttribute"/>
         public virtual int PositionLength
@@ -302,7 +302,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Set the starting and ending offset.
         /// </summary>
-        /// <exception cref="System.ArgumentException"> If <paramref name="startOffset"/> or <paramref name="endOffset"/>
+        /// <exception cref="ArgumentException"> If <paramref name="startOffset"/> or <paramref name="endOffset"/>
         ///         are negative, or if <paramref name="startOffset"/> is greater than
         ///         <paramref name="endOffset"/> </exception>
         /// <seealso cref="StartOffset"/>
@@ -634,7 +634,7 @@ namespace Lucene.Net.Analysis
         {
             if (startOffset < 0 || endOffset < startOffset)
             {
-                throw new System.ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset);
+                throw new ArgumentException("startOffset must be non-negative, and endOffset must be >= startOffset, " + "startOffset=" + startOffset + ",endOffset=" + endOffset);
             }
         }
 

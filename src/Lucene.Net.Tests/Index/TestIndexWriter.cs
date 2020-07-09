@@ -1027,7 +1027,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("did not hit expected exception");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException iea)
+            catch (ArgumentException iea)
 #pragma warning restore 168
             {
                 // expected
@@ -2013,7 +2013,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should have hit exception");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
 #pragma warning restore 168
             {
                 // expected
@@ -2678,7 +2678,7 @@ namespace Lucene.Net.Index
 
               public virtual void Remove()
               {
-                  throw new System.NotSupportedException();
+                  throw new NotSupportedException();
               }
           }*/
         }

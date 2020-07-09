@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
@@ -46,7 +47,7 @@ namespace Lucene.Net.Index
         [Serializable]
 #endif
         public class PrepareCommitFailException
-            : System.IO.IOException
+            : IOException
         {
             /// <summary>
             /// Sole constructor. </summary>
@@ -83,7 +84,7 @@ namespace Lucene.Net.Index
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
-        public class CommitFailException : System.IO.IOException
+        public class CommitFailException : IOException
         {
             /// <summary>
             /// Sole constructor. </summary>

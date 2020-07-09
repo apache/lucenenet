@@ -1,6 +1,7 @@
 ﻿using J2N.IO;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 /*
@@ -74,7 +75,7 @@ namespace Egothor.Stemmer
         /// Constructor for the <see cref="MultiTrie"/> object.
         /// </summary>
         /// <param name="is">the input stream</param>
-        /// <exception cref="System.IO.IOException">if an I/O error occurs</exception>
+        /// <exception cref="IOException">if an I/O error occurs</exception>
         public MultiTrie2(IDataInput @is)
             : base(@is)
         {
@@ -207,7 +208,7 @@ namespace Egothor.Stemmer
         /// Write this data structure to the given output stream.
         /// </summary>
         /// <param name="os">the output stream</param>
-        /// <exception cref="System.IO.IOException">if an I/O error occurs</exception>
+        /// <exception cref="IOException">if an I/O error occurs</exception>
         public override void Store(IDataOutput os)
         {
             base.Store(os);

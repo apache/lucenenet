@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
@@ -84,7 +85,7 @@ namespace Lucene.Net.Codecs
 
         public override int Advance(int target)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         public override int NextDoc()

@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
       {
         if (!d.Suite)
         {
-          throw new System.ArgumentException("this is a @ClassRule (applies to suites only).");
+          throw new ArgumentException("this is a @ClassRule (applies to suites only).");
         }
 
         return new StatementAnonymousInnerClassHelper(this, s, d);

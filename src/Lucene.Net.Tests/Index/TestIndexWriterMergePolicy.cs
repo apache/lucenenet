@@ -301,7 +301,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("Didn't throw IllegalArgumentException");
             }
 #pragma warning disable 168
-            catch (System.ArgumentException iae)
+            catch (ArgumentException iae)
 #pragma warning restore 168
             {
                 // pass

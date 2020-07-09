@@ -265,7 +265,7 @@ namespace Lucene.Net.Documents
                 CheckIfFrozen();
                 if (value < 1)
                 {
-                    throw new System.ArgumentException("precisionStep must be >= 1 (got " + value + ")");
+                    throw new ArgumentException("precisionStep must be >= 1 (got " + value + ")");
                 }
                 this.numericPrecisionStep = value;
             }

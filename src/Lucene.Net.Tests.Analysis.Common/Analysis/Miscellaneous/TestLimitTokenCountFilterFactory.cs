@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("LimitTokenCount");
                 fail();
             }
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
             {
                 assertTrue("exception doesn't mention param: " + e.Message, 0 < e.Message.IndexOf(LimitTokenCountFilterFactory.MAX_TOKEN_COUNT_KEY, StringComparison.Ordinal));
             }
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("LimitTokenCount", LimitTokenCountFilterFactory.MAX_TOKEN_COUNT_KEY, "3", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Support;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Range
@@ -21,11 +21,11 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-    using IBits = Lucene.Net.Util.IBits;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Filter = Lucene.Net.Search.Filter;
     using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
+    using IBits = Lucene.Net.Util.IBits;
     using Int64FieldSource = Lucene.Net.Queries.Function.ValueSources.Int64FieldSource;
     using MatchingDocs = FacetsCollector.MatchingDocs;
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Facet.Range
                     bits = dis.Bits;
                     if (bits == null)
                     {
-                        throw new System.ArgumentException("fastMatchFilter does not implement DocIdSet.bits");
+                        throw new ArgumentException("fastMatchFilter does not implement DocIdSet.bits");
                     }
                 }
                 else

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -43,7 +44,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("ScandinavianNormalization", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -163,7 +164,7 @@ namespace Lucene.Net.Analysis.Wikipedia
             // TODO: cutover to enum
             if (tokenOutput != TOKENS_ONLY && tokenOutput != UNTOKENIZED_ONLY && tokenOutput != BOTH)
             {
-                throw new System.ArgumentException("tokenOutput must be TOKENS_ONLY, UNTOKENIZED_ONLY or BOTH");
+                throw new ArgumentException("tokenOutput must be TOKENS_ONLY, UNTOKENIZED_ONLY or BOTH");
             }
             this.tokenOutput = tokenOutput;
             this.untokenizedTypes = untokenizedTypes;

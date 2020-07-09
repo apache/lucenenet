@@ -94,7 +94,7 @@ namespace Lucene.Net.Facet.Taxonomy
             DimConfig dimConfig = m_config.GetDimConfig(dim);
             if (!dimConfig.IndexFieldName.Equals(m_indexFieldName, StringComparison.Ordinal))
             {
-                throw new System.ArgumentException("dimension \"" + dim + "\" was not indexed into field \"" + m_indexFieldName);
+                throw new ArgumentException("dimension \"" + dim + "\" was not indexed into field \"" + m_indexFieldName);
             }
             return dimConfig;
         }

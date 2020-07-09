@@ -186,7 +186,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         bits |= FIELD_IS_NUMERIC_DOUBLE;
                         break;
                     default:
-                        throw new System.ArgumentException("cannot store numeric type " + field.NumericType);
+                        throw new ArgumentException("cannot store numeric type " + field.NumericType);
                 }
 
                 @string = null;
@@ -205,7 +205,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     @string = field.GetStringValue();
                     if (@string == null)
                     {
-                        throw new System.ArgumentException("field " + field.Name + " is stored but does not have binaryValue, stringValue nor numericValue");
+                        throw new ArgumentException("field " + field.Name + " is stored but does not have binaryValue, stringValue nor numericValue");
                     }
                 }
             }

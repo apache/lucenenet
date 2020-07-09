@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -245,7 +246,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// Called initially, and whenever <see cref="Visit(Lucene.Net.Spatial.Prefix.Tree.Cell)"/>
             /// returns true.
             /// </summary>
-            /// <exception cref="System.IO.IOException"></exception>
+            /// <exception cref="IOException"></exception>
             private void AddIntersectingChildren()
             {
                 Debug.Assert(thisTerm != null);
@@ -315,7 +316,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// level <paramref name="scanDetailLevel"/> then it calls
             /// <see cref="VisitScanned(Lucene.Net.Spatial.Prefix.Tree.Cell)"/>.
             /// </summary>
-            /// <exception cref="System.IO.IOException"></exception>
+            /// <exception cref="IOException"></exception>
             protected internal virtual void Scan(int scanDetailLevel)
             {
                 for (;
@@ -412,11 +413,11 @@ namespace Lucene.Net.Spatial.Prefix
             #endregion
 
             /// <summary>Called first to setup things.</summary>
-            /// <exception cref="System.IO.IOException"></exception>
+            /// <exception cref="IOException"></exception>
             protected internal abstract void Start();
 
             /// <summary>Called last to return the result.</summary>
-            /// <exception cref="System.IO.IOException"></exception>
+            /// <exception cref="IOException"></exception>
             protected internal abstract DocIdSet Finish();
 
             /// <summary>
@@ -428,7 +429,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// true to descend to more levels. It is an error to return true
             /// if cell.Level == detailLevel
             /// </returns>
-            /// <exception cref="System.IO.IOException"></exception>
+            /// <exception cref="IOException"></exception>
             protected internal abstract bool Visit(Cell cell);
 
             /// <summary>Called after visit() returns true and an indexed leaf cell is found.</summary>
@@ -437,14 +438,14 @@ namespace Lucene.Net.Spatial.Prefix
             /// indexed leaf cell means associated documents generally won't be found at
             /// further detail levels.
             /// </remarks>
-            /// <exception cref="System.IO.IOException"></exception>
+            /// <exception cref="IOException"></exception>
             protected internal abstract void VisitLeaf(Cell cell);
 
             /// <summary>
             /// The cell is either indexed as a leaf or is the last level of detail. It
             /// might not even intersect the query shape, so be sure to check for that.
             /// </summary>
-            /// <exception cref="System.IO.IOException"></exception>
+            /// <exception cref="IOException"></exception>
             protected internal abstract void VisitScanned(Cell cell);
 
             protected internal virtual void PreSiblings(VNode vNode)

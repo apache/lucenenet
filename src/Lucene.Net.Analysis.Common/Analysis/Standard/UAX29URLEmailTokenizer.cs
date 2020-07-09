@@ -4,6 +4,7 @@ using Lucene.Net.Analysis.Standard.Std36;
 using Lucene.Net.Analysis.Standard.Std40;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Standard
@@ -96,7 +97,7 @@ namespace Lucene.Net.Analysis.Standard
             {
                 if (value < 1)
                 {
-                    throw new System.ArgumentException("maxTokenLength must be greater than zero");
+                    throw new ArgumentException("maxTokenLength must be greater than zero");
                 }
                 this.maxTokenLength = value;
             }

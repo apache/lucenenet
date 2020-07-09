@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Standard;
-using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Analysis.Util;
+using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Standard
 {
@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Standard
             AssureMatchVersion();
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

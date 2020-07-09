@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
         {
             if (Directory != commit.Directory)
             {
-                throw new System.NotSupportedException("cannot compare IndexCommits from different Directory instances");
+                throw new NotSupportedException("cannot compare IndexCommits from different Directory instances");
             }
 
             long gen = Generation;

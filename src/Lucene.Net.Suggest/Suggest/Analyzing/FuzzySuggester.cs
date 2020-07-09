@@ -153,15 +153,15 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             if (maxEdits < 0 || maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
             {
-                throw new System.ArgumentException("maxEdits must be between 0 and " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
+                throw new ArgumentException("maxEdits must be between 0 and " + LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
             }
             if (nonFuzzyPrefix < 0)
             {
-                throw new System.ArgumentException("nonFuzzyPrefix must not be >= 0 (got " + nonFuzzyPrefix + ")");
+                throw new ArgumentException("nonFuzzyPrefix must not be >= 0 (got " + nonFuzzyPrefix + ")");
             }
             if (minFuzzyLength < 0)
             {
-                throw new System.ArgumentException("minFuzzyLength must not be >= 0 (got " + minFuzzyLength + ")");
+                throw new ArgumentException("minFuzzyLength must not be >= 0 (got " + minFuzzyLength + ")");
             }
 
             this.maxEdits = maxEdits;

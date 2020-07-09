@@ -4,6 +4,7 @@ using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -205,7 +206,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                     throw new ParseException(string.Format(@"Analyzer returned nothing for ""{0}""", chunk));
                 }
             }
-            catch (System.IO.IOException /*e*/)
+            catch (IOException /*e*/)
             {
                 throw new ParseException(
                     string.Format(@"IO error while trying to analyze single term: ""{0}""", termStr));

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -44,7 +45,7 @@ namespace Lucene.Net.Analysis.Standard
             maxTokenLength = GetInt32(args, "maxTokenLength", StandardAnalyzer.DEFAULT_MAX_TOKEN_LENGTH);
             if (args.Count > 0)
             {
-                throw new System.ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException("Unknown parameters: " + args);
             }
         }
 

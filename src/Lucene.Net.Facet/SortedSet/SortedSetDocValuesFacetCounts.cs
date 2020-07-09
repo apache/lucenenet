@@ -83,16 +83,16 @@ namespace Lucene.Net.Facet.SortedSet
         {
             if (topN <= 0)
             {
-                throw new System.ArgumentException("topN must be > 0 (got: " + topN + ")");
+                throw new ArgumentException("topN must be > 0 (got: " + topN + ")");
             }
             if (path.Length > 0)
             {
-                throw new System.ArgumentException("path should be 0 length");
+                throw new ArgumentException("path should be 0 length");
             }
             OrdRange ordRange = state.GetOrdRange(dim);
             if (ordRange == null)
             {
-                throw new System.ArgumentException("dimension \"" + dim + "\" was not indexed");
+                throw new ArgumentException("dimension \"" + dim + "\" was not indexed");
             }
             return GetDim(dim, ordRange, topN);
         }
@@ -287,7 +287,7 @@ namespace Lucene.Net.Facet.SortedSet
         {
             if (path.Length != 1)
             {
-                throw new System.ArgumentException("path must be length=1");
+                throw new ArgumentException("path must be length=1");
             }
             int ord = (int)dv.LookupTerm(new BytesRef(FacetsConfig.PathToString(dim, path)));
             if (ord < 0)

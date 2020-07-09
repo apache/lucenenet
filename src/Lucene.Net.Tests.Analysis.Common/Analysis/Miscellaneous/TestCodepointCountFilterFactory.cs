@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
+using System;
 using System.IO;
 using Reader = System.IO.TextReader;
 
@@ -43,7 +44,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("CodepointCount", "min", "4", "max", "5", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 TokenFilterFactory("CodepointCount", CodepointCountFilterFactory.MIN_KEY, "5", CodepointCountFilterFactory.MAX_KEY, "4").Create(stream);
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("maximum length must not be greater than minimum length"));
             }

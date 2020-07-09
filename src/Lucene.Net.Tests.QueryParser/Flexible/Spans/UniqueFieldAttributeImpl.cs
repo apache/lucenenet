@@ -1,4 +1,6 @@
 ﻿using Lucene.Net.Util;
+using System;
+using Attribute = Lucene.Net.Util.Attribute;
 
 namespace Lucene.Net.QueryParsers.Flexible.Spans
 {
@@ -50,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
 
             if (!(target is UniqueFieldAttribute))
             {
-                throw new System.ArgumentException(
+                throw new ArgumentException(
                     "cannot copy the values from attribute UniqueFieldAttribute to an instance of "
                         + target.GetType().Name);
             }

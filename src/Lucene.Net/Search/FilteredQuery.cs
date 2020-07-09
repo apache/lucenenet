@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -65,11 +66,11 @@ namespace Lucene.Net.Search
         {
             if (query == null || filter == null)
             {
-                throw new System.ArgumentException("Query and filter cannot be null.");
+                throw new ArgumentException("Query and filter cannot be null.");
             }
             if (strategy == null)
             {
-                throw new System.ArgumentException("FilterStrategy can not be null");
+                throw new ArgumentException("FilterStrategy can not be null");
             }
             this.strategy = strategy;
             this.query = query;
@@ -530,7 +531,7 @@ namespace Lucene.Net.Search
             /// <param name="docIdSet"> the filter <see cref="DocIdSet"/> to apply </param>
             /// <returns> a filtered scorer
             /// </returns>
-            /// <exception cref="System.IO.IOException"> if an <see cref="System.IO.IOException"/> occurs </exception>
+            /// <exception cref="IOException"> if an <see cref="IOException"/> occurs </exception>
             public abstract Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet);
 
             /// <summary>

@@ -220,7 +220,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// </summary>
         /// <param name="file">
         ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file)
             : this(file, false, CultureInfo.CurrentCulture)
@@ -237,7 +237,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="file">
         ///          The <see cref="FileInfo"/> with the data to load into the Trie. </param>
         /// <param name="culture">The culture used for lowercasing.</param>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, CultureInfo culture)
             : this(file, false, culture)
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <param name="compression">
         ///          If true, the file is compressed with the GZIP algorithm, and if
         ///          false, the file is a normal text document. </param>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, bool compression)
             : this(file, compression, CultureInfo.CurrentCulture)
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         ///          If true, the file is compressed with the GZIP algorithm, and if
         ///          false, the file is a normal text document. </param>
         /// <param name="culture">The culture used for lowercasing.</param>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         ///              A problem occured while reading the data. </exception>
         public JaspellTernarySearchTrie(FileInfo file, bool compression, CultureInfo culture)
             : this(culture)
@@ -625,7 +625,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
             if (key.Length == 0)
             {
-                throw new System.ArgumentException("attempt to get or create node with key of zero length");
+                throw new ArgumentException("attempt to get or create node with key of zero length");
             }
             if (rootNode == null)
             {

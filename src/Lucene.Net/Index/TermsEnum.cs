@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
         {
             if (!SeekExact(term))
             {
-                throw new System.ArgumentException("term=" + term + " does not exist");
+                throw new ArgumentException("term=" + term + " does not exist");
             }
         }
 
@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
 
             public override void CopyFrom(TermState other)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
         }
 

@@ -152,7 +152,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // expected exception
@@ -167,7 +167,7 @@ namespace Lucene.Net.Documents
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.ArgumentException e)
+            catch (ArgumentException e)
 #pragma warning restore 168
             {
                 // expected exception
@@ -366,7 +366,7 @@ namespace Lucene.Net.Documents
         [Test]
         public virtual void TestInvalidFields()
         {
-            Assert.Throws<System.ArgumentException>(() => { new Field("foo", new MockTokenizer(new StreamReader(File.Open("", FileMode.Open))), StringField.TYPE_STORED); });
+            Assert.Throws<ArgumentException>(() => { new Field("foo", new MockTokenizer(new StreamReader(File.Open("", FileMode.Open))), StringField.TYPE_STORED); });
         }
 
         // LUCENE-3682

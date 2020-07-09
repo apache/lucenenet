@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
                 // LUCENENET specific - making non-nullable, so we don't need to worry about this.
                 //if (value == null)
                 //{
-                //    throw new System.ArgumentException("openMode must not be null");
+                //    throw new ArgumentException("openMode must not be null");
                 //}
                 this.openMode = value;
         }
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
             {
                 if (value == null)
                 {
-                    throw new System.ArgumentException("indexDeletionPolicy must not be null");
+                    throw new ArgumentException("indexDeletionPolicy must not be null");
                 }
                 this.delPolicy = value;
             }
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
             {
                 if (value == null)
                 {
-                    throw new System.ArgumentException("similarity must not be null");
+                    throw new ArgumentException("similarity must not be null");
                 }
                 this.similarity = value;
             }
@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
             {
                 if (value == null)
                 {
-                    throw new System.ArgumentException("mergeScheduler must not be null");
+                    throw new ArgumentException("mergeScheduler must not be null");
                 }
                 this.mergeScheduler = value;
             }
@@ -354,7 +354,7 @@ namespace Lucene.Net.Index
             {
                 if (value == null)
                 {
-                    throw new System.ArgumentException("codec must not be null");
+                    throw new ArgumentException("codec must not be null");
                 }
                 this.codec = value;
             }
@@ -377,7 +377,7 @@ namespace Lucene.Net.Index
             {
                 if (value == null)
                 {
-                    throw new System.ArgumentException("mergePolicy must not be null");
+                    throw new ArgumentException("mergePolicy must not be null");
                 }
                 this.mergePolicy = value;
             }
@@ -407,7 +407,7 @@ namespace Lucene.Net.Index
             {
                 if (value == null)
                 {
-                    throw new System.ArgumentException("threadPool must not be null");
+                    throw new ArgumentException("threadPool must not be null");
                 }
                 this.indexerThreadPool = value;
             }
@@ -473,7 +473,7 @@ namespace Lucene.Net.Index
             {
                 if (value == null)
                 {
-                    throw new System.ArgumentException("indexingChain must not be null");
+                    throw new ArgumentException("indexingChain must not be null");
                 }
                 this.indexingChain = value;
             }
@@ -498,7 +498,7 @@ namespace Lucene.Net.Index
             {
                 if (value <= 0 || value >= 2048)
                 {
-                    throw new System.ArgumentException("PerThreadHardLimit must be greater than 0 and less than 2048MB");
+                    throw new ArgumentException("PerThreadHardLimit must be greater than 0 and less than 2048MB");
                 }
                 this.perThreadHardLimitMB = value;
             }
@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
             {
                 if (value == null)
                 {
-                    throw new System.ArgumentException("flushPolicy must not be null");
+                    throw new ArgumentException("flushPolicy must not be null");
                 }
                 this.flushPolicy = value;
             }
@@ -603,7 +603,7 @@ namespace Lucene.Net.Index
         {
             if (infoStream == null)
             {
-                throw new System.ArgumentException("Cannot set InfoStream implementation to null. " + 
+                throw new ArgumentException("Cannot set InfoStream implementation to null. " + 
                     "To disable logging use InfoStream.NO_OUTPUT");
             }
             this.infoStream = infoStream;
@@ -618,7 +618,7 @@ namespace Lucene.Net.Index
         {
             if (printStream == null)
             {
-                throw new System.ArgumentException("printStream must not be null");
+                throw new ArgumentException("printStream must not be null");
             }
             return SetInfoStream(new TextWriterInfoStream(printStream));
         }

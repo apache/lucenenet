@@ -106,7 +106,7 @@ namespace Lucene.Net.Util
             {
                 if (indexInterval < 1)
                 {
-                    throw new System.ArgumentException("indexInterval must be >= 1");
+                    throw new ArgumentException("indexInterval must be >= 1");
                 }
                 this.indexInterval = indexInterval;
                 return this;
@@ -118,7 +118,7 @@ namespace Lucene.Net.Util
             {
                 if (doc <= previousDoc)
                 {
-                    throw new System.ArgumentException("Doc IDs must be provided in order, but previousDoc=" + previousDoc + " and doc=" + doc);
+                    throw new ArgumentException("Doc IDs must be provided in order, but previousDoc=" + previousDoc + " and doc=" + doc);
                 }
                 buffer[bufferSize++] = doc - previousDoc - 1;
                 if (bufferSize == BLOCK_SIZE)

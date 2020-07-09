@@ -49,7 +49,7 @@ namespace Lucene.Net.Documents
 
         public override void SetInt64Value(long value)
         {
-            throw new System.ArgumentException("cannot change value type from System.Double to System.Int64");
+            throw new ArgumentException("cannot change value type from System.Double to System.Int64");
         }
     }
 }

@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
                         return bin;
 
                     default:
-                        throw new System.ArgumentException("unsupported type: " + type);
+                        throw new ArgumentException("unsupported type: " + type);
                 }
             }
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
                         return binaryUpdates;
 
                     default:
-                        throw new System.ArgumentException("unsupported type: " + type);
+                        throw new ArgumentException("unsupported type: " + type);
                 }
             }
 

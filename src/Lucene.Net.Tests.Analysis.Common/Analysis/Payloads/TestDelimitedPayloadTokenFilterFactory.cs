@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Payloads
                 TokenFilterFactory("DelimitedPayload", "encoder", "float", "bogusArg", "bogusValue");
                 fail();
             }
-            catch (System.ArgumentException expected)
+            catch (ArgumentException expected)
             {
                 assertTrue(expected.Message.Contains("Unknown parameters"));
             }

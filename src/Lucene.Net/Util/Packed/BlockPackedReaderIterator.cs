@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -141,7 +142,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(count >= 0);
             if (ord + count > valueCount || ord + count < 0)
             {
-                throw new System.IO.EndOfStreamException();
+                throw new EndOfStreamException();
             }
 
             // 1. skip buffered values
@@ -162,7 +163,7 @@ namespace Lucene.Net.Util.Packed
                 int bitsPerValue = (int)((uint)token >> AbstractBlockPackedWriter.BPV_SHIFT);
                 if (bitsPerValue > 64)
                 {
-                    throw new System.IO.IOException("Corrupted");
+                    throw new IOException("Corrupted");
                 }
                 if ((token & AbstractBlockPackedWriter.MIN_VALUE_EQUALS_0) == 0)
                 {
@@ -214,7 +215,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (ord == valueCount)
             {
-                throw new System.IO.EndOfStreamException();
+                throw new EndOfStreamException();
             }
             if (off == blockSize)
             {
@@ -232,7 +233,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(count > 0);
             if (ord == valueCount)
             {
-                throw new System.IO.EndOfStreamException();
+                throw new EndOfStreamException();
             }
             if (off == blockSize)
             {
@@ -256,7 +257,7 @@ namespace Lucene.Net.Util.Packed
             int bitsPerValue = (int)((uint)token >> AbstractBlockPackedWriter.BPV_SHIFT);
             if (bitsPerValue > 64)
             {
-                throw new System.IO.IOException("Corrupted");
+                throw new IOException("Corrupted");
             }
             long minValue = minEquals0 ? 0L : ZigZagDecode(1L + ReadVInt64(@in));
             Debug.Assert(minEquals0 || minValue != 0);

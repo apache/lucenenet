@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Analysis.TokenAttributes
 {
@@ -50,7 +51,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <summary>
         /// Gets or Sets the position increment (the distance from the prior term). The default value is one.
         /// </summary>
-        /// <exception cref="System.ArgumentException"> if value is set to a negative value. </exception>
+        /// <exception cref="ArgumentException"> if value is set to a negative value. </exception>
         int PositionIncrement { set; get; }
     }
 }

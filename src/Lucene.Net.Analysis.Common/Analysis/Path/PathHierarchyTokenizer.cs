@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using System;
 using System.IO;
 using System.Text;
 
@@ -81,11 +82,11 @@ namespace Lucene.Net.Analysis.Path
         {
             if (bufferSize < 0)
             {
-                throw new System.ArgumentException("bufferSize cannot be negative");
+                throw new ArgumentException("bufferSize cannot be negative");
             }
             if (skip < 0)
             {
-                throw new System.ArgumentException("skip cannot be negative");
+                throw new ArgumentException("skip cannot be negative");
             }
 
             offsetAtt = AddAttribute<IOffsetAttribute>();

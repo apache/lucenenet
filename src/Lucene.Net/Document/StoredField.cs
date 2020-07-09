@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Documents
 {
@@ -48,7 +49,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> byte array pointing to binary content (not copied) </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
         public StoredField(string name, byte[] value)
             : base(name, value, TYPE)
         {
@@ -63,7 +64,7 @@ namespace Lucene.Net.Documents
         /// <param name="value"> <see cref="byte"/> array pointing to binary content (not copied) </param>
         /// <param name="offset"> starting position of the byte array </param>
         /// <param name="length"> valid length of the byte array </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
         public StoredField(string name, byte[] value, int offset, int length)
             : base(name, value, offset, length, TYPE)
         {
@@ -76,7 +77,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="BytesRef"/> pointing to binary content (not copied) </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
         public StoredField(string name, BytesRef value)
             : base(name, value, TYPE)
         {
@@ -86,7 +87,7 @@ namespace Lucene.Net.Documents
         /// Create a stored-only field with the given <see cref="string"/> value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="string"/> value </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
         public StoredField(string name, string value)
             : base(name, value, TYPE)
         {
@@ -97,7 +98,7 @@ namespace Lucene.Net.Documents
         /// Create a stored-only field with the given <see cref="int"/> value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="int"/> value </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
         public StoredField(string name, int value)
             : base(name, TYPE)
         {
@@ -108,7 +109,7 @@ namespace Lucene.Net.Documents
         /// Create a stored-only field with the given <see cref="float"/> value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="float"/> value </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
         public StoredField(string name, float value)
             : base(name, TYPE)
         {
@@ -119,7 +120,7 @@ namespace Lucene.Net.Documents
         /// Create a stored-only field with the given <see cref="long"/> value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="long"/> value </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
         public StoredField(string name, long value)
             : base(name, TYPE)
         {
@@ -130,7 +131,7 @@ namespace Lucene.Net.Documents
         /// Create a stored-only field with the given <see cref="double"/> value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> <see cref="double"/> value </param>
-        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
         public StoredField(string name, double value)
             : base(name, TYPE)
         {

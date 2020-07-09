@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
             {
                 if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value < 1)
                 {
-                    throw new System.ArgumentException("maxBufferedDeleteTerms must at least be 1 when enabled");
+                    throw new ArgumentException("maxBufferedDeleteTerms must at least be 1 when enabled");
                 }
                 this.maxBufferedDeleteTerms = value;
             }
@@ -352,11 +352,11 @@ namespace Lucene.Net.Index
             {
                 if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value <= 0.0)
                 {
-                    throw new System.ArgumentException("ramBufferSizeMB should be > 0.0 MB when enabled");
+                    throw new ArgumentException("ramBufferSizeMB should be > 0.0 MB when enabled");
                 }
                 if (value == IndexWriterConfig.DISABLE_AUTO_FLUSH && maxBufferedDocs == IndexWriterConfig.DISABLE_AUTO_FLUSH)
                 {
-                    throw new System.ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
+                    throw new ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
                 }
                 this.ramBufferSizeMB = value;
             }
@@ -392,11 +392,11 @@ namespace Lucene.Net.Index
             {
                 if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value < 2)
                 {
-                    throw new System.ArgumentException("maxBufferedDocs must at least be 2 when enabled");
+                    throw new ArgumentException("maxBufferedDocs must at least be 2 when enabled");
                 }
                 if (value == IndexWriterConfig.DISABLE_AUTO_FLUSH && ramBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH)
                 {
-                    throw new System.ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
+                    throw new ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
                 }
                 this.maxBufferedDocs = value;
             }
@@ -436,7 +436,7 @@ namespace Lucene.Net.Index
             {
                 if (value <= 0 && value != -1)
                 {
-                    throw new System.ArgumentException("divisor must be >= 1, or -1 (got " + value + ")");
+                    throw new ArgumentException("divisor must be >= 1, or -1 (got " + value + ")");
                 }
                 readerTermsIndexDivisor = value;
             }

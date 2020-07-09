@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Search;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Join
@@ -72,7 +73,7 @@ namespace Lucene.Net.Join
                     fromSearcher.Search(fromQuery, termsWithScoreCollector);
                     return new TermsIncludingScoreQuery(toField, multipleValuesPerDocument, termsWithScoreCollector.CollectedTerms, termsWithScoreCollector.ScoresPerTerm, fromQuery);
                 default:
-                    throw new System.ArgumentException(string.Format("Score mode {0} isn't supported.", scoreMode));
+                    throw new ArgumentException(string.Format("Score mode {0} isn't supported.", scoreMode));
             }
         }
     }

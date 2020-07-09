@@ -1,9 +1,9 @@
 using J2N.Runtime.CompilerServices;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -25,12 +25,12 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using IBits = Lucene.Net.Util.IBits;
     using Codec = Lucene.Net.Codecs.Codec;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Directory = Lucene.Net.Store.Directory;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
+    using IBits = Lucene.Net.Util.IBits;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using StoredFieldsReader = Lucene.Net.Codecs.StoredFieldsReader;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Constructs a new <see cref="SegmentReader"/> with a new core. </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
-        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         // TODO: why is this public?
         public SegmentReader(SegmentCommitInfo si, int termInfosIndexDivisor, IOContext context)
         {

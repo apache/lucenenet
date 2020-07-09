@@ -611,7 +611,7 @@ namespace Lucene.Net.Util.Automaton
         {
             var other = obj as Automaton;
             return BasicOperations.SameLanguage(this, other);
-            //throw new System.NotSupportedException("use BasicOperations.sameLanguage instead");
+            //throw new NotSupportedException("use BasicOperations.sameLanguage instead");
         }
 
         // LUCENENET specific - in .NET, we can't simply throw an exception here because 
@@ -660,7 +660,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             return hash;
-            //throw new System.NotSupportedException();
+            //throw new NotSupportedException();
         }
 
         ///// <summary>

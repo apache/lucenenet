@@ -53,11 +53,11 @@ namespace Lucene.Net.Facet.SortedSet
             SortedSetDocValues dv = topReader.GetSortedSetDocValues(field);
             if (dv == null)
             {
-                throw new System.ArgumentException("field \"" + field + "\" was not indexed with SortedSetDocValues");
+                throw new ArgumentException("field \"" + field + "\" was not indexed with SortedSetDocValues");
             }
             if (dv.ValueCount > int.MaxValue)
             {
-                throw new System.ArgumentException("can only handle valueCount < System.Int32.MaxValue; got " + dv.ValueCount);
+                throw new ArgumentException("can only handle valueCount < System.Int32.MaxValue; got " + dv.ValueCount);
             }
             valueCount = (int)dv.ValueCount;
 
@@ -78,7 +78,7 @@ namespace Lucene.Net.Facet.SortedSet
                 string[] components = FacetsConfig.StringToPath(term.Utf8ToString());
                 if (components.Length != 2)
                 {
-                    throw new System.ArgumentException("this class can only handle 2 level hierarchy (dim/value); got: " + Arrays.ToString(components) + " " + term.Utf8ToString());
+                    throw new ArgumentException("this class can only handle 2 level hierarchy (dim/value); got: " + Arrays.ToString(components) + " " + term.Utf8ToString());
                 }
                 if (!components[0].Equals(lastDim, StringComparison.Ordinal))
                 {

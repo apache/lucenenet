@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -97,7 +98,7 @@ namespace Lucene.Net.Search
         {
             if (minNrShouldMatch < 0)
             {
-                throw new System.ArgumentException("Minimum number of optional scorers should not be negative");
+                throw new ArgumentException("Minimum number of optional scorers should not be negative");
             }
             this.minNrShouldMatch = minNrShouldMatch;
 

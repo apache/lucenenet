@@ -146,14 +146,14 @@ namespace Lucene.Net.Util
             // based on harmony charset.java
             if (name.Length >= 128)
             {
-                throw new System.ArgumentException("Illegal service name: '" + name + "' is too long (must be < 128 chars).");
+                throw new ArgumentException("Illegal service name: '" + name + "' is too long (must be < 128 chars).");
             }
             for (int i = 0, len = name.Length; i < len; i++)
             {
                 char c = name[i];
                 if (!IsLetterOrDigit(c))
                 {
-                    throw new System.ArgumentException("Illegal service name: '" + name + "' must be simple ascii alphanumeric.");
+                    throw new ArgumentException("Illegal service name: '" + name + "' must be simple ascii alphanumeric.");
                 }
             }
         }

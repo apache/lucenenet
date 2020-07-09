@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
             // at the start
             if (compiled.Type != CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
             {
-                throw new System.ArgumentException("please use CompiledAutomaton.getTermsEnum instead");
+                throw new ArgumentException("please use CompiledAutomaton.getTermsEnum instead");
             }
             if (startTerm == null)
             {

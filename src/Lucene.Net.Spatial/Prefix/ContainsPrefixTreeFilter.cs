@@ -6,6 +6,7 @@ using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -80,7 +81,7 @@ namespace Lucene.Net.Spatial.Prefix
             internal Cell nextCell;//see getLeafDocs
 
             /// <remarks>This is the primary algorithm; recursive.  Returns null if finds none.</remarks>
-            /// <exception cref="System.IO.IOException"></exception>
+            /// <exception cref="IOException"></exception>
             internal SmallDocSet Visit(Cell cell, IBits acceptContains)
             {
                 if (m_termsEnum == null)
