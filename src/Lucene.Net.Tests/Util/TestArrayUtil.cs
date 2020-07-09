@@ -245,7 +245,8 @@ namespace Lucene.Net.Util
 
         internal class Item : IComparable<Item>
         {
-            internal readonly int Val, Order;
+            public int Val { get; }
+            public int Order { get; }
 
             internal Item(int val, int order)
             {

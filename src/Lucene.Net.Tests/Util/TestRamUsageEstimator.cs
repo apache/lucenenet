@@ -29,9 +29,9 @@ namespace Lucene.Net.Util
             Assert.IsTrue(RamUsageEstimator.SizeOf("test string") > RamUsageEstimator.ShallowSizeOfInstance(typeof(string)));
 
             Holder holder = new Holder();
-            holder.Holder_Renamed = new Holder("string2", 5000L);
+            holder.holder = new Holder("string2", 5000L);
             Assert.IsTrue(RamUsageEstimator.SizeOf(holder) > RamUsageEstimator.ShallowSizeOfInstance(typeof(Holder)));
-            Assert.IsTrue(RamUsageEstimator.SizeOf(holder) > RamUsageEstimator.SizeOf(holder.Holder_Renamed));
+            Assert.IsTrue(RamUsageEstimator.SizeOf(holder) > RamUsageEstimator.SizeOf(holder.holder));
 
             Assert.IsTrue(RamUsageEstimator.ShallowSizeOfInstance(typeof(HolderSubclass)) >= RamUsageEstimator.ShallowSizeOfInstance(typeof(Holder)));
             Assert.IsTrue(RamUsageEstimator.ShallowSizeOfInstance(typeof(Holder)) == RamUsageEstimator.ShallowSizeOfInstance(typeof(HolderSubclass2)));
@@ -117,12 +117,13 @@ namespace Lucene.Net.Util
 
         private class Holder
         {
-            internal long Field1 = 5000L;
-            internal string Name = "name";
-            internal Holder Holder_Renamed;
-#pragma warning disable 649
-            internal long Field2, Field3, Field4;
-#pragma warning restore 649
+            private long field1 = 5000L;
+            private string name = "name";
+            internal Holder holder;
+
+            public long Field2 { get; set; }
+            public long Field3 { get; set; }
+            public long Field4 { get; set; }
 
             internal Holder()
             {
@@ -130,17 +131,15 @@ namespace Lucene.Net.Util
 
             internal Holder(string name, long field1)
             {
-                this.Name = name;
-                this.Field1 = field1;
+                this.name = name;
+                this.field1 = field1;
             }
         }
 
         private class HolderSubclass : Holder
         {
-#pragma warning disable 649
-            internal sbyte Foo;
-            internal int Bar;
-#pragma warning restore 649
+            public sbyte Foo { get; set; }
+            public int Bar { get; set; }
         }
 
         private class HolderSubclass2 : Holder

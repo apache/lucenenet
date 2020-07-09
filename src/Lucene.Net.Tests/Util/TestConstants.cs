@@ -1,6 +1,5 @@
-using System;
-using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 using System.Text.RegularExpressions;
 using Console = Lucene.Net.Util.SystemConsole;
 

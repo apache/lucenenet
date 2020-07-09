@@ -1,4 +1,3 @@
-using Lucene.Net.Support;
 using System.Diagnostics;
 using BitSet = J2N.Collections.BitSet;
 
@@ -34,16 +33,16 @@ namespace Lucene.Net.Util.Packed
 
         private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
         {
-            private readonly TestEliasFanoDocIdSet OuterInstance;
+            private readonly TestEliasFanoDocIdSet outerInstance;
 
-            private BitSet Bs;
-            private int NumBits;
+            private readonly BitSet bs;
+            private readonly int numBits;
 
             public DocIdSetIteratorAnonymousInnerClassHelper(TestEliasFanoDocIdSet outerInstance, BitSet bs, int numBits)
             {
-                this.OuterInstance = outerInstance;
-                this.Bs = bs;
-                this.NumBits = numBits;
+                this.outerInstance = outerInstance;
+                this.bs = bs;
+                this.numBits = numBits;
                 doc = -1;
             }
 
@@ -51,12 +50,12 @@ namespace Lucene.Net.Util.Packed
 
             public override int NextDoc()
             {
-                doc = Bs.NextSetBit(doc + 1);
+                doc = bs.NextSetBit(doc + 1);
                 if (doc == -1)
                 {
                     doc = NO_MORE_DOCS;
                 }
-                Debug.Assert(doc < NumBits);
+                Debug.Assert(doc < numBits);
                 return doc;
             }
 
@@ -67,7 +66,7 @@ namespace Lucene.Net.Util.Packed
 
             public override long GetCost()
             {
-                return Bs.Cardinality;
+                return bs.Cardinality;
             }
 
             public override int Advance(int target)

@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -24,14 +23,8 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestVirtualMethod : LuceneTestCase
     {
-        private static readonly VirtualMethod PublicTestMethod;
-        private static readonly VirtualMethod ProtectedTestMethod;
-
-        static TestVirtualMethod()
-        {
-            PublicTestMethod = new VirtualMethod(typeof(BaseTestVirtualMethod), "PublicTest", typeof(string));
-            ProtectedTestMethod = new VirtualMethod(typeof(BaseTestVirtualMethod), "ProtectedTest", typeof(int));
-        }
+        private static readonly VirtualMethod publicTestMethod = new VirtualMethod(typeof(BaseTestVirtualMethod), "PublicTest", typeof(string));
+        private static readonly VirtualMethod protectedTestMethod = new VirtualMethod(typeof(BaseTestVirtualMethod), "ProtectedTest", typeof(int));
 
         /// <summary>
         /// LUCENENET specific class used here because inheriting test classes messes up the context
@@ -87,23 +80,23 @@ namespace Lucene.Net.Util
         public virtual void TestGeneral()
         {
             // LUCENENET: Substituted BaseTestVirtualMethod for this class, but the logic is the same.
-            Assert.AreEqual(0, PublicTestMethod.GetImplementationDistance(typeof(BaseTestVirtualMethod)));
-            Assert.AreEqual(1, PublicTestMethod.GetImplementationDistance(typeof(TestClass1)));
-            Assert.AreEqual(1, PublicTestMethod.GetImplementationDistance(typeof(TestClass2)));
-            Assert.AreEqual(3, PublicTestMethod.GetImplementationDistance(typeof(TestClass3)));
-            Assert.IsFalse(PublicTestMethod.IsOverriddenAsOf(typeof(TestClass4)));
-            Assert.IsFalse(PublicTestMethod.IsOverriddenAsOf(typeof(TestClass5)));
+            Assert.AreEqual(0, publicTestMethod.GetImplementationDistance(typeof(BaseTestVirtualMethod)));
+            Assert.AreEqual(1, publicTestMethod.GetImplementationDistance(typeof(TestClass1)));
+            Assert.AreEqual(1, publicTestMethod.GetImplementationDistance(typeof(TestClass2)));
+            Assert.AreEqual(3, publicTestMethod.GetImplementationDistance(typeof(TestClass3)));
+            Assert.IsFalse(publicTestMethod.IsOverriddenAsOf(typeof(TestClass4)));
+            Assert.IsFalse(publicTestMethod.IsOverriddenAsOf(typeof(TestClass5)));
 
             // LUCENENET: Substituted BaseTestVirtualMethod for this class, but the logic is the same.
-            Assert.AreEqual(0, ProtectedTestMethod.GetImplementationDistance(typeof(BaseTestVirtualMethod)));
-            Assert.AreEqual(1, ProtectedTestMethod.GetImplementationDistance(typeof(TestClass1)));
-            Assert.AreEqual(2, ProtectedTestMethod.GetImplementationDistance(typeof(TestClass2)));
-            Assert.AreEqual(2, ProtectedTestMethod.GetImplementationDistance(typeof(TestClass3)));
-            Assert.IsFalse(ProtectedTestMethod.IsOverriddenAsOf(typeof(TestClass4)));
-            Assert.IsFalse(ProtectedTestMethod.IsOverriddenAsOf(typeof(TestClass5)));
+            Assert.AreEqual(0, protectedTestMethod.GetImplementationDistance(typeof(BaseTestVirtualMethod)));
+            Assert.AreEqual(1, protectedTestMethod.GetImplementationDistance(typeof(TestClass1)));
+            Assert.AreEqual(2, protectedTestMethod.GetImplementationDistance(typeof(TestClass2)));
+            Assert.AreEqual(2, protectedTestMethod.GetImplementationDistance(typeof(TestClass3)));
+            Assert.IsFalse(protectedTestMethod.IsOverriddenAsOf(typeof(TestClass4)));
+            Assert.IsFalse(protectedTestMethod.IsOverriddenAsOf(typeof(TestClass5)));
 
-            Assert.IsTrue(VirtualMethod.CompareImplementationDistance(typeof(TestClass3), PublicTestMethod, ProtectedTestMethod) > 0);
-            Assert.AreEqual(0, VirtualMethod.CompareImplementationDistance(typeof(TestClass5), PublicTestMethod, ProtectedTestMethod));
+            Assert.IsTrue(VirtualMethod.CompareImplementationDistance(typeof(TestClass3), publicTestMethod, protectedTestMethod) > 0);
+            Assert.AreEqual(0, VirtualMethod.CompareImplementationDistance(typeof(TestClass5), publicTestMethod, protectedTestMethod));
         }
 
         [Test]
@@ -112,7 +105,7 @@ namespace Lucene.Net.Util
             try
             {
                 // cast to Class to remove generics:
-                PublicTestMethod.GetImplementationDistance(typeof(LuceneTestCase));
+                publicTestMethod.GetImplementationDistance(typeof(LuceneTestCase));
                 Assert.Fail("LuceneTestCase is not a subclass and can never override publicTest(String)");
             }
 #pragma warning disable 168

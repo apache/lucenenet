@@ -34,7 +34,7 @@ namespace Lucene.Net.Util.Fst
     [TestFixture]
     public class Test2BFST : LuceneTestCase
     {
-        private static long LIMIT = 3L * 1024 * 1024 * 1024;
+        private const long LIMIT = 3L * 1024 * 1024 * 1024;
 
         [Test]
         public virtual void Test()

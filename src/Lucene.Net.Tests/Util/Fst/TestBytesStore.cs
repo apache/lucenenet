@@ -1,8 +1,9 @@
-using System;
-using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
-using Console = Lucene.Net.Util.SystemConsole;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -24,11 +25,9 @@ namespace Lucene.Net.Util.Fst
      */
 
     using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
-    using Support;
-    using Attributes;
+    using IOContext = Lucene.Net.Store.IOContext;
 
     [TestFixture]
     public class TestBytesStore : LuceneTestCase

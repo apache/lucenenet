@@ -10,21 +10,21 @@ using Console = Lucene.Net.Util.SystemConsole;
 namespace Lucene.Net.Util
 {
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using Directory = Lucene.Net.Store.Directory;
@@ -41,22 +41,22 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestFieldCacheSanityChecker : LuceneTestCase
     {
-        protected internal AtomicReader ReaderA;
-        protected internal AtomicReader ReaderB;
-        protected internal AtomicReader ReaderX;
-        protected internal AtomicReader ReaderAclone;
-        protected internal Directory DirA, DirB;
+        protected internal AtomicReader readerA;
+        protected internal AtomicReader readerB;
+        protected internal AtomicReader readerX;
+        protected internal AtomicReader readerAclone;
+        protected internal Directory dirA, dirB;
         private const int NUM_DOCS = 1000;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            DirA = NewDirectory();
-            DirB = NewDirectory();
+            dirA = NewDirectory();
+            dirB = NewDirectory();
 
-            IndexWriter wA = new IndexWriter(DirA, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-            IndexWriter wB = new IndexWriter(DirB, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            IndexWriter wA = new IndexWriter(dirA, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            IndexWriter wB = new IndexWriter(dirB, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             long theLong = long.MaxValue;
             double theDouble = double.MaxValue;
@@ -85,12 +85,12 @@ namespace Lucene.Net.Util
             }
             wA.Dispose();
             wB.Dispose();
-            DirectoryReader rA = DirectoryReader.Open(DirA);
-            ReaderA = SlowCompositeReaderWrapper.Wrap(rA);
-            ReaderAclone = SlowCompositeReaderWrapper.Wrap(rA);
-            ReaderA = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(DirA));
-            ReaderB = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(DirB));
-            ReaderX = SlowCompositeReaderWrapper.Wrap(new MultiReader(ReaderA, ReaderB));
+            DirectoryReader rA = DirectoryReader.Open(dirA);
+            readerA = SlowCompositeReaderWrapper.Wrap(rA);
+            readerAclone = SlowCompositeReaderWrapper.Wrap(rA);
+            readerA = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dirA));
+            readerB = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dirB));
+            readerX = SlowCompositeReaderWrapper.Wrap(new MultiReader(readerA, readerB));
 
             // LUCENENET specific.Ensure we have an infostream attached to the default FieldCache
             // when running the tests. In Java, this was done in the Core.Search.TestFieldCache.TestInfoStream()
@@ -103,12 +103,12 @@ namespace Lucene.Net.Util
         [TearDown]
         public override void TearDown()
         {
-            ReaderA.Dispose();
-            ReaderAclone.Dispose();
-            ReaderB.Dispose();
-            ReaderX.Dispose();
-            DirA.Dispose();
-            DirB.Dispose();
+            readerA.Dispose();
+            readerAclone.Dispose();
+            readerB.Dispose();
+            readerX.Dispose();
+            dirA.Dispose();
+            dirB.Dispose();
 
             // LUCENENET specific. See <see cref="SetUp()"/>. Dispose our InfoStream and set it to null
             // to avoid polluting the state of other tests.
@@ -123,14 +123,14 @@ namespace Lucene.Net.Util
             IFieldCache cache = FieldCache.DEFAULT;
             cache.PurgeAllCaches();
 
-            cache.GetDoubles(ReaderA, "theDouble", false);
+            cache.GetDoubles(readerA, "theDouble", false);
 #pragma warning disable 612, 618
-            cache.GetDoubles(ReaderA, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
-            cache.GetDoubles(ReaderAclone, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
-            cache.GetDoubles(ReaderB, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
+            cache.GetDoubles(readerA, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
+            cache.GetDoubles(readerAclone, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
+            cache.GetDoubles(readerB, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
 
-            cache.GetInt32s(ReaderX, "theInt", false);
-            cache.GetInt32s(ReaderX, "theInt", FieldCache.DEFAULT_INT32_PARSER, false);
+            cache.GetInt32s(readerX, "theInt", false);
+            cache.GetInt32s(readerX, "theInt", FieldCache.DEFAULT_INT32_PARSER, false);
 #pragma warning restore 612, 618
 
             // // //
@@ -153,9 +153,9 @@ namespace Lucene.Net.Util
             cache.PurgeAllCaches();
 
 #pragma warning disable 612, 618
-            cache.GetInt32s(ReaderX, "theInt", FieldCache.DEFAULT_INT32_PARSER, false);
-            cache.GetTerms(ReaderX, "theInt", false);
-            cache.GetBytes(ReaderX, "theByte", false);
+            cache.GetInt32s(readerX, "theInt", FieldCache.DEFAULT_INT32_PARSER, false);
+            cache.GetTerms(readerX, "theInt", false);
+            cache.GetBytes(readerX, "theByte", false);
 #pragma warning restore 612, 618
 
             // // //
@@ -176,11 +176,11 @@ namespace Lucene.Net.Util
             IFieldCache cache = FieldCache.DEFAULT;
             cache.PurgeAllCaches();
 
-            cache.GetTerms(ReaderA, "theInt", false);
-            cache.GetTerms(ReaderB, "theInt", false);
-            cache.GetTerms(ReaderX, "theInt", false);
+            cache.GetTerms(readerA, "theInt", false);
+            cache.GetTerms(readerB, "theInt", false);
+            cache.GetTerms(readerX, "theInt", false);
 #pragma warning disable 612, 618
-            cache.GetBytes(ReaderX, "theByte", false);
+            cache.GetBytes(readerX, "theByte", false);
 #pragma warning restore 612, 618
 
             // // //

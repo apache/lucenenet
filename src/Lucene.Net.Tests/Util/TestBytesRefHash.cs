@@ -30,20 +30,20 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestBytesRefHash : LuceneTestCase
     {
-        internal BytesRefHash Hash;
-        internal ByteBlockPool Pool;
+        internal BytesRefHash hash;
+        internal ByteBlockPool pool;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Pool = NewPool();
-            Hash = NewHash(Pool);
+            pool = NewPool();
+            hash = NewHash(pool);
         }
 
         private ByteBlockPool NewPool()
         {
-            return Random.NextBoolean() && Pool != null ? Pool : new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random.Next(25)));
+            return Random.NextBoolean() && pool != null ? pool : new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random.Next(25)));
         }
 
         private BytesRefHash NewHash(ByteBlockPool blockPool)
@@ -71,21 +71,21 @@ namespace Lucene.Net.Util
                         str = TestUtil.RandomRealisticUnicodeString(Random, 1000);
                     } while (str.Length == 0);
                     @ref.CopyChars(str);
-                    int count = Hash.Count;
-                    int key = Hash.Add(@ref);
+                    int count = hash.Count;
+                    int key = hash.Add(@ref);
                     if (key < 0)
                     {
-                        Assert.AreEqual(Hash.Count, count);
+                        Assert.AreEqual(hash.Count, count);
                     }
                     else
                     {
-                        Assert.AreEqual(Hash.Count, count + 1);
+                        Assert.AreEqual(hash.Count, count + 1);
                     }
                     if (i % mod == 0)
                     {
-                        Hash.Clear();
-                        Assert.AreEqual(0, Hash.Count);
-                        Hash.Reinit();
+                        hash.Clear();
+                        Assert.AreEqual(0, hash.Count);
+                        hash.Reinit();
                     }
                 }
             }
@@ -114,30 +114,30 @@ namespace Lucene.Net.Util
                         str = TestUtil.RandomRealisticUnicodeString(Random, 1000);
                     } while (str.Length == 0);
                     @ref.CopyChars(str);
-                    int count = Hash.Count;
-                    int key = Hash.Add(@ref);
+                    int count = hash.Count;
+                    int key = hash.Add(@ref);
                     if (key >= 0)
                     {
                         Assert.IsFalse(strings.ContainsKey(str));
                         strings[str] = Convert.ToInt32(key);
                         Assert.AreEqual(uniqueCount, key);
                         uniqueCount++;
-                        Assert.AreEqual(Hash.Count, count + 1);
+                        Assert.AreEqual(hash.Count, count + 1);
                     }
                     else
                     {
                         Assert.IsTrue((-key) - 1 < count);
-                        Assert.AreEqual(Hash.Count, count);
+                        Assert.AreEqual(hash.Count, count);
                     }
                 }
                 foreach (KeyValuePair<string, int?> entry in strings)
                 {
                     @ref.CopyChars(entry.Key);
-                    Assert.AreEqual(@ref, Hash.Get((int)entry.Value, scratch));
+                    Assert.AreEqual(@ref, hash.Get((int)entry.Value, scratch));
                 }
-                Hash.Clear();
-                Assert.AreEqual(0, Hash.Count);
-                Hash.Reinit();
+                hash.Clear();
+                Assert.AreEqual(0, hash.Count);
+                hash.Reinit();
             }
         }
 
@@ -162,7 +162,7 @@ namespace Lucene.Net.Util
                         str = TestUtil.RandomRealisticUnicodeString(Random, 1000);
                     } while (str.Length == 0);
                     @ref.CopyChars(str);
-                    int key = Hash.Add(@ref);
+                    int key = hash.Add(@ref);
                     if (key < 0)
                     {
                         Assert.IsTrue(bits.SafeGet((-key) - 1));
@@ -174,19 +174,19 @@ namespace Lucene.Net.Util
                         numEntries++;
                     }
                 }
-                Assert.AreEqual(Hash.Count, bits.Cardinality());
+                Assert.AreEqual(hash.Count, bits.Cardinality());
                 Assert.AreEqual(numEntries, bits.Cardinality());
-                Assert.AreEqual(numEntries, Hash.Count);
-                int[] compact = Hash.Compact();
+                Assert.AreEqual(numEntries, hash.Count);
+                int[] compact = hash.Compact();
                 Assert.IsTrue(numEntries < compact.Length);
                 for (int i = 0; i < numEntries; i++)
                 {
                     bits.SafeSet(compact[i], false);
                 }
                 Assert.AreEqual(0, bits.Cardinality());
-                Hash.Clear();
-                Assert.AreEqual(0, Hash.Count);
-                Hash.Reinit();
+                hash.Clear();
+                Assert.AreEqual(0, hash.Count);
+                hash.Reinit();
             }
         }
 
@@ -213,13 +213,13 @@ namespace Lucene.Net.Util
                         str = TestUtil.RandomRealisticUnicodeString(Random, 1000);
                     } while (str.Length == 0);
                     @ref.CopyChars(str);
-                    Hash.Add(@ref);
+                    hash.Add(@ref);
                     strings.Add(str);
                 }
                 // We use the UTF-16 comparer here, because we need to be able to
                 // compare to native String.CompareTo() [UTF-16]:
 #pragma warning disable 612, 618
-                int[] sort = Hash.Sort(BytesRef.UTF8SortedAsUTF16Comparer);
+                int[] sort = hash.Sort(BytesRef.UTF8SortedAsUTF16Comparer);
 #pragma warning restore 612, 618
                 Assert.IsTrue(strings.Count < sort.Length);
                 int i = 0;
@@ -227,11 +227,11 @@ namespace Lucene.Net.Util
                 foreach (string @string in strings)
                 {
                     @ref.CopyChars(@string);
-                    Assert.AreEqual(@ref, Hash.Get(sort[i++], scratch));
+                    Assert.AreEqual(@ref, hash.Get(sort[i++], scratch));
                 }
-                Hash.Clear();
-                Assert.AreEqual(0, Hash.Count);
-                Hash.Reinit();
+                hash.Clear();
+                Assert.AreEqual(0, hash.Count);
+                hash.Reinit();
             }
         }
 
@@ -258,29 +258,29 @@ namespace Lucene.Net.Util
                         str = TestUtil.RandomRealisticUnicodeString(Random, 1000);
                     } while (str.Length == 0);
                     @ref.CopyChars(str);
-                    int count = Hash.Count;
-                    int key = Hash.Add(@ref);
+                    int count = hash.Count;
+                    int key = hash.Add(@ref);
 
                     if (key >= 0)
                     {
                         Assert.IsTrue(strings.Add(str));
                         Assert.AreEqual(uniqueCount, key);
-                        Assert.AreEqual(Hash.Count, count + 1);
+                        Assert.AreEqual(hash.Count, count + 1);
                         uniqueCount++;
                     }
                     else
                     {
                         Assert.IsFalse(strings.Add(str));
                         Assert.IsTrue((-key) - 1 < count);
-                        Assert.AreEqual(str, Hash.Get((-key) - 1, scratch).Utf8ToString());
-                        Assert.AreEqual(count, Hash.Count);
+                        Assert.AreEqual(str, hash.Get((-key) - 1, scratch).Utf8ToString());
+                        Assert.AreEqual(count, hash.Count);
                     }
                 }
 
-                AssertAllIn(strings, Hash);
-                Hash.Clear();
-                Assert.AreEqual(0, Hash.Count);
-                Hash.Reinit();
+                AssertAllIn(strings, hash);
+                hash.Clear();
+                Assert.AreEqual(0, hash.Count);
+                hash.Reinit();
             }
         }
 
@@ -302,29 +302,29 @@ namespace Lucene.Net.Util
                         str = TestUtil.RandomRealisticUnicodeString(Random, 1000);
                     } while (str.Length == 0);
                     @ref.CopyChars(str);
-                    int count = Hash.Count;
-                    int key = Hash.Find(@ref); //hash.Add(ref);
+                    int count = hash.Count;
+                    int key = hash.Find(@ref); //hash.Add(ref);
                     if (key >= 0) // string found in hash
                     {
                         Assert.IsFalse(strings.Add(str));
                         Assert.IsTrue(key < count);
-                        Assert.AreEqual(str, Hash.Get(key, scratch).Utf8ToString());
-                        Assert.AreEqual(count, Hash.Count);
+                        Assert.AreEqual(str, hash.Get(key, scratch).Utf8ToString());
+                        Assert.AreEqual(count, hash.Count);
                     }
                     else
                     {
-                        key = Hash.Add(@ref);
+                        key = hash.Add(@ref);
                         Assert.IsTrue(strings.Add(str));
                         Assert.AreEqual(uniqueCount, key);
-                        Assert.AreEqual(Hash.Count, count + 1);
+                        Assert.AreEqual(hash.Count, count + 1);
                         uniqueCount++;
                     }
                 }
 
-                AssertAllIn(strings, Hash);
-                Hash.Clear();
-                Assert.AreEqual(0, Hash.Count);
-                Hash.Reinit();
+                AssertAllIn(strings, hash);
+                hash.Clear();
+                Assert.AreEqual(0, hash.Count);
+                hash.Reinit();
             }
         }
 
@@ -343,7 +343,7 @@ namespace Lucene.Net.Util
                 @ref.Length = sizes[i];
                 try
                 {
-                    Assert.AreEqual(i, Hash.Add(@ref));
+                    Assert.AreEqual(i, hash.Add(@ref));
                 }
 #pragma warning disable 168
                 catch (MaxBytesLengthExceededException e)
@@ -370,7 +370,7 @@ namespace Lucene.Net.Util
         {
             BytesRef @ref = new BytesRef();
             BytesRef scratch = new BytesRef();
-            BytesRefHash offsetHash = NewHash(Pool);
+            BytesRefHash offsetHash = NewHash(pool);
             int num = AtLeast(2);
             for (int j = 0; j < num; j++)
             {
@@ -384,15 +384,15 @@ namespace Lucene.Net.Util
                         str = TestUtil.RandomRealisticUnicodeString(Random, 1000);
                     } while (str.Length == 0);
                     @ref.CopyChars(str);
-                    int count = Hash.Count;
-                    int key = Hash.Add(@ref);
+                    int count = hash.Count;
+                    int key = hash.Add(@ref);
 
                     if (key >= 0)
                     {
                         Assert.IsTrue(strings.Add(str));
                         Assert.AreEqual(uniqueCount, key);
-                        Assert.AreEqual(Hash.Count, count + 1);
-                        int offsetKey = offsetHash.AddByPoolOffset(Hash.ByteStart(key));
+                        Assert.AreEqual(hash.Count, count + 1);
+                        int offsetKey = offsetHash.AddByPoolOffset(hash.ByteStart(key));
                         Assert.AreEqual(uniqueCount, offsetKey);
                         Assert.AreEqual(offsetHash.Count, count + 1);
                         uniqueCount++;
@@ -401,29 +401,29 @@ namespace Lucene.Net.Util
                     {
                         Assert.IsFalse(strings.Add(str));
                         Assert.IsTrue((-key) - 1 < count);
-                        Assert.AreEqual(str, Hash.Get((-key) - 1, scratch).Utf8ToString());
-                        Assert.AreEqual(count, Hash.Count);
-                        int offsetKey = offsetHash.AddByPoolOffset(Hash.ByteStart((-key) - 1));
+                        Assert.AreEqual(str, hash.Get((-key) - 1, scratch).Utf8ToString());
+                        Assert.AreEqual(count, hash.Count);
+                        int offsetKey = offsetHash.AddByPoolOffset(hash.ByteStart((-key) - 1));
                         Assert.IsTrue((-offsetKey) - 1 < count);
-                        Assert.AreEqual(str, Hash.Get((-offsetKey) - 1, scratch).Utf8ToString());
-                        Assert.AreEqual(count, Hash.Count);
+                        Assert.AreEqual(str, hash.Get((-offsetKey) - 1, scratch).Utf8ToString());
+                        Assert.AreEqual(count, hash.Count);
                     }
                 }
 
-                AssertAllIn(strings, Hash);
+                AssertAllIn(strings, hash);
                 foreach (string @string in strings)
                 {
                     @ref.CopyChars(@string);
-                    int key = Hash.Add(@ref);
+                    int key = hash.Add(@ref);
                     BytesRef bytesRef = offsetHash.Get((-key) - 1, scratch);
                     Assert.AreEqual(@ref, bytesRef);
                 }
 
-                Hash.Clear();
-                Assert.AreEqual(0, Hash.Count);
+                hash.Clear();
+                Assert.AreEqual(0, hash.Count);
                 offsetHash.Clear();
                 Assert.AreEqual(0, offsetHash.Count);
-                Hash.Reinit(); // init for the next round
+                hash.Reinit(); // init for the next round
                 offsetHash.Reinit();
             }
         }

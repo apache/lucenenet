@@ -1,5 +1,3 @@
-using NUnit.Framework;
-
 namespace Lucene.Net.Util
 {
     /*
@@ -18,10 +16,6 @@ namespace Lucene.Net.Util
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    /*using RunWith = org.junit.runner.RunWith;
-
-    using RandomizedRunner = com.carrotsearch.randomizedtesting.RandomizedRunner;*/
 
     public class TestInPlaceMergeSorter : BaseSortTestCase
     {

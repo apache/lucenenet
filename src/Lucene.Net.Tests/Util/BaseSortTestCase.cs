@@ -28,8 +28,8 @@ namespace Lucene.Net.Util
     {
         public class Entry : IComparable<Entry>
         {
-            public readonly int Value;
-            public readonly int Ord;
+            public int Value { get; }
+            public int Ord { get; }
 
             public Entry(int value, int ord)
             {
@@ -43,12 +43,12 @@ namespace Lucene.Net.Util
             }
         }
 
-        private readonly bool Stable;
+        private readonly bool stable;
         private readonly Random random;
 
         protected BaseSortTestCase(bool stable)
         {
-            this.Stable = stable;
+            this.stable = stable;
             this.random = Random;
         }
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Util
             for (int i = 0; i < original.Length; ++i)
             {
                 Assert.AreEqual(stableSorted[i].Value, sorted[i].Value);
-                if (Stable)
+                if (stable)
                 {
                     Assert.AreEqual(stableSorted[i].Ord, sorted[i].Ord);
                 }

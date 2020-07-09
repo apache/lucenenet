@@ -1,8 +1,6 @@
 using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
-using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -28,7 +26,7 @@ namespace Lucene.Net.Util
     public class TestMathUtil : LuceneTestCase
     {
 
-        internal static long[] PRIMES = new long[] { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 };
+        internal static readonly long[] PRIMES = new long[] { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 };
 
         internal static long RandomLong()
         {

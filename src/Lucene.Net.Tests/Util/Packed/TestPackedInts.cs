@@ -1,4 +1,5 @@
 using J2N.IO;
+using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -6,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util.Packed
@@ -28,18 +28,16 @@ namespace Lucene.Net.Util.Packed
      * limitations under the License.
      */
 
-    using CodecUtil = Lucene.Net.Codecs.CodecUtil;
+    using Assert = Lucene.Net.TestFramework.Assert;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
+    using CodecUtil = Lucene.Net.Codecs.CodecUtil;
     using DataInput = Lucene.Net.Store.DataInput;
     using Directory = Lucene.Net.Store.Directory;
-    using IOContext = Lucene.Net.Store.IOContext;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
+    using IOContext = Lucene.Net.Store.IOContext;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    //using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
     using Reader = Lucene.Net.Util.Packed.PackedInt32s.Reader;
-    using Assert = Lucene.Net.TestFramework.Assert;
-    using Attributes;
 
     [TestFixture]
     public class TestPackedInts : LuceneTestCase
