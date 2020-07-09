@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Join;
-using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Lucene.Net.Tests.Join
 {
@@ -37,45 +35,45 @@ namespace Lucene.Net.Tests.Join
         public const int AMOUNT_OF_SEGMENTS = 5;
         public const int AMOUNT_OF_PARENT_DOCS = 10;
         public const int AMOUNT_OF_CHILD_DOCS = 5;
-        public static readonly int AMOUNT_OF_DOCS_IN_SEGMENT = AMOUNT_OF_PARENT_DOCS + AMOUNT_OF_PARENT_DOCS * AMOUNT_OF_CHILD_DOCS;
+        public const int AMOUNT_OF_DOCS_IN_SEGMENT = AMOUNT_OF_PARENT_DOCS + AMOUNT_OF_PARENT_DOCS * AMOUNT_OF_CHILD_DOCS;
 
-        private Directory Directory;
-        private IndexReader IndexReader;
-        private IndexSearcher IndexSearcher;
-        private Filter ParentsFilter;
+        private Directory directory;
+        private IndexReader indexReader;
+        private IndexSearcher indexSearcher;
+        private Filter parentsFilter;
         
         [SetUp]
         public override void SetUp()
         {
-            Directory = NewDirectory();
+            directory = NewDirectory();
             IndexWriterConfig config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            IndexWriter indexWriter = new IndexWriter(Directory, config);
+            IndexWriter indexWriter = new IndexWriter(directory, config);
             for (int i = 0; i < AMOUNT_OF_SEGMENTS; i++)
             {
                 IList<Document> segmentDocs = CreateDocsForSegment(i);
                 indexWriter.AddDocuments(segmentDocs);
                 indexWriter.Commit();
             }
-            IndexReader = DirectoryReader.Open(indexWriter, Random.NextBoolean());
+            indexReader = DirectoryReader.Open(indexWriter, Random.NextBoolean());
             indexWriter.Dispose();
-            IndexSearcher = new IndexSearcher(IndexReader);
-            ParentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new WildcardQuery(new Term("parent", "*"))));
+            indexSearcher = new IndexSearcher(indexReader);
+            parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new WildcardQuery(new Term("parent", "*"))));
         }
 
         [TearDown]
         public override void TearDown()
         {
-            IndexReader.Dispose();
-            Directory.Dispose();
+            indexReader.Dispose();
+            directory.Dispose();
         }
 
         [Test]
         public void TestNextDocValidationForToParentBjq()
         {
             Query parentQueryWithRandomChild = CreateChildrenQueryWithOneParent(GetRandomChildNumber(0));
-            var blockJoinQuery = new ToParentBlockJoinQuery(parentQueryWithRandomChild, ParentsFilter, ScoreMode.None);
+            var blockJoinQuery = new ToParentBlockJoinQuery(parentQueryWithRandomChild, parentsFilter, ScoreMode.None);
 
-            var ex = Assert.Throws<InvalidOperationException>(() => IndexSearcher.Search(blockJoinQuery, 1));
+            var ex = Assert.Throws<InvalidOperationException>(() => indexSearcher.Search(blockJoinQuery, 1));
             StringAssert.Contains("child query must only match non-parent docs", ex.Message);
 
         }
@@ -88,14 +86,14 @@ namespace Lucene.Net.Tests.Join
             // in BJQ must be greater than child number in Boolean clause
             int nextRandomChildNumber = GetRandomChildNumber(randomChildNumber);
             Query parentQueryWithRandomChild = CreateChildrenQueryWithOneParent(nextRandomChildNumber);
-            ToParentBlockJoinQuery blockJoinQuery = new ToParentBlockJoinQuery(parentQueryWithRandomChild, ParentsFilter, ScoreMode.None);
+            ToParentBlockJoinQuery blockJoinQuery = new ToParentBlockJoinQuery(parentQueryWithRandomChild, parentsFilter, ScoreMode.None);
             // advance() method is used by ConjunctionScorer, so we need to create Boolean conjunction query
             BooleanQuery conjunctionQuery = new BooleanQuery();
             WildcardQuery childQuery = new WildcardQuery(new Term("child", CreateFieldValue(randomChildNumber)));
             conjunctionQuery.Add(new BooleanClause(childQuery, Occur.MUST));
             conjunctionQuery.Add(new BooleanClause(blockJoinQuery, Occur.MUST));
 
-            var ex = Assert.Throws<InvalidOperationException>(() => IndexSearcher.Search(conjunctionQuery, 1));
+            var ex = Assert.Throws<InvalidOperationException>(() => indexSearcher.Search(conjunctionQuery, 1));
             StringAssert.Contains("child query must only match non-parent docs", ex.Message);
         }
 
@@ -103,9 +101,9 @@ namespace Lucene.Net.Tests.Join
         public void TestNextDocValidationForToChildBjq()
         {
             Query parentQueryWithRandomChild = CreateParentsQueryWithOneChild(GetRandomChildNumber(0));
-            var blockJoinQuery = new ToChildBlockJoinQuery(parentQueryWithRandomChild, ParentsFilter, false);
+            var blockJoinQuery = new ToChildBlockJoinQuery(parentQueryWithRandomChild, parentsFilter, false);
 
-            var ex = Assert.Throws<InvalidOperationException>(() => IndexSearcher.Search(blockJoinQuery, 1));
+            var ex = Assert.Throws<InvalidOperationException>(() => indexSearcher.Search(blockJoinQuery, 1));
             StringAssert.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE, ex.Message);
         }
         
@@ -117,14 +115,14 @@ namespace Lucene.Net.Tests.Join
             // in BJQ must be greater than child number in Boolean clause
             int nextRandomChildNumber = GetRandomChildNumber(randomChildNumber);
             Query parentQueryWithRandomChild = CreateParentsQueryWithOneChild(nextRandomChildNumber);
-            var blockJoinQuery = new ToChildBlockJoinQuery(parentQueryWithRandomChild, ParentsFilter, false);
+            var blockJoinQuery = new ToChildBlockJoinQuery(parentQueryWithRandomChild, parentsFilter, false);
             // advance() method is used by ConjunctionScorer, so we need to create Boolean conjunction query
             var conjunctionQuery = new BooleanQuery();
             var childQuery = new WildcardQuery(new Term("child", CreateFieldValue(randomChildNumber)));
             conjunctionQuery.Add(new BooleanClause(childQuery, Occur.MUST));
             conjunctionQuery.Add(new BooleanClause(blockJoinQuery, Occur.MUST));
             
-            var ex = Assert.Throws<InvalidOperationException>(() => IndexSearcher.Search(conjunctionQuery, 1));
+            var ex = Assert.Throws<InvalidOperationException>(() => indexSearcher.Search(conjunctionQuery, 1));
             StringAssert.Contains(ToChildBlockJoinQuery.INVALID_QUERY_MESSAGE, ex.Message);
         }
 
