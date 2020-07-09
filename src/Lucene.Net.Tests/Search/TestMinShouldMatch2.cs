@@ -12,30 +12,29 @@ using J2N.Collections.Generic.Extensions;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BooleanWeight = Lucene.Net.Search.BooleanQuery.BooleanWeight;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -55,15 +54,15 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestMinShouldMatch2 : LuceneTestCase
     {
-        internal static Directory Dir;
+        internal static Directory dir;
         internal static DirectoryReader r;
         internal static AtomicReader atomicReader;
-        internal static IndexSearcher Searcher;
+        internal static IndexSearcher searcher;
 
-        internal static readonly string[] AlwaysTerms = new string[] { "a" };
-        internal static readonly string[] CommonTerms = new string[] { "b", "c", "d" };
-        internal static readonly string[] MediumTerms = new string[] { "e", "f", "g" };
-        internal static readonly string[] RareTerms = new string[] { "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
+        internal static readonly string[] alwaysTerms = new string[] { "a" };
+        internal static readonly string[] commonTerms = new string[] { "b", "c", "d" };
+        internal static readonly string[] mediumTerms = new string[] { "e", "f", "g" };
+        internal static readonly string[] rareTerms = new string[] { "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 
         /// <summary>
         /// LUCENENET specific
@@ -74,39 +73,39 @@ namespace Lucene.Net.Search
         {
             base.BeforeClass();
 
-            Dir = NewDirectory();
+            dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Dir);
+                Random, dir);
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
 
-                AddSome(doc, AlwaysTerms);
+                AddSome(doc, alwaysTerms);
 
                 if (Random.Next(100) < 90)
                 {
-                    AddSome(doc, CommonTerms);
+                    AddSome(doc, commonTerms);
                 }
                 if (Random.Next(100) < 50)
                 {
-                    AddSome(doc, MediumTerms);
+                    AddSome(doc, mediumTerms);
                 }
                 if (Random.Next(100) < 10)
                 {
-                    AddSome(doc, RareTerms);
+                    AddSome(doc, rareTerms);
                 }
                 iw.AddDocument(doc);
             }
             iw.ForceMerge(1);
             iw.Dispose();
-            r = DirectoryReader.Open(Dir);
+            r = DirectoryReader.Open(dir);
             atomicReader = GetOnlySegmentReader(r);
-            Searcher = new IndexSearcher(atomicReader);
-            Searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper();
+            searcher = new IndexSearcher(atomicReader);
+            searcher.Similarity = new DefaultSimilarityAnonymousInnerClassHelper();
         }
 
         private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
@@ -125,11 +124,11 @@ namespace Lucene.Net.Search
         public override void AfterClass()
         {
             atomicReader.Dispose();
-            Dir.Dispose();
-            Searcher = null;
+            dir.Dispose();
+            searcher = null;
             atomicReader = null;
             r = null;
-            Dir = null;
+            dir = null;
             base.AfterClass();
         }
 
@@ -154,11 +153,11 @@ namespace Lucene.Net.Search
             }
             bq.MinimumNumberShouldMatch = minShouldMatch;
 
-            BooleanWeight weight = (BooleanWeight)Searcher.CreateNormalizedWeight(bq);
+            BooleanWeight weight = (BooleanWeight)searcher.CreateNormalizedWeight(bq);
 
             if (slow)
             {
-                return new SlowMinShouldMatchScorer(weight, atomicReader, Searcher);
+                return new SlowMinShouldMatchScorer(weight, atomicReader, searcher);
             }
             else
             {
@@ -211,14 +210,14 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestNextCMR2()
         {
-            for (int common = 0; common < CommonTerms.Length; common++)
+            for (int common = 0; common < commonTerms.Length; common++)
             {
-                for (int medium = 0; medium < MediumTerms.Length; medium++)
+                for (int medium = 0; medium < mediumTerms.Length; medium++)
                 {
-                    for (int rare = 0; rare < RareTerms.Length; rare++)
+                    for (int rare = 0; rare < rareTerms.Length; rare++)
                     {
-                        Scorer expected = Scorer(new string[] { CommonTerms[common], MediumTerms[medium], RareTerms[rare] }, 2, true);
-                        Scorer actual = Scorer(new string[] { CommonTerms[common], MediumTerms[medium], RareTerms[rare] }, 2, false);
+                        Scorer expected = Scorer(new string[] { commonTerms[common], mediumTerms[medium], rareTerms[rare] }, 2, true);
+                        Scorer actual = Scorer(new string[] { commonTerms[common], mediumTerms[medium], rareTerms[rare] }, 2, false);
                         AssertNext(expected, actual);
                     }
                 }
@@ -232,14 +231,14 @@ namespace Lucene.Net.Search
         {
             for (int amount = 25; amount < 200; amount += 25)
             {
-                for (int common = 0; common < CommonTerms.Length; common++)
+                for (int common = 0; common < commonTerms.Length; common++)
                 {
-                    for (int medium = 0; medium < MediumTerms.Length; medium++)
+                    for (int medium = 0; medium < mediumTerms.Length; medium++)
                     {
-                        for (int rare = 0; rare < RareTerms.Length; rare++)
+                        for (int rare = 0; rare < rareTerms.Length; rare++)
                         {
-                            Scorer expected = Scorer(new string[] { CommonTerms[common], MediumTerms[medium], RareTerms[rare] }, 2, true);
-                            Scorer actual = Scorer(new string[] { CommonTerms[common], MediumTerms[medium], RareTerms[rare] }, 2, false);
+                            Scorer expected = Scorer(new string[] { commonTerms[common], mediumTerms[medium], rareTerms[rare] }, 2, true);
+                            Scorer actual = Scorer(new string[] { commonTerms[common], mediumTerms[medium], rareTerms[rare] }, 2, false);
                             AssertAdvance(expected, actual, amount);
                         }
                     }
@@ -252,10 +251,10 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestNextAllTerms()
         {
-            IList<string> termsList = new List<string>(CommonTerms.Length + MediumTerms.Length + RareTerms.Length);
-            termsList.AddRange(CommonTerms);
-            termsList.AddRange(MediumTerms);
-            termsList.AddRange(RareTerms);
+            IList<string> termsList = new List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
+            termsList.AddRange(commonTerms);
+            termsList.AddRange(mediumTerms);
+            termsList.AddRange(rareTerms);
             string[] terms = termsList.ToArray();
 
             for (int minNrShouldMatch = 1; minNrShouldMatch <= terms.Length; minNrShouldMatch++)
@@ -271,10 +270,10 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestAdvanceAllTerms()
         {
-            IList<string> termsList = new List<string>(CommonTerms.Length + MediumTerms.Length + RareTerms.Length);
-            termsList.AddRange(CommonTerms);
-            termsList.AddRange(MediumTerms);
-            termsList.AddRange(RareTerms);
+            IList<string> termsList = new List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
+            termsList.AddRange(commonTerms);
+            termsList.AddRange(mediumTerms);
+            termsList.AddRange(rareTerms);
             string[] terms = termsList.ToArray();
 
             for (int amount = 25; amount < 200; amount += 25)
@@ -293,10 +292,10 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestNextVaryingNumberOfTerms()
         {
-            IList<string> termsList = new List<string>(CommonTerms.Length + MediumTerms.Length + RareTerms.Length);
-            termsList.AddRange(CommonTerms);
-            termsList.AddRange(MediumTerms);
-            termsList.AddRange(RareTerms);
+            IList<string> termsList = new List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
+            termsList.AddRange(commonTerms);
+            termsList.AddRange(mediumTerms);
+            termsList.AddRange(rareTerms);
             termsList.Shuffle(Random);
 
             for (int numTerms = 2; numTerms <= termsList.Count; numTerms++)
@@ -316,10 +315,10 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestAdvanceVaryingNumberOfTerms()
         {
-            IList<string> termsList = new List<string>(CommonTerms.Length + MediumTerms.Length + RareTerms.Length);
-            termsList.AddRange(CommonTerms);
-            termsList.AddRange(MediumTerms);
-            termsList.AddRange(RareTerms);
+            IList<string> termsList = new List<string>(commonTerms.Length + mediumTerms.Length + rareTerms.Length);
+            termsList.AddRange(commonTerms);
+            termsList.AddRange(mediumTerms);
+            termsList.AddRange(rareTerms);
             termsList.Shuffle(Random);
 
             for (int amount = 25; amount < 200; amount += 25)
@@ -344,84 +343,78 @@ namespace Lucene.Net.Search
         // and e.g. print out their values and so on for the document
         internal class SlowMinShouldMatchScorer : Scorer
         {
-            internal int CurrentDoc = -1; // current docid
-            internal int CurrentMatched = -1; // current number of terms matched
+            internal int currentDoc = -1; // current docid
+            internal int currentMatched = -1; // current number of terms matched
 
-            internal readonly SortedSetDocValues Dv;
-            internal readonly int MaxDoc;
+            internal readonly SortedSetDocValues dv;
+            internal readonly int maxDoc;
 
-            internal readonly ISet<long?> Ords = new JCG.HashSet<long?>();
-            internal readonly SimScorer[] Sims;
-            internal readonly int MinNrShouldMatch;
+            internal readonly ISet<long?> ords = new JCG.HashSet<long?>();
+            internal readonly SimScorer[] sims;
+            internal readonly int minNrShouldMatch;
 
-            internal double Score_Renamed = float.NaN;
+            internal double score = float.NaN;
 
             internal SlowMinShouldMatchScorer(BooleanWeight weight, AtomicReader reader, IndexSearcher searcher)
                 : base(weight)
             {
-                this.Dv = reader.GetSortedSetDocValues("dv");
-                this.MaxDoc = reader.MaxDoc;
+                this.dv = reader.GetSortedSetDocValues("dv");
+                this.maxDoc = reader.MaxDoc;
                 BooleanQuery bq = (BooleanQuery)weight.Query;
-                this.MinNrShouldMatch = bq.MinimumNumberShouldMatch;
-                this.Sims = new SimScorer[(int)Dv.ValueCount];
+                this.minNrShouldMatch = bq.MinimumNumberShouldMatch;
+                this.sims = new SimScorer[(int)dv.ValueCount];
                 foreach (BooleanClause clause in bq.GetClauses())
                 {
                     Debug.Assert(!clause.IsProhibited);
                     Debug.Assert(!clause.IsRequired);
                     Term term = ((TermQuery)clause.Query).Term;
-                    long ord = Dv.LookupTerm(term.Bytes);
+                    long ord = dv.LookupTerm(term.Bytes);
                     if (ord >= 0)
                     {
-                        bool success = Ords.Add(ord);
+                        bool success = ords.Add(ord);
                         Debug.Assert(success); // no dups
                         TermContext context = TermContext.Build(reader.Context, term);
                         SimWeight w = weight.Similarity.ComputeWeight(1f, searcher.CollectionStatistics("field"), searcher.TermStatistics(term, context));
                         var dummy = w.GetValueForNormalization(); // ignored
                         w.Normalize(1F, 1F);
-                        Sims[(int)ord] = weight.Similarity.GetSimScorer(w, (AtomicReaderContext)reader.Context);
+                        sims[(int)ord] = weight.Similarity.GetSimScorer(w, (AtomicReaderContext)reader.Context);
                     }
                 }
             }
 
             public override float GetScore()
             {
-                Debug.Assert(Score_Renamed != 0, CurrentMatched.ToString());
-                return (float)Score_Renamed * ((BooleanWeight)m_weight).Coord(CurrentMatched, ((BooleanWeight)m_weight).MaxCoord);
+                Debug.Assert(score != 0, currentMatched.ToString());
+                return (float)score * ((BooleanWeight)m_weight).Coord(currentMatched, ((BooleanWeight)m_weight).MaxCoord);
             }
 
-            public override int Freq
-            {
-                get { return CurrentMatched; }
-            }
+            public override int Freq => currentMatched;
 
-            public override int DocID
-            {
-                get { return CurrentDoc; }
-            }
+            public override int DocID => currentDoc;
 
             public override int NextDoc()
             {
-                Debug.Assert(CurrentDoc != NO_MORE_DOCS);
-                for (CurrentDoc = CurrentDoc + 1; CurrentDoc < MaxDoc; CurrentDoc++)
+                Debug.Assert(currentDoc != NO_MORE_DOCS);
+                for (currentDoc = currentDoc + 1; currentDoc < maxDoc; currentDoc++)
                 {
-                    CurrentMatched = 0;
-                    Score_Renamed = 0;
-                    Dv.SetDocument(CurrentDoc);
+                    currentMatched = 0;
+                    score = 0;
+                    dv.SetDocument(currentDoc);
                     long ord;
-                    while ((ord = Dv.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
+                    while ((ord = dv.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                     {
-                        if (Ords.Contains(ord))
+                        if (ords.Contains(ord))
                         {
-                            CurrentMatched++;
-                            Score_Renamed += Sims[(int)ord].Score(CurrentDoc, 1);
+                            currentMatched++;
+                            score += sims[(int)ord].Score(currentDoc, 1);
                         }
                     }
-                    if (CurrentMatched >= MinNrShouldMatch)
+                    if (currentMatched >= minNrShouldMatch)
                     {
-                        return CurrentDoc;
+                        return currentDoc;
                     }
                 }
-                return CurrentDoc = NO_MORE_DOCS;
+                return currentDoc = NO_MORE_DOCS;
             }
 
             public override int Advance(int target)
@@ -435,7 +428,7 @@ namespace Lucene.Net.Search
 
             public override long GetCost()
             {
-                return MaxDoc;
+                return maxDoc;
             }
         }
     }

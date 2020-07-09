@@ -3,25 +3,24 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
-    using Directory = Lucene.Net.Store.Directory;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -31,8 +30,8 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestNGramPhraseQuery : LuceneTestCase
     {
-        private static IndexReader Reader;
-        private static Directory Directory;
+        private static IndexReader reader;
+        private static Directory directory;
 
         /// <summary>
         /// LUCENENET specific
@@ -43,23 +42,23 @@ namespace Lucene.Net.Search
         {
             base.BeforeClass();
 
-            Directory = NewDirectory();
+            directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Directory);
+                Random, directory);
             writer.Dispose();
-            Reader = DirectoryReader.Open(Directory);
+            reader = DirectoryReader.Open(directory);
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Reader.Dispose();
-            Reader = null;
-            Directory.Dispose();
-            Directory = null;
+            reader.Dispose();
+            reader = null;
+            directory.Dispose();
+            directory = null;
             base.AfterClass();
         }
 
@@ -71,7 +70,7 @@ namespace Lucene.Net.Search
             pq1.Add(new Term("f", "AB"));
             pq1.Add(new Term("f", "BC"));
 
-            Query q = pq1.Rewrite(Reader);
+            Query q = pq1.Rewrite(reader);
             Assert.IsTrue(q is NGramPhraseQuery);
             Assert.AreSame(pq1, q);
             pq1 = (NGramPhraseQuery)q;
@@ -84,7 +83,7 @@ namespace Lucene.Net.Search
             pq2.Add(new Term("f", "BC"));
             pq2.Add(new Term("f", "CD"));
 
-            q = pq2.Rewrite(Reader);
+            q = pq2.Rewrite(reader);
             Assert.IsTrue(q is PhraseQuery);
             Assert.AreNotSame(pq2, q);
             pq2 = (PhraseQuery)q;
@@ -100,7 +99,7 @@ namespace Lucene.Net.Search
             pq3.Add(new Term("f", "EFG"));
             pq3.Add(new Term("f", "FGH"));
 
-            q = pq3.Rewrite(Reader);
+            q = pq3.Rewrite(reader);
             Assert.IsTrue(q is PhraseQuery);
             Assert.AreNotSame(pq3, q);
             pq3 = (PhraseQuery)q;
@@ -114,7 +113,7 @@ namespace Lucene.Net.Search
             pq4.Add(new Term("f", "CD"));
             pq4.Boost = 100.0F;
 
-            q = pq4.Rewrite(Reader);
+            q = pq4.Rewrite(reader);
             Assert.AreNotSame(pq4, q);
             Assert.AreEqual(pq4.Boost, q.Boost, 0.1f);
         }

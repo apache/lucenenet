@@ -7,21 +7,21 @@ using JCG = J2N.Collections.Generic;
 namespace Lucene.Net.Search.Spans
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
@@ -38,19 +38,19 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class MultiSpansWrapper : Spans // can't be package private due to payloads
     {
-        private readonly SpanQuery Query;
-        private readonly IList<AtomicReaderContext> Leaves;
-        private int LeafOrd = 0;
-        private Spans Current;
-        private readonly IDictionary<Term, TermContext> TermContexts;
-        private readonly int NumLeaves;
+        private readonly SpanQuery query;
+        private readonly IList<AtomicReaderContext> leaves;
+        private int leafOrd = 0;
+        private Spans current;
+        private readonly IDictionary<Term, TermContext> termContexts;
+        private readonly int numLeaves;
 
         private MultiSpansWrapper(IList<AtomicReaderContext> leaves, SpanQuery query, IDictionary<Term, TermContext> termContexts)
         {
-            this.Query = query;
-            this.Leaves = leaves;
-            this.NumLeaves = leaves.Count;
-            this.TermContexts = termContexts;
+            this.query = query;
+            this.leaves = leaves;
+            this.numLeaves = leaves.Count;
+            this.termContexts = termContexts;
         }
 
         public static Spans Wrap(IndexReaderContext topLevelReaderContext, SpanQuery query)
@@ -73,29 +73,29 @@ namespace Lucene.Net.Search.Spans
 
         public override bool Next()
         {
-            if (LeafOrd >= NumLeaves)
+            if (leafOrd >= numLeaves)
             {
                 return false;
             }
-            if (Current == null)
+            if (current == null)
             {
-                AtomicReaderContext ctx = Leaves[LeafOrd];
-                Current = Query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, TermContexts);
+                AtomicReaderContext ctx = leaves[leafOrd];
+                current = query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, termContexts);
             }
             while (true)
             {
-                if (Current.Next())
+                if (current.Next())
                 {
                     return true;
                 }
-                if (++LeafOrd < NumLeaves)
+                if (++leafOrd < numLeaves)
                 {
-                    AtomicReaderContext ctx = Leaves[LeafOrd];
-                    Current = Query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, TermContexts);
+                    AtomicReaderContext ctx = leaves[leafOrd];
+                    current = query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, termContexts);
                 }
                 else
                 {
-                    Current = null;
+                    current = null;
                     break;
                 }
             }
@@ -104,46 +104,46 @@ namespace Lucene.Net.Search.Spans
 
         public override bool SkipTo(int target)
         {
-            if (LeafOrd >= NumLeaves)
+            if (leafOrd >= numLeaves)
             {
                 return false;
             }
 
-            int subIndex = ReaderUtil.SubIndex(target, Leaves);
-            Debug.Assert(subIndex >= LeafOrd);
-            if (subIndex != LeafOrd)
+            int subIndex = ReaderUtil.SubIndex(target, leaves);
+            Debug.Assert(subIndex >= leafOrd);
+            if (subIndex != leafOrd)
             {
-                AtomicReaderContext ctx = Leaves[subIndex];
-                Current = Query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, TermContexts);
-                LeafOrd = subIndex;
+                AtomicReaderContext ctx = leaves[subIndex];
+                current = query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, termContexts);
+                leafOrd = subIndex;
             }
-            else if (Current == null)
+            else if (current == null)
             {
-                AtomicReaderContext ctx = Leaves[LeafOrd];
-                Current = Query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, TermContexts);
+                AtomicReaderContext ctx = leaves[leafOrd];
+                current = query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, termContexts);
             }
             while (true)
             {
-                if (target < Leaves[LeafOrd].DocBase)
+                if (target < leaves[leafOrd].DocBase)
                 {
                     // target was in the previous slice
-                    if (Current.Next())
+                    if (current.Next())
                     {
                         return true;
                     }
                 }
-                else if (Current.SkipTo(target - Leaves[LeafOrd].DocBase))
+                else if (current.SkipTo(target - leaves[leafOrd].DocBase))
                 {
                     return true;
                 }
-                if (++LeafOrd < NumLeaves)
+                if (++leafOrd < numLeaves)
                 {
-                    AtomicReaderContext ctx = Leaves[LeafOrd];
-                    Current = Query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, TermContexts);
+                    AtomicReaderContext ctx = leaves[leafOrd];
+                    current = query.GetSpans(ctx, ((AtomicReader)ctx.Reader).LiveDocs, termContexts);
                 }
                 else
                 {
-                    Current = null;
+                    current = null;
                     break;
                 }
             }
@@ -155,11 +155,11 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                if (Current == null)
+                if (current == null)
                 {
                     return DocIdSetIterator.NO_MORE_DOCS;
                 }
-                return Current.Doc + Leaves[LeafOrd].DocBase;
+                return current.Doc + leaves[leafOrd].DocBase;
             }
         }
 
@@ -167,11 +167,11 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                if (Current == null)
+                if (current == null)
                 {
                     return DocIdSetIterator.NO_MORE_DOCS;
                 }
-                return Current.Start;
+                return current.Start;
             }
         }
 
@@ -179,32 +179,32 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                if (Current == null)
+                if (current == null)
                 {
                     return DocIdSetIterator.NO_MORE_DOCS;
                 }
-                return Current.End;
+                return current.End;
             }
         }
 
         public override ICollection<byte[]> GetPayload()
         {
-            if (Current == null)
+            if (current == null)
             {
                 return Collections.EmptyList<byte[]>();
             }
-            return Current.GetPayload();
+            return current.GetPayload();
         }
 
         public override bool IsPayloadAvailable
         {
             get
             {
-                if (Current == null)
+                if (current == null)
                 {
                     return false;
                 }
-                return Current.IsPayloadAvailable;
+                return current.IsPayloadAvailable;
             }
         }
 

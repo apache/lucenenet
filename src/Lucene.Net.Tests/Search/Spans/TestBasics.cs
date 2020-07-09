@@ -6,7 +6,6 @@ using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Spans
@@ -27,7 +26,6 @@ namespace Lucene.Net.Search.Spans
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
 
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -55,22 +53,22 @@ namespace Lucene.Net.Search.Spans
     [TestFixture]
     public class TestBasics : LuceneTestCase
     {
-        private static IndexSearcher Searcher;
-        private static IndexReader Reader;
-        private static Directory Directory;
+        private static IndexSearcher searcher;
+        private static IndexReader reader;
+        private static Directory directory;
 
         internal sealed class SimplePayloadFilter : TokenFilter
         {
-            internal int Pos;
-            internal readonly IPayloadAttribute PayloadAttr;
-            internal readonly ICharTermAttribute TermAttr;
+            internal int pos;
+            internal readonly IPayloadAttribute payloadAttr;
+            internal readonly ICharTermAttribute termAttr;
 
             public SimplePayloadFilter(TokenStream input)
                 : base(input)
             {
-                Pos = 0;
-                PayloadAttr = input.AddAttribute<IPayloadAttribute>();
-                TermAttr = input.AddAttribute<ICharTermAttribute>();
+                pos = 0;
+                payloadAttr = input.AddAttribute<IPayloadAttribute>();
+                termAttr = input.AddAttribute<ICharTermAttribute>();
             }
 
             public override bool IncrementToken()
@@ -78,9 +76,9 @@ namespace Lucene.Net.Search.Spans
                 if (m_input.IncrementToken())
                 {
 #pragma warning disable 612, 618
-                    PayloadAttr.Payload = new BytesRef(("pos: " + Pos).GetBytes(IOUtils.CHARSET_UTF_8));
+                    payloadAttr.Payload = new BytesRef(("pos: " + pos).GetBytes(IOUtils.CHARSET_UTF_8));
 #pragma warning restore 612, 618
-                    Pos++;
+                    pos++;
                     return true;
                 }
                 else
@@ -92,11 +90,11 @@ namespace Lucene.Net.Search.Spans
             public override void Reset()
             {
                 base.Reset();
-                Pos = 0;
+                pos = 0;
             }
         }
 
-        internal static Analyzer SimplePayloadAnalyzer;
+        internal static Analyzer simplePayloadAnalyzer;
 
         /// <summary>
         /// LUCENENET specific
@@ -107,10 +105,14 @@ namespace Lucene.Net.Search.Spans
         {
             base.BeforeClass();
 
-            SimplePayloadAnalyzer = new AnalyzerAnonymousInnerClassHelper();
+            simplePayloadAnalyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader2) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader2, MockTokenizer.SIMPLE, true);
+                return new TokenStreamComponents(tokenizer, new SimplePayloadFilter(tokenizer));
+            });
 
-            Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, SimplePayloadAnalyzer).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
+             directory = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, simplePayloadAnalyzer).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 100, 1000)).SetMergePolicy(NewLogMergePolicy()));
             //writer.infoStream = System.out;
             for (int i = 0; i < 2000; i++)
             {
@@ -118,33 +120,20 @@ namespace Lucene.Net.Search.Spans
                 doc.Add(NewTextField("field", English.Int32ToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.GetReader();
-            Searcher = NewSearcher(Reader);
+            reader = writer.GetReader();
+            searcher = NewSearcher(reader);
             writer.Dispose();
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                return new TokenStreamComponents(tokenizer, new SimplePayloadFilter(tokenizer));
-            }
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Reader.Dispose();
-            Directory.Dispose();
-            Searcher = null;
-            Reader = null;
-            Directory = null;
-            SimplePayloadAnalyzer = null;
+            reader.Dispose();
+            directory.Dispose();
+            searcher = null;
+            reader = null;
+            directory = null;
+            simplePayloadAnalyzer = null;
             base.AfterClass();
         }
 
@@ -206,8 +195,8 @@ namespace Lucene.Net.Search.Spans
             SpanNearQuery query = new SpanNearQuery(new SpanQuery[] { term1, term2 }, 0, true);
             CheckHits(query, new int[] { 77, 177, 277, 377, 477, 577, 677, 777, 877, 977, 1077, 1177, 1277, 1377, 1477, 1577, 1677, 1777, 1877, 1977 });
 
-            Assert.IsTrue(Searcher.Explain(query, 77).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 977).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 77).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 977).Value > 0.0f);
 
             QueryUtils.Check(term1);
             QueryUtils.Check(term2);
@@ -251,8 +240,8 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 801, 821, 831, 851, 861, 871, 881, 891, 1801, 1821, 1831, 1851, 1861, 1871, 1881, 1891 });
 
-            Assert.IsTrue(Searcher.Explain(query, 801).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 801).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 891).Value > 0.0f);
         }
 
         [Test]
@@ -269,8 +258,8 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 801, 821, 831, 851, 861, 871, 881, 891, 1801, 1821, 1831, 1851, 1861, 1871, 1881, 1891 });
 
-            Assert.IsTrue(Searcher.Explain(query, 801).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 801).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 891).Value > 0.0f);
         }
 
         [Test]
@@ -289,8 +278,8 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 801, 821, 831, 851, 871, 891, 1801, 1821, 1831, 1851, 1871, 1891 });
 
-            Assert.IsTrue(Searcher.Explain(query, 801).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 801).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 891).Value > 0.0f);
         }
 
         [Test]
@@ -307,8 +296,8 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 801, 821, 831, 851, 861, 871, 881, 891, 1801, 1821, 1831, 1851, 1861, 1871, 1881, 1891 });
 
-            Assert.IsTrue(Searcher.Explain(query, 801).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 801).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 891).Value > 0.0f);
         }
 
         [Test]
@@ -338,8 +327,8 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 840, 842, 843, 844, 845, 846, 847, 848, 849, 1840, 1842, 1843, 1844, 1845, 1846, 1847, 1848, 1849 });
 
-            Assert.IsTrue(Searcher.Explain(query, 840).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 1842).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 840).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 1842).Value > 0.0f);
         }
 
         [Test]
@@ -353,8 +342,8 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 840, 841, 842, 843, 844, 845, 846, 847, 848, 849 });
 
-            Assert.IsTrue(Searcher.Explain(query, 840).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 849).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 840).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 849).Value > 0.0f);
         }
 
         [Test]
@@ -372,8 +361,8 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 801, 821, 831, 851, 861, 871, 881, 891, 1801, 1821, 1831, 1851, 1861, 1871, 1881, 1891 });
 
-            Assert.IsTrue(Searcher.Explain(query, 801).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 891).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 801).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 891).Value > 0.0f);
         }
 
         [Test]
@@ -389,8 +378,8 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 42, 242, 342, 442, 542, 642, 742, 842, 942 });
 
-            Assert.IsTrue(Searcher.Explain(query, 242).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 942).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 242).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 942).Value > 0.0f);
         }
 
         [Test]
@@ -401,8 +390,8 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 5, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599 });
 
-            Assert.IsTrue(Searcher.Explain(query, 5).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 599).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 5).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 599).Value > 0.0f);
         }
 
         [Test]
@@ -412,8 +401,8 @@ namespace Lucene.Net.Search.Spans
             SpanTermQuery term1 = new SpanTermQuery(new Term("field", "five"));
             query = new SpanPositionRangeQuery(term1, 1, 2);
             CheckHits(query, new int[] { 25, 35, 45, 55, 65, 75, 85, 95 });
-            Assert.IsTrue(Searcher.Explain(query, 25).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 95).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 25).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 95).Value > 0.0f);
 
             query = new SpanPositionRangeQuery(term1, 0, 1);
             CheckHits(query, new int[] { 5, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599 });
@@ -431,7 +420,7 @@ namespace Lucene.Net.Search.Spans
 #pragma warning restore 612, 618
             SpanQuery query = new SpanPayloadCheckQuery(term1, new List<byte[]>() { pay.Bytes });
             CheckHits(query, new int[] { 1125, 1135, 1145, 1155, 1165, 1175, 1185, 1195, 1225, 1235, 1245, 1255, 1265, 1275, 1285, 1295, 1325, 1335, 1345, 1355, 1365, 1375, 1385, 1395, 1425, 1435, 1445, 1455, 1465, 1475, 1485, 1495, 1525, 1535, 1545, 1555, 1565, 1575, 1585, 1595, 1625, 1635, 1645, 1655, 1665, 1675, 1685, 1695, 1725, 1735, 1745, 1755, 1765, 1775, 1785, 1795, 1825, 1835, 1845, 1855, 1865, 1875, 1885, 1895, 1925, 1935, 1945, 1955, 1965, 1975, 1985, 1995 });
-            Assert.IsTrue(Searcher.Explain(query, 1125).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 1125).Value > 0.0f);
 
             SpanTermQuery term2 = new SpanTermQuery(new Term("field", "hundred"));
             SpanNearQuery snq;
@@ -518,8 +507,8 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 33, 47, 133, 147, 233, 247, 333, 347, 433, 447, 533, 547, 633, 647, 733, 747, 833, 847, 933, 947, 1033, 1047, 1133, 1147, 1233, 1247, 1333, 1347, 1433, 1447, 1533, 1547, 1633, 1647, 1733, 1747, 1833, 1847, 1933, 1947 });
 
-            Assert.IsTrue(Searcher.Explain(query, 33).Value > 0.0f);
-            Assert.IsTrue(Searcher.Explain(query, 947).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 33).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 947).Value > 0.0f);
         }
 
         [Test]
@@ -536,7 +525,7 @@ namespace Lucene.Net.Search.Spans
 
             CheckHits(query, new int[] { 333, 1333 });
 
-            Assert.IsTrue(Searcher.Explain(query, 333).Value > 0.0f);
+            Assert.IsTrue(searcher.Explain(query, 333).Value > 0.0f);
         }
 
         [Test]
@@ -583,8 +572,8 @@ namespace Lucene.Net.Search.Spans
         {
             SpanTermQuery t1 = new SpanTermQuery(new Term("field", "seventy"));
             SpanTermQuery t2 = new SpanTermQuery(new Term("field", "seventy"));
-            Spans s1 = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, t1);
-            Spans s2 = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, t2);
+            Spans s1 = MultiSpansWrapper.Wrap(searcher.TopReaderContext, t1);
+            Spans s2 = MultiSpansWrapper.Wrap(searcher.TopReaderContext, t2);
 
             Assert.IsTrue(s1.Next());
             Assert.IsTrue(s2.Next());
@@ -630,7 +619,7 @@ namespace Lucene.Net.Search.Spans
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, query, "field", Searcher, results);
+                Random, query, "field", searcher, results);
         }
     }
 }

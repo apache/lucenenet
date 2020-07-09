@@ -10,20 +10,6 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using Directory = Lucene.Net.Store.Directory;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
-    using Document = Documents.Document;
-    using Field = Field;
-    using IBits = Lucene.Net.Util.IBits;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using OpenMode = Lucene.Net.Index.OpenMode;
-    using Term = Lucene.Net.Index.Term;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -41,13 +27,27 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
+    using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using DocIdBitSet = Lucene.Net.Util.DocIdBitSet;
+    using Document = Documents.Document;
+    using Field = Field;
+    using IBits = Lucene.Net.Util.IBits;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode = Lucene.Net.Index.OpenMode;
+    using Term = Lucene.Net.Index.Term;
+
     [TestFixture]
     public class TestScorerPerf : LuceneTestCase
     {
-        internal bool Validate = true; // set to false when doing performance testing
+        internal bool validate = true; // set to false when doing performance testing
 
-        internal BitSet[] Sets;
-        internal Term[] Terms;
+        internal BitSet[] sets;
+        internal Term[] terms;
         internal IndexSearcher s;
         internal IndexReader r;
         internal Directory d;
@@ -68,12 +68,12 @@ namespace Lucene.Net.Search
         public virtual void CreateRandomTerms(int nDocs, int nTerms, double power, Directory dir)
         {
             int[] freq = new int[nTerms];
-            Terms = new Term[nTerms];
+            terms = new Term[nTerms];
             for (int i = 0; i < nTerms; i++)
             {
                 int f = (nTerms + 1) - i; // make first terms less frequent
                 freq[i] = (int)Math.Ceiling(Math.Pow(f, power));
-                Terms[i] = new Term("f", char.ToString((char)('A' + i)));
+                terms[i] = new Term("f", char.ToString((char)('A' + i)));
             }
 
             IndexWriter iw = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE));
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
                 {
                     if (Random.Next(freq[j]) == 0)
                     {
-                        d.Add(NewStringField("f", Terms[j].Text(), Field.Store.NO));
+                        d.Add(NewStringField("f", terms[j].Text(), Field.Store.NO));
                         //System.out.println(d);
                     }
                 }
@@ -116,9 +116,9 @@ namespace Lucene.Net.Search
 
         public class CountingHitCollector : ICollector
         {
-            internal int Count_Renamed = 0;
-            internal int Sum_Renamed = 0;
-            protected internal int DocBase = 0;
+            internal int count = 0;
+            internal int sum = 0;
+            protected internal int docBase = 0;
 
             public virtual void SetScorer(Scorer scorer)
             {
@@ -126,53 +126,38 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Count_Renamed++;
-                Sum_Renamed += DocBase + doc; // use it to avoid any possibility of being eliminated by hotspot
+                count++;
+                sum += docBase + doc; // use it to avoid any possibility of being eliminated by hotspot
             }
 
-            public virtual int Count
-            {
-                get
-                {
-                    return Count_Renamed;
-                }
-            }
+            public virtual int Count => count;
 
-            public virtual int Sum
-            {
-                get
-                {
-                    return Sum_Renamed;
-                }
-            }
+            public virtual int Sum => sum;
 
             public virtual void SetNextReader(AtomicReaderContext context)
             {
-                DocBase = context.DocBase;
+                docBase = context.DocBase;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
         public class MatchingHitCollector : CountingHitCollector
         {
-            internal BitSet Answer;
-            internal int Pos = -1;
+            internal BitSet answer;
+            internal int pos = -1;
 
             public MatchingHitCollector(BitSet answer)
             {
-                this.Answer = answer;
+                this.answer = answer;
             }
 
             public virtual void Collect(int doc, float score)
             {
-                Pos = Answer.NextSetBit(Pos + 1);
-                if (Pos != doc + DocBase)
+                pos = answer.NextSetBit(pos + 1);
+                if (pos != doc + docBase)
                 {
-                    throw new Exception("Expected doc " + Pos + " but got " + doc + DocBase);
+                    throw new Exception("Expected doc " + pos + " but got " + doc + docBase);
                 }
                 base.Collect(doc);
             }
@@ -180,10 +165,10 @@ namespace Lucene.Net.Search
 
         internal virtual BitSet AddClause(BooleanQuery bq, BitSet result)
         {
-            BitSet rnd = Sets[Random.Next(Sets.Length)];
+            BitSet rnd = sets[Random.Next(sets.Length)];
             Query q = new ConstantScoreQuery(new FilterAnonymousInnerClassHelper(this, rnd));
             bq.Add(q, Occur.MUST);
-            if (Validate)
+            if (validate)
             {
                 if (result == null)
                 {
@@ -199,20 +184,20 @@ namespace Lucene.Net.Search
 
         private class FilterAnonymousInnerClassHelper : Filter
         {
-            private readonly TestScorerPerf OuterInstance;
+            private readonly TestScorerPerf outerInstance;
 
-            private BitSet Rnd;
+            private readonly BitSet rnd;
 
             public FilterAnonymousInnerClassHelper(TestScorerPerf outerInstance, BitSet rnd)
             {
-                this.OuterInstance = outerInstance;
-                this.Rnd = rnd;
+                this.outerInstance = outerInstance;
+                this.rnd = rnd;
             }
 
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 Assert.IsNull(acceptDocs, "acceptDocs should be null, as we have an index without deletions");
-                return new DocIdBitSet(Rnd);
+                return new DocIdBitSet(rnd);
             }
         }
 
@@ -230,11 +215,11 @@ namespace Lucene.Net.Search
                     result = AddClause(bq, result);
                 }
 
-                CountingHitCollector hc = Validate ? new MatchingHitCollector(result) : new CountingHitCollector();
+                CountingHitCollector hc = validate ? new MatchingHitCollector(result) : new CountingHitCollector();
                 s.Search(bq, hc);
                 ret += hc.Sum;
 
-                if (Validate)
+                if (validate)
                 {
                     Assert.AreEqual(result.Cardinality, hc.Count);
                 }
@@ -267,11 +252,11 @@ namespace Lucene.Net.Search
                     oq.Add(bq, Occur.MUST);
                 } // outer
 
-                CountingHitCollector hc = Validate ? new MatchingHitCollector(result) : new CountingHitCollector();
+                CountingHitCollector hc = validate ? new MatchingHitCollector(result) : new CountingHitCollector();
                 s.Search(oq, hc);
                 nMatches += hc.Count;
                 ret += hc.Sum;
-                if (Validate)
+                if (validate)
                 {
                     Assert.AreEqual(result.Cardinality, hc.Count);
                 }
@@ -308,7 +293,7 @@ namespace Lucene.Net.Search
                         tnum = termflag.NextClearBit(0);
                     }
                     termflag.SafeSet(tnum, true);
-                    Query tq = new TermQuery(Terms[tnum]);
+                    Query tq = new TermQuery(terms[tnum]);
                     bq.Add(tq, Occur.MUST);
                 }
 
@@ -352,7 +337,7 @@ namespace Lucene.Net.Search
                             tnum = termflag.NextClearBit(0);
                         }
                         termflag.SafeSet(tnum, true);
-                        Query tq = new TermQuery(Terms[tnum]);
+                        Query tq = new TermQuery(terms[tnum]);
                         bq.Add(tq, Occur.MUST);
                     } // inner
 
@@ -399,8 +384,8 @@ namespace Lucene.Net.Search
         {
             // test many small sets... the bugs will be found on boundary conditions
             CreateDummySearcher();
-            Validate = true;
-            Sets = RandBitSets(AtLeast(1000), AtLeast(10));
+            validate = true;
+            sets = RandBitSets(AtLeast(1000), AtLeast(10));
             DoConjunctions(AtLeast(10000), AtLeast(5));
             DoNestedConjunctions(AtLeast(10000), AtLeast(3), AtLeast(3));
             r.Dispose();

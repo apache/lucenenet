@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
@@ -38,68 +39,47 @@ namespace Lucene.Net.Search.Spans
 
         internal sealed class JustCompileSpans : Spans
         {
-            public override int Doc
-            {
-                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
-            }
+            public override int Doc => throw new NotSupportedException(UNSUPPORTED_MSG);
 
-            public override int End
-            {
-                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
-            }
+            public override int End => throw new NotSupportedException(UNSUPPORTED_MSG);
 
             public override bool Next()
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
 
             public override bool SkipTo(int target)
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override int Start
-            {
-                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
-            }
+            public override int Start => throw new NotSupportedException(UNSUPPORTED_MSG);
 
             public override ICollection<byte[]> GetPayload()
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override bool IsPayloadAvailable
-            {
-                get
-                {
-                    throw new System.NotSupportedException(UNSUPPORTED_MSG);
-                }
-            }
+            public override bool IsPayloadAvailable => throw new NotSupportedException(UNSUPPORTED_MSG);
 
             public override long GetCost()
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
         }
 
         internal sealed class JustCompileSpanQuery : SpanQuery
         {
-            public override string Field
-            {
-                get
-                {
-                    throw new System.NotSupportedException(UNSUPPORTED_MSG);
-                }
-            }
+            public override string Field => throw new NotSupportedException(UNSUPPORTED_MSG);
 
             public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
 
             public override string ToString(string field)
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
         }
 
@@ -107,45 +87,30 @@ namespace Lucene.Net.Search.Spans
         {
             public override ICollection<byte[]> GetPayload()
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override bool IsPayloadAvailable
-            {
-                get
-                {
-                    throw new System.NotSupportedException(UNSUPPORTED_MSG);
-                }
-            }
+            public override bool IsPayloadAvailable => throw new NotSupportedException(UNSUPPORTED_MSG);
 
-            public override int Doc
-            {
-                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
-            }
+            public override int Doc => throw new NotSupportedException(UNSUPPORTED_MSG);
 
-            public override int End
-            {
-                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
-            }
+            public override int End => throw new NotSupportedException(UNSUPPORTED_MSG);
 
             public override bool Next()
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
 
             public override bool SkipTo(int target)
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
 
-            public override int Start
-            {
-                get { throw new System.NotSupportedException(UNSUPPORTED_MSG); }
-            }
+            public override int Start => throw new NotSupportedException(UNSUPPORTED_MSG);
 
             public override long GetCost()
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
         }
 
@@ -158,7 +123,7 @@ namespace Lucene.Net.Search.Spans
 
             protected override bool SetFreqCurrentDoc()
             {
-                throw new System.NotSupportedException(UNSUPPORTED_MSG);
+                throw new NotSupportedException(UNSUPPORTED_MSG);
             }
         }
     }

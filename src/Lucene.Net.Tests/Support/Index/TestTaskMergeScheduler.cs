@@ -10,20 +10,6 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Directory = Lucene.Net.Store.Directory;
-    using Document = Documents.Document;
-    using Field = Field;
-    //using IndexWriter = Lucene.Net.Index.IndexWriter;
-    //using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    //using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    //using MergePolicy = Lucene.Net.Index.MergePolicy;
-    //using MergeScheduler = Lucene.Net.Index.MergeScheduler;
-    //using MergeTrigger = Lucene.Net.Index.MergeTrigger;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -40,6 +26,14 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Documents.Document;
+    using Field = Field;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using RAMDirectory = Lucene.Net.Store.RAMDirectory;
 
     /// <summary>
     /// Holds tests cases to verify external APIs are accessible

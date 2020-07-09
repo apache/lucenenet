@@ -8,25 +8,24 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    using Directory = Lucene.Net.Store.Directory;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
@@ -122,18 +121,18 @@ namespace Lucene.Net.Search
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestSearchWithThreads OuterInstance;
+            private readonly TestSearchWithThreads outerInstance;
 
-            private IndexSearcher s;
-            private AtomicBoolean Failed;
-            private AtomicInt64 NetSearch;
+            private readonly IndexSearcher s;
+            private readonly AtomicBoolean failed;
+            private readonly AtomicInt64 netSearch;
 
             public ThreadAnonymousInnerClassHelper(TestSearchWithThreads outerInstance, IndexSearcher s, AtomicBoolean failed, AtomicInt64 netSearch)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.s = s;
-                this.Failed = failed;
-                this.NetSearch = netSearch;
+                this.failed = failed;
+                this.netSearch = netSearch;
                 col = new TotalHitCountCollector();
             }
 
@@ -145,8 +144,8 @@ namespace Lucene.Net.Search
                 {
                     long totHits = 0;
                     long totSearch = 0;
-                    long stopAt = Environment.TickCount + OuterInstance.RUN_TIME_MSEC;
-                    while (Environment.TickCount < stopAt && !Failed)
+                    long stopAt = Environment.TickCount + outerInstance.RUN_TIME_MSEC;
+                    while (Environment.TickCount < stopAt && !failed)
                     {
                         s.Search(new TermQuery(new Term("body", "aaa")), col);
                         totHits += col.TotalHits;
@@ -155,11 +154,11 @@ namespace Lucene.Net.Search
                         totSearch++;
                     }
                     Assert.IsTrue(totSearch > 0 && totHits > 0);
-                    NetSearch.AddAndGet(totSearch);
+                    netSearch.AddAndGet(totSearch);
                 }
                 catch (Exception exc)
                 {
-                    Failed.Value = (true);
+                    failed.Value = (true);
                     throw new Exception(exc.Message, exc);
                 }
             }

@@ -52,19 +52,19 @@ namespace Lucene.Net.Search.Spans
     [TestFixture]
     public class TestPayloadSpans : LuceneTestCase
     {
-        private IndexSearcher Searcher_Renamed;
+        private IndexSearcher searcher;
         private Similarity similarity = new DefaultSimilarity();
-        protected internal IndexReader IndexReader;
-        private IndexReader CloseIndexReader;
-        private Directory Directory;
+        protected internal IndexReader indexReader;
+        private IndexReader closeIndexReader;
+        private Directory directory;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
             PayloadHelper helper = new PayloadHelper();
-            Searcher_Renamed = helper.SetUp(Random, similarity, 1000);
-            IndexReader = Searcher_Renamed.IndexReader;
+            searcher = helper.SetUp(Random, similarity, 1000);
+            indexReader = searcher.IndexReader;
         }
 
         [Test]
@@ -73,12 +73,12 @@ namespace Lucene.Net.Search.Spans
             SpanTermQuery stq;
             Spans spans;
             stq = new SpanTermQuery(new Term(PayloadHelper.FIELD, "seventy"));
-            spans = MultiSpansWrapper.Wrap(IndexReader.Context, stq);
+            spans = MultiSpansWrapper.Wrap(indexReader.Context, stq);
             Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
             CheckSpans(spans, 100, 1, 1, 1);
 
             stq = new SpanTermQuery(new Term(PayloadHelper.NO_PAYLOAD_FIELD, "seventy"));
-            spans = MultiSpansWrapper.Wrap(IndexReader.Context, stq);
+            spans = MultiSpansWrapper.Wrap(indexReader.Context, stq);
             Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
             CheckSpans(spans, 100, 0, 0, 0);
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Search.Spans
             SpanFirstQuery sfq;
             match = new SpanTermQuery(new Term(PayloadHelper.FIELD, "one"));
             sfq = new SpanFirstQuery(match, 2);
-            Spans spans = MultiSpansWrapper.Wrap(IndexReader.Context, sfq);
+            Spans spans = MultiSpansWrapper.Wrap(indexReader.Context, sfq);
             CheckSpans(spans, 109, 1, 1, 1);
             //Test more complicated subclause
             SpanQuery[] clauses = new SpanQuery[2];
@@ -98,11 +98,11 @@ namespace Lucene.Net.Search.Spans
             clauses[1] = new SpanTermQuery(new Term(PayloadHelper.FIELD, "hundred"));
             match = new SpanNearQuery(clauses, 0, true);
             sfq = new SpanFirstQuery(match, 2);
-            CheckSpans(MultiSpansWrapper.Wrap(IndexReader.Context, sfq), 100, 2, 1, 1);
+            CheckSpans(MultiSpansWrapper.Wrap(indexReader.Context, sfq), 100, 2, 1, 1);
 
             match = new SpanNearQuery(clauses, 0, false);
             sfq = new SpanFirstQuery(match, 2);
-            CheckSpans(MultiSpansWrapper.Wrap(IndexReader.Context, sfq), 100, 2, 1, 1);
+            CheckSpans(MultiSpansWrapper.Wrap(indexReader.Context, sfq), 100, 2, 1, 1);
         }
 
         [Test]
@@ -181,8 +181,8 @@ namespace Lucene.Net.Search.Spans
             spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, nestedSpanNearQuery);
             Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
             CheckSpans(spans, 2, new int[] { 3, 3 });
-            CloseIndexReader.Dispose();
-            Directory.Dispose();
+            closeIndexReader.Dispose();
+            directory.Dispose();
         }
 
         [Test]
@@ -215,8 +215,8 @@ namespace Lucene.Net.Search.Spans
 
             Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
             CheckSpans(spans, 1, new int[] { 3 });
-            CloseIndexReader.Dispose();
-            Directory.Dispose();
+            closeIndexReader.Dispose();
+            directory.Dispose();
         }
 
         [Test]
@@ -254,8 +254,8 @@ namespace Lucene.Net.Search.Spans
             spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, nestedSpanNearQuery);
             Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
             CheckSpans(spans, 2, new int[] { 8, 8 });
-            CloseIndexReader.Dispose();
-            Directory.Dispose();
+            closeIndexReader.Dispose();
+            directory.Dispose();
         }
 
         [Test]
@@ -449,9 +449,9 @@ namespace Lucene.Net.Search.Spans
         {
             get
             {
-                Directory = NewDirectory();
+                directory = NewDirectory();
                 string[] docs = new string[] { "xx rr yy mm  pp", "xx yy mm rr pp", "nopayload qq ss pp np", "one two three four five six seven eight nine ten eleven", "nine one two three four five six seven eight eleven ten" };
-                RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
+                RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer(this)).SetSimilarity(similarity));
 
                 Document doc = null;
                 for (int i = 0; i < docs.Length; i++)
@@ -462,10 +462,10 @@ namespace Lucene.Net.Search.Spans
                     writer.AddDocument(doc);
                 }
 
-                CloseIndexReader = writer.GetReader();
+                closeIndexReader = writer.GetReader();
                 writer.Dispose();
 
-                IndexSearcher searcher = NewSearcher(CloseIndexReader);
+                IndexSearcher searcher = NewSearcher(closeIndexReader);
                 return searcher;
             }
         }
@@ -506,63 +506,63 @@ namespace Lucene.Net.Search.Spans
 
         internal sealed class PayloadAnalyzer : Analyzer
         {
-            private readonly TestPayloadSpans OuterInstance;
+            private readonly TestPayloadSpans outerInstance;
 
             public PayloadAnalyzer(TestPayloadSpans outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result));
+                return new TokenStreamComponents(result, new PayloadFilter(outerInstance, result));
             }
         }
 
         internal sealed class PayloadFilter : TokenFilter
         {
-            private readonly TestPayloadSpans OuterInstance;
+            private readonly TestPayloadSpans outerInstance;
 
-            internal ISet<string> Entities = new JCG.HashSet<string>();
-            internal ISet<string> Nopayload = new JCG.HashSet<string>();
-            internal int Pos;
-            internal IPayloadAttribute PayloadAtt;
-            internal ICharTermAttribute TermAtt;
-            internal IPositionIncrementAttribute PosIncrAtt;
+            internal ISet<string> entities = new JCG.HashSet<string>();
+            internal ISet<string> nopayload = new JCG.HashSet<string>();
+            internal int pos;
+            internal IPayloadAttribute payloadAtt;
+            internal ICharTermAttribute termAtt;
+            internal IPositionIncrementAttribute posIncrAtt;
 
             public PayloadFilter(TestPayloadSpans outerInstance, TokenStream input)
                 : base(input)
             {
-                this.OuterInstance = outerInstance;
-                Pos = 0;
-                Entities.Add("xx");
-                Entities.Add("one");
-                Nopayload.Add("nopayload");
-                Nopayload.Add("np");
-                TermAtt = AddAttribute<ICharTermAttribute>();
-                PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-                PayloadAtt = AddAttribute<IPayloadAttribute>();
+                this.outerInstance = outerInstance;
+                pos = 0;
+                entities.Add("xx");
+                entities.Add("one");
+                nopayload.Add("nopayload");
+                nopayload.Add("np");
+                termAtt = AddAttribute<ICharTermAttribute>();
+                posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+                payloadAtt = AddAttribute<IPayloadAttribute>();
             }
 
             public override bool IncrementToken()
             {
                 if (m_input.IncrementToken())
                 {
-                    string token = TermAtt.ToString();
+                    string token = termAtt.ToString();
 
-                    if (!Nopayload.Contains(token))
+                    if (!nopayload.Contains(token))
                     {
-                        if (Entities.Contains(token))
+                        if (entities.Contains(token))
                         {
-                            PayloadAtt.Payload = new BytesRef(token + ":Entity:" + Pos);
+                            payloadAtt.Payload = new BytesRef(token + ":Entity:" + pos);
                         }
                         else
                         {
-                            PayloadAtt.Payload = new BytesRef(token + ":Noise:" + Pos);
+                            payloadAtt.Payload = new BytesRef(token + ":Noise:" + pos);
                         }
                     }
-                    Pos += PosIncrAtt.PositionIncrement;
+                    pos += posIncrAtt.PositionIncrement;
                     return true;
                 }
                 return false;
@@ -571,23 +571,23 @@ namespace Lucene.Net.Search.Spans
             public override void Reset()
             {
                 base.Reset();
-                this.Pos = 0;
+                this.pos = 0;
             }
         }
 
         public sealed class TestPayloadAnalyzer : Analyzer
         {
-            private readonly TestPayloadSpans OuterInstance;
+            private readonly TestPayloadSpans outerInstance;
 
             public TestPayloadAnalyzer(TestPayloadSpans outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer result = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                return new TokenStreamComponents(result, new PayloadFilter(OuterInstance, result));
+                return new TokenStreamComponents(result, new PayloadFilter(outerInstance, result));
             }
         }
     }

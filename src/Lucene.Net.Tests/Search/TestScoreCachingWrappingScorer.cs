@@ -4,21 +4,21 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net.Search
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
@@ -32,8 +32,8 @@ namespace Lucene.Net.Search
     {
         private sealed class SimpleScorer : Scorer
         {
-            internal int Idx = 0;
-            internal int Doc = -1;
+            private int idx = 0;
+            private int doc = -1;
 
             public SimpleScorer(Weight weight)
                 : base(weight)
@@ -46,60 +46,54 @@ namespace Lucene.Net.Search
                 // different results. this is to emulate computation of a score. If
                 // ScoreCachingWrappingScorer is used, this should not be called more than
                 // once per document.
-                return Idx == Scores.Length ? float.NaN : Scores[Idx++];
+                return idx == scores.Length ? float.NaN : scores[idx++];
             }
 
-            public override int Freq
-            {
-                get { return 1; }
-            }
+            public override int Freq => 1;
 
-            public override int DocID
-            {
-                get { return Doc; }
-            }
+            public override int DocID => doc;
 
             public override int NextDoc()
             {
-                return ++Doc < Scores.Length ? Doc : NO_MORE_DOCS;
+                return ++doc < scores.Length ? doc : NO_MORE_DOCS;
             }
 
             public override int Advance(int target)
             {
-                Doc = target;
-                return Doc < Scores.Length ? Doc : NO_MORE_DOCS;
+                doc = target;
+                return doc < scores.Length ? doc : NO_MORE_DOCS;
             }
 
             public override long GetCost()
             {
-                return Scores.Length;
+                return scores.Length;
             }
         }
 
         private sealed class ScoreCachingCollector : ICollector
         {
-            internal int Idx = 0;
-            internal Scorer Scorer_Renamed;
-            internal float[] Mscores;
+            private int idx = 0;
+            private Scorer scorer;
+            public readonly float[] mscores;
 
             public ScoreCachingCollector(int numToCollect)
             {
-                Mscores = new float[numToCollect];
+                mscores = new float[numToCollect];
             }
 
             public void Collect(int doc)
             {
                 // just a sanity check to avoid IOOB.
-                if (Idx == Mscores.Length)
+                if (idx == mscores.Length)
                 {
                     return;
                 }
 
                 // just call score() a couple of times and record the score.
-                Mscores[Idx] = Scorer_Renamed.GetScore();
-                Mscores[Idx] = Scorer_Renamed.GetScore();
-                Mscores[Idx] = Scorer_Renamed.GetScore();
-                ++Idx;
+                mscores[idx] = scorer.GetScore();
+                mscores[idx] = scorer.GetScore();
+                mscores[idx] = scorer.GetScore();
+                ++idx;
             }
 
             public void SetNextReader(AtomicReaderContext context)
@@ -108,16 +102,13 @@ namespace Lucene.Net.Search
 
             public void SetScorer(Scorer scorer)
             {
-                this.Scorer_Renamed = new ScoreCachingWrappingScorer(scorer);
+                this.scorer = new ScoreCachingWrappingScorer(scorer);
             }
 
-            public bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public bool AcceptsDocsOutOfOrder => true;
         }
 
-        private static readonly float[] Scores = new float[] { 0.7767749f, 1.7839992f, 8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, 8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f };
+        private static readonly float[] scores = new float[] { 0.7767749f, 1.7839992f, 8.9925785f, 7.9608946f, 0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, 8.108544f, 4.961808f, 2.2423935f, 7.285586f, 4.6699767f };
 
         [Test]
         public virtual void TestGetScores()
@@ -134,7 +125,7 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(ir);
             Weight fake = (new TermQuery(new Term("fake", "weight"))).CreateWeight(searcher);
             Scorer s = new SimpleScorer(fake);
-            ScoreCachingCollector scc = new ScoreCachingCollector(Scores.Length);
+            ScoreCachingCollector scc = new ScoreCachingCollector(scores.Length);
             scc.SetScorer(s);
 
             // We need to iterate on the scorer so that its doc() advances.
@@ -144,9 +135,9 @@ namespace Lucene.Net.Search
                 scc.Collect(doc);
             }
 
-            for (int i = 0; i < Scores.Length; i++)
+            for (int i = 0; i < scores.Length; i++)
             {
-                Assert.AreEqual(Scores[i], scc.Mscores[i], 0f);
+                Assert.AreEqual(scores[i], scc.mscores[i], 0f);
             }
             ir.Dispose();
             directory.Dispose();

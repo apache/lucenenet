@@ -8,6 +8,23 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -16,24 +33,6 @@ namespace Lucene.Net.Search
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MultiReader = Lucene.Net.Index.MultiReader;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -44,9 +43,9 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestMultiTermQueryRewrites : LuceneTestCase
     {
-        internal static Directory Dir, Sdir1, Sdir2;
-        internal static IndexReader Reader, MultiReader, MultiReaderDupls;
-        internal static IndexSearcher Searcher, MultiSearcher, MultiSearcherDupls;
+        private static Directory dir, sdir1, sdir2;
+        private static IndexReader reader, multiReader, multiReaderDupls;
+        private static IndexSearcher searcher, multiSearcher, multiSearcherDupls;
 
         /// <summary>
         /// LUCENENET specific
@@ -57,24 +56,24 @@ namespace Lucene.Net.Search
         {
             base.BeforeClass();
 
-            Dir = NewDirectory();
-            Sdir1 = NewDirectory();
-            Sdir2 = NewDirectory();
+            dir = NewDirectory();
+            sdir1 = NewDirectory();
+            sdir2 = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Dir, new MockAnalyzer(Random));
+                Random, dir, new MockAnalyzer(Random));
             RandomIndexWriter swriter1 = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Sdir1, new MockAnalyzer(Random));
+                Random, sdir1, new MockAnalyzer(Random));
             RandomIndexWriter swriter2 = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Sdir2, new MockAnalyzer(Random));
+                Random, sdir2, new MockAnalyzer(Random));
 
             for (int i = 0; i < 10; i++)
             {
@@ -90,28 +89,28 @@ namespace Lucene.Net.Search
             swriter1.Dispose();
             swriter2.Dispose();
 
-            Reader = DirectoryReader.Open(Dir);
-            Searcher = NewSearcher(Reader);
+            reader = DirectoryReader.Open(dir);
+            searcher = NewSearcher(reader);
 
-            MultiReader = new MultiReader(new IndexReader[] { DirectoryReader.Open(Sdir1), DirectoryReader.Open(Sdir2) }, true);
-            MultiSearcher = NewSearcher(MultiReader);
+            multiReader = new MultiReader(new IndexReader[] { DirectoryReader.Open(sdir1), DirectoryReader.Open(sdir2) }, true);
+            multiSearcher = NewSearcher(multiReader);
 
-            MultiReaderDupls = new MultiReader(new IndexReader[] { DirectoryReader.Open(Sdir1), DirectoryReader.Open(Dir) }, true);
-            MultiSearcherDupls = NewSearcher(MultiReaderDupls);
+            multiReaderDupls = new MultiReader(new IndexReader[] { DirectoryReader.Open(sdir1), DirectoryReader.Open(dir) }, true);
+            multiSearcherDupls = NewSearcher(multiReaderDupls);
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Reader.Dispose();
-            MultiReader.Dispose();
-            MultiReaderDupls.Dispose();
-            Dir.Dispose();
-            Sdir1.Dispose();
-            Sdir2.Dispose();
-            Reader = MultiReader = MultiReaderDupls = null;
-            Searcher = MultiSearcher = MultiSearcherDupls = null;
-            Dir = Sdir1 = Sdir2 = null;
+            reader.Dispose();
+            multiReader.Dispose();
+            multiReaderDupls.Dispose();
+            dir.Dispose();
+            sdir1.Dispose();
+            sdir2.Dispose();
+            reader = multiReader = multiReaderDupls = null;
+            searcher = multiSearcher = multiSearcherDupls = null;
+            dir = sdir1 = sdir2 = null;
             base.AfterClass();
         }
 
@@ -151,9 +150,9 @@ namespace Lucene.Net.Search
         {
             MultiTermQuery mtq = TermRangeQuery.NewStringRange("data", "2", "7", true, true);
             mtq.MultiTermRewriteMethod = (method);
-            Query q1 = Searcher.Rewrite(mtq);
-            Query q2 = MultiSearcher.Rewrite(mtq);
-            Query q3 = MultiSearcherDupls.Rewrite(mtq);
+            Query q1 = searcher.Rewrite(mtq);
+            Query q2 = multiSearcher.Rewrite(mtq);
+            Query q3 = multiSearcherDupls.Rewrite(mtq);
             if (VERBOSE)
             {
                 Console.WriteLine();
@@ -199,9 +198,9 @@ namespace Lucene.Net.Search
         {
             MultiTermQuery mtq = new MultiTermQueryAnonymousInnerClassHelper(this);
             mtq.MultiTermRewriteMethod = (method);
-            Query q1 = Searcher.Rewrite(mtq);
-            Query q2 = MultiSearcher.Rewrite(mtq);
-            Query q3 = MultiSearcherDupls.Rewrite(mtq);
+            Query q1 = searcher.Rewrite(mtq);
+            Query q2 = multiSearcher.Rewrite(mtq);
+            Query q3 = multiSearcherDupls.Rewrite(mtq);
             if (VERBOSE)
             {
                 Console.WriteLine();
@@ -218,12 +217,12 @@ namespace Lucene.Net.Search
 
         private class MultiTermQueryAnonymousInnerClassHelper : MultiTermQuery
         {
-            private readonly TestMultiTermQueryRewrites OuterInstance;
+            private readonly TestMultiTermQueryRewrites outerInstance;
 
             public MultiTermQueryAnonymousInnerClassHelper(TestMultiTermQueryRewrites outerInstance)
                 : base("data")
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
@@ -233,12 +232,12 @@ namespace Lucene.Net.Search
 
             private class TermRangeTermsEnumAnonymousInnerClassHelper : TermRangeTermsEnum
             {
-                private readonly MultiTermQueryAnonymousInnerClassHelper OuterInstance;
+                private readonly MultiTermQueryAnonymousInnerClassHelper outerInstance;
 
                 public TermRangeTermsEnumAnonymousInnerClassHelper(MultiTermQueryAnonymousInnerClassHelper outerInstance, TermsEnum iterator, BytesRef bref1, BytesRef bref2)
                     : base(iterator, bref1, bref2, true, true)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                     boostAtt = Attributes.AddAttribute<IBoostAttribute>();
                 }
 
@@ -275,7 +274,7 @@ namespace Lucene.Net.Search
             mtq.MultiTermRewriteMethod = (method);
             try
             {
-                MultiSearcherDupls.Rewrite(mtq);
+                multiSearcherDupls.Rewrite(mtq);
                 Assert.Fail("Should throw BooleanQuery.TooManyClauses");
             }
             catch (BooleanQuery.TooManyClausesException e)
@@ -298,7 +297,7 @@ namespace Lucene.Net.Search
             mtq.MultiTermRewriteMethod = (method);
             try
             {
-                MultiSearcherDupls.Rewrite(mtq);
+                multiSearcherDupls.Rewrite(mtq);
             }
             finally
             {

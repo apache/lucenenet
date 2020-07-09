@@ -386,16 +386,10 @@ namespace Lucene.Net.Search
 
             public int HitCount()
             {
-                return (int)bits.Cardinality();
+                return (int) bits.Cardinality();
             }
 
-            public int LastDocCollected
-            {
-                get
-                {
-                    return lastDocCollected;
-                }
-            }
+            public int LastDocCollected => lastDocCollected;
 
             public virtual void SetScorer(Scorer scorer)
             {
@@ -423,6 +417,7 @@ namespace Lucene.Net.Search
 //                    }
 //#endif
                 }
+
                 Debug.Assert(docId >= 0, " base=" + docBase + " doc=" + doc);
                 bits.Set(docId);
                 lastDocCollected = docId;
@@ -433,12 +428,7 @@ namespace Lucene.Net.Search
                 docBase = context.DocBase;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
-
+            public virtual bool AcceptsDocsOutOfOrder => false;
         }
-
     }
 }

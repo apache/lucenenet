@@ -1,8 +1,7 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
-    using Term = Lucene.Net.Index.Term;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -19,6 +18,8 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using Term = Lucene.Net.Index.Term;
 
     /// <summary>
     /// Basic equivalence tests for core queries

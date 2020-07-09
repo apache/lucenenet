@@ -8,29 +8,28 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Term = Lucene.Net.Index.Term;
@@ -45,16 +44,16 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestWildcardRandom : LuceneTestCase
     {
-        private IndexSearcher Searcher;
-        private IndexReader Reader;
-        private Directory Dir;
+        private IndexSearcher searcher;
+        private IndexReader reader;
+        private Directory dir;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
+            dir = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
 
             Document doc = new Document();
             Field field = NewStringField("field", "", Field.Store.NO);
@@ -66,12 +65,12 @@ namespace Lucene.Net.Search
                 writer.AddDocument(doc);
             }
 
-            Reader = writer.GetReader();
-            Searcher = NewSearcher(Reader);
+            reader = writer.GetReader();
+            searcher = NewSearcher(reader);
             writer.Dispose();
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: setUp searcher=" + Searcher);
+                Console.WriteLine("TEST: setUp searcher=" + searcher);
             }
         }
 
@@ -108,15 +107,15 @@ namespace Lucene.Net.Search
                 Console.WriteLine("TEST: run wildcard pattern=" + pattern + " filled=" + filledPattern);
             }
             Query wq = new WildcardQuery(new Term("field", filledPattern));
-            TopDocs docs = Searcher.Search(wq, 25);
+            TopDocs docs = searcher.Search(wq, 25);
             Assert.AreEqual(numHits, docs.TotalHits, "Incorrect hits for pattern: " + pattern);
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Dir.Dispose();
+            reader.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 

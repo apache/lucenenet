@@ -7,6 +7,23 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
@@ -14,24 +31,6 @@ namespace Lucene.Net.Search
     using Field = Field;
     using FieldType = FieldType;
     using IndexReader = Lucene.Net.Index.IndexReader;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -48,8 +47,8 @@ namespace Lucene.Net.Search
         // LUCENENET specific - made these instance variables
         // since our BeforeClass() and AfterClass() are instance
         // methods and not doing so makes them cross runner threads.
-        internal /*static*/ Directory Small;
-        internal /*static*/ IndexReader Reader;
+        internal /*static*/ Directory small;
+        internal /*static*/ IndexReader reader;
 
         /// <summary>
         /// LUCENENET specific
@@ -62,8 +61,8 @@ namespace Lucene.Net.Search
 
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 
-            Small = NewDirectory();
-            using (RandomIndexWriter writer = new RandomIndexWriter(Random, Small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy())))
+            small = NewDirectory();
+            using (RandomIndexWriter writer = new RandomIndexWriter(Random, small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy())))
             {
 
                 FieldType customType = new FieldType(TextField.TYPE_STORED);
@@ -80,17 +79,17 @@ namespace Lucene.Net.Search
                     writer.AddDocument(doc);
                 }
 
-                Reader = writer.GetReader();
+                reader = writer.GetReader();
             }
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Reader?.Dispose();
-            Small?.Dispose();
-            Reader = null;
-            Small = null;
+            reader?.Dispose();
+            small?.Dispose();
+            reader = null;
+            small = null;
             base.AfterClass();
         }
 
@@ -155,7 +154,7 @@ namespace Lucene.Net.Search
         {
             // NOTE: uses index build in *this* setUp
 
-            IndexSearcher search = NewSearcher(Reader);
+            IndexSearcher search = NewSearcher(reader);
 
             ScoreDoc[] result;
 
@@ -192,7 +191,7 @@ namespace Lucene.Net.Search
         {
             // NOTE: uses index build in *this* setUp
 
-            IndexSearcher search = NewSearcher(Reader);
+            IndexSearcher search = NewSearcher(reader);
 
             ScoreDoc[] result;
 
@@ -238,7 +237,7 @@ namespace Lucene.Net.Search
         {
             // NOTE: uses index build in *this* setUp
 
-            IndexSearcher search = NewSearcher(Reader);
+            IndexSearcher search = NewSearcher(reader);
 
             // test for correct application of query normalization
             // must use a non score normalizing method for this.
@@ -291,11 +290,11 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly TestMultiTermConstantScore OuterInstance;
+            private readonly TestMultiTermConstantScore outerInstance;
 
             public CollectorAnonymousInnerClassHelper(TestMultiTermConstantScore outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 @base = 0;
             }
 
@@ -317,10 +316,7 @@ namespace Lucene.Net.Search
                 @base = context.DocBase;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
         [Test]
@@ -328,7 +324,7 @@ namespace Lucene.Net.Search
         {
             // NOTE: uses index build in *this* setUp
 
-            IndexSearcher search = NewSearcher(Reader);
+            IndexSearcher search = NewSearcher(reader);
 
             // first do a regular TermRangeQuery which uses term expansion so
             // docs with more terms in range get higher scores
@@ -359,7 +355,7 @@ namespace Lucene.Net.Search
         {
             // NOTE: uses index build in *super* setUp
 
-            IndexReader reader = SignedIndexReader;
+            IndexReader reader = signedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
             if (VERBOSE)
@@ -367,15 +363,15 @@ namespace Lucene.Net.Search
                 Console.WriteLine("TEST: reader=" + reader);
             }
 
-            int medId = ((MaxId - MinId) / 2);
+            int medId = ((maxId - minId) / 2);
 
-            string minIP = Pad(MinId);
-            string maxIP = Pad(MaxId);
+            string minIP = Pad(minId);
+            string maxIP = Pad(maxId);
             string medIP = Pad(medId);
 
             int numDocs = reader.NumDocs;
 
-            assertEquals("num of docs", numDocs, 1 + MaxId - MinId);
+            assertEquals("num of docs", numDocs, 1 + maxId - minId);
 
             ScoreDoc[] result;
 
@@ -406,16 +402,16 @@ namespace Lucene.Net.Search
             assertEquals("all but ends", numDocs - 2, result.Length);
 
             result = search.Search(Csrq("id", medIP, maxIP, T, T), null, numDocs).ScoreDocs;
-            assertEquals("med and up", 1 + MaxId - medId, result.Length);
+            assertEquals("med and up", 1 + maxId - medId, result.Length);
 
             result = search.Search(Csrq("id", medIP, maxIP, T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            assertEquals("med and up", 1 + MaxId - medId, result.Length);
+            assertEquals("med and up", 1 + maxId - medId, result.Length);
 
             result = search.Search(Csrq("id", minIP, medIP, T, T), null, numDocs).ScoreDocs;
-            assertEquals("up to med", 1 + medId - MinId, result.Length);
+            assertEquals("up to med", 1 + medId - minId, result.Length);
 
             result = search.Search(Csrq("id", minIP, medIP, T, T, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT), null, numDocs).ScoreDocs;
-            assertEquals("up to med", 1 + medId - MinId, result.Length);
+            assertEquals("up to med", 1 + medId - minId, result.Length);
 
             // unbounded id
 
@@ -432,10 +428,10 @@ namespace Lucene.Net.Search
             assertEquals("not max, but down", numDocs - 1, result.Length);
 
             result = search.Search(Csrq("id", medIP, maxIP, T, F), null, numDocs).ScoreDocs;
-            assertEquals("med and up, not max", MaxId - medId, result.Length);
+            assertEquals("med and up, not max", maxId - medId, result.Length);
 
             result = search.Search(Csrq("id", minIP, medIP, F, T), null, numDocs).ScoreDocs;
-            assertEquals("not min, up to med", medId - MinId, result.Length);
+            assertEquals("not min, up to med", medId - minId, result.Length);
 
             // very small sets
 
@@ -493,15 +489,15 @@ namespace Lucene.Net.Search
         {
             // NOTE: uses index build in *super* setUp
 
-            IndexReader reader = SignedIndexReader;
+            IndexReader reader = signedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
-            string minRP = Pad(SignedIndexDir.MinR);
-            string maxRP = Pad(SignedIndexDir.MaxR);
+            string minRP = Pad(signedIndexDir.minR);
+            string maxRP = Pad(signedIndexDir.maxR);
 
             int numDocs = reader.NumDocs;
 
-            assertEquals("num of docs", numDocs, 1 + MaxId - MinId);
+            assertEquals("num of docs", numDocs, 1 + maxId - minId);
 
             ScoreDoc[] result;
 

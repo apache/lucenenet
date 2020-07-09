@@ -4,29 +4,28 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SpanFirstQuery = Lucene.Net.Search.Spans.SpanFirstQuery;
@@ -51,9 +50,9 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestExplanations : LuceneTestCase
     {
-        protected internal static IndexSearcher Searcher;
-        protected internal static IndexReader Reader;
-        protected internal static Directory Directory;
+        protected internal static IndexSearcher searcher;
+        protected internal static IndexReader reader;
+        protected internal static Directory directory;
 
         public const string KEY = "KEY";
 
@@ -66,11 +65,11 @@ namespace Lucene.Net.Search
         [OneTimeTearDown]
         public override void AfterClass() // LUCENENET specific - renamed from AfterClassTestExplanations() to ensure calling order
         {
-            Searcher = null;
-            Reader.Dispose();
-            Reader = null;
-            Directory.Dispose();
-            Directory = null;
+            searcher = null;
+            reader.Dispose();
+            reader = null;
+            directory.Dispose();
+            directory = null;
             base.AfterClass();
         }
 
@@ -84,24 +83,24 @@ namespace Lucene.Net.Search
         {
             base.BeforeClass();
 
-            Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
-            for (int i = 0; i < DocFields.Length; i++)
+            directory = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            for (int i = 0; i < docFields.Length; i++)
             {
                 Document doc = new Document();
                 doc.Add(NewStringField(KEY, "" + i, Field.Store.NO));
-                Field f = NewTextField(FIELD, DocFields[i], Field.Store.NO);
+                Field f = NewTextField(FIELD, docFields[i], Field.Store.NO);
                 f.Boost = i;
                 doc.Add(f);
-                doc.Add(NewTextField(ALTFIELD, DocFields[i], Field.Store.NO));
+                doc.Add(NewTextField(ALTFIELD, docFields[i], Field.Store.NO));
                 writer.AddDocument(doc);
             }
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
-            Searcher = NewSearcher(Reader);
+            searcher = NewSearcher(reader);
         }
 
-        protected internal static readonly string[] DocFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3 zz", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3 zz" };
+        protected internal static readonly string[] docFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3 zz", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3 zz" };
 
         /// <summary>
         /// check the expDocNrs first, then check the query (and the explanations) </summary>
@@ -111,7 +110,7 @@ namespace Lucene.Net.Search
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, q, FIELD, Searcher, expDocNrs);
+                Random, q, FIELD, searcher, expDocNrs);
         }
 
         /// <summary>

@@ -1,37 +1,34 @@
 using J2N.Threading;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using NUnit.Framework;
-using System;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
     using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
     using Directory = Lucene.Net.Store.Directory;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
@@ -47,9 +44,9 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestAutomatonQuery : LuceneTestCase
     {
-        private Directory Directory;
-        private IndexReader Reader;
-        private IndexSearcher Searcher;
+        private Directory directory;
+        private IndexReader reader;
+        private IndexSearcher searcher;
 
         private readonly string FN = "field";
 
@@ -57,12 +54,12 @@ namespace Lucene.Net.Search
         public override void SetUp()
         {
             base.SetUp();
-            Directory = NewDirectory();
+            directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Directory);
+                Random, directory);
             Document doc = new Document();
             Field titleField = NewTextField("title", "some title", Field.Store.NO);
             Field field = NewTextField(FN, "this is document one 2345", Field.Store.NO);
@@ -75,16 +72,16 @@ namespace Lucene.Net.Search
             writer.AddDocument(doc);
             field.SetStringValue("doc three has some different stuff" + " with numbers 1234 5678.9 and letter b");
             writer.AddDocument(doc);
-            Reader = writer.GetReader();
-            Searcher = NewSearcher(Reader);
+            reader = writer.GetReader();
+            searcher = NewSearcher(reader);
             writer.Dispose();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Directory.Dispose();
+            reader.Dispose();
+            directory.Dispose();
             base.TearDown();
         }
 
@@ -99,7 +96,7 @@ namespace Lucene.Net.Search
             {
                 Console.WriteLine("TEST: run aq=" + query);
             }
-            return Searcher.Search(query, 5).TotalHits;
+            return searcher.Search(query, 5).TotalHits;
         }
 
         private void AssertAutomatonHits(int expected, Automaton automaton)
@@ -192,7 +189,7 @@ namespace Lucene.Net.Search
         public virtual void TestRewriteSingleTerm()
         {
             AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), BasicAutomata.MakeString("piece"));
-            Terms terms = MultiFields.GetTerms(Searcher.IndexReader, FN);
+            Terms terms = MultiFields.GetTerms(searcher.IndexReader, FN);
             Assert.IsTrue(aq.GetTermsEnum(terms) is SingleTermsEnum);
             Assert.AreEqual(1, AutomatonQueryNrHits(aq));
         }
@@ -208,7 +205,7 @@ namespace Lucene.Net.Search
             pfx.ExpandSingleton(); // expand singleton representation for testing
             Automaton prefixAutomaton = BasicOperations.Concatenate(pfx, BasicAutomata.MakeAnyString());
             AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), prefixAutomaton);
-            Terms terms = MultiFields.GetTerms(Searcher.IndexReader, FN);
+            Terms terms = MultiFields.GetTerms(searcher.IndexReader, FN);
 
             var en = aq.GetTermsEnum(terms);
             Assert.IsTrue(en is PrefixTermsEnum, "Expected type PrefixTermEnum but was {0}", en.GetType().Name);
@@ -224,7 +221,7 @@ namespace Lucene.Net.Search
             AutomatonQuery aq = new AutomatonQuery(NewTerm("bogus"), BasicAutomata.MakeEmpty());
             // not yet available: Assert.IsTrue(aq.getEnum(searcher.getIndexReader())
             // instanceof EmptyTermEnum);
-            Terms terms = MultiFields.GetTerms(Searcher.IndexReader, FN);
+            Terms terms = MultiFields.GetTerms(searcher.IndexReader, FN);
             Assert.AreSame(TermsEnum.EMPTY, aq.GetTermsEnum(terms));
             Assert.AreEqual(0, AutomatonQueryNrHits(aq));
         }
@@ -255,24 +252,24 @@ namespace Lucene.Net.Search
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestAutomatonQuery OuterInstance;
+            private readonly TestAutomatonQuery outerInstance;
 
-            private AutomatonQuery[] Queries;
-            private CountdownEvent StartingGun;
+            private readonly AutomatonQuery[] queries;
+            private readonly CountdownEvent startingGun;
 
             public ThreadAnonymousInnerClassHelper(TestAutomatonQuery outerInstance, AutomatonQuery[] queries, CountdownEvent startingGun)
             {
-                this.OuterInstance = outerInstance;
-                this.Queries = queries;
-                this.StartingGun = startingGun;
+                this.outerInstance = outerInstance;
+                this.queries = queries;
+                this.startingGun = startingGun;
             }
 
             public override void Run()
             {
-                StartingGun.Wait();
-                for (int i = 0; i < Queries.Length; i++)
+                startingGun.Wait();
+                for (int i = 0; i < queries.Length; i++)
                 {
-                    Queries[i].GetHashCode();
+                    queries[i].GetHashCode();
                 }
             }
         }

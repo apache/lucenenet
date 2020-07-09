@@ -8,26 +8,26 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BooleanWeight = Lucene.Net.Search.BooleanQuery.BooleanWeight;
     using Directory = Lucene.Net.Store.Directory;
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using Field = Field;
     using IBits = Lucene.Net.Util.IBits;
@@ -132,14 +132,14 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly TestBooleanScorer OuterInstance;
+            private readonly TestBooleanScorer outerInstance;
 
-            private IList<int> Hits;
+            private readonly IList<int> hits;
 
             public CollectorAnonymousInnerClassHelper(TestBooleanScorer outerInstance, IList<int> hits)
             {
-                this.OuterInstance = outerInstance;
-                this.Hits = hits;
+                this.outerInstance = outerInstance;
+                this.hits = hits;
             }
 
             internal int docBase;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Hits.Add(docBase + doc);
+                hits.Add(docBase + doc);
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
@@ -158,10 +158,7 @@ namespace Lucene.Net.Search
                 docBase = context.DocBase;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
         [Test]
@@ -202,16 +199,16 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper2 : ICollector
         {
-            private readonly TestBooleanScorer OuterInstance;
+            private readonly TestBooleanScorer outerInstance;
 
-            private Document Doc;
-            private int[] Count;
+            private Document doc;
+            private readonly int[] count;
 
             public CollectorAnonymousInnerClassHelper2(TestBooleanScorer outerInstance, Document doc, int[] count)
             {
-                this.OuterInstance = outerInstance;
-                this.Doc = doc;
-                this.Count = count;
+                this.outerInstance = outerInstance;
+                this.doc = doc;
+                this.count = count;
             }
 
             public virtual void SetScorer(Scorer scorer)
@@ -223,17 +220,14 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Count[0]++;
+                count[0]++;
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
         /// <summary>
@@ -252,25 +246,19 @@ namespace Lucene.Net.Search
 
             private class WeightAnonymousInnerClassHelper : Weight
             {
-                private readonly CrazyMustUseBulkScorerQuery OuterInstance;
+                private readonly CrazyMustUseBulkScorerQuery outerInstance;
 
                 public WeightAnonymousInnerClassHelper(CrazyMustUseBulkScorerQuery outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 public override Explanation Explain(AtomicReaderContext context, int doc)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
 
-                public override Query Query
-                {
-                    get
-                    {
-                        return OuterInstance;
-                    }
-                }
+                public override Query Query => outerInstance;
 
                 public override float GetValueForNormalization()
                 {
@@ -283,7 +271,7 @@ namespace Lucene.Net.Search
 
                 public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
                 {
-                    throw new System.NotSupportedException();
+                    throw new NotSupportedException();
                 }
 
                 public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
@@ -293,11 +281,11 @@ namespace Lucene.Net.Search
 
                 private class BulkScorerAnonymousInnerClassHelper : BulkScorer
                 {
-                    private readonly WeightAnonymousInnerClassHelper OuterInstance;
+                    private readonly WeightAnonymousInnerClassHelper outerInstance;
 
                     public BulkScorerAnonymousInnerClassHelper(WeightAnonymousInnerClassHelper outerInstance)
                     {
-                        this.OuterInstance = outerInstance;
+                        this.outerInstance = outerInstance;
                     }
 
                     public override bool Score(ICollector collector, int max)

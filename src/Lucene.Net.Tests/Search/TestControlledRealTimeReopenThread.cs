@@ -84,9 +84,9 @@ namespace Lucene.Net.Search
         {
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: finalSearcher maxGen=" + MaxGen);
+                Console.WriteLine("TEST: finalSearcher maxGen=" + maxGen);
             }
-            nrtDeletesThread.WaitForGeneration(MaxGen);
+            nrtDeletesThread.WaitForGeneration(maxGen);
             return nrtDeletes.Acquire();
         }
 
@@ -316,13 +316,13 @@ namespace Lucene.Net.Search
             }
         }
 
-        private long MaxGen = -1;
+        private long maxGen = -1;
 
         private void AddMaxGen(long gen)
         {
             lock (this)
             {
-                MaxGen = Math.Max(gen, MaxGen);
+                maxGen = Math.Max(gen, maxGen);
             }
         }
 
@@ -431,10 +431,10 @@ namespace Lucene.Net.Search
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
-            private CountdownEvent latch;
-            private CountdownEvent signal;
-            private TrackingIndexWriter writer;
-            private SearcherManager manager;
+            private readonly CountdownEvent latch;
+            private readonly CountdownEvent signal;
+            private readonly TrackingIndexWriter writer;
+            private readonly SearcherManager manager;
 
             public ThreadAnonymousInnerClassHelper(TestControlledRealTimeReopenThread outerInstance, CountdownEvent latch, CountdownEvent signal, TrackingIndexWriter writer, SearcherManager manager)
             {
@@ -470,9 +470,9 @@ namespace Lucene.Net.Search
         {
             private readonly TestControlledRealTimeReopenThread outerInstance;
 
-            private long lastGen;
-            private ControlledRealTimeReopenThread<IndexSearcher> thread;
-            private AtomicBoolean finished;
+            private readonly long lastGen;
+            private readonly ControlledRealTimeReopenThread<IndexSearcher> thread;
+            private readonly AtomicBoolean finished;
 
             public ThreadAnonymousInnerClassHelper2(TestControlledRealTimeReopenThread outerInstance, long lastGen, ControlledRealTimeReopenThread<IndexSearcher> thread, AtomicBoolean finished)
             {
@@ -571,23 +571,23 @@ namespace Lucene.Net.Search
 
         private class SearcherFactoryAnonymousInnerClassHelper2 : SearcherFactory
         {
-            private readonly TestControlledRealTimeReopenThread OuterInstance;
+            private readonly TestControlledRealTimeReopenThread outerInstance;
 
-            private IndexReader Other;
+            private readonly IndexReader other;
 
             public SearcherFactoryAnonymousInnerClassHelper2(TestControlledRealTimeReopenThread outerInstance, IndexReader other)
             {
-                this.OuterInstance = outerInstance;
-                this.Other = other;
+                this.outerInstance = outerInstance;
+                this.other = other;
             }
 
             public override IndexSearcher NewSearcher(IndexReader ignored)
             {
                 return LuceneTestCase.NewSearcher(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                    OuterInstance,
+                    outerInstance,
 #endif
-                    Other);
+                    other);
             }
         }
 

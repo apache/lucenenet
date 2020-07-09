@@ -38,22 +38,22 @@ namespace Lucene.Net.Store
         /// </summary>
         private class DenseRAMFile : RAMFile
         {
-            private long Capacity = 0;
-            private readonly Dictionary<int, byte[]> SingleBuffers = new Dictionary<int, byte[]>();
+            private long capacity = 0;
+            private readonly Dictionary<int, byte[]> singleBuffers = new Dictionary<int, byte[]>();
 
             protected override byte[] NewBuffer(int size)
             {
-                Capacity += size;
-                if (Capacity <= MAX_VALUE)
+                capacity += size;
+                if (capacity <= MAX_VALUE)
                 {
                     // below maxint we reuse buffers
                     byte[] buf;
-                    SingleBuffers.TryGetValue(Convert.ToInt32(size), out buf);
+                    singleBuffers.TryGetValue(Convert.ToInt32(size), out buf);
                     if (buf == null)
                     {
                         buf = new byte[size];
                         //System.out.println("allocate: "+size);
-                        SingleBuffers[Convert.ToInt32(size)] = buf;
+                        singleBuffers[Convert.ToInt32(size)] = buf;
                     }
                     return buf;
                 }

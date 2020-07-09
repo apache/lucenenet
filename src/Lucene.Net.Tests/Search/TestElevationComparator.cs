@@ -9,36 +9,35 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Document = Documents.Document;
     using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 
     [TestFixture]
     public class TestElevationComparer : LuceneTestCase
     {
-        private readonly IDictionary<BytesRef, int?> Priority = new Dictionary<BytesRef, int?>();
+        private readonly IDictionary<BytesRef, int?> priority = new Dictionary<BytesRef, int?>();
 
         [Test]
         public virtual void TestSorting()
@@ -73,7 +72,7 @@ namespace Lucene.Net.Search
             newq.Add(query, Occur.SHOULD);
             newq.Add(GetElevatedQuery(new string[] { "id", "a", "id", "x" }), Occur.SHOULD);
 
-            Sort sort = new Sort(new SortField("id", new ElevationComparerSource(Priority), false), new SortField(null, SortFieldType.SCORE, reversed)
+            Sort sort = new Sort(new SortField("id", new ElevationComparerSource(priority), false), new SortField(null, SortFieldType.SCORE, reversed)
              );
 
             TopDocsCollector<Entry> topCollector = TopFieldCollector.Create(sort, 50, false, true, true, true);
@@ -120,7 +119,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < vals.Length - 1; i += 2)
             {
                 q.Add(new TermQuery(new Term(vals[i], vals[i + 1])), Occur.SHOULD);
-                Priority[new BytesRef(vals[i + 1])] = Convert.ToInt32(max--);
+                priority[new BytesRef(vals[i + 1])] = Convert.ToInt32(max--);
                 // System.out.println(" pri doc=" + vals[i+1] + " pri=" + (1+max));
             }
             return q;
@@ -139,11 +138,11 @@ namespace Lucene.Net.Search
 
     internal class ElevationComparerSource : FieldComparerSource
     {
-        private readonly IDictionary<BytesRef, int?> Priority;
+        private readonly IDictionary<BytesRef, int?> priority;
 
         public ElevationComparerSource(IDictionary<BytesRef, int?> boosts)
         {
-            this.Priority = boosts;
+            this.priority = boosts;
         }
 
         public override FieldComparer NewComparer(string fieldname, int numHits, int sortPos, bool reversed)
@@ -153,16 +152,16 @@ namespace Lucene.Net.Search
 
         private class FieldComparerAnonymousInnerClassHelper : FieldComparer
         {
-            private readonly ElevationComparerSource OuterInstance;
+            private readonly ElevationComparerSource outerInstance;
 
-            private string Fieldname;
-            private int NumHits;
+            private readonly string fieldname;
+            private int numHits;
 
             public FieldComparerAnonymousInnerClassHelper(ElevationComparerSource outerInstance, string fieldname, int numHits)
             {
-                this.OuterInstance = outerInstance;
-                this.Fieldname = fieldname;
-                this.NumHits = numHits;
+                this.outerInstance = outerInstance;
+                this.fieldname = fieldname;
+                this.numHits = numHits;
                 values = new int[numHits];
                 tempBR = new BytesRef();
             }
@@ -189,7 +188,7 @@ namespace Lucene.Net.Search
 
             public override void SetTopValue(object value)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
 
             private int DocVal(int doc)
@@ -203,7 +202,7 @@ namespace Lucene.Net.Search
                 {
                     idIndex.LookupOrd(ord, tempBR);
                     int? prio;
-                    if (OuterInstance.Priority.TryGetValue(tempBR, out prio))
+                    if (outerInstance.priority.TryGetValue(tempBR, out prio))
                     {
                         return (int)prio;
                     }
@@ -223,19 +222,16 @@ namespace Lucene.Net.Search
 
             public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
-                idIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, Fieldname);
+                idIndex = FieldCache.DEFAULT.GetTermsIndex(context.AtomicReader, fieldname);
                 return this;
             }
 
             // LUCENENET NOTE: This was value(int) in Lucene.
-            public override IComparable this[int slot]
-            {
-                get { return values[slot]; }
-            }
+            public override IComparable this[int slot] => values[slot];
 
             public override int CompareTop(int doc)
             {
-                throw new System.NotSupportedException();
+                throw new NotSupportedException();
             }
         }
     }

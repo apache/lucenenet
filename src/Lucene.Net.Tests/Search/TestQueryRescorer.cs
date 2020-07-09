@@ -8,26 +8,26 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using Field = Field;
     using IBits = Lucene.Net.Util.IBits;
@@ -172,12 +172,12 @@ namespace Lucene.Net.Search
 
         private class QueryRescorerAnonymousInnerClassHelper : QueryRescorer
         {
-            private readonly TestQueryRescorer OuterInstance;
+            private readonly TestQueryRescorer outerInstance;
 
             public QueryRescorerAnonymousInnerClassHelper(TestQueryRescorer outerInstance, PhraseQuery pq)
                 : base(pq)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
@@ -264,12 +264,12 @@ namespace Lucene.Net.Search
 
         private class QueryRescorerAnonymousInnerClassHelper2 : QueryRescorer
         {
-            private readonly TestQueryRescorer OuterInstance;
+            private readonly TestQueryRescorer outerInstance;
 
             public QueryRescorerAnonymousInnerClassHelper2(TestQueryRescorer outerInstance, PhraseQuery pq)
                 : base(pq)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
@@ -432,12 +432,12 @@ namespace Lucene.Net.Search
 
         private class QueryRescorerAnonymousInnerClassHelper3 : QueryRescorer
         {
-            private readonly TestQueryRescorer OuterInstance;
+            private readonly TestQueryRescorer outerInstance;
 
             public QueryRescorerAnonymousInnerClassHelper3(TestQueryRescorer outerInstance, FixedScoreQuery fixedScoreQuery)
                 : base(fixedScoreQuery)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected override float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore)
@@ -450,13 +450,13 @@ namespace Lucene.Net.Search
         /// Just assigns score == idToNum[doc("id")] for each doc. </summary>
         private class FixedScoreQuery : Query
         {
-            internal readonly int[] IdToNum;
-            internal readonly bool Reverse;
+            private readonly int[] idToNum;
+            private readonly bool reverse;
 
             public FixedScoreQuery(int[] idToNum, bool reverse)
             {
-                this.IdToNum = idToNum;
-                this.Reverse = reverse;
+                this.idToNum = idToNum;
+                this.reverse = reverse;
             }
 
             public override Weight CreateWeight(IndexSearcher searcher)
@@ -466,20 +466,14 @@ namespace Lucene.Net.Search
 
             private class WeightAnonymousInnerClassHelper : Weight
             {
-                private readonly FixedScoreQuery OuterInstance;
+                private readonly FixedScoreQuery outerInstance;
 
                 public WeightAnonymousInnerClassHelper(FixedScoreQuery outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
-                public override Query Query
-                {
-                    get
-                    {
-                        return OuterInstance;
-                    }
-                }
+                public override Query Query => outerInstance;
 
                 public override float GetValueForNormalization()
                 {
@@ -497,29 +491,23 @@ namespace Lucene.Net.Search
 
                 private class ScorerAnonymousInnerClassHelper : Scorer
                 {
-                    private readonly WeightAnonymousInnerClassHelper OuterInstance;
+                    private readonly WeightAnonymousInnerClassHelper outerInstance;
 
-                    private AtomicReaderContext Context;
+                    private readonly AtomicReaderContext context;
 
                     public ScorerAnonymousInnerClassHelper(WeightAnonymousInnerClassHelper outerInstance, AtomicReaderContext context)
                         : base(null)
                     {
-                        this.OuterInstance = outerInstance;
-                        this.Context = context;
+                        this.outerInstance = outerInstance;
+                        this.context = context;
                         docID = -1;
                     }
 
                     internal int docID;
 
-                    public override int DocID
-                    {
-                        get { return docID; }
-                    }
+                    public override int DocID => docID;
 
-                    public override int Freq
-                    {
-                        get { return 1; }
-                    }
+                    public override int Freq => 1;
 
                     public override long GetCost()
                     {
@@ -529,7 +517,7 @@ namespace Lucene.Net.Search
                     public override int NextDoc()
                     {
                         docID++;
-                        if (docID >= Context.Reader.MaxDoc)
+                        if (docID >= context.Reader.MaxDoc)
                         {
                             return NO_MORE_DOCS;
                         }
@@ -544,8 +532,8 @@ namespace Lucene.Net.Search
 
                     public override float GetScore()
                     {
-                        int num = OuterInstance.OuterInstance.IdToNum[Convert.ToInt32(Context.Reader.Document(docID).Get("id"))];
-                        if (OuterInstance.OuterInstance.Reverse)
+                        int num = outerInstance.outerInstance.idToNum[Convert.ToInt32(context.Reader.Document(docID).Get("id"))];
+                        if (outerInstance.outerInstance.reverse)
                         {
                             //System.out.println("score doc=" + docID + " num=" + num);
                             return num;
@@ -570,7 +558,7 @@ namespace Lucene.Net.Search
 
             public override string ToString(string field)
             {
-                return "FixedScoreQuery " + IdToNum.Length + " ids; reverse=" + Reverse;
+                return "FixedScoreQuery " + idToNum.Length + " ids; reverse=" + reverse;
             }
 
             public override bool Equals(object o)
@@ -580,23 +568,23 @@ namespace Lucene.Net.Search
                     return false;
                 }
                 FixedScoreQuery other = (FixedScoreQuery)o;
-                return J2N.BitConversion.SingleToInt32Bits(Boost) == J2N.BitConversion.SingleToInt32Bits(other.Boost) && Reverse == other.Reverse && Arrays.Equals(IdToNum, other.IdToNum);
+                return J2N.BitConversion.SingleToInt32Bits(Boost) == J2N.BitConversion.SingleToInt32Bits(other.Boost) && reverse == other.reverse && Arrays.Equals(idToNum, other.idToNum);
             }
 
             public override object Clone()
             {
-                return new FixedScoreQuery(IdToNum, Reverse);
+                return new FixedScoreQuery(idToNum, reverse);
             }
 
             public override int GetHashCode()
             {
                 int PRIME = 31;
                 int hash = base.GetHashCode();
-                if (Reverse)
+                if (reverse)
                 {
                     hash = PRIME * hash + 3623;
                 }
-                hash = PRIME * hash + Arrays.GetHashCode(IdToNum);
+                hash = PRIME * hash + Arrays.GetHashCode(idToNum);
                 return hash;
             }
         }

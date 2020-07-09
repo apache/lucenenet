@@ -3,25 +3,24 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
-    using Directory = Lucene.Net.Store.Directory;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using Directory = Lucene.Net.Store.Directory;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -32,7 +31,7 @@ namespace Lucene.Net.Search
     {
         private sealed class SimpleScorer : Scorer
         {
-            internal int Idx = -1;
+            private int idx = -1;
 
             public SimpleScorer(Weight weight)
                 : base(weight)
@@ -41,38 +40,32 @@ namespace Lucene.Net.Search
 
             public override float GetScore()
             {
-                return Idx == Scores.Length ? float.NaN : Scores[Idx];
+                return idx == scores.Length ? float.NaN : scores[idx];
             }
 
-            public override int Freq
-            {
-                get { return 1; }
-            }
+            public override int Freq => 1;
 
-            public override int DocID
-            {
-                get { return Idx; }
-            }
+            public override int DocID => idx;
 
             public override int NextDoc()
             {
-                return ++Idx != Scores.Length ? Idx : NO_MORE_DOCS;
+                return ++idx != scores.Length ? idx : NO_MORE_DOCS;
             }
 
             public override int Advance(int target)
             {
-                Idx = target;
-                return Idx < Scores.Length ? Idx : NO_MORE_DOCS;
+                idx = target;
+                return idx < scores.Length ? idx : NO_MORE_DOCS;
             }
 
             public override long GetCost()
             {
-                return Scores.Length;
+                return scores.Length;
             }
         }
 
         // The scores must have positive as well as negative values
-        private static readonly float[] Scores = new float[] { 0.7767749f, -1.7839992f, 8.9925785f, 7.9608946f, -0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, -8.108544f, 4.961808f, 2.2423935f, -7.285586f, 4.6699767f };
+        private static readonly float[] scores = new float[] { 0.7767749f, -1.7839992f, 8.9925785f, 7.9608946f, -0.07948637f, 2.6356435f, 7.4950366f, 7.1490803f, -8.108544f, 4.961808f, 2.2423935f, -7.285586f, 4.6699767f };
 
         [Test]
         public virtual void TestNegativeScores()
@@ -83,9 +76,9 @@ namespace Lucene.Net.Search
             // filtered.
 
             int numPositiveScores = 0;
-            for (int i = 0; i < Scores.Length; i++)
+            for (int i = 0; i < scores.Length; i++)
             {
-                if (Scores[i] > 0)
+                if (scores[i] > 0)
                 {
                     ++numPositiveScores;
                 }
@@ -103,7 +96,7 @@ namespace Lucene.Net.Search
             IndexSearcher searcher = NewSearcher(ir);
             Weight fake = (new TermQuery(new Term("fake", "weight"))).CreateWeight(searcher);
             Scorer s = new SimpleScorer(fake);
-            TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.Create(Scores.Length, true);
+            TopDocsCollector<ScoreDoc> tdc = TopScoreDocCollector.Create(scores.Length, true);
             ICollector c = new PositiveScoresOnlyCollector(tdc);
             c.SetScorer(s);
             while (s.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)

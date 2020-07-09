@@ -11,6 +11,23 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using English = Lucene.Net.Util.English;
@@ -18,24 +35,6 @@ namespace Lucene.Net.Search
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
@@ -43,22 +42,22 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestMultiThreadTermVectors : LuceneTestCase
     {
-        private Directory Directory;
-        public int NumDocs = 100;
-        public int NumThreads = 3;
+        private Directory directory;
+        public int numDocs = 100;
+        public int numThreads = 3;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Directory = NewDirectory();
-            IndexWriter writer = new IndexWriter(Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            directory = NewDirectory();
+            IndexWriter writer = new IndexWriter(directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             //writer.setNoCFSRatio(0.0);
             //writer.infoStream = System.out;
             FieldType customType = new FieldType(TextField.TYPE_STORED);
             customType.IsTokenized = false;
             customType.StoreTermVectors = true;
-            for (int i = 0; i < NumDocs; i++)
+            for (int i = 0; i < numDocs; i++)
             {
                 Documents.Document doc = new Documents.Document();
                 Field fld = NewField("field", English.Int32ToEnglish(i), customType);
@@ -71,7 +70,7 @@ namespace Lucene.Net.Search
         [TearDown]
         public override void TearDown()
         {
-            Directory.Dispose();
+            directory.Dispose();
             base.TearDown();
         }
 
@@ -82,8 +81,8 @@ namespace Lucene.Net.Search
 
             try
             {
-                reader = DirectoryReader.Open(Directory);
-                for (int i = 1; i <= NumThreads; i++)
+                reader = DirectoryReader.Open(directory);
+                for (int i = 1; i <= numThreads; i++)
                 {
                     TestTermPositionVectors(reader, i);
                 }
@@ -141,7 +140,7 @@ namespace Lucene.Net.Search
             long totalTime = 0L;
             for (int i = 0; i < mtr.Length; i++)
             {
-                totalTime += mtr[i].TimeElapsed;
+                totalTime += mtr[i].timeElapsed;
                 mtr[i] = null;
             }
 
@@ -151,16 +150,16 @@ namespace Lucene.Net.Search
 
     internal class MultiThreadTermVectorsReader //: IThreadRunnable
     {
-        private IndexReader Reader = null;
+        private IndexReader reader = null;
         private ThreadJob t = null;
 
-        private readonly int RunsToDo = 100;
-        internal long TimeElapsed = 0;
+        private readonly int runsToDo = 100;
+        internal long timeElapsed = 0;
 
         public virtual void Init(IndexReader reader)
         {
-            this.Reader = reader;
-            TimeElapsed = 0;
+            this.reader = reader;
+            timeElapsed = 0;
             t = new ThreadJob(new System.Threading.ThreadStart(this.Run));
             t.Start();
         }
@@ -184,7 +183,7 @@ namespace Lucene.Net.Search
             try
             {
                 // run the test 100 times
-                for (int i = 0; i < RunsToDo; i++)
+                for (int i = 0; i < runsToDo; i++)
                 {
                     TestTermVectors();
                 }
@@ -200,20 +199,20 @@ namespace Lucene.Net.Search
         private void TestTermVectors()
         {
             // check:
-            int numDocs = Reader.NumDocs;
+            int numDocs = reader.NumDocs;
             long start = 0L;
             for (int docId = 0; docId < numDocs; docId++)
             {
                 start = Environment.TickCount;
-                Fields vectors = Reader.GetTermVectors(docId);
-                TimeElapsed += Environment.TickCount - start;
+                Fields vectors = reader.GetTermVectors(docId);
+                timeElapsed += Environment.TickCount - start;
 
                 // verify vectors result
                 VerifyVectors(vectors, docId);
 
                 start = Environment.TickCount;
-                Terms vector = Reader.GetTermVectors(docId).GetTerms("field");
-                TimeElapsed += Environment.TickCount - start;
+                Terms vector = reader.GetTermVectors(docId).GetTerms("field");
+                timeElapsed += Environment.TickCount - start;
 
                 VerifyVector(vector.GetIterator(null), docId);
             }

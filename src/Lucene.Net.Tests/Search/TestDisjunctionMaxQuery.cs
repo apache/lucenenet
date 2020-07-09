@@ -8,30 +8,29 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Field = Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
     using FieldType = FieldType;
@@ -98,16 +97,16 @@ namespace Lucene.Net.Search
             }
         }
 
-        public Similarity Sim = new TestSimilarity();
-        public Directory Index;
+        public Similarity sim = new TestSimilarity();
+        public Directory index;
         public IndexReader r;
         public IndexSearcher s;
 
-        private static readonly FieldType NonAnalyzedType = new FieldType(TextField.TYPE_STORED);
+        private static readonly FieldType nonAnalyzedType = new FieldType(TextField.TYPE_STORED);
 
         static TestDisjunctionMaxQuery()
         {
-            NonAnalyzedType.IsTokenized = false;
+            nonAnalyzedType.IsTokenized = false;
         }
 
         [SetUp]
@@ -115,15 +114,15 @@ namespace Lucene.Net.Search
         {
             base.SetUp();
 
-            Index = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Index, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetSimilarity(Sim).SetMergePolicy(NewLogMergePolicy()));
+            index = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, index, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetSimilarity(sim).SetMergePolicy(NewLogMergePolicy()));
 
             // hed is the most important field, dek is secondary
 
             // d1 is an "ok" match for: albino elephant
             {
                 Document d1 = new Document();
-                d1.Add(NewField("id", "d1", NonAnalyzedType)); // Field.Keyword("id",
+                d1.Add(NewField("id", "d1", nonAnalyzedType)); // Field.Keyword("id",
                 // "d1"));
                 d1.Add(NewTextField("hed", "elephant", Field.Store.YES)); // Field.Text("hed", "elephant"));
                 d1.Add(NewTextField("dek", "elephant", Field.Store.YES)); // Field.Text("dek", "elephant"));
@@ -133,7 +132,7 @@ namespace Lucene.Net.Search
             // d2 is a "good" match for: albino elephant
             {
                 Document d2 = new Document();
-                d2.Add(NewField("id", "d2", NonAnalyzedType)); // Field.Keyword("id",
+                d2.Add(NewField("id", "d2", nonAnalyzedType)); // Field.Keyword("id",
                 // "d2"));
                 d2.Add(NewTextField("hed", "elephant", Field.Store.YES)); // Field.Text("hed", "elephant"));
                 d2.Add(NewTextField("dek", "albino", Field.Store.YES)); // Field.Text("dek",
@@ -145,7 +144,7 @@ namespace Lucene.Net.Search
             // d3 is a "better" match for: albino elephant
             {
                 Document d3 = new Document();
-                d3.Add(NewField("id", "d3", NonAnalyzedType)); // Field.Keyword("id",
+                d3.Add(NewField("id", "d3", nonAnalyzedType)); // Field.Keyword("id",
                 // "d3"));
                 d3.Add(NewTextField("hed", "albino", Field.Store.YES)); // Field.Text("hed",
                 // "albino"));
@@ -156,11 +155,11 @@ namespace Lucene.Net.Search
             // d4 is the "best" match for: albino elephant
             {
                 Document d4 = new Document();
-                d4.Add(NewField("id", "d4", NonAnalyzedType)); // Field.Keyword("id",
+                d4.Add(NewField("id", "d4", nonAnalyzedType)); // Field.Keyword("id",
                 // "d4"));
                 d4.Add(NewTextField("hed", "albino", Field.Store.YES)); // Field.Text("hed",
                 // "albino"));
-                d4.Add(NewField("hed", "elephant", NonAnalyzedType)); // Field.Text("hed", "elephant"));
+                d4.Add(NewField("hed", "elephant", nonAnalyzedType)); // Field.Text("hed", "elephant"));
                 d4.Add(NewTextField("dek", "albino", Field.Store.YES)); // Field.Text("dek",
                 // "albino"));
                 writer.AddDocument(d4);
@@ -169,14 +168,14 @@ namespace Lucene.Net.Search
             r = SlowCompositeReaderWrapper.Wrap(writer.GetReader());
             writer.Dispose();
             s = NewSearcher(r);
-            s.Similarity = Sim;
+            s.Similarity = sim;
         }
 
         [TearDown]
         public override void TearDown()
         {
             r.Dispose();
-            Index.Dispose();
+            index.Dispose();
             base.TearDown();
         }
 

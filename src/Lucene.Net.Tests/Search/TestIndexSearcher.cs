@@ -8,25 +8,24 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
 {
-    using Directory = Lucene.Net.Store.Directory;
-
     /*
-    * Licensed to the Apache Software Foundation (ASF) under one or more
-    * contributor license agreements.  See the NOTICE file distributed with
-    * this work for additional information regarding copyright ownership.
-    * The ASF licenses this file to You under the Apache License, Version 2.0
-    * (the "License"); you may not use this file except in compliance with
-    * the License.  You may obtain a copy of the License at
-    *
-    *     http://www.apache.org/licenses/LICENSE-2.0
-    *
-    * Unless required by applicable law or agreed to in writing, software
-    * distributed under the License is distributed on an "AS IS" BASIS,
-    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    * See the License for the specific language governing permissions and
-    * limitations under the License.
-    */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
@@ -37,19 +36,19 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestIndexSearcher : LuceneTestCase
     {
-        internal Directory Dir;
-        internal IndexReader Reader;
+        private Directory dir;
+        private IndexReader reader;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
+            dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Dir);
+                Random, dir);
             for (int i = 0; i < 100; i++)
             {
                 Document doc = new Document();
@@ -57,15 +56,15 @@ namespace Lucene.Net.Search
                 doc.Add(NewStringField("field2", Convert.ToString(i % 2 == 0), Field.Store.NO));
                 iw.AddDocument(doc);
             }
-            Reader = iw.GetReader();
+            reader = iw.GetReader();
             iw.Dispose();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Dir.Dispose();
+            reader.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
@@ -75,7 +74,7 @@ namespace Lucene.Net.Search
         {
             TaskScheduler service = new LimitedConcurrencyLevelTaskScheduler(4);
 
-            IndexSearcher[] searchers = new IndexSearcher[] { new IndexSearcher(Reader), new IndexSearcher(Reader, service) };
+            IndexSearcher[] searchers = new IndexSearcher[] { new IndexSearcher(reader), new IndexSearcher(reader, service) };
             Query[] queries = new Query[] { new MatchAllDocsQuery(), new TermQuery(new Term("field", "1")) };
             Sort[] sorts = new Sort[] { null, new Sort(new SortField("field2", SortFieldType.STRING)) };
             Filter[] filters = new Filter[] { null, new QueryWrapperFilter(new TermQuery(new Term("field2", "true"))) };

@@ -10,31 +10,30 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
-    using ChildScorer = Lucene.Net.Search.Scorer.ChildScorer;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using ChildScorer = Lucene.Net.Search.Scorer.ChildScorer;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 
     [TestFixture]
     public class TestSubScorerFreqs : LuceneTestCase
     {
-        private static Directory Dir;
+        private static Directory dir;
         private static IndexSearcher s;
 
         [OneTimeSetUp]
@@ -42,8 +41,8 @@ namespace Lucene.Net.Search
         {
             base.BeforeClass();
 
-            Dir = new RAMDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
+            dir = new RAMDirectory();
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()));
             // make sure we have more than one segment occationally
             int num = AtLeast(31);
             for (int i = 0; i < num; i++)
@@ -66,21 +65,21 @@ namespace Lucene.Net.Search
         {
             s.IndexReader.Dispose();
             s = null;
-            Dir.Dispose();
-            Dir = null;
+            dir.Dispose();
+            dir = null;
 
             base.AfterClass();
         }
 
         private class CountingCollector : ICollector
         {
-            internal readonly ICollector Other;
-            internal int DocBase;
+            private readonly ICollector other;
+            private int docBase;
 
-            public readonly IDictionary<int?, IDictionary<Query, float?>> DocCounts = new Dictionary<int?, IDictionary<Query, float?>>();
+            public IDictionary<int?, IDictionary<Query, float?>> DocCounts { get; } = new Dictionary<int?, IDictionary<Query, float?>>();
 
-            internal readonly IDictionary<Query, Scorer> SubScorers = new Dictionary<Query, Scorer>();
-            internal readonly ISet<string> Relationships;
+            private readonly IDictionary<Query, Scorer> subScorers = new Dictionary<Query, Scorer>();
+            private readonly ISet<string> relationships;
 
             public CountingCollector(ICollector other)
                 : this(other, new JCG.HashSet<string> { "MUST", "SHOULD", "MUST_NOT" })
@@ -89,14 +88,14 @@ namespace Lucene.Net.Search
 
             public CountingCollector(ICollector other, ISet<string> relationships)
             {
-                this.Other = other;
-                this.Relationships = relationships;
+                this.other = other;
+                this.relationships = relationships;
             }
 
             public virtual void SetScorer(Scorer scorer)
             {
-                Other.SetScorer(scorer);
-                SubScorers.Clear();
+                other.SetScorer(scorer);
+                subScorers.Clear();
                 SetSubScorers(scorer, "TOP");
             }
 
@@ -104,37 +103,34 @@ namespace Lucene.Net.Search
             {
                 foreach (ChildScorer child in scorer.GetChildren())
                 {
-                    if (scorer is AssertingScorer || Relationships.Contains(child.Relationship))
+                    if (scorer is AssertingScorer || relationships.Contains(child.Relationship))
                     {
                         SetSubScorers(child.Child, child.Relationship);
                     }
                 }
-                SubScorers[scorer.Weight.Query] = scorer;
+                subScorers[scorer.Weight.Query] = scorer;
             }
 
             public virtual void Collect(int doc)
             {
                 IDictionary<Query, float?> freqs = new Dictionary<Query, float?>();
-                foreach (KeyValuePair<Query, Scorer> ent in SubScorers)
+                foreach (KeyValuePair<Query, Scorer> ent in subScorers)
                 {
                     Scorer value = ent.Value;
                     int matchId = value.DocID;
                     freqs[ent.Key] = matchId == doc ? value.Freq : 0.0f;
                 }
-                DocCounts[doc + DocBase] = freqs;
-                Other.Collect(doc);
+                DocCounts[doc + docBase] = freqs;
+                other.Collect(doc);
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
             {
-                DocBase = context.DocBase;
-                Other.SetNextReader(context);
+                docBase = context.DocBase;
+                other.SetNextReader(context);
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return Other.AcceptsDocsOutOfOrder; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => other.AcceptsDocsOutOfOrder;
         }
 
         private const float FLOAT_TOLERANCE = 0.00001F;

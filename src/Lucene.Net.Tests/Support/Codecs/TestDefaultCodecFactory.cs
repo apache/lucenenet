@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Reflection;
 
 namespace Lucene.Net.Codecs
 {
@@ -232,409 +231,121 @@ namespace Lucene.Net.Codecs
     #region Test Classes
     public class PublicCodec : Codec
     {
-        public override DocValuesFormat DocValuesFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override DocValuesFormat DocValuesFormat => throw new NotImplementedException();
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override FieldInfosFormat FieldInfosFormat => throw new NotImplementedException();
 
-        public override LiveDocsFormat LiveDocsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override LiveDocsFormat LiveDocsFormat => throw new NotImplementedException();
 
-        public override NormsFormat NormsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override NormsFormat NormsFormat => throw new NotImplementedException();
 
-        public override PostingsFormat PostingsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override PostingsFormat PostingsFormat => throw new NotImplementedException();
 
-        public override SegmentInfoFormat SegmentInfoFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override SegmentInfoFormat SegmentInfoFormat => throw new NotImplementedException();
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => throw new NotImplementedException();
 
-        public override TermVectorsFormat TermVectorsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override TermVectorsFormat TermVectorsFormat => throw new NotImplementedException();
     }
 
     internal class PrivateCodec : Codec
     {
-        public override DocValuesFormat DocValuesFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override DocValuesFormat DocValuesFormat => throw new NotImplementedException();
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override FieldInfosFormat FieldInfosFormat => throw new NotImplementedException();
 
-        public override LiveDocsFormat LiveDocsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override LiveDocsFormat LiveDocsFormat => throw new NotImplementedException();
 
-        public override NormsFormat NormsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override NormsFormat NormsFormat => throw new NotImplementedException();
 
-        public override PostingsFormat PostingsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override PostingsFormat PostingsFormat => throw new NotImplementedException();
 
-        public override SegmentInfoFormat SegmentInfoFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override SegmentInfoFormat SegmentInfoFormat => throw new NotImplementedException();
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => throw new NotImplementedException();
 
-        public override TermVectorsFormat TermVectorsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override TermVectorsFormat TermVectorsFormat => throw new NotImplementedException();
     }
 
     public class NotIgnoredCodec : Codec
     {
-        public override DocValuesFormat DocValuesFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override DocValuesFormat DocValuesFormat => throw new NotImplementedException();
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override FieldInfosFormat FieldInfosFormat => throw new NotImplementedException();
 
-        public override LiveDocsFormat LiveDocsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override LiveDocsFormat LiveDocsFormat => throw new NotImplementedException();
 
-        public override NormsFormat NormsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override NormsFormat NormsFormat => throw new NotImplementedException();
 
-        public override PostingsFormat PostingsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override PostingsFormat PostingsFormat => throw new NotImplementedException();
 
-        public override SegmentInfoFormat SegmentInfoFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override SegmentInfoFormat SegmentInfoFormat => throw new NotImplementedException();
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => throw new NotImplementedException();
 
-        public override TermVectorsFormat TermVectorsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override TermVectorsFormat TermVectorsFormat => throw new NotImplementedException();
     }
 
     [ExcludeCodecFromScan]
     [CodecName("FooBar")]
     public class CustomNamedCodec : Codec
     {
-        public override DocValuesFormat DocValuesFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override DocValuesFormat DocValuesFormat => throw new NotImplementedException();
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override FieldInfosFormat FieldInfosFormat => throw new NotImplementedException();
 
-        public override LiveDocsFormat LiveDocsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override LiveDocsFormat LiveDocsFormat => throw new NotImplementedException();
 
-        public override NormsFormat NormsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override NormsFormat NormsFormat => throw new NotImplementedException();
 
-        public override PostingsFormat PostingsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override PostingsFormat PostingsFormat => throw new NotImplementedException();
 
-        public override SegmentInfoFormat SegmentInfoFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override SegmentInfoFormat SegmentInfoFormat => throw new NotImplementedException();
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => throw new NotImplementedException();
 
-        public override TermVectorsFormat TermVectorsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override TermVectorsFormat TermVectorsFormat => throw new NotImplementedException();
     }
 
     [ExcludeCodecFromScan]
     [CodecName("My-Codec|With-Bad_Name")]
     public class InvalidNamedCodec : Codec
     {
-        public override DocValuesFormat DocValuesFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override DocValuesFormat DocValuesFormat => throw new NotImplementedException();
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override FieldInfosFormat FieldInfosFormat => throw new NotImplementedException();
 
-        public override LiveDocsFormat LiveDocsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override LiveDocsFormat LiveDocsFormat => throw new NotImplementedException();
 
-        public override NormsFormat NormsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override NormsFormat NormsFormat => throw new NotImplementedException();
 
-        public override PostingsFormat PostingsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override PostingsFormat PostingsFormat => throw new NotImplementedException();
 
-        public override SegmentInfoFormat SegmentInfoFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override SegmentInfoFormat SegmentInfoFormat => throw new NotImplementedException();
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => throw new NotImplementedException();
 
-        public override TermVectorsFormat TermVectorsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override TermVectorsFormat TermVectorsFormat => throw new NotImplementedException();
     }
 
     [CodecName("Lucene40")]
     public class TestLucene40Codec : Codec
     {
-        public override DocValuesFormat DocValuesFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override DocValuesFormat DocValuesFormat => throw new NotImplementedException();
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override FieldInfosFormat FieldInfosFormat => throw new NotImplementedException();
 
-        public override LiveDocsFormat LiveDocsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override LiveDocsFormat LiveDocsFormat => throw new NotImplementedException();
 
-        public override NormsFormat NormsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override NormsFormat NormsFormat => throw new NotImplementedException();
 
-        public override PostingsFormat PostingsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override PostingsFormat PostingsFormat => throw new NotImplementedException();
 
-        public override SegmentInfoFormat SegmentInfoFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override SegmentInfoFormat SegmentInfoFormat => throw new NotImplementedException();
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => throw new NotImplementedException();
 
-        public override TermVectorsFormat TermVectorsFormat
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public override TermVectorsFormat TermVectorsFormat => throw new NotImplementedException();
     }
     #endregion Test Classes
 }

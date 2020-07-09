@@ -1,24 +1,3 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
 using Lucene.Net.Analysis;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -31,6 +10,23 @@ using Version = Lucene.Net.Util.LuceneVersion;
 #pragma warning disable 612, 618
 namespace Lucene.Net.Support
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     [SuppressCodecs("Lucene3x")] // Suppress non-writable codecs
     [TestFixture]
     public class TestOldPatches : LuceneTestCase
@@ -154,9 +150,9 @@ namespace Lucene.Net.Support
             wr.Dispose();
         }
 
-        static string TEST_STRING = "First Line\nSecond Line";
+        private const string TEST_STRING = "First Line\nSecond Line";
 
-        class TestAnalyzer : Lucene.Net.Analysis.Analyzer
+        private class TestAnalyzer : Lucene.Net.Analysis.Analyzer
         {
             public TestAnalyzer()
                 //: base(new TestReuseStrategy())
@@ -194,7 +190,7 @@ namespace Lucene.Net.Support
         //    }
         //}
 
-        class TestTokenizer : Lucene.Net.Analysis.Tokenizer
+        private class TestTokenizer : Lucene.Net.Analysis.Tokenizer
         {
             public TestTokenizer(System.IO.TextReader reader)
                 : base(reader)

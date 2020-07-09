@@ -5,6 +5,23 @@ using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
@@ -12,24 +29,6 @@ namespace Lucene.Net.Search
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
@@ -38,37 +37,37 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestTermScorer : LuceneTestCase
     {
-        protected internal Directory Directory;
+        protected internal Directory directory;
         private const string FIELD = "field";
 
-        protected internal string[] Values = new string[] { "all", "dogs dogs", "like", "playing", "fetch", "all" };
-        protected internal IndexSearcher IndexSearcher;
-        protected internal IndexReader IndexReader;
+        protected internal string[] values = new string[] { "all", "dogs dogs", "like", "playing", "fetch", "all" };
+        protected internal IndexSearcher indexSearcher;
+        protected internal IndexReader indexReader;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Directory = NewDirectory();
+            directory = NewDirectory();
 
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
-            for (int i = 0; i < Values.Length; i++)
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergePolicy(NewLogMergePolicy()).SetSimilarity(new DefaultSimilarity()));
+            for (int i = 0; i < values.Length; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewTextField(FIELD, Values[i], Field.Store.YES));
+                doc.Add(NewTextField(FIELD, values[i], Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            IndexReader = SlowCompositeReaderWrapper.Wrap(writer.GetReader());
+            indexReader = SlowCompositeReaderWrapper.Wrap(writer.GetReader());
             writer.Dispose();
-            IndexSearcher = NewSearcher(IndexReader);
-            IndexSearcher.Similarity = new DefaultSimilarity();
+            indexSearcher = NewSearcher(indexReader);
+            indexSearcher.Similarity = new DefaultSimilarity();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            IndexReader.Dispose();
-            Directory.Dispose();
+            indexReader.Dispose();
+            directory.Dispose();
             base.TearDown();
         }
 
@@ -78,9 +77,9 @@ namespace Lucene.Net.Search
             Term allTerm = new Term(FIELD, "all");
             TermQuery termQuery = new TermQuery(allTerm);
 
-            Weight weight = IndexSearcher.CreateNormalizedWeight(termQuery);
-            Assert.IsTrue(IndexSearcher.TopReaderContext is AtomicReaderContext);
-            AtomicReaderContext context = (AtomicReaderContext)IndexSearcher.TopReaderContext;
+            Weight weight = indexSearcher.CreateNormalizedWeight(termQuery);
+            Assert.IsTrue(indexSearcher.TopReaderContext is AtomicReaderContext);
+            AtomicReaderContext context = (AtomicReaderContext)indexSearcher.TopReaderContext;
             BulkScorer ts = weight.GetBulkScorer(context, true, (context.AtomicReader).LiveDocs);
             // we have 2 documents with the term all in them, one document for all the
             // other values
@@ -107,16 +106,16 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly TestTermScorer OuterInstance;
+            private readonly TestTermScorer outerInstance;
 
-            private AtomicReaderContext Context;
-            private IList<TestHit> Docs;
+            private AtomicReaderContext context;
+            private readonly IList<TestHit> docs;
 
             public CollectorAnonymousInnerClassHelper(TestTermScorer outerInstance, AtomicReaderContext context, IList<TestHit> docs)
             {
-                this.OuterInstance = outerInstance;
-                this.Context = context;
-                this.Docs = docs;
+                this.outerInstance = outerInstance;
+                this.context = context;
+                this.docs = docs;
                 @base = 0;
             }
 
@@ -132,7 +131,7 @@ namespace Lucene.Net.Search
             {
                 float score = scorer.GetScore();
                 doc = doc + @base;
-                Docs.Add(new TestHit(OuterInstance, doc, score));
+                docs.Add(new TestHit(outerInstance, doc, score));
                 Assert.IsTrue(score > 0, "score " + score + " is not greater than 0");
                 Assert.IsTrue(doc == 0 || doc == 5, "Doc: " + doc + " does not equal 0 or doc does not equal 5");
             }
@@ -142,10 +141,7 @@ namespace Lucene.Net.Search
                 @base = context.DocBase;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
         [Test]
@@ -154,9 +150,9 @@ namespace Lucene.Net.Search
             Term allTerm = new Term(FIELD, "all");
             TermQuery termQuery = new TermQuery(allTerm);
 
-            Weight weight = IndexSearcher.CreateNormalizedWeight(termQuery);
-            Assert.IsTrue(IndexSearcher.TopReaderContext is AtomicReaderContext);
-            AtomicReaderContext context = (AtomicReaderContext)IndexSearcher.TopReaderContext;
+            Weight weight = indexSearcher.CreateNormalizedWeight(termQuery);
+            Assert.IsTrue(indexSearcher.TopReaderContext is AtomicReaderContext);
+            AtomicReaderContext context = (AtomicReaderContext)indexSearcher.TopReaderContext;
             Scorer ts = weight.GetScorer(context, (context.AtomicReader).LiveDocs);
             Assert.IsTrue(ts.NextDoc() != DocIdSetIterator.NO_MORE_DOCS, "next did not return a doc");
             Assert.IsTrue(ts.GetScore() == 1.6931472f, "score is not correct");
@@ -171,9 +167,9 @@ namespace Lucene.Net.Search
             Term allTerm = new Term(FIELD, "all");
             TermQuery termQuery = new TermQuery(allTerm);
 
-            Weight weight = IndexSearcher.CreateNormalizedWeight(termQuery);
-            Assert.IsTrue(IndexSearcher.TopReaderContext is AtomicReaderContext);
-            AtomicReaderContext context = (AtomicReaderContext)IndexSearcher.TopReaderContext;
+            Weight weight = indexSearcher.CreateNormalizedWeight(termQuery);
+            Assert.IsTrue(indexSearcher.TopReaderContext is AtomicReaderContext);
+            AtomicReaderContext context = (AtomicReaderContext)indexSearcher.TopReaderContext;
             Scorer ts = weight.GetScorer(context, (context.AtomicReader).LiveDocs);
             Assert.IsTrue(ts.Advance(3) != DocIdSetIterator.NO_MORE_DOCS, "Didn't skip");
             // The next doc should be doc 5
@@ -182,14 +178,14 @@ namespace Lucene.Net.Search
 
         private class TestHit
         {
-            private readonly TestTermScorer OuterInstance;
+            private readonly TestTermScorer outerInstance;
 
-            public int Doc;
-            public float Score;
+            public int Doc { get; }
+            public float Score { get; }
 
             public TestHit(TestTermScorer outerInstance, int doc, float score)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 this.Doc = doc;
                 this.Score = score;
             }

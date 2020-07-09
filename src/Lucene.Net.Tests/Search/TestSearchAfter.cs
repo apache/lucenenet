@@ -1,51 +1,48 @@
+using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Lucene.Net.Attributes;
-using Lucene.Net.Documents;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
-using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BinaryDocValuesField = BinaryDocValuesField;
     using BytesRef = Lucene.Net.Util.BytesRef;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using DoubleField = DoubleField;
     using English = Lucene.Net.Util.English;
     using Field = Field;
-    using SingleDocValuesField = SingleDocValuesField;
-    using SingleField = SingleField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Int32Field = Int32Field;
     using Int64Field = Int64Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using NumericDocValuesField = NumericDocValuesField;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using SingleDocValuesField = SingleDocValuesField;
+    using SingleField = SingleField;
     using SortedDocValuesField = SortedDocValuesField;
     using StoredField = StoredField;
     using Term = Lucene.Net.Index.Term;
@@ -59,14 +56,14 @@ namespace Lucene.Net.Search
     {
         private bool isVerbose = false;
 
-        private Directory Dir;
-        private IndexReader Reader;
-        private IndexSearcher Searcher;
+        private Directory dir;
+        private IndexReader reader;
+        private IndexSearcher searcher;
 
         // LUCENENET specific - need to execute this AFTER the base setup, or it won't be right
         //internal bool supportsDocValues = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) == false;
-        private int Iter;
-        private IList<SortField> AllSortFields;
+        private int iter;
+        private IList<SortField> allSortFields;
 
         [SetUp]
         public override void SetUp()
@@ -77,7 +74,7 @@ namespace Lucene.Net.Search
             // after the class is setup - a field is way to early to execute this.
             bool supportsDocValues = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) == false;
 
-            AllSortFields = new List<SortField> {
+            allSortFields = new List<SortField> {
 #pragma warning disable 612,618
                 new SortField("byte", SortFieldType.BYTE, false),
                 new SortField("short", SortFieldType.INT16, false),
@@ -104,7 +101,7 @@ namespace Lucene.Net.Search
 
             if (supportsDocValues)
             {
-                AllSortFields.AddRange(new SortField[] {
+                allSortFields.AddRange(new SortField[] {
                     new SortField("intdocvalues", SortFieldType.INT32, false),
                     new SortField("floatdocvalues", SortFieldType.SINGLE, false),
                     new SortField("sortedbytesdocvalues", SortFieldType.STRING, false),
@@ -126,50 +123,50 @@ namespace Lucene.Net.Search
                     bool reversed = rev == 0;
                     SortField sf = new SortField(field, SortFieldType.STRING, reversed);
                     sf.MissingValue = SortField.STRING_FIRST;
-                    AllSortFields.Add(sf);
+                    allSortFields.Add(sf);
 
                     sf = new SortField(field, SortFieldType.STRING, reversed);
                     sf.MissingValue = SortField.STRING_LAST;
-                    AllSortFields.Add(sf);
+                    allSortFields.Add(sf);
                 }
             }
 
-            int limit = AllSortFields.Count;
+            int limit = allSortFields.Count;
             for (int i = 0; i < limit; i++)
             {
-                SortField sf = AllSortFields[i];
+                SortField sf = allSortFields[i];
                 if (sf.Type == SortFieldType.INT32)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.INT32, sf.IsReverse);
                     sf2.MissingValue = Random.Next();
-                    AllSortFields.Add(sf2);
+                    allSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.INT64)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.INT64, sf.IsReverse);
                     sf2.MissingValue = Random.NextInt64();
-                    AllSortFields.Add(sf2);
+                    allSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.SINGLE)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.SINGLE, sf.IsReverse);
                     sf2.MissingValue = (float)Random.NextDouble();
-                    AllSortFields.Add(sf2);
+                    allSortFields.Add(sf2);
                 }
                 else if (sf.Type == SortFieldType.DOUBLE)
                 {
                     SortField sf2 = new SortField(sf.Field, SortFieldType.DOUBLE, sf.IsReverse);
                     sf2.MissingValue = Random.NextDouble();
-                    AllSortFields.Add(sf2);
+                    allSortFields.Add(sf2);
                 }
             }
 
-            Dir = NewDirectory();
+            dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Dir);
+                Random, dir);
             int numDocs = AtLeast(200);
             for (int i = 0; i < numDocs; i++)
             {
@@ -221,20 +218,20 @@ namespace Lucene.Net.Search
                     iw.Commit();
                 }
             }
-            Reader = iw.GetReader();
+            reader = iw.GetReader();
             iw.Dispose();
-            Searcher = NewSearcher(Reader);
+            searcher = NewSearcher(reader);
             if (isVerbose)
             {
-                Console.WriteLine("  searcher=" + Searcher);
+                Console.WriteLine("  searcher=" + searcher);
             }
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Dir.Dispose();
+            reader.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
@@ -272,7 +269,7 @@ namespace Lucene.Net.Search
             AssertQuery(query, filter, null);
             AssertQuery(query, filter, Sort.RELEVANCE);
             AssertQuery(query, filter, Sort.INDEXORDER);
-            foreach (SortField sortField in AllSortFields)
+            foreach (SortField sortField in allSortFields)
             {
                 AssertQuery(query, filter, new Sort(new SortField[] { sortField }));
             }
@@ -289,7 +286,7 @@ namespace Lucene.Net.Search
                 SortField[] sortFields = new SortField[TestUtil.NextInt32(Random, 2, 7)];
                 for (int i = 0; i < sortFields.Length; i++)
                 {
-                    sortFields[i] = AllSortFields[Random.Next(AllSortFields.Count)];
+                    sortFields[i] = allSortFields[Random.Next(allSortFields.Count)];
                 }
                 return new Sort(sortFields);
             }
@@ -297,26 +294,26 @@ namespace Lucene.Net.Search
 
         internal virtual void AssertQuery(Query query, Filter filter, Sort sort)
         {
-            int maxDoc = Searcher.IndexReader.MaxDoc;
+            int maxDoc = searcher.IndexReader.MaxDoc;
             TopDocs all;
             int pageSize = TestUtil.NextInt32(Random, 1, maxDoc * 2);
             if (isVerbose)
             {
-                Console.WriteLine("\nassertQuery " + (Iter++) + ": query=" + query + " filter=" + filter + " sort=" + sort + " pageSize=" + pageSize);
+                Console.WriteLine("\nassertQuery " + (iter++) + ": query=" + query + " filter=" + filter + " sort=" + sort + " pageSize=" + pageSize);
             }
             bool doMaxScore = Random.NextBoolean();
             bool doScores = Random.NextBoolean();
             if (sort == null)
             {
-                all = Searcher.Search(query, filter, maxDoc);
+                all = searcher.Search(query, filter, maxDoc);
             }
             else if (sort == Sort.RELEVANCE)
             {
-                all = Searcher.Search(query, filter, maxDoc, sort, true, doMaxScore);
+                all = searcher.Search(query, filter, maxDoc, sort, true, doMaxScore);
             }
             else
             {
-                all = Searcher.Search(query, filter, maxDoc, sort, doScores, doMaxScore);
+                all = searcher.Search(query, filter, maxDoc, sort, doScores, doMaxScore);
             }
             if (isVerbose)
             {
@@ -324,7 +321,7 @@ namespace Lucene.Net.Search
                 int upto = 0;
                 foreach (ScoreDoc scoreDoc in all.ScoreDocs)
                 {
-                    Console.WriteLine("    hit " + (upto++) + ": id=" + Searcher.Doc(scoreDoc.Doc).Get("id") + " " + scoreDoc);
+                    Console.WriteLine("    hit " + (upto++) + ": id=" + searcher.Doc(scoreDoc.Doc).Get("id") + " " + scoreDoc);
                 }
             }
             int pageStart = 0;
@@ -338,7 +335,7 @@ namespace Lucene.Net.Search
                     {
                         Console.WriteLine("  iter lastBottom=" + lastBottom);
                     }
-                    paged = Searcher.SearchAfter(lastBottom, query, filter, pageSize);
+                    paged = searcher.SearchAfter(lastBottom, query, filter, pageSize);
                 }
                 else
                 {
@@ -348,11 +345,11 @@ namespace Lucene.Net.Search
                     }
                     if (sort == Sort.RELEVANCE)
                     {
-                        paged = Searcher.SearchAfter(lastBottom, query, filter, pageSize, sort, true, doMaxScore);
+                        paged = searcher.SearchAfter(lastBottom, query, filter, pageSize, sort, true, doMaxScore);
                     }
                     else
                     {
-                        paged = Searcher.SearchAfter(lastBottom, query, filter, pageSize, sort, doScores, doMaxScore);
+                        paged = searcher.SearchAfter(lastBottom, query, filter, pageSize, sort, doScores, doMaxScore);
                     }
                 }
                 if (isVerbose)
@@ -381,8 +378,8 @@ namespace Lucene.Net.Search
                 if (isVerbose)
                 {
                     Console.WriteLine("    hit " + (pageStart + i));
-                    Console.WriteLine("      expected id=" + Searcher.Doc(sd1.Doc).Get("id") + " " + sd1);
-                    Console.WriteLine("        actual id=" + Searcher.Doc(sd2.Doc).Get("id") + " " + sd2);
+                    Console.WriteLine("      expected id=" + searcher.Doc(sd1.Doc).Get("id") + " " + sd1);
+                    Console.WriteLine("        actual id=" + searcher.Doc(sd2.Doc).Get("id") + " " + sd2);
                 }
                 Assert.AreEqual(sd1.Doc, sd2.Doc);
                 Assert.AreEqual(sd1.Score, sd2.Score, 0f);

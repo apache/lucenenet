@@ -47,11 +47,11 @@ namespace Lucene.Net.Store
 
         private class LockMock : Lock
         {
-            private readonly TestLock OuterInstance;
+            private readonly TestLock outerInstance;
 
             public LockMock(TestLock outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public int LockAttempts;

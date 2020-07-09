@@ -6,25 +6,24 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search.Similarities
 {
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -93,48 +92,48 @@ namespace Lucene.Net.Search.Similarities
         /// Lambdas for IB. </summary>
         internal static Lambda[] LAMBDAS = new Lambda[] { new LambdaDF(), new LambdaTTF() };
 
-        private IndexSearcher Searcher;
-        private Directory Dir;
-        private IndexReader Reader;
+        private IndexSearcher searcher;
+        private Directory dir;
+        private IndexReader reader;
 
         /// <summary>
         /// The list of similarities to test. </summary>
-        private IList<SimilarityBase> Sims;
+        private IList<SimilarityBase> sims;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
 
-            Dir = NewDirectory();
+            dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Dir);
+                Random, dir);
 
-            for (int i = 0; i < Docs.Length; i++)
+            for (int i = 0; i < docs.Length; i++)
             {
                 Document d = new Document();
                 FieldType ft = new FieldType(TextField.TYPE_STORED);
                 ft.IsIndexed = false;
                 d.Add(NewField(FIELD_ID, Convert.ToString(i), ft));
-                d.Add(NewTextField(FIELD_BODY, Docs[i], Field.Store.YES));
+                d.Add(NewTextField(FIELD_BODY, docs[i], Field.Store.YES));
                 writer.AddDocument(d);
             }
 
-            Reader = writer.GetReader();
-            Searcher = NewSearcher(Reader);
+            reader = writer.GetReader();
+            searcher = NewSearcher(reader);
             writer.Dispose();
 
-            Sims = new List<SimilarityBase>();
+            sims = new List<SimilarityBase>();
             foreach (BasicModel basicModel in BASIC_MODELS)
             {
                 foreach (AfterEffect afterEffect in AFTER_EFFECTS)
                 {
                     foreach (Normalization normalization in NORMALIZATIONS)
                     {
-                        Sims.Add(new DFRSimilarity(basicModel, afterEffect, normalization));
+                        sims.Add(new DFRSimilarity(basicModel, afterEffect, normalization));
                     }
                 }
             }
@@ -144,13 +143,13 @@ namespace Lucene.Net.Search.Similarities
                 {
                     foreach (Normalization normalization in NORMALIZATIONS)
                     {
-                        Sims.Add(new IBSimilarity(distribution, lambda, normalization));
+                        sims.Add(new IBSimilarity(distribution, lambda, normalization));
                     }
                 }
             }
-            Sims.Add(new LMDirichletSimilarity());
-            Sims.Add(new LMJelinekMercerSimilarity(0.1f));
-            Sims.Add(new LMJelinekMercerSimilarity(0.7f));
+            sims.Add(new LMDirichletSimilarity());
+            sims.Add(new LMJelinekMercerSimilarity(0.1f));
+            sims.Add(new LMJelinekMercerSimilarity(0.7f));
         }
 
         // ------------------------------- Unit tests --------------------------------
@@ -216,7 +215,7 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         private void UnitTestCore(BasicStats stats, float freq, int docLen)
         {
-            foreach (SimilarityBase sim in Sims)
+            foreach (SimilarityBase sim in sims)
             {
                 BasicStats realStats = (BasicStats)sim.ComputeWeight(stats.TotalBoost, ToCollectionStats(stats), ToTermStats(stats));
                 float score = sim.Score(realStats, freq, docLen);
@@ -576,7 +575,7 @@ namespace Lucene.Net.Search.Similarities
         /// <summary>
         /// The generic test core called by all correctness test methods. It calls the
         /// <see cref="SimilarityBase.Score(BasicStats, float, float)"/> method of all
-        /// Similarities in <see cref="Sims"/> and compares the score against the manually
+        /// Similarities in <see cref="sims"/> and compares the score against the manually
         /// computed <c>gold</c>.
         /// </summary>
         private void CorrectnessTestCore(SimilarityBase sim, float gold)
@@ -591,7 +590,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// The "collection" for the integration tests. </summary>
-        internal string[] Docs = new string[] { "Tiger, tiger burning bright   In the forest of the night   What immortal hand or eye   Could frame thy fearful symmetry ?", "In what distant depths or skies   Burnt the fire of thine eyes ?   On what wings dare he aspire ?   What the hands the seize the fire ?", "And what shoulder and what art   Could twist the sinews of thy heart ?   And when thy heart began to beat What dread hand ? And what dread feet ?", "What the hammer? What the chain ?   In what furnace was thy brain ?   What the anvil ? And what dread grasp   Dare its deadly terrors clasp ?", "And when the stars threw down their spears   And water'd heaven with their tear   Did he smile his work to see ?   Did he, who made the lamb, made thee ?", "Tiger, tiger burning bright   In the forest of the night   What immortal hand or eye   Dare frame thy fearful symmetry ?", "Cruelty has a human heart   And jealousy a human face   Terror the human form divine   And Secrecy the human dress .", "The human dress is forg'd iron   The human form a fiery forge   The human face a furnace seal'd   The human heart its fiery gorge ." };
+        internal string[] docs = new string[] { "Tiger, tiger burning bright   In the forest of the night   What immortal hand or eye   Could frame thy fearful symmetry ?", "In what distant depths or skies   Burnt the fire of thine eyes ?   On what wings dare he aspire ?   What the hands the seize the fire ?", "And what shoulder and what art   Could twist the sinews of thy heart ?   And when thy heart began to beat What dread hand ? And what dread feet ?", "What the hammer? What the chain ?   In what furnace was thy brain ?   What the anvil ? And what dread grasp   Dare its deadly terrors clasp ?", "And when the stars threw down their spears   And water'd heaven with their tear   Did he smile his work to see ?   Did he, who made the lamb, made thee ?", "Tiger, tiger burning bright   In the forest of the night   What immortal hand or eye   Dare frame thy fearful symmetry ?", "Cruelty has a human heart   And jealousy a human face   Terror the human form divine   And Secrecy the human dress .", "The human dress is forg'd iron   The human form a fiery forge   The human face a furnace seal'd   The human heart its fiery gorge ." };
 
         /// <summary>
         /// Tests whether all similarities return three documents for the query word
@@ -602,10 +601,10 @@ namespace Lucene.Net.Search.Similarities
         {
             Query q = new TermQuery(new Term(FIELD_BODY, "heart"));
 
-            foreach (SimilarityBase sim in Sims)
+            foreach (SimilarityBase sim in sims)
             {
-                Searcher.Similarity = sim;
-                TopDocs topDocs = Searcher.Search(q, 1000);
+                searcher.Similarity = sim;
+                TopDocs topDocs = searcher.Search(q, 1000);
                 Assert.AreEqual(3, topDocs.TotalHits, "Failed: " + sim.ToString());
             }
         }
@@ -619,19 +618,19 @@ namespace Lucene.Net.Search.Similarities
 
             Query q = new TermQuery(new Term(FIELD_BODY, "heart"));
 
-            foreach (SimilarityBase sim in Sims)
+            foreach (SimilarityBase sim in sims)
             {
-                Searcher.Similarity = sim;
-                TopDocs topDocs = Searcher.Search(q, 1000);
-                Assert.AreEqual("2", Reader.Document(topDocs.ScoreDocs[0].Doc).Get(FIELD_ID), "Failed: " + sim.ToString());
+                searcher.Similarity = sim;
+                TopDocs topDocs = searcher.Search(q, 1000);
+                Assert.AreEqual("2", reader.Document(topDocs.ScoreDocs[0].Doc).Get(FIELD_ID), "Failed: " + sim.ToString());
             }
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Dir.Dispose();
+            reader.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 

@@ -7,29 +7,28 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -49,30 +48,30 @@ namespace Lucene.Net.Search
         /// </summary>
         internal class TestIndex
         {
-            internal int MaxR;
-            internal int MinR;
-            internal bool AllowNegativeRandomInts;
-            internal Directory Index;
+            internal int maxR;
+            internal int minR;
+            internal bool allowNegativeRandomInts;
+            internal Directory index;
 
             internal TestIndex(Random random, int minR, int maxR, bool allowNegativeRandomInts)
             {
-                this.MinR = minR;
-                this.MaxR = maxR;
-                this.AllowNegativeRandomInts = allowNegativeRandomInts;
-                Index = NewDirectory(random);
+                this.minR = minR;
+                this.maxR = maxR;
+                this.allowNegativeRandomInts = allowNegativeRandomInts;
+                index = NewDirectory(random);
             }
         }
 
-        internal static IndexReader SignedIndexReader;
-        internal static IndexReader UnsignedIndexReader;
+        internal static IndexReader signedIndexReader;
+        internal static IndexReader unsignedIndexReader;
 
-        internal static TestIndex SignedIndexDir;
-        internal static TestIndex UnsignedIndexDir;
+        internal static TestIndex signedIndexDir;
+        internal static TestIndex unsignedIndexDir;
 
-        internal static int MinId = 0;
-        internal static int MaxId;
+        internal static int minId = 0;
+        internal static int maxId;
 
-        internal static readonly int IntLength = Convert.ToString(int.MaxValue).Length;
+        internal static readonly int intLength = Convert.ToString(int.MaxValue).Length;
 
         /// <summary>
         /// a simple padding function that should work with any int
@@ -88,7 +87,7 @@ namespace Lucene.Net.Search
             }
             b.Append(p);
             string s = Convert.ToString(n);
-            for (int i = s.Length; i <= IntLength; i++)
+            for (int i = s.Length; i <= intLength; i++)
             {
                 b.Append("0");
             }
@@ -107,24 +106,24 @@ namespace Lucene.Net.Search
         {
             base.BeforeClass();
 
-            MaxId = AtLeast(500);
-            SignedIndexDir = new TestIndex(Random, int.MaxValue, int.MinValue, true);
-            UnsignedIndexDir = new TestIndex(Random, int.MaxValue, 0, false);
-            SignedIndexReader = Build(Random, SignedIndexDir);
-            UnsignedIndexReader = Build(Random, UnsignedIndexDir);
+            maxId = AtLeast(500);
+            signedIndexDir = new TestIndex(Random, int.MaxValue, int.MinValue, true);
+            unsignedIndexDir = new TestIndex(Random, int.MaxValue, 0, false);
+            signedIndexReader = Build(Random, signedIndexDir);
+            unsignedIndexReader = Build(Random, unsignedIndexDir);
         }
 
         [OneTimeTearDown]
         public override void AfterClass() // LUCENENET specific: renamed from AfterClassBaseTestRangeFilter() so we can override to control the order of execution
         {
-            SignedIndexReader?.Dispose();
-            UnsignedIndexReader?.Dispose();
-            SignedIndexDir?.Index?.Dispose();
-            UnsignedIndexDir?.Index?.Dispose();
-            SignedIndexReader = null;
-            UnsignedIndexReader = null;
-            SignedIndexDir = null;
-            UnsignedIndexDir = null;
+            signedIndexReader?.Dispose();
+            unsignedIndexReader?.Dispose();
+            signedIndexDir?.index?.Dispose();
+            unsignedIndexDir?.index?.Dispose();
+            signedIndexReader = null;
+            unsignedIndexReader = null;
+            signedIndexDir = null;
+            unsignedIndexDir = null;
             base.AfterClass();
         }
 
@@ -145,7 +144,7 @@ namespace Lucene.Net.Search
             doc.Add(randField);
             doc.Add(bodyField);
 
-            RandomIndexWriter writer = new RandomIndexWriter(random, index.Index, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(TestUtil.NextInt32(random, 50, 1000)).SetMergePolicy(NewLogMergePolicy()));
+            RandomIndexWriter writer = new RandomIndexWriter(random, index.index, NewIndexWriterConfig(random, TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetOpenMode(OpenMode.CREATE).SetMaxBufferedDocs(TestUtil.NextInt32(random, 50, 1000)).SetMergePolicy(NewLogMergePolicy()));
             TestUtil.ReduceOpenFiles(writer.IndexWriter);
 
             while (true)
@@ -153,26 +152,26 @@ namespace Lucene.Net.Search
                 int minCount = 0;
                 int maxCount = 0;
 
-                for (int d = MinId; d <= MaxId; d++)
+                for (int d = minId; d <= maxId; d++)
                 {
                     idField.SetStringValue(Pad(d));
-                    int r = index.AllowNegativeRandomInts ? random.Next() : random.Next(int.MaxValue);
-                    if (index.MaxR < r)
+                    int r = index.allowNegativeRandomInts ? random.Next() : random.Next(int.MaxValue);
+                    if (index.maxR < r)
                     {
-                        index.MaxR = r;
+                        index.maxR = r;
                         maxCount = 1;
                     }
-                    else if (index.MaxR == r)
+                    else if (index.maxR == r)
                     {
                         maxCount++;
                     }
 
-                    if (r < index.MinR)
+                    if (r < index.minR)
                     {
-                        index.MinR = r;
+                        index.minR = r;
                         minCount = 1;
                     }
-                    else if (r == index.MinR)
+                    else if (r == index.minR)
                     {
                         minCount++;
                     }

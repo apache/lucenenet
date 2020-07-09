@@ -1,27 +1,26 @@
+using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -30,26 +29,26 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestEarlyTermination : LuceneTestCase
     {
-        internal Directory Dir;
-        internal RandomIndexWriter Writer;
+        private Directory dir;
+        private RandomIndexWriter writer;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
-            Writer = new RandomIndexWriter(
+            dir = NewDirectory();
+            writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Dir);
+                Random, dir);
             int numDocs = AtLeast(100);
             for (int i = 0; i < numDocs; i++)
             {
-                Writer.AddDocument(new Document());
+                writer.AddDocument(new Document());
                 if (Rarely())
                 {
-                    Writer.Commit();
+                    writer.Commit();
                 }
             }
         }
@@ -58,15 +57,15 @@ namespace Lucene.Net.Search
         public override void TearDown()
         {
             base.TearDown();
-            Writer.Dispose();
-            Dir.Dispose();
+            writer.Dispose();
+            dir.Dispose();
         }
 
         [Test]
         public virtual void TestEarlyTermination_Mem()
         {
             int iters = AtLeast(5);
-            IndexReader reader = Writer.GetReader();
+            IndexReader reader = writer.GetReader();
 
             for (int i = 0; i < iters; ++i)
             {
@@ -80,11 +79,11 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly TestEarlyTermination OuterInstance;
+            private readonly TestEarlyTermination outerInstance;
 
             public CollectorAnonymousInnerClassHelper(TestEarlyTermination outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 outOfOrder = Random.NextBoolean();
                 collectionTerminated = true;
             }
@@ -119,10 +118,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return outOfOrder; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => outOfOrder;
         }
     }
 }

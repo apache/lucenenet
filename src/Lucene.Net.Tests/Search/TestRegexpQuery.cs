@@ -6,27 +6,27 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
     using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
     using Directory = Lucene.Net.Store.Directory;
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using Field = Field;
     using IAutomatonProvider = Lucene.Net.Util.Automaton.IAutomatonProvider;
@@ -41,34 +41,34 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestRegexpQuery : LuceneTestCase
     {
-        private IndexSearcher Searcher;
-        private IndexReader Reader;
-        private Directory Directory;
-        private readonly string FN = "field";
+        private IndexSearcher searcher;
+        private IndexReader reader;
+        private Directory directory;
+        private const string FN = "field";
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Directory = NewDirectory();
+            directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, Directory);
+                Random, directory);
             Document doc = new Document();
             doc.Add(NewTextField(FN, "the quick brown fox jumps over the lazy ??? dog 493432 49344", Field.Store.NO));
             writer.AddDocument(doc);
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
-            Searcher = NewSearcher(Reader);
+            searcher = NewSearcher(reader);
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Directory.Dispose();
+            reader.Dispose();
+            directory.Dispose();
             base.TearDown();
         }
 
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
         private int RegexQueryNrHits(string regex)
         {
             RegexpQuery query = new RegexpQuery(NewTerm(regex));
-            return Searcher.Search(query, 5).TotalHits;
+            return searcher.Search(query, 5).TotalHits;
         }
 
         [Test]
@@ -121,16 +121,16 @@ namespace Lucene.Net.Search
         {
             IAutomatonProvider myProvider = new AutomatonProviderAnonymousInnerClassHelper(this);
             RegexpQuery query = new RegexpQuery(NewTerm("<quickBrown>"), RegExpSyntax.ALL, myProvider);
-            Assert.AreEqual(1, Searcher.Search(query, 5).TotalHits);
+            Assert.AreEqual(1, searcher.Search(query, 5).TotalHits);
         }
 
         private class AutomatonProviderAnonymousInnerClassHelper : IAutomatonProvider
         {
-            private readonly TestRegexpQuery OuterInstance;
+            private readonly TestRegexpQuery outerInstance;
 
             public AutomatonProviderAnonymousInnerClassHelper(TestRegexpQuery outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
                 quickBrownAutomaton = BasicOperations.Union(new Automaton[] { BasicAutomata.MakeString("quick"), BasicAutomata.MakeString("brown"), BasicAutomata.MakeString("bob") });
             }
 

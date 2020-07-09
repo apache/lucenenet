@@ -5,26 +5,26 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using Field = Field;
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
@@ -159,20 +159,20 @@ namespace Lucene.Net.Search
 
         private class PerFieldSimilarityWrapperAnonymousInnerClassHelper : PerFieldSimilarityWrapper
         {
-            private readonly TestDocValuesScoring OuterInstance;
+            private readonly TestDocValuesScoring outerInstance;
 
-            private Field Field;
+            private Field field;
             private Similarity @base;
 
             public PerFieldSimilarityWrapperAnonymousInnerClassHelper(TestDocValuesScoring outerInstance, Field field, Similarity @base)
             {
-                this.OuterInstance = outerInstance;
-                this.Field = field;
+                this.outerInstance = outerInstance;
+                this.field = field;
                 this.@base = @base;
                 fooSim = new BoostingSimilarity(@base, "foo_boost");
             }
 
-            internal readonly Similarity fooSim;
+            private readonly Similarity fooSim;
 
             public override Similarity Get(string field)
             {
@@ -198,66 +198,66 @@ namespace Lucene.Net.Search
         /// </summary>
         internal class BoostingSimilarity : Similarity
         {
-            internal readonly Similarity Sim;
-            internal readonly string BoostField;
+            private readonly Similarity sim;
+            private readonly string boostField;
 
             public BoostingSimilarity(Similarity sim, string boostField)
             {
-                this.Sim = sim;
-                this.BoostField = boostField;
+                this.sim = sim;
+                this.boostField = boostField;
             }
 
             public override long ComputeNorm(FieldInvertState state)
             {
-                return Sim.ComputeNorm(state);
+                return sim.ComputeNorm(state);
             }
 
             public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)
             {
-                return Sim.ComputeWeight(queryBoost, collectionStats, termStats);
+                return sim.ComputeWeight(queryBoost, collectionStats, termStats);
             }
 
             public override SimScorer GetSimScorer(SimWeight stats, AtomicReaderContext context)
             {
-                SimScorer sub = Sim.GetSimScorer(stats, context);
-                FieldCache.Singles values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, BoostField, false);
+                SimScorer sub = sim.GetSimScorer(stats, context);
+                FieldCache.Singles values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, boostField, false);
 
                 return new SimScorerAnonymousInnerClassHelper(this, sub, values);
             }
 
             private class SimScorerAnonymousInnerClassHelper : SimScorer
             {
-                private readonly BoostingSimilarity OuterInstance;
+                private readonly BoostingSimilarity outerInstance;
 
-                private SimScorer Sub;
-                private FieldCache.Singles Values;
+                private readonly SimScorer sub;
+                private readonly FieldCache.Singles values;
 
                 public SimScorerAnonymousInnerClassHelper(BoostingSimilarity outerInstance, SimScorer sub, FieldCache.Singles values)
                 {
-                    this.OuterInstance = outerInstance;
-                    this.Sub = sub;
-                    this.Values = values;
+                    this.outerInstance = outerInstance;
+                    this.sub = sub;
+                    this.values = values;
                 }
 
                 public override float Score(int doc, float freq)
                 {
-                    return Values.Get(doc) * Sub.Score(doc, freq);
+                    return values.Get(doc) * sub.Score(doc, freq);
                 }
 
                 public override float ComputeSlopFactor(int distance)
                 {
-                    return Sub.ComputeSlopFactor(distance);
+                    return sub.ComputeSlopFactor(distance);
                 }
 
                 public override float ComputePayloadFactor(int doc, int start, int end, BytesRef payload)
                 {
-                    return Sub.ComputePayloadFactor(doc, start, end, payload);
+                    return sub.ComputePayloadFactor(doc, start, end, payload);
                 }
 
                 public override Explanation Explain(int doc, Explanation freq)
                 {
-                    Explanation boostExplanation = new Explanation(Values.Get(doc), "indexDocValue(" + OuterInstance.BoostField + ")");
-                    Explanation simExplanation = Sub.Explain(doc, freq);
+                    Explanation boostExplanation = new Explanation(values.Get(doc), "indexDocValue(" + outerInstance.boostField + ")");
+                    Explanation simExplanation = sub.Explain(doc, freq);
                     Explanation expl = new Explanation(boostExplanation.Value * simExplanation.Value, "product of:");
                     expl.AddDetail(boostExplanation);
                     expl.AddDetail(simExplanation);

@@ -5,27 +5,26 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Document = Documents.Document;
     using Field = Field;
     using IndexReader = Lucene.Net.Index.IndexReader;
@@ -66,20 +65,20 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly TestConstantScoreQuery OuterInstance;
+            private readonly TestConstantScoreQuery outerInstance;
 
-            private float ExpectedScore;
-            private string ScorerClassName;
-            private string InnerScorerClassName;
-            private int[] Count;
+            private readonly float expectedScore;
+            private readonly string scorerClassName;
+            private readonly string innerScorerClassName;
+            private readonly int[] count;
 
             public CollectorAnonymousInnerClassHelper(TestConstantScoreQuery outerInstance, float expectedScore, string scorerClassName, string innerScorerClassName, int[] count)
             {
-                this.OuterInstance = outerInstance;
-                this.ExpectedScore = expectedScore;
-                this.ScorerClassName = scorerClassName;
-                this.InnerScorerClassName = innerScorerClassName;
-                this.Count = count;
+                this.outerInstance = outerInstance;
+                this.expectedScore = expectedScore;
+                this.scorerClassName = scorerClassName;
+                this.innerScorerClassName = innerScorerClassName;
+                this.count = count;
             }
 
             private Scorer scorer;
@@ -87,28 +86,25 @@ namespace Lucene.Net.Search
             public virtual void SetScorer(Scorer scorer)
             {
                 this.scorer = scorer;
-                Assert.AreEqual(ScorerClassName, scorer.GetType().Name, "Scorer is implemented by wrong class");
-                if (InnerScorerClassName != null && scorer is ConstantScoreQuery.ConstantScorer)
+                Assert.AreEqual(scorerClassName, scorer.GetType().Name, "Scorer is implemented by wrong class");
+                if (innerScorerClassName != null && scorer is ConstantScoreQuery.ConstantScorer)
                 {
                     ConstantScoreQuery.ConstantScorer innerScorer = (ConstantScoreQuery.ConstantScorer)scorer;
-                    Assert.AreEqual(InnerScorerClassName, innerScorer.docIdSetIterator.GetType().Name, "inner Scorer is implemented by wrong class");
+                    Assert.AreEqual(innerScorerClassName, innerScorer.docIdSetIterator.GetType().Name, "inner Scorer is implemented by wrong class");
                 }
             }
 
             public virtual void Collect(int doc)
             {
-                Assert.AreEqual(ExpectedScore, this.scorer.GetScore(), 0, "Score differs from expected");
-                Count[0]++;
+                Assert.AreEqual(expectedScore, this.scorer.GetScore(), 0, "Score differs from expected");
+                count[0]++;
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
             {
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => true;
         }
 
         [Test]
@@ -173,11 +169,11 @@ namespace Lucene.Net.Search
 
         private class DefaultSimilarityAnonymousInnerClassHelper : DefaultSimilarity
         {
-            private readonly TestConstantScoreQuery OuterInstance;
+            private readonly TestConstantScoreQuery outerInstance;
 
             public DefaultSimilarityAnonymousInnerClassHelper(TestConstantScoreQuery outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override float QueryNorm(float sumOfSquaredWeights)

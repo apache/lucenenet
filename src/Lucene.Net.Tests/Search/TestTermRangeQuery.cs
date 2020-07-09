@@ -39,20 +39,20 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestTermRangeQuery : LuceneTestCase
     {
-        private int DocCount = 0;
-        private Directory Dir;
+        private int docCount = 0;
+        private Directory dir;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
+            dir = NewDirectory();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Dir.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
@@ -61,21 +61,21 @@ namespace Lucene.Net.Search
         {
             Query query = TermRangeQuery.NewStringRange("content", "A", "C", false, false);
             InitializeIndex(new string[] { "A", "B", "C", "D" });
-            IndexReader reader = DirectoryReader.Open(Dir);
+            IndexReader reader = DirectoryReader.Open(dir);
             IndexSearcher searcher = NewSearcher(reader);
             ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "A,B,C,D, only B in range");
             reader.Dispose();
 
             InitializeIndex(new string[] { "A", "B", "D" });
-            reader = DirectoryReader.Open(Dir);
+            reader = DirectoryReader.Open(dir);
             searcher = NewSearcher(reader);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "A,B,D, only B in range");
             reader.Dispose();
 
             AddDoc("C");
-            reader = DirectoryReader.Open(Dir);
+            reader = DirectoryReader.Open(dir);
             searcher = NewSearcher(reader);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(1, hits.Length, "C added, still only B in range");
@@ -88,21 +88,21 @@ namespace Lucene.Net.Search
             Query query = TermRangeQuery.NewStringRange("content", "A", "C", true, true);
 
             InitializeIndex(new string[] { "A", "B", "C", "D" });
-            IndexReader reader = DirectoryReader.Open(Dir);
+            IndexReader reader = DirectoryReader.Open(dir);
             IndexSearcher searcher = NewSearcher(reader);
             ScoreDoc[] hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(3, hits.Length, "A,B,C,D - A,B,C in range");
             reader.Dispose();
 
             InitializeIndex(new string[] { "A", "B", "D" });
-            reader = DirectoryReader.Open(Dir);
+            reader = DirectoryReader.Open(dir);
             searcher = NewSearcher(reader);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(2, hits.Length, "A,B,D - A and B in range");
             reader.Dispose();
 
             AddDoc("C");
-            reader = DirectoryReader.Open(Dir);
+            reader = DirectoryReader.Open(dir);
             searcher = NewSearcher(reader);
             hits = searcher.Search(query, null, 1000).ScoreDocs;
             Assert.AreEqual(3, hits.Length, "C added - A, B, C in range");
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search
         public virtual void TestAllDocs()
         {
             InitializeIndex(new string[] { "A", "B", "C", "D" });
-            IndexReader reader = DirectoryReader.Open(Dir);
+            IndexReader reader = DirectoryReader.Open(dir);
             IndexSearcher searcher = NewSearcher(reader);
             TermRangeQuery query = new TermRangeQuery("content", null, null, true, true);
             Terms terms = MultiFields.GetTerms(searcher.IndexReader, "content");
@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
         {
             InitializeIndex(new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K" });
 
-            IndexReader reader = DirectoryReader.Open(Dir);
+            IndexReader reader = DirectoryReader.Open(dir);
             IndexSearcher searcher = NewSearcher(reader);
             TermRangeQuery query = TermRangeQuery.NewStringRange("content", "B", "J", true, true);
             CheckBooleanTerms(searcher, query, "B", "C", "D", "E", "F", "G", "H", "I", "J");
@@ -224,30 +224,30 @@ namespace Lucene.Net.Search
         {
             private class SingleCharTokenizer : Tokenizer
             {
-                internal char[] Buffer = new char[1];
-                internal bool Done = false;
-                internal ICharTermAttribute TermAtt;
+                private readonly char[] buffer = new char[1];
+                private bool done = false;
+                private readonly ICharTermAttribute termAtt;
 
                 public SingleCharTokenizer(TextReader r)
                     : base(r)
                 {
-                    TermAtt = AddAttribute<ICharTermAttribute>();
+                    termAtt = AddAttribute<ICharTermAttribute>();
                 }
 
                 public override sealed bool IncrementToken()
                 {
-                    if (Done)
+                    if (done)
                     {
                         return false;
                     }
                     else
                     {
-                        int count = m_input.Read(Buffer, 0, Buffer.Length);
+                        int count = m_input.Read(buffer, 0, buffer.Length);
                         ClearAttributes();
-                        Done = true;
+                        done = true;
                         if (count == 1)
                         {
-                            TermAtt.CopyBuffer(Buffer, 0, 1);
+                            termAtt.CopyBuffer(buffer, 0, 1);
                         }
                         return true;
                     }
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search
                 public override void Reset()
                 {
                     base.Reset();
-                    Done = false;
+                    done = false;
                 }
             }
 
@@ -273,7 +273,7 @@ namespace Lucene.Net.Search
 
         private void InitializeIndex(string[] values, Analyzer analyzer)
         {
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode.CREATE));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(OpenMode.CREATE));
             for (int i = 0; i < values.Length; i++)
             {
                 InsertDoc(writer, values[i]);
@@ -284,7 +284,7 @@ namespace Lucene.Net.Search
         // shouldnt create an analyzer for every doc?
         private void AddDoc(string content)
         {
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetOpenMode(OpenMode.APPEND));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetOpenMode(OpenMode.APPEND));
             InsertDoc(writer, content);
             writer.Dispose();
         }
@@ -293,11 +293,11 @@ namespace Lucene.Net.Search
         {
             Document doc = new Document();
 
-            doc.Add(NewStringField("id", "id" + DocCount, Field.Store.YES));
+            doc.Add(NewStringField("id", "id" + docCount, Field.Store.YES));
             doc.Add(NewTextField("content", content, Field.Store.NO));
 
             writer.AddDocument(doc);
-            DocCount++;
+            docCount++;
         }
 
         // LUCENE-38
@@ -308,7 +308,7 @@ namespace Lucene.Net.Search
             //http://issues.apache.org/jira/browse/LUCENE-38
             Query query = TermRangeQuery.NewStringRange("content", null, "C", false, false);
             InitializeIndex(new string[] { "A", "B", "", "C", "D" }, analyzer);
-            IndexReader reader = DirectoryReader.Open(Dir);
+            IndexReader reader = DirectoryReader.Open(dir);
             IndexSearcher searcher = NewSearcher(reader);
             int numHits = searcher.Search(query, null, 1000).TotalHits;
             // When Lucene-38 is fixed, use the assert on the next line:
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search
 
             reader.Dispose();
             InitializeIndex(new string[] { "A", "B", "", "D" }, analyzer);
-            reader = DirectoryReader.Open(Dir);
+            reader = DirectoryReader.Open(dir);
             searcher = NewSearcher(reader);
             numHits = searcher.Search(query, null, 1000).TotalHits;
             // When Lucene-38 is fixed, use the assert on the next line:
@@ -327,7 +327,7 @@ namespace Lucene.Net.Search
             //Assert.AreEqual(2, hits.Length(), "A,B,<empty string>,D => A, B & <empty string> are in range");
             reader.Dispose();
             AddDoc("C");
-            reader = DirectoryReader.Open(Dir);
+            reader = DirectoryReader.Open(dir);
             searcher = NewSearcher(reader);
             numHits = searcher.Search(query, null, 1000).TotalHits;
             // When Lucene-38 is fixed, use the assert on the next line:
@@ -345,7 +345,7 @@ namespace Lucene.Net.Search
             Analyzer analyzer = new SingleCharAnalyzer();
             Query query = TermRangeQuery.NewStringRange("content", null, "C", true, true);
             InitializeIndex(new string[] { "A", "B", "", "C", "D" }, analyzer);
-            IndexReader reader = DirectoryReader.Open(Dir);
+            IndexReader reader = DirectoryReader.Open(dir);
             IndexSearcher searcher = NewSearcher(reader);
             int numHits = searcher.Search(query, null, 1000).TotalHits;
             // When Lucene-38 is fixed, use the assert on the next line:
@@ -354,7 +354,7 @@ namespace Lucene.Net.Search
             //Assert.AreEqual(3, hits.Length(), "A,B,<empty string>,C,D => A,B,<empty string>,C in range");
             reader.Dispose();
             InitializeIndex(new string[] { "A", "B", "", "D" }, analyzer);
-            reader = DirectoryReader.Open(Dir);
+            reader = DirectoryReader.Open(dir);
             searcher = NewSearcher(reader);
             numHits = searcher.Search(query, null, 1000).TotalHits;
             // When Lucene-38 is fixed, use the assert on the next line:
@@ -363,7 +363,7 @@ namespace Lucene.Net.Search
             //Assert.AreEqual(2, hits.Length(), "A,B,<empty string>,D => A, B and <empty string> in range");
             reader.Dispose();
             AddDoc("C");
-            reader = DirectoryReader.Open(Dir);
+            reader = DirectoryReader.Open(dir);
             searcher = NewSearcher(reader);
             numHits = searcher.Search(query, null, 1000).TotalHits;
             // When Lucene-38 is fixed, use the assert on the next line:

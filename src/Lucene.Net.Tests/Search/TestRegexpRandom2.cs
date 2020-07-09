@@ -8,6 +8,23 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Search
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
@@ -21,24 +38,6 @@ namespace Lucene.Net.Search
     using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
@@ -56,21 +55,21 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestRegexpRandom2 : LuceneTestCase
     {
-        protected internal IndexSearcher Searcher1;
-        protected internal IndexSearcher Searcher2;
-        private IndexReader Reader;
-        private Directory Dir;
-        protected internal string FieldName;
+        protected internal IndexSearcher searcher1;
+        protected internal IndexSearcher searcher2;
+        private IndexReader reader;
+        private Directory dir;
+        protected internal string fieldName;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
-            FieldName = Random.NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
+            dir = NewDirectory();
+            fieldName = Random.NextBoolean() ? "field" : ""; // sometimes use an empty string as field name
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             Document doc = new Document();
-            Field field = NewStringField(FieldName, "", Field.Store.NO);
+            Field field = NewStringField(fieldName, "", Field.Store.NO);
             doc.Add(field);
             List<string> terms = new List<string>();
             int num = AtLeast(200);
@@ -93,17 +92,17 @@ namespace Lucene.Net.Search
                 }
             }
 
-            Reader = writer.GetReader();
-            Searcher1 = NewSearcher(Reader);
-            Searcher2 = NewSearcher(Reader);
+            reader = writer.GetReader();
+            searcher1 = NewSearcher(reader);
+            searcher2 = NewSearcher(reader);
             writer.Dispose();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Dir.Dispose();
+            reader.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
@@ -111,13 +110,13 @@ namespace Lucene.Net.Search
         /// a stupid regexp query that just blasts thru the terms </summary>
         private class DumbRegexpQuery : MultiTermQuery
         {
-            private readonly Automaton Automaton;
+            private readonly Automaton automaton;
 
             internal DumbRegexpQuery(Term term, RegExpSyntax flags)
                 : base(term.Field)
             {
                 RegExp re = new RegExp(term.Text(), flags);
-                Automaton = re.ToAutomaton();
+                automaton = re.ToAutomaton();
             }
 
             protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
@@ -129,18 +128,18 @@ namespace Lucene.Net.Search
             {
                 private void InitializeInstanceFields()
                 {
-                    RunAutomaton = new CharacterRunAutomaton(OuterInstance.Automaton);
+                    runAutomaton = new CharacterRunAutomaton(outerInstance.automaton);
                 }
 
-                private readonly TestRegexpRandom2.DumbRegexpQuery OuterInstance;
+                private readonly TestRegexpRandom2.DumbRegexpQuery outerInstance;
 
-                internal CharacterRunAutomaton RunAutomaton;
-                internal CharsRef Utf16 = new CharsRef(10);
+                private CharacterRunAutomaton runAutomaton;
+                private CharsRef utf16 = new CharsRef(10);
 
                 internal SimpleAutomatonTermsEnum(TestRegexpRandom2.DumbRegexpQuery outerInstance, TermsEnum tenum)
                     : base(tenum)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
 
                     InitializeInstanceFields();
                     SetInitialSeekTerm(new BytesRef(""));
@@ -148,14 +147,14 @@ namespace Lucene.Net.Search
 
                 protected override AcceptStatus Accept(BytesRef term)
                 {
-                    UnicodeUtil.UTF8toUTF16(term.Bytes, term.Offset, term.Length, Utf16);
-                    return RunAutomaton.Run(Utf16.Chars, 0, Utf16.Length) ? AcceptStatus.YES : AcceptStatus.NO;
+                    UnicodeUtil.UTF8toUTF16(term.Bytes, term.Offset, term.Length, utf16);
+                    return runAutomaton.Run(utf16.Chars, 0, utf16.Length) ? AcceptStatus.YES : AcceptStatus.NO;
                 }
             }
 
             public override string ToString(string field)
             {
-                return field.ToString() + Automaton.ToString();
+                return field.ToString() + automaton.ToString();
             }
         }
 
@@ -184,11 +183,11 @@ namespace Lucene.Net.Search
         /// </summary>
         protected internal virtual void AssertSame(string regexp)
         {
-            RegexpQuery smart = new RegexpQuery(new Term(FieldName, regexp), RegExpSyntax.NONE);
-            DumbRegexpQuery dumb = new DumbRegexpQuery(new Term(FieldName, regexp), RegExpSyntax.NONE);
+            RegexpQuery smart = new RegexpQuery(new Term(fieldName, regexp), RegExpSyntax.NONE);
+            DumbRegexpQuery dumb = new DumbRegexpQuery(new Term(fieldName, regexp), RegExpSyntax.NONE);
 
-            TopDocs smartDocs = Searcher1.Search(smart, 25);
-            TopDocs dumbDocs = Searcher2.Search(dumb, 25);
+            TopDocs smartDocs = searcher1.Search(smart, 25);
+            TopDocs dumbDocs = searcher2.Search(dumb, 25);
 
             CheckHits.CheckEqual(smart, smartDocs.ScoreDocs, dumbDocs.ScoreDocs);
         }

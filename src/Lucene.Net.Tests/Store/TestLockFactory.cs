@@ -12,6 +12,23 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Store
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
     using Field = Field;
@@ -20,24 +37,6 @@ namespace Lucene.Net.Store
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OpenMode = Lucene.Net.Index.OpenMode;
     using Query = Lucene.Net.Search.Query;
@@ -291,27 +290,27 @@ namespace Lucene.Net.Store
 
         private class WriterThread : ThreadJob
         {
-            private readonly TestLockFactory OuterInstance;
+            private readonly TestLockFactory outerInstance;
 
-            internal Directory Dir;
-            internal int NumIteration;
-            public bool HitException = false;
+            private readonly Directory dir;
+            private readonly int numIteration;
+            public bool HitException { get; private set; } = false;
 
             public WriterThread(TestLockFactory outerInstance, int numIteration, Directory dir)
             {
-                this.OuterInstance = outerInstance;
-                this.NumIteration = numIteration;
-                this.Dir = dir;
+                this.outerInstance = outerInstance;
+                this.numIteration = numIteration;
+                this.dir = dir;
             }
 
             public override void Run()
             {
                 IndexWriter writer = null;
-                for (int i = 0; i < this.NumIteration; i++)
+                for (int i = 0; i < this.numIteration; i++)
                 {
                     try
                     {
-                        writer = new IndexWriter(Dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
+                        writer = new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetOpenMode(OpenMode.APPEND));
                     }
                     catch (IOException e)
                     {
@@ -342,7 +341,7 @@ namespace Lucene.Net.Store
                     {
                         try
                         {
-                            OuterInstance.AddDoc(writer);
+                            outerInstance.AddDoc(writer);
                         }
                         catch (IOException e)
                         {
@@ -370,17 +369,17 @@ namespace Lucene.Net.Store
 
         private class SearcherThread : ThreadJob
         {
-            private readonly TestLockFactory OuterInstance;
+            private readonly TestLockFactory outerInstance;
 
-            internal Directory Dir;
-            internal int NumIteration;
-            public bool HitException = false;
+            private readonly Directory dir;
+            private readonly int numIteration;
+            public bool HitException { get; private set; } = false;
 
             public SearcherThread(TestLockFactory outerInstance, int numIteration, Directory dir)
             {
-                this.OuterInstance = outerInstance;
-                this.NumIteration = numIteration;
-                this.Dir = dir;
+                this.outerInstance = outerInstance;
+                this.numIteration = numIteration;
+                this.dir = dir;
             }
 
             public override void Run()
@@ -388,11 +387,11 @@ namespace Lucene.Net.Store
                 IndexReader reader = null;
                 IndexSearcher searcher = null;
                 Query query = new TermQuery(new Term("content", "aaa"));
-                for (int i = 0; i < this.NumIteration; i++)
+                for (int i = 0; i < this.numIteration; i++)
                 {
                     try
                     {
-                        reader = DirectoryReader.Open(Dir);
+                        reader = DirectoryReader.Open(dir);
                         searcher = NewSearcher(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                             OuterInstance,
@@ -435,11 +434,11 @@ namespace Lucene.Net.Store
 
         public class MockLockFactory : LockFactory
         {
-            private readonly TestLockFactory OuterInstance;
+            private readonly TestLockFactory outerInstance;
 
             public MockLockFactory(TestLockFactory outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public bool LockPrefixSet;
@@ -472,11 +471,11 @@ namespace Lucene.Net.Store
 
             public class MockLock : Lock
             {
-                private readonly TestLockFactory.MockLockFactory OuterInstance;
+                private readonly TestLockFactory.MockLockFactory outerInstance;
 
                 public MockLock(TestLockFactory.MockLockFactory outerInstance)
                 {
-                    this.OuterInstance = outerInstance;
+                    this.outerInstance = outerInstance;
                 }
 
                 public int LockAttempts;

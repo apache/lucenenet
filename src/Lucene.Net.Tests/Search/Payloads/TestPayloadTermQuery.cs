@@ -1,6 +1,10 @@
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
+using System;
+using System.IO;
 
 namespace Lucene.Net.Search.Payloads
 {
@@ -21,10 +25,6 @@ namespace Lucene.Net.Search.Payloads
      * limitations under the License.
      */
 
-    using Lucene.Net.Analysis;
-    using NUnit.Framework;
-    using System;
-    using System.IO;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
@@ -45,13 +45,13 @@ namespace Lucene.Net.Search.Payloads
     [TestFixture]
     public class TestPayloadTermQuery : LuceneTestCase
     {
-        private static IndexSearcher Searcher;
-        private static IndexReader Reader;
+        private static IndexSearcher searcher;
+        private static IndexReader reader;
         private static readonly Similarity similarity = new BoostingSimilarity();
-        private static readonly byte[] PayloadField = { 1 };
-        private static readonly byte[] PayloadMultiField1 = { 2 };
-        private static readonly byte[] PayloadMultiField2 = { 4 };
-        protected internal static Directory Directory;
+        private static readonly byte[] payloadField = { 1 };
+        private static readonly byte[] payloadMultiField1 = { 2 };
+        private static readonly byte[] payloadMultiField2 = { 4 };
+        protected internal static Directory directory;
 
         private class PayloadAnalyzer : Analyzer
         {
@@ -69,16 +69,16 @@ namespace Lucene.Net.Search.Payloads
 
         private class PayloadFilter : TokenFilter
         {
-            internal readonly string FieldName;
-            internal int NumSeen = 0;
+            private readonly string fieldName;
+            private int numSeen = 0;
 
-            internal readonly IPayloadAttribute PayloadAtt;
+            private readonly IPayloadAttribute payloadAtt;
 
             public PayloadFilter(TokenStream input, string fieldName)
                 : base(input)
             {
-                this.FieldName = fieldName;
-                PayloadAtt = AddAttribute<IPayloadAttribute>();
+                this.fieldName = fieldName;
+                payloadAtt = AddAttribute<IPayloadAttribute>();
             }
 
             public sealed override bool IncrementToken()
@@ -86,21 +86,21 @@ namespace Lucene.Net.Search.Payloads
                 bool hasNext = m_input.IncrementToken();
                 if (hasNext)
                 {
-                    if (FieldName.Equals("field", StringComparison.Ordinal))
+                    if (fieldName.Equals("field", StringComparison.Ordinal))
                     {
-                        PayloadAtt.Payload = new BytesRef(PayloadField);
+                        payloadAtt.Payload = new BytesRef(payloadField);
                     }
-                    else if (FieldName.Equals("multiField", StringComparison.Ordinal))
+                    else if (fieldName.Equals("multiField", StringComparison.Ordinal))
                     {
-                        if (NumSeen % 2 == 0)
+                        if (numSeen % 2 == 0)
                         {
-                            PayloadAtt.Payload = new BytesRef(PayloadMultiField1);
+                            payloadAtt.Payload = new BytesRef(payloadMultiField1);
                         }
                         else
                         {
-                            PayloadAtt.Payload = new BytesRef(PayloadMultiField2);
+                            payloadAtt.Payload = new BytesRef(payloadMultiField2);
                         }
-                        NumSeen++;
+                        numSeen++;
                     }
                     return true;
                 }
@@ -113,7 +113,7 @@ namespace Lucene.Net.Search.Payloads
             public override void Reset()
             {
                 base.Reset();
-                this.NumSeen = 0;
+                this.numSeen = 0;
             }
         }
 
@@ -126,8 +126,8 @@ namespace Lucene.Net.Search.Payloads
         {
             base.BeforeClass();
 
-            Directory = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(similarity).SetMergePolicy(NewLogMergePolicy()));
+            directory = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(similarity).SetMergePolicy(NewLogMergePolicy()));
             //writer.infoStream = System.out;
             for (int i = 0; i < 1000; i++)
             {
@@ -139,21 +139,21 @@ namespace Lucene.Net.Search.Payloads
                 doc.Add(NewTextField("multiField", English.Int32ToEnglish(i) + "  " + English.Int32ToEnglish(i), Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
 
-            Searcher = NewSearcher(Reader);
-            Searcher.Similarity = similarity;
+            searcher = NewSearcher(reader);
+            searcher.Similarity = similarity;
         }
 
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Searcher = null;
-            Reader.Dispose();
-            Reader = null;
-            Directory.Dispose();
-            Directory = null;
+            searcher = null;
+            reader.Dispose();
+            reader = null;
+            directory.Dispose();
+            directory = null;
             base.AfterClass();
         }
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search.Payloads
         public virtual void Test()
         {
             PayloadTermQuery query = new PayloadTermQuery(new Term("field", "seventy"), new MaxPayloadFunction());
-            TopDocs hits = Searcher.Search(query, null, 100);
+            TopDocs hits = searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
             Assert.IsTrue(hits.TotalHits == 100, "hits Size: " + hits.TotalHits + " is not: " + 100);
 
@@ -174,8 +174,8 @@ namespace Lucene.Net.Search.Payloads
                 ScoreDoc doc = hits.ScoreDocs[i];
                 Assert.IsTrue(doc.Score == 1, doc.Score + " does not equal: " + 1);
             }
-            CheckHits.CheckExplanations(query, PayloadHelper.FIELD, Searcher, true);
-            Spans spans = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, query);
+            CheckHits.CheckExplanations(query, PayloadHelper.FIELD, searcher, true);
+            Spans spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, query);
             Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
             /*float score = hits.Score(0);
             for (int i =1; i < hits.Length(); i++)
@@ -203,7 +203,7 @@ namespace Lucene.Net.Search.Payloads
         public virtual void TestMultipleMatchesPerDoc()
         {
             PayloadTermQuery query = new PayloadTermQuery(new Term(PayloadHelper.MULTI_FIELD, "seventy"), new MaxPayloadFunction());
-            TopDocs hits = Searcher.Search(query, null, 100);
+            TopDocs hits = searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
             Assert.IsTrue(hits.TotalHits == 100, "hits Size: " + hits.TotalHits + " is not: " + 100);
 
@@ -229,8 +229,8 @@ namespace Lucene.Net.Search.Payloads
                 }
             }
             Assert.IsTrue(numTens == 10, numTens + " does not equal: " + 10);
-            CheckHits.CheckExplanations(query, "field", Searcher, true);
-            Spans spans = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, query);
+            CheckHits.CheckExplanations(query, "field", searcher, true);
+            Spans spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, query);
             Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
             //should be two matches per document
             int count = 0;
@@ -248,10 +248,10 @@ namespace Lucene.Net.Search.Payloads
         {
             PayloadTermQuery query = new PayloadTermQuery(new Term(PayloadHelper.MULTI_FIELD, "seventy"), new MaxPayloadFunction(), false);
 
-            IndexReader reader = DirectoryReader.Open(Directory);
+            IndexReader reader = DirectoryReader.Open(directory);
             IndexSearcher theSearcher = NewSearcher(reader);
             theSearcher.Similarity = new FullSimilarity();
-            TopDocs hits = Searcher.Search(query, null, 100);
+            TopDocs hits = searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
             Assert.IsTrue(hits.TotalHits == 100, "hits Size: " + hits.TotalHits + " is not: " + 100);
 
@@ -277,8 +277,8 @@ namespace Lucene.Net.Search.Payloads
                 }
             }
             Assert.IsTrue(numTens == 10, numTens + " does not equal: " + 10);
-            CheckHits.CheckExplanations(query, "field", Searcher, true);
-            Spans spans = MultiSpansWrapper.Wrap(Searcher.TopReaderContext, query);
+            CheckHits.CheckExplanations(query, "field", searcher, true);
+            Spans spans = MultiSpansWrapper.Wrap(searcher.TopReaderContext, query);
             Assert.IsTrue(spans != null, "spans is null and it shouldn't be");
             //should be two matches per document
             int count = 0;
@@ -294,7 +294,7 @@ namespace Lucene.Net.Search.Payloads
         public virtual void TestNoMatch()
         {
             PayloadTermQuery query = new PayloadTermQuery(new Term(PayloadHelper.FIELD, "junk"), new MaxPayloadFunction());
-            TopDocs hits = Searcher.Search(query, null, 100);
+            TopDocs hits = searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
             Assert.IsTrue(hits.TotalHits == 0, "hits Size: " + hits.TotalHits + " is not: " + 0);
         }
@@ -309,7 +309,7 @@ namespace Lucene.Net.Search.Payloads
             BooleanQuery query = new BooleanQuery();
             query.Add(c1);
             query.Add(c2);
-            TopDocs hits = Searcher.Search(query, null, 100);
+            TopDocs hits = searcher.Search(query, null, 100);
             Assert.IsTrue(hits != null, "hits is null and it shouldn't be");
             Assert.IsTrue(hits.TotalHits == 1, "hits Size: " + hits.TotalHits + " is not: " + 1);
             int[] results = new int[1];
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search.Payloads
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, query, PayloadHelper.NO_PAYLOAD_FIELD, Searcher, results);
+                Random, query, PayloadHelper.NO_PAYLOAD_FIELD, searcher, results);
         }
 
         internal class BoostingSimilarity : DefaultSimilarity

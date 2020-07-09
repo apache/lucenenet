@@ -27,10 +27,10 @@ namespace Lucene.Net.Search
     {
         private class DummyCollector : ICollector
         {
-            internal bool AcceptsDocsOutOfOrderCalled = false;
-            internal bool CollectCalled = false;
-            internal bool SetNextReaderCalled = false;
-            internal bool SetScorerCalled = false;
+            internal bool AcceptsDocsOutOfOrderCalled { get; private set; } = false;
+            internal bool CollectCalled { get; private set; } = false;
+            internal bool SetNextReaderCalled { get; private set; } = false;
+            internal bool SetScorerCalled { get; private set; } = false;
 
             public virtual bool AcceptsDocsOutOfOrder
             {
