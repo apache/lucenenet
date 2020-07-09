@@ -5,29 +5,28 @@ using System;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using TermRangeQuery = Lucene.Net.Search.TermRangeQuery;
@@ -36,15 +35,15 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestReaderClosed : LuceneTestCase
     {
-        private IndexReader Reader;
-        private Directory Dir;
+        private IndexReader reader;
+        private Directory dir;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
+            dir = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
 
             Document doc = new Document();
             Field field = NewStringField("field", "", Field.Store.NO);
@@ -58,18 +57,18 @@ namespace Lucene.Net.Index
                 field.SetStringValue(TestUtil.RandomUnicodeString(Random, 10));
                 writer.AddDocument(doc);
             }
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
         }
 
         [Test]
         public virtual void Test()
         {
-            Assert.IsTrue(Reader.RefCount > 0);
-            IndexSearcher searcher = NewSearcher(Reader);
+            Assert.IsTrue(reader.RefCount > 0);
+            IndexSearcher searcher = NewSearcher(reader);
             TermRangeQuery query = TermRangeQuery.NewStringRange("field", "a", "z", true, true);
             searcher.Search(query, 5);
-            Reader.Dispose();
+            reader.Dispose();
             try
             {
                 searcher.Search(query, 5);
@@ -86,14 +85,14 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestReaderChaining()
         {
-            Assert.IsTrue(Reader.RefCount > 0);
-            IndexReader wrappedReader = SlowCompositeReaderWrapper.Wrap(Reader);
+            Assert.IsTrue(reader.RefCount > 0);
+            IndexReader wrappedReader = SlowCompositeReaderWrapper.Wrap(reader);
             wrappedReader = new ParallelAtomicReader((AtomicReader)wrappedReader);
 
             IndexSearcher searcher = NewSearcher(wrappedReader);
             TermRangeQuery query = TermRangeQuery.NewStringRange("field", "a", "z", true, true);
             searcher.Search(query, 5);
-            Reader.Dispose(); // close original child reader
+            reader.Dispose(); // close original child reader
             try
             {
                 searcher.Search(query, 5);
@@ -115,7 +114,7 @@ namespace Lucene.Net.Index
         [TearDown]
         public override void TearDown()
         {
-            Dir.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
     }

@@ -52,12 +52,12 @@ namespace Lucene.Net.Index
     {
         internal class CountingRAMDirectory : MockDirectoryWrapper
         {
-            private readonly TestMultiLevelSkipList OuterInstance;
+            private readonly TestMultiLevelSkipList outerInstance;
 
             public CountingRAMDirectory(TestMultiLevelSkipList outerInstance, Directory @delegate)
                 : base(Random, @delegate)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override IndexInput OpenInput(string fileName, IOContext context)
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
                 IndexInput @in = base.OpenInput(fileName, context);
                 if (fileName.EndsWith(".frq", StringComparison.Ordinal))
                 {
-                    @in = new CountingStream(OuterInstance, @in);
+                    @in = new CountingStream(outerInstance, @in);
                 }
                 return @in;
             }
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
         public override void SetUp()
         {
             base.SetUp();
-            Counter = 0;
+            counter = 0;
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 2; i++)
             {
-                Counter = 0;
+                counter = 0;
                 DocsAndPositionsEnum tp = reader.GetTermPositionsEnum(term);
                 CheckSkipTo(tp, 14, 185); // no skips
                 CheckSkipTo(tp, 17, 190); // one skip on level 0
@@ -113,9 +113,9 @@ namespace Lucene.Net.Index
         public virtual void CheckSkipTo(DocsAndPositionsEnum tp, int target, int maxCounter)
         {
             tp.Advance(target);
-            if (maxCounter < Counter)
+            if (maxCounter < counter)
             {
-                Assert.Fail("Too many bytes read: " + Counter + " vs " + maxCounter);
+                Assert.Fail("Too many bytes read: " + counter + " vs " + maxCounter);
             }
 
             Assert.AreEqual(target, tp.DocID, "Wrong document " + tp.DocID + " after skipTo target " + target);
@@ -128,25 +128,25 @@ namespace Lucene.Net.Index
 
         private class PayloadAnalyzer : Analyzer
         {
-            internal readonly AtomicInt32 PayloadCount = new AtomicInt32(-1);
+            internal readonly AtomicInt32 payloadCount = new AtomicInt32(-1);
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
-                return new TokenStreamComponents(tokenizer, new PayloadFilter(PayloadCount, tokenizer));
+                return new TokenStreamComponents(tokenizer, new PayloadFilter(payloadCount, tokenizer));
             }
         }
 
         private class PayloadFilter : TokenFilter
         {
-            internal IPayloadAttribute PayloadAtt;
-            internal AtomicInt32 PayloadCount;
+            internal IPayloadAttribute payloadAtt;
+            internal AtomicInt32 payloadCount;
 
             protected internal PayloadFilter(AtomicInt32 payloadCount, TokenStream input)
                 : base(input)
             {
-                this.PayloadCount = payloadCount;
-                PayloadAtt = AddAttribute<IPayloadAttribute>();
+                this.payloadCount = payloadCount;
+                payloadAtt = AddAttribute<IPayloadAttribute>();
             }
 
             public sealed override bool IncrementToken()
@@ -154,67 +154,67 @@ namespace Lucene.Net.Index
                 bool hasNext = m_input.IncrementToken();
                 if (hasNext)
                 {
-                    PayloadAtt.Payload = new BytesRef(new[] { (byte)PayloadCount.IncrementAndGet() });
+                    payloadAtt.Payload = new BytesRef(new[] { (byte)payloadCount.IncrementAndGet() });
                 }
                 return hasNext;
             }
         }
 
-        private int Counter = 0;
+        private int counter = 0;
 
         // Simply extends IndexInput in a way that we are able to count the number
         // of bytes read
         internal class CountingStream : IndexInput
         {
-            private readonly TestMultiLevelSkipList OuterInstance;
+            private readonly TestMultiLevelSkipList outerInstance;
 
-            internal IndexInput Input;
+            internal IndexInput input;
 
             internal CountingStream(TestMultiLevelSkipList outerInstance, IndexInput input)
                 : base("CountingStream(" + input + ")")
             {
-                this.OuterInstance = outerInstance;
-                this.Input = input;
+                this.outerInstance = outerInstance;
+                this.input = input;
             }
 
             public override byte ReadByte()
             {
-                OuterInstance.Counter++;
-                return this.Input.ReadByte();
+                outerInstance.counter++;
+                return this.input.ReadByte();
             }
 
             public override void ReadBytes(byte[] b, int offset, int len)
             {
-                OuterInstance.Counter += len;
-                this.Input.ReadBytes(b, offset, len);
+                outerInstance.counter += len;
+                this.input.ReadBytes(b, offset, len);
             }
 
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
                 {
-                    this.Input.Dispose();
+                    this.input.Dispose();
                 }
             }
 
             public override long GetFilePointer()
             {
-                return this.Input.GetFilePointer();
+                return this.input.GetFilePointer();
             }
 
             public override void Seek(long pos)
             {
-                this.Input.Seek(pos);
+                this.input.Seek(pos);
             }
 
             public override long Length
             {
-                get { return this.Input.Length; }
+                get { return this.input.Length; }
             }
 
             public override object Clone()
             {
-                return new CountingStream(OuterInstance, (IndexInput)this.Input.Clone());
+                return new CountingStream(outerInstance, (IndexInput)this.input.Clone());
             }
         }
     }

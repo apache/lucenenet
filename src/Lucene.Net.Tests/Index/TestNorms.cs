@@ -6,6 +6,23 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
@@ -13,27 +30,7 @@ namespace Lucene.Net.Index
     using Document = Documents.Document;
     using Field = Field;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
-
-    //using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
@@ -50,15 +47,15 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestNorms : LuceneTestCase
     {
-        internal readonly string ByteTestField = "normsTestByte";
+        private readonly string byteTestField = "normsTestByte";
 
         internal class CustomNormEncodingSimilarity : TFIDFSimilarity
         {
-            private readonly TestNorms OuterInstance;
+            private readonly TestNorms outerInstance;
 
             public CustomNormEncodingSimilarity(TestNorms outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override long EncodeNormValue(float f)
@@ -154,12 +151,12 @@ namespace Lucene.Net.Index
             Directory dir = NewFSDirectory(CreateTempDir("TestNorms.testMaxByteNorms"));
             BuildIndex(dir);
             AtomicReader open = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
-            NumericDocValues normValues = open.GetNormValues(ByteTestField);
+            NumericDocValues normValues = open.GetNormValues(byteTestField);
             Assert.IsNotNull(normValues);
             for (int i = 0; i < open.MaxDoc; i++)
             {
                 Document document = open.Document(i);
-                int expected = Convert.ToInt32(document.Get(ByteTestField));
+                int expected = Convert.ToInt32(document.Get(byteTestField));
                 Assert.AreEqual(expected, normValues.Get(i) & 0xff);
             }
             open.Dispose();
@@ -183,11 +180,11 @@ namespace Lucene.Net.Index
             {
                 Document doc = docs.NextDoc();
                 int boost = LuceneTestCase.Random.Next(255);
-                Field f = new TextField(ByteTestField, "" + boost, Field.Store.YES);
+                Field f = new TextField(byteTestField, "" + boost, Field.Store.YES);
                 f.Boost = boost;
                 doc.Add(f);
                 writer.AddDocument(doc);
-                doc.RemoveField(ByteTestField);
+                doc.RemoveField(byteTestField);
                 if (Rarely())
                 {
                     writer.Commit();
@@ -200,11 +197,11 @@ namespace Lucene.Net.Index
 
         public class MySimProvider : PerFieldSimilarityWrapper
         {
-            private readonly TestNorms OuterInstance;
+            private readonly TestNorms outerInstance;
 
             public MySimProvider(TestNorms outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             internal Similarity @delegate = new DefaultSimilarity();
@@ -216,7 +213,7 @@ namespace Lucene.Net.Index
 
             public override Similarity Get(string field)
             {
-                if (OuterInstance.ByteTestField.Equals(field, StringComparison.Ordinal))
+                if (outerInstance.byteTestField.Equals(field, StringComparison.Ordinal))
                 {
                     return new ByteEncodingBoostSimilarity();
                 }

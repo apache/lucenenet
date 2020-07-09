@@ -5,25 +5,24 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Constants = Lucene.Net.Util.Constants;
     using Directory = Lucene.Net.Store.Directory;
@@ -38,81 +37,81 @@ namespace Lucene.Net.Index
     public class TestSegmentMerger : LuceneTestCase
     {
         //The variables for the new merged segment
-        private Directory MergedDir;
+        private Directory mergedDir;
 
-        private string MergedSegment = "test";
+        private string mergedSegment = "test";
 
         //First segment to be merged
-        private Directory Merge1Dir;
+        private Directory merge1Dir;
 
-        private Document Doc1;
-        private SegmentReader Reader1;
+        private Document doc1;
+        private SegmentReader reader1;
 
         //Second Segment to be merged
-        private Directory Merge2Dir;
+        private Directory merge2Dir;
 
-        private Document Doc2;
-        private SegmentReader Reader2;
+        private Document doc2;
+        private SegmentReader reader2;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            this.Doc1 = new Document();
-            this.Doc2 = new Document();
-            MergedDir = NewDirectory();
-            Merge1Dir = NewDirectory();
-            Merge2Dir = NewDirectory();
-            DocHelper.SetupDoc(Doc1);
-            SegmentCommitInfo info1 = DocHelper.WriteDoc(Random, Merge1Dir, Doc1);
-            DocHelper.SetupDoc(Doc2);
-            SegmentCommitInfo info2 = DocHelper.WriteDoc(Random, Merge2Dir, Doc2);
-            Reader1 = new SegmentReader(info1, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
-            Reader2 = new SegmentReader(info2, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
+            this.doc1 = new Document();
+            this.doc2 = new Document();
+            mergedDir = NewDirectory();
+            merge1Dir = NewDirectory();
+            merge2Dir = NewDirectory();
+            DocHelper.SetupDoc(doc1);
+            SegmentCommitInfo info1 = DocHelper.WriteDoc(Random, merge1Dir, doc1);
+            DocHelper.SetupDoc(doc2);
+            SegmentCommitInfo info2 = DocHelper.WriteDoc(Random, merge2Dir, doc2);
+            reader1 = new SegmentReader(info1, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
+            reader2 = new SegmentReader(info2, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader1.Dispose();
-            Reader2.Dispose();
-            MergedDir.Dispose();
-            Merge1Dir.Dispose();
-            Merge2Dir.Dispose();
+            reader1.Dispose();
+            reader2.Dispose();
+            mergedDir.Dispose();
+            merge1Dir.Dispose();
+            merge2Dir.Dispose();
             base.TearDown();
         }
 
         [Test]
         public virtual void Test()
         {
-            Assert.IsTrue(MergedDir != null);
-            Assert.IsTrue(Merge1Dir != null);
-            Assert.IsTrue(Merge2Dir != null);
-            Assert.IsTrue(Reader1 != null);
-            Assert.IsTrue(Reader2 != null);
+            Assert.IsTrue(mergedDir != null);
+            Assert.IsTrue(merge1Dir != null);
+            Assert.IsTrue(merge2Dir != null);
+            Assert.IsTrue(reader1 != null);
+            Assert.IsTrue(reader2 != null);
         }
 
         [Test]
         public virtual void TestMerge()
         {
             Codec codec = Codec.Default;
-            SegmentInfo si = new SegmentInfo(MergedDir, Constants.LUCENE_MAIN_VERSION, MergedSegment, -1, false, codec, null);
+            SegmentInfo si = new SegmentInfo(mergedDir, Constants.LUCENE_MAIN_VERSION, mergedSegment, -1, false, codec, null);
 
-            SegmentMerger merger = new SegmentMerger(new List<AtomicReader> { Reader1, Reader2 }, si, InfoStream.Default, MergedDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, CheckAbort.NONE, new FieldInfos.FieldNumbers(), NewIOContext(Random), true);
+            SegmentMerger merger = new SegmentMerger(new List<AtomicReader> { reader1, reader2 }, si, InfoStream.Default, mergedDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, CheckAbort.NONE, new FieldInfos.FieldNumbers(), NewIOContext(Random), true);
             MergeState mergeState = merger.Merge();
             int docsMerged = mergeState.SegmentInfo.DocCount;
             Assert.IsTrue(docsMerged == 2);
             //Should be able to open a new SegmentReader against the new directory
-            SegmentReader mergedReader = new SegmentReader(new SegmentCommitInfo(new SegmentInfo(MergedDir, Constants.LUCENE_MAIN_VERSION, MergedSegment, docsMerged, false, codec, null), 0, -1L, -1L), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
+            SegmentReader mergedReader = new SegmentReader(new SegmentCommitInfo(new SegmentInfo(mergedDir, Constants.LUCENE_MAIN_VERSION, mergedSegment, docsMerged, false, codec, null), 0, -1L, -1L), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random));
             Assert.IsTrue(mergedReader != null);
             Assert.IsTrue(mergedReader.NumDocs == 2);
             Document newDoc1 = mergedReader.Document(0);
             Assert.IsTrue(newDoc1 != null);
             //There are 2 unstored fields on the document
-            Assert.IsTrue(DocHelper.NumFields(newDoc1) == DocHelper.NumFields(Doc1) - DocHelper.Unstored.Count);
+            Assert.IsTrue(DocHelper.NumFields(newDoc1) == DocHelper.NumFields(doc1) - DocHelper.Unstored.Count);
             Document newDoc2 = mergedReader.Document(1);
             Assert.IsTrue(newDoc2 != null);
-            Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(Doc2) - DocHelper.Unstored.Count);
+            Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(doc2) - DocHelper.Unstored.Count);
 
             DocsEnum termDocs = TestUtil.Docs(Random, mergedReader, DocHelper.TEXT_FIELD_2_KEY, new BytesRef("field"), MultiFields.GetLiveDocs(mergedReader), null, 0);
             Assert.IsTrue(termDocs != null);

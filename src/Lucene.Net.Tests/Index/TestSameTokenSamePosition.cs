@@ -4,28 +4,27 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TextField = TextField;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     [TestFixture]
@@ -76,31 +75,31 @@ namespace Lucene.Net.Index
 
     internal sealed class BugReproTokenStream : TokenStream
     {
-        private readonly ICharTermAttribute TermAtt;
-        private readonly IOffsetAttribute OffsetAtt;
-        private readonly IPositionIncrementAttribute PosIncAtt;
-        private readonly int TokenCount = 4;
-        private int NextTokenIndex = 0;
-        private readonly string[] Terms = new string[] { "six", "six", "drunken", "drunken" };
-        private readonly int[] Starts = new int[] { 0, 0, 4, 4 };
-        private readonly int[] Ends = new int[] { 3, 3, 11, 11 };
-        private readonly int[] Incs = new int[] { 1, 0, 1, 0 };
+        private readonly ICharTermAttribute termAtt;
+        private readonly IOffsetAttribute offsetAtt;
+        private readonly IPositionIncrementAttribute posIncAtt;
+        private readonly int tokenCount = 4;
+        private int nextTokenIndex = 0;
+        private readonly string[] terms = new string[] { "six", "six", "drunken", "drunken" };
+        private readonly int[] starts = new int[] { 0, 0, 4, 4 };
+        private readonly int[] ends = new int[] { 3, 3, 11, 11 };
+        private readonly int[] incs = new int[] { 1, 0, 1, 0 };
 
         public BugReproTokenStream()
         {
-            TermAtt = AddAttribute<ICharTermAttribute>();
-            OffsetAtt = AddAttribute<IOffsetAttribute>();
-            PosIncAtt = AddAttribute<IPositionIncrementAttribute>();
+            termAtt = AddAttribute<ICharTermAttribute>();
+            offsetAtt = AddAttribute<IOffsetAttribute>();
+            posIncAtt = AddAttribute<IPositionIncrementAttribute>();
         }
 
         public override bool IncrementToken()
         {
-            if (NextTokenIndex < TokenCount)
+            if (nextTokenIndex < tokenCount)
             {
-                TermAtt.SetEmpty().Append(Terms[NextTokenIndex]);
-                OffsetAtt.SetOffset(Starts[NextTokenIndex], Ends[NextTokenIndex]);
-                PosIncAtt.PositionIncrement = Incs[NextTokenIndex];
-                NextTokenIndex++;
+                termAtt.SetEmpty().Append(terms[nextTokenIndex]);
+                offsetAtt.SetOffset(starts[nextTokenIndex], ends[nextTokenIndex]);
+                posIncAtt.PositionIncrement = incs[nextTokenIndex];
+                nextTokenIndex++;
                 return true;
             }
             else
@@ -112,7 +111,7 @@ namespace Lucene.Net.Index
         public override void Reset()
         {
             base.Reset();
-            this.NextTokenIndex = 0;
+            this.nextTokenIndex = 0;
         }
     }
 }

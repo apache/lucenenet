@@ -5,27 +5,26 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using Field = Field;
     using Lucene41PostingsFormat = Lucene.Net.Codecs.Lucene41.Lucene41PostingsFormat;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -35,19 +34,19 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestSegmentTermEnum : LuceneTestCase
     {
-        internal Directory Dir;
+        internal Directory dir;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
+            dir = NewDirectory();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Dir.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
@@ -56,7 +55,7 @@ namespace Lucene.Net.Index
         {
             IndexWriter writer = null;
 
-            writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
 
             // ADD 100 documents with term : aaa
             // add 100 documents with terms: aaa bbb
@@ -73,7 +72,7 @@ namespace Lucene.Net.Index
             VerifyDocFreq();
 
             // merge segments
-            writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
+            writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
             writer.Dispose();
 
@@ -84,10 +83,10 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestPrevTermAtEnd()
         {
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(TestUtil.AlwaysPostingsFormat(new Lucene41PostingsFormat())));
             AddDoc(writer, "aaa bbb");
             writer.Dispose();
-            SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(Dir));
+            SegmentReader reader = GetOnlySegmentReader(DirectoryReader.Open(dir));
             TermsEnum terms = reader.Fields.GetTerms("content").GetIterator(null);
             Assert.IsNotNull(terms.Next());
             Assert.AreEqual("aaa", terms.Term.Utf8ToString());
@@ -115,7 +114,7 @@ namespace Lucene.Net.Index
 
         private void VerifyDocFreq()
         {
-            IndexReader reader = DirectoryReader.Open(Dir);
+            IndexReader reader = DirectoryReader.Open(dir);
             TermsEnum termEnum = MultiFields.GetTerms(reader, "content").GetIterator(null);
 
             // create enumeration of all terms

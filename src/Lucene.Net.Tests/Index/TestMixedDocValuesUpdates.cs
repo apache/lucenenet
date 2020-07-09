@@ -15,19 +15,6 @@ using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-    using BinaryDocValuesField = BinaryDocValuesField;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using Directory = Lucene.Net.Store.Directory;
-    using Document = Documents.Document;
-    using IBits = Lucene.Net.Util.IBits;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using NumericDocValuesField = NumericDocValuesField;
-    using Store = Field.Store;
-    using StringField = StringField;
-    using TestUtil = Lucene.Net.Util.TestUtil;
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -44,6 +31,19 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
+    using BinaryDocValuesField = BinaryDocValuesField;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
+    using Document = Documents.Document;
+    using IBits = Lucene.Net.Util.IBits;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using NumericDocValuesField = NumericDocValuesField;
+    using Store = Field.Store;
+    using StringField = StringField;
+    using TestUtil = Lucene.Net.Util.TestUtil;
 
     [SuppressCodecs("Appending", "Lucene3x", "Lucene40", "Lucene41", "Lucene42", "Lucene45")]
     [TestFixture]
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
                         {
                             if (liveDocs == null || liveDocs.Get(doc))
                             {
-                                //              System.out.println("doc=" + (doc + context.DocBase) + " f='" + f + "' vslue=" + getValue(bdv, doc, scratch));
+                                //              System.out.println("doc=" + (doc + context.docBase) + " f='" + f + "' vslue=" + getValue(bdv, doc, scratch));
                                 if (fieldHasValue[field])
                                 {
                                     Assert.IsTrue(docsWithField.Get(doc));
@@ -326,25 +326,25 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestMixedDocValuesUpdates OuterInstance;
+            private readonly TestMixedDocValuesUpdates outerInstance;
 
-            private IndexWriter Writer;
-            private int NumDocs;
-            private CountdownEvent Done;
-            private AtomicInt32 NumUpdates;
-            private string f;
-            private string Cf;
+            private readonly IndexWriter writer;
+            private readonly int numDocs;
+            private readonly CountdownEvent done;
+            private readonly AtomicInt32 numUpdates;
+            private readonly string f;
+            private readonly string cf;
 
             public ThreadAnonymousInnerClassHelper(TestMixedDocValuesUpdates outerInstance, string str, IndexWriter writer, int numDocs, CountdownEvent done, AtomicInt32 numUpdates, string f, string cf)
                 : base(str)
             {
-                this.OuterInstance = outerInstance;
-                this.Writer = writer;
-                this.NumDocs = numDocs;
-                this.Done = done;
-                this.NumUpdates = numUpdates;
+                this.outerInstance = outerInstance;
+                this.writer = writer;
+                this.numDocs = numDocs;
+                this.done = done;
+                this.numUpdates = numUpdates;
                 this.f = f;
-                this.Cf = cf;
+                this.cf = cf;
             }
 
             public override void Run()
@@ -354,7 +354,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Random random = Random;
-                    while (NumUpdates.GetAndDecrement() > 0)
+                    while (numUpdates.GetAndDecrement() > 0)
                     {
                         double group = random.NextDouble();
                         Term t;
@@ -378,29 +378,29 @@ namespace Lucene.Net.Index
                         if (random.NextBoolean()) // sometimes unset a value
                         {
                             //                System.err.println("[" + Thread.currentThread().getName() + "] t=" + t + ", f=" + f + ", updValue=UNSET");
-                            Writer.UpdateBinaryDocValue(t, f, null);
-                            Writer.UpdateNumericDocValue(t, Cf, null);
+                            writer.UpdateBinaryDocValue(t, f, null);
+                            writer.UpdateNumericDocValue(t, cf, null);
                         }
                         else
                         {
                             long updValue = random.Next();
                             //                System.err.println("[" + Thread.currentThread().getName() + "] t=" + t + ", f=" + f + ", updValue=" + updValue);
-                            Writer.UpdateBinaryDocValue(t, f, TestBinaryDocValuesUpdates.ToBytes(updValue));
-                            Writer.UpdateNumericDocValue(t, Cf, updValue * 2);
+                            writer.UpdateBinaryDocValue(t, f, TestBinaryDocValuesUpdates.ToBytes(updValue));
+                            writer.UpdateNumericDocValue(t, cf, updValue * 2);
                         }
 
                         if (random.NextDouble() < 0.2)
                         {
                             // delete a random document
-                            int doc = random.Next(NumDocs);
+                            int doc = random.Next(numDocs);
                             //                System.out.println("[" + Thread.currentThread().getName() + "] deleteDoc=doc" + doc);
-                            Writer.DeleteDocuments(new Term("id", "doc" + doc));
+                            writer.DeleteDocuments(new Term("id", "doc" + doc));
                         }
 
                         if (random.NextDouble() < 0.05) // commit every 20 updates on average
                         {
                             //                  System.out.println("[" + Thread.currentThread().getName() + "] commit");
-                            Writer.Commit();
+                            writer.Commit();
                         }
 
                         if (random.NextDouble() < 0.1) // reopen NRT reader (apply updates), on average once every 10 updates
@@ -408,12 +408,12 @@ namespace Lucene.Net.Index
                             if (reader == null)
                             {
                                 //                  System.out.println("[" + Thread.currentThread().getName() + "] open NRT");
-                                reader = DirectoryReader.Open(Writer, true);
+                                reader = DirectoryReader.Open(writer, true);
                             }
                             else
                             {
                                 //                  System.out.println("[" + Thread.currentThread().getName() + "] reopen NRT");
-                                DirectoryReader r2 = DirectoryReader.OpenIfChanged(reader, Writer, true);
+                                DirectoryReader r2 = DirectoryReader.OpenIfChanged(reader, writer, true);
                                 if (r2 != null)
                                 {
                                     reader.Dispose();
@@ -445,7 +445,7 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    Done.Signal();
+                    done.Signal();
                 }
             }
         }

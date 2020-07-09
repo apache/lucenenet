@@ -5,61 +5,60 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
     public class TestSegmentTermDocs : LuceneTestCase
     {
-        private Document TestDoc;
-        private Directory Dir;
-        private SegmentCommitInfo Info;
+        private Document testDoc;
+        private Directory dir;
+        private SegmentCommitInfo info;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            TestDoc = new Document();
-            Dir = NewDirectory();
-            DocHelper.SetupDoc(TestDoc);
-            Info = DocHelper.WriteDoc(Random, Dir, TestDoc);
+            testDoc = new Document();
+            dir = NewDirectory();
+            DocHelper.SetupDoc(testDoc);
+            info = DocHelper.WriteDoc(Random, dir, testDoc);
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Dir.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
         [Test]
         public virtual void Test()
         {
-            Assert.IsTrue(Dir != null);
+            Assert.IsTrue(dir != null);
         }
 
         [Test]
@@ -71,7 +70,7 @@ namespace Lucene.Net.Index
         public virtual void TestTermDocs(int indexDivisor)
         {
             //After adding the document, we should be able to read it back in
-            SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random));
+            SegmentReader reader = new SegmentReader(info, indexDivisor, NewIOContext(Random));
             Assert.IsTrue(reader != null);
             Assert.AreEqual(indexDivisor, reader.TermInfosIndexDivisor);
 
@@ -98,7 +97,7 @@ namespace Lucene.Net.Index
         {
             {
                 //After adding the document, we should be able to read it back in
-                SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random));
+                SegmentReader reader = new SegmentReader(info, indexDivisor, NewIOContext(Random));
                 Assert.IsTrue(reader != null);
                 DocsEnum termDocs = TestUtil.Docs(Random, reader, "textField2", new BytesRef("bad"), reader.LiveDocs, null, 0);
 
@@ -107,7 +106,7 @@ namespace Lucene.Net.Index
             }
             {
                 //After adding the document, we should be able to read it back in
-                SegmentReader reader = new SegmentReader(Info, indexDivisor, NewIOContext(Random));
+                SegmentReader reader = new SegmentReader(info, indexDivisor, NewIOContext(Random));
                 Assert.IsTrue(reader != null);
                 DocsEnum termDocs = TestUtil.Docs(Random, reader, "junk", new BytesRef("bad"), reader.LiveDocs, null, 0);
                 Assert.IsNull(termDocs);
@@ -258,9 +257,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestIndexDivisor()
         {
-            TestDoc = new Document();
-            DocHelper.SetupDoc(TestDoc);
-            DocHelper.WriteDoc(Random, Dir, TestDoc);
+            testDoc = new Document();
+            DocHelper.SetupDoc(testDoc);
+            DocHelper.WriteDoc(Random, dir, testDoc);
             TestTermDocs(2);
             TestBadSeek(2);
             TestSkipTo(2);

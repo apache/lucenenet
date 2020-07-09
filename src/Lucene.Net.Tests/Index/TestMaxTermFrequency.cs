@@ -10,29 +10,28 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -44,19 +43,19 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestMaxTermFrequency : LuceneTestCase
     {
-        internal Directory Dir;
-        internal IndexReader Reader;
+        private Directory dir;
+        private IndexReader reader;
         /* expected maxTermFrequency values for our documents */
-        internal List<int?> Expected = new List<int?>();
+        private readonly List<int?> expected = new List<int?>();
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
+            dir = NewDirectory();
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy());
             config.SetSimilarity(new TestSimilarity(this));
-            RandomIndexWriter writer = new RandomIndexWriter(Random, Dir, config);
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, config);
             Document doc = new Document();
             Field foo = NewTextField("foo", "", Field.Store.NO);
             doc.Add(foo);
@@ -65,25 +64,25 @@ namespace Lucene.Net.Index
                 foo.SetStringValue(AddValue());
                 writer.AddDocument(doc);
             }
-            Reader = writer.GetReader();
+            reader = writer.GetReader();
             writer.Dispose();
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Reader.Dispose();
-            Dir.Dispose();
+            reader.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
         [Test]
         public virtual void Test()
         {
-            NumericDocValues fooNorms = MultiDocValues.GetNormValues(Reader, "foo");
-            for (int i = 0; i < Reader.MaxDoc; i++)
+            NumericDocValues fooNorms = MultiDocValues.GetNormValues(reader, "foo");
+            for (int i = 0; i < reader.MaxDoc; i++)
             {
-                Assert.AreEqual((int)Expected[i], fooNorms.Get(i) & 0xff);
+                Assert.AreEqual((int)expected[i], fooNorms.Get(i) & 0xff);
             }
         }
 
@@ -107,7 +106,7 @@ namespace Lucene.Net.Index
                 }
                 max = Math.Max(max, num);
             }
-            Expected.Add(max);
+            expected.Add(max);
 
             terms.Shuffle(Random);
             return Arrays.ToString(terms.ToArray());
@@ -118,11 +117,11 @@ namespace Lucene.Net.Index
         /// </summary>
         internal class TestSimilarity : TFIDFSimilarity
         {
-            private readonly TestMaxTermFrequency OuterInstance;
+            private readonly TestMaxTermFrequency outerInstance;
 
             public TestSimilarity(TestMaxTermFrequency outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override float LengthNorm(FieldInvertState state)

@@ -9,30 +9,29 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using English = Lucene.Net.Util.English;
     using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
     using StringField = StringField;
@@ -49,7 +48,7 @@ namespace Lucene.Net.Index
 
         private const int NUM_ITER2 = 1;
 
-        private volatile bool Failed;
+        private volatile bool failed;
 
         [SetUp]
         public static void Setup()
@@ -59,7 +58,7 @@ namespace Lucene.Net.Index
 
         private void SetFailed()
         {
-            Failed = true;
+            failed = true;
         }
 
         public virtual void RunTest(Random random, Directory directory)
@@ -104,7 +103,7 @@ namespace Lucene.Net.Index
                     threads[i].Join();
                 }
 
-                Assert.IsTrue(!Failed);
+                Assert.IsTrue(!failed);
 
                 int expectedDocCount = (int)((1 + iter) * (200 + 8 * NUM_ITER2 * (NUM_THREADS / 2.0) * (1 + NUM_THREADS)));
 
@@ -124,20 +123,20 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestThreadedForceMerge OuterInstance;
+            private readonly TestThreadedForceMerge outerInstance;
 
-            private int IterFinal;
-            private FieldType CustomType;
-            private int IFinal;
-            private IndexWriter WriterFinal;
+            private readonly int iterFinal;
+            private readonly FieldType customType;
+            private readonly int iFinal;
+            private readonly IndexWriter writerFinal;
 
             public ThreadAnonymousInnerClassHelper(TestThreadedForceMerge outerInstance, int iterFinal, FieldType customType, int iFinal, IndexWriter writerFinal)
             {
-                this.OuterInstance = outerInstance;
-                this.IterFinal = iterFinal;
-                this.CustomType = customType;
-                this.IFinal = iFinal;
-                this.WriterFinal = writerFinal;
+                this.outerInstance = outerInstance;
+                this.iterFinal = iterFinal;
+                this.customType = customType;
+                this.iFinal = iFinal;
+                this.writerFinal = writerFinal;
             }
 
             public override void Run()
@@ -146,24 +145,24 @@ namespace Lucene.Net.Index
                 {
                     for (int j = 0; j < NUM_ITER2; j++)
                     {
-                        WriterFinal.ForceMerge(1, false);
-                        for (int k = 0; k < 17 * (1 + IFinal); k++)
+                        writerFinal.ForceMerge(1, false);
+                        for (int k = 0; k < 17 * (1 + iFinal); k++)
                         {
                             Document d = new Document();
-                            d.Add(NewField("id", IterFinal + "_" + IFinal + "_" + j + "_" + k, CustomType));
-                            d.Add(NewField("contents", English.Int32ToEnglish(IFinal + k), CustomType));
-                            WriterFinal.AddDocument(d);
+                            d.Add(NewField("id", iterFinal + "_" + iFinal + "_" + j + "_" + k, customType));
+                            d.Add(NewField("contents", English.Int32ToEnglish(iFinal + k), customType));
+                            writerFinal.AddDocument(d);
                         }
-                        for (int k = 0; k < 9 * (1 + IFinal); k++)
+                        for (int k = 0; k < 9 * (1 + iFinal); k++)
                         {
-                            WriterFinal.DeleteDocuments(new Term("id", IterFinal + "_" + IFinal + "_" + j + "_" + k));
+                            writerFinal.DeleteDocuments(new Term("id", iterFinal + "_" + iFinal + "_" + j + "_" + k));
                         }
-                        WriterFinal.ForceMerge(1);
+                        writerFinal.ForceMerge(1);
                     }
                 }
                 catch (Exception t)
                 {
-                    OuterInstance.SetFailed();
+                    outerInstance.SetFailed();
                     Console.WriteLine(Thread.CurrentThread.Name + ": hit exception");
                     Console.WriteLine(t.StackTrace);
                 }

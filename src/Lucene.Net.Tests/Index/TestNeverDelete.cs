@@ -11,28 +11,27 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using Document = Documents.Document;
     using Field = Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -107,11 +106,11 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly Func<string, string, Field.Store, Field> NewStringField;
-            private readonly Func<string, string, Field.Store, Field> NewTextField;
+            private readonly Func<string, string, Field.Store, Field> newStringField;
+            private readonly Func<string, string, Field.Store, Field> newTextField;
 
             private RandomIndexWriter w;
-            private long StopTime;
+            private long stopTime;
 
             /// <param name="newStringField">
             /// LUCENENET specific
@@ -127,9 +126,9 @@ namespace Lucene.Net.Index
                 Func<string, string, Field.Store, Field> newStringField, Func<string, string, Field.Store, Field> newTextField)
             {
                 this.w = w;
-                this.StopTime = stopTime;
-                NewStringField = newStringField;
-                NewTextField = newTextField;
+                this.stopTime = stopTime;
+                this.newStringField = newStringField;
+                this.newTextField = newTextField;
             }
 
             public override void Run()
@@ -137,11 +136,11 @@ namespace Lucene.Net.Index
                 try
                 {
                     int docCount = 0;
-                    while (Environment.TickCount < StopTime)
+                    while (Environment.TickCount < stopTime)
                     {
                         Document doc = new Document();
-                        doc.Add(NewStringField("dc", "" + docCount, Field.Store.YES));
-                        doc.Add(NewTextField("field", "here is some text", Field.Store.YES));
+                        doc.Add(newStringField("dc", "" + docCount, Field.Store.YES));
+                        doc.Add(newTextField("field", "here is some text", Field.Store.YES));
                         w.AddDocument(doc);
 
                         if (docCount % 13 == 0)

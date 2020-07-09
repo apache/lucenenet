@@ -1,5 +1,4 @@
 using J2N.Threading;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -36,23 +35,23 @@ namespace Lucene.Net.Index
     {
         private abstract class TimedThread : ThreadJob
         {
-            internal volatile bool Failed;
-            internal int Count;
+            internal volatile bool failed;
+            internal int count;
             internal static int RUN_TIME_MSEC = AtLeast(1000);
-            internal TimedThread[] AllThreads;
+            internal TimedThread[] allThreads;
 
             public abstract void DoWork();
 
             internal TimedThread(TimedThread[] threads)
             {
-                this.AllThreads = threads;
+                this.allThreads = threads;
             }
 
             public override void Run()
             {
                 long stopTime = Environment.TickCount + RUN_TIME_MSEC;
 
-                Count = 0;
+                count = 0;
 
                 try
                 {
@@ -63,22 +62,22 @@ namespace Lucene.Net.Index
                             break;
                         }
                         DoWork();
-                        Count++;
+                        count++;
                     } while (Environment.TickCount < stopTime);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(Thread.CurrentThread + ": exc");
                     Console.WriteLine(e.StackTrace);
-                    Failed = true;
+                    failed = true;
                 }
             }
 
             internal virtual bool AnyErrors()
             {
-                for (int i = 0; i < AllThreads.Length; i++)
+                for (int i = 0; i < allThreads.Length; i++)
                 {
-                    if (AllThreads[i] != null && AllThreads[i].Failed)
+                    if (allThreads[i] != null && allThreads[i].failed)
                     {
                         return true;
                     }
@@ -89,11 +88,11 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : TimedThread
         {
-            private readonly Func<string, string, Field.Store, Field> NewStringFieldFunc;
-            private readonly Func<string, string, Field.Store, Field> NewTextFieldFunc;
+            private readonly Func<string, string, Field.Store, Field> newStringFieldFunc;
+            private readonly Func<string, string, Field.Store, Field> newTextFieldFunc;
 
-            internal IndexWriter Writer;
-            internal int NextID;
+            internal IndexWriter writer;
+            internal int nextID;
 
             /// <param name="newStringField">
             /// LUCENENET specific
@@ -110,9 +109,9 @@ namespace Lucene.Net.Index
                 Func<string, string, Field.Store, Field> newTextField)
                 : base(threads)
             {
-                this.Writer = writer;
-                NewStringFieldFunc = newStringField;
-                NewTextFieldFunc = newTextField;
+                this.writer = writer;
+                newStringFieldFunc = newStringField;
+                newTextFieldFunc = newTextField;
             }
 
             public override void DoWork()
@@ -122,16 +121,16 @@ namespace Lucene.Net.Index
                 {
                     Documents.Document d = new Documents.Document();
                     int n = Random.Next();
-                    d.Add(NewStringFieldFunc("id", Convert.ToString(NextID++), Field.Store.YES));
-                    d.Add(NewTextFieldFunc("contents", English.Int32ToEnglish(n), Field.Store.NO));
-                    Writer.AddDocument(d);
+                    d.Add(newStringFieldFunc("id", Convert.ToString(nextID++), Field.Store.YES));
+                    d.Add(newTextFieldFunc("contents", English.Int32ToEnglish(n), Field.Store.NO));
+                    writer.AddDocument(d);
                 }
 
                 // Delete 5 docs:
-                int deleteID = NextID - 1;
+                int deleteID = nextID - 1;
                 for (int j = 0; j < 5; j++)
                 {
-                    Writer.DeleteDocuments(new Term("id", "" + deleteID));
+                    writer.DeleteDocuments(new Term("id", "" + deleteID));
                     deleteID -= 2;
                 }
             }
@@ -139,8 +138,8 @@ namespace Lucene.Net.Index
 
         private class SearcherThread : TimedThread
         {
-            internal Directory Directory;
-            private readonly LuceneTestCase OuterInstance;
+            internal Directory directory;
+            private readonly LuceneTestCase outerInstance;
 
             /// <param name="outerInstance">
             /// LUCENENET specific
@@ -150,23 +149,23 @@ namespace Lucene.Net.Index
             public SearcherThread(Directory directory, TimedThread[] threads, LuceneTestCase outerInstance)
                 : base(threads)
             {
-                OuterInstance = outerInstance;
-                this.Directory = directory;
+                this.outerInstance = outerInstance;
+                this.directory = directory;
             }
 
             public override void DoWork()
             {
                 for (int i = 0; i < 100; i++)
                 {
-                    IndexReader ir = DirectoryReader.Open(Directory);
+                    IndexReader ir = DirectoryReader.Open(directory);
                     IndexSearcher @is =
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
-                        OuterInstance.
+                        outerInstance.
 #endif
                         NewSearcher(ir);
                     ir.Dispose();
                 }
-                Count += 100;
+                count += 100;
             }
         }
 
@@ -212,7 +211,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < numThread; i++)
             {
-                Assert.IsTrue(!threads[i].Failed);
+                Assert.IsTrue(!threads[i].failed);
             }
 
             //System.out.println("    Writer: " + indexerThread.count + " iterations");

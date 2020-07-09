@@ -40,30 +40,30 @@ namespace Lucene.Net.Index
 
     internal class RepeatingTokenizer : Tokenizer
     {
-        private readonly Random Random;
-        private readonly float PercentDocs;
-        private readonly int MaxTF;
-        private int Num;
-        internal ICharTermAttribute TermAtt;
-        internal string Value;
+        private readonly Random random;
+        private readonly float percentDocs;
+        private readonly int maxTf;
+        private int num;
+        internal ICharTermAttribute termAtt;
+        internal string value;
 
         public RepeatingTokenizer(TextReader reader, string val, Random random, float percentDocs, int maxTF)
             : base(reader)
         {
-            this.Value = val;
-            this.Random = random;
-            this.PercentDocs = percentDocs;
-            this.MaxTF = maxTF;
-            this.TermAtt = AddAttribute<ICharTermAttribute>();
+            this.value = val;
+            this.random = random;
+            this.percentDocs = percentDocs;
+            this.maxTf = maxTF;
+            this.termAtt = AddAttribute<ICharTermAttribute>();
         }
 
         public sealed override bool IncrementToken()
         {
-            Num--;
-            if (Num >= 0)
+            num--;
+            if (num >= 0)
             {
                 ClearAttributes();
-                TermAtt.Append(Value);
+                termAtt.Append(value);
                 return true;
             }
             return false;
@@ -72,13 +72,13 @@ namespace Lucene.Net.Index
         public override void Reset()
         {
             base.Reset();
-            if (Random.NextDouble() < PercentDocs)
+            if (random.NextDouble() < percentDocs)
             {
-                Num = Random.Next(MaxTF) + 1;
+                num = random.Next(maxTf) + 1;
             }
             else
             {
-                Num = 0;
+                num = 0;
             }
         }
     }
@@ -106,22 +106,22 @@ namespace Lucene.Net.Index
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
         {
-            private Random Random;
-            private string Val;
-            private int MaxTF;
-            private float PercentDocs;
+            private readonly Random random;
+            private readonly string val;
+            private readonly int maxTf;
+            private readonly float percentDocs;
 
             public AnalyzerAnonymousInnerClassHelper(Random random, string val, int maxTF, float percentDocs)
             {
-                this.Random = random;
-                this.Val = val;
-                this.MaxTF = maxTF;
-                this.PercentDocs = percentDocs;
+                this.random = random;
+                this.val = val;
+                this.maxTf = maxTF;
+                this.percentDocs = percentDocs;
             }
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                return new TokenStreamComponents(new RepeatingTokenizer(reader, Val, Random, PercentDocs, MaxTF));
+                return new TokenStreamComponents(new RepeatingTokenizer(reader, val, random, percentDocs, maxTf));
             }
         }
 

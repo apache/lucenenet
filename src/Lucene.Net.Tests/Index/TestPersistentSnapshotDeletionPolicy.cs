@@ -7,25 +7,24 @@ using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
 {
-    using Directory = Lucene.Net.Store.Directory;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements. See the NOTICE file distributed with this
-         * work for additional information regarding copyright ownership. The ASF
-         * licenses this file to You under the Apache License, Version 2.0 (the
-         * "License"); you may not use this file except in compliance with the License.
-         * You may obtain a copy of the License at
-         *
-         * http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-         * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-         * License for the specific language governing permissions and limitations under
-         * the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 
@@ -88,7 +87,7 @@ namespace Lucene.Net.Index
 
             writer.AddDocument(new Document());
             writer.Commit();
-            Snapshots.Add(psdp.Snapshot());
+            snapshots.Add(psdp.Snapshot());
             Assert.AreEqual(numSnapshots + 1, psdp.GetSnapshots().Count);
             Assert.AreEqual(numSnapshots + 1, psdp.SnapshotCount);
             AssertSnapshotExists(dir, psdp, numSnapshots + 1, false);
@@ -156,14 +155,14 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper : Failure
         {
-            private readonly TestPersistentSnapshotDeletionPolicy OuterInstance;
+            private readonly TestPersistentSnapshotDeletionPolicy outerInstance;
 
-            private MockDirectoryWrapper Dir;
+            private MockDirectoryWrapper dir;
 
             public FailureAnonymousInnerClassHelper(TestPersistentSnapshotDeletionPolicy outerInstance, MockDirectoryWrapper dir)
             {
-                this.OuterInstance = outerInstance;
-                this.Dir = dir;
+                this.outerInstance = outerInstance;
+                this.dir = dir;
             }
 
             public override void Eval(MockDirectoryWrapper dir)
@@ -186,7 +185,7 @@ namespace Lucene.Net.Index
             PrepareIndexAndSnapshots(psdp, writer, 1);
             writer.Dispose();
 
-            psdp.Release(Snapshots[0]);
+            psdp.Release(snapshots[0]);
 
             psdp = new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.APPEND);
             Assert.AreEqual(0, psdp.SnapshotCount, "Should have no snapshots !");
@@ -202,7 +201,7 @@ namespace Lucene.Net.Index
             PrepareIndexAndSnapshots(psdp, writer, 1);
             writer.Dispose();
 
-            psdp.Release(Snapshots[0].Generation);
+            psdp.Release(snapshots[0].Generation);
 
             psdp = new PersistentSnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy(), dir, OpenMode.APPEND);
             Assert.AreEqual(0, psdp.SnapshotCount, "Should have no snapshots !");

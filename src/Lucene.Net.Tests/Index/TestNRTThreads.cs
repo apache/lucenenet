@@ -8,25 +8,24 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Directory = Lucene.Net.Store.Directory;
-
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
+    using Directory = Lucene.Net.Store.Directory;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
 
@@ -37,13 +36,13 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestNRTThreads : ThreadedIndexingAndSearchingTestCase
     {
-        private bool UseNonNrtReaders = true;
+        private bool useNonNrtReaders = true;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            UseNonNrtReaders = Random.NextBoolean();
+            useNonNrtReaders = Random.NextBoolean();
         }
 
         protected override void DoSearching(TaskScheduler es, long stopTime)
@@ -97,8 +96,8 @@ namespace Lucene.Net.Index
 
                 if (r.NumDocs > 0)
                 {
-                    FixedSearcher = new IndexSearcher(r, es);
-                    SmokeTestSearcher(FixedSearcher);
+                    fixedSearcher = new IndexSearcher(r, es);
+                    SmokeTestSearcher(fixedSearcher);
                     RunSearchThreads(Environment.TickCount + 500);
                 }
             }
@@ -118,7 +117,7 @@ namespace Lucene.Net.Index
         protected override Directory GetDirectory(Directory @in)
         {
             Debug.Assert(@in is MockDirectoryWrapper);
-            if (!UseNonNrtReaders)
+            if (!useNonNrtReaders)
             {
                 ((MockDirectoryWrapper)@in).AssertNoDeleteOpenFile = true;
             }
@@ -133,16 +132,16 @@ namespace Lucene.Net.Index
             m_writer.GetReader().Dispose();
         }
 
-        private IndexSearcher FixedSearcher;
+        private IndexSearcher fixedSearcher;
 
         protected override IndexSearcher GetCurrentSearcher()
         {
-            return FixedSearcher;
+            return fixedSearcher;
         }
 
         protected override void ReleaseSearcher(IndexSearcher s)
         {
-            if (s != FixedSearcher)
+            if (s != fixedSearcher)
             {
                 // Final searcher:
                 s.IndexReader.Dispose();
@@ -152,7 +151,7 @@ namespace Lucene.Net.Index
         protected override IndexSearcher GetFinalSearcher()
         {
             IndexReader r2;
-            if (UseNonNrtReaders)
+            if (useNonNrtReaders)
             {
                 if (Random.NextBoolean())
                 {

@@ -11,21 +11,21 @@ using Assert = Lucene.Net.TestFramework.Assert;
 namespace Lucene.Net.Index
 {
     /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -54,13 +54,13 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestPostingsOffsets : LuceneTestCase
     {
-        internal IndexWriterConfig Iwc;
+        private IndexWriterConfig iwc;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-            Iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
 
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Iwc);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, iwc);
             Document doc = new Document();
 
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
@@ -136,9 +136,9 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             Analyzer analyzer = withPayloads ? (Analyzer)new MockPayloadAnalyzer() : new MockAnalyzer(Random);
-            Iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
-            Iwc.SetMergePolicy(NewLogMergePolicy()); // will rely on docids a bit for skipping
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Iwc);
+            iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
+            iwc.SetMergePolicy(NewLogMergePolicy()); // will rely on docids a bit for skipping
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, iwc);
 
             FieldType ft = new FieldType(TextField.TYPE_STORED);
             ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
             IDictionary<string, IDictionary<int?, IList<Token>>> actualTokens = new Dictionary<string, IDictionary<int?, IList<Token>>>();
 
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random, dir, Iwc);
+            RandomIndexWriter w = new RandomIndexWriter(Random, dir, iwc);
 
             int numDocs = AtLeast(20);
             //final int numDocs = AtLeast(5);
@@ -396,7 +396,7 @@ namespace Lucene.Net.Index
         public virtual void TestWithUnindexedFields()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter riw = new RandomIndexWriter(Random, dir, Iwc);
+            RandomIndexWriter riw = new RandomIndexWriter(Random, dir, iwc);
             for (int i = 0; i < 100; i++)
             {
                 Document doc = new Document();
@@ -542,7 +542,7 @@ namespace Lucene.Net.Index
         private void CheckTokens(Token[] tokens)
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter riw = new RandomIndexWriter(Random, dir, Iwc);
+            RandomIndexWriter riw = new RandomIndexWriter(Random, dir, iwc);
             bool success = false;
             try
             {

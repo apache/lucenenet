@@ -48,92 +48,92 @@ namespace Lucene.Net.Index
 
         private void InitializeInstanceFields()
         {
-            Positions = new int[TestTerms.Length][];
-            Tokens = new TestToken[TestTerms.Length * TERM_FREQ];
+            positions = new int[testTerms.Length][];
+            tokens = new TestToken[testTerms.Length * TERM_FREQ];
         }
 
         //Must be lexicographically sorted, will do in setup, versus trying to maintain here
-        private string[] TestFields = new string[] { "f1", "f2", "f3", "f4" };
+        private string[] testFields = new string[] { "f1", "f2", "f3", "f4" };
 
-        private bool[] TestFieldsStorePos = new bool[] { true, false, true, false };
-        private bool[] TestFieldsStoreOff = new bool[] { true, false, false, true };
-        private string[] TestTerms = new string[] { "this", "is", "a", "test" };
-        private int[][] Positions;
-        private Directory Dir;
-        private SegmentCommitInfo Seg;
-        private FieldInfos FieldInfos = new FieldInfos(new FieldInfo[0]);
+        private bool[] testFieldsStorePos = new bool[] { true, false, true, false };
+        private bool[] testFieldsStoreOff = new bool[] { true, false, false, true };
+        private string[] testTerms = new string[] { "this", "is", "a", "test" };
+        private int[][] positions;
+        private Directory dir;
+        private SegmentCommitInfo seg;
+        private FieldInfos fieldInfos = new FieldInfos(new FieldInfo[0]);
         private static int TERM_FREQ = 3;
 
         internal class TestToken : IComparable<TestToken>
         {
-            private readonly TestTermVectorsReader OuterInstance;
+            private readonly TestTermVectorsReader outerInstance;
 
             public TestToken(TestTermVectorsReader outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
-            internal string Text;
-            internal int Pos;
-            internal int StartOffset;
-            internal int EndOffset;
+            internal string text;
+            internal int pos;
+            internal int startOffset;
+            internal int endOffset;
 
             public virtual int CompareTo(TestToken other)
             {
-                return Pos - other.Pos;
+                return pos - other.pos;
             }
         }
 
-        internal TestToken[] Tokens;
+        internal TestToken[] tokens;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
             /*
-            for (int i = 0; i < testFields.Length; i++) {
+            for (int i = 0; i < testFields.length; i++) {
               fieldInfos.Add(testFields[i], true, true, testFieldsStorePos[i], testFieldsStoreOff[i]);
             }
             */
 
-            Array.Sort(TestTerms);
+            Array.Sort(testTerms);
             int tokenUpto = 0;
-            for (int i = 0; i < TestTerms.Length; i++)
+            for (int i = 0; i < testTerms.Length; i++)
             {
-                Positions[i] = new int[TERM_FREQ];
+                positions[i] = new int[TERM_FREQ];
                 // first position must be 0
                 for (int j = 0; j < TERM_FREQ; j++)
                 {
                     // positions are always sorted in increasing order
-                    Positions[i][j] = (int)(j * 10 + new Random(1).NextDouble() * 10);
-                    TestToken token = Tokens[tokenUpto++] = new TestToken(this);
-                    token.Text = TestTerms[i];
-                    token.Pos = Positions[i][j];
-                    token.StartOffset = j * 10;
-                    token.EndOffset = j * 10 + TestTerms[i].Length;
+                    positions[i][j] = (int)(j * 10 + new Random(1).NextDouble() * 10);
+                    TestToken token = tokens[tokenUpto++] = new TestToken(this);
+                    token.text = testTerms[i];
+                    token.pos = positions[i][j];
+                    token.startOffset = j * 10;
+                    token.endOffset = j * 10 + testTerms[i].Length;
                 }
             }
-            Array.Sort(Tokens);
+            Array.Sort(tokens);
 
-            Dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MyAnalyzer(this)).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(false, 10)).SetUseCompoundFile(false));
+            dir = NewDirectory();
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MyAnalyzer(this)).SetMaxBufferedDocs(-1).SetMergePolicy(NewLogMergePolicy(false, 10)).SetUseCompoundFile(false));
 
             Document doc = new Document();
-            for (int i = 0; i < TestFields.Length; i++)
+            for (int i = 0; i < testFields.Length; i++)
             {
                 FieldType customType = new FieldType(TextField.TYPE_NOT_STORED);
-                if (TestFieldsStorePos[i] && TestFieldsStoreOff[i])
+                if (testFieldsStorePos[i] && testFieldsStoreOff[i])
                 {
                     customType.StoreTermVectors = true;
                     customType.StoreTermVectorPositions = true;
                     customType.StoreTermVectorOffsets = true;
                 }
-                else if (TestFieldsStorePos[i] && !TestFieldsStoreOff[i])
+                else if (testFieldsStorePos[i] && !testFieldsStoreOff[i])
                 {
                     customType.StoreTermVectors = true;
                     customType.StoreTermVectorPositions = true;
                 }
-                else if (!TestFieldsStorePos[i] && TestFieldsStoreOff[i])
+                else if (!testFieldsStorePos[i] && testFieldsStoreOff[i])
                 {
                     customType.StoreTermVectors = true;
                     customType.StoreTermVectorOffsets = true;
@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
                 {
                     customType.StoreTermVectors = true;
                 }
-                doc.Add(new Field(TestFields[i], "", customType));
+                doc.Add(new Field(testFields[i], "", customType));
             }
 
             //Create 5 documents for testing, they all have the same
@@ -152,57 +152,57 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
             }
             writer.Commit();
-            Seg = writer.NewestSegment();
+            seg = writer.NewestSegment();
             writer.Dispose();
 
-            FieldInfos = SegmentReader.ReadFieldInfos(Seg);
+            fieldInfos = SegmentReader.ReadFieldInfos(seg);
         }
 
         [TearDown]
         public override void TearDown()
         {
-            Dir.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
         private class MyTokenizer : Tokenizer
         {
-            private readonly TestTermVectorsReader OuterInstance;
+            private readonly TestTermVectorsReader outerInstance;
 
-            internal int TokenUpto;
+            private int tokenUpto;
 
-            internal readonly ICharTermAttribute TermAtt;
-            internal readonly IPositionIncrementAttribute PosIncrAtt;
-            internal readonly IOffsetAttribute OffsetAtt;
+            private readonly ICharTermAttribute termAtt;
+            private readonly IPositionIncrementAttribute posIncrAtt;
+            private readonly IOffsetAttribute offsetAtt;
 
             public MyTokenizer(TestTermVectorsReader outerInstance, TextReader reader)
                 : base(reader)
             {
-                this.OuterInstance = outerInstance;
-                TermAtt = AddAttribute<ICharTermAttribute>();
-                PosIncrAtt = AddAttribute<IPositionIncrementAttribute>();
-                OffsetAtt = AddAttribute<IOffsetAttribute>();
+                this.outerInstance = outerInstance;
+                termAtt = AddAttribute<ICharTermAttribute>();
+                posIncrAtt = AddAttribute<IPositionIncrementAttribute>();
+                offsetAtt = AddAttribute<IOffsetAttribute>();
             }
 
             public sealed override bool IncrementToken()
             {
-                if (TokenUpto >= OuterInstance.Tokens.Length)
+                if (tokenUpto >= outerInstance.tokens.Length)
                 {
                     return false;
                 }
                 else
                 {
-                    TestToken testToken = OuterInstance.Tokens[TokenUpto++];
+                    TestToken testToken = outerInstance.tokens[tokenUpto++];
                     ClearAttributes();
-                    TermAtt.Append(testToken.Text);
-                    OffsetAtt.SetOffset(testToken.StartOffset, testToken.EndOffset);
-                    if (TokenUpto > 1)
+                    termAtt.Append(testToken.text);
+                    offsetAtt.SetOffset(testToken.startOffset, testToken.endOffset);
+                    if (tokenUpto > 1)
                     {
-                        PosIncrAtt.PositionIncrement = testToken.Pos - OuterInstance.Tokens[TokenUpto - 2].Pos;
+                        posIncrAtt.PositionIncrement = testToken.pos - outerInstance.tokens[tokenUpto - 2].pos;
                     }
                     else
                     {
-                        PosIncrAtt.PositionIncrement = testToken.Pos + 1;
+                        posIncrAtt.PositionIncrement = testToken.pos + 1;
                     }
                     return true;
                 }
@@ -211,22 +211,22 @@ namespace Lucene.Net.Index
             public override void Reset()
             {
                 base.Reset();
-                this.TokenUpto = 0;
+                this.tokenUpto = 0;
             }
         }
 
         private class MyAnalyzer : Analyzer
         {
-            private readonly TestTermVectorsReader OuterInstance;
+            private readonly TestTermVectorsReader outerInstance;
 
             public MyAnalyzer(TestTermVectorsReader outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                return new TokenStreamComponents(new MyTokenizer(OuterInstance, reader));
+                return new TokenStreamComponents(new MyTokenizer(outerInstance, reader));
             }
         }
 
@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
         public virtual void Test()
         {
             //Check to see the files were created properly in setup
-            DirectoryReader reader = DirectoryReader.Open(Dir);
+            DirectoryReader reader = DirectoryReader.Open(dir);
             foreach (AtomicReaderContext ctx in reader.Leaves)
             {
                 SegmentReader sr = (SegmentReader)ctx.Reader;
@@ -246,20 +246,20 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestReader()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(dir, seg.Info, fieldInfos, NewIOContext(Random));
             for (int j = 0; j < 5; j++)
             {
-                Terms vector = reader.Get(j).GetTerms(TestFields[0]);
+                Terms vector = reader.Get(j).GetTerms(testFields[0]);
                 Assert.IsNotNull(vector);
-                Assert.AreEqual(TestTerms.Length, vector.Count);
+                Assert.AreEqual(testTerms.Length, vector.Count);
                 TermsEnum termsEnum = vector.GetIterator(null);
-                for (int i = 0; i < TestTerms.Length; i++)
+                for (int i = 0; i < testTerms.Length; i++)
                 {
                     BytesRef text = termsEnum.Next();
                     Assert.IsNotNull(text);
                     string term = text.Utf8ToString();
                     //System.out.println("Term: " + term);
-                    Assert.AreEqual(TestTerms[i], term);
+                    Assert.AreEqual(testTerms[i], term);
                 }
                 Assert.IsNull(termsEnum.Next());
             }
@@ -269,21 +269,21 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestDocsEnum()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(dir, seg.Info, fieldInfos, NewIOContext(Random));
             for (int j = 0; j < 5; j++)
             {
-                Terms vector = reader.Get(j).GetTerms(TestFields[0]);
+                Terms vector = reader.Get(j).GetTerms(testFields[0]);
                 Assert.IsNotNull(vector);
-                Assert.AreEqual(TestTerms.Length, vector.Count);
+                Assert.AreEqual(testTerms.Length, vector.Count);
                 TermsEnum termsEnum = vector.GetIterator(null);
                 DocsEnum docsEnum = null;
-                for (int i = 0; i < TestTerms.Length; i++)
+                for (int i = 0; i < testTerms.Length; i++)
                 {
                     BytesRef text = termsEnum.Next();
                     Assert.IsNotNull(text);
                     string term = text.Utf8ToString();
                     //System.out.println("Term: " + term);
-                    Assert.AreEqual(TestTerms[i], term);
+                    Assert.AreEqual(testTerms[i], term);
 
                     docsEnum = TestUtil.Docs(Random, termsEnum, null, docsEnum, DocsFlags.NONE);
                     Assert.IsNotNull(docsEnum);
@@ -300,30 +300,30 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestPositionReader()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random));
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(dir, seg.Info, fieldInfos, NewIOContext(Random));
             //BytesRef[] terms; // LUCENENET NOTE: Not used in Lucene
-            Terms vector = reader.Get(0).GetTerms(TestFields[0]);
+            Terms vector = reader.Get(0).GetTerms(testFields[0]);
             Assert.IsNotNull(vector);
-            Assert.AreEqual(TestTerms.Length, vector.Count);
+            Assert.AreEqual(testTerms.Length, vector.Count);
             TermsEnum termsEnum = vector.GetIterator(null);
             DocsAndPositionsEnum dpEnum = null;
-            for (int i = 0; i < TestTerms.Length; i++)
+            for (int i = 0; i < testTerms.Length; i++)
             {
                 BytesRef text = termsEnum.Next();
                 Assert.IsNotNull(text);
                 string term = text.Utf8ToString();
                 //System.out.println("Term: " + term);
-                Assert.AreEqual(TestTerms[i], term);
+                Assert.AreEqual(testTerms[i], term);
 
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                 Assert.IsNotNull(dpEnum);
                 int doc = dpEnum.DocID;
                 Assert.AreEqual(-1, doc);
                 Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                Assert.AreEqual(dpEnum.Freq, Positions[i].Length);
-                for (int j = 0; j < Positions[i].Length; j++)
+                Assert.AreEqual(dpEnum.Freq, positions[i].Length);
+                for (int j = 0; j < positions[i].Length; j++)
                 {
-                    Assert.AreEqual(Positions[i][j], dpEnum.NextPosition());
+                    Assert.AreEqual(positions[i][j], dpEnum.NextPosition());
                 }
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
@@ -332,28 +332,28 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(-1, doc);
                 Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 Assert.IsNotNull(dpEnum);
-                Assert.AreEqual(dpEnum.Freq, Positions[i].Length);
-                for (int j = 0; j < Positions[i].Length; j++)
+                Assert.AreEqual(dpEnum.Freq, positions[i].Length);
+                for (int j = 0; j < positions[i].Length; j++)
                 {
-                    Assert.AreEqual(Positions[i][j], dpEnum.NextPosition());
+                    Assert.AreEqual(positions[i][j], dpEnum.NextPosition());
                     Assert.AreEqual(j * 10, dpEnum.StartOffset);
-                    Assert.AreEqual(j * 10 + TestTerms[i].Length, dpEnum.EndOffset);
+                    Assert.AreEqual(j * 10 + testTerms[i].Length, dpEnum.EndOffset);
                 }
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
             }
 
-            Terms freqVector = reader.Get(0).GetTerms(TestFields[1]); //no pos, no offset
+            Terms freqVector = reader.Get(0).GetTerms(testFields[1]); //no pos, no offset
             Assert.IsNotNull(freqVector);
-            Assert.AreEqual(TestTerms.Length, freqVector.Count);
+            Assert.AreEqual(testTerms.Length, freqVector.Count);
             termsEnum = freqVector.GetIterator(null);
             Assert.IsNotNull(termsEnum);
-            for (int i = 0; i < TestTerms.Length; i++)
+            for (int i = 0; i < testTerms.Length; i++)
             {
                 BytesRef text = termsEnum.Next();
                 Assert.IsNotNull(text);
                 string term = text.Utf8ToString();
                 //System.out.println("Term: " + term);
-                Assert.AreEqual(TestTerms[i], term);
+                Assert.AreEqual(testTerms[i], term);
                 Assert.IsNotNull(termsEnum.Docs(null, null));
                 Assert.IsNull(termsEnum.DocsAndPositions(null, null)); // no pos
             }
@@ -363,39 +363,39 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestOffsetReader()
         {
-            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random));
-            Terms vector = reader.Get(0).GetTerms(TestFields[0]);
+            TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(dir, seg.Info, fieldInfos, NewIOContext(Random));
+            Terms vector = reader.Get(0).GetTerms(testFields[0]);
             Assert.IsNotNull(vector);
             TermsEnum termsEnum = vector.GetIterator(null);
             Assert.IsNotNull(termsEnum);
-            Assert.AreEqual(TestTerms.Length, vector.Count);
+            Assert.AreEqual(testTerms.Length, vector.Count);
             DocsAndPositionsEnum dpEnum = null;
-            for (int i = 0; i < TestTerms.Length; i++)
+            for (int i = 0; i < testTerms.Length; i++)
             {
                 BytesRef text = termsEnum.Next();
                 Assert.IsNotNull(text);
                 string term = text.Utf8ToString();
-                Assert.AreEqual(TestTerms[i], term);
+                Assert.AreEqual(testTerms[i], term);
 
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                 Assert.IsNotNull(dpEnum);
                 Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-                Assert.AreEqual(dpEnum.Freq, Positions[i].Length);
-                for (int j = 0; j < Positions[i].Length; j++)
+                Assert.AreEqual(dpEnum.Freq, positions[i].Length);
+                for (int j = 0; j < positions[i].Length; j++)
                 {
-                    Assert.AreEqual(Positions[i][j], dpEnum.NextPosition());
+                    Assert.AreEqual(positions[i][j], dpEnum.NextPosition());
                 }
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                 Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 Assert.IsNotNull(dpEnum);
-                Assert.AreEqual(dpEnum.Freq, Positions[i].Length);
-                for (int j = 0; j < Positions[i].Length; j++)
+                Assert.AreEqual(dpEnum.Freq, positions[i].Length);
+                for (int j = 0; j < positions[i].Length; j++)
                 {
-                    Assert.AreEqual(Positions[i][j], dpEnum.NextPosition());
+                    Assert.AreEqual(positions[i][j], dpEnum.NextPosition());
                     Assert.AreEqual(j * 10, dpEnum.StartOffset);
-                    Assert.AreEqual(j * 10 + TestTerms[i].Length, dpEnum.EndOffset);
+                    Assert.AreEqual(j * 10 + testTerms[i].Length, dpEnum.EndOffset);
                 }
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
             }

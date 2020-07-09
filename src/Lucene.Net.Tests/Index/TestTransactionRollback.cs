@@ -9,28 +9,28 @@ using BitSet = Lucene.Net.Util.OpenBitSet;
 
 namespace Lucene.Net.Index
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
     using IBits = Lucene.Net.Util.IBits;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    /*
-         * Licensed to the Apache Software Foundation (ASF) under one or more
-         * contributor license agreements.  See the NOTICE file distributed with
-         * this work for additional information regarding copyright ownership.
-         * The ASF licenses this file to You under the Apache License, Version 2.0
-         * (the "License"); you may not use this file except in compliance with
-         * the License.  You may obtain a copy of the License at
-         *
-         *     http://www.apache.org/licenses/LICENSE-2.0
-         *
-         * Unless required by applicable law or agreed to in writing, software
-         * distributed under the License is distributed on an "AS IS" BASIS,
-         * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         * See the License for the specific language governing permissions and
-         * limitations under the License.
-         */
-
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 
     /// <summary>
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
     public class TestTransactionRollback : LuceneTestCase
     {
         private const string FIELD_RECORD_ID = "record_id";
-        private Directory Dir;
+        private Directory dir;
 
         //Rolls back index to a chosen ID
         private void RollBackLast(int id)
@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
             // System.out.println("Attempting to rollback to "+id);
             string ids = "-" + id;
             IndexCommit last = null;
-            ICollection<IndexCommit> commits = DirectoryReader.ListCommits(Dir);
+            ICollection<IndexCommit> commits = DirectoryReader.ListCommits(dir);
             for (IEnumerator<IndexCommit> iterator = commits.GetEnumerator(); iterator.MoveNext(); )
             {
                 IndexCommit commit = iterator.Current;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
                 throw new Exception("Couldn't find commit point " + id);
             }
 
-            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(new RollbackDeletionPolicy(this, id)).SetIndexCommit(last));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(new RollbackDeletionPolicy(this, id)).SetIndexCommit(last));
             IDictionary<string, string> data = new Dictionary<string, string>();
             data["index"] = "Rolled back to 1-" + id.ToString(CultureInfo.InvariantCulture);
             w.SetCommitData(data);
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
 
         private void CheckExpecteds(BitSet expecteds)
         {
-            IndexReader r = DirectoryReader.Open(Dir);
+            IndexReader r = DirectoryReader.Open(dir);
 
             //Perhaps not the most efficient approach but meets our
             //needs here.
@@ -137,11 +137,11 @@ namespace Lucene.Net.Index
         public override void SetUp()
         {
             base.SetUp();
-            Dir = NewDirectory();
+            dir = NewDirectory();
 
             //Build index, of records 1 to 100, committing after each batch of 10
             IndexDeletionPolicy sdp = new KeepAllDeletionPolicy(this);
-            IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(sdp));
+            IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(sdp));
 
             for (int currentRecordId = 1; currentRecordId <= 100; currentRecordId++)
             {
@@ -164,21 +164,21 @@ namespace Lucene.Net.Index
         [TearDown]
         public override void TearDown()
         {
-            Dir.Dispose();
+            dir.Dispose();
             base.TearDown();
         }
 
         // Rolls back to previous commit point
         internal class RollbackDeletionPolicy : IndexDeletionPolicy
         {
-            private readonly TestTransactionRollback OuterInstance;
+            private readonly TestTransactionRollback outerInstance;
 
-            internal int RollbackPoint;
+            internal int rollbackPoint;
 
             public RollbackDeletionPolicy(TestTransactionRollback outerInstance, int rollbackPoint)
             {
-                this.OuterInstance = outerInstance;
-                this.RollbackPoint = rollbackPoint;
+                this.outerInstance = outerInstance;
+                this.rollbackPoint = rollbackPoint;
             }
 
             public override void OnCommit<T>(IList<T> commits)
@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
                         string x = userData["index"];
                         string lastVal = x.Substring(x.LastIndexOf('-') + 1);
                         int last = Convert.ToInt32(lastVal, CultureInfo.InvariantCulture);
-                        if (last > RollbackPoint)
+                        if (last > rollbackPoint)
                         {
                             /*
                             System.out.print("\tRolling back commit point:" +
@@ -219,11 +219,11 @@ namespace Lucene.Net.Index
 
         internal class DeleteLastCommitPolicy : IndexDeletionPolicy
         {
-            private readonly TestTransactionRollback OuterInstance;
+            private readonly TestTransactionRollback outerInstance;
 
             public DeleteLastCommitPolicy(TestTransactionRollback outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override void OnCommit<T>(IList<T> commits)
@@ -243,8 +243,8 @@ namespace Lucene.Net.Index
             {
                 // Unless you specify a prior commit point, rollback
                 // should not work:
-                (new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(new DeleteLastCommitPolicy(this)))).Dispose();
-                IndexReader r = DirectoryReader.Open(Dir);
+                (new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetIndexDeletionPolicy(new DeleteLastCommitPolicy(this)))).Dispose();
+                IndexReader r = DirectoryReader.Open(dir);
                 Assert.AreEqual(100, r.NumDocs);
                 r.Dispose();
             }
@@ -253,11 +253,11 @@ namespace Lucene.Net.Index
         // Keeps all commit points (used to build index)
         internal class KeepAllDeletionPolicy : IndexDeletionPolicy
         {
-            private readonly TestTransactionRollback OuterInstance;
+            private readonly TestTransactionRollback outerInstance;
 
             public KeepAllDeletionPolicy(TestTransactionRollback outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override void OnCommit<T>(IList<T> commits)
