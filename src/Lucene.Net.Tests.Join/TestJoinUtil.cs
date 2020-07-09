@@ -257,11 +257,11 @@ namespace Lucene.Net.Tests.Join
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly TestJoinUtil OuterInstance;
+            private readonly TestJoinUtil outerInstance;
 
             public CollectorAnonymousInnerClassHelper(TestJoinUtil outerInstance)
             {
-                OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             internal bool sawFive;
@@ -526,22 +526,22 @@ namespace Lucene.Net.Tests.Join
 
         private class CollectorAnonymousInnerClassHelper2 : ICollector
         {
-            private readonly TestJoinUtil OuterInstance;
+            private readonly TestJoinUtil outerInstance;
 
-            private bool ScoreDocsInOrder;
-            private IndexIterationContext Context;
-            private FixedBitSet ActualResult;
-            private TopScoreDocCollector TopScoreDocCollector;
+            private bool scoreDocsInOrder;
+            private IndexIterationContext context;
+            private FixedBitSet actualResult;
+            private TopScoreDocCollector topScoreDocCollector;
 
             public CollectorAnonymousInnerClassHelper2(TestJoinUtil outerInstance, bool scoreDocsInOrder,
                 IndexIterationContext context, FixedBitSet actualResult,
                 TopScoreDocCollector topScoreDocCollector)
             {
-                OuterInstance = outerInstance;
-                ScoreDocsInOrder = scoreDocsInOrder;
-                Context = context;
-                ActualResult = actualResult;
-                TopScoreDocCollector = topScoreDocCollector;
+                this.outerInstance = outerInstance;
+                this.scoreDocsInOrder = scoreDocsInOrder;
+                this.context = context;
+                this.actualResult = actualResult;
+                this.topScoreDocCollector = topScoreDocCollector;
             }
 
 
@@ -549,24 +549,24 @@ namespace Lucene.Net.Tests.Join
             
             public virtual void Collect(int doc)
             {
-                ActualResult.Set(doc + _docBase);
-                TopScoreDocCollector.Collect(doc);
+                actualResult.Set(doc + _docBase);
+                topScoreDocCollector.Collect(doc);
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
             {
                 _docBase = context.DocBase;
-                TopScoreDocCollector.SetNextReader(context);
+                topScoreDocCollector.SetNextReader(context);
             }
             
             public virtual void SetScorer(Scorer scorer)
             {
-                TopScoreDocCollector.SetScorer(scorer);
+                topScoreDocCollector.SetScorer(scorer);
             }
 
             public virtual bool AcceptsDocsOutOfOrder
             {
-                get { return ScoreDocsInOrder; }
+                get { return scoreDocsInOrder; }
             }
         }
         
@@ -614,7 +614,7 @@ namespace Lucene.Net.Tests.Join
                 for (int j = 0; j < numberOfLinkValues; j++)
                 {
                     string linkValue = context.RandomUniqueValues[Random.Next(context.RandomUniqueValues.Length)];
-                    docs[i].LinkValues.Add(linkValue);
+                    docs[i].linkValues.Add(linkValue);
                     if (from)
                     {
                         if (!context.FromDocuments.TryGetValue(linkValue, out IList<RandomDoc> fromDocs))
@@ -664,7 +664,7 @@ namespace Lucene.Net.Tests.Join
                 }
                 if (VERBOSE)
                 {
-                    Console.WriteLine("Added document[" + docs[i].Id + "]: " + document);
+                    Console.WriteLine("Added document[" + docs[i].id + "]: " + document);
                 }
             }
 
@@ -763,20 +763,20 @@ namespace Lucene.Net.Tests.Join
 
         private class CollectorAnonymousInnerClassHelper3 : ICollector
         {
-            private readonly TestJoinUtil OuterInstance;
+            private readonly TestJoinUtil outerInstance;
 
-            private IndexIterationContext Context;
-            private string FromField;
-            private IDictionary<BytesRef, JoinScore> JoinValueToJoinScores;
+            private readonly IndexIterationContext context;
+            private readonly string fromField;
+            private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
 
             public CollectorAnonymousInnerClassHelper3(TestJoinUtil outerInstance,
                 IndexIterationContext context, string fromField,
                 IDictionary<BytesRef, JoinScore> joinValueToJoinScores)
             {
-                OuterInstance = outerInstance;
-                Context = context;
-                FromField = fromField;
-                JoinValueToJoinScores = joinValueToJoinScores;
+                this.outerInstance = outerInstance;
+                this.context = context;
+                this.fromField = fromField;
+                this.joinValueToJoinScores = joinValueToJoinScores;
                 joinValue = new BytesRef();
             }
 
@@ -792,9 +792,9 @@ namespace Lucene.Net.Tests.Join
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
                     docTermOrds.LookupOrd(ord, joinValue);
-                    if (!JoinValueToJoinScores.TryGetValue(joinValue, out JoinScore joinScore) || joinScore == null)
+                    if (!joinValueToJoinScores.TryGetValue(joinValue, out JoinScore joinScore) || joinScore == null)
                     {
-                        JoinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
+                        joinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
                     }
                     joinScore.AddScore(scorer.GetScore());
                 }
@@ -802,7 +802,7 @@ namespace Lucene.Net.Tests.Join
             
             public virtual void SetNextReader(AtomicReaderContext context)
             {
-                docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, FromField);
+                docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, fromField);
             }
 
             public virtual void SetScorer(Scorer scorer)
@@ -818,20 +818,20 @@ namespace Lucene.Net.Tests.Join
 
         private class CollectorAnonymousInnerClassHelper4 : ICollector
         {
-            private readonly TestJoinUtil OuterInstance;
+            private readonly TestJoinUtil outerInstance;
 
-            private IndexIterationContext Context;
-            private string FromField;
-            private IDictionary<BytesRef, JoinScore> JoinValueToJoinScores;
+            private readonly IndexIterationContext context;
+            private readonly string fromField;
+            private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
 
             public CollectorAnonymousInnerClassHelper4(TestJoinUtil outerInstance,
                 IndexIterationContext context, string fromField,
                 IDictionary<BytesRef, JoinScore> joinValueToJoinScores)
             {
-                OuterInstance = outerInstance;
-                Context = context;
-                FromField = fromField;
-                JoinValueToJoinScores = joinValueToJoinScores;
+                this.outerInstance = outerInstance;
+                this.context = context;
+                this.fromField = fromField;
+                this.joinValueToJoinScores = joinValueToJoinScores;
                 spare = new BytesRef();
             }
 
@@ -850,17 +850,17 @@ namespace Lucene.Net.Tests.Join
                     return;
                 }
 
-                if (!JoinValueToJoinScores.TryGetValue(joinValue, out JoinScore joinScore) || joinScore == null)
+                if (!joinValueToJoinScores.TryGetValue(joinValue, out JoinScore joinScore) || joinScore == null)
                 {
-                    JoinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
+                    joinValueToJoinScores[BytesRef.DeepCopyOf(joinValue)] = joinScore = new JoinScore();
                 }
                 joinScore.AddScore(scorer.GetScore());
             }
             
             public virtual void SetNextReader(AtomicReaderContext context)
             {
-                terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, FromField, true);
-                docsWithField = FieldCache.DEFAULT.GetDocsWithField(context.AtomicReader, FromField);
+                terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, fromField, true);
+                docsWithField = FieldCache.DEFAULT.GetDocsWithField(context.AtomicReader, fromField);
             }
 
             public virtual void SetScorer(Scorer scorer)
@@ -876,11 +876,11 @@ namespace Lucene.Net.Tests.Join
 
         private class CollectorAnonymousInnerClassHelper5 : ICollector
         {
-            private readonly TestJoinUtil OuterInstance;
+            private readonly TestJoinUtil outerInstance;
 
-            private string _toField;
-            private readonly IDictionary<BytesRef, JoinScore> _joinValueToJoinScores;
-            private readonly IDictionary<int, JoinScore> _docToJoinScore;
+            private readonly string toField;
+            private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
+            private readonly IDictionary<int, JoinScore> docToJoinScore;
 
             private SortedSetDocValues docTermOrds;
             private readonly BytesRef scratch = new BytesRef();
@@ -890,10 +890,10 @@ namespace Lucene.Net.Tests.Join
                 string toField, IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
                 IDictionary<int, JoinScore> docToJoinScore)
             {
-                OuterInstance = testJoinUtil;
-                _toField = toField;
-                _joinValueToJoinScores = joinValueToJoinScores;
-                _docToJoinScore = docToJoinScore;
+                outerInstance = testJoinUtil;
+                this.toField = toField;
+                this.joinValueToJoinScores = joinValueToJoinScores;
+                this.docToJoinScore = docToJoinScore;
             }
 
             public virtual void Collect(int doc)
@@ -903,16 +903,16 @@ namespace Lucene.Net.Tests.Join
                 while ((ord = docTermOrds.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
                 {
                     docTermOrds.LookupOrd(ord, scratch);
-                    if (!_joinValueToJoinScores.TryGetValue(scratch, out JoinScore joinScore) || joinScore == null)
+                    if (!joinValueToJoinScores.TryGetValue(scratch, out JoinScore joinScore) || joinScore == null)
                     {
                         continue;
                     }
                     int basedDoc = docBase + doc;
                     // First encountered join value determines the score.
                     // Something to keep in mind for many-to-many relations.
-                    if (!_docToJoinScore.ContainsKey(basedDoc))
+                    if (!docToJoinScore.ContainsKey(basedDoc))
                     {
-                        _docToJoinScore[basedDoc] = joinScore;
+                        docToJoinScore[basedDoc] = joinScore;
                     }
                 }
             }
@@ -920,13 +920,10 @@ namespace Lucene.Net.Tests.Join
             public virtual void SetNextReader(AtomicReaderContext context)
             {
                 docBase = context.DocBase;
-                docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, _toField);
+                docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, toField);
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => false;
 
             public virtual void SetScorer(Scorer scorer)
             {
@@ -935,11 +932,11 @@ namespace Lucene.Net.Tests.Join
 
         private class CollectorAnonymousInnerClassHelper6 : ICollector
         {
-            private readonly TestJoinUtil OuterInstance;
+            private readonly TestJoinUtil outerInstance;
 
-            private string ToField;
-            private IDictionary<BytesRef, JoinScore> JoinValueToJoinScores;
-            private IDictionary<int, JoinScore> DocToJoinScore;
+            private readonly string toField;
+            private readonly IDictionary<BytesRef, JoinScore> joinValueToJoinScores;
+            private readonly IDictionary<int, JoinScore> docToJoinScore;
 
             private BinaryDocValues terms;
             private int docBase;
@@ -950,25 +947,25 @@ namespace Lucene.Net.Tests.Join
                 IDictionary<BytesRef, JoinScore> joinValueToJoinScores, 
                 IDictionary<int, JoinScore> docToJoinScore)
             {
-                OuterInstance = testJoinUtil;
-                ToField = toField;
-                JoinValueToJoinScores = joinValueToJoinScores;
-                DocToJoinScore = docToJoinScore;
+                outerInstance = testJoinUtil;
+                this.toField = toField;
+                this.joinValueToJoinScores = joinValueToJoinScores;
+                this.docToJoinScore = docToJoinScore;
             }
 
             public virtual void Collect(int doc)
             {
                 terms.Get(doc, spare);
-                if (!JoinValueToJoinScores.TryGetValue(spare, out JoinScore joinScore) || joinScore == null)
+                if (!joinValueToJoinScores.TryGetValue(spare, out JoinScore joinScore) || joinScore == null)
                 {
                     return;
                 }
-                DocToJoinScore[docBase + doc] = joinScore;
+                docToJoinScore[docBase + doc] = joinScore;
             }
             
             public virtual void SetNextReader(AtomicReaderContext context)
             {
-                terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, ToField, false);
+                terms = FieldCache.DEFAULT.GetTerms(context.AtomicReader, toField, false);
                 docBase = context.DocBase;
             }
 
@@ -1035,7 +1032,7 @@ namespace Lucene.Net.Tests.Join
 
             foreach (RandomDoc matchingDoc in matchingDocs)
             {
-                foreach (string linkValue in matchingDoc.LinkValues)
+                foreach (string linkValue in matchingDoc.linkValues)
                 {
                     if (!linkValueDocuments.TryGetValue(linkValue, out IList<RandomDoc> otherMatchingDocs) || otherMatchingDocs == null)
                     {
@@ -1045,7 +1042,7 @@ namespace Lucene.Net.Tests.Join
                     foreach (RandomDoc otherSideDoc in otherMatchingDocs)
                     {
                         DocsEnum docsEnum = MultiFields.GetTermDocsEnum(topLevelReader,
-                            MultiFields.GetLiveDocs(topLevelReader), "id", new BytesRef(otherSideDoc.Id), 0);
+                            MultiFields.GetLiveDocs(topLevelReader), "id", new BytesRef(otherSideDoc.id), 0);
                         Debug.Assert(docsEnum != null);
                         int doc = docsEnum.NextDoc();
                         expectedResult.Set(doc);
@@ -1058,54 +1055,54 @@ namespace Lucene.Net.Tests.Join
         private class IndexIterationContext
         {
 
-            internal string[] RandomUniqueValues;
-            internal bool[] RandomFrom;
-            internal IDictionary<string, IList<RandomDoc>> FromDocuments = new Dictionary<string, IList<RandomDoc>>();
-            internal IDictionary<string, IList<RandomDoc>> ToDocuments = new Dictionary<string, IList<RandomDoc>>();
+            internal string[] RandomUniqueValues { get; set; }
+            internal bool[] RandomFrom { get; set; }
+            internal IDictionary<string, IList<RandomDoc>> FromDocuments { get; set; } = new Dictionary<string, IList<RandomDoc>>();
+            internal IDictionary<string, IList<RandomDoc>> ToDocuments { get; set; } = new Dictionary<string, IList<RandomDoc>>();
 
-            internal IDictionary<string, IList<RandomDoc>> RandomValueFromDocs =
+            internal IDictionary<string, IList<RandomDoc>> RandomValueFromDocs { get; set; } =
                 new Dictionary<string, IList<RandomDoc>>();
 
-            internal IDictionary<string, IList<RandomDoc>> RandomValueToDocs =
+            internal IDictionary<string, IList<RandomDoc>> RandomValueToDocs { get; set; } =
                 new Dictionary<string, IList<RandomDoc>>();
 
-            internal IDictionary<string, IDictionary<int, JoinScore>> FromHitsToJoinScore =
+            internal IDictionary<string, IDictionary<int, JoinScore>> FromHitsToJoinScore { get; set; } =
                 new Dictionary<string, IDictionary<int, JoinScore>>();
 
-            internal IDictionary<string, IDictionary<int, JoinScore>> ToHitsToJoinScore =
+            internal IDictionary<string, IDictionary<int, JoinScore>> ToHitsToJoinScore { get; set; } =
                 new Dictionary<string, IDictionary<int, JoinScore>>();
         }
 
         private class RandomDoc
         {
-            internal readonly string Id;
-            internal readonly IList<string> LinkValues;
-            internal readonly string Value;
-            internal readonly bool From;
+            internal readonly string id;
+            internal readonly IList<string> linkValues;
+            internal readonly string value;
+            internal readonly bool @from;
 
             internal RandomDoc(string id, int numberOfLinkValues, string value, bool from)
             {
-                Id = id;
-                From = from;
-                LinkValues = new List<string>(numberOfLinkValues);
-                Value = value;
+                this.id = id;
+                this.@from = from;
+                linkValues = new List<string>(numberOfLinkValues);
+                this.value = value;
             }
         }
 
         private class JoinScore
         {
-            internal float MaxScore;
-            internal float Total;
-            internal int Count;
+            private float maxScore;
+            private float total;
+            private int count;
 
             internal virtual void AddScore(float score)
             {
-                Total += score;
-                if (score > MaxScore)
+                total += score;
+                if (score > maxScore)
                 {
-                    MaxScore = score;
+                    maxScore = score;
                 }
-                Count++;
+                count++;
             }
 
             internal virtual float Score(ScoreMode mode)
@@ -1115,11 +1112,11 @@ namespace Lucene.Net.Tests.Join
                     case ScoreMode.None:
                         return 1.0f;
                     case ScoreMode.Total:
-                        return Total;
+                        return total;
                     case ScoreMode.Avg:
-                        return Total/Count;
+                        return total/count;
                     case ScoreMode.Max:
-                        return MaxScore;
+                        return maxScore;
                 }
                 throw new ArgumentException("Unsupported ScoreMode: " + mode);
             }
