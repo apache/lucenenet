@@ -111,10 +111,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             return sb;
         }
 
-        internal IHTMLParser HtmlParser
-        {
-            get { return htmlParser; }
-        }
+        internal IHTMLParser HtmlParser => htmlParser;
 
         /// <summary>
         /// Read until a line starting with the specified <paramref name="lineStart"/>.

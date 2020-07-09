@@ -405,9 +405,9 @@ namespace Lucene.Net.Util.Automaton
             {
                 p = worklist.First.Value;
                 worklist.Remove(p);
-                p.s.accept = p.S1.accept && p.S2.accept;
-                Transition[] t1 = transitions1[p.S1.number];
-                Transition[] t2 = transitions2[p.S2.number];
+                p.s.accept = p.s1.accept && p.s2.accept;
+                Transition[] t1 = transitions1[p.s1.number];
+                Transition[] t2 = transitions2[p.s2.number];
                 for (int n1 = 0, b2 = 0; n1 < t1.Length; n1++)
                 {
                     while (b2 < t2.Length && t2[b2].max < t1[n1].min)
@@ -501,12 +501,12 @@ namespace Lucene.Net.Util.Automaton
             {
                 p = worklist.First.Value;
                 worklist.Remove(p);
-                if (p.S1.accept && !p.S2.accept)
+                if (p.s1.accept && !p.s2.accept)
                 {
                     return false;
                 }
-                Transition[] t1 = transitions1[p.S1.number];
-                Transition[] t2 = transitions2[p.S2.number];
+                Transition[] t1 = transitions1[p.s1.number];
+                Transition[] t2 = transitions2[p.s2.number];
                 for (int n1 = 0, b2 = 0; n1 < t1.Length; n1++)
                 {
                     while (b2 < t2.Length && t2[b2].max < t1[n1].min)
@@ -927,19 +927,19 @@ namespace Lucene.Net.Util.Automaton
             Dictionary<State, JCG.HashSet<State>> back = new Dictionary<State, JCG.HashSet<State>>();
             foreach (StatePair p in pairs)
             {
-                if (!forward.TryGetValue(p.S1, out JCG.HashSet<State> to))
+                if (!forward.TryGetValue(p.s1, out JCG.HashSet<State> to))
                 {
                     to = new JCG.HashSet<State>();
-                    forward[p.S1] = to;
+                    forward[p.s1] = to;
                 }
-                to.Add(p.S2);
+                to.Add(p.s2);
                 JCG.HashSet<State> from;
-                if (!back.TryGetValue(p.S2, out from))
+                if (!back.TryGetValue(p.s2, out from))
                 {
                     from = new JCG.HashSet<State>();
-                    back[p.S2] = from;
+                    back[p.s2] = from;
                 }
-                from.Add(p.S1);
+                from.Add(p.s1);
             }
             // calculate epsilon closure
             LinkedList<StatePair> worklist = new LinkedList<StatePair>(pairs);
@@ -951,23 +951,23 @@ namespace Lucene.Net.Util.Automaton
                 workset.Remove(p);
                 JCG.HashSet<State> to;
                 JCG.HashSet<State> from;
-                if (forward.TryGetValue(p.S2, out to))
+                if (forward.TryGetValue(p.s2, out to))
                 {
                     foreach (State s in to)
                     {
-                        StatePair pp = new StatePair(p.S1, s);
+                        StatePair pp = new StatePair(p.s1, s);
                         if (!pairs.Contains(pp))
                         {
                             pairs.Add(pp);
-                            forward[p.S1].Add(s);
-                            back[s].Add(p.S1);
+                            forward[p.s1].Add(s);
+                            back[s].Add(p.s1);
                             worklist.AddLast(pp);
                             workset.Add(pp);
-                            if (back.TryGetValue(p.S1, out from))
+                            if (back.TryGetValue(p.s1, out from))
                             {
                                 foreach (State q in from)
                                 {
-                                    StatePair qq = new StatePair(q, p.S1);
+                                    StatePair qq = new StatePair(q, p.s1);
                                     if (!workset.Contains(qq))
                                     {
                                         worklist.AddLast(qq);
@@ -982,7 +982,7 @@ namespace Lucene.Net.Util.Automaton
             // add transitions
             foreach (StatePair p in pairs)
             {
-                p.S1.AddEpsilon(p.S2);
+                p.s1.AddEpsilon(p.s2);
             }
             a.deterministic = false;
             //a.clearHashCode();

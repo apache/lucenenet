@@ -41,8 +41,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
 
         public virtual string UniqueField
         {
-            get { return this.uniqueField; }
-            set { this.uniqueField = value; }
+            get => this.uniqueField;
+            set => this.uniqueField = value;
         }
 
         public override void CopyTo(IAttribute target)

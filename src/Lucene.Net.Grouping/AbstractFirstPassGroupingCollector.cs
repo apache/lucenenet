@@ -382,10 +382,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return false; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => false;
 
         public virtual void SetNextReader(AtomicReaderContext context)
         {

@@ -492,10 +492,7 @@ namespace Lucene.Net.Search
                 lastDoc[0] = -1;
             }
 
-            public virtual bool AcceptsDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public virtual bool AcceptsDocsOutOfOrder => false;
         }
 
 #if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION

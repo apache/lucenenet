@@ -68,21 +68,9 @@ namespace Lucene.Net.Codecs.Lucene46
         {
         }
 
-        public override SegmentInfoReader SegmentInfoReader
-        {
-            get
-            {
-                return reader;
-            }
-        }
+        public override SegmentInfoReader SegmentInfoReader => reader;
 
-        public override SegmentInfoWriter SegmentInfoWriter
-        {
-            get
-            {
-                return writer;
-            }
-        }
+        public override SegmentInfoWriter SegmentInfoWriter => writer;
 
         /// <summary>
         /// File extension used to store <see cref="SegmentInfo"/>. </summary>

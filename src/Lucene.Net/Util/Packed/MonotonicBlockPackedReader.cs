@@ -90,10 +90,7 @@ namespace Lucene.Net.Util.Packed
         /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        public long Count
-        {
-            get { return valueCount; }
-        }
+        public long Count => valueCount;
 
         /// <summary>
         /// Returns the approximate RAM bytes used. </summary>

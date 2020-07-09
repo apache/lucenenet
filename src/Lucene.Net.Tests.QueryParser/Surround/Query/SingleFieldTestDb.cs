@@ -50,8 +50,8 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             }
         }
 
-        public Directory Db { get { return db; } }
-        public string[] Docs { get { return docs; } }
-        public string Fieldname { get { return fieldName; } }
+        public Directory Db => db;
+        public string[] Docs => docs;
+        public string Fieldname => fieldName;
     }
 }

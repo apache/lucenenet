@@ -444,26 +444,26 @@ namespace Lucene.Net.Search.Highlight
 
         public virtual int MaxDocCharsToAnalyze
         {
-            get { return _maxDocCharsToAnalyze; }
-            set { this._maxDocCharsToAnalyze = value; }
+            get => _maxDocCharsToAnalyze;
+            set => this._maxDocCharsToAnalyze = value;
         }
 
         public virtual IFragmenter TextFragmenter
         {
-            get { return _textFragmenter; }
-            set { _textFragmenter = value; }
+            get => _textFragmenter;
+            set => _textFragmenter = value;
         }
 
         public virtual IScorer FragmentScorer
         {
-            get { return _fragmentScorer; }
-            set { _fragmentScorer = value; }
+            get => _fragmentScorer;
+            set => _fragmentScorer = value;
         }
 
         public virtual IEncoder Encoder
         {
-            get { return _encoder; }
-            set { this._encoder = value; }
+            get => _encoder;
+            set => this._encoder = value;
         }
     }
 

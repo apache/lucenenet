@@ -188,15 +188,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: returns the current refCount for this reader </summary>
-        public int RefCount
-        {
-            get
-            {
-                // NOTE: don't ensureOpen, so that callers can see
-                // refCount is 0 (reader is closed)
-                return refCount;
-            }
-        }
+        public int RefCount =>
+            // NOTE: don't ensureOpen, so that callers can see
+            // refCount is 0 (reader is closed)
+            refCount;
 
         /// <summary>
         /// Expert: increments the <see cref="RefCount"/> of this <see cref="IndexReader"/>
@@ -473,10 +468,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the number of deleted documents. </summary>
-        public int NumDeletedDocs
-        {
-            get { return MaxDoc - NumDocs; }
-        }
+        public int NumDeletedDocs => MaxDoc - NumDocs;
 
         /// <summary>
         /// Expert: visits the fields of a stored document, for
@@ -531,13 +523,7 @@ namespace Lucene.Net.Index
         /// consider overriding this property if <see cref="MaxDoc"/> or <see cref="NumDocs"/>
         /// are not constant-time operations.
         /// </summary>
-        public virtual bool HasDeletions
-        {
-            get
-            {
-                return NumDeletedDocs > 0;
-            }
-        }
+        public virtual bool HasDeletions => NumDeletedDocs > 0;
 
         /// <summary> Closes files associated with this index.
         /// Also saves any new deletions to disk.
@@ -604,10 +590,7 @@ namespace Lucene.Net.Index
         /// This is a convenience method calling <c>this.Context.Leaves</c>.
         /// </summary>
         /// <seealso cref="IndexReaderContext.Leaves"/>
-        public IList<AtomicReaderContext> Leaves
-        {
-            get { return Context.Leaves; }
-        }
+        public IList<AtomicReaderContext> Leaves => Context.Leaves;
 
         /// <summary>
         /// Expert: Returns a key for this <see cref="IndexReader"/>, so 
@@ -616,15 +599,10 @@ namespace Lucene.Net.Index
         /// This key must not have Equals()/GetHashCode() methods, 
         /// so &quot;equals&quot; means &quot;identical&quot;.
         /// </summary>
-        public virtual object CoreCacheKey
-        {
-            get
-            {
-                // Don't call ensureOpen since FC calls this (to evict)
-                // on close
-                return this;
-            }
-        }
+        public virtual object CoreCacheKey =>
+            // Don't call ensureOpen since FC calls this (to evict)
+            // on close
+            this;
 
         /// <summary>
         /// Expert: Returns a key for this <see cref="IndexReader"/> that also includes deletions,
@@ -632,15 +610,10 @@ namespace Lucene.Net.Index
         /// This key must not have Equals()/GetHashCode() methods, 
         /// so &quot;equals&quot; means &quot;identical&quot;.
         /// </summary>
-        public virtual object CombinedCoreAndDeletesKey
-        {
-            get
-            {
-                // Don't call ensureOpen since FC calls this (to evict)
-                // on close
-                return this;
-            }
-        }
+        public virtual object CombinedCoreAndDeletesKey =>
+            // Don't call ensureOpen since FC calls this (to evict)
+            // on close
+            this;
 
         /// <summary>
         /// Returns the number of documents containing the

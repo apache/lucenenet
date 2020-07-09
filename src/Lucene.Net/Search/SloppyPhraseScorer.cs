@@ -631,15 +631,9 @@ namespace Lucene.Net.Search
             return tg;
         }
 
-        public override int Freq
-        {
-            get { return numMatches; }
-        }
+        public override int Freq => numMatches;
 
-        internal float SloppyFreq
-        {
-            get { return sloppyFreq; }
-        }
+        internal float SloppyFreq => sloppyFreq;
 
         //  private void printQueue(PrintStream ps, PhrasePositions ext, String title) {
         //    //if (min.doc != ?) return;
@@ -674,10 +668,7 @@ namespace Lucene.Net.Search
             return true;
         }
 
-        public override int DocID
-        {
-            get { return max.doc; }
-        }
+        public override int DocID => max.doc;
 
         public override int NextDoc()
         {

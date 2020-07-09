@@ -89,8 +89,8 @@ namespace Lucene.Net.Analysis.Util
             private TValue value = default(TValue);
             public TValue Value
             {
-                get { return value; }
-                set { this.value = value; }
+                get => value;
+                set => this.value = value;
             }
 
             public MapValue()
@@ -887,10 +887,7 @@ namespace Lucene.Net.Analysis.Util
         /// The Lucene version corresponding to the compatibility behavior 
         /// that this instance emulates
         /// </summary>
-        public virtual LuceneVersion MatchVersion
-        {
-            get { return matchVersion; }
-        }
+        public virtual LuceneVersion MatchVersion => matchVersion;
 
         /// <summary>
         /// Adds a placeholder with the given <paramref name="text"/> as the key.
@@ -1039,8 +1036,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="length">The total length of the <paramref name="key"/>.</param>
         public virtual TValue this[char[] key, int offset, int length]
         {
-            get { return Get(key, offset, length); }
-            set { Put(key, value); }
+            get => Get(key, offset, length);
+            set => Put(key, value);
         }
 
         /// <summary>
@@ -1049,8 +1046,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="key">The key of the value to get or set.</param>
         public virtual TValue this[char[] key]
         {
-            get { return Get(key); }
-            set { Put(key, value); }
+            get => Get(key);
+            set => Put(key, value);
         }
 
         /// <summary>
@@ -1059,8 +1056,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="key">The key of the value to get or set.</param>
         public virtual TValue this[ICharSequence key]
         {
-            get { return Get(key); }
-            set { Put(key, value); }
+            get => Get(key);
+            set => Put(key, value);
         }
 
         /// <summary>
@@ -1069,8 +1066,8 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="key">The key of the value to get or set.</param>
         public virtual TValue this[string key]
         {
-            get { return Get(key); }
-            set { Put(key, value); }
+            get => Get(key);
+            set => Put(key, value);
         }
 
         /// <summary>
@@ -1079,17 +1076,14 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="key">The key of the value to get or set.</param>
         public virtual TValue this[object key]
         {
-            get { return Get(key); }
-            set { Put(key, value); }
+            get => Get(key);
+            set => Put(key, value);
         }
 
         /// <summary>
         /// Gets a collection containing the keys in the <see cref="CharArrayMap{TValue}"/>.
         /// </summary>
-        public virtual ICollection<string> Keys
-        {
-            get { return KeySet; }
-        }
+        public virtual ICollection<string> Keys => KeySet;
 
 
         private volatile ICollection<TValue> valueSet;
@@ -1129,21 +1123,9 @@ namespace Lucene.Net.Analysis.Util
                 this.outerInstance = outerInstance;
             }
 
-            public int Count
-            {
-                get
-                {
-                    return outerInstance.Count;
-                }
-            }
+            public int Count => outerInstance.Count;
 
-            public bool IsReadOnly
-            {
-                get
-                {
-                    return outerInstance.IsReadOnly;
-                }
-            }
+            public bool IsReadOnly => outerInstance.IsReadOnly;
 
             public void Add(string item)
             {
@@ -1200,21 +1182,9 @@ namespace Lucene.Net.Analysis.Util
                     this.entryIterator = new EntryIterator(outerInstance, !outerInstance.IsReadOnly);
                 }
 
-                public string Current
-                {
-                    get
-                    {
-                        return entryIterator.Current.Key;
-                    }
-                }
+                public string Current => entryIterator.Current.Key;
 
-                object IEnumerator.Current
-                {
-                    get
-                    {
-                        return Current;
-                    }
-                }
+                object IEnumerator.Current => Current;
 
                 public void Dispose()
                 {
@@ -1245,21 +1215,9 @@ namespace Lucene.Net.Analysis.Util
                 this.outerInstance = outerInstance;
             }
 
-            public int Count
-            {
-                get
-                {
-                    return outerInstance.Count;
-                }
-            }
+            public int Count => outerInstance.Count;
 
-            public bool IsReadOnly
-            {
-                get
-                {
-                    return outerInstance.IsReadOnly;
-                }
-            }
+            public bool IsReadOnly => outerInstance.IsReadOnly;
 
             public void Add(TValue item)
             {
@@ -1339,21 +1297,9 @@ namespace Lucene.Net.Analysis.Util
                     this.entryIterator = new EntryIterator(outerInstance, !outerInstance.IsReadOnly);
                 }
 
-                public TValue Current
-                {
-                    get
-                    {
-                        return entryIterator.CurrentValue;
-                    }
-                }
+                public TValue Current => entryIterator.CurrentValue;
 
-                object IEnumerator.Current
-                {
-                    get
-                    {
-                        return Current;
-                    }
-                }
+                object IEnumerator.Current => Current;
 
                 public void Dispose()
                 {
@@ -1370,10 +1316,7 @@ namespace Lucene.Net.Analysis.Util
                     entryIterator.Reset();
                 }
 
-                public bool HasNext
-                {
-                    get { return entryIterator.HasNext; }
-                }
+                public bool HasNext => entryIterator.HasNext;
             }
         }
 
@@ -1419,10 +1362,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Gets the number of key/value pairs contained in the <see cref="CharArrayMap{TValue}"/>.
         /// </summary>
-        public virtual int Count
-        {
-            get { return count; }
-        }
+        public virtual int Count => count;
 
         /// <summary>
         /// Returns a string that represents the current object. (Inherited from <see cref="object"/>.)
@@ -1557,10 +1497,7 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
 
-            public virtual bool HasNext
-            {
-                get { return pos < outerInstance.keys.Length; }
-            }
+            public virtual bool HasNext => pos < outerInstance.keys.Length;
 
             /// <summary>
             /// gets the next key... do not modify the returned char[]
@@ -1637,10 +1574,7 @@ namespace Lucene.Net.Analysis.Util
                 }
             }
 
-            object IEnumerator.Current
-            {
-                get { return Current; }
-            }
+            object IEnumerator.Current => Current;
 
             #endregion
         }
@@ -1706,11 +1640,8 @@ namespace Lucene.Net.Analysis.Util
                 throw new NotSupportedException();
             }
 
-            public int Count
-            {
-                get { return outerInstance.count; }
-            }
-            
+            public int Count => outerInstance.count;
+
             public void Clear()
             {
                 if (!allowModify)
@@ -1740,7 +1671,7 @@ namespace Lucene.Net.Analysis.Util
                 outerInstance.Add(item);
             }
 
-            public bool IsReadOnly { get { return !allowModify; } }
+            public bool IsReadOnly => !allowModify;
 
             public override string ToString()
             {
@@ -1986,28 +1917,28 @@ namespace Lucene.Net.Analysis.Util
             }
             public override TValue this[char[] key, int offset, int length]
             {
-                get { return base[key, offset, length]; }
-                set { throw new NotSupportedException(); }
+                get => base[key, offset, length];
+                set => throw new NotSupportedException();
             }
             public override TValue this[char[] key]
             {
-                get { return base[key]; }
-                set { throw new NotSupportedException(); }
+                get => base[key];
+                set => throw new NotSupportedException();
             }
             public override TValue this[ICharSequence key]
             {
-                get { return base[key]; }
-                set { throw new NotSupportedException(); }
+                get => base[key];
+                set => throw new NotSupportedException();
             }
             public override TValue this[string key]
             {
-                get { return base[key]; }
-                set { throw new NotSupportedException(); }
+                get => base[key];
+                set => throw new NotSupportedException();
             }
             public override TValue this[object key]
             {
-                get { return base[key]; }
-                set { throw new NotSupportedException(); }
+                get => base[key];
+                set => throw new NotSupportedException();
             }
 
             [Obsolete("Not applicable in this class.")]

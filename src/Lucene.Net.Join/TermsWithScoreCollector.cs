@@ -41,23 +41,11 @@ namespace Lucene.Net.Join
             this._scoreMode = scoreMode;
         }
 
-        public BytesRefHash CollectedTerms
-        {
-            get
-            {
-                return _collectedTerms;
-            }
-        }
+        public BytesRefHash CollectedTerms => _collectedTerms;
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual float[] ScoresPerTerm
-        {
-            get
-            {
-                return _scoreSums;
-            }
-        }
+        public virtual float[] ScoresPerTerm => _scoreSums;
 
         public virtual void SetScorer(Scorer scorer)
         {
@@ -92,10 +80,7 @@ namespace Lucene.Net.Join
         public abstract void SetNextReader(AtomicReaderContext context);
 
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return true; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => true;
 
         /// <summary>
         /// Chooses the right <see cref="TermsWithScoreCollector"/> implementation.

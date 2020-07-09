@@ -87,8 +87,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public virtual bool IsLeaf
         {
-            get { return this.isLeaf; }
-            protected set { this.isLeaf = value; }
+            get => this.isLeaf;
+            protected set => this.isLeaf = value;
         }
 
         public void Set(IList<IQueryNode> children)
@@ -207,15 +207,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
         }
 
-        public virtual IQueryNode Parent
-        {
-            get { return this.parent; }
-        }
+        public virtual IQueryNode Parent => this.parent;
 
-        protected virtual bool IsRoot
-        {
-            get { return Parent == null; }
-        }
+        protected virtual bool IsRoot => Parent == null;
 
         /// <summary>
         /// If set to true the the method toQueryString will not write field names
@@ -257,10 +251,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// Gets a map containing all tags attached to this query node.
         /// </summary>
-        public virtual IDictionary<string, object> TagMap
-        {
-            get { return new Dictionary<string, object>(this.tags); }
-        }
+        public virtual IDictionary<string, object> TagMap => new Dictionary<string, object>(this.tags);
 
         public virtual void RemoveFromParent()
         {

@@ -57,13 +57,7 @@ namespace Lucene.Net.Index
             fieldState = termsHashPerField.fieldState;
         }
 
-        internal override int StreamCount
-        {
-            get
-            {
-                return 2;
-            }
-        }
+        internal override int StreamCount => 2;
 
         internal override bool Start(IIndexableField[] fields, int count)
         {

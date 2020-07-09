@@ -1561,13 +1561,7 @@ namespace Lucene.Net.Search.Highlight
                 return 0;
             }
 
-            public float FragmentScore
-            {
-                get
-                {
-                    return 1;
-                }
-            }
+            public float FragmentScore => 1;
 
             public TokenStream Init(TokenStream tokenStream)
             {

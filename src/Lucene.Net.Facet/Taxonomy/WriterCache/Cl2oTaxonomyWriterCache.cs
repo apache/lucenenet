@@ -75,14 +75,9 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        public virtual bool IsFull
-        {
-            get
-            {
-                // This cache is never full
-                return false;
-            }
-        }
+        public virtual bool IsFull =>
+            // This cache is never full
+            false;
 
         public virtual int Get(FacetLabel categoryPath)
         {

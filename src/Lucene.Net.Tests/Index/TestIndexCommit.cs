@@ -54,65 +54,23 @@ namespace Lucene.Net.Index
                 this.dir = dir;
             }
 
-            public override string SegmentsFileName
-            {
-                get
-                {
-                    return "a";
-                }
-            }
+            public override string SegmentsFileName => "a";
 
-            public override Directory Directory
-            {
-                get
-                {
-                    return dir;
-                }
-            }
+            public override Directory Directory => dir;
 
-            public override ICollection<string> FileNames
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public override ICollection<string> FileNames => null;
 
             public override void Delete()
             {
             }
 
-            public override long Generation
-            {
-                get
-                {
-                    return 0;
-                }
-            }
+            public override long Generation => 0;
 
-            public override IDictionary<string, string> UserData
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public override IDictionary<string, string> UserData => null;
 
-            public override bool IsDeleted
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public override bool IsDeleted => false;
 
-            public override int SegmentCount
-            {
-                get
-                {
-                    return 2;
-                }
-            }
+            public override int SegmentCount => 2;
         }
 
         private class IndexCommitAnonymousInnerClassHelper2 : IndexCommit
@@ -127,65 +85,23 @@ namespace Lucene.Net.Index
                 this.dir = dir;
             }
 
-            public override string SegmentsFileName
-            {
-                get
-                {
-                    return "b";
-                }
-            }
+            public override string SegmentsFileName => "b";
 
-            public override Directory Directory
-            {
-                get
-                {
-                    return dir;
-                }
-            }
+            public override Directory Directory => dir;
 
-            public override ICollection<string> FileNames
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public override ICollection<string> FileNames => null;
 
             public override void Delete()
             {
             }
 
-            public override long Generation
-            {
-                get
-                {
-                    return 0;
-                }
-            }
+            public override long Generation => 0;
 
-            public override IDictionary<string, string> UserData
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public override IDictionary<string, string> UserData => null;
 
-            public override bool IsDeleted
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public override bool IsDeleted => false;
 
-            public override int SegmentCount
-            {
-                get
-                {
-                    return 2;
-                }
-            }
+            public override int SegmentCount => 2;
         }
     }
 }

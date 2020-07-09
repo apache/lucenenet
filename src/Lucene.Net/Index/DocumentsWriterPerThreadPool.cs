@@ -97,62 +97,36 @@ namespace Lucene.Net.Index
             /// only return <c>false</c> iff the DW has been disposed and this
             /// <see cref="ThreadState"/> is already checked out for flush.
             /// </summary>
-            internal bool IsActive
-            {
-                get
-                {
-                    //Debug.Assert(this.HeldByCurrentThread);
-                    return isActive;
-                }
-            }
+            internal bool IsActive =>
+                //Debug.Assert(this.HeldByCurrentThread);
+                isActive;
 
-            internal bool IsInitialized
-            {
-                get
-                {
-                    //Debug.Assert(this.HeldByCurrentThread);
-                    return IsActive && dwpt != null;
-                }
-            }
+            internal bool IsInitialized =>
+                //Debug.Assert(this.HeldByCurrentThread);
+                IsActive && dwpt != null;
 
             /// <summary>
             /// Returns the number of currently active bytes in this ThreadState's
             /// <see cref="DocumentsWriterPerThread"/>
             /// </summary>
-            public long BytesUsedPerThread
-            {
-                get
-                {
-                    //Debug.Assert(this.HeldByCurrentThread);
-                    // public for FlushPolicy
-                    return bytesUsed;
-                }
-            }
+            public long BytesUsedPerThread =>
+                //Debug.Assert(this.HeldByCurrentThread);
+                // public for FlushPolicy
+                bytesUsed;
 
             /// <summary>
             /// Returns this <see cref="ThreadState"/>s <see cref="DocumentsWriterPerThread"/>
             /// </summary>
-            public DocumentsWriterPerThread DocumentsWriterPerThread
-            {
-                get
-                {
-                    //Debug.Assert(this.HeldByCurrentThread);
-                    // public for FlushPolicy
-                    return dwpt;
-                }
-            }
+            public DocumentsWriterPerThread DocumentsWriterPerThread =>
+                //Debug.Assert(this.HeldByCurrentThread);
+                // public for FlushPolicy
+                dwpt;
 
             /// <summary>
             /// Returns <c>true</c> iff this <see cref="ThreadState"/> is marked as flush
             /// pending otherwise <c>false</c>
             /// </summary>
-            public bool IsFlushPending
-            {
-                get
-                {
-                    return flushPending;
-                }
-            }
+            public bool IsFlushPending => flushPending;
         }
 
         private ThreadState[] threadStates;
@@ -199,24 +173,12 @@ namespace Lucene.Net.Index
         /// Returns the max number of <see cref="ThreadState"/> instances available in this
         /// <see cref="DocumentsWriterPerThreadPool"/>
         /// </summary>
-        public virtual int MaxThreadStates
-        {
-            get
-            {
-                return threadStates.Length;
-            }
-        }
+        public virtual int MaxThreadStates => threadStates.Length;
 
         /// <summary>
         /// Returns the active number of <see cref="ThreadState"/> instances.
         /// </summary>
-        public virtual int NumThreadStatesActive // LUCENENET NOTE: Changed from getActiveThreadState() because the name wasn't clear
-        {
-            get
-            {
-                return numThreadStatesActive;
-            }
-        }
+        public virtual int NumThreadStatesActive => numThreadStatesActive; // LUCENENET NOTE: Changed from getActiveThreadState() because the name wasn't clear
 
         /// <summary>
         /// Returns a new <see cref="ThreadState"/> iff any new state is available otherwise

@@ -61,10 +61,7 @@ namespace TagSoup
         /// <summary>
         /// Gets or sets the root element of this schema
         /// </summary>
-        public virtual ElementType RootElementType
-        {
-            get { return theRoot; }
-        }
+        public virtual ElementType RootElementType => theRoot;
 
         /// <summary>
         /// Add or replace a default attribute for an element type in this schema.
@@ -143,8 +140,8 @@ namespace TagSoup
         /// </summary>
         public virtual string Uri
         {
-            get { return theURI; }
-            set { theURI = value; }
+            get => theURI;
+            set => theURI = value;
         }
 
         /// <summary>
@@ -152,8 +149,8 @@ namespace TagSoup
         /// </summary>
         public virtual string Prefix
         {
-            get { return thePrefix; }
-            set { thePrefix = value; }
+            get => thePrefix;
+            set => thePrefix = value;
         }
     }
 }

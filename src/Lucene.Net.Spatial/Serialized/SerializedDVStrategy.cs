@@ -200,10 +200,7 @@ namespace Lucene.Net.Spatial.Serialized
                         return predFuncValues.BoolVal(index);
                     }
 
-                    public virtual int Length
-                    {
-                        get { return context.Reader.MaxDoc; }
-                    }
+                    public virtual int Length => context.Reader.MaxDoc;
                 }
             }
 

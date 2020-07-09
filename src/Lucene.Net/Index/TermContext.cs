@@ -169,10 +169,7 @@ namespace Lucene.Net.Index
         ///         instances passed to <see cref="Register(TermState, int, int, long)"/>. </summary>
         /// <returns> the accumulated term frequency of all <see cref="TermState"/>
         ///         instances passed to <see cref="Register(TermState, int, int, long)"/>. </returns>
-        public long TotalTermFreq
-        {
-            get { return totalTermFreq; }
-        }
+        public long TotalTermFreq => totalTermFreq;
 
         /// <summary>
         /// expert: only available for queries that want to lie about docfreq
@@ -181,14 +178,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public int DocFreq
         {
-            internal set
-            {
-                this.docFreq = value;
-            }
-            get
-            {
-                return docFreq;
-            }
+            get => docFreq;
+            internal set => this.docFreq = value;
         }
     }
 }

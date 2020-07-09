@@ -39,10 +39,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             userData = @params;
         }
 
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
 
         public override int DoLogic()
         {

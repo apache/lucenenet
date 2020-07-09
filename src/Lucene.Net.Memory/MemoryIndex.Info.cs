@@ -86,13 +86,7 @@ namespace Lucene.Net.Index.Memory
                 this.lastOffset = lastOffset;
             }
 
-            public long SumTotalTermFreq
-            {
-                get
-                {
-                    return sumTotalTermFreq;
-                }
-            }
+            public long SumTotalTermFreq => sumTotalTermFreq;
 
             /// <summary>
             /// Sorts hashed terms into ascending order, reusing memory along the
@@ -110,13 +104,7 @@ namespace Lucene.Net.Index.Memory
                 }
             }
 
-            public float Boost
-            {
-                get
-                {
-                    return boost;
-                }
-            }
+            public float Boost => boost;
         }
     }
 }

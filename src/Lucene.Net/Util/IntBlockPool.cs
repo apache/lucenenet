@@ -99,8 +99,8 @@ namespace Lucene.Net.Util
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[][] Buffers
         {
-            get { return buffers; }
-            set { buffers = value; }
+            get => buffers;
+            set => buffers = value;
         }
         private int[][] buffers = new int[10][];
 
@@ -121,8 +121,8 @@ namespace Lucene.Net.Util
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[] Buffer
         {
-            get { return buffer; }
-            set { buffer = value; }
+            get => buffer;
+            set => buffer = value;
         }
         private int[] buffer;
 
@@ -365,13 +365,7 @@ namespace Lucene.Net.Util
             /// this slice is fully written or to reset the this writer if another slice
             /// needs to be written.
             /// </summary>
-            public virtual int CurrentOffset
-            {
-                get
-                {
-                    return offset;
-                }
-            }
+            public virtual int CurrentOffset => offset;
         }
 
         /// <summary>

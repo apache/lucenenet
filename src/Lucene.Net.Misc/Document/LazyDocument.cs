@@ -155,10 +155,7 @@ namespace Lucene.Net.Documents
             /// non-private for test only access
             /// @lucene.internal 
             /// </summary>
-            public virtual bool HasBeenLoaded
-            {
-                get { return null != realValue; }
-            }
+            public virtual bool HasBeenLoaded => null != realValue;
 
             internal virtual IIndexableField GetRealValue()
             {
@@ -175,18 +172,12 @@ namespace Lucene.Net.Documents
             /// <summary>
             /// The field's name
             /// </summary>
-            public virtual string Name
-            {
-                get { return name; }
-            }
+            public virtual string Name => name;
 
             /// <summary>
             /// Gets the boost factor on this field.
             /// </summary>
-            public virtual float Boost
-            {
-                get { return 1.0f; }
-            }
+            public virtual float Boost => 1.0f;
 
             /// <summary>
             /// Non-null if this field has a binary value. </summary>
@@ -281,10 +272,7 @@ namespace Lucene.Net.Documents
             /// </summary>
             // LUCENENET specific - Since we have no numeric reference types in .NET, this method was added to check
             // the numeric type of the inner field without boxing/unboxing.
-            public virtual NumericFieldType NumericType
-            {
-                get { return GetRealValue().NumericType; }
-            }
+            public virtual NumericFieldType NumericType => GetRealValue().NumericType;
 
             /// <summary>
             /// Returns the field value as <see cref="byte"/> or <c>null</c> if the type
@@ -354,17 +342,11 @@ namespace Lucene.Net.Documents
 
             /// <summary>
             /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="Documents.FieldType"/>. </summary>
-            public virtual FieldType FieldType
-            {
-                get { return GetRealValue().IndexableFieldType as FieldType; }
-            }
+            public virtual FieldType FieldType => GetRealValue().IndexableFieldType as FieldType;
 
             /// <summary>
             /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="IIndexableFieldType"/>. </summary>
-            public virtual IIndexableFieldType IndexableFieldType
-            {
-                get { return GetRealValue().IndexableFieldType; }
-            }
+            public virtual IIndexableFieldType IndexableFieldType => GetRealValue().IndexableFieldType;
 
             public virtual TokenStream GetTokenStream(Analyzer analyzer)
             {

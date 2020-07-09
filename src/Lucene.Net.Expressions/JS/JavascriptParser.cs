@@ -145,23 +145,18 @@ namespace Lucene.Net.Expressions.JS
 
         public virtual ITreeAdaptor TreeAdaptor
         {
-            get { return m_adaptor; }
-            set { m_adaptor = value; }
+            get => m_adaptor;
+            set => m_adaptor = value;
         }
 
         // delegators
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public override string[] TokenNames
-        {
-            get { return tokenNames; }
-        }
+        public override string[] TokenNames => tokenNames;
 
         public override string GrammarFileName
-        {
-            get { return "src/java/org/apache/lucene/expressions/js/Javascript.g"; }
-        }
+            => "src/java/org/apache/lucene/expressions/js/Javascript.g";
 
         public override void DisplayRecognitionError(string[] tokenNames, RecognitionException re)
         {

@@ -86,15 +86,9 @@ namespace Lucene.Net.Util.Fst
         private readonly FreezeTail<T> freezeTail;
 
         // LUCENENET specific - allow external access through property
-        internal FST<T> Fst
-        {
-            get { return fst; }
-        }
+        internal FST<T> Fst => fst;
 
-        internal T NoOutput
-        {
-            get { return NO_OUTPUT; }
-        }
+        internal T NoOutput => NO_OUTPUT;
 
 
         /// <summary>
@@ -189,29 +183,11 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public virtual long TotStateCount
-        {
-            get
-            {
-                return fst.nodeCount;
-            }
-        }
+        public virtual long TotStateCount => fst.nodeCount;
 
-        public virtual long TermCount
-        {
-            get
-            {
-                return frontier[0].InputCount;
-            }
-        }
+        public virtual long TermCount => frontier[0].InputCount;
 
-        public virtual long MappedStateCount
-        {
-            get
-            {
-                return dedupHash == null ? 0 : fst.nodeCount;
-            }
-        }
+        public virtual long MappedStateCount => dedupHash == null ? 0 : fst.nodeCount;
 
         private CompiledNode CompileNode(UnCompiledNode<T> nodeIn, int tailLength)
         {
@@ -629,13 +605,7 @@ namespace Lucene.Net.Util.Fst
         {
             public long Node { get; set; }
 
-            public bool IsCompiled
-            {
-                get
-                {
-                    return true;
-                }
-            }
+            public bool IsCompiled => true;
         }
 
         /// <summary>
@@ -675,13 +645,7 @@ namespace Lucene.Net.Util.Fst
                 this.Depth = depth;
             }
 
-            public bool IsCompiled
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public bool IsCompiled => false;
 
             public void Clear()
             {

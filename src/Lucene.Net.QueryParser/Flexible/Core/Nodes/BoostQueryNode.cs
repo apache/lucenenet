@@ -72,10 +72,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// Gets the boost value. It may vary from 0.0 to 1.0.
         /// </summary>
-        public virtual float Value
-        {
-            get { return this.value; }
-        }
+        public virtual float Value => this.value;
 
         /// <summary>
         /// Returns the boost value parsed to a string.

@@ -43,13 +43,7 @@ namespace Lucene.Net.Analysis.Cjk
         /// <summary>
         /// Returns an unmodifiable instance of the default stop-words set. </summary>
         /// <returns> an unmodifiable instance of the default stop-words set. </returns>
-        public static CharArraySet DefaultStopSet
-        {
-            get
-            {
-                return DefaultSetHolder.DEFAULT_STOP_SET;
-            }
-        }
+        public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         private class DefaultSetHolder
         {

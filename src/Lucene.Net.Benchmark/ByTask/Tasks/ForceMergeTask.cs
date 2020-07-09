@@ -53,9 +53,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             maxNumSegments = (int)double.Parse(@params, CultureInfo.InvariantCulture);
         }
 
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
     }
 }

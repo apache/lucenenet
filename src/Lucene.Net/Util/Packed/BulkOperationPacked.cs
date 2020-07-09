@@ -67,28 +67,16 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// NOTE: This was longBlockCount() in Lucene.
         /// </summary>
-        public override int Int64BlockCount
-        {
-            get { return longBlockCount; }
-        }
+        public override int Int64BlockCount => longBlockCount;
 
         /// <summary>
         /// NOTE: This was longValueCount() in Lucene.
         /// </summary>
-        public override int Int64ValueCount
-        {
-            get { return longValueCount; }
-        }
+        public override int Int64ValueCount => longValueCount;
 
-        public override int ByteBlockCount
-        {
-            get { return byteBlockCount; }
-        }
+        public override int ByteBlockCount => byteBlockCount;
 
-        public override int ByteValueCount
-        {
-            get { return byteValueCount; }
-        }
+        public override int ByteValueCount => byteValueCount;
 
         public override void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations)
         {

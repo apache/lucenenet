@@ -70,10 +70,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         }
 
         /// <summary>Any more than this and there's no point (double lat &amp; lon are the same).</summary>
-        public static int MaxLevelsPossible
-        {
-            get { return GeohashUtils.MAX_PRECISION; }
-        }
+        public static int MaxLevelsPossible => GeohashUtils.MAX_PRECISION;
 
         public override int GetLevelForDistance(double dist)
         {
@@ -133,10 +130,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return cells;
             }
 
-            public override int SubCellsSize
-            {
-                get { return 32; }//8x4
-            }
+            public override int SubCellsSize => 32; //8x4
 
             public override Cell GetSubCell(IPoint p)
             {
@@ -157,15 +151,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 }
             }
 
-            public override IPoint Center
-            {
-                get { return GeohashUtils.Decode(Geohash, m_outerInstance.m_ctx); }
-            }
+            public override IPoint Center => GeohashUtils.Decode(Geohash, m_outerInstance.m_ctx);
 
-            private string Geohash
-            {
-                get { return TokenString; }
-            }
+            private string Geohash => TokenString;
 
             //class GhCell
         }

@@ -261,15 +261,9 @@ namespace Lucene.Net.Search
             return (float)score;
         }
 
-        public override int DocID
-        {
-            get { return doc; }
-        }
+        public override int DocID => doc;
 
-        public override int Freq
-        {
-            get { return m_nrMatchers; }
-        }
+        public override int Freq => m_nrMatchers;
 
         /// <summary>
         /// Advances to the first match beyond the current whose document number is

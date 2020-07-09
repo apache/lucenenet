@@ -64,44 +64,20 @@ namespace Lucene.Net.Codecs
             this.m_delegate = @delegate;
         }
 
-        public override DocValuesFormat DocValuesFormat
-        {
-            get { return m_delegate.DocValuesFormat; }
-        }
+        public override DocValuesFormat DocValuesFormat => m_delegate.DocValuesFormat;
 
-        public override FieldInfosFormat FieldInfosFormat
-        {
-            get { return m_delegate.FieldInfosFormat; }
-        }
+        public override FieldInfosFormat FieldInfosFormat => m_delegate.FieldInfosFormat;
 
-        public override LiveDocsFormat LiveDocsFormat
-        {
-            get { return m_delegate.LiveDocsFormat; }
-        }
+        public override LiveDocsFormat LiveDocsFormat => m_delegate.LiveDocsFormat;
 
-        public override NormsFormat NormsFormat
-        {
-            get { return m_delegate.NormsFormat; }
-        }
+        public override NormsFormat NormsFormat => m_delegate.NormsFormat;
 
-        public override PostingsFormat PostingsFormat
-        {
-            get { return m_delegate.PostingsFormat; }
-        }
+        public override PostingsFormat PostingsFormat => m_delegate.PostingsFormat;
 
-        public override SegmentInfoFormat SegmentInfoFormat
-        {
-            get { return m_delegate.SegmentInfoFormat; }
-        }
+        public override SegmentInfoFormat SegmentInfoFormat => m_delegate.SegmentInfoFormat;
 
-        public override StoredFieldsFormat StoredFieldsFormat
-        {
-            get { return m_delegate.StoredFieldsFormat; }
-        }
+        public override StoredFieldsFormat StoredFieldsFormat => m_delegate.StoredFieldsFormat;
 
-        public override TermVectorsFormat TermVectorsFormat
-        {
-            get { return m_delegate.TermVectorsFormat; }
-        }
+        public override TermVectorsFormat TermVectorsFormat => m_delegate.TermVectorsFormat;
     }
 }

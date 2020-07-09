@@ -189,14 +189,8 @@ namespace Lucene.Net.Analysis.Compound
             }
             public bool Retain
             {
-                get
-                {
-                    return retain;
-                }
-                set
-                {
-                    this.retain = value;
-                }
+                get => retain;
+                set => this.retain = value;
             }
             public override void CopyTo(IAttribute target)
             {

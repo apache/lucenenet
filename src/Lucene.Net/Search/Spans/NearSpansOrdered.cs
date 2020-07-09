@@ -132,31 +132,19 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Returns the document number of the current match.  Initially invalid. </summary>
-        public override int Doc
-        {
-            get { return matchDoc; }
-        }
+        public override int Doc => matchDoc;
 
         /// <summary>
         /// Returns the start position of the current match.  Initially invalid. </summary>
-        public override int Start
-        {
-            get { return matchStart; }
-        }
+        public override int Start => matchStart;
 
         /// <summary>
         /// Returns the end position of the current match.  Initially invalid. </summary>
-        public override int End
-        {
-            get { return matchEnd; }
-        }
+        public override int End => matchEnd;
 
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual Spans[] SubSpans
-        {
-            get { return subSpans; }
-        }
+        public virtual Spans[] SubSpans => subSpans;
 
         // TODO: Remove warning after API has been finalized
         // TODO: Would be nice to be able to lazy load payloads
@@ -166,13 +154,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         // TODO: Remove warning after API has been finalized
-        public override bool IsPayloadAvailable
-        {
-            get
-            {
-                return matchPayload.Count == 0 == false;
-            }
-        }
+        public override bool IsPayloadAvailable => matchPayload.Count == 0 == false;
 
         public override long GetCost()
         {

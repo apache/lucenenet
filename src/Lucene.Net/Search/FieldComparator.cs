@@ -422,10 +422,7 @@ namespace Lucene.Net.Search
                 topValue = (sbyte)value;
             }
 
-            public override IComparable this[int slot]
-            {
-                get { return values[slot]; }
-            }
+            public override IComparable this[int slot] => values[slot];
 
             public override int CompareTop(int doc)
             {
@@ -518,10 +515,7 @@ namespace Lucene.Net.Search
                 topValue = (double)value;
             }
 
-            public override IComparable this[int slot]
-            {
-                get { return values[slot]; }
-            }
+            public override IComparable this[int slot] => values[slot];
 
             public override int CompareTop(int doc)
             {
@@ -620,10 +614,7 @@ namespace Lucene.Net.Search
                 topValue = (float)value;
             }
 
-            public override IComparable this[int slot]
-            {
-                get { return values[slot]; }
-            }
+            public override IComparable this[int slot] => values[slot];
 
             public override int CompareTop(int doc)
             {
@@ -715,10 +706,7 @@ namespace Lucene.Net.Search
                 topValue = (short)value;
             }
 
-            public override IComparable this[int slot]
-            {
-                get { return values[slot]; }
-            }
+            public override IComparable this[int slot] => values[slot];
 
             public override int CompareTop(int doc)
             {
@@ -802,10 +790,7 @@ namespace Lucene.Net.Search
                 topValue = (int)value;
             }
 
-            public override IComparable this[int slot]
-            {
-                get { return values[slot]; }
-            }
+            public override IComparable this[int slot] => values[slot];
 
             public override int CompareTop(int doc)
             {
@@ -894,10 +879,7 @@ namespace Lucene.Net.Search
                 topValue = (long)value;
             }
 
-            public override IComparable this[int slot]
-            {
-                get { return values[slot]; }
-            }
+            public override IComparable this[int slot] => values[slot];
 
             public override int CompareTop(int doc)
             {
@@ -987,10 +969,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override IComparable this[int slot]
-            {
-                get { return scores[slot]; }
-            }
+            public override IComparable this[int slot] => scores[slot];
 
             // Override because we sort reverse of natural Float order:
             public override int CompareValues(float first, float second)
@@ -1066,10 +1045,7 @@ namespace Lucene.Net.Search
                 topValue = (int)value;
             }
 
-            public override IComparable this[int slot]
-            {
-                get { return docIDs[slot]; }
-            }
+            public override IComparable this[int slot] => docIDs[slot];
 
             public override int CompareTop(int doc)
             {
@@ -1374,10 +1350,7 @@ namespace Lucene.Net.Search
                 //System.out.println("setTopValue " + topValue);
             }
 
-            public override IComparable this[int slot]
-            {
-                get { return values[slot]; }
-            }
+            public override IComparable this[int slot] => values[slot];
 
             public override int CompareTop(int doc)
             {
@@ -1524,10 +1497,7 @@ namespace Lucene.Net.Search
                 topValue = (BytesRef)value;
             }
 
-            public override IComparable this[int slot]
-            {
-                get { return values[slot]; }
-            }
+            public override IComparable this[int slot] => values[slot];
 
             public override int CompareValues(BytesRef val1, BytesRef val2)
             {

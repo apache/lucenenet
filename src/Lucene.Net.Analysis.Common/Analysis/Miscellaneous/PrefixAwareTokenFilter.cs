@@ -199,26 +199,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public virtual TokenStream Prefix
         {
-            get
-            {
-                return prefix;
-            }
-            set
-            {
-                this.prefix = value;
-            }
+            get => prefix;
+            set => this.prefix = value;
         }
 
         public virtual TokenStream Suffix
         {
-            get
-            {
-                return suffix;
-            }
-            set
-            {
-                this.suffix = value;
-            }
+            get => suffix;
+            set => this.suffix = value;
         }
     }
 }

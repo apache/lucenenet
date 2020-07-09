@@ -95,17 +95,13 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual int Slop
         {
+            get => slop;
             set
             {
                 if (value < 0)
-                {
                     throw new System.ArgumentException("slop value cannot be negative");
-                }
+
                 slop = value;
-            }
-            get
-            {
-                return slop;
             }
         }
 
@@ -327,13 +323,7 @@ namespace Lucene.Net.Search
                 return "weight(" + outerInstance + ")";
             }
 
-            public override Query Query
-            {
-                get
-                {
-                    return outerInstance;
-                }
-            }
+            public override Query Query => outerInstance;
 
             public override float GetValueForNormalization()
             {

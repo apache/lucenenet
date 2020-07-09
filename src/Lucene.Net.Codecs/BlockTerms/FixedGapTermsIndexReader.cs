@@ -155,10 +155,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-        public override int Divisor
-        {
-            get { return indexDivisor; }
-        }
+        public override int Divisor => indexDivisor;
 
         private int ReadHeader(DataInput input)
         {
@@ -186,7 +183,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 this.fieldIndex = fieldIndex;
             }
 
-            public override sealed BytesRef Term { get { return term; } }
+            public override sealed BytesRef Term => term;
 
             public override long Seek(BytesRef target)
             {
@@ -248,7 +245,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 return fieldIndex.termsStart + fieldIndex.termsDictOffsets.Get(idx);
             }
 
-            public override long Ord { get { return ord; } }
+            public override long Ord => ord;
 
             public override long Seek(long ord)
             {
@@ -263,10 +260,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-        public override bool SupportsOrd
-        {
-            get { return true; }
-        }
+        public override bool SupportsOrd => true;
 
         private class FieldIndexData
         {

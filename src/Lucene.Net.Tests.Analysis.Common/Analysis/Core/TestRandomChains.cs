@@ -1055,10 +1055,7 @@ namespace Lucene.Net.Analysis.Core
                 : base(@in)
             { }
 
-            private CharFilter Input
-            {
-                get { return (CharFilter)this.m_input; }
-            }
+            private CharFilter Input => (CharFilter)this.m_input;
 
             protected override int Correct(int currentOff)
             {
@@ -1095,18 +1092,9 @@ namespace Lucene.Net.Analysis.Core
                 Input.Mark(readAheadLimit);
             }
 
-            public override bool IsMarkSupported
-            {
-                get
-                {
-                    return Input.IsMarkSupported;
-                }
-            }
+            public override bool IsMarkSupported => Input.IsMarkSupported;
 
-            public override bool IsReady
-            {
-                get { return Input.IsReady; }
-            }
+            public override bool IsReady => Input.IsReady;
 
             public override void Reset()
             {

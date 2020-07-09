@@ -117,14 +117,14 @@ namespace Lucene.Net.Spatial.Queries
 
         public virtual SpatialOperation Operation
         {
-            get { return operation; }
-            set { operation = value; }
+            get => operation;
+            set => operation = value;
         }
 
         public virtual IShape Shape
         {
-            get { return shape; }
-            set { shape = value; }
+            get => shape;
+            set => shape = value;
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Lucene.Net.Spatial.Queries
         /// <returns>0 to 0.5</returns>
         public virtual double? DistErrPct
         {
-            get { return distErrPct; }
+            get => distErrPct;
             set
             {
                 if (value != null)
@@ -151,8 +151,8 @@ namespace Lucene.Net.Spatial.Queries
         /// <returns>&gt;= 0</returns>
         public virtual double? DistErr
         {
-            get { return distErr; }
-            set { distErr = value; }
+            get => distErr;
+            set => distErr = value;
         }
     }
 }

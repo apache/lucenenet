@@ -48,13 +48,7 @@ namespace Lucene.Net.Analysis.Bg
         /// Returns an unmodifiable instance of the default stop-words set.
         /// </summary>
         /// <returns> an unmodifiable instance of the default stop-words set. </returns>
-        public static CharArraySet DefaultStopSet
-        {
-            get
-            {
-                return DefaultSetHolder.DEFAULT_STOP_SET;
-            }
-        }
+        public static CharArraySet DefaultStopSet => DefaultSetHolder.DEFAULT_STOP_SET;
 
         /// <summary>
         /// Atomically loads the DEFAULT_STOP_SET in a lazy fashion once the outer

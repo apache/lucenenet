@@ -46,10 +46,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         /// Gets the current task stats.
         /// The actual task stats are returned, so caller should not modify this task stats.
         /// </summary>
-        public virtual IList<TaskStats> TaskStats
-        {
-            get { return points; }
-        }
+        public virtual IList<TaskStats> TaskStats => points;
 
         /// <summary>
         /// Mark that a task is starting.
@@ -69,10 +66,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             }
         }
 
-        public virtual TaskStats CurrentStats
-        {
-            get { return currentStats; }
-        }
+        public virtual TaskStats CurrentStats => currentStats;
 
         // return next task num
         private int NextTaskRunNum()

@@ -131,38 +131,20 @@ namespace Lucene.Net.Search
         }
 
         /// <returns> The maximum number of edit distances allowed for this query to match. </returns>
-        public virtual int MaxEdits
-        {
-            get
-            {
-                return maxEdits;
-            }
-        }
+        public virtual int MaxEdits => maxEdits;
 
         /// <summary>
         /// Returns the non-fuzzy prefix length. This is the number of characters at the start
         /// of a term that must be identical (not fuzzy) to the query term if the query
         /// is to match that term.
         /// </summary>
-        public virtual int PrefixLength
-        {
-            get
-            {
-                return prefixLength;
-            }
-        }
+        public virtual int PrefixLength => prefixLength;
 
         /// <summary>
         /// Returns <c>true</c> if transpositions should be treated as a primitive edit operation.
         /// If this is <c>false</c>, comparisons will implement the classic Levenshtein algorithm.
         /// </summary>
-        public virtual bool Transpositions
-        {
-            get
-            {
-                return transpositions;
-            }
-        }
+        public virtual bool Transpositions => transpositions;
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
@@ -176,13 +158,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the pattern term.
         /// </summary>
-        public virtual Term Term
-        {
-            get
-            {
-                return term;
-            }
-        }
+        public virtual Term Term => term;
 
         public override string ToString(string field)
         {

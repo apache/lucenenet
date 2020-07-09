@@ -83,9 +83,6 @@ namespace Lucene.Net.Util
         /// <summary>
         /// The suffix to append to the resource key class name to locate the embedded resource.
         /// </summary>
-        protected virtual string ResourceSuffix
-        {
-            get { return "Bundle"; }
-        }
+        protected virtual string ResourceSuffix => "Bundle";
     }
 }

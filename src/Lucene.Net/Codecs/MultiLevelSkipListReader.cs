@@ -129,13 +129,7 @@ namespace Lucene.Net.Codecs
         /// Returns the id of the doc to which the last call of <see cref="SkipTo(int)"/>
         /// has skipped.
         /// </summary>
-        public virtual int Doc
-        {
-            get
-            {
-                return lastDoc;
-            }
-        }
+        public virtual int Doc => lastDoc;
 
         /// <summary>
         /// Skips entries to the first beyond the current whose document number is
@@ -367,10 +361,7 @@ namespace Lucene.Net.Codecs
                 return pointer + pos;
             }
 
-            public override long Length
-            {
-                get { return data.Length; }
-            }
+            public override long Length => data.Length;
 
             public override byte ReadByte()
             {

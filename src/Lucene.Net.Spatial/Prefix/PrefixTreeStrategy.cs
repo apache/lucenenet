@@ -96,8 +96,8 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         public virtual int DefaultFieldValuesArrayLen
         {
-            get { return m_defaultFieldValuesArrayLen; } // LUCENENET NOTE: Added getter per MSDN guidelines
-            set { m_defaultFieldValuesArrayLen = value; }
+            get => m_defaultFieldValuesArrayLen; // LUCENENET NOTE: Added getter per MSDN guidelines
+            set => m_defaultFieldValuesArrayLen = value;
         }
 
         /// <summary>
@@ -116,8 +116,8 @@ namespace Lucene.Net.Spatial.Prefix
         /// <seealso cref="Lucene.Net.Spatial.Queries.SpatialArgs.DistErrPct"/>
         public virtual double DistErrPct
         {
-            get { return m_distErrPct; }
-            set { m_distErrPct = value; }
+            get => m_distErrPct;
+            set => m_distErrPct = value;
         }
 
         public override Field[] CreateIndexableFields(IShape shape)
@@ -202,9 +202,6 @@ namespace Lucene.Net.Spatial.Prefix
             return new ShapeFieldCacheDistanceValueSource(m_ctx, p, queryPoint, multiplier);
         }
 
-        public virtual SpatialPrefixTree Grid
-        {
-            get { return m_grid; }
-        }
+        public virtual SpatialPrefixTree Grid => m_grid;
     }
 }

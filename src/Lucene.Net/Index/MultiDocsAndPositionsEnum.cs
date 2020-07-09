@@ -78,22 +78,13 @@ namespace Lucene.Net.Index
         /// <summary>
         /// How many sub-readers we are merging. </summary>
         /// <see cref="Subs"/>
-        public int NumSubs
-        {
-            get
-            {
-                return numSubs;
-            }
-        }
+        public int NumSubs => numSubs;
 
         /// <summary>
         /// Returns sub-readers we are merging. </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public EnumWithSlice[] Subs
-        {
-            get { return subs; }
-        }
+        public EnumWithSlice[] Subs => subs;
 
         public override int Freq
         {
@@ -104,10 +95,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override int DocID
-        {
-            get { return doc; }
-        }
+        public override int DocID => doc;
 
         public override int Advance(int target)
         {
@@ -183,15 +171,9 @@ namespace Lucene.Net.Index
             return current.NextPosition();
         }
 
-        public override int StartOffset
-        {
-            get { return current.StartOffset; }
-        }
+        public override int StartOffset => current.StartOffset;
 
-        public override int EndOffset
-        {
-            get { return current.EndOffset; }
-        }
+        public override int EndOffset => current.EndOffset;
 
         public override BytesRef GetPayload()
         {

@@ -142,34 +142,16 @@ namespace Lucene.Net.Search.Similarities
         /// <summary>
         /// Returns the distribution
         /// </summary>
-        public virtual Distribution Distribution
-        {
-            get
-            {
-                return m_distribution;
-            }
-        }
+        public virtual Distribution Distribution => m_distribution;
 
         /// <summary>
         /// Returns the distribution's lambda parameter
         /// </summary>
-        public virtual Lambda Lambda
-        {
-            get
-            {
-                return m_lambda;
-            }
-        }
+        public virtual Lambda Lambda => m_lambda;
 
         /// <summary>
         /// Returns the term frequency normalization
         /// </summary>
-        public virtual Normalization Normalization
-        {
-            get
-            {
-                return m_normalization;
-            }
-        }
+        public virtual Normalization Normalization => m_normalization;
     }
 }

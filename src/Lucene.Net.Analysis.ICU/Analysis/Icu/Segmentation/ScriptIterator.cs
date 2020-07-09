@@ -67,26 +67,17 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         /// <summary>
         /// Gets the start of this script run.
         /// </summary>
-        public int ScriptStart
-        {
-            get { return scriptStart; }
-        }
+        public int ScriptStart => scriptStart;
 
         /// <summary>
         /// Get the index of the first character after the end of this script run.
         /// </summary>
-        public int ScriptLimit
-        {
-            get { return scriptLimit; }
-        }
+        public int ScriptLimit => scriptLimit;
 
         /// <summary>
         /// Get the UScript script code for this script run.
         /// </summary>
-        public int ScriptCode
-        {
-            get { return scriptCode; }
-        }
+        public int ScriptCode => scriptCode;
 
         /// <summary>
         /// Iterates to the next script run, returning true if one exists.

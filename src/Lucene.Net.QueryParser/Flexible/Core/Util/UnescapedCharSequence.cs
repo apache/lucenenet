@@ -110,10 +110,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
 
         public int Length => this.chars.Length;
 
-        public char this[int index]
-        {
-            get => this.chars[index];
-        }
+        public char this[int index] => this.chars[index];
 
         public ICharSequence Subsequence(int startIndex, int length)
         {

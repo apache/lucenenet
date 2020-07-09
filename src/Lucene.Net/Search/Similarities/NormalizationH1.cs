@@ -61,12 +61,6 @@ namespace Lucene.Net.Search.Similarities
         /// <summary>
         /// Returns the <c>c</c> parameter. </summary>
         /// <seealso cref="NormalizationH1(float)"/>
-        public virtual float C
-        {
-            get
-            {
-                return c;
-            }
-        }
+        public virtual float C => c;
     }
 }

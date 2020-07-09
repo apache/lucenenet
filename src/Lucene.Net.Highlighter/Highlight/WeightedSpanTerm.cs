@@ -70,13 +70,10 @@ namespace Lucene.Net.Search.Highlight
 
         public virtual bool IsPositionSensitive
         {
-            get { return _positionSensitive; }
-            set { this._positionSensitive = value; }
+            get => _positionSensitive;
+            set => this._positionSensitive = value;
         }
 
-        public virtual IList<PositionSpan> PositionSpans
-        {
-            get { return _positionSpans; }
-        }
+        public virtual IList<PositionSpan> PositionSpans => _positionSpans;
     }
 }

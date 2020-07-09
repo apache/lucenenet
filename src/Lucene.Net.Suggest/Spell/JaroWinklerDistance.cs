@@ -129,14 +129,8 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         public virtual float Threshold
         {
-            set
-            {
-                this.threshold = value;
-            }
-            get
-            {
-                return threshold;
-            }
+            set => this.threshold = value;
+            get => threshold;
         }
 
 

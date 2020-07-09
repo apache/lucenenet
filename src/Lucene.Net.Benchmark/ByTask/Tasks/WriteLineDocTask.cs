@@ -241,9 +241,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             docSize = (int)float.Parse(@params, CultureInfo.InvariantCulture);
         }
 
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
     }
 }

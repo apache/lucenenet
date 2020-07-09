@@ -35,11 +35,11 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         private float weight = (float)1.0;
         private bool weighted = false;
 
-        public virtual bool IsWeighted { get { return weighted; } }
+        public virtual bool IsWeighted => weighted;
 
         public virtual float Weight 
         { 
-            get { return weight; }
+            get => weight;
             set
             {
                 weight = value; /* as parsed from the query text */
@@ -47,9 +47,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             }
         }
 
-        public virtual string WeightString { get { return Number.ToString(Weight); } }
+        public virtual string WeightString => Number.ToString(Weight);
 
-        public virtual string WeightOperator { get { return "^"; } }
+        public virtual string WeightOperator => "^";
 
         protected virtual void WeightToString(StringBuilder r)
         { 
@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         /// </summary>
         public abstract override string ToString();
 
-        public virtual bool IsFieldsSubQueryAcceptable { get { return true; } }
+        public virtual bool IsFieldsSubQueryAcceptable => true;
 
         /// <summary> Shallow clone. Subclasses must override this if they
         /// need to clone any members deeply,
@@ -129,8 +129,8 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             public override float Boost
             {
-                get { return base.Boost; }
-                set { throw new NotSupportedException(); }
+                get => base.Boost;
+                set => throw new NotSupportedException();
             }
 
             public override void Add(BooleanClause clause)

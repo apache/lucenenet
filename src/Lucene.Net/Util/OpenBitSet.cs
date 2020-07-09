@@ -133,27 +133,15 @@ namespace Lucene.Net.Util
             return new OpenBitSetIterator(m_bits, m_wlen);
         }
 
-        public override IBits Bits
-        {
-            get { return this; }
-        }
+        public override IBits Bits => this;
 
         /// <summary>
         /// This DocIdSet implementation is cacheable. </summary>
-        public override bool IsCacheable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsCacheable => true;
 
         /// <summary>
         /// Returns the current capacity in bits (1 greater than the index of the last bit). </summary>
-        public virtual long Capacity
-        {
-            get { return m_bits.Length << 6; }
-        }
+        public virtual long Capacity => m_bits.Length << 6;
 
         // LUCENENET specific - eliminating this extra property, since it is identical to
         // Length anyway, and Length is required by the IBits interface.
@@ -171,20 +159,11 @@ namespace Lucene.Net.Util
         /// <para/>
         /// NOTE: This is equivalent to size() or length() in Lucene.
         /// </summary>
-        public virtual int Length
-        {
-            get { return m_bits.Length << 6; }
-        }
+        public virtual int Length => m_bits.Length << 6;
 
         /// <summary>
         /// Returns <c>true</c> if there are no set bits </summary>
-        public virtual bool IsEmpty
-        {
-            get
-            {
-                return Cardinality() == 0;
-            }
-        }
+        public virtual bool IsEmpty => Cardinality() == 0;
 
         /// <summary>
         /// Expert: returns the <see cref="T:long[]"/> storing the bits. </summary>
@@ -196,13 +175,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Expert: gets the number of <see cref="long"/>s in the array that are in use. </summary>
-        public virtual int NumWords
-        {
-            get
-            {
-                return m_wlen;
-            }
-        }
+        public virtual int NumWords => m_wlen;
 
         /// <summary>
         /// Returns <c>true</c> or <c>false</c> for the specified bit <paramref name="index"/>. </summary>

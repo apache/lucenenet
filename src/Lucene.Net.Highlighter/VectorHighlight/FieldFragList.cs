@@ -50,10 +50,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// <summary>
         /// return the list of <see cref="WeightedFragInfo"/>s.
         /// </summary>
-        public virtual IList<WeightedFragInfo> FragInfos
-        {
-            get { return fragInfos; }
-        }
+        public virtual IList<WeightedFragInfo> FragInfos => fragInfos;
 
         /// <summary>
         /// List of term offsets + weight for a frag info
@@ -73,25 +70,13 @@ namespace Lucene.Net.Search.VectorHighlight
                 this.subInfos = subInfos;
             }
 
-            public IList<SubInfo> SubInfos
-            {
-                get { return subInfos; }
-            }
+            public IList<SubInfo> SubInfos => subInfos;
 
-            public float TotalBoost
-            {
-                get { return totalBoost; }
-            }
+            public float TotalBoost => totalBoost;
 
-            public int StartOffset
-            {
-                get { return startOffset; }
-            }
+            public int StartOffset => startOffset;
 
-            public int EndOffset
-            {
-                get { return endOffset; }
-            }
+            public int EndOffset => endOffset;
 
             public override string ToString()
             {
@@ -122,25 +107,13 @@ namespace Lucene.Net.Search.VectorHighlight
                     this.boost = boost;
                 }
 
-                public virtual IList<Toffs> TermsOffsets
-                {
-                    get { return termsOffsets; }
-                }
+                public virtual IList<Toffs> TermsOffsets => termsOffsets;
 
-                public virtual int Seqnum
-                {
-                    get { return seqnum; }
-                }
+                public virtual int Seqnum => seqnum;
 
-                public virtual string Text
-                {
-                    get { return text; }
-                }
+                public virtual string Text => text;
 
-                public virtual float Boost
-                {
-                    get { return boost; }
-                }
+                public virtual float Boost => boost;
 
                 public override string ToString()
                 {

@@ -420,26 +420,26 @@ namespace TagSoup
 
         public virtual IEntityResolver EntityResolver
         {
-            get { return theEntityResolver == this ? null : theEntityResolver; }
-            set { theEntityResolver = value ?? this; }
+            get => theEntityResolver == this ? null : theEntityResolver;
+            set => theEntityResolver = value ?? this;
         }
 
         public virtual IDTDHandler DTDHandler
         {
-            get { return theDTDHandler == this ? null : theDTDHandler; }
-            set { theDTDHandler = value ?? this; }
+            get => theDTDHandler == this ? null : theDTDHandler;
+            set => theDTDHandler = value ?? this;
         }
 
         public virtual IContentHandler ContentHandler
         {
-            get { return theContentHandler == this ? null : theContentHandler; }
-            set { theContentHandler = value ?? this; }
+            get => theContentHandler == this ? null : theContentHandler;
+            set => theContentHandler = value ?? this;
         }
 
         public virtual IErrorHandler ErrorHandler
         {
-            get { return theErrorHandler == this ? null : theErrorHandler; }
-            set { theErrorHandler = value ?? this; }
+            get => theErrorHandler == this ? null : theErrorHandler;
+            set => theErrorHandler = value ?? this;
         }
 
         public virtual void Parse(InputSource input)

@@ -88,10 +88,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             // LUCENENET TODO: EntrySet not supported. Should we throw on GetEnumerator()?
 
-            new public string this[string key]
-            {
-                get { return config.Get("spatial." + key, null); }
-            }
+            new public string this[string key] => config.Get("spatial." + key, null);
         }
 
         protected virtual SpatialStrategy MakeSpatialStrategy(Config config, IDictionary<string, string> configMap,

@@ -357,13 +357,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Returns the used <see cref="ReuseStrategy"/>.
         /// </summary>
-        public ReuseStrategy Strategy
-        {
-            get
-            {
-                return reuseStrategy;
-            }
-        }
+        public ReuseStrategy Strategy => reuseStrategy;
 
         /// <summary>
         /// Frees persistent resources used by this <see cref="Analyzer"/> 
@@ -575,25 +569,13 @@ namespace Lucene.Net.Analysis
         /// Returns the sink <see cref="Analysis.TokenStream"/>
         /// </summary>
         /// <returns> the sink <see cref="Analysis.TokenStream"/> </returns>
-        public virtual TokenStream TokenStream
-        {
-            get
-            {
-                return m_sink;
-            }
-        }
+        public virtual TokenStream TokenStream => m_sink;
 
         /// <summary>
         /// Returns the component's <see cref="Analysis.Tokenizer"/>
         /// </summary>
         /// <returns> Component's <see cref="Analysis.Tokenizer"/> </returns>
-        public virtual Tokenizer Tokenizer
-        {
-            get
-            {
-                return m_source;
-            }
-        }
+        public virtual Tokenizer Tokenizer => m_source;
     }
 
     /// <summary>

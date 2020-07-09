@@ -70,10 +70,7 @@ namespace Lucene.Net.Spatial.Vector
 
         public virtual int PrecisionStep
         {
-            get // LUCENENET NOTE: Added getter per MSDN guidelines
-            {
-                return precisionStep;
-            }
+            get => precisionStep; // LUCENENET NOTE: Added getter per MSDN guidelines
             set
             {
                 precisionStep = value;
@@ -82,15 +79,9 @@ namespace Lucene.Net.Spatial.Vector
             }
         }
 
-        internal virtual string FieldNameX
-        {
-            get { return fieldNameX; }
-        }
+        internal virtual string FieldNameX => fieldNameX;
 
-        internal virtual string FieldNameY
-        {
-            get { return fieldNameY; }
-        }
+        internal virtual string FieldNameY => fieldNameY;
 
         public override Field[] CreateIndexableFields(IShape shape)
         {

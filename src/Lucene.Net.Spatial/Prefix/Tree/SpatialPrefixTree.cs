@@ -52,15 +52,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             this.m_maxLevels = maxLevels;
         }
 
-        public virtual SpatialContext SpatialContext
-        {
-            get { return m_ctx; }
-        }
+        public virtual SpatialContext SpatialContext => m_ctx;
 
-        public virtual int MaxLevels
-        {
-            get { return m_maxLevels; }
-        }
+        public virtual int MaxLevels => m_maxLevels;
 
         public override string ToString()
         {

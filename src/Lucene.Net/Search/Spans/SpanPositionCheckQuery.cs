@@ -44,21 +44,9 @@ namespace Lucene.Net.Search.Spans
         /// <returns> 
         /// The <see cref="SpanQuery"/> whose matches are filtered.
         /// </returns>
-        public virtual SpanQuery Match
-        {
-            get
-            {
-                return m_match;
-            }
-        }
+        public virtual SpanQuery Match => m_match;
 
-        public override string Field
-        {
-            get
-            {
-                return m_match.Field;
-            }
-        }
+        public override string Field => m_match.Field;
 
         public override void ExtractTerms(ISet<Term> terms)
         {
@@ -182,21 +170,12 @@ namespace Lucene.Net.Search.Spans
                 }
             }
 
-            public override int Doc
-            {
-                get { return spans.Doc; }
-            }
+            public override int Doc => spans.Doc;
 
-            public override int Start
-            {
-                get { return spans.Start; }
-            }
+            public override int Start => spans.Start;
 
             // TODO: Remove warning after API has been finalized
-            public override int End
-            {
-                get { return spans.End; }
-            }
+            public override int End => spans.End;
 
             public override ICollection<byte[]> GetPayload()
             {
@@ -209,13 +188,7 @@ namespace Lucene.Net.Search.Spans
             }
 
             // TODO: Remove warning after API has been finalized
-            public override bool IsPayloadAvailable
-            {
-                get
-                {
-                    return spans.IsPayloadAvailable;
-                }
-            }
+            public override bool IsPayloadAvailable => spans.IsPayloadAvailable;
 
             public override long GetCost()
             {

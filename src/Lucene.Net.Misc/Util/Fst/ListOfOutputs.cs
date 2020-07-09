@@ -151,13 +151,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override object NoOutput
-        {
-            get
-            {
-                return outputs.NoOutput;
-            }
-        }
+        public override object NoOutput => outputs.NoOutput;
 
         public override string OutputToString(object output)
         {

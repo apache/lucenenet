@@ -67,35 +67,17 @@ namespace Lucene.Net.Index
                     this.outerInstance = outerInstance;
                 }
 
-                public bool IsIndexed
-                {
-                    get { return (outerInstance.counter % 10) != 3; }
-                }
+                public bool IsIndexed => (outerInstance.counter % 10) != 3;
 
-                public bool IsStored
-                {
-                    get { return (outerInstance.counter & 1) == 0 || (outerInstance.counter % 10) == 3; }
-                }
+                public bool IsStored => (outerInstance.counter & 1) == 0 || (outerInstance.counter % 10) == 3;
 
-                public bool IsTokenized
-                {
-                    get { return true; }
-                }
+                public bool IsTokenized => true;
 
-                public bool StoreTermVectors
-                {
-                    get { return IsIndexed && outerInstance.counter % 2 == 1 && outerInstance.counter % 10 != 9; }
-                }
+                public bool StoreTermVectors => IsIndexed && outerInstance.counter % 2 == 1 && outerInstance.counter % 10 != 9;
 
-                public bool StoreTermVectorOffsets
-                {
-                    get { return StoreTermVectors && outerInstance.counter % 10 != 9; }
-                }
+                public bool StoreTermVectorOffsets => StoreTermVectors && outerInstance.counter % 10 != 9;
 
-                public bool StoreTermVectorPositions
-                {
-                    get { return StoreTermVectors && outerInstance.counter % 10 != 9; }
-                }
+                public bool StoreTermVectorPositions => StoreTermVectors && outerInstance.counter % 10 != 9;
 
                 public bool StoreTermVectorPayloads
                 {
@@ -114,20 +96,11 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                public bool OmitNorms
-                {
-                    get { return false; }
-                }
+                public bool OmitNorms => false;
 
-                public IndexOptions IndexOptions
-                {
-                    get { return Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
-                }
+                public IndexOptions IndexOptions => Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 
-                public DocValuesType DocValueType
-                {
-                    get { return DocValuesType.NONE; }
-                }
+                public DocValuesType DocValueType => DocValuesType.NONE;
             }
 
             public MyField(TestIndexableField outerInstance, int counter)
@@ -137,15 +110,9 @@ namespace Lucene.Net.Index
                 this.counter = counter;
             }
 
-            public string Name
-            {
-                get { return "f" + counter; }
-            }
+            public string Name => "f" + counter;
 
-            public float Boost
-            {
-                get { return 1.0f + (float)Random.NextDouble(); }
-            }
+            public float Boost => 1.0f + (float)Random.NextDouble();
 
             public BytesRef GetBinaryValue()
             {
@@ -214,10 +181,7 @@ namespace Lucene.Net.Index
 
             // LUCENENET specific - Since we have no numeric reference types in .NET, this method was added to check
             // the numeric type of the inner field without boxing/unboxing.
-            public virtual NumericFieldType NumericType
-            {
-                get { return NumericFieldType.NONE; }
-            }
+            public virtual NumericFieldType NumericType => NumericFieldType.NONE;
 
             // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
             public virtual byte? GetByteValue()
@@ -255,10 +219,7 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            public IIndexableFieldType IndexableFieldType
-            {
-                get { return fieldType; }
-            }
+            public IIndexableFieldType IndexableFieldType => fieldType;
 
             public TokenStream GetTokenStream(Analyzer analyzer)
             {
@@ -477,15 +438,9 @@ namespace Lucene.Net.Index
                     return true;
                 }
 
-                public IIndexableField Current
-                {
-                    get { return current; }
-                }
+                public IIndexableField Current => current;
 
-                object System.Collections.IEnumerator.Current
-                {
-                    get { return Current; }
-                }
+                object System.Collections.IEnumerator.Current => Current;
 
                 public void Dispose()
                 {

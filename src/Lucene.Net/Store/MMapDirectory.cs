@@ -175,13 +175,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Returns the current mmap chunk size. </summary>
         /// <seealso cref="MMapDirectory(DirectoryInfo, LockFactory, int)"/>
-        public int MaxChunkSize
-        {
-            get
-            {
-                return 1 << chunkSizePower;
-            }
-        }
+        public int MaxChunkSize => 1 << chunkSizePower;
 
         /// <summary>
         /// Creates an <see cref="IndexInput"/> for the file with the given name. </summary>

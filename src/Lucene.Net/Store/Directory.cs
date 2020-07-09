@@ -390,10 +390,7 @@ namespace Lucene.Net.Store
                 }
             }
 
-            public override long Length
-            {
-                get { return length; }
-            }
+            public override long Length => length;
         }
     }
 }

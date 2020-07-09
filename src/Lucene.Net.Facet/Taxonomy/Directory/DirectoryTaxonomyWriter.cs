@@ -704,13 +704,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             indexWriter.SetCommitData(CombinedCommitData(commitUserData));
         }
 
-        public virtual IDictionary<string, string> CommitData
-        {
-            get
-            {
-                return CombinedCommitData(indexWriter.CommitData);
-            }
-        }
+        public virtual IDictionary<string, string> CommitData => CombinedCommitData(indexWriter.CommitData);
 
 
         /// <summary>
@@ -1147,13 +1141,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Returns the <see cref="Store.Directory"/> of this taxonomy writer.
         /// </summary>
-        public virtual Directory Directory
-        {
-            get
-            {
-                return dir;
-            }
-        }
+        public virtual Directory Directory => dir;
 
         /// <summary>
         /// Used by <see cref="DirectoryTaxonomyReader"/> to support NRT.
@@ -1163,13 +1151,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// index may become corrupt!
         /// </para>
         /// </summary>
-        internal IndexWriter InternalIndexWriter
-        {
-            get
-            {
-                return indexWriter;
-            }
-        }
+        internal IndexWriter InternalIndexWriter => indexWriter;
 
         /// <summary>
         /// Expert: returns current index epoch, if this is a
@@ -1178,12 +1160,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// 
         /// @lucene.internal 
         /// </summary>
-        public long TaxonomyEpoch
-        {
-            get
-            {
-                return indexEpoch;
-            }
-        }
+        public long TaxonomyEpoch => indexEpoch;
     }
 }

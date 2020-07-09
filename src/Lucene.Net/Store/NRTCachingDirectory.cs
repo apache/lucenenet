@@ -87,21 +87,9 @@ namespace Lucene.Net.Store
             maxCachedBytes = (long)(maxCachedMB * 1024 * 1024);
         }
 
-        public virtual Directory Delegate
-        {
-            get
-            {
-                return @delegate;
-            }
-        }
+        public virtual Directory Delegate => @delegate;
 
-        public override LockFactory LockFactory
-        {
-            get
-            {
-                return @delegate.LockFactory;
-            }
-        }
+        public override LockFactory LockFactory => @delegate.LockFactory;
 
         public override void SetLockFactory(LockFactory lockFactory)
         {

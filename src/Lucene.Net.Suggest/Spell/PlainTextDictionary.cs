@@ -117,13 +117,7 @@ namespace Lucene.Net.Search.Spell
                 return result;
             }
 
-            public IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public IComparer<BytesRef> Comparer => null;
         }
     }
 }

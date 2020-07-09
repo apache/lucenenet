@@ -38,26 +38,14 @@ namespace Lucene.Net.Search
 
         public float MaxNonCompetitiveBoost
         {
-            set
-            {
-                this.maxNonCompetitiveBoost = value;
-            }
-            get
-            {
-                return maxNonCompetitiveBoost;
-            }
+            get => maxNonCompetitiveBoost;
+            set => this.maxNonCompetitiveBoost = value;
         }
 
         public BytesRef CompetitiveTerm
         {
-            set
-            {
-                this.competitiveTerm = value;
-            }
-            get
-            {
-                return competitiveTerm;
-            }
+            get => competitiveTerm;
+            set => this.competitiveTerm = value;
         }
 
         public override void Clear()

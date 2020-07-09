@@ -44,13 +44,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Return the wrapped <see cref="Index.SortedDocValues"/> </summary>
-        public SortedDocValues SortedDocValues
-        {
-            get
-            {
-                return @in;
-            }
-        }
+        public SortedDocValues SortedDocValues => @in;
 
         public override long NextOrd()
         {
@@ -77,13 +71,7 @@ namespace Lucene.Net.Index
             @in.LookupOrd((int)ord, result);
         }
 
-        public override long ValueCount
-        {
-            get
-            {
-                return @in.ValueCount;
-            }
-        }
+        public override long ValueCount => @in.ValueCount;
 
         public override long LookupTerm(BytesRef key)
         {

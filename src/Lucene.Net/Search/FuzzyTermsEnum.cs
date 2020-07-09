@@ -297,15 +297,9 @@ namespace Lucene.Net.Search
         }
 
         // proxy all other enum calls to the actual enum
-        public override int DocFreq
-        {
-            get { return actualEnum.DocFreq; }
-        }
+        public override int DocFreq => actualEnum.DocFreq;
 
-        public override long TotalTermFreq
-        {
-            get { return actualEnum.TotalTermFreq; }
-        }
+        public override long TotalTermFreq => actualEnum.TotalTermFreq;
 
         public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
@@ -468,10 +462,7 @@ namespace Lucene.Net.Search
             // LUCENENET NOTE: Must use JCG.List for Equals and GetHashCode()
             private readonly IList<CompiledAutomaton> automata = new JCG.List<CompiledAutomaton>();
 
-            public IList<CompiledAutomaton> Automata
-            {
-                get { return automata; }
-            }
+            public IList<CompiledAutomaton> Automata => automata;
 
             public override void Clear()
             {

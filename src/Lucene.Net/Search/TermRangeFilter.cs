@@ -78,36 +78,18 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the lower value of this range filter </summary>
-        public virtual BytesRef LowerTerm
-        {
-            get
-            {
-                return m_query.LowerTerm;
-            }
-        }
+        public virtual BytesRef LowerTerm => m_query.LowerTerm;
 
         /// <summary>
         /// Returns the upper value of this range filter </summary>
-        public virtual BytesRef UpperTerm
-        {
-            get
-            {
-                return m_query.UpperTerm;
-            }
-        }
+        public virtual BytesRef UpperTerm => m_query.UpperTerm;
 
         /// <summary>
         /// Returns <c>true</c> if the lower endpoint is inclusive </summary>
-        public virtual bool IncludesLower
-        {
-            get { return m_query.IncludesLower; }
-        }
+        public virtual bool IncludesLower => m_query.IncludesLower;
 
         /// <summary>
         /// Returns <c>true</c> if the upper endpoint is inclusive </summary>
-        public virtual bool IncludesUpper
-        {
-            get { return m_query.IncludesUpper; }
-        }
+        public virtual bool IncludesUpper => m_query.IncludesUpper;
     }
 }

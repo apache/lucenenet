@@ -56,10 +56,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             return length;
         }
 
-        public virtual CharacterDefinition CharacterDefinition
-        {
-            get { return characterDefinition; }
-        }
+        public virtual CharacterDefinition CharacterDefinition => characterDefinition;
 
         public override string GetReading(int wordId, char[] surface, int off, int len)
         {

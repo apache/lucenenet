@@ -154,10 +154,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        public int Count
-        {
-            get { return size; }
-        }
+        public int Count => size;
 
         private void SeekIndex(int docID)
         {

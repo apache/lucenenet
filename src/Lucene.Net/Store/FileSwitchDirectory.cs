@@ -53,23 +53,11 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Return the primary directory </summary>
-        public virtual Directory PrimaryDir
-        {
-            get
-            {
-                return primaryDir;
-            }
-        }
+        public virtual Directory PrimaryDir => primaryDir;
 
         /// <summary>
         /// Return the secondary directory </summary>
-        public virtual Directory SecondaryDir
-        {
-            get
-            {
-                return secondaryDir;
-            }
-        }
+        public virtual Directory SecondaryDir => secondaryDir;
 
         protected override void Dispose(bool disposing)
         {

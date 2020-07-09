@@ -65,14 +65,8 @@ namespace Lucene.Net.Store
 
         public int Position
         {
-            get
-            {
-                return pos;
-            }
-            set
-            {
-                this.pos = value;
-            }
+            get => pos;
+            set => this.pos = value;
         }
 
         public void Reset(byte[] bytes, int offset, int len)
@@ -82,15 +76,9 @@ namespace Lucene.Net.Store
             limit = offset + len;
         }
 
-        public int Length
-        {
-            get { return limit; }
-        }
+        public int Length => limit;
 
-        public bool Eof
-        {
-            get { return pos == limit; }
-        }
+        public bool Eof => pos == limit;
 
         public override void SkipBytes(long count)
         {

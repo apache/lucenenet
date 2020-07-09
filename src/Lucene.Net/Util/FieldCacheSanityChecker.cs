@@ -334,10 +334,7 @@ namespace Lucene.Net.Util
         /// </summary>
         private sealed class ReaderField
         {
-            public object ReaderKey
-            {
-                get { return readerKey; }
-            }
+            public object ReaderKey => readerKey;
             private readonly object readerKey;
             public string FieldName { get; private set; }
 
@@ -399,34 +396,19 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Type of insane behavior this object represents
             /// </summary>
-            public InsanityType Type
-            {
-                get
-                {
-                    return type;
-                }
-            }
+            public InsanityType Type => type;
 
             /// <summary>
             /// Description of the insane behavior
             /// </summary>
-            public string Msg
-            {
-                get
-                {
-                    return msg;
-                }
-            }
+            public string Msg => msg;
 
             /// <summary>
             /// <see cref="FieldCache.CacheEntry"/> objects which suggest a problem
             /// </summary>
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            public FieldCache.CacheEntry[] CacheEntries
-            {
-                get { return entries; }
-            }
+            public FieldCache.CacheEntry[] CacheEntries => entries;
 
             /// <summary>
             /// Multi-Line representation of this <see cref="Insanity"/> object, starting with

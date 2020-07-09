@@ -211,10 +211,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the number of terms.
         /// </summary>
         /// <returns> int. </returns>
-        internal virtual int Length
-        {
-            get { return indexSize; }
-        }
+        internal virtual int Length => indexSize;
 
         /// <summary>
         /// The compares the given term against the term in the index specified by the

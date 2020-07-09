@@ -257,10 +257,7 @@ namespace Lucene.Net.Codecs.PerField
                 return null;
             }
 
-            public override int Count
-            {
-                get { return fields.Count; }
-            }
+            public override int Count => fields.Count;
 
             protected override void Dispose(bool disposing)
             {

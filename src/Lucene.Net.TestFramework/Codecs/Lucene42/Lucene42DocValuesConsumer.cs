@@ -420,15 +420,9 @@ namespace Lucene.Net.Codecs.Lucene42
                 return true;
             }
 
-            public BytesRef Current
-            {
-                get { return @ref; }
-            }
+            public BytesRef Current => @ref;
 
-            object System.Collections.IEnumerator.Current
-            {
-                get { return Current; }
-            }
+            object System.Collections.IEnumerator.Current => Current;
 
             // encodes count values to buffer
             internal virtual void EncodeValues(int count)

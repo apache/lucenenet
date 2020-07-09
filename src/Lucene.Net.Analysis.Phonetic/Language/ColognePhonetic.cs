@@ -207,10 +207,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
             protected abstract char[] CopyData(int start, int length);
 
-            public virtual int Length
-            {
-                get { return m_length; }
-            }
+            public virtual int Length => m_length;
 
             public override string ToString()
             {

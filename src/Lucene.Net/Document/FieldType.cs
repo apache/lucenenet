@@ -94,7 +94,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual bool IsIndexed
         {
-            get { return this.indexed; }
+            get => this.indexed;
             set
             {
                 CheckIfFrozen();
@@ -109,10 +109,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual bool IsStored
         {
-            get
-            {
-                return this.stored;
-            }
+            get => this.stored;
             set
             {
                 CheckIfFrozen();
@@ -128,10 +125,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual bool IsTokenized
         {
-            get
-            {
-                return this.tokenized;
-            }
+            get => this.tokenized;
             set
             {
                 CheckIfFrozen();
@@ -147,7 +141,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual bool StoreTermVectors
         {
-            get { return this.storeTermVectors; }
+            get => this.storeTermVectors;
 
             set
             {
@@ -164,10 +158,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual bool StoreTermVectorOffsets
         {
-            get
-            {
-                return this.storeTermVectorOffsets;
-            }
+            get => this.storeTermVectorOffsets;
             set
             {
                 CheckIfFrozen();
@@ -183,10 +174,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual bool StoreTermVectorPositions
         {
-            get
-            {
-                return this.storeTermVectorPositions;
-            }
+            get => this.storeTermVectorPositions;
             set
             {
                 CheckIfFrozen();
@@ -202,10 +190,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual bool StoreTermVectorPayloads
         {
-            get
-            {
-                return this.storeTermVectorPayloads;
-            }
+            get => this.storeTermVectorPayloads;
             set
             {
                 CheckIfFrozen();
@@ -220,7 +205,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual bool OmitNorms
         {
-            get { return this.omitNorms; }
+            get => this.omitNorms;
             set
             {
                 CheckIfFrozen();
@@ -237,10 +222,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual IndexOptions IndexOptions
         {
-            get
-            {
-                return this.indexOptions;
-            }
+            get => this.indexOptions;
             set
             {
                 CheckIfFrozen();
@@ -257,10 +239,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual NumericType NumericType
         {
-            get
-            {
-                return this.numericType;
-            }
+            get => this.numericType;
             set
             {
                 CheckIfFrozen();
@@ -280,10 +259,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual int NumericPrecisionStep
         {
-            get
-            {
-                return numericPrecisionStep;
-            }
+            get => numericPrecisionStep;
             set
             {
                 CheckIfFrozen();
@@ -371,10 +347,7 @@ namespace Lucene.Net.Documents
         ///         future modifications. </exception>
         public virtual DocValuesType DocValueType
         {
-            get
-            {
-                return docValueType;
-            }
+            get => docValueType;
 
             set
             {

@@ -792,13 +792,7 @@ namespace Lucene.Net.Codecs.Compressing
             CodecUtil.WriteFooter(vectorsStream);
         }
 
-        public override IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return BytesRef.UTF8SortedAsUnicodeComparer;
-            }
-        }
+        public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
         public override void AddProx(int numProx, DataInput positions, DataInput offsets)
         {

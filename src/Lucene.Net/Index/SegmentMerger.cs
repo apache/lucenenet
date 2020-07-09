@@ -76,10 +76,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// <c>True</c> if any merging should happen </summary>
-        internal bool ShouldMerge
-        {
-            get { return mergeState.SegmentInfo.DocCount > 0; }
-        }
+        internal bool ShouldMerge => mergeState.SegmentInfo.DocCount > 0;
 
         /// <summary>
         /// Merges the readers into the directory passed to the constructor </summary>

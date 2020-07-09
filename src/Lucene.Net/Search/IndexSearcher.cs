@@ -94,13 +94,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.internal
         /// </summary>
-        public static Similarity DefaultSimilarity
-        {
-            get
-            {
-                return defaultSimilarity;
-            }
-        }
+        public static Similarity DefaultSimilarity => defaultSimilarity;
 
         /// <summary>
         /// The <see cref="Similarities.Similarity"/> implementation used by this searcher. </summary>
@@ -177,13 +171,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Return the <see cref="Index.IndexReader"/> this searches. </summary>
-        public virtual IndexReader IndexReader
-        {
-            get
-            {
-                return reader;
-            }
-        }
+        public virtual IndexReader IndexReader => reader;
 
         /// <summary>
         /// Sugar for <code>.IndexReader.Document(docID)</code> </summary>
@@ -221,14 +209,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual Similarity Similarity
         {
-            set
-            {
-                this.similarity = value;
-            }
-            get
-            {
-                return similarity;
-            }
+            get => similarity;
+            set => this.similarity = value;
         }
 
         /// <summary>
@@ -733,13 +715,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="IndexReader.Context"/>
         /* sugar for #getReader().getTopReaderContext() */
 
-        public virtual IndexReaderContext TopReaderContext
-        {
-            get
-            {
-                return m_readerContext;
-            }
-        }
+        public virtual IndexReaderContext TopReaderContext => m_readerContext;
 
         /// <summary>
         /// A thread subclass for searching a single searchable
@@ -870,18 +846,9 @@ namespace Lucene.Net.Search
                 this.service = new TaskSchedulerCompletionService<T>(executor);
             }
 
-            public T Current
-            {
-                get
-                {
-                    return current;
-                }
-            }
+            public T Current => current;
 
-            object IEnumerator.Current
-            {
-                get { return current; }
-            }
+            object IEnumerator.Current => current;
 
             public void Dispose()
             {

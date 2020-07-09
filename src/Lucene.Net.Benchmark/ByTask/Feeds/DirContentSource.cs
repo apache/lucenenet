@@ -111,10 +111,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
             }
 
-            public virtual int Count
-            {
-                get { return count; }
-            }
+            public virtual int Count => count;
 
             public virtual bool MoveNext()
             {
@@ -129,15 +126,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 return true;
             }
 
-            public virtual FileInfo Current
-            {
-                get { return current; }
-            }
+            public virtual FileInfo Current => current;
 
-            object IEnumerator.Current
-            {
-                get { return current; }
-            }
+            object IEnumerator.Current => current;
 
             public void Dispose()
             {

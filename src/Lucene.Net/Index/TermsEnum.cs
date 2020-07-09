@@ -289,33 +289,15 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override BytesRef Term
-            {
-                get { throw new InvalidOperationException("this method should never be called"); }
-            }
+            public override BytesRef Term => throw new InvalidOperationException("this method should never be called");
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return null;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => null;
 
-            public override int DocFreq
-            {
-                get { throw new InvalidOperationException("this method should never be called"); }
-            }
+            public override int DocFreq => throw new InvalidOperationException("this method should never be called");
 
-            public override long TotalTermFreq
-            {
-                get { throw new InvalidOperationException("this method should never be called"); }
-            }
+            public override long TotalTermFreq => throw new InvalidOperationException("this method should never be called");
 
-            public override long Ord
-            {
-                get { throw new InvalidOperationException("this method should never be called"); }
-            }
+            public override long Ord => throw new InvalidOperationException("this method should never be called");
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {

@@ -327,28 +327,19 @@ namespace Lucene.Net.Util.Packed
         /// Expert. The low bits. </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual long[] LowerBits
-        {
-            get { return lowerLongs; }
-        }
+        public virtual long[] LowerBits => lowerLongs;
 
         /// <summary>
         /// Expert. The high bits. </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual long[] UpperBits
-        {
-            get { return upperLongs; }
-        }
+        public virtual long[] UpperBits => upperLongs;
 
         /// <summary>
         /// Expert. The index bits. </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual long[] IndexBits
-        {
-            get { return upperZeroBitPositionIndex; }
-        }
+        public virtual long[] IndexBits => upperZeroBitPositionIndex;
 
         public override string ToString()
         {

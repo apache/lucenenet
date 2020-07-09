@@ -103,13 +103,7 @@ namespace Lucene.Net.Util.Automaton
         /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        public int Count
-        {
-            get
-            {
-                return _size;
-            }
-        }
+        public int Count => _size;
 
         /// <summary>
         /// Returns acceptance status for given state.
@@ -122,13 +116,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns initial state.
         /// </summary>
-        public int InitialState
-        {
-            get
-            {
-                return m_initial;
-            }
-        }
+        public int InitialState => m_initial;
 
         /// <summary>
         /// Returns array of codepoint class interval start points. The array should

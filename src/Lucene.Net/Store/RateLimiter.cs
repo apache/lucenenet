@@ -85,13 +85,7 @@ namespace Lucene.Net.Store
             /// <summary>
             /// The current mb per second rate limit.
             /// </summary>
-            public override double MbPerSec
-            {
-                get
-                {
-                    return this.mbPerSec;
-                }
-            }
+            public override double MbPerSec => this.mbPerSec;
 
             /// <summary>
             /// Pauses, if necessary, to keep the instantaneous IO

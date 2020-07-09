@@ -108,10 +108,7 @@ namespace Lucene.Net.QueryParsers.Ext
         /// Returns the extension field delimiter character.
         /// </summary>
         /// <returns>the extension field delimiter character.</returns>
-        public virtual char ExtensionFieldDelimiter
-        {
-            get { return extensions.ExtensionFieldDelimiter; }
-        }
+        public virtual char ExtensionFieldDelimiter => extensions.ExtensionFieldDelimiter;
 
         protected internal override Query GetFieldQuery(string field, string queryText, bool quoted)
         {

@@ -112,13 +112,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the pattern term.
         /// </summary>
-        public virtual Term Term
-        {
-            get
-            {
-                return base.m_term;
-            }
-        }
+        public virtual Term Term => base.m_term;
 
         /// <summary>
         /// Prints a user-readable version of this query. </summary>

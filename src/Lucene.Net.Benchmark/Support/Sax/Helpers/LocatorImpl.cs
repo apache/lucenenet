@@ -79,8 +79,8 @@ namespace Sax.Helpers
         /// <seealso cref="ILocator.PublicId"/>
         public string PublicId
         {
-            get { return publicId; }
-            set { publicId = value; }
+            get => publicId;
+            set => publicId = value;
         }
 
 
@@ -91,8 +91,8 @@ namespace Sax.Helpers
         /// <seealso cref="ILocator.SystemId"/>
         public string SystemId
         {
-            get { return systemId; }
-            set { systemId = value; }
+            get => systemId;
+            set => systemId = value;
         }
 
 
@@ -103,8 +103,8 @@ namespace Sax.Helpers
         /// <seealso cref="ILocator.LineNumber"/>
         public int LineNumber
         {
-            get { return lineNumber; }
-            set { lineNumber = value; }
+            get => lineNumber;
+            set => lineNumber = value;
         }
 
 
@@ -115,8 +115,8 @@ namespace Sax.Helpers
         /// <seealso cref="ILocator.ColumnNumber"/>
         public int ColumnNumber
         {
-            get { return columnNumber; }
-            set { columnNumber = value; }
+            get => columnNumber;
+            set => columnNumber = value;
         }
 
         ////////////////////////////////////////////////////////////////////

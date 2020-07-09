@@ -207,10 +207,7 @@ namespace Lucene.Net.Index
                 this.input.Seek(pos);
             }
 
-            public override long Length
-            {
-                get { return this.input.Length; }
-            }
+            public override long Length => this.input.Length;
 
             public override object Clone()
             {

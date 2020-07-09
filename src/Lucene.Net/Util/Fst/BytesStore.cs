@@ -122,13 +122,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        internal virtual int BlockBits
-        {
-            get
-            {
-                return blockBits;
-            }
-        }
+        internal virtual int BlockBits => blockBits;
 
         /// <summary>
         /// Absolute writeBytes without changing the current
@@ -354,13 +348,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public virtual long Position
-        {
-            get
-            {
-                return ((long)blocks.Count - 1) * blockSize + nextWrite;
-            }
-        }
+        public virtual long Position => ((long)blocks.Count - 1) * blockSize + nextWrite;
 
         /// <summary>
         /// Pos must be less than the max position written so far!
@@ -475,10 +463,7 @@ namespace Lucene.Net.Util.Fst
 
             public override long Position
             {
-                get
-                {
-                    return ((long)nextBuffer - 1) * outerInstance.blockSize + nextRead;
-                }
+                get => ((long)nextBuffer - 1) * outerInstance.blockSize + nextRead;
                 set
                 {
                     int bufferIndex = (int)(value >> outerInstance.blockBits);
@@ -489,10 +474,7 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-            public override bool IsReversed
-            {
-                get { return false; }
-            }
+            public override bool IsReversed => false;
         }
 
         public virtual FST.BytesReader GetReverseReader()
@@ -550,10 +532,7 @@ namespace Lucene.Net.Util.Fst
 
             public override long Position
             {
-                get
-                {
-                    return ((long)nextBuffer + 1) * outerInstance.blockSize + nextRead;
-                }
+                get => ((long)nextBuffer + 1) * outerInstance.blockSize + nextRead;
                 set
                 {
                     // NOTE: a little weird because if you
@@ -568,10 +547,7 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-            public override bool IsReversed
-            {
-                get { return true; }
-            }
+            public override bool IsReversed => true;
         }
     }
 }

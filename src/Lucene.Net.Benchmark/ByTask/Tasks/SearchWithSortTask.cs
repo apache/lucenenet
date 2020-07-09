@@ -102,45 +102,24 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             this.sort = new Sort(sortFields);
         }
 
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
 
         public override IQueryMaker GetQueryMaker()
         {
             return RunData.GetQueryMaker(this);
         }
 
-        public override bool WithRetrieve
-        {
-            get { return false; }
-        }
+        public override bool WithRetrieve => false;
 
-        public override bool WithSearch
-        {
-            get { return true; }
-        }
+        public override bool WithSearch => true;
 
-        public override bool WithTraverse
-        {
-            get { return false; }
-        }
+        public override bool WithTraverse => false;
 
-        public override bool WithWarm
-        {
-            get { return false; }
-        }
+        public override bool WithWarm => false;
 
-        public override bool WithScore
-        {
-            get { return doScore; }
-        }
+        public override bool WithScore => doScore;
 
-        public override bool WithMaxScore
-        {
-            get { return doMaxScore; }
-        }
+        public override bool WithMaxScore => doMaxScore;
 
         public override Sort Sort
         {

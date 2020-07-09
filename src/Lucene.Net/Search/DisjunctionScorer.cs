@@ -141,10 +141,7 @@ namespace Lucene.Net.Search
             return sum;
         }
 
-        public override int DocID
-        {
-            get { return m_doc; }
-        }
+        public override int DocID => m_doc;
 
         public override int NextDoc()
         {

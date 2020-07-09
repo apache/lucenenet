@@ -45,10 +45,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// returns a list of all available tokenfilter names from the host project's referenced assemblies </summary>
-        public static ICollection<string> AvailableTokenFilters
-        {
-            get { return loader.AvailableServices; }
-        }
+        public static ICollection<string> AvailableTokenFilters => loader.AvailableServices;
 
         /// <summary>
         /// Reloads the factory list.

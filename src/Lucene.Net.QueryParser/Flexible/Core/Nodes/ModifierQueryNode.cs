@@ -62,10 +62,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             return GetChildren()[0];
         }
 
-        public virtual Modifier Modifier
-        {
-            get { return this.modifier; }
-        }
+        public virtual Modifier Modifier => this.modifier;
 
         public override string ToString()
         {

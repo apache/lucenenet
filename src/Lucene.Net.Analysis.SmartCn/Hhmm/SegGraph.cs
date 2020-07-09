@@ -64,10 +64,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// Get the highest start offset in the map. Returns maximum start offset, or -1 if the map is empty.
         /// </summary>
-        public virtual int MaxStart
-        {
-            get { return maxStart; }
-        }
+        public virtual int MaxStart => maxStart;
 
         /// <summary>
         /// Set the <see cref="SegToken.Index"/> for each token, based upon its order by startOffset. 

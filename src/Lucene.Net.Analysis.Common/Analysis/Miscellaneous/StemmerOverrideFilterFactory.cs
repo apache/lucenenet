@@ -73,13 +73,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
         }
 
-        public virtual bool IgnoreCase
-        {
-            get
-            {
-                return ignoreCase;
-            }
-        }
+        public virtual bool IgnoreCase => ignoreCase;
 
         public override TokenStream Create(TokenStream input)
         {

@@ -48,10 +48,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// returned is the output of <see cref="DateTools.DateToString(DateTime, DateTools.Resolution)"/>.
         /// Otherwise it's the string passed to the other ctor.
         /// </summary>
-        public virtual string Date
-        {
-            get { return date; }
-        }
+        public virtual string Date => date;
 
         public virtual void SetDate(DateTime? date)
         {

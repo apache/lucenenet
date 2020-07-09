@@ -79,10 +79,7 @@ namespace Lucene.Net.Tartarus.Snowball
         /// <summary>
         /// Get the current string.
         /// </summary>
-        public virtual string Current
-        {
-            get { return new string(m_current, 0, m_limit); }
-        }
+        public virtual string Current => new string(m_current, 0, m_limit);
 
         /// <summary>
         /// Set the current string.
@@ -113,18 +110,12 @@ namespace Lucene.Net.Tartarus.Snowball
         /// <seealso cref="CurrentBufferLength"/>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual char[] CurrentBuffer
-        {
-            get { return m_current; }
-        }
+        public virtual char[] CurrentBuffer => m_current;
 
         /// <summary>
         /// Get the valid length of the character array in <seealso cref="CurrentBuffer"/>
         /// </summary>
-        public virtual int CurrentBufferLength
-        {
-            get { return m_limit; }
-        }
+        public virtual int CurrentBufferLength => m_limit;
 
         // current string
         protected char[] m_current;

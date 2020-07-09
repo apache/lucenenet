@@ -442,13 +442,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Returns the bucket count (discretization thresholds).
         /// </summary>
-        public virtual int BucketCount
-        {
-            get
-            {
-                return rootArcs.Length;
-            }
-        }
+        public virtual int BucketCount => rootArcs.Length;
 
         /// <summary>
         /// Returns the bucket assigned to a given key (if found) or <c>-1</c> if
@@ -462,12 +456,6 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Returns the internal automaton.
         /// </summary>
-        public virtual FST<object> FST
-        {
-            get
-            {
-                return automaton;
-            }
-        }
+        public virtual FST<object> FST => automaton;
     }
 }

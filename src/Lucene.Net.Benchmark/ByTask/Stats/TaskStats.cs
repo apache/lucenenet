@@ -121,16 +121,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             return countsByTime; 
         }
 
-        public virtual long CountsByTimeStepMSec
-        {
-            get { return countsByTimeStepMSec; }
-        }
+        public virtual long CountsByTimeStepMSec => countsByTimeStepMSec;
 
         /// <summary>Gets the taskRunNum.</summary>
-        public virtual int TaskRunNum
-        {
-            get { return taskRunNum; }
-        }
+        public virtual int TaskRunNum => taskRunNum;
 
         /// <seealso cref="object.ToString()"/>
         public override string ToString()
@@ -144,46 +138,25 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         }
 
         /// <summary>Gets the count.</summary>
-        public virtual int Count
-        {
-            get { return count; }
-        }
+        public virtual int Count => count;
 
         /// <summary>Gets elapsed time.</summary>
-        public virtual long Elapsed
-        {
-            get { return elapsed; }
-        }
+        public virtual long Elapsed => elapsed;
 
         /// <summary>Gets the maxTotMem.</summary>
-        public virtual long MaxTotMem
-        {
-            get { return maxTotMem; }
-        }
+        public virtual long MaxTotMem => maxTotMem;
 
         /// <summary>Gets the maxUsedMem.</summary>
-        public virtual long MaxUsedMem
-        {
-            get { return maxUsedMem; }
-        }
+        public virtual long MaxUsedMem => maxUsedMem;
 
         /// <summary>Gets the numParallelTasks.</summary>
-        public virtual int NumParallelTasks
-        {
-            get { return numParallelTasks; }
-        }
+        public virtual int NumParallelTasks => numParallelTasks;
 
         /// <summary>Gets the task.</summary>
-        public virtual PerfTask Task
-        {
-            get { return task; }
-        }
+        public virtual PerfTask Task => task;
 
         /// <summary>Gets the numRuns.</summary>
-        public virtual int NumRuns
-        {
-            get { return numRuns; }
-        }
+        public virtual int NumRuns => numRuns;
 
         /// <summary>
         /// Add data from another stat, for aggregation.
@@ -229,9 +202,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         }
 
         /// <summary>Gets the round number.</summary>
-        public virtual int Round
-        {
-            get { return round; }
-        }
+        public virtual int Round => round;
     }
 }

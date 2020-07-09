@@ -35,8 +35,8 @@ namespace Lucene.Net.Store
         // property.
         protected internal virtual bool IsOpen
         {
-            get { return isOpen; }
-            set { isOpen = value; }
+            get => isOpen;
+            set => isOpen = value;
         }
 
         /// <summary>
@@ -72,13 +72,7 @@ namespace Lucene.Net.Store
             lockFactory.LockPrefix = this.GetLockID();
         }
 
-        public override LockFactory LockFactory
-        {
-            get
-            {
-                return this.m_lockFactory;
-            }
-        }
+        public override LockFactory LockFactory => this.m_lockFactory;
 
         protected internal override sealed void EnsureOpen()
         {

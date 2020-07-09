@@ -453,13 +453,7 @@ namespace Egothor.Stemmer
                 }
             }
 
-            internal int Length
-            {
-                get
-                {
-                    return s.Length;
-                }
-            }
+            internal int Length => s.Length;
 
             internal char Next()
             {

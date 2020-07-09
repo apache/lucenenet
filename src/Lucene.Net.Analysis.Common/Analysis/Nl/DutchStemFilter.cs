@@ -98,10 +98,7 @@ namespace Lucene.Net.Analysis.Nl
         /// </summary>
         public DutchStemmer Stemmer
         {
-            get // LUCENENET NOTE: Added getter per MSDN guidelines
-            {
-                return this.stemmer;
-            }
+            get => this.stemmer; // LUCENENET NOTE: Added getter per MSDN guidelines
             set
             {
                 if (value != null)

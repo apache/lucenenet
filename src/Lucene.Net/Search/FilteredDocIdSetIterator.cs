@@ -48,10 +48,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="FilteredDocIdSetIterator(DocIdSetIterator)"/>
         protected abstract bool Match(int doc);
 
-        public override int DocID
-        {
-            get { return doc; }
-        }
+        public override int DocID => doc;
 
         public override int NextDoc()
         {

@@ -56,14 +56,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual string LockPrefix
         {
-            set
-            {
-                this.m_lockPrefix = value;
-            }
-            get
-            {
-                return this.m_lockPrefix;
-            }
+            get => this.m_lockPrefix;
+            set => this.m_lockPrefix = value;
         }
 
         /// <summary>

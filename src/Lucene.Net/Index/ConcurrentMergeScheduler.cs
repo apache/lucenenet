@@ -132,23 +132,11 @@ namespace Lucene.Net.Index
         /// Returns <see cref="maxThreadCount"/>.
         /// </summary>
         /// <seealso cref="SetMaxMergesAndThreads(int, int)"/>
-        public virtual int MaxThreadCount
-        {
-            get
-            {
-                return maxThreadCount;
-            }
-        }
+        public virtual int MaxThreadCount => maxThreadCount;
 
         /// <summary>
         /// See <see cref="SetMaxMergesAndThreads(int, int)"/>. </summary>
-        public virtual int MaxMergeCount
-        {
-            get
-            {
-                return maxMergeCount;
-            }
-        }
+        public virtual int MaxMergeCount => maxMergeCount;
 
         /// <summary>
         /// Return the priority that merge threads run at.  By
@@ -293,10 +281,7 @@ namespace Lucene.Net.Index
         /// }
         /// </code>
         /// </summary>
-        protected virtual bool IsVerbose
-        {
-            get { return m_writer != null && m_writer.infoStream.IsEnabled("CMS"); }
-        }
+        protected virtual bool IsVerbose => m_writer != null && m_writer.infoStream.IsEnabled("CMS");
 
         /// <summary>
         /// Outputs the given message - this method assumes <see cref="IsVerbose"/> was

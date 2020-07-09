@@ -74,21 +74,9 @@ namespace Lucene.Net.Analysis.CommonGrams
             }
         }
 
-        public virtual bool IgnoreCase
-        {
-            get
-            {
-                return ignoreCase;
-            }
-        }
+        public virtual bool IgnoreCase => ignoreCase;
 
-        public virtual CharArraySet CommonWords
-        {
-            get
-            {
-                return commonWords;
-            }
-        }
+        public virtual CharArraySet CommonWords => commonWords;
 
         public override TokenStream Create(TokenStream input)
         {

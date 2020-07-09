@@ -206,14 +206,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         // for loading
         internal virtual TSTNode Root
         {
-            set
-            {
-                rootNode = value;
-            }
-            get
-            {
-                return rootNode;
-            }
+            set => rootNode = value;
+            get => rootNode;
         }
 
 
@@ -908,24 +902,15 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// </summary>
         public virtual int MatchAlmostDiff
         {
-            get // LUCENENET NOTE: Added property get per MSDN guidelines
-            {
-                return matchAlmostDiff;
-            }
+            get => matchAlmostDiff; // LUCENENET NOTE: Added property get per MSDN guidelines
             set
             {
                 if (value < 0)
-                {
                     matchAlmostDiff = 0;
-                }
                 else if (value > 3)
-                {
                     matchAlmostDiff = 3;
-                }
                 else
-                {
                     matchAlmostDiff = value;
-                }
             }
         }
 
@@ -941,14 +926,8 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// </summary>
         public virtual int NumReturnValues
         {
-            get // LUCENENET NOTE: Added property get per MSDN guidelines
-            {
-                return defaultNumReturnValues;
-            }
-            set
-            {
-                defaultNumReturnValues = (value < 0) ? -1 : value;
-            }
+            get => defaultNumReturnValues; // LUCENENET NOTE: Added property get per MSDN guidelines
+            set => defaultNumReturnValues = (value < 0) ? -1 : value;
         }
 
         /// <summary>

@@ -77,13 +77,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
         }
 
-        public IComparer<BytesRef> Comparer
-        {
-            get
-            {
-                return sort.Comparer;
-            }
-        }
+        public IComparer<BytesRef> Comparer => sort.Comparer;
 
         /// <summary>
         /// Removes any written temporary files.
@@ -155,13 +149,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
             }
 
-            public virtual IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return comparer;
-                }
-            }
+            public virtual IComparer<BytesRef> Comparer => comparer;
         }
     }
 }

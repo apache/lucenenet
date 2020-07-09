@@ -50,13 +50,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// This <see cref="DocIdSet"/> implementation is cacheable if the inner set is cacheable. </summary>
-        public override bool IsCacheable
-        {
-            get
-            {
-                return innerSet.IsCacheable;
-            }
-        }
+        public override bool IsCacheable => innerSet.IsCacheable;
 
         public override IBits Bits
         {
@@ -84,10 +78,7 @@ namespace Lucene.Net.Search
                 return bits.Get(docid) && outerInstance.Match(docid);
             }
 
-            public virtual int Length
-            {
-                get { return bits.Length; }
-            }
+            public virtual int Length => bits.Length;
         }
 
         /// <summary>

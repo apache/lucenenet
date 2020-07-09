@@ -240,13 +240,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             return result;
         }
 
-        public override int Count
-        {
-            get
-            {
-                return fields.Count;
-            }
-        }
+        public override int Count => fields.Count;
 
         private class FieldReader : Terms
         {
@@ -276,55 +270,28 @@ namespace Lucene.Net.Codecs.BlockTerms
                 this.longsSize = longsSize;
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
             public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 return new SegmentTermsEnum(this);
             }
 
-            public override bool HasFreqs
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
-            }
+            public override bool HasFreqs => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
-            }
+            public override bool HasOffsets => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
-            }
+            public override bool HasPositions => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
-            public override bool HasPayloads
-            {
-                get { return fieldInfo.HasPayloads; }
-            }
+            public override bool HasPayloads => fieldInfo.HasPayloads;
 
-            public override long Count
-            {
-                get { return numTerms; }
-            }
+            public override long Count => numTerms;
 
-            public override long SumTotalTermFreq
-            {
-                get { return sumTotalTermFreq; }
-            }
+            public override long SumTotalTermFreq => sumTotalTermFreq;
 
-            public override long SumDocFreq
-            {
-                get { return sumDocFreq; }
-            }
+            public override long SumDocFreq => sumDocFreq;
 
-            public override int DocCount
-            {
-                get { return docCount; }
-            }
+            public override int DocCount => docCount;
 
             // Iterates through terms in this field
             private class SegmentTermsEnum : TermsEnum
@@ -397,10 +364,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     longs = new long[outerInstance.longsSize];
                 }
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-                }
+                public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
                 /// <remarks>
                 /// TODO: we may want an alternate mode here which is
@@ -758,10 +722,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     return term;
                 }
 
-                public override BytesRef Term
-                {
-                    get { return term; }
-                }
+                public override BytesRef Term => term;
 
                 public override int DocFreq
                 {

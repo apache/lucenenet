@@ -39,6 +39,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public virtual int PositionIncrement
         {
+            get => positionIncrement;
             set
             {
                 if (value < 0)
@@ -46,10 +47,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
                     throw new ArgumentException("Increment must be zero or greater: got " + value);
                 }
                 this.positionIncrement = value;
-            }
-            get
-            {
-                return positionIncrement;
             }
         }
 

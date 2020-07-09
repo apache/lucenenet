@@ -193,14 +193,9 @@ namespace Lucene.Net.Index.Sorter
             }
 
             // LUCENENET NOTE: This was value(int) in Lucene.
-            public override IComparable this[int slot]
-            {
-                get
-                {
-                    // really our sort "value" is more complex...
-                    throw new System.NotSupportedException("filling sort field values is not yet supported");
-                }
-            }
+            public override IComparable this[int slot] => throw
+                // really our sort "value" is more complex...
+                new System.NotSupportedException("filling sort field values is not yet supported");
 
             public override void SetScorer(Scorer scorer)
             {

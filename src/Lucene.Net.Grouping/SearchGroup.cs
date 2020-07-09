@@ -96,16 +96,10 @@ namespace Lucene.Net.Search.Grouping
 
         private class ShardIter<T>
         {
-            public IEnumerator<ISearchGroup<T>> Iter
-            {
-                get { return iter; }
-            }
+            public IEnumerator<ISearchGroup<T>> Iter => iter;
             private readonly IEnumerator<ISearchGroup<T>> iter;
 
-            public int ShardIndex
-            {
-                get { return shardIndex; }
-            }
+            public int ShardIndex => shardIndex;
             private readonly int shardIndex;
 
             public ShardIter(IEnumerable<ISearchGroup<T>> shard, int shardIndex)
@@ -140,45 +134,39 @@ namespace Lucene.Net.Search.Grouping
         {
 
             // groupValue may be null!
-            public T GroupValue
-            {
-                get { return groupValue; }
-            }
+            public T GroupValue => groupValue;
             private readonly T groupValue;
 
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public object[] TopValues
             {
-                get { return topValues; }
-                set { topValues = value; }
+                get => topValues;
+                set => topValues = value;
             }
             private object[] topValues;
 
-            public IList<ShardIter<T>> Shards
-            {
-                get { return shards; }
-            }
+            public IList<ShardIter<T>> Shards => shards;
             private readonly List<ShardIter<T>> shards = new List<ShardIter<T>>();
 
             public int MinShardIndex
             {
-                get { return minShardIndex; }
-                set { minShardIndex = value; }
+                get => minShardIndex;
+                set => minShardIndex = value;
             }
             private int minShardIndex;
 
             public bool IsProcessed
             {
-                get { return processed; }
-                set { processed = value; }
+                get => processed;
+                set => processed = value;
             }
             private bool processed;
 
             public bool IsInQueue
             {
-                get { return inQueue; }
-                set { inQueue = value; }
+                get => inQueue;
+                set => inQueue = value;
             }
             private bool inQueue;
 
@@ -262,18 +250,14 @@ namespace Lucene.Net.Search.Grouping
         {
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            public FieldComparer[] Comparers
-            {
-                get { return comparers; }
-            }
+            public FieldComparer[] Comparers => comparers;
+
             private readonly FieldComparer[] comparers;
 
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-            public int[] Reversed
-            {
-                get { return reversed; }
-            }
+            public int[] Reversed => reversed;
+
             private readonly int[] reversed;
 
             public GroupComparer(Sort groupSort)

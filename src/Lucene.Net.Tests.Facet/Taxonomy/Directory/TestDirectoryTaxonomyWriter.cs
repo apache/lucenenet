@@ -64,13 +64,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 return true;
             }
-            public virtual bool IsFull
-            {
-                get
-                {
-                    return true;
-                }
-            }
+            public virtual bool IsFull => true;
+
             public virtual void Clear()
             {
             }

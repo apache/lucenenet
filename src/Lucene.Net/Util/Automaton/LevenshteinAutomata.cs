@@ -261,10 +261,7 @@ namespace Lucene.Net.Util.Automaton
             /// <para/>
             /// NOTE: This was size() in Lucene.
             /// </summary>
-            internal virtual int Count
-            {
-                get { return minErrors.Length * (m_w + 1); }
-            }
+            internal virtual int Count => minErrors.Length * (m_w + 1);
 
             /// <summary>
             /// Returns <c>true</c> if the <c>state</c> in any Levenshtein DFA is an accept state (final state).

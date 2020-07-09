@@ -93,14 +93,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
         public virtual ICharSequence Text
         {
-            get { return text; }
-            set { this.text = value; }
+            get => text;
+            set => this.text = value;
         }
 
         public virtual string Field
         {
-            get { return field; }
-            set { this.field = value; }
+            get => field;
+            set => this.field = value;
         }
 
         public virtual string GetFieldAsString()

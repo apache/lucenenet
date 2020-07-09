@@ -100,10 +100,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the number of bits stored in this bitset. </summary>
-        public long Length
-        {
-            get { return numBits; }
-        }
+        public long Length => numBits;
 
         /// <summary>
         /// Expert. </summary>

@@ -88,26 +88,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             /// <summary>
             /// Gets the value
             /// </summary>
-            public virtual string Value
-            {
-                get { return value; }
-            }
+            public virtual string Value => value;
 
             /// <summary>
             /// Gets the begin
             /// </summary>
-            public virtual int Begin
-            {
-                get { return begin; }
-            }
+            public virtual int Begin => begin;
 
             /// <summary>
             /// Gets the end
             /// </summary>
-            public virtual int End
-            {
-                get { return end; }
-            }
+            public virtual int End => end;
 
             public override string ToString()
             {
@@ -138,8 +129,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <returns>QueryText List size</returns>
         public virtual IList<QueryText> PathElements
         {
-            get { return values; }
-            set { this.values = value; }
+            get => values;
+            set => this.values = value;
         }
 
         /// <summary>

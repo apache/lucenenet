@@ -358,15 +358,9 @@ namespace Lucene.Net.Analysis.En
         // private void initializeStemHash() { if (maxCacheSize > 0) cache = new
         // CharArrayMap<String>(maxCacheSize,false); }
 
-        private char FinalChar
-        {
-            get { return word[k]; }
-        }
+        private char FinalChar => word[k];
 
-        private char PenultChar
-        {
-            get { return word[k - 1]; }
-        }
+        private char PenultChar => word[k - 1];
 
         private bool IsVowel(int index)
         {
@@ -580,10 +574,7 @@ namespace Lucene.Net.Analysis.En
         }
 
         /// <summary>length of stem within word</summary>
-        private int StemLength
-        {
-            get { return j + 1; }
-        }
+        private int StemLength => j + 1;
 
         private bool EndsIn(char[] s)
         {
@@ -1847,47 +1838,22 @@ namespace Lucene.Net.Analysis.En
             return result != null ? (ICharSequence)new CharsRef(result) : word;
         }
 
-        internal virtual string String
-        {
-            get
-            {
-                return result;
-            }
-        }
+        internal virtual string String => result;
 
-        internal virtual char[] Chars
-        {
-            get
-            {
-                return word.Array;
-            }
-        }
+        internal virtual char[] Chars => word.Array;
 
-        internal virtual int Length
-        {
-            get
-            {
-                return word.Length;
-            }
-        }
+        internal virtual int Length => word.Length;
 
         internal string result;
 
-        private bool IsMatched
-        {
-            get
-            {
-
-                //*
-                // if (!lookups.contains(word.toString())) { throw new
-                // RuntimeException("didn't look up "+word.toString()+" prev="+prevLookup);
-                // }
-                // **
-
-                // lookup();
-                return matchedEntry != null;
-            }
-        }
+        private bool IsMatched =>
+            //*
+            // if (!lookups.contains(word.toString())) { throw new
+            // RuntimeException("didn't look up "+word.toString()+" prev="+prevLookup);
+            // }
+            // **
+            // lookup();
+            matchedEntry != null;
 
         /// <summary>
         /// Stems the text in the token. Returns true if changed.

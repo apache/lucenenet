@@ -47,8 +47,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public virtual string Type
         {
-            get { return type; }
-            set { type = value; }
+            get => type;
+            set => type = value;
         }
 
         public override void Clear()

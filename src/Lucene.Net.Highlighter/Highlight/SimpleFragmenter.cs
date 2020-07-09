@@ -69,8 +69,8 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         public virtual int FragmentSize
         {
-            get { return fragmentSize; }
-            set { fragmentSize = value; }
+            get => fragmentSize;
+            set => fragmentSize = value;
         }
     }
 }

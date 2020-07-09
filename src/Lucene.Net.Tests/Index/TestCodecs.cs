@@ -137,55 +137,25 @@ namespace Lucene.Net.Index
                     this.omitTF = omitTF;
                 }
 
-                public bool IsIndexed
-                {
-                    get { return true; }
-                }
+                public bool IsIndexed => true;
 
-                public bool IsStored
-                {
-                    get { return false; }
-                }
+                public bool IsStored => false;
 
-                public bool IsTokenized
-                {
-                    get { return false; }
-                }
+                public bool IsTokenized => false;
 
-                public bool StoreTermVectors
-                {
-                    get { return false; }
-                }
+                public bool StoreTermVectors => false;
 
-                public bool StoreTermVectorOffsets
-                {
-                    get { return false; }
-                }
+                public bool StoreTermVectorOffsets => false;
 
-                public bool StoreTermVectorPositions
-                {
-                    get { return false; }
-                }
+                public bool StoreTermVectorPositions => false;
 
-                public bool StoreTermVectorPayloads
-                {
-                    get { return false; }
-                }
+                public bool StoreTermVectorPayloads => false;
 
-                public bool OmitNorms
-                {
-                    get { return false; }
-                }
+                public bool OmitNorms => false;
 
-                public IndexOptions IndexOptions
-                {
-                    get { return omitTF ? Index.IndexOptions.DOCS_ONLY : Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
-                }
+                public IndexOptions IndexOptions => omitTF ? Index.IndexOptions.DOCS_ONLY : Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
 
-                public DocValuesType DocValueType
-                {
-                    get { return DocValuesType.NONE; }
-                }
+                public DocValuesType DocValueType => DocValuesType.NONE;
             }
 
             public int CompareTo(FieldData other)

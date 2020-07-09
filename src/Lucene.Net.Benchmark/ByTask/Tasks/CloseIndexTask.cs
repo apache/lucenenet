@@ -59,9 +59,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 doWait = bool.Parse(@params);
         }
 
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
     }
 }

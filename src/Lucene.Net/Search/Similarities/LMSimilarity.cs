@@ -123,14 +123,8 @@ namespace Lucene.Net.Search.Similarities
             /// </summary>
             public float CollectionProbability
             {
-                get
-                {
-                    return collectionProbability;
-                }
-                set
-                {
-                    this.collectionProbability = value;
-                }
+                get => collectionProbability;
+                set => this.collectionProbability = value;
             }
         }
 

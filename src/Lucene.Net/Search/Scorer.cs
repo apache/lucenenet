@@ -69,13 +69,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public virtual Weight Weight
-        {
-            get
-            {
-                return m_weight;
-            }
-        }
+        public virtual Weight Weight => m_weight;
 
         /// <summary>
         /// Returns child sub-scorers

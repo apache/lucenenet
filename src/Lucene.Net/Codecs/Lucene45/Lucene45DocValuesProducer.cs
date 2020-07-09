@@ -649,13 +649,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 binary.Get(ord, result);
             }
 
-            public override int ValueCount
-            {
-                get
-                {
-                    return valueCount;
-                }
-            }
+            public override int ValueCount => valueCount;
 
             public override int LookupTerm(BytesRef key)
             {
@@ -776,13 +770,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 binary.Get(ord, result);
             }
 
-            public override long ValueCount
-            {
-                get
-                {
-                    return valueCount;
-                }
-            }
+            public override long ValueCount => valueCount;
 
             public override long LookupTerm(BytesRef key)
             {
@@ -859,10 +847,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
-            public virtual int Length
-            {
-                get { return outerInstance.maxDoc; }
-            }
+            public virtual int Length => outerInstance.maxDoc;
         }
 
         public override IBits GetDocsWithField(FieldInfo field)
@@ -1226,33 +1211,15 @@ namespace Lucene.Net.Codecs.Lucene45
                     term.CopyBytes(termBuffer);
                 }
 
-                public override BytesRef Term
-                {
-                    get { return term; }
-                }
+                public override BytesRef Term => term;
 
-                public override long Ord
-                {
-                    get { return currentOrd; }
-                }
+                public override long Ord => currentOrd;
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get
-                    {
-                        return BytesRef.UTF8SortedAsUnicodeComparer;
-                    }
-                }
+                public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-                public override int DocFreq
-                {
-                    get { throw new System.NotSupportedException(); }
-                }
+                public override int DocFreq => throw new System.NotSupportedException();
 
-                public override long TotalTermFreq
-                {
-                    get { return -1; }
-                }
+                public override long TotalTermFreq => -1;
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {

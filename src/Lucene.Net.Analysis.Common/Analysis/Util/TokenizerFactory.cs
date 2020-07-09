@@ -46,10 +46,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// returns a list of all available tokenizer names from the host project's referenced assemblies </summary>
-        public static ICollection<string> AvailableTokenizers
-        {
-            get { return loader.AvailableServices; }
-        }
+        public static ICollection<string> AvailableTokenizers => loader.AvailableServices;
 
         /// <summary>
         /// Reloads the factory list.

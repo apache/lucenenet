@@ -61,8 +61,8 @@ namespace Lucene.Net.Util
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public byte[] Bytes
         {
-            get { return bytes; }
-            set { bytes = value; } // LUCENENET NOTE: Although the comments state this cannot be null, some of the tests depend on setting it to null!
+            get => bytes;
+            set => bytes = value; // LUCENENET NOTE: Although the comments state this cannot be null, some of the tests depend on setting it to null!
         }
         private byte[] bytes;
 
@@ -324,13 +324,7 @@ namespace Lucene.Net.Util
 
         private static readonly IComparer<BytesRef> utf8SortedAsUnicodeSortOrder = Utf8SortedAsUnicodeComparer.Instance;
 
-        public static IComparer<BytesRef> UTF8SortedAsUnicodeComparer
-        {
-            get
-            {
-                return utf8SortedAsUnicodeSortOrder;
-            }
-        }
+        public static IComparer<BytesRef> UTF8SortedAsUnicodeComparer => utf8SortedAsUnicodeSortOrder;
 
         // LUCENENET NOTE: De-nested Utf8SortedAsUnicodeComparer class to prevent naming conflict
 
@@ -340,13 +334,7 @@ namespace Lucene.Net.Util
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]
-        public static IComparer<BytesRef> UTF8SortedAsUTF16Comparer
-        {
-            get
-            {
-                return utf8SortedAsUTF16SortOrder;
-            }
-        }
+        public static IComparer<BytesRef> UTF8SortedAsUTF16Comparer => utf8SortedAsUTF16SortOrder;
 
         // LUCENENET NOTE: De-nested Utf8SortedAsUtf16Comparer class to prevent naming conflict
 

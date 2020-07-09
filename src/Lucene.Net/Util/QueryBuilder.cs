@@ -152,14 +152,8 @@ namespace Lucene.Net.Util
         /// Gets or Sets the analyzer. </summary>
         public virtual Analyzer Analyzer
         {
-            get
-            {
-                return analyzer;
-            }
-            set
-            {
-                this.analyzer = value;
-            }
+            get => analyzer;
+            set => this.analyzer = value;
         }
 
         /// <summary>
@@ -174,14 +168,8 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual bool EnablePositionIncrements
         {
-            get
-            {
-                return enablePositionIncrements;
-            }
-            set
-            {
-                this.enablePositionIncrements = value;
-            }
+            get => enablePositionIncrements;
+            set => this.enablePositionIncrements = value;
         }
 
         /// <summary>

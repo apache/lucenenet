@@ -1678,13 +1678,7 @@ namespace Lucene.Net.Search
                 this.numOrd = numOrd;
             }
 
-            public override int ValueCount
-            {
-                get
-                {
-                    return numOrd;
-                }
-            }
+            public override int ValueCount => numOrd;
 
             public override int GetOrd(int docID)
             {
@@ -2025,10 +2019,7 @@ namespace Lucene.Net.Search
                     return offsetReader.Get(index) != 0;
                 }
 
-                public virtual int Length
-                {
-                    get { return maxDoc; }
-                }
+                public virtual int Length => maxDoc;
             }
         }
 
@@ -2083,18 +2074,13 @@ namespace Lucene.Net.Search
 
         public virtual TextWriter InfoStream
         {
-            set
-            {
+            get => infoStream;
+            set =>
                 // LUCENENET specific - use a SafeTextWriterWrapper to ensure that if the TextWriter
                 // is disposed by the caller (using block) we don't get any exceptions if we keep using it.
                 infoStream = value == null
                     ? null
                     : (value is SafeTextWriterWrapper ? value : new SafeTextWriterWrapper(value));
-            }
-            get
-            {
-                return infoStream;
-            }
         }
     }
 }

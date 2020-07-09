@@ -86,15 +86,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             m_maxDocCharsToAnalyze = data.Config.Get("highlighter.maxDocCharsToAnalyze", Highlighter.DEFAULT_MAX_CHARS_TO_ANALYZE);
         }
 
-        public override bool WithRetrieve
-        {
-            get { return true; }
-        }
+        public override bool WithRetrieve => true;
 
-        public override int NumToHighlight
-        {
-            get { return m_numToHighlight; }
-        }
+        public override int NumToHighlight => m_numToHighlight;
 
         protected override BenchmarkHighlighter GetBenchmarkHighlighter(Query q)
         {

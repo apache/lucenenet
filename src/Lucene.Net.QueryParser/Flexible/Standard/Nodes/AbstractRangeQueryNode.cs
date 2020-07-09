@@ -87,18 +87,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// <summary>
         /// Gets the lower bound node.
         /// </summary>
-        public virtual IFieldableNode LowerBound
-        {
-            get { return (IFieldableNode)GetChildren()[0]; }
-        }
+        public virtual IFieldableNode LowerBound => (IFieldableNode)GetChildren()[0];
 
         /// <summary>
         /// Gets the upper bound node.
         /// </summary>
-        public virtual IFieldableNode UpperBound
-        {
-            get { return (IFieldableNode)GetChildren()[1]; }
-        }
+        public virtual IFieldableNode UpperBound => (IFieldableNode)GetChildren()[1];
 
         /// <summary>
         /// Gets whether the lower bound is inclusive or exclusive. 
@@ -106,10 +100,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// <remarks>
         /// <c>true</c> if the lower bound is inclusive, otherwise, <c>false</c>
         /// </remarks>
-        public virtual bool IsLowerInclusive
-        {
-            get { return lowerInclusive; }
-        }
+        public virtual bool IsLowerInclusive => lowerInclusive;
 
         /// <summary>
         /// Gets whether the upper bound is inclusive or exclusive.
@@ -117,10 +108,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         /// <remarks>
         /// <c>true</c> if the upper bound is inclusive, otherwise, <c>false</c>
         /// </remarks>
-        public virtual bool IsUpperInclusive
-        {
-            get { return upperInclusive; }
-        }
+        public virtual bool IsUpperInclusive => upperInclusive;
 
         /// <summary>
         /// Sets the lower and upper bounds.

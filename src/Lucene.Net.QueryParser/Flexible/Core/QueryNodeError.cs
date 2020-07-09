@@ -97,9 +97,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// <summary>
         /// <see cref="INLSException.MessageObject"/> 
         /// </summary>
-        public virtual IMessage MessageObject
-        {
-            get { return this.message; }
-        }
+        public virtual IMessage MessageObject => this.message;
     }
 }

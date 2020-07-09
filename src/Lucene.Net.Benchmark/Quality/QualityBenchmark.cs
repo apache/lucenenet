@@ -143,8 +143,8 @@ namespace Lucene.Net.Benchmarks.Quality
         /// </summary>
         public virtual int MaxQueries
         {
-            get { return maxQueries; }
-            set { maxQueries = value; }
+            get => maxQueries;
+            set => maxQueries = value;
         }
 
         /// <summary>
@@ -152,8 +152,8 @@ namespace Lucene.Net.Benchmarks.Quality
         /// </summary>
         public virtual int MaxResults
         {
-            get { return maxResults; }
-            set { maxResults = value; }
+            get => maxResults;
+            set => maxResults = value;
         }
     }
 }

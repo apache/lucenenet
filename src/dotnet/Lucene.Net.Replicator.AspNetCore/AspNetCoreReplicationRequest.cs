@@ -44,7 +44,7 @@ namespace Lucene.Net.Replicator.AspNetCore
         /// <summary>
         /// Provides the requested path which mapps to a replication operation.
         /// </summary>
-        public string Path { get { return request.PathBase + request.Path; } }
+        public string Path => request.PathBase + request.Path;
 
         /// <summary>
         /// Returns the requested query parameter or null if not present.

@@ -1308,13 +1308,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Gets the <see cref="Store.Directory"/> used by this index. </summary>
-        public virtual Directory Directory
-        {
-            get
-            {
-                return directory;
-            }
-        }
+        public virtual Directory Directory => directory;
 
         /// <summary>
         /// Gets the analyzer used by this index. </summary>
@@ -5276,22 +5270,10 @@ namespace Lucene.Net.Index
         }
 
         // For test purposes.
-        internal int BufferedDeleteTermsSize
-        {
-            get
-            {
-                return docWriter.BufferedDeleteTermsSize;
-            }
-        }
+        internal int BufferedDeleteTermsSize => docWriter.BufferedDeleteTermsSize;
 
         // For test purposes.
-        internal int NumBufferedDeleteTerms
-        {
-            get
-            {
-                return docWriter.NumBufferedDeleteTerms;
-            }
-        }
+        internal int NumBufferedDeleteTerms => docWriter.NumBufferedDeleteTerms;
 
         // utility routines for tests
         internal virtual SegmentCommitInfo NewestSegment()
@@ -5387,14 +5369,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual bool KeepFullyDeletedSegments
         {
-            set
-            {
-                keepFullyDeletedSegments = value;
-            }
-            get
-            {
-                return keepFullyDeletedSegments;
-            }
+            get => keepFullyDeletedSegments;
+            set => keepFullyDeletedSegments = value;
         }
 
         // called only from assert

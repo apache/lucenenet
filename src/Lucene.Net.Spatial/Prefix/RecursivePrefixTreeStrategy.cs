@@ -58,15 +58,10 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         public virtual int PrefixGridScanLevel
         {
-            get // LUCENENET NOTE: Added getter per MSDN guidelines
-            {
-                return prefixGridScanLevel;
-            }
-            set
-            {
+            get => prefixGridScanLevel; // LUCENENET NOTE: Added getter per MSDN guidelines
+            set =>
                 //TODO if negative then subtract from maxlevels
                 prefixGridScanLevel = value;
-            }
         }
 
         public override string ToString()

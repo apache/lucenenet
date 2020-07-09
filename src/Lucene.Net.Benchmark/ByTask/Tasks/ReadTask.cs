@@ -224,10 +224,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// </summary>
         public abstract bool WithSearch { get; }
 
-        public virtual bool WithCollector
-        {
-            get { return false; }
-        }
+        public virtual bool WithCollector => false;
 
 
         /// <summary>
@@ -244,19 +241,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// Whether scores should be computed (only useful with
         /// field sort)
         /// </summary>
-        public virtual bool WithScore
-        {
-            get { return true; }
-        }
+        public virtual bool WithScore => true;
 
         /// <summary>
         /// Whether maxScores should be computed (only useful with
         /// field sort)
         /// </summary>
-        public virtual bool WithMaxScore
-        {
-            get { return true; }
-        }
+        public virtual bool WithMaxScore => true;
 
         /// <summary>
         /// Specify the number of hits to traverse.  Tasks should override this if they want to restrict the number
@@ -267,10 +258,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <remarks>
         /// Unless overridden, the return value is <see cref="int.MaxValue"/>.
         /// </remarks>
-        public virtual int TraversalSize
-        {
-            get { return int.MaxValue; }
-        }
+        public virtual int TraversalSize => int.MaxValue;
 
         internal static readonly int DEFAULT_SEARCH_NUM_HITS = 10;
         private int numHits;
@@ -287,10 +275,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <para/>
         /// Returns 10 by default, or <c>search.num.hits</c> config if set.
         /// </summary>
-        public virtual int NumHits
-        {
-            get { return numHits; }
-        }
+        public virtual int NumHits => numHits;
 
         /// <summary>
         /// Return <c>true</c> if, with search &amp; results traversing, docs should be retrieved.
@@ -300,10 +285,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// <summary>
         /// The number of documents to highlight. 0 means no docs will be highlighted.
         /// </summary>
-        public virtual int NumToHighlight
-        {
-            get { return 0; }
-        }
+        public virtual int NumToHighlight => 0;
 
         /// <summary>
         /// Return an appropriate highlighter to be used with
@@ -316,10 +298,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return null;
         }
 
-        public virtual Sort Sort
-        {
-            get { return null; }
-        }
+        public virtual Sort Sort => null;
 
         /// <summary>
         /// Define the fields to highlight.  Base implementation returns all fields.

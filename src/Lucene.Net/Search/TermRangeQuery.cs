@@ -91,37 +91,19 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the lower value of this range query </summary>
-        public virtual BytesRef LowerTerm
-        {
-            get
-            {
-                return lowerTerm;
-            }
-        }
+        public virtual BytesRef LowerTerm => lowerTerm;
 
         /// <summary>
         /// Returns the upper value of this range query </summary>
-        public virtual BytesRef UpperTerm
-        {
-            get
-            {
-                return upperTerm;
-            }
-        }
+        public virtual BytesRef UpperTerm => upperTerm;
 
         /// <summary>
         /// Returns <c>true</c> if the lower endpoint is inclusive </summary>
-        public virtual bool IncludesLower
-        {
-            get { return includeLower; }
-        }
+        public virtual bool IncludesLower => includeLower;
 
         /// <summary>
         /// Returns <c>true</c> if the upper endpoint is inclusive </summary>
-        public virtual bool IncludesUpper
-        {
-            get { return includeUpper; }
-        }
+        public virtual bool IncludesUpper => includeUpper;
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {

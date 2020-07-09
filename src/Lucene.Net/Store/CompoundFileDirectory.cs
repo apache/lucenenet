@@ -277,21 +277,9 @@ namespace Lucene.Net.Store
             return entries;
         }
 
-        public Directory Directory
-        {
-            get
-            {
-                return directory;
-            }
-        }
+        public Directory Directory => directory;
 
-        public string Name
-        {
-            get
-            {
-                return fileName;
-            }
-        }
+        public string Name => fileName;
 
         protected override void Dispose(bool disposing)
         {

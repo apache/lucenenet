@@ -199,10 +199,7 @@ namespace Lucene.Net.Store
                 return clone;
             }
 
-            public override sealed long Length
-            {
-                get { return m_end - m_off; }
-            }
+            public override sealed long Length => m_end - m_off;
 
             /// <summary>
             /// <see cref="IndexInput"/> methods </summary>
@@ -251,13 +248,7 @@ namespace Lucene.Net.Store
             {
             }
 
-            public virtual bool IsFDValid
-            {
-                get
-                {
-                    return m_file != null;
-                }
-            }
+            public virtual bool IsFDValid => m_file != null;
         }
     }
 }

@@ -394,15 +394,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 return this;
             }
 
-            public override int Freq
-            {
-                get { return freq; }
-            }
+            public override int Freq => freq;
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             private void RefillDocs()
             {
@@ -729,15 +723,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 return this;
             }
 
-            public override int Freq
-            {
-                get { return freq; }
-            }
+            public override int Freq => freq;
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             private void RefillDocs()
             {
@@ -1044,15 +1032,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 return position;
             }
 
-            public override int StartOffset
-            {
-                get { return -1; }
-            }
+            public override int StartOffset => -1;
 
-            public override int EndOffset
-            {
-                get { return -1; }
-            }
+            public override int EndOffset => -1;
 
             public override BytesRef GetPayload()
             {
@@ -1246,15 +1228,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 return this;
             }
 
-            public override int Freq
-            {
-                get { return freq; }
-            }
+            public override int Freq => freq;
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             private void RefillDocs()
             {
@@ -1694,15 +1670,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 return position;
             }
 
-            public override int StartOffset
-            {
-                get { return startOffset; }
-            }
+            public override int StartOffset => startOffset;
 
-            public override int EndOffset
-            {
-                get { return endOffset; }
-            }
+            public override int EndOffset => endOffset;
 
             public override BytesRef GetPayload()
             {

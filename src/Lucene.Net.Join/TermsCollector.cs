@@ -36,14 +36,8 @@ namespace Lucene.Net.Join
             _field = field;
         }
 
-        public virtual BytesRefHash CollectorTerms
-        {
-            get
-            {
-                return _collectorTerms;
-            }
-        }
-        
+        public virtual BytesRefHash CollectorTerms => _collectorTerms;
+
         public virtual void SetScorer(Scorer scorer)
         {
         }
@@ -77,10 +71,7 @@ namespace Lucene.Net.Join
         public abstract void SetNextReader(AtomicReaderContext context);
 
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return true; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => true;
 
         /// <summary>
         /// Chooses the right <see cref="TermsCollector"/> implementation.

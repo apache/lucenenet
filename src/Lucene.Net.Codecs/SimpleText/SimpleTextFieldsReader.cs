@@ -170,30 +170,18 @@ namespace Lucene.Net.Codecs.SimpleText
                 return result.Input;
             }
 
-            public override BytesRef Term
-            {
-                get { return _fstEnum.Current.Input; }
-            }
+            public override BytesRef Term => _fstEnum.Current.Input;
 
-            public override long Ord
-            {
-                get { throw new NotSupportedException(); }
-            }
+            public override long Ord => throw new NotSupportedException();
 
             public override void SeekExact(long ord)
             {
                 throw new NotSupportedException();
             }
 
-            public override int DocFreq
-            {
-                get { return _docFreq; }
-            }
+            public override int DocFreq => _docFreq;
 
-            public override long TotalTermFreq
-            {
-                get { return _indexOptions == IndexOptions.DOCS_ONLY ? -1 : _totalTermFreq; }
-            }
+            public override long TotalTermFreq => _indexOptions == IndexOptions.DOCS_ONLY ? -1 : _totalTermFreq;
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
@@ -231,10 +219,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return docsAndPositionsEnum.Reset(_docsStart, liveDocs, _indexOptions, _docFreq);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
         }
 
         private class SimpleTextDocsEnum : DocsEnum
@@ -271,15 +256,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 return this;
             }
 
-            public override int DocID
-            {
-                get { return _docId; }
-            }
+            public override int DocID => _docId;
 
-            public override int Freq
-            {
-                get { return _tf; }
-            }
+            public override int Freq => _tf;
 
             public override int NextDoc()
             {
@@ -412,15 +391,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 return this;
             }
 
-            public override int DocID
-            {
-                get { return _docId; }
-            }
+            public override int DocID => _docId;
 
-            public override int Freq
-            {
-                get { return _tf; }
-            }
+            public override int Freq => _tf;
 
             public override int NextDoc()
             {
@@ -542,15 +515,9 @@ namespace Lucene.Net.Codecs.SimpleText
                 return pos;
             }
 
-            public override int StartOffset
-            {
-                get { return _startOffset; }
-            }
+            public override int StartOffset => _startOffset;
 
-            public override int EndOffset
-            {
-                get { return _endOffset; }
-            }
+            public override int EndOffset => _endOffset;
 
             public override BytesRef GetPayload()
             {
@@ -685,53 +652,23 @@ namespace Lucene.Net.Codecs.SimpleText
                     : TermsEnum.EMPTY;
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            public override long Count
-            {
-                get { return _termCount; }
-            }
+            public override long Count => _termCount;
 
-            public override long SumTotalTermFreq
-            {
-                get { return _fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? - 1 : _sumTotalTermFreq; }
-            }
+            public override long SumTotalTermFreq => _fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? - 1 : _sumTotalTermFreq;
 
-            public override long SumDocFreq
-            {
-                get { return _sumDocFreq; }
-            }
+            public override long SumDocFreq => _sumDocFreq;
 
-            public override int DocCount
-            {
-                get { return _docCount; }
-            }
+            public override int DocCount => _docCount;
 
-            public override bool HasFreqs
-            {
-                get { return _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
-            }
+            public override bool HasFreqs => _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets
-            {
-                get
-                {
-                    return _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-                }
-            }
+            public override bool HasOffsets => _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions
-            {
-                get { return _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; } 
-            }
+            public override bool HasPositions => _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
-            public override bool HasPayloads
-            {
-                get { return _fieldInfo.HasPayloads; }
-            }
+            public override bool HasPayloads => _fieldInfo.HasPayloads;
         }
 
         public override IEnumerator<string> GetEnumerator()
@@ -762,10 +699,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        public override int Count
-        {
-            get { return -1; }
-        }
+        public override int Count => -1;
 
         protected override void Dispose(bool disposing)
         {

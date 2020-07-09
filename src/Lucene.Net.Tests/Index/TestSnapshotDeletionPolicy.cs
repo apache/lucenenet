@@ -84,13 +84,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        protected internal virtual SnapshotDeletionPolicy DeletionPolicy
-        {
-            get
-            {
-                return new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
-            }
-        }
+        protected internal virtual SnapshotDeletionPolicy DeletionPolicy => new SnapshotDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
 
         protected internal virtual void AssertSnapshotExists(Directory dir, SnapshotDeletionPolicy sdp, int numSnapshots, bool checkIndexCommitSame)
         {

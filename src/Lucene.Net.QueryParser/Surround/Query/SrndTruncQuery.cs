@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         private BytesRef prefixRef;
         private Regex pattern;
 
-        public virtual string Truncated { get { return truncated; } }
+        public virtual string Truncated => truncated;
 
         public override string ToStringUnquoted()
         {

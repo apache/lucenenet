@@ -111,10 +111,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
         }
 
-        public virtual ProximityQueryNode.Type ProximityType
-        {
-            get { return this.proximityType; }
-        }
+        public virtual ProximityQueryNode.Type ProximityType => this.proximityType;
 
         public override string ToString()
         {
@@ -184,18 +181,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// Gets the distance
         /// </summary>
-        public virtual int Distance
-        {
-            get { return this.distance; }
-        }
+        public virtual int Distance => this.distance;
 
         /// <summary>
         /// Gets or Sets the field. Returns null if the field was not specified in the query string.
         /// </summary>
         public virtual string Field
         {
-            get { return this.field; }
-            set { this.field = value; }
+            get => this.field;
+            set => this.field = value;
         }
 
         // LUCENENET specific: This method is technically not required because Field is already a string property, not ICharSequence
@@ -214,10 +208,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <summary>
         /// terms must be matched in the specified order
         /// </summary>
-        public virtual bool IsInOrder
-        {
-            get { return this.inorder; }
-        }
+        public virtual bool IsInOrder => this.inorder;
     }
 
     /// <summary>

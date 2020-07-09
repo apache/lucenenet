@@ -151,7 +151,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             if (DirectoryReader.IndexExists(dir))
             {
                 // Already built; open it:
-                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GramAnalyzer, OpenMode.APPEND));
+                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.APPEND));
                 m_searcherMgr = new SearcherManager(writer, true, null);
             }
         }
@@ -188,7 +188,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override void Build(IInputIterator iter)
         {
-
             if (m_searcherMgr != null)
             {
                 m_searcherMgr.Dispose();
@@ -207,7 +206,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 // First pass: build a temporary normal Lucene index,
                 // just indexing the suggestions as they iterate:
-                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GramAnalyzer, OpenMode.CREATE));
+                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
                 //long t0 = System.nanoTime();
 
                 // TODO: use threads?
@@ -246,13 +245,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        private Analyzer GramAnalyzer
-        {
-            get
-            {
-                return new AnalyzerWrapperAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
-            }
-        }
+        private Analyzer GetGramAnalyzer() 
+            => new AnalyzerWrapperAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 
         private class AnalyzerWrapperAnonymousInnerClassHelper : AnalyzerWrapper
         {

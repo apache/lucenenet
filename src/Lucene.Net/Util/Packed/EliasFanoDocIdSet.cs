@@ -92,10 +92,7 @@ namespace Lucene.Net.Util.Packed
             private int curDocId;
             private readonly EliasFanoDecoder efDecoder;
 
-            public override int DocID
-            {
-                get { return curDocId; }
-            }
+            public override int DocID => curDocId;
 
             private int SetCurDocID(long value)
             {
@@ -122,13 +119,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// This DocIdSet implementation is cacheable. </summary>
         /// <returns> <c>true</c> </returns>
-        public override bool IsCacheable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsCacheable => true;
 
         public override bool Equals(object other)
         {

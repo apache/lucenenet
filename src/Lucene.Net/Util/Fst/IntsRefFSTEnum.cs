@@ -47,10 +47,7 @@ namespace Lucene.Net.Util.Fst
             current.Offset = 1;
         }
 
-        public Int32sRefFSTEnum.InputOutput<T> Current
-        {
-            get { return result; }
-        }
+        public Int32sRefFSTEnum.InputOutput<T> Current => result;
 
         public Int32sRefFSTEnum.InputOutput<T> Next()
         {
@@ -116,16 +113,9 @@ namespace Lucene.Net.Util.Fst
         }
 
         protected override int CurrentLabel
-        {
-            get
-            {
-                // current.offset fixed at 1
-                return current.Int32s[m_upto];
-            }
-            set
-            {
-                current.Int32s[m_upto] = value;
-            }
+        {   // current.offset fixed at 1
+            get => current.Int32s[m_upto];
+            set => current.Int32s[m_upto] = value;
         }
 
         protected override void Grow()

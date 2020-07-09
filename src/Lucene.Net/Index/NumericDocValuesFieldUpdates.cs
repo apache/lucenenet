@@ -56,10 +56,7 @@ namespace Lucene.Net.Index
                 this.docs = docs;
             }
 
-            public override object Value
-            {
-                get { return value; }
-            }
+            public override object Value => value;
 
             public override int NextDoc()
             {
@@ -86,10 +83,7 @@ namespace Lucene.Net.Index
                 return doc;
             }
 
-            public override int Doc
-            {
-                get { return doc; }
-            }
+            public override int Doc => doc;
 
             public override void Reset()
             {

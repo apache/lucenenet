@@ -221,10 +221,7 @@ namespace Lucene.Net.Index
                 return result;
             }
 
-            public override int Count
-            {
-                get { return fields.Count; }
-            }
+            public override int Count => fields.Count;
         }
 
         /// <summary>
@@ -236,13 +233,7 @@ namespace Lucene.Net.Index
         /// readers, and codec metadata (<see cref="FieldInfo.GetAttribute(string)"/>
         /// will be unavailable.
         /// </summary>
-        public override FieldInfos FieldInfos
-        {
-            get
-            {
-                return fieldInfos;
-            }
-        }
+        public override FieldInfos FieldInfos => fieldInfos;
 
         public override IBits LiveDocs
         {
@@ -262,23 +253,13 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override int NumDocs
-        {
-            get
-            {
-                // Don't call ensureOpen() here (it could affect performance)
-                return numDocs;
-            }
-        }
+        public override int NumDocs =>
+            // Don't call ensureOpen() here (it could affect performance)
+            numDocs;
 
-        public override int MaxDoc
-        {
-            get
-            {
-                // Don't call ensureOpen() here (it could affect performance)
-                return maxDoc;
-            }
-        }
+        public override int MaxDoc =>
+            // Don't call ensureOpen() here (it could affect performance)
+            maxDoc;
 
         public override void Document(int docID, StoredFieldVisitor visitor)
         {

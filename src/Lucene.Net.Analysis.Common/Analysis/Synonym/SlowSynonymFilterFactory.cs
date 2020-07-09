@@ -223,13 +223,7 @@ namespace Lucene.Net.Analysis.Synonym
             return tokFactory.Create(reader);
         }
 
-        public SlowSynonymMap SynonymMap
-        {
-            get
-            {
-                return synMap;
-            }
-        }
+        public SlowSynonymMap SynonymMap => synMap;
 
         public override TokenStream Create(TokenStream input)
         {

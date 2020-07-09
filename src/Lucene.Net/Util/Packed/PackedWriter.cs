@@ -50,13 +50,7 @@ namespace Lucene.Net.Util.Packed
             finished = false;
         }
 
-        protected internal override PackedInt32s.Format Format
-        {
-            get
-            {
-                return format;
-            }
-        }
+        protected internal override PackedInt32s.Format Format => format;
 
         public override void Add(long v)
         {
@@ -98,9 +92,6 @@ namespace Lucene.Net.Util.Packed
             off = 0;
         }
 
-        public override int Ord
-        {
-            get { return written - 1; }
-        }
+        public override int Ord => written - 1;
     }
 }

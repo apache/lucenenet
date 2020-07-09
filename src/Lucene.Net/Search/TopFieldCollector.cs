@@ -152,10 +152,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool AcceptsDocsOutOfOrder => true;
         }
 
         /// <summary>
@@ -272,10 +269,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool AcceptsDocsOutOfOrder => true;
         }
 
         /// <summary>
@@ -392,10 +386,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool AcceptsDocsOutOfOrder => true;
         }
 
         /// <summary>
@@ -579,10 +570,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool AcceptsDocsOutOfOrder => true;
         }
 
         /// <summary>
@@ -761,10 +749,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool AcceptsDocsOutOfOrder => true;
         }
 
         /// <summary>
@@ -947,10 +932,7 @@ namespace Lucene.Net.Search
                 base.SetScorer(scorer);
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool AcceptsDocsOutOfOrder => true;
         }
 
         /// <summary>
@@ -1132,10 +1114,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override bool AcceptsDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool AcceptsDocsOutOfOrder => true;
 
             public override void SetNextReader(AtomicReaderContext context)
             {
@@ -1400,9 +1379,6 @@ namespace Lucene.Net.Search
             return new TopFieldDocs(m_totalHits, results, ((FieldValueHitQueue<Entry>)m_pq).Fields, maxScore);
         }
 
-        public override bool AcceptsDocsOutOfOrder
-        {
-            get { return false; }
-        }
+        public override bool AcceptsDocsOutOfOrder => false;
     }
 }

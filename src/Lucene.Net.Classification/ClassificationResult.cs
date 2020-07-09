@@ -42,23 +42,11 @@ namespace Lucene.Net.Classification
         /// retrieve the result class
         /// @return a <typeparamref name="T"/> representing an assigned class
         /// </summary>
-        public virtual T AssignedClass 
-        {
-            get
-            {
-                return _assignedClass;
-            }
-        }
+        public virtual T AssignedClass => _assignedClass;
 
         /// <summary>
         /// Gets a <see cref="double"/> representing a result score.
         /// </summary>
-        public virtual double Score
-        {
-            get
-            {
-                return _score;
-            }
-        }
+        public virtual double Score => _score;
     }
 }

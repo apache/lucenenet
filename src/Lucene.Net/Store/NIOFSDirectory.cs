@@ -218,10 +218,7 @@ namespace Lucene.Net.Store
                 return clone;
             }
 
-            public override sealed long Length
-            {
-                get { return m_end - m_off; }
-            }
+            public override sealed long Length => m_end - m_off;
 
             protected override void NewBuffer(byte[] newBuffer)
             {

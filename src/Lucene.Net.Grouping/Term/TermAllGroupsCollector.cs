@@ -96,13 +96,7 @@ namespace Lucene.Net.Search.Grouping.Terms
             }
         }
 
-        public override IEnumerable<BytesRef> Groups
-        {
-            get
-            {
-                return groups;
-            }
-        }
+        public override IEnumerable<BytesRef> Groups => groups;
 
         public override void SetNextReader(AtomicReaderContext context)
         {

@@ -36,12 +36,6 @@ namespace Lucene.Net.Cli.CommandLine
         public virtual string Description { get; set; }
         public List<string> Values { get; private set; }
         public bool MultipleValues { get; set; }
-        public virtual string Value
-        {
-            get
-            {
-                return Values.FirstOrDefault();
-            }
-        }
+        public virtual string Value => Values.FirstOrDefault();
     }
 }

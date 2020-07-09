@@ -244,8 +244,8 @@ namespace Lucene.Net.Tests.Queries.Function
         ///  <seealso cref= #computeNorm </seealso>
         public virtual bool DiscountOverlaps
         {
-            set { discountOverlaps = value; }
-            get { return discountOverlaps; }
+            set => discountOverlaps = value;
+            get => discountOverlaps;
         }
 
         public override string ToString()

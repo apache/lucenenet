@@ -170,10 +170,7 @@ namespace Lucene.Net.Util.Packed
 
             private static readonly Format[] values = new Format[] { PACKED, PACKED_SINGLE_BLOCK };
 
-            public static IEnumerable<Format> Values
-            {
-                get { return values; }
-            }
+            public static IEnumerable<Format> Values => values;
 
             /// <summary>
             /// Get a format according to its ID.
@@ -200,10 +197,7 @@ namespace Lucene.Net.Util.Packed
             /// <summary>
             /// Returns the ID of the format.
             /// </summary>
-            public int Id
-            {
-                get { return id; }
-            }
+            public int Id => id;
 
             /// <summary>
             /// Computes how many <see cref="byte"/> blocks are needed to store <paramref name="valueCount"/>
@@ -589,10 +583,7 @@ namespace Lucene.Net.Util.Packed
             /// native .NET array.
             /// </summary>
             /// <seealso cref="GetArray"/>
-            public virtual bool HasArray
-            {
-                get { return false; }
-            }
+            public virtual bool HasArray => false;
         }
 
         /// <summary>
@@ -652,18 +643,9 @@ namespace Lucene.Net.Util.Packed
 
             public abstract Int64sRef Next(int count);
 
-            public virtual int BitsPerValue
-            {
-                get
-                {
-                    return m_bitsPerValue;
-                }
-            }
+            public virtual int BitsPerValue => m_bitsPerValue;
 
-            public virtual int Count
-            {
-                get { return m_valueCount; }
-            }
+            public virtual int Count => m_valueCount;
 
             public abstract int Ord { get; }
         }
@@ -741,13 +723,7 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// The underlying format. </summary>
-            internal virtual Format Format
-            {
-                get
-                {
-                    return Format.PACKED;
-                }
-            }
+            internal virtual Format Format => Format.PACKED;
         }
 
         /// <summary>
@@ -769,18 +745,9 @@ namespace Lucene.Net.Util.Packed
 
             public override abstract long Get(int index);
 
-            public override sealed int BitsPerValue
-            {
-                get
-                {
-                    return m_bitsPerValue;
-                }
-            }
+            public override sealed int BitsPerValue => m_bitsPerValue;
 
-            public override sealed int Count
-            {
-                get { return m_valueCount; }
-            }
+            public override sealed int Count => m_valueCount;
         }
 
         public abstract class MutableImpl : Mutable
@@ -795,18 +762,9 @@ namespace Lucene.Net.Util.Packed
                 this.m_bitsPerValue = bitsPerValue;
             }
 
-            public override sealed int BitsPerValue
-            {
-                get
-                {
-                    return m_bitsPerValue;
-                }
-            }
+            public override sealed int BitsPerValue => m_bitsPerValue;
 
-            public override sealed int Count
-            {
-                get { return m_valueCount; }
-            }
+            public override sealed int Count => m_valueCount;
         }
 
         /// <summary>
@@ -836,18 +794,9 @@ namespace Lucene.Net.Util.Packed
                 return len;
             }
 
-            public override int BitsPerValue
-            {
-                get
-                {
-                    return 0;
-                }
-            }
+            public override int BitsPerValue => 0;
 
-            public override int Count
-            {
-                get { return valueCount; }
-            }
+            public override int Count => valueCount;
 
             public override long RamBytesUsed()
             {
@@ -894,10 +843,7 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// The number of bits per value. </summary>
-            public int BitsPerValue
-            {
-                get { return m_bitsPerValue; }
-            }
+            public int BitsPerValue => m_bitsPerValue;
 
             /// <summary>
             /// Perform end-of-stream operations. </summary>

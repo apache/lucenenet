@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public char[] Chars
         {
-            get { return chars; }
+            get => chars;
             set
             {
                 if (value == null)
@@ -326,13 +326,7 @@ namespace Lucene.Net.Util
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]
-        public static IComparer<CharsRef> UTF16SortedAsUTF8Comparer
-        {
-            get
-            {
-                return utf16SortedAsUTF8SortOrder;
-            }
-        }
+        public static IComparer<CharsRef> UTF16SortedAsUTF8Comparer => utf16SortedAsUTF8SortOrder;
 
         /// @deprecated this comparer is only a transition mechanism
         [Obsolete("this comparer is only a transition mechanism")]

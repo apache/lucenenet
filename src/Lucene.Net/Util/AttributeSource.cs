@@ -320,14 +320,11 @@ namespace Lucene.Net.Util
 
             public Attribute Current
             {
-                get { return current; }
-                set { current = value; }
+                get => current;
+                set => current = value;
             }
 
-            object IEnumerator.Current
-            {
-                get { return Current; }
-            }
+            object IEnumerator.Current => Current;
         }
 
         /// <summary>
@@ -435,10 +432,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns <c>true</c>, if this <see cref="AttributeSource"/> has any attributes </summary>
-        public bool HasAttributes
-        {
-            get { return this.attributes.Count > 0; }
-        }
+        public bool HasAttributes => this.attributes.Count > 0;
 
         /// <summary>
         /// The caller must pass in an interface type that extends <see cref="IAttribute"/>.

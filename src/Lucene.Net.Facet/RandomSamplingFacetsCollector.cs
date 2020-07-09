@@ -307,12 +307,6 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Returns the sampling rate that was used.
         /// </summary>
-        public virtual double SamplingRate
-        {
-            get
-            {
-                return samplingRate;
-            }
-        }
+        public virtual double SamplingRate => samplingRate;
     }
 }

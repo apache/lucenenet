@@ -605,13 +605,7 @@ namespace Lucene.Net.Analysis.Shingle
 
             /// <returns> the current value. </returns>
             /// <seealso cref="Advance()"/>
-            public virtual int Value
-            {
-                get
-                {
-                    return value;
-                }
-            }
+            public virtual int Value => value;
 
             /// <summary>
             /// <para>Increments this circular number's value to the next member in the
@@ -673,18 +667,12 @@ namespace Lucene.Net.Analysis.Shingle
             }
 
             /// <returns> the value this instance had before the last <see cref="Advance()"/> call </returns>
-            public virtual int PreviousValue
-            {
-                get
-                {
-                    return previousValue;
-                }
-            }
+            public virtual int PreviousValue => previousValue;
 
             internal virtual int MinValue // LUCENENET specific - added to encapsulate minValue field
             {
-                get { return minValue; }
-                set { minValue = value; }
+                get => minValue;
+                set => minValue = value;
             }
         }
 

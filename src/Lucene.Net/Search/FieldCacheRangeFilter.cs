@@ -890,56 +890,26 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the field name for this filter </summary>
-        public virtual string Field
-        {
-            get
-            {
-                return field;
-            }
-        }
+        public virtual string Field => field;
 
         /// <summary>
         /// Returns <c>true</c> if the lower endpoint is inclusive </summary>
-        public virtual bool IncludesLower
-        {
-            get { return includeLower; }
-        }
+        public virtual bool IncludesLower => includeLower;
 
         /// <summary>
         /// Returns <c>true</c> if the upper endpoint is inclusive </summary>
-        public virtual bool IncludesUpper
-        {
-            get { return includeUpper; }
-        }
+        public virtual bool IncludesUpper => includeUpper;
 
         /// <summary>
         /// Returns the lower value of this range filter </summary>
-        public virtual T LowerVal
-        {
-            get
-            {
-                return lowerVal;
-            }
-        }
+        public virtual T LowerVal => lowerVal;
 
         /// <summary>
         /// Returns the upper value of this range filter </summary>
-        public virtual T UpperVal
-        {
-            get
-            {
-                return upperVal;
-            }
-        }
+        public virtual T UpperVal => upperVal;
 
         /// <summary>
         /// Returns the current numeric parser (<c>null</c> for <typeparamref name="T"/> is <see cref="string"/>) </summary>
-        public virtual FieldCache.IParser Parser
-        {
-            get
-            {
-                return parser;
-            }
-        }
+        public virtual FieldCache.IParser Parser => parser;
     }
 }

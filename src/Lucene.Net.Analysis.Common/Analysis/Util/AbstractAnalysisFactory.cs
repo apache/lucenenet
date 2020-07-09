@@ -72,10 +72,7 @@ namespace Lucene.Net.Analysis.Util
             args.Remove(CLASS_NAME); // consume the class arg
         }
 
-        public IDictionary<string, string> OriginalArgs
-        {
-            get { return originalArgs; }
-        }
+        public IDictionary<string, string> OriginalArgs => originalArgs;
 
         /// <summary>
         /// this method can be called in the <see cref="TokenizerFactory.Create(TextReader)"/>
@@ -93,10 +90,7 @@ namespace Lucene.Net.Analysis.Util
             //}
         }
 
-        public LuceneVersion LuceneMatchVersion
-        {
-            get { return this.m_luceneMatchVersion; }
-        }
+        public LuceneVersion LuceneMatchVersion => this.m_luceneMatchVersion;
 
         public virtual string Require(IDictionary<string, string> args, string name)
         {

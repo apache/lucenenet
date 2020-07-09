@@ -294,9 +294,6 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Return the offset of the next value to read. </summary>
-        public long Ord
-        {
-            get { return ord; }
-        }
+        public long Ord => ord;
     }
 }

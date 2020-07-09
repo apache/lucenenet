@@ -38,13 +38,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static ByteSequenceOutputs Singleton
-        {
-            get
-            {
-                return singleton;
-            }
-        }
+        public static ByteSequenceOutputs Singleton => singleton;
 
         public override BytesRef Common(BytesRef output1, BytesRef output2)
         {
@@ -154,13 +148,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override BytesRef NoOutput
-        {
-            get
-            {
-                return NO_OUTPUT;
-            }
-        }
+        public override BytesRef NoOutput => NO_OUTPUT;
 
         public override string OutputToString(BytesRef output)
         {

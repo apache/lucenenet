@@ -39,45 +39,25 @@ namespace Lucene.Net.Util
             return new DocIdBitSetIterator(bitSet);
         }
 
-        public override IBits Bits
-        {
-            get { return this; }
-        }
+        public override IBits Bits => this;
 
         /// <summary>
         /// This DocIdSet implementation is cacheable. </summary>
-        public override bool IsCacheable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsCacheable => true;
 
         /// <summary>
         /// Returns the underlying <see cref="BitSet"/>.
         /// </summary>
-        public virtual BitSet BitSet
-        {
-            get
-            {
-                return this.bitSet;
-            }
-        }
+        public virtual BitSet BitSet => this.bitSet;
 
         public bool Get(int index)
         {
             return bitSet.Get(index);
         }
 
-        public int Length
-        {
-            get
-            {
-                // the size may not be correct...
-                return bitSet.Length;
-            }
-        }
+        public int Length =>
+            // the size may not be correct...
+            bitSet.Length;
 
         private class DocIdBitSetIterator : DocIdSetIterator
         {
@@ -90,10 +70,7 @@ namespace Lucene.Net.Util
                 this.docId = -1;
             }
 
-            public override int DocID
-            {
-                get { return docId; }
-            }
+            public override int DocID => docId;
 
             public override int NextDoc()
             {

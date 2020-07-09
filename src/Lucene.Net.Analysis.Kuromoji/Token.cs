@@ -62,26 +62,17 @@ namespace Lucene.Net.Analysis.Ja
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public virtual char[] SurfaceForm
-        {
-            get { return surfaceForm; }
-        }
+        public virtual char[] SurfaceForm => surfaceForm;
 
         /// <summary>
         /// offset into surfaceForm
         /// </summary>
-        public virtual int Offset
-        {
-            get { return offset; }
-        }
+        public virtual int Offset => offset;
 
         /// <summary>
         /// length of surfaceForm
         /// </summary>
-        public virtual int Length
-        {
-            get { return length; }
-        }
+        public virtual int Length => length;
 
         /// <summary>
         /// surfaceForm as a String
@@ -176,10 +167,7 @@ namespace Lucene.Net.Analysis.Ja
         /// <summary>
         /// Get index of this token in input text. Returns position of token.
         /// </summary>
-        public virtual int Position
-        {
-            get { return position; }
-        }
+        public virtual int Position => position;
 
         /// <summary>
         /// Gets or Sets the length (in tokens) of this token.  For normal
@@ -187,8 +175,8 @@ namespace Lucene.Net.Analysis.Ja
         /// </summary>
         public virtual int PositionLength
         {
-            get { return positionLength; }
-            set { this.positionLength = value; }
+            get => positionLength;
+            set => this.positionLength = value;
         }
     }
 }

@@ -51,10 +51,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             return (object[])this.arguments.Clone(); // LUCENENET specific: These are obviously not meant to be written to, so cloning the result
         }
 
-        public virtual string Key
-        {
-            get { return this.key; }
-        }
+        public virtual string Key => this.key;
 
         public virtual string GetLocalizedMessage()
         {

@@ -195,47 +195,23 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns <c>true</c> if the lower endpoint is inclusive </summary>
-        public bool IncludesMin
-        {
-            get { return minInclusive; }
-        }
+        public bool IncludesMin => minInclusive;
 
         /// <summary>
         /// Returns <c>true</c> if the upper endpoint is inclusive </summary>
-        public bool IncludesMax
-        {
-            get { return maxInclusive; }
-        }
+        public bool IncludesMax => maxInclusive;
 
         /// <summary>
         /// Returns the lower value of this range query </summary>
-        public T? Min
-        {
-            get
-            {
-                return min;
-            }
-        }
+        public T? Min => min;
 
         /// <summary>
         /// Returns the upper value of this range query </summary>
-        public T? Max
-        {
-            get
-            {
-                return max;
-            }
-        }
+        public T? Max => max;
 
         /// <summary>
         /// Returns the precision step. </summary>
-        public int PrecisionStep
-        {
-            get
-            {
-                return precisionStep;
-            }
-        }
+        public int PrecisionStep => precisionStep;
 
         public override string ToString(string field)
         {

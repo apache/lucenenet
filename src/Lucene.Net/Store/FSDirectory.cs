@@ -452,15 +452,14 @@ namespace Lucene.Net.Store
         [Obsolete("this is no longer used since Lucene 4.5.")]
         public int ReadChunkSize
         {
+            get => chunkSize;
             set
             {
                 if (value <= 0)
-                {
                     throw new System.ArgumentException("chunkSize must be positive");
-                }
+
                 this.chunkSize = value;
             }
-            get { return chunkSize; }
         }
 
         /// <summary>

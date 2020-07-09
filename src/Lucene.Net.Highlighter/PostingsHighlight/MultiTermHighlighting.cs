@@ -285,10 +285,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 return int.MaxValue;
             }
 
-            public override int Freq
-            {
-                get { return int.MaxValue; } // lie
-            }
+            public override int Freq => int.MaxValue; // lie
 
             public override int StartOffset
             {
@@ -318,10 +315,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 return matchDescriptions[currentMatch];
             }
 
-            public override int DocID
-            {
-                get { return currentDoc; }
-            }
+            public override int DocID => currentDoc;
 
             public override int NextDoc()
             {

@@ -103,10 +103,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-        public override int Divisor
-        {
-            get { return indexDivisor; }
-        }
+        public override int Divisor => indexDivisor;
 
         private int ReadHeader(IndexInput input)
         {
@@ -181,10 +178,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
             }
 
-            public override long Ord
-            {
-                get { throw new NotSupportedException(); }
-            }
+            public override long Ord => throw new NotSupportedException();
 
             public override long Seek(long ord)
             {
@@ -192,10 +186,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-        public override bool SupportsOrd
-        {
-            get { return false; }
-        }
+        public override bool SupportsOrd => false;
 
         private class FieldIndexData
         {

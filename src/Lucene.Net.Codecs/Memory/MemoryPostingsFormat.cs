@@ -305,13 +305,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return BytesRef.UTF8SortedAsUnicodeComparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
         }
 
         private static string EXTENSION = "ram";
@@ -386,9 +380,9 @@ namespace Lucene.Net.Codecs.Memory
 
             private IBits liveDocs;
             private int docUpto;
-            private int docID_Renamed = -1;
+            private int docID = -1;
             private int accum;
-            private int freq_Renamed;
+            private int freq;
             private int payloadLen;
             private int numDocs;
 
@@ -415,10 +409,10 @@ namespace Lucene.Net.Codecs.Memory
                 @in.Reset(buffer, 0, bufferIn.Length);
                 Array.Copy(bufferIn.Bytes, bufferIn.Offset, buffer, 0, bufferIn.Length);
                 this.liveDocs = liveDocs;
-                docID_Renamed = -1;
+                docID = -1;
                 accum = 0;
                 docUpto = 0;
-                freq_Renamed = 1;
+                freq = 1;
                 payloadLen = 0;
                 this.numDocs = numDocs;
                 return this;
@@ -432,7 +426,7 @@ namespace Lucene.Net.Codecs.Memory
                     if (docUpto == numDocs)
                     {
                         // System.out.println("    END");
-                        return docID_Renamed = NO_MORE_DOCS;
+                        return docID = NO_MORE_DOCS;
                     }
                     docUpto++;
                     if (indexOptions == IndexOptions.DOCS_ONLY)
@@ -446,18 +440,18 @@ namespace Lucene.Net.Codecs.Memory
                         //System.out.println("  docID=" + accum + " code=" + code);
                         if ((code & 1) != 0)
                         {
-                            freq_Renamed = 1;
+                            freq = 1;
                         }
                         else
                         {
-                            freq_Renamed = @in.ReadVInt32();
-                            Debug.Assert(freq_Renamed > 0);
+                            freq = @in.ReadVInt32();
+                            Debug.Assert(freq > 0);
                         }
 
                         if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                         {
                             // Skip positions/payloads
-                            for (int posUpto = 0; posUpto < freq_Renamed; posUpto++)
+                            for (int posUpto = 0; posUpto < freq; posUpto++)
                             {
                                 if (!storePayloads)
                                 {
@@ -477,7 +471,7 @@ namespace Lucene.Net.Codecs.Memory
                         else if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
                         {
                             // Skip positions/offsets/payloads
-                            for (int posUpto = 0; posUpto < freq_Renamed; posUpto++)
+                            for (int posUpto = 0; posUpto < freq; posUpto++)
                             {
                                 int posCode = @in.ReadVInt32();
                                 if (storePayloads && ((posCode & 1) != 0))
@@ -500,15 +494,12 @@ namespace Lucene.Net.Codecs.Memory
                     if (liveDocs == null || liveDocs.Get(accum))
                     {
                         //System.out.println("    return docID=" + accum + " freq=" + freq);
-                        return (docID_Renamed = accum);
+                        return (docID = accum);
                     }
                 }
             }
 
-            public override int DocID
-            {
-                get { return docID_Renamed; }
-            }
+            public override int DocID => docID;
 
             public override int Advance(int target)
             {
@@ -519,10 +510,7 @@ namespace Lucene.Net.Codecs.Memory
                 return SlowAdvance(target);
             }
 
-            public override int Freq
-            {
-                get { return freq_Renamed; }
-            }
+            public override int Freq => freq;
 
             public override long GetCost()
             {
@@ -538,15 +526,15 @@ namespace Lucene.Net.Codecs.Memory
 
             private IBits liveDocs;
             private int docUpto;
-            private int docID_Renamed = -1;
+            private int docID = -1;
             private int accum;
-            private int freq_Renamed;
+            private int freq;
             private int numDocs;
             private int posPending;
             private int payloadLength;
             private readonly bool storeOffsets;
             private int offsetLength;
-            private int startOffset_Renamed;
+            private int startOffset;
 
             private int pos;
             private readonly BytesRef payload = new BytesRef();
@@ -580,14 +568,14 @@ namespace Lucene.Net.Codecs.Memory
                 @in.Reset(buffer, 0, bufferIn.Length - bufferIn.Offset);
                 Array.Copy(bufferIn.Bytes, bufferIn.Offset, buffer, 0, bufferIn.Length);
                 this.liveDocs = liveDocs;
-                docID_Renamed = -1;
+                docID = -1;
                 accum = 0;
                 docUpto = 0;
                 payload.Bytes = buffer;
                 payloadLength = 0;
                 this.numDocs = numDocs;
                 posPending = 0;
-                startOffset_Renamed = storeOffsets ? 0 : -1; // always return -1 if no offsets are stored
+                startOffset = storeOffsets ? 0 : -1; // always return -1 if no offsets are stored
                 offsetLength = 0;
                 return this;
             }
@@ -604,7 +592,7 @@ namespace Lucene.Net.Codecs.Memory
                     if (docUpto == numDocs)
                     {
                         //System.out.println("    END");
-                        return docID_Renamed = NO_MORE_DOCS;
+                        return docID = NO_MORE_DOCS;
                     }
                     docUpto++;
 
@@ -612,25 +600,25 @@ namespace Lucene.Net.Codecs.Memory
                     accum += (int)((uint)code >> 1);
                     if ((code & 1) != 0)
                     {
-                        freq_Renamed = 1;
+                        freq = 1;
                     }
                     else
                     {
-                        freq_Renamed = @in.ReadVInt32();
-                        Debug.Assert(freq_Renamed > 0);
+                        freq = @in.ReadVInt32();
+                        Debug.Assert(freq > 0);
                     }
 
                     if (liveDocs == null || liveDocs.Get(accum))
                     {
                         pos = 0;
-                        startOffset_Renamed = storeOffsets ? 0 : -1;
-                        posPending = freq_Renamed;
+                        startOffset = storeOffsets ? 0 : -1;
+                        posPending = freq;
                         //System.out.println("    return docID=" + accum + " freq=" + freq);
-                        return (docID_Renamed = accum);
+                        return (docID = accum);
                     }
 
                     // Skip positions
-                    for (int posUpto = 0; posUpto < freq_Renamed; posUpto++)
+                    for (int posUpto = 0; posUpto < freq; posUpto++)
                     {
                         if (!storePayloads)
                         {
@@ -693,7 +681,7 @@ namespace Lucene.Net.Codecs.Memory
                         // new offset length
                         offsetLength = @in.ReadVInt32();
                     }
-                    startOffset_Renamed += (int)((uint)offsetCode >> 1);
+                    startOffset += (int)((uint)offsetCode >> 1);
                 }
 
                 if (storePayloads)
@@ -707,25 +695,16 @@ namespace Lucene.Net.Codecs.Memory
                 return pos;
             }
 
-            public override int StartOffset
-            {
-                get { return startOffset_Renamed; }
-            }
+            public override int StartOffset => startOffset;
 
-            public override int EndOffset
-            {
-                get { return startOffset_Renamed + offsetLength; }
-            }
+            public override int EndOffset => startOffset + offsetLength;
 
             public override BytesRef GetPayload()
             {
                 return payload.Length > 0 ? payload : null;
             }
 
-            public override int DocID
-            {
-                get { return docID_Renamed; }
-            }
+            public override int DocID => docID;
 
             public override int Advance(int target)
             {
@@ -736,10 +715,7 @@ namespace Lucene.Net.Codecs.Memory
                 return SlowAdvance(target);
             }
 
-            public override int Freq
-            {
-                get { return freq_Renamed; }
-            }
+            public override int Freq => freq;
 
             public override long GetCost()
             {
@@ -754,8 +730,8 @@ namespace Lucene.Net.Codecs.Memory
             private readonly ByteArrayDataInput buffer = new ByteArrayDataInput();
             private bool didDecode;
 
-            private int docFreq_Renamed;
-            private long totalTermFreq_Renamed;
+            private int docFreq;
+            private long totalTermFreq;
             private BytesRefFSTEnum.InputOutput<BytesRef> current;
             private BytesRef postingsSpare = new BytesRef();
 
@@ -770,14 +746,14 @@ namespace Lucene.Net.Codecs.Memory
                 if (!didDecode)
                 {
                     buffer.Reset(current.Output.Bytes, current.Output.Offset, current.Output.Length);
-                    docFreq_Renamed = buffer.ReadVInt32();
+                    docFreq = buffer.ReadVInt32();
                     if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
-                        totalTermFreq_Renamed = docFreq_Renamed + buffer.ReadVInt64();
+                        totalTermFreq = docFreq + buffer.ReadVInt64();
                     }
                     else
                     {
-                        totalTermFreq_Renamed = -1;
+                        totalTermFreq = -1;
                     }
                     postingsSpare.Bytes = current.Output.Bytes;
                     postingsSpare.Offset = buffer.Position;
@@ -843,7 +819,7 @@ namespace Lucene.Net.Codecs.Memory
                         docsEnum = new FSTDocsEnum(field.IndexOptions, field.HasPayloads);
                     }
                 }
-                return docsEnum.Reset(this.postingsSpare, liveDocs, docFreq_Renamed);
+                return docsEnum.Reset(this.postingsSpare, liveDocs, docFreq);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
@@ -868,13 +844,10 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
                 //System.out.println("D&P reset this=" + this);
-                return docsAndPositionsEnum.Reset(postingsSpare, liveDocs, docFreq_Renamed);
+                return docsAndPositionsEnum.Reset(postingsSpare, liveDocs, docFreq);
             }
 
-            public override BytesRef Term
-            {
-                get { return current.Input; }
-            }
+            public override BytesRef Term => current.Input;
 
             public override BytesRef Next()
             {
@@ -895,7 +868,7 @@ namespace Lucene.Net.Codecs.Memory
                 get
                 {
                     DecodeMetaData();
-                    return docFreq_Renamed;
+                    return docFreq;
                 }
             }
 
@@ -904,17 +877,11 @@ namespace Lucene.Net.Codecs.Memory
                 get
                 {
                     DecodeMetaData();
-                    return totalTermFreq_Renamed;
+                    return totalTermFreq;
                 }
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return BytesRef.UTF8SortedAsUnicodeComparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
             public override void SeekExact(long ord)
             {
@@ -922,14 +889,9 @@ namespace Lucene.Net.Codecs.Memory
                 throw new System.NotSupportedException();
             }
 
-            public override long Ord
-            {
-                get
-                {
-                    // NOTE: we could add this...
-                    throw new System.NotSupportedException();
-                }
-            }
+            public override long Ord => throw
+                // NOTE: we could add this...
+                new System.NotSupportedException();
         }
 
         private sealed class TermsReader : Terms
@@ -961,67 +923,28 @@ namespace Lucene.Net.Codecs.Memory
                 fst = new FST<BytesRef>(@in, outputs);
             }
 
-            public override long SumTotalTermFreq
-            {
-                get
-                {
-                    return sumTotalTermFreq;
-                }
-            }
+            public override long SumTotalTermFreq => sumTotalTermFreq;
 
-            public override long SumDocFreq
-            {
-                get
-                {
-                    return sumDocFreq;
-                }
-            }
+            public override long SumDocFreq => sumDocFreq;
 
-            public override int DocCount
-            {
-                get
-                {
-                    return docCount;
-                }
-            }
+            public override int DocCount => docCount;
 
-            public override long Count
-            {
-                get { return termCount; }
-            }
+            public override long Count => termCount;
 
             public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 return new FSTTermsEnum(field, fst);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return BytesRef.UTF8SortedAsUnicodeComparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            public override bool HasFreqs
-            {
-                get { return field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
-            }
+            public override bool HasFreqs => field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets
-            {
-                get { return field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
-            }
+            public override bool HasOffsets => field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions
-            {
-                get { return field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
-            }
+            public override bool HasPositions => field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
-            public override bool HasPayloads
-            {
-                get { return field.HasPayloads; }
-            }
+            public override bool HasPayloads => field.HasPayloads;
 
             public long RamBytesUsed()
             {
@@ -1083,13 +1006,7 @@ namespace Lucene.Net.Codecs.Memory
                 return result;
             }
 
-            public override int Count
-            {
-                get
-                {
-                    return _fields.Count;
-                }
-            }
+            public override int Count => _fields.Count;
 
             protected override void Dispose(bool disposing)
             {

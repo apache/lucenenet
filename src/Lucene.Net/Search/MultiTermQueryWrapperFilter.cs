@@ -85,13 +85,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the field name for this query </summary>
-        public string Field
-        {
-            get
-            {
-                return m_query.Field;
-            }
-        }
+        public string Field => m_query.Field;
 
         /// <summary>
         /// Returns a <see cref="DocIdSet"/> with documents that should be permitted in search

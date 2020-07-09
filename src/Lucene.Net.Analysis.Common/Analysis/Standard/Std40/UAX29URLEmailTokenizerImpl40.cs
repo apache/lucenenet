@@ -4036,10 +4036,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
 
         public static readonly int URL_TYPE = UAX29URLEmailTokenizer.URL;
 
-        public int YyChar
-        {
-            get { return yychar; }
-        }
+        public int YyChar => yychar;
 
         /// <summary>
         /// Fills ICharTermAttribute with the current token text.
@@ -4184,10 +4181,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
         /// <summary>
         /// Returns the current lexical state.
         /// </summary>
-        public int YyState
-        {
-            get { return zzLexicalState; }
-        }
+        public int YyState => zzLexicalState;
 
 
         /// <summary>
@@ -4203,10 +4197,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
         /// <summary>
         /// Returns the text matched by the current regular expression.
         /// </summary>
-        public string YyText
-        {
-            get { return new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead); }
-        }
+        public string YyText => new string(zzBuffer, zzStartRead, zzMarkedPos - zzStartRead);
 
 
         /// <summary>
@@ -4229,10 +4220,7 @@ namespace Lucene.Net.Analysis.Standard.Std40
         /// <summary>
         /// Returns the length of the matched text region.
         /// </summary>
-        public int YyLength
-        {
-            get { return zzMarkedPos - zzStartRead; }
-        }
+        public int YyLength => zzMarkedPos - zzStartRead;
 
 
         /// <summary>

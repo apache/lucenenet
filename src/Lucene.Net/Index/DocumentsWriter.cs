@@ -194,10 +194,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal DocumentsWriterDeleteQueue CurrentDeleteSession
-        {
-            get { return deleteQueue; }
-        }
+        internal DocumentsWriterDeleteQueue CurrentDeleteSession => deleteQueue;
 
         private bool ApplyAllDeletes(DocumentsWriterDeleteQueue deleteQueue)
         {
@@ -406,22 +403,10 @@ namespace Lucene.Net.Index
             return numDocsInRAM != 0 || AnyDeletions() || ticketQueue.HasTickets || pendingChangesInCurrentFullFlush;
         }
 
-        public int BufferedDeleteTermsSize
-        {
-            get
-            {
-                return deleteQueue.BufferedUpdatesTermsSize;
-            }
-        }
+        public int BufferedDeleteTermsSize => deleteQueue.BufferedUpdatesTermsSize;
 
         //for testing
-        public int NumBufferedDeleteTerms
-        {
-            get
-            {
-                return deleteQueue.NumGlobalTermDeletes;
-            }
-        }
+        public int NumBufferedDeleteTerms => deleteQueue.NumGlobalTermDeletes;
 
         public bool AnyDeletions()
         {
@@ -812,13 +797,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public LiveIndexWriterConfig IndexWriterConfig
-        {
-            get
-            {
-                return config;
-            }
-        }
+        public LiveIndexWriterConfig IndexWriterConfig => config;
 
         private void PutEvent(IEvent @event)
         {
@@ -906,9 +885,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        public ConcurrentQueue<IEvent> EventQueue
-        {
-            get { return events; }
-        }
+        public ConcurrentQueue<IEvent> EventQueue => events;
     }
 }

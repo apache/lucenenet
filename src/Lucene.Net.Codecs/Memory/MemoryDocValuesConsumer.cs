@@ -438,21 +438,9 @@ namespace Lucene.Net.Codecs.Memory
             private readonly IEnumerator<long?> counts;
             private readonly IEnumerator<long?> ords;
 
-            public BytesRef Current
-            {
-                get
-                {
-                    return _current;
-                }
-            }
+            public BytesRef Current => _current;
 
-            object IEnumerator.Current
-            {
-                get
-                {
-                    return this.Current;
-                }
-            }
+            object IEnumerator.Current => this.Current;
 
             internal SortedSetIterator(IEnumerator<long?> counts, IEnumerator<long?> ords)
             {

@@ -129,13 +129,7 @@ namespace Lucene.Net.Analysis.Util
             skippedPositions = 0;
         }
 
-        public virtual bool EnablePositionIncrements
-        {
-            get
-            {
-                return enablePositionIncrements;
-            }
-        }
+        public virtual bool EnablePositionIncrements => enablePositionIncrements;
 
         /// <summary>
         /// If <c>true</c>, this <see cref="TokenFilter"/> will preserve

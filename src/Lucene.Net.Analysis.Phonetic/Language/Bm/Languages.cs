@@ -148,21 +148,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 throw new InvalidOperationException("Can't fetch any language from the empty language set.");
             }
 
-            public override bool IsEmpty
-            {
-                get
-                {
-                    return true;
-                }
-            }
+            public override bool IsEmpty => true;
 
-            public override bool IsSingleton
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public override bool IsSingleton => false;
 
             public override LanguageSet RestrictTo(LanguageSet other)
             {
@@ -192,21 +180,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 throw new InvalidOperationException("Can't fetch any language from the any language set.");
             }
 
-            public override bool IsEmpty
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public override bool IsEmpty => false;
 
-            public override bool IsSingleton
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public override bool IsSingleton => false;
 
             public override LanguageSet RestrictTo(LanguageSet other)
             {
@@ -284,15 +260,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             return this.languages;
         }
 
-        public override bool IsEmpty
-        {
-            get { return this.languages.Count == 0; }
-        }
+        public override bool IsEmpty => this.languages.Count == 0;
 
-        public override bool IsSingleton
-        {
-            get { return this.languages.Count == 1; }
-        }
+        public override bool IsSingleton => this.languages.Count == 1;
 
         public override LanguageSet RestrictTo(LanguageSet other)
         {

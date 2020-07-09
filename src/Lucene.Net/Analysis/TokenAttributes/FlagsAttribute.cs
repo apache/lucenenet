@@ -39,14 +39,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public virtual int Flags
         {
-            get
-            {
-                return flags;
-            }
-            set
-            {
-                this.flags = value;
-            }
+            get => flags;
+            set => this.flags = value;
         }
 
         public override void Clear()

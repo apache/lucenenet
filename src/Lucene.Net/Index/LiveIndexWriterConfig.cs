@@ -207,13 +207,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Gets the default analyzer to use for indexing documents. </summary>
-        public virtual Analyzer Analyzer
-        {
-            get
-            {
-                return analyzer;
-            }
-        }
+        public virtual Analyzer Analyzer => analyzer;
 
         /// <summary>
         /// Expert: Gets or sets the interval between indexed terms. Large values cause less
@@ -270,14 +264,8 @@ namespace Lucene.Net.Index
         /// <seealso cref="IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL"/>
         public virtual int TermIndexInterval
         {
-            get
-            {
-                return termIndexInterval;
-            }
-            set // TODO: this should be private to the codec, not settable here
-            {
-                this.termIndexInterval = value;
-            }
+            get => termIndexInterval;
+            set => this.termIndexInterval = value; // TODO: this should be private to the codec, not settable here
         }
 
         /// <summary>
@@ -300,10 +288,7 @@ namespace Lucene.Net.Index
         /// <seealso cref="RAMBufferSizeMB"/>
         public virtual int MaxBufferedDeleteTerms
         {
-            get
-            {
-                return maxBufferedDeleteTerms;
-            }
+            get => maxBufferedDeleteTerms;
             set
             {
                 if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value < 1)
@@ -362,10 +347,7 @@ namespace Lucene.Net.Index
         ///           ramBufferSizeMB when maxBufferedDocs is already disabled </exception>
         public virtual double RAMBufferSizeMB
         {
-            get
-            {
-                return ramBufferSizeMB;
-            }
+            get => ramBufferSizeMB;
             set
             {
                 if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value <= 0.0)
@@ -405,10 +387,7 @@ namespace Lucene.Net.Index
         ///           maxBufferedDocs when ramBufferSizeMB is already disabled </exception>
         public virtual int MaxBufferedDocs
         {
-            get
-            {
-                return maxBufferedDocs;
-            }
+            get => maxBufferedDocs;
             set
             {
                 if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value < 2)
@@ -430,14 +409,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual IndexReaderWarmer MergedSegmentWarmer
         {
-            get
-            {
-                return mergedSegmentWarmer;
-            }
-            set
-            {
-                this.mergedSegmentWarmer = value;
-            }
+            get => mergedSegmentWarmer;
+            set => this.mergedSegmentWarmer = value;
         }
 
         /// <summary>
@@ -458,10 +431,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual int ReaderTermsIndexDivisor
         {
-            get
-            {
-                return readerTermsIndexDivisor;
-            }
+            get => readerTermsIndexDivisor;
             set
             {
                 if (value <= 0 && value != -1)
@@ -474,109 +444,55 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Gets the <see cref="Index.OpenMode"/> set by <see cref="IndexWriterConfig.OpenMode"/> setter. </summary>
-        public virtual OpenMode OpenMode
-        {
-            get
-            {
-                return openMode;
-            }
-        }
+        public virtual OpenMode OpenMode => openMode;
 
         /// <summary>
         /// Gets the <see cref="Index.IndexDeletionPolicy"/> specified in
         /// <see cref="IndexWriterConfig.IndexDeletionPolicy"/> setter or
         /// the default <see cref="KeepOnlyLastCommitDeletionPolicy"/>
         /// </summary>
-        public virtual IndexDeletionPolicy IndexDeletionPolicy
-        {
-            get
-            {
-                return delPolicy;
-            }
-        }
+        public virtual IndexDeletionPolicy IndexDeletionPolicy => delPolicy;
 
         /// <summary>
         /// Gets the <see cref="IndexCommit"/> as specified in
         /// <see cref="IndexWriterConfig.IndexCommit"/> setter or the default,
         /// <c>null</c> which specifies to open the latest index commit point.
         /// </summary>
-        public virtual IndexCommit IndexCommit
-        {
-            get
-            {
-                return commit;
-            }
-        }
+        public virtual IndexCommit IndexCommit => commit;
 
         /// <summary>
         /// Expert: returns the <see cref="Search.Similarities.Similarity"/> implementation used by this
         /// <see cref="IndexWriter"/>.
         /// </summary>
-        public virtual Similarity Similarity
-        {
-            get
-            {
-                return similarity;
-            }
-        }
+        public virtual Similarity Similarity => similarity;
 
         /// <summary>
         /// Returns the <see cref="IMergeScheduler"/> that was set by
         /// <see cref="IndexWriterConfig.MergeScheduler"/> setter.
         /// </summary>
-        public virtual IMergeScheduler MergeScheduler
-        {
-            get
-            {
-                return mergeScheduler;
-            }
-        }
+        public virtual IMergeScheduler MergeScheduler => mergeScheduler;
 
         /// <summary>
         /// Returns allowed timeout when acquiring the write lock.
         /// </summary>
         /// <seealso cref="IndexWriterConfig.WriteLockTimeout"/>
-        public virtual long WriteLockTimeout
-        {
-            get
-            {
-                return writeLockTimeout;
-            }
-        }
+        public virtual long WriteLockTimeout => writeLockTimeout;
 
         /// <summary>
         /// Returns the current <see cref="Codecs.Codec"/>. </summary>
-        public virtual Codec Codec
-        {
-            get
-            {
-                return codec;
-            }
-        }
+        public virtual Codec Codec => codec;
 
         /// <summary>
         /// Returns the current <see cref="Index.MergePolicy"/> in use by this writer.
         /// </summary>
         /// <seealso cref="IndexWriterConfig.MergePolicy"/>
-        public virtual MergePolicy MergePolicy
-        {
-            get
-            {
-                return mergePolicy;
-            }
-        }
+        public virtual MergePolicy MergePolicy => mergePolicy;
 
         /// <summary>
         /// Returns the configured <see cref="DocumentsWriterPerThreadPool"/> instance.
         /// </summary>
         /// <seealso cref="IndexWriterConfig.IndexerThreadPool"/>
-        internal virtual DocumentsWriterPerThreadPool IndexerThreadPool
-        {
-            get
-            {
-                return indexerThreadPool;
-            }
-        }
+        internal virtual DocumentsWriterPerThreadPool IndexerThreadPool => indexerThreadPool;
 
         /// <summary>
         /// Returns the max number of simultaneous threads that may be indexing
@@ -601,59 +517,29 @@ namespace Lucene.Net.Index
         /// Returns <c>true</c> if <see cref="IndexWriter"/> should pool readers even if
         /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/> has not been called.
         /// </summary>
-        public virtual bool UseReaderPooling
-        {
-            get
-            {
-                return readerPooling;
-            }
-        }
+        public virtual bool UseReaderPooling => readerPooling;
 
         /// <summary>
         /// Returns the indexing chain set on
         /// <see cref="IndexWriterConfig.IndexingChain"/>.
         /// </summary>
-        internal virtual IndexingChain IndexingChain
-        {
-            get
-            {
-                return indexingChain;
-            }
-        }
+        internal virtual IndexingChain IndexingChain => indexingChain;
 
         /// <summary>
         /// Returns the max amount of memory each <see cref="DocumentsWriterPerThread"/> can
         /// consume until forcefully flushed.
         /// </summary>
         /// <seealso cref="IndexWriterConfig.RAMPerThreadHardLimitMB"/>
-        public virtual int RAMPerThreadHardLimitMB
-        {
-            get
-            {
-                return perThreadHardLimitMB;
-            }
-        }
+        public virtual int RAMPerThreadHardLimitMB => perThreadHardLimitMB;
 
         /// <seealso cref="IndexWriterConfig.FlushPolicy"/>
-        internal virtual FlushPolicy FlushPolicy
-        {
-            get
-            {
-                return flushPolicy;
-            }
-        }
+        internal virtual FlushPolicy FlushPolicy => flushPolicy;
 
         /// <summary>
         /// Returns <see cref="Util.InfoStream"/> used for debugging.
         /// </summary>
         /// <seealso cref="IndexWriterConfig.SetInfoStream(InfoStream)"/>
-        public virtual InfoStream InfoStream
-        {
-            get
-            {
-                return infoStream;
-            }
-        }
+        public virtual InfoStream InfoStream => infoStream;
 
         /// <summary>
         /// Gets or sets if the <see cref="IndexWriter"/> should pack newly written segments in a
@@ -671,14 +557,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual bool UseCompoundFile
         {
-            get
-            {
-                return useCompoundFile;
-            }
-            set
-            {
-                this.useCompoundFile = value;
-            }
+            get => useCompoundFile;
+            set => this.useCompoundFile = value;
         }
 
         /// <summary>
@@ -692,14 +572,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual bool CheckIntegrityAtMerge
         {
-            get
-            {
-                return checkIntegrityAtMerge;
-            }
-            set
-            {
-                this.checkIntegrityAtMerge = value;
-            }
+            get => checkIntegrityAtMerge;
+            set => this.checkIntegrityAtMerge = value;
         }
 
         public override string ToString()

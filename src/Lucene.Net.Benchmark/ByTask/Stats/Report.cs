@@ -38,33 +38,21 @@
         /// <summary>
         /// Gets total number of stats points when this report was created.
         /// </summary>
-        public virtual int OutOf
-        {
-            get { return outOf; }
-        }
+        public virtual int OutOf => outOf;
 
         /// <summary>
         /// Gets number of lines in the report.
         /// </summary>
-        public virtual int Count
-        {
-            get { return size; }
-        }
+        public virtual int Count => size;
 
         /// <summary>
         /// Gets the report text.
         /// </summary>
-        public virtual string Text
-        {
-            get { return text; }
-        }
+        public virtual string Text => text;
 
         /// <summary>
         /// Gets number of stats points represented in this report.
         /// </summary>
-        public virtual int Reported
-        {
-            get { return reported; }
-        }
+        public virtual int Reported => reported;
     }
 }

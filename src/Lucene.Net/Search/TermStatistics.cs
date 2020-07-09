@@ -46,25 +46,16 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the term text </summary>
-        public BytesRef Term
-        {
-            get { return term; }
-        }
+        public BytesRef Term => term;
 
         /// <summary>
         /// Returns the number of documents this term occurs in </summary>
         /// <seealso cref="Index.TermsEnum.DocFreq"/>
-        public long DocFreq
-        {
-            get { return docFreq; }
-        }
+        public long DocFreq => docFreq;
 
         /// <summary>
         /// Returns the total number of occurrences of this term </summary>
         /// <seealso cref="Index.TermsEnum.TotalTermFreq"/>
-        public long TotalTermFreq
-        {
-            get { return totalTermFreq; }
-        }
+        public long TotalTermFreq => totalTermFreq;
     }
 }

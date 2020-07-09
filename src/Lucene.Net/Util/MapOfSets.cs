@@ -36,13 +36,7 @@ namespace Lucene.Net.Util
         }
 
         /// <returns> Direct access to the map backing this object. </returns>
-        public virtual IDictionary<TKey, ISet<TValue>> Map
-        {
-            get
-            {
-                return theMap;
-            }
-        }
+        public virtual IDictionary<TKey, ISet<TValue>> Map => theMap;
 
         /// <summary>
         /// Adds <paramref name="val"/> to the <see cref="ISet{T}"/> associated with key in the <see cref="IDictionary{TKey, TValue}"/>.  

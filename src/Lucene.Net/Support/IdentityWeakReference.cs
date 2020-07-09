@@ -55,16 +55,9 @@ namespace Lucene.Net.Support
         }
 
         public new T Target
-        {
-            get
-            {
-                // note: if this.NULL is the target, it will not cast to T, so the "as" will return null as we would expect.
-                return base.Target as T;
-            }
-            set
-            {
-                base.Target = value;
-            }
+        {   // note: if this.NULL is the target, it will not cast to T, so the "as" will return null as we would expect.
+            get => base.Target as T;
+            set => base.Target = value;
         }
     }
 }

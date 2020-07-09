@@ -36,9 +36,6 @@
         {
         }
 
-        public override bool WithRetrieve
-        {
-            get { return true; }
-        }
+        public override bool WithRetrieve => true;
     }
 }

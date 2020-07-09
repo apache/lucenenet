@@ -568,10 +568,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         }
 
         /// <seealso cref="PerfTask.SupportsParams"/>
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
 
         /// <summary>Returns the current line in the algorithm file</summary>
         public virtual int GetLineNumber(StreamTokenizer stok)

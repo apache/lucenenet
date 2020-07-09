@@ -98,11 +98,8 @@ namespace Lucene.Net.Join
                 _doScores = doScores;
             }
 
-            public override Query Query
-            {
-                get { return _joinQuery; }
-            }
-            
+            public override Query Query => _joinQuery;
+
             public override float GetValueForNormalization()
             {
                 return _parentWeight.GetValueForNormalization() * _joinQuery.Boost*_joinQuery.Boost;
@@ -150,10 +147,7 @@ namespace Lucene.Net.Join
                 throw new NotSupportedException(GetType().Name + " cannot explain match on parent document");
             }
 
-            public override bool ScoresDocsOutOfOrder
-            {
-                get { return false; }
-            }
+            public override bool ScoresDocsOutOfOrder => false;
         }
 
         private sealed class ToChildBlockJoinScorer : Scorer
@@ -275,21 +269,15 @@ namespace Lucene.Net.Join
                 }
             }
 
-            public override int DocID
-            {
-                get { return _childDoc; }
-            }
-            
+            public override int DocID => _childDoc;
+
             public override float GetScore()
             {
                 return _parentScore;
             }
             
-            public override int Freq
-            {
-                get { return _parentFreq; }
-            }
-            
+            public override int Freq => _parentFreq;
+
             public override int Advance(int childTarget)
             {
                 Debug.Assert(childTarget >= _parentBits.Length || !_parentBits.Get(childTarget));

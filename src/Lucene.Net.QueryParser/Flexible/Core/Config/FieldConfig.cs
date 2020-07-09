@@ -44,10 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         /// <summary>
         /// Gets the field name this configuration represents.
         /// </summary>
-        public virtual string Field
-        {
-            get { return this.fieldName; }
-        }
+        public virtual string Field => this.fieldName;
 
         public override string ToString()
         {

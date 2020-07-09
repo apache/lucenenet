@@ -134,10 +134,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Return the number of values which have been added. </summary>
-        public virtual long Ord
-        {
-            get { return m_ord; }
-        }
+        public virtual long Ord => m_ord;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected abstract void Flush();

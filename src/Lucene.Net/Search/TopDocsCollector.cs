@@ -88,29 +88,18 @@ namespace Lucene.Net.Search
         /// The total number of documents that matched this query. </summary>
         public virtual int TotalHits
         {
-            get
-            {
-                return m_totalHits;
-            }
-            internal set
-            {
-                m_totalHits = value;
-            }
+            get => m_totalHits;
+            internal set => m_totalHits = value;
         }
 
         /// <summary>
         /// The number of valid priority queue entries 
         /// </summary>
-        protected virtual int TopDocsCount
-        {
-            get
-            {
-                // In case pq was populated with sentinel values, there might be less
-                // results than pq.size(). Therefore return all results until either
-                // pq.size() or totalHits.
-                return m_totalHits < m_pq.Count ? m_totalHits : m_pq.Count;
-            }
-        }
+        protected virtual int TopDocsCount =>
+            // In case pq was populated with sentinel values, there might be less
+            // results than pq.size(). Therefore return all results until either
+            // pq.size() or totalHits.
+            m_totalHits < m_pq.Count ? m_totalHits : m_pq.Count;
 
         /// <summary>
         /// Returns the top docs that were collected by this collector. </summary>

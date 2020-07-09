@@ -147,13 +147,7 @@ namespace Lucene.Net.Util
         /// Returns the maximum position looked up, or -1 if no
         /// position has been looked up since <see cref="Reset()"/>/init.
         /// </summary>
-        public virtual int MaxPos
-        {
-            get
-            {
-                return nextPos - 1;
-            }
-        }
+        public virtual int MaxPos => nextPos - 1;
 
         public virtual void FreeBefore(int pos)
         {

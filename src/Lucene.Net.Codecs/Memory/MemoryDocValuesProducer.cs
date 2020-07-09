@@ -517,10 +517,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override int ValueCount
-            {
-                get { return (int) entry.numOrds; }
-            }
+            public override int ValueCount => (int) entry.numOrds;
 
             public override TermsEnum GetTermsEnum()
             {
@@ -654,10 +651,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override long ValueCount
-            {
-                get { return entry.numOrds; }
-            }
+            public override long ValueCount => entry.numOrds;
 
             public override TermsEnum GetTermsEnum()
             {
@@ -775,10 +769,7 @@ namespace Lucene.Net.Codecs.Memory
                 return io == null ? null : io.Input;
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
@@ -818,25 +809,13 @@ namespace Lucene.Net.Codecs.Memory
                 input.SeekExact(scratchBytes);
             }
 
-            public override BytesRef Term
-            {
-                get { return input.Current.Input; }
-            }
+            public override BytesRef Term => input.Current.Input;
 
-            public override long Ord
-            {
-                get { return input.Current.Output.Value; }
-            }
+            public override long Ord => input.Current.Output.Value;
 
-            public override int DocFreq
-            {
-                get { throw new NotSupportedException(); }
-            }
+            public override int DocFreq => throw new NotSupportedException();
 
-            public override long TotalTermFreq
-            {
-                get { throw new NotSupportedException(); }
-            }
+            public override long TotalTermFreq => throw new NotSupportedException();
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {

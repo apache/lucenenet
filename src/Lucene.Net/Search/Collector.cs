@@ -273,13 +273,7 @@ namespace Lucene.Net.Search
                 this.acceptsDocsOutOfOrder = acceptsDocsOutOfOrder;
             }
 
-            public bool AcceptsDocsOutOfOrder
-            {
-                get
-                {
-                    return this.acceptsDocsOutOfOrder();
-                }
-            }
+            public bool AcceptsDocsOutOfOrder => this.acceptsDocsOutOfOrder();
 
             public void Collect(int doc)
             {

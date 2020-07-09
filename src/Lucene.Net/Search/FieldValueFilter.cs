@@ -63,18 +63,12 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the field this filter is applied on. </summary>
         /// <returns> The field this filter is applied on. </returns>
-        public virtual string Field
-        {
-            get { return field; }
-        }
+        public virtual string Field => field;
 
         /// <summary>
         /// Returns <c>true</c> if this filter is negated, otherwise <c>false</c> </summary>
         /// <returns> <c>true</c> if this filter is negated, otherwise <c>false</c> </returns>
-        public virtual bool Negate
-        {
-            get { return negate; }
-        }
+        public virtual bool Negate => negate;
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {

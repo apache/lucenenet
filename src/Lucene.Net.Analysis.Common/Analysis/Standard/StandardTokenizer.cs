@@ -114,6 +114,7 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         public int MaxTokenLength
         {
+            get => maxTokenLength;
             set
             {
                 if (value < 1)
@@ -121,10 +122,6 @@ namespace Lucene.Net.Analysis.Standard
                     throw new System.ArgumentException("maxTokenLength must be greater than zero");
                 }
                 this.maxTokenLength = value;
-            }
-            get
-            {
-                return maxTokenLength;
             }
         }
 

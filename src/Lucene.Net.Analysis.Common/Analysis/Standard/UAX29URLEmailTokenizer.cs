@@ -91,6 +91,7 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         public int MaxTokenLength
         {
+            get => maxTokenLength;
             set
             {
                 if (value < 1)
@@ -99,12 +100,7 @@ namespace Lucene.Net.Analysis.Standard
                 }
                 this.maxTokenLength = value;
             }
-            get
-            {
-                return maxTokenLength;
-            }
         }
-
 
         /// <summary>
         /// Creates a new instance of the <see cref="UAX29URLEmailTokenizer"/>.  Attaches

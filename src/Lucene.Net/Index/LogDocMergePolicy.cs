@@ -61,14 +61,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual int MinMergeDocs
         {
-            set
-            {
-                m_minMergeSize = value;
-            }
-            get
-            {
-                return (int)m_minMergeSize;
-            }
+            get => (int)m_minMergeSize;
+            set => m_minMergeSize = value;
         }
     }
 }

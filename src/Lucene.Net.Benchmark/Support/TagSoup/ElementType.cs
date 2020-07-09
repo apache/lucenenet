@@ -62,26 +62,17 @@ namespace TagSoup
         /// <summary>
         /// Gets the name of this element type.
         /// </summary>
-        public virtual string Name
-        {
-            get { return name; }
-        }
+        public virtual string Name => name;
 
         /// <summary>
         /// Gets the namespace name of this element type.
         /// </summary>
-        public virtual string Namespace
-        {
-            get { return @namespace; }
-        }
+        public virtual string Namespace => @namespace;
 
         /// <summary>
         /// Gets the local name of this element type.
         /// </summary>
-        public virtual string LocalName
-        {
-            get { return localName; }
-        }
+        public virtual string LocalName => localName;
 
         /// <summary>
         /// Gets or sets the content models of this element type as a vector of bits
@@ -106,10 +97,7 @@ namespace TagSoup
         /// The return value is an Attributes to allow the caller to mutate
         /// the attributes.
         /// </summary>
-        public virtual Attributes Attributes
-        {
-            get { return atts; }
-        }
+        public virtual Attributes Attributes => atts;
 
         /// <summary>
         /// Gets or sets the parent element type of this element type.
@@ -119,10 +107,7 @@ namespace TagSoup
         /// <summary>
         /// Gets the schema which this element type is associated with.
         /// </summary>
-        public virtual Schema Schema
-        {
-            get { return schema; }
-        }
+        public virtual Schema Schema => schema;
 
         /// <summary>
         /// Return a namespace name from a Qname.

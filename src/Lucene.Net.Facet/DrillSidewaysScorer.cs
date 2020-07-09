@@ -723,7 +723,7 @@ namespace Lucene.Net.Facet
         {
             private readonly DrillSidewaysScorer outerInstance;
 
-            //internal float score_Renamed; // not used
+            //internal float score; // not used
             //internal int doc; // not used
 
             public FakeScorer(DrillSidewaysScorer outerInstance)
@@ -737,15 +737,9 @@ namespace Lucene.Net.Facet
                 throw new System.NotSupportedException("FakeScorer doesn't support advance(int)");
             }
 
-            public override int DocID
-            {
-                get { return outerInstance.collectDocID; }
-            }
+            public override int DocID => outerInstance.collectDocID;
 
-            public override int Freq
-            {
-                get { return 1 + outerInstance.dims.Length; }
-            }
+            public override int Freq => 1 + outerInstance.dims.Length;
 
             public override int NextDoc()
             {
@@ -767,13 +761,7 @@ namespace Lucene.Net.Facet
                 return new[] { new Scorer.ChildScorer(outerInstance.baseScorer, "MUST") };
             }
 
-            public override Weight Weight
-            {
-                get
-                {
-                    throw new System.NotSupportedException();
-                }
-            }
+            public override Weight Weight => throw new System.NotSupportedException();
         }
 
         internal class DocsAndCost : IComparable<DocsAndCost>

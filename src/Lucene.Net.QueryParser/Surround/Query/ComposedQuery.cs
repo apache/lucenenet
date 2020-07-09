@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         protected string m_opName;
-        public virtual string OperatorName { get { return m_opName; } }
+        public virtual string OperatorName => m_opName;
 
         protected IList<SrndQuery> m_queries;
 
@@ -49,12 +49,12 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             return m_queries.GetEnumerator();
         }
 
-        public virtual int NrSubQueries { get { return m_queries.Count; } }
+        public virtual int NrSubQueries => m_queries.Count;
 
         public virtual SrndQuery GetSubQuery(int qn) { return m_queries[qn]; }
 
         private bool operatorInfix;
-        public virtual bool IsOperatorInfix { get { return operatorInfix; } } /* else prefix operator */
+        public virtual bool IsOperatorInfix => operatorInfix; /* else prefix operator */
 
         public virtual IList<Search.Query> MakeLuceneSubQueriesField(string fn, BasicQueryFactory qf)
         {
@@ -83,9 +83,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         // Override for different spacing
-        protected virtual string PrefixSeparator { get { return ", "; } }
-        protected virtual string BracketOpen { get { return "("; } }
-        protected virtual string BracketClose { get { return ")"; } }
+        protected virtual string PrefixSeparator => ", ";
+        protected virtual string BracketOpen => "(";
+        protected virtual string BracketClose => ")";
 
         protected virtual void InfixToString(StringBuilder r)
         {

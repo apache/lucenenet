@@ -78,10 +78,7 @@ namespace Lucene.Net.Util.Packed
             return values;
         }
 
-        public override bool HasArray
-        {
-            get { return true; }
-        }
+        public override bool HasArray => true;
 
         public override int Get(int index, long[] arr, int off, int len)
         {

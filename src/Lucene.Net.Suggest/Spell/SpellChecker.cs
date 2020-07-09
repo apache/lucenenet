@@ -165,14 +165,8 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         public virtual IComparer<SuggestWord> Comparer
         {
-            set
-            {
-                this.comparer = value;
-            }
-            get
-            {
-                return comparer;
-            }
+            set => this.comparer = value;
+            get => comparer;
         }
 
 
@@ -182,14 +176,8 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         public virtual IStringDistance StringDistance
         {
-            set
-            {
-                this.sd = value;
-            }
-            get
-            {
-                return sd;
-            }
+            set => this.sd = value;
+            get => sd;
         }
 
         /// <summary>
@@ -200,14 +188,8 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         public virtual float Accuracy
         {
-            set
-            {
-                this.accuracy = value;
-            }
-            get
-            {
-                return accuracy;
-            }
+            set => this.accuracy = value;
+            get => accuracy;
         }
 
 
@@ -734,12 +716,6 @@ namespace Lucene.Net.Search.Spell
         /// </summary>
         /// <returns> <c>true</c> if and only if the <see cref="SpellChecker"/> is
         ///         disposed, otherwise <c>false</c>. </returns>
-        internal virtual bool IsDisposed
-        {
-            get
-            {
-                return disposed;
-            }
-        }
+        internal virtual bool IsDisposed => disposed;
     }
 }

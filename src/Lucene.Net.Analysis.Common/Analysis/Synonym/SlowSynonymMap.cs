@@ -37,8 +37,8 @@ namespace Lucene.Net.Analysis.Synonym
         /// @lucene.internal </summary>
         public CharArrayMap<SlowSynonymMap> Submap // recursive: Map<String, SynonymMap>
         {
-            get { return submap; }
-            set { submap = value; }
+            get => submap;
+            set => submap = value;
         }
         private CharArrayMap<SlowSynonymMap> submap;
 
@@ -48,8 +48,8 @@ namespace Lucene.Net.Analysis.Synonym
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public Token[] Synonyms
         {
-            get { return synonyms; }
-            set { synonyms = value; }
+            get => synonyms;
+            set => synonyms = value;
         }
         private Token[] synonyms;
         internal int flags;
@@ -69,21 +69,9 @@ namespace Lucene.Net.Analysis.Synonym
             }
         }
 
-        public virtual bool IncludeOrig
-        {
-            get
-            {
-                return (flags & INCLUDE_ORIG) != 0;
-            }
-        }
+        public virtual bool IncludeOrig => (flags & INCLUDE_ORIG) != 0;
 
-        public virtual bool IgnoreCase
-        {
-            get
-            {
-                return (flags & IGNORE_CASE) != 0;
-            }
-        }
+        public virtual bool IgnoreCase => (flags & IGNORE_CASE) != 0;
 
         /// <param name="singleMatch">  <see cref="IList{String}"/>, the sequence of strings to match </param>
         /// <param name="replacement">  <see cref="IList{Token}"/> the list of tokens to use on a match </param>

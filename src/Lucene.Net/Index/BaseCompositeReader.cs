@@ -105,23 +105,13 @@ namespace Lucene.Net.Index
             return subReaders[i].GetTermVectors(docID - starts[i]); // dispatch to subreader
         }
 
-        public override sealed int NumDocs
-        {
-            get
-            {
-                // Don't call ensureOpen() here (it could affect performance)
-                return numDocs;
-            }
-        }
+        public override sealed int NumDocs =>
+            // Don't call ensureOpen() here (it could affect performance)
+            numDocs;
 
-        public override sealed int MaxDoc
-        {
-            get
-            {
-                // Don't call ensureOpen() here (it could affect performance)
-                return maxDoc;
-            }
-        }
+        public override sealed int MaxDoc =>
+            // Don't call ensureOpen() here (it could affect performance)
+            maxDoc;
 
         public override sealed void Document(int docID, StoredFieldVisitor visitor)
         {

@@ -142,15 +142,9 @@ namespace Lucene.Net.Index
                     return true;
                 }
 
-                public Document Current
-                {
-                    get { return current; }
-                }
+                public Document Current => current;
 
-                object System.Collections.IEnumerator.Current
-                {
-                    get { return Current; }
-                }
+                object System.Collections.IEnumerator.Current => Current;
 
                 public void Reset()
                 {
@@ -1968,20 +1962,11 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
-            public string Name
-            {
-                get { return "foo"; }
-            }
+            public string Name => "foo";
 
-            public IIndexableFieldType IndexableFieldType
-            {
-                get { return StringField.TYPE_NOT_STORED; }
-            }
+            public IIndexableFieldType IndexableFieldType => StringField.TYPE_NOT_STORED;
 
-            public float Boost
-            {
-                get { return 5f; }
-            }
+            public float Boost => 5f;
 
             public BytesRef GetBinaryValue()
             {
@@ -2023,10 +2008,7 @@ namespace Lucene.Net.Index
 
             // LUCENENET specific - Since we have no numeric reference types in .NET, this method was added to check
             // the numeric type of the inner field without boxing/unboxing.
-            public virtual NumericFieldType NumericType
-            {
-                get { return NumericFieldType.NONE; }
-            }
+            public virtual NumericFieldType NumericType => NumericFieldType.NONE;
 
             // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
             public virtual byte? GetByteValue()

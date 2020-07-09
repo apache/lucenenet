@@ -125,34 +125,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
         }
 
-        public int Column
-        {
-            get { return bufferStart + bufferPosition; }
-        }
+        public int Column => bufferStart + bufferPosition;
 
-        public int Line
-        {
-            get { return 1; }
-        }
+        public int Line => 1;
 
-        public int EndColumn
-        {
-            get { return bufferStart + bufferPosition; }
-        }
+        public int EndColumn => bufferStart + bufferPosition;
 
-        public int EndLine
-        {
-            get { return 1; }
-        }
+        public int EndLine => 1;
 
-        public int BeginColumn
-        {
-            get { return bufferStart + tokenStart; }
-        }
+        public int BeginColumn => bufferStart + tokenStart;
 
-        public int BeginLine
-        {
-            get { return 1; }
-        }
+        public int BeginLine => 1;
     }
 }

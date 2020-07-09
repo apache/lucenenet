@@ -85,20 +85,15 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         public int MaxTokenLength
         {
+            get => maxTokenLength;
             set
             {
                 if (value < 1)
-                {
                     throw new System.ArgumentException("maxTokenLength must be greater than zero");
-                }
+
                 this.maxTokenLength = value;
             }
-            get
-            {
-                return maxTokenLength;
-            }
         }
-
 
         /// <summary>
         /// Creates a new instance of the <see cref="ClassicTokenizer"/>.  Attaches

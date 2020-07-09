@@ -90,12 +90,6 @@ namespace Lucene.Net.Util
             }
         }
 
-        public virtual bool IsSystemStream
-        {
-            get
-            {
-                return isSystemStream;
-            }
-        }
+        public virtual bool IsSystemStream => isSystemStream;
     }
 }

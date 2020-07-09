@@ -40,26 +40,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
         }
 
-        public override bool WithRetrieve
-        {
-            get { return false; }
-        }
+        public override bool WithRetrieve => false;
 
 
-        public override bool WithSearch
-        {
-            get { return true; }
-        }
+        public override bool WithSearch => true;
 
-        public override bool WithTraverse
-        {
-            get { return true; }
-        }
+        public override bool WithTraverse => true;
 
-        public override bool WithWarm
-        {
-            get { return false; }
-        }
+        public override bool WithWarm => false;
 
 
         public override IQueryMaker GetQueryMaker()
@@ -67,10 +55,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             return RunData.GetQueryMaker(this);
         }
 
-        public override int TraversalSize
-        {
-            get { return m_traversalSize; }
-        }
+        public override int TraversalSize => m_traversalSize;
 
         public override void SetParams(string @params)
         {
@@ -79,9 +64,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         }
 
         /// <seealso cref="PerfTask.SupportsParams"/>
-        public override bool SupportsParams
-        {
-            get { return true; }
-        }
+        public override bool SupportsParams => true;
     }
 }

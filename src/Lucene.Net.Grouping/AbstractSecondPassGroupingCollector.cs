@@ -118,10 +118,7 @@ namespace Lucene.Net.Search.Grouping
             }
         }
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return false; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => false;
 
         public virtual ITopGroups<TGroupValue> GetTopGroups(int withinGroupOffset)
         {
@@ -169,16 +166,10 @@ namespace Lucene.Net.Search.Grouping
         // disad: blows up the size of SearchGroup if we need many of them, and couples implementations
         public class SearchGroupDocs<TGroupValue>
         {
-            public TGroupValue GroupValue
-            {
-                get { return groupValue; }
-            }
+            public TGroupValue GroupValue => groupValue;
             private readonly TGroupValue groupValue;
 
-            public ITopDocsCollector Collector
-            {
-                get { return collector; }
-            }
+            public ITopDocsCollector Collector => collector;
             private readonly ITopDocsCollector collector;
             public SearchGroupDocs(TGroupValue groupValue, ITopDocsCollector collector)
             {

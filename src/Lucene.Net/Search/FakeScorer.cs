@@ -39,15 +39,9 @@ namespace Lucene.Net.Search
             throw new System.NotSupportedException("FakeScorer doesn't support advance(int)");
         }
 
-        public override int DocID
-        {
-            get { return doc; }
-        }
+        public override int DocID => doc;
 
-        public override int Freq
-        {
-            get { return freq; }
-        }
+        public override int Freq => freq;
 
         public override int NextDoc()
         {
@@ -64,13 +58,7 @@ namespace Lucene.Net.Search
             return 1;
         }
 
-        public override Weight Weight
-        {
-            get
-            {
-                throw new System.NotSupportedException();
-            }
-        }
+        public override Weight Weight => throw new System.NotSupportedException();
 
         public override ICollection<ChildScorer> GetChildren()
         {

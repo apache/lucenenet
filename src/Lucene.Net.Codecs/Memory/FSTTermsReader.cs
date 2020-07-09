@@ -172,10 +172,7 @@ namespace Lucene.Net.Codecs.Memory
             return result;
         }
 
-        public override int Count
-        {
-            get { return fields.Count; }
-        }
+        public override int Count => fields.Count;
 
         protected override void Dispose(bool disposing)
         {
@@ -216,62 +213,23 @@ namespace Lucene.Net.Codecs.Memory
                 this.dict = new FST<FSTTermOutputs.TermData>(@in, new FSTTermOutputs(fieldInfo, longsSize));
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return BytesRef.UTF8SortedAsUnicodeComparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            public override bool HasFreqs
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
-            }
+            public override bool HasFreqs => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
-            }
+            public override bool HasOffsets => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
-            }
+            public override bool HasPositions => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
-            public override bool HasPayloads
-            {
-                get { return fieldInfo.HasPayloads; }
-            }
+            public override bool HasPayloads => fieldInfo.HasPayloads;
 
-            public override long Count
-            {
-                get { return numTerms; }
-            }
+            public override long Count => numTerms;
 
-            public override long SumTotalTermFreq
-            {
-                get
-                {
-                    return sumTotalTermFreq;
-                }
-            }
+            public override long SumTotalTermFreq => sumTotalTermFreq;
 
-            public override long SumDocFreq
-            {
-                get
-                {
-                    return sumDocFreq;
-                }
-            }
+            public override long SumDocFreq => sumDocFreq;
 
-            public override int DocCount
-            {
-                get
-                {
-                    return docCount;
-                }
-            }
+            public override int DocCount => docCount;
 
             public override TermsEnum GetIterator(TermsEnum reuse)
             {
@@ -289,7 +247,7 @@ namespace Lucene.Net.Codecs.Memory
                 private readonly FSTTermsReader.TermsReader outerInstance;
 
                 /// <summary>Current term, null when enum ends or unpositioned.</summary>
-                internal BytesRef term_Renamed;
+                internal BytesRef term;
 
                 /// <summary>Current term stats + decoded metadata (customized by PBF).</summary>
                 internal readonly BlockTermState state;
@@ -307,7 +265,7 @@ namespace Lucene.Net.Codecs.Memory
                     this.outerInstance = outerInstance;
                     this.state = outerInstance.outerInstance.postingsReader.NewTermState();
                     this.bytesReader = new ByteArrayDataInput();
-                    this.term_Renamed = null;
+                    this.term = null;
                     // NOTE: metadata will only be initialized in child class
                 }
 
@@ -317,20 +275,11 @@ namespace Lucene.Net.Codecs.Memory
                     return (TermState) state.Clone();
                 }
 
-                public override BytesRef Term
-                {
-                    get { return term_Renamed; }
-                }
+                public override BytesRef Term => term;
 
-                public override int DocFreq
-                {
-                    get { return state.DocFreq; }
-                }
+                public override int DocFreq => state.DocFreq;
 
-                public override long TotalTermFreq
-                {
-                    get { return state.TotalTermFreq; }
-                }
+                public override long TotalTermFreq => state.TotalTermFreq;
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
@@ -353,10 +302,7 @@ namespace Lucene.Net.Codecs.Memory
                     throw new System.NotSupportedException();
                 }
 
-                public override long Ord
-                {
-                    get { throw new System.NotSupportedException(); }
-                }
+                public override long Ord => throw new System.NotSupportedException();
             }
 
 
@@ -383,13 +329,7 @@ namespace Lucene.Net.Codecs.Memory
                     this.meta = null;
                 }
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get
-                    {
-                        return BytesRef.UTF8SortedAsUnicodeComparer;
-                    }
-                }
+                public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
                 // Let PBF decode metadata from long[] and byte[]
                 internal override void DecodeMetaData()
@@ -410,11 +350,11 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     if (pair == null)
                     {
-                        term_Renamed = null;
+                        term = null;
                     }
                     else
                     {
-                        term_Renamed = pair.Input;
+                        term = pair.Input;
                         meta = pair.Output;
                         state.DocFreq = meta.docFreq;
                         state.TotalTermFreq = meta.totalTermFreq;
@@ -428,38 +368,38 @@ namespace Lucene.Net.Codecs.Memory
                     if (seekPending) // previously positioned, but termOutputs not fetched
                     {
                         seekPending = false;
-                        SeekStatus status = SeekCeil(term_Renamed);
+                        SeekStatus status = SeekCeil(term);
                         Debug.Assert(status == SeekStatus.FOUND); // must positioned on valid term
                     }
                     UpdateEnum(fstEnum.Next());
-                    return term_Renamed;
+                    return term;
                 }
 
                 public override bool SeekExact(BytesRef target)
                 {
                     UpdateEnum(fstEnum.SeekExact(target));
-                    return term_Renamed != null;
+                    return term != null;
                 }
 
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
                     UpdateEnum(fstEnum.SeekCeil(target));
-                    if (term_Renamed == null)
+                    if (term == null)
                     {
                         return SeekStatus.END;
                     }
                     else
                     {
-                        return term_Renamed.Equals(target) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+                        return term.Equals(target) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
                     }
                 }
 
                 public override void SeekExact(BytesRef target, TermState otherState)
                 {
-                    if (!target.Equals(term_Renamed))
+                    if (!target.Equals(term))
                     {
                         state.CopyFrom(otherState);
-                        term_Renamed = BytesRef.DeepCopyOf(target);
+                        term = BytesRef.DeepCopyOf(target);
                         seekPending = true;
                     }
                 }
@@ -555,21 +495,15 @@ namespace Lucene.Net.Codecs.Memory
                     else
                     {
                         DoSeekCeil(startTerm);
-                        pending = !startTerm.Equals(term_Renamed) && IsValid(TopFrame()) && IsAccept(TopFrame());
+                        pending = !startTerm.Equals(term) && IsValid(TopFrame()) && IsAccept(TopFrame());
                     }
                 }
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get
-                    {
-                        return BytesRef.UTF8SortedAsUnicodeComparer;
-                    }
-                }
+                public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
                 internal override void DecodeMetaData()
                 {
-                    Debug.Assert(term_Renamed != null);
+                    Debug.Assert(term != null);
                     if (!decoded)
                     {
                         if (meta.bytes != null)
@@ -610,15 +544,15 @@ namespace Lucene.Net.Codecs.Memory
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
                     decoded = false;
-                    term_Renamed = DoSeekCeil(target);
+                    term = DoSeekCeil(target);
                     LoadMetaData();
-                    if (term_Renamed == null)
+                    if (term == null)
                     {
                         return SeekStatus.END;
                     }
                     else
                     {
-                        return term_Renamed.Equals(target) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+                        return term.Equals(target) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
                     }
                 }
 
@@ -629,7 +563,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         pending = false;
                         LoadMetaData();
-                        return term_Renamed;
+                        return term;
                     }
                     decoded = false;
                     while (level > 0)
@@ -663,7 +597,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 DFSBreak:
                     LoadMetaData();
-                    return term_Renamed;
+                    return term;
                 }
 
                 private BytesRef DoSeekCeil(BytesRef target)
@@ -686,12 +620,12 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     if (upto == limit) // got target
                     {
-                        return term_Renamed;
+                        return term;
                     }
                     if (frame != null) // got larger term('s prefix)
                     {
                         PushFrame(frame);
-                        return IsAccept(frame) ? term_Renamed : Next();
+                        return IsAccept(frame) ? term : Next();
                     }
                     while (level > 0) // got target's prefix, advance to larger term
                     {
@@ -703,7 +637,7 @@ namespace Lucene.Net.Codecs.Memory
                         if (LoadNextFrame(TopFrame(), frame) != null)
                         {
                             PushFrame(frame);
-                            return IsAccept(frame) ? term_Renamed : Next();
+                            return IsAccept(frame) ? term : Next();
                         }
                     }
                     return null;
@@ -808,14 +742,14 @@ namespace Lucene.Net.Codecs.Memory
 
                 private void PushFrame(Frame frame)
                 {
-                    term_Renamed = Grow(frame.fstArc.Label);
+                    term = Grow(frame.fstArc.Label);
                     level++;
                     //if (TEST) System.out.println("  term=" + term + " level=" + level);
                 }
 
                 private Frame PopFrame()
                 {
-                    term_Renamed = Shrink();
+                    term = Shrink();
                     level--;
                     metaUpto = metaUpto > level ? level : metaUpto;
                     //if (TEST) System.out.println("  term=" + term + " level=" + level);
@@ -844,32 +778,32 @@ namespace Lucene.Net.Codecs.Memory
 
                 private BytesRef Grow(int label)
                 {
-                    if (term_Renamed == null)
+                    if (term == null)
                     {
-                        term_Renamed = new BytesRef(new byte[16], 0, 0);
+                        term = new BytesRef(new byte[16], 0, 0);
                     }
                     else
                     {
-                        if (term_Renamed.Length == term_Renamed.Bytes.Length)
+                        if (term.Length == term.Bytes.Length)
                         {
-                            term_Renamed.Grow(term_Renamed.Length + 1);
+                            term.Grow(term.Length + 1);
                         }
-                        term_Renamed.Bytes[term_Renamed.Length++] = (byte)label;
+                        term.Bytes[term.Length++] = (byte)label;
                     }
-                    return term_Renamed;
+                    return term;
                 }
 
                 private BytesRef Shrink()
                 {
-                    if (term_Renamed.Length == 0)
+                    if (term.Length == 0)
                     {
-                        term_Renamed = null;
+                        term = null;
                     }
                     else
                     {
-                        term_Renamed.Length--;
+                        term.Length--;
                     }
-                    return term_Renamed;
+                    return term;
                 }
             }
         }

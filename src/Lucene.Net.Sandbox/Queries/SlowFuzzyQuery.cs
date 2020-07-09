@@ -132,20 +132,14 @@ namespace Lucene.Net.Sandbox.Queries
         /// Gets the minimum similarity that is required for this query to match.
         /// Returns float value between 0.0 and 1.0.
         /// </summary>
-        public virtual float MinSimilarity
-        {
-            get { return minimumSimilarity; }
-        }
+        public virtual float MinSimilarity => minimumSimilarity;
 
         /// <summary>
         /// Gets the non-fuzzy prefix length. This is the number of characters at the start
         /// of a term that must be identical (not fuzzy) to the query term if the query
         /// is to match that term.
         /// </summary>
-        public virtual int PrefixLength
-        {
-            get { return prefixLength; }
-        }
+        public virtual int PrefixLength => prefixLength;
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
@@ -159,10 +153,7 @@ namespace Lucene.Net.Sandbox.Queries
         /// <summary>
         /// Gets the pattern term.
         /// </summary>
-        public virtual Term Term
-        {
-            get { return m_term; }
-        }
+        public virtual Term Term => m_term;
 
         public override string ToString(string field)
         {

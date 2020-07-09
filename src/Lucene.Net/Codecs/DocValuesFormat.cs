@@ -133,13 +133,7 @@ namespace Lucene.Net.Codecs
         /// Unique name that's used to retrieve this format when
         /// reading the index.
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public string Name => name;
 
         public override string ToString()
         {

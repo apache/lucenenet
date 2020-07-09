@@ -33,21 +33,9 @@ namespace Lucene.Net.Analysis.Hunspell
             return new ISO8859_14Decoder();
         }
 
-        public override string EncodingName
-        {
-            get
-            {
-                return "iso-8859-14";
-            }
-        }
+        public override string EncodingName => "iso-8859-14";
 
-        public override int CodePage
-        {
-            get
-            {
-                return 28604;
-            }
-        }
+        public override int CodePage => 28604;
 
         public override int GetCharCount(byte[] bytes, int index, int count)
         {

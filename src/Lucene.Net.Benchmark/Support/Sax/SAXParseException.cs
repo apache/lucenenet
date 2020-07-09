@@ -209,10 +209,7 @@ namespace Sax
         /// Returns a string containing the public identifier, or null if none is available.
         /// </summary>
         /// <seealso cref="ILocator.PublicId"/>
-        public string PublicId
-        {
-            get { return this.publicId; }
-        }
+        public string PublicId => this.publicId;
 
         /// <summary>
         /// Get the system identifier of the entity where the exception occurred.
@@ -222,10 +219,7 @@ namespace Sax
         /// A string containing the system identifier, or null if none is available.
         /// </summary>
         /// <seealso cref="ILocator.SystemId"/>
-        public string SystemId
-        {
-            get { return this.systemId; }
-        }
+        public string SystemId => this.systemId;
 
         /// <summary>
         /// The line number of the end of the text where the exception occurred.
@@ -235,10 +229,7 @@ namespace Sax
         /// An integer representing the line number, or -1 if none is available.
         /// </summary>
         /// <seealso cref="ILocator.LineNumber"/>
-        public int LineNumber
-        {
-            get { return this.lineNumber; }
-        }
+        public int LineNumber => this.lineNumber;
 
         /// <summary>
         /// The column number of the end of the text where the exception occurred.
@@ -249,10 +240,7 @@ namespace Sax
         /// if none is available.
         /// </summary>
         /// <seealso cref="ILocator.ColumnNumber"/>
-        public int ColumnNumber
-        {
-            get { return this.columnNumber; }
-        }
+        public int ColumnNumber => this.columnNumber;
 
 
         //////////////////////////////////////////////////////////////////////

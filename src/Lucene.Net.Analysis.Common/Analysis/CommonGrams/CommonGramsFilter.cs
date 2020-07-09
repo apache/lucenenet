@@ -157,13 +157,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// Determines if the current token is a common term
         /// </summary>
         /// <returns> <c>true</c> if the current token is a common term, <c>false</c> otherwise </returns>
-        private bool IsCommon
-        {
-            get
-            {
-                return commonWords != null && commonWords.Contains(termAttribute.Buffer, 0, termAttribute.Length);
-            }
-        }
+        private bool IsCommon => commonWords != null && commonWords.Contains(termAttribute.Buffer, 0, termAttribute.Length);
 
         /// <summary>
         /// Saves this information to form the left part of a gram

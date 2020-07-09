@@ -146,10 +146,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         ///     
         /// from this method for such cases in the release version of your parser.
         /// </summary>
-        public override string Message
-        {
-            get { return base.Message; }
-        }
+        public override string Message => base.Message;
 
         // Constructors of various flavors follow.
 

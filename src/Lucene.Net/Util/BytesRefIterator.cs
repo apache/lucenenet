@@ -68,10 +68,7 @@ namespace Lucene.Net.Util
                 return null;
             }
 
-            public IComparer<BytesRef> Comparer
-            {
-                get { return null; }
-            }
+            public IComparer<BytesRef> Comparer => null;
         }
     }
 }

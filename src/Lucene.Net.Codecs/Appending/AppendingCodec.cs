@@ -40,10 +40,7 @@ namespace Lucene.Net.Codecs.Appending
         {
         }
 
-        public override PostingsFormat PostingsFormat
-        {
-            get { return _postings; }
-        }
+        public override PostingsFormat PostingsFormat => _postings;
     }
 }
 

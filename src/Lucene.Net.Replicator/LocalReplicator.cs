@@ -219,7 +219,7 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public virtual long ExpirationThreshold
         {
-            get { return expirationThreshold; }
+            get => expirationThreshold;
             set
             {
                 lock (padlock)

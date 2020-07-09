@@ -77,24 +77,12 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// <summary>
         /// How many mappings.
         /// </summary>
-        public virtual int Count
-        {
-            get
-            {
-                return this.size;
-            }
-        }
+        public virtual int Count => this.size;
 
         /// <summary>
         /// How many slots are allocated. 
         /// </summary>
-        public virtual int Capacity
-        {
-            get
-            {
-                return this.capacity;
-            }
-        }
+        public virtual int Capacity => this.capacity;
 
         private void Grow()
         {
@@ -228,7 +216,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             private readonly CollisionMap outerInstance;
 
-            internal Entry next_Renamed; // next entry to return
+            internal Entry next; // next entry to return
             internal int index; // current slot
             internal Entry[] ents;
 
@@ -246,18 +234,18 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                         // advance
                     }
                 }
-                this.next_Renamed = n;
+                this.next = n;
                 this.index = i;
             }
 
             public bool HasNext()
             {
-                return this.next_Renamed != null;
+                return this.next != null;
             }
 
             public Entry Next()
             {
-                Entry e = this.next_Renamed;
+                Entry e = this.next;
                 if (e == null)
                 {
                     throw new InvalidOperationException(this.GetType() + " cannot get next entry"); ;
@@ -271,7 +259,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     n = t[--i];
                 }
                 this.index = i;
-                this.next_Renamed = n;
+                this.next = n;
                 return e;
             }
 
@@ -300,10 +288,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             public Entry Current { get; private set; }
 
-            object IEnumerator.Current
-            {
-                get { return Current; }
-            }
+            object IEnumerator.Current => Current;
         }
     }
 }

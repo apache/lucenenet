@@ -80,10 +80,7 @@ namespace Lucene.Net.Search.Grouping.Function
             this.m_temporalResult.GroupHead = groupHead;
         }
 
-        protected override ICollection<GroupHead> CollectedGroupHeads
-        {
-            get { return groups.Values; }
-        }
+        protected override ICollection<GroupHead> CollectedGroupHeads => groups.Values;
 
         public override void SetScorer(Scorer scorer)
         {
@@ -124,10 +121,7 @@ namespace Lucene.Net.Search.Grouping.Function
             private readonly FunctionAllGroupHeadsCollector outerInstance;
             // LUCENENET: Moved this here from the base class, AbstractAllGroupHeadsCollector_GroupHead so it doesn't
             // need to reference the generic closing type MutableValue.
-            public MutableValue GroupValue
-            {
-                get { return groupValue; }
-            }
+            public MutableValue GroupValue => groupValue;
             private readonly MutableValue groupValue;
             internal readonly FieldComparer[] comparers;
 

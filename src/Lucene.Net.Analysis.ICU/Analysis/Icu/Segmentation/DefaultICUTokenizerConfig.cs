@@ -88,10 +88,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             this.myanmarAsWords = myanmarAsWords;
         }
 
-        public override bool CombineCJ
-        {
-            get { return cjkAsWords; }
-        }
+        public override bool CombineCJ => cjkAsWords;
 
         public override BreakIterator GetBreakIterator(int script)
         {

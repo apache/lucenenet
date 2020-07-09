@@ -38,13 +38,7 @@ namespace Lucene.Net.Util.Fst
         {
         }
 
-        public static CharSequenceOutputs Singleton
-        {
-            get
-            {
-                return singleton;
-            }
-        }
+        public static CharSequenceOutputs Singleton => singleton;
 
         public override CharsRef Common(CharsRef output1, CharsRef output2)
         {
@@ -161,13 +155,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        public override CharsRef NoOutput
-        {
-            get
-            {
-                return NO_OUTPUT;
-            }
-        }
+        public override CharsRef NoOutput => NO_OUTPUT;
 
         public override string OutputToString(CharsRef output)
         {

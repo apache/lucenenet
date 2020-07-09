@@ -129,10 +129,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public bool IsReadOnly => false;
 
         public bool ContainsKey(TKey key)
         {
@@ -157,7 +154,7 @@ namespace Lucene.Net.Support
 
         public TValue this[TKey key]
         {
-            get { return _hm[new WeakKey<TKey>(key)]; }
+            get => _hm[new WeakKey<TKey>(key)];
             set
             {
                 CleanIfNeeded();
@@ -217,17 +214,11 @@ namespace Lucene.Net.Support
                 throw new NotImplementedException("Implement this as needed");
             }
 
-            public int Count
-            {
-                get { return _internalDict.Count + 1; }
-            }
+            public int Count => _internalDict.Count + 1;
 
-            public bool IsReadOnly
-            {
-                get { return true; }
-            }
+            public bool IsReadOnly => true;
 
-#region Explicit Interface Definitions
+            #region Explicit Interface Definitions
 
             bool ICollection<TKey>.Contains(TKey item)
             {
@@ -296,15 +287,9 @@ namespace Lucene.Net.Support
                 return false;
             }
 
-            public T Target
-            {
-                get { return (T)reference.Target; }
-            }
+            public T Target => (T)reference.Target;
 
-            public bool IsAlive
-            {
-                get { return reference.IsAlive; }
-            }
+            public bool IsAlive => reference.IsAlive;
         }
     }
 }

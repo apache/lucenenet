@@ -95,13 +95,7 @@ namespace Lucene.Net.Analysis.Core
                 throw new System.NotSupportedException("Mark(int)");
             }
 
-            public override bool IsMarkSupported
-            {
-                get
-                {
-                    throw new System.NotSupportedException("IsMarkSupported");
-                }
-            }
+            public override bool IsMarkSupported => throw new System.NotSupportedException("IsMarkSupported");
 
             public override int Read()
             {
@@ -119,10 +113,7 @@ namespace Lucene.Net.Analysis.Core
             //    throw new System.NotSupportedException("Read(CharBuffer)");
             //}
 
-            public override bool IsReady
-            {
-                get { throw new System.NotSupportedException("Ready()"); }
-            }
+            public override bool IsReady => throw new System.NotSupportedException("Ready()");
 
             public override void Reset()
             {

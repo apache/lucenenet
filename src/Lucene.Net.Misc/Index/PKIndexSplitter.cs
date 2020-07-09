@@ -171,18 +171,9 @@ namespace Lucene.Net.Index
                 this.numDocs = bits.Cardinality();
             }
 
-            public override int NumDocs
-            {
-                get { return numDocs; }
-            }
+            public override int NumDocs => numDocs;
 
-            public override IBits LiveDocs
-            {
-                get
-                {
-                    return liveDocs;
-                }
-            }
+            public override IBits LiveDocs => liveDocs;
         }
     }
 }

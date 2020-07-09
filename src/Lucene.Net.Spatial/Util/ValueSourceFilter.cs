@@ -34,16 +34,10 @@ namespace Lucene.Net.Spatial.Util
 
         internal readonly Filter startingFilter;
         internal readonly ValueSource source;
-        public double Min
-        {
-            get { return min; }
-        }
+        public double Min => min;
         private readonly double min;
 
-        public double Max
-        {
-            get { return max; }
-        }
+        public double Max => max;
         private readonly double max;
 
         public ValueSourceFilter(Filter startingFilter, ValueSource source, double min, double max)

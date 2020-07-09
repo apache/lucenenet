@@ -274,10 +274,7 @@ namespace Lucene.Net.Search.Spans
                 return queue.Count != 0;
             }
 
-            private Spans Top
-            {
-                get { return queue.Top; }
-            }
+            private Spans Top => queue.Top;
 
             public override bool SkipTo(int target)
             {
@@ -307,20 +304,11 @@ namespace Lucene.Net.Search.Spans
                 return Next();
             }
 
-            public override int Doc
-            {
-                get { return Top.Doc; }
-            }
+            public override int Doc => Top.Doc;
 
-            public override int Start
-            {
-                get { return Top.Start; }
-            }
+            public override int Start => Top.Start;
 
-            public override int End
-            {
-                get { return Top.End; }
-            }
+            public override int End => Top.End;
 
             public override ICollection<byte[]> GetPayload()
             {

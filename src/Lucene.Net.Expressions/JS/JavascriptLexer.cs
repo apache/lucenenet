@@ -145,10 +145,7 @@ namespace Lucene.Net.Expressions.JS
             m_dfa9 = new JavascriptLexer.DFA9(this, this);
         }
 
-        public override string GrammarFileName
-        {
-            get { return ""; }
-        }
+        public override string GrammarFileName => "";
 
         // $ANTLR start "AT_ADD"
         
@@ -2174,13 +2171,7 @@ loop2_break: ;
             }
 
             public override string Description
-            {
-                get
-                {
-                    return
-                        "346:1: DECIMAL : ( DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )? | AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )? | DECIMALINTEGER ( EXPONENT )? );";
-                }
-            }
+                => "346:1: DECIMAL : ( DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )? | AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )? | DECIMALINTEGER ( EXPONENT )? );";
 
             private readonly JavascriptLexer _enclosing;
         }

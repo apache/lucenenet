@@ -55,9 +55,6 @@ namespace Lucene.Net.Search
             c.SetScorer(this.scorer);
         }
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return c.AcceptsDocsOutOfOrder; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => c.AcceptsDocsOutOfOrder;
     }
 }

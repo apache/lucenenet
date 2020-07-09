@@ -297,10 +297,7 @@ namespace Lucene.Net.Codecs
             return ret;
         }
 
-        public override int Count
-        {
-            get { return fields.Count; }
-        }
+        public override int Count => fields.Count;
 
         // for debugging
         internal virtual string BrToString(BytesRef b)
@@ -393,8 +390,8 @@ namespace Lucene.Net.Codecs
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[] BlockCountByPrefixLen
             {
-                get { return blockCountByPrefixLen; }
-                set { blockCountByPrefixLen = value; }
+                get => blockCountByPrefixLen;
+                set => blockCountByPrefixLen = value;
             }
             private int[] blockCountByPrefixLen = new int[10];
 
@@ -610,67 +607,28 @@ namespace Lucene.Net.Codecs
                 return (new SegmentTermsEnum(this)).ComputeBlockStats();
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return BytesRef.UTF8SortedAsUnicodeComparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            public override bool HasFreqs
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
-            }
+            public override bool HasFreqs => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
-            }
+            public override bool HasOffsets => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions
-            {
-                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
-            }
+            public override bool HasPositions => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
-            public override bool HasPayloads
-            {
-                get { return fieldInfo.HasPayloads; }
-            }
+            public override bool HasPayloads => fieldInfo.HasPayloads;
 
             public override TermsEnum GetIterator(TermsEnum reuse)
             {
                 return new SegmentTermsEnum(this);
             }
 
-            public override long Count
-            {
-                get { return numTerms; }
-            }
+            public override long Count => numTerms;
 
-            public override long SumTotalTermFreq
-            {
-                get
-                {
-                    return sumTotalTermFreq;
-                }
-            }
+            public override long SumTotalTermFreq => sumTotalTermFreq;
 
-            public override long SumDocFreq
-            {
-                get
-                {
-                    return sumDocFreq;
-                }
-            }
+            public override long SumDocFreq => sumDocFreq;
 
-            public override int DocCount
-            {
-                get
-                {
-                    return docCount;
-                }
-            }
+            public override int DocCount => docCount;
 
             public override TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
             {
@@ -768,8 +726,8 @@ namespace Lucene.Net.Codecs
                     [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                     public long[] Int64s
                     {
-                        get { return longs; }
-                        set { longs = value; }
+                        get => longs;
+                        set => longs = value;
                     }
                     private long[] longs;
 
@@ -778,8 +736,8 @@ namespace Lucene.Net.Codecs
                     [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                     public byte[] Bytes
                     {
-                        get { return bytes; }
-                        set { bytes = value; }
+                        get => bytes;
+                        set => bytes = value;
                     }
                     private byte[] bytes;
 
@@ -979,13 +937,7 @@ namespace Lucene.Net.Codecs
                         }
                     }
 
-                    public int TermBlockOrd
-                    {
-                        get
-                        {
-                            return isLeafBlock ? nextEnt : termState.TermBlockOrd;
-                        }
-                    }
+                    public int TermBlockOrd => isLeafBlock ? nextEnt : termState.TermBlockOrd;
 
                     public void DecodeMetaData()
                     {
@@ -1170,10 +1122,7 @@ namespace Lucene.Net.Codecs
                     return f;
                 }
 
-                public override BytesRef Term
-                {
-                    get { return term; }
-                }
+                public override BytesRef Term => term;
 
                 public override int DocFreq
                 {
@@ -1504,13 +1453,7 @@ namespace Lucene.Net.Codecs
                     term.Length = len;
                 }
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get
-                    {
-                        return BytesRef.UTF8SortedAsUnicodeComparer;
-                    }
-                }
+                public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
                 public override bool SeekExact(BytesRef text)
                 {
@@ -1522,10 +1465,7 @@ namespace Lucene.Net.Codecs
                     throw new System.NotSupportedException();
                 }
 
-                public override long Ord
-                {
-                    get { throw new System.NotSupportedException(); }
-                }
+                public override long Ord => throw new System.NotSupportedException();
 
                 public override SeekStatus SeekCeil(BytesRef text)
                 {
@@ -1767,13 +1707,7 @@ namespace Lucene.Net.Codecs
                     return arcs[ord];
                 }
 
-                public override IComparer<BytesRef> Comparer
-                {
-                    get
-                    {
-                        return BytesRef.UTF8SortedAsUnicodeComparer;
-                    }
-                }
+                public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
                 // Pushes a frame we seek'd to
                 internal Frame PushFrame(FST.Arc<BytesRef> arc, BytesRef frameData, int length)
@@ -2433,7 +2367,7 @@ namespace Lucene.Net.Codecs
                 //        {
                 //            Frame f = GetFrame(ord);
                 //            Debug.Assert(f != null);
-                //            BytesRef prefix = new BytesRef(Term_Renamed.Bytes, 0, f.Prefix);
+                //            BytesRef prefix = new BytesRef(term.Bytes, 0, f.Prefix);
                 //            if (f.NextEnt == -1)
                 //            {
                 //                @out.println("    frame " + (isSeekFrame ? "(seek)" : "(next)") + " ord=" + ord + " fp=" + f.Fp + (f.IsFloor ? (" (fpOrig=" + f.FpOrig + ")") : "") + " prefixLen=" + f.Prefix + " prefix=" + prefix + (f.NextEnt == -1 ? "" : (" (of " + f.EntCount + ")")) + " hasTerms=" + f.HasTerms + " isFloor=" + f.IsFloor + " code=" + ((f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) + (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS : 0) + (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR : 0)) + " isLastInFloor=" + f.IsLastInFloor + " mdUpto=" + f.MetaDataUpto + " tbOrd=" + f.TermBlockOrd);
@@ -2445,9 +2379,9 @@ namespace Lucene.Net.Codecs
                 //            if (OuterInstance.Index != null)
                 //            {
                 //                Debug.Assert(!isSeekFrame || f.Arc != null, "isSeekFrame=" + isSeekFrame + " f.arc=" + f.Arc);
-                //                if (f.Prefix > 0 && isSeekFrame && f.Arc.Label != (Term_Renamed.Bytes[f.Prefix - 1] & 0xFF))
+                //                if (f.Prefix > 0 && isSeekFrame && f.Arc.Label != (term.Bytes[f.Prefix - 1] & 0xFF))
                 //                {
-                //                    @out.println("      broken seek state: arc.label=" + (char)f.Arc.Label + " vs term byte=" + (char)(Term_Renamed.Bytes[f.Prefix - 1] & 0xFF));
+                //                    @out.println("      broken seek state: arc.label=" + (char)f.Arc.Label + " vs term byte=" + (char)(term.Bytes[f.Prefix - 1] & 0xFF));
                 //                    throw new Exception("seek state is broken");
                 //                }
                 //                BytesRef output = Util.Get(OuterInstance.Index, prefix);
@@ -2684,10 +2618,7 @@ namespace Lucene.Net.Codecs
                     throw new NotSupportedException();
                 }
 
-                public override long Ord
-                {
-                    get { throw new NotSupportedException(); }
-                }
+                public override long Ord => throw new NotSupportedException();
 
                 // Not static -- references term, postingsReader,
                 // fieldInfo, in
@@ -2758,8 +2689,8 @@ namespace Lucene.Net.Codecs
                     [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                     public long[] Int64s
                     {
-                        get { return longs; }
-                        set { longs = value; }
+                        get => longs;
+                        set => longs = value;
                     }
                     private long[] longs;
 
@@ -2768,8 +2699,8 @@ namespace Lucene.Net.Codecs
                     [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
                     public byte[] Bytes
                     {
-                        get { return bytes; }
-                        set { bytes = value; }
+                        get => bytes;
+                        set => bytes = value;
                     }
                     private byte[] bytes;
 
@@ -2800,13 +2731,7 @@ namespace Lucene.Net.Codecs
                         //}
                     }
 
-                    public int TermBlockOrd
-                    {
-                        get
-                        {
-                            return isLeafBlock ? nextEnt : state.TermBlockOrd;
-                        }
-                    }
+                    public int TermBlockOrd => isLeafBlock ? nextEnt : state.TermBlockOrd;
 
                     internal void LoadNextFloorBlock()
                     {

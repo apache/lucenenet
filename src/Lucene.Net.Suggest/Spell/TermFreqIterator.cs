@@ -49,19 +49,13 @@ namespace Lucene.Net.Search.Spell
             this.wrapped = wrapped;
         }
 
-        public virtual long Weight
-        {
-            get { return 1; }
-        }
+        public virtual long Weight => 1;
 
         public virtual BytesRef Next()
         {
             return wrapped.Next();
         }
 
-        public virtual IComparer<BytesRef> Comparer
-        {
-            get { return wrapped.Comparer; }
-        }
+        public virtual IComparer<BytesRef> Comparer => wrapped.Comparer;
     }
 }

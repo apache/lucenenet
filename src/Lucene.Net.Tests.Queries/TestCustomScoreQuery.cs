@@ -97,10 +97,7 @@ namespace Lucene.Net.Tests.Queries
             {
             }
 
-            public override string Name
-            {
-                get { return "customAdd"; } 
-            }
+            public override string Name => "customAdd";
 
             protected override CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
             {
@@ -143,10 +140,7 @@ namespace Lucene.Net.Tests.Queries
             {
             }
 
-            public override string Name
-            {
-                get { return "customMulAdd"; }
-            }
+            public override string Name => "customMulAdd";
 
             protected override CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
             {

@@ -532,61 +532,19 @@ namespace Lucene.Net.Index
                 return "DirectoryReader.ReaderCommit(" + segmentsFileName + ")";
             }
 
-            public override int SegmentCount
-            {
-                get
-                {
-                    return segmentCount;
-                }
-            }
+            public override int SegmentCount => segmentCount;
 
-            public override string SegmentsFileName
-            {
-                get
-                {
-                    return segmentsFileName;
-                }
-            }
+            public override string SegmentsFileName => segmentsFileName;
 
-            public override ICollection<string> FileNames
-            {
-                get
-                {
-                    return files;
-                }
-            }
+            public override ICollection<string> FileNames => files;
 
-            public override Directory Directory
-            {
-                get
-                {
-                    return dir;
-                }
-            }
+            public override Directory Directory => dir;
 
-            public override long Generation
-            {
-                get
-                {
-                    return generation;
-                }
-            }
+            public override long Generation => generation;
 
-            public override bool IsDeleted
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public override bool IsDeleted => false;
 
-            public override IDictionary<string, string> UserData
-            {
-                get
-                {
-                    return userData;
-                }
-            }
+            public override IDictionary<string, string> UserData => userData;
 
             public override void Delete()
             {

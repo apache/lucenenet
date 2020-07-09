@@ -91,10 +91,7 @@ namespace Lucene.Net.Sandbox.Queries
         }
 
         /// <summary>Returns the selector in use for this sort</summary>
-        public Selector Selector
-        {
-            get { return selector; }
-        }
+        public Selector Selector => selector;
 
         public override int GetHashCode()
         {
@@ -135,10 +132,7 @@ namespace Lucene.Net.Sandbox.Queries
         /// </summary>
         public override object MissingValue
         {
-            get
-            {
-                return base.m_missingValue;
-            }
+            get => base.m_missingValue;
             set
             {
                 if (value != STRING_FIRST && value != STRING_LAST)
@@ -229,10 +223,7 @@ namespace Lucene.Net.Sandbox.Queries
                 @in.LookupOrd(ord, result);
             }
 
-            public override int ValueCount
-            {
-                get { return (int)@in.ValueCount; }
-            }
+            public override int ValueCount => (int)@in.ValueCount;
 
             public override int LookupTerm(BytesRef key)
             {
@@ -269,10 +260,7 @@ namespace Lucene.Net.Sandbox.Queries
                 @in.LookupOrd(ord, result);
             }
 
-            public override int ValueCount
-            {
-                get { return (int)@in.ValueCount; }
-            }
+            public override int ValueCount => (int)@in.ValueCount;
 
             public override int LookupTerm(BytesRef key)
             {
@@ -309,10 +297,7 @@ namespace Lucene.Net.Sandbox.Queries
                 @in.LookupOrd(ord, result);
             }
 
-            public override int ValueCount
-            {
-                get { return (int)@in.ValueCount; }
-            }
+            public override int ValueCount => (int)@in.ValueCount;
 
             public override int LookupTerm(BytesRef key)
             {
@@ -349,10 +334,7 @@ namespace Lucene.Net.Sandbox.Queries
                 @in.LookupOrd(ord, result);
             }
 
-            public override int ValueCount
-            {
-                get { return (int)@in.ValueCount; }
-            }
+            public override int ValueCount => (int)@in.ValueCount;
 
             public override int LookupTerm(BytesRef key)
             {

@@ -125,13 +125,7 @@ namespace Lucene.Net.Facet
                 return baseWeight.Explain(context, doc);
             }
 
-            public override Query Query
-            {
-                get
-                {
-                    return outerInstance.baseQuery;
-                }
-            }
+            public override Query Query => outerInstance.baseQuery;
 
             public override float GetValueForNormalization()
             {
@@ -143,15 +137,10 @@ namespace Lucene.Net.Facet
                 baseWeight.Normalize(norm, topLevelBoost);
             }
 
-            public override bool ScoresDocsOutOfOrder
-            {
-                get
-                {
-                    // TODO: would be nice if AssertingIndexSearcher
-                    // confirmed this for us
-                    return false;
-                }
-            }
+            public override bool ScoresDocsOutOfOrder =>
+                // TODO: would be nice if AssertingIndexSearcher
+                // confirmed this for us
+                false;
 
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {

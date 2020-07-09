@@ -177,14 +177,8 @@ namespace Lucene.Net.Search.Similarities
         /// <seealso cref="TFIDFSimilarity.ComputeNorm(FieldInvertState)"/>
         public virtual bool DiscountOverlaps
         {
-            set
-            {
-                m_discountOverlaps = value;
-            }
-            get
-            {
-                return m_discountOverlaps;
-            }
+            get => m_discountOverlaps;
+            set => m_discountOverlaps = value;
         }
 
         public override string ToString()

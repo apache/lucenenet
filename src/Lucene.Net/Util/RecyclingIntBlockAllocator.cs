@@ -124,22 +124,13 @@ namespace Lucene.Net.Util
         }
 
         /// <returns> The number of currently buffered blocks. </returns>
-        public int NumBufferedBlocks
-        {
-            get { return freeBlocks; }
-        }
+        public int NumBufferedBlocks => freeBlocks;
 
         /// <returns> The number of bytes currently allocated by this <see cref="Allocator"/>. </returns>
-        public long BytesUsed 
-        {
-            get { return bytesUsed.Get(); }
-        }
+        public long BytesUsed => bytesUsed.Get();
 
         /// <returns> The maximum number of buffered byte blocks. </returns>
-        public int MaxBufferedBlocks
-        {
-            get { return maxBufferedBlocks; }
-        }
+        public int MaxBufferedBlocks => maxBufferedBlocks;
 
         /// <summary>
         /// Removes the given number of int blocks from the buffer if possible.

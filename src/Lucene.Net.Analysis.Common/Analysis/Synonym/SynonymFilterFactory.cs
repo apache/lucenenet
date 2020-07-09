@@ -99,12 +99,6 @@ namespace Lucene.Net.Analysis.Synonym
         /// @deprecated Method exists only for testing 4x, will be removed in 5.0
         /// @lucene.internal 
         [Obsolete("Method exists only for testing 4x, will be removed in 5.0")]
-        internal virtual TokenFilterFactory Delegator
-        {
-            get
-            {
-                return delegator;
-            }
-        }
+        internal virtual TokenFilterFactory Delegator => delegator;
     }
 }

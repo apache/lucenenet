@@ -439,10 +439,7 @@ namespace Lucene.Net.Replicator
         /// caused it to terminate (i.e. <see cref="HandleUpdateException"/>
         /// threw the exception further).
         /// </summary>
-        public virtual bool IsUpdateThreadAlive
-        {
-            get { return updateThread != null && updateThread.IsAlive; }
-        }
+        public virtual bool IsUpdateThreadAlive => updateThread != null && updateThread.IsAlive;
 
         public override string ToString()
         {
@@ -484,8 +481,8 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public virtual InfoStream InfoStream
         {
-            get { return infoStream; }
-            set { infoStream = value ?? InfoStream.NO_OUTPUT; }
+            get => infoStream;
+            set => infoStream = value ?? InfoStream.NO_OUTPUT;
         }
     }
 

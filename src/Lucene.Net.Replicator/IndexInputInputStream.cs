@@ -77,15 +77,15 @@ namespace Lucene.Net.Replicator
             throw new InvalidCastException("Cannot write to a readonly stream.");
         }
 
-        public override bool CanRead { get { return true; } }
-        public override bool CanSeek { get { return true; } }
-        public override bool CanWrite { get { return false; } }
-        public override long Length { get { return input.Length; } }
+        public override bool CanRead => true;
+        public override bool CanSeek => true;
+        public override bool CanWrite => false;
+        public override long Length => input.Length;
 
         public override long Position
         {
-            get { return input.GetFilePointer(); }
-            set { input.Seek(value); }
+            get => input.GetFilePointer();
+            set => input.Seek(value);
         }
 
         protected override void Dispose(bool disposing)

@@ -262,60 +262,30 @@ namespace Lucene.Net.Search
         /// Returns the name of the field.  Could return <c>null</c>
         /// if the sort is by <see cref="SortFieldType.SCORE"/> or <see cref="SortFieldType.DOC"/>. </summary>
         /// <returns> Name of field, possibly <c>null</c>. </returns>
-        public virtual string Field
-        {
-            get
-            {
-                return field;
-            }
-        }
+        public virtual string Field => field;
 
         /// <summary>
         /// Returns the type of contents in the field. </summary>
         /// <returns> One of <see cref="SortFieldType.SCORE"/>, <see cref="SortFieldType.DOC"/>, 
         /// <see cref="SortFieldType.STRING"/>, <see cref="SortFieldType.INT32"/> or <see cref="SortFieldType.SINGLE"/>. </returns>
-        public virtual SortFieldType Type
-        {
-            get
-            {
-                return type;
-            }
-        }
+        public virtual SortFieldType Type => type;
 
         /// <summary>
         /// Returns the instance of a <see cref="IFieldCache"/> parser that fits to the given sort type.
         /// May return <c>null</c> if no parser was specified. Sorting is using the default parser then. </summary>
         /// <returns> An instance of a <see cref="IFieldCache"/> parser, or <c>null</c>. </returns>
-        public virtual FieldCache.IParser Parser
-        {
-            get
-            {
-                return parser;
-            }
-        }
+        public virtual FieldCache.IParser Parser => parser;
 
         /// <summary>
         /// Returns whether the sort should be reversed. </summary>
         /// <returns> <c>True</c> if natural order should be reversed. </returns>
-        public virtual bool IsReverse
-        {
-            get
-            {
-                return reverse;
-            }
-        }
+        public virtual bool IsReverse => reverse;
 
         /// <summary>
         /// Returns the <see cref="FieldComparerSource"/> used for
         /// custom sorting.
         /// </summary>
-        public virtual FieldComparerSource ComparerSource
-        {
-            get
-            {
-                return comparerSource;
-            }
-        }
+        public virtual FieldComparerSource ComparerSource => comparerSource;
 
         public override string ToString()
         {
@@ -438,14 +408,8 @@ namespace Lucene.Net.Search
 
         public virtual IComparer<BytesRef> BytesComparer
         {
-            set
-            {
-                bytesComparer = value;
-            }
-            get
-            {
-                return bytesComparer;
-            }
+            get => bytesComparer;
+            set => bytesComparer = value;
         }
 
         /// <summary>
@@ -526,10 +490,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Whether the relevance score is needed to sort documents. </summary>
-        public virtual bool NeedsScores
-        {
-            get { return type == SortFieldType.SCORE; }
-        }
+        public virtual bool NeedsScores => type == SortFieldType.SCORE;
     }
 
     /// <summary>

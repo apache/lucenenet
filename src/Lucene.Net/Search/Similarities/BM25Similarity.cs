@@ -134,14 +134,8 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         public virtual bool DiscountOverlaps
         {
-            set
-            {
-                discountOverlaps = value;
-            }
-            get
-            {
-                return discountOverlaps;
-            }
+            get => discountOverlaps;
+            set => discountOverlaps = value;
         }
 
         /// <summary>
@@ -384,23 +378,11 @@ namespace Lucene.Net.Search.Similarities
         /// <summary>
         /// Returns the <c>k1</c> parameter </summary>
         /// <seealso cref="BM25Similarity(float, float)"/>
-        public virtual float K1
-        {
-            get
-            {
-                return k1;
-            }
-        }
+        public virtual float K1 => k1;
 
         /// <summary>
         /// Returns the <c>b</c> parameter </summary>
         /// <seealso cref="BM25Similarity(float, float)"/>
-        public virtual float B
-        {
-            get
-            {
-                return b;
-            }
-        }
+        public virtual float B => b;
     }
 }

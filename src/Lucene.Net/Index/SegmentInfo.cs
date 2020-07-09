@@ -81,14 +81,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public IDictionary<string, string> Diagnostics
         {
-            set
-            {
-                this.diagnostics = value;
-            }
-            get
-            {
-                return diagnostics;
-            }
+            get => diagnostics;
+            set => this.diagnostics = value;
         }
 
         /// <summary>
@@ -122,10 +116,7 @@ namespace Lucene.Net.Index
         }
 
         [Obsolete("separate norms are not supported in >= 4.0")]
-        internal bool HasSeparateNorms
-        {
-            get { return GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_KEY) != null; }
-        }
+        internal bool HasSeparateNorms => GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_KEY) != null;
 
         /// <summary>
         /// Gets or Sets whether this segment is stored as a compound file.
@@ -134,14 +125,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public bool UseCompoundFile
         {
-            set
-            {
-                this.isCompoundFile = value;
-            }
-            get
-            {
-                return isCompoundFile;
-            }
+            get => isCompoundFile;
+            set => this.isCompoundFile = value;
         }
 
         /// <summary>
@@ -149,6 +134,7 @@ namespace Lucene.Net.Index
         /// Setter can only be called once. </summary>
         public Codec Codec
         {
+            get => codec;
             set
             {
                 Debug.Assert(this.codec == null);
@@ -157,10 +143,6 @@ namespace Lucene.Net.Index
                     throw new System.ArgumentException("codec must be non-null");
                 }
                 this.codec = value;
-            }
-            get
-            {
-                return codec;
             }
         }
 
@@ -277,14 +259,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public string Version
         {
-            set
-            {
-                this.version = value;
-            }
-            get
-            {
-                return version;
-            }
+            get => version;
+            set => this.version = value;
         }
 
         private ISet<string> setFiles;
@@ -371,9 +347,6 @@ namespace Lucene.Net.Index
         /// Returns the internal codec attributes map. May be null if no mappings exist.
         /// </summary>
         [Obsolete("no longer supported")]
-        public IDictionary<string, string> Attributes
-        {
-            get { return attributes; }
-        }
+        public IDictionary<string, string> Attributes => attributes;
     }
 }

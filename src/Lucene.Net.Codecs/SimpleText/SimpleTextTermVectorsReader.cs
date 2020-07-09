@@ -295,10 +295,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return result;
             }
 
-            public override int Count
-            {
-                get { return _fields.Count; }
-            }
+            public override int Count => _fields.Count;
         }
 
         private class SimpleTVTerms : Terms
@@ -322,50 +319,23 @@ namespace Lucene.Net.Codecs.SimpleText
                 return new SimpleTVTermsEnum(terms);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            public override long Count
-            {
-                get { return terms.Count; }
-            }
+            public override long Count => terms.Count;
 
-            public override long SumTotalTermFreq
-            {
-                get { return -1; }
-            }
+            public override long SumTotalTermFreq => -1;
 
-            public override long SumDocFreq
-            {
-                get { return terms.Count; }
-            }
+            public override long SumDocFreq => terms.Count;
 
-            public override int DocCount
-            {
-                get { return 1; }
-            }
+            public override int DocCount => 1;
 
-            public override bool HasFreqs
-            {
-                get { return true; }
-            }
+            public override bool HasFreqs => true;
 
-            public override bool HasOffsets
-            {
-                get { return _hasOffsetsRenamed; }
-            }
+            public override bool HasOffsets => _hasOffsetsRenamed;
 
-            public override bool HasPositions
-            {
-                get { return _hasPositionsRenamed; }
-            }
+            public override bool HasPositions => _hasPositionsRenamed;
 
-            public override bool HasPayloads
-            {
-                get { return _hasPayloadsRenamed; }
-            }
+            public override bool HasPayloads => _hasPayloadsRenamed;
         }
 
         private class SimpleTVPostings
@@ -430,25 +400,13 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public override BytesRef Term
-            {
-                get { return _current.Key; }
-            }
+            public override BytesRef Term => _current.Key;
 
-            public override long Ord
-            {
-                get { throw new NotSupportedException(); }
-            }
+            public override long Ord => throw new NotSupportedException();
 
-            public override int DocFreq
-            {
-                get { return 1; }
-            }
+            public override int DocFreq => 1;
 
-            public override long TotalTermFreq
-            {
-                get { return _current.Value.freq; }
-            }
+            public override long TotalTermFreq => _current.Value.freq;
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
@@ -470,10 +428,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return e;
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get { return BytesRef.UTF8SortedAsUnicodeComparer; }
-            }
+            public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
         }
 
         // note: these two enum classes are exactly like the Default impl...
@@ -493,10 +448,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public override int DocID
-            {
-                get { return _doc; }
-            }
+            public override int DocID => _doc;
 
             public override int NextDoc()
             {
@@ -547,10 +499,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
-            public override int DocID
-            {
-                get { return _doc; }
-            }
+            public override int DocID => _doc;
 
             public override int NextDoc()
             {

@@ -400,15 +400,9 @@ namespace Lucene.Net.Codecs.Sep
                 return (doc = accum);
             }
 
-            public override int Freq
-            {
-                get { return freq; }
-            }
+            public override int Freq => freq;
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             public override int Advance(int target)
             {
@@ -597,15 +591,9 @@ namespace Lucene.Net.Codecs.Sep
                 return (doc = accum);
             }
 
-            public override int Freq
-            {
-                get { return freq; }
-            }
+            public override int Freq => freq;
 
-            public override int DocID
-            {
-                get { return doc; }
-            }
+            public override int DocID => doc;
 
             public override int Advance(int target)
             {
@@ -734,15 +722,9 @@ namespace Lucene.Net.Codecs.Sep
                 return position;
             }
 
-            public override int StartOffset
-            {
-                get { return -1; }
-            }
+            public override int StartOffset => -1;
 
-            public override int EndOffset
-            {
-                get { return -1; }
-            }
+            public override int EndOffset => -1;
 
             private BytesRef payload;
 

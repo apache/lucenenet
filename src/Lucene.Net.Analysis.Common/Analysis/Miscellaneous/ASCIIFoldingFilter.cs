@@ -86,10 +86,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// Does the filter preserve the original tokens?
         /// </summary>
-        public bool PreserveOriginal
-        {
-            get { return preserveOriginal; }
-        }
+        public bool PreserveOriginal => preserveOriginal;
 
         public override bool IncrementToken()
         {

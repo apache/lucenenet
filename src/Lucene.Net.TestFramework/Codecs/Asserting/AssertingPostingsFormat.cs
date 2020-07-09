@@ -77,19 +77,10 @@ namespace Lucene.Net.Codecs.Asserting
                 return terms == null ? null : new AssertingTerms(terms);
             }
 
-            public override int Count
-            {
-                get { return @in.Count; }
-            }
+            public override int Count => @in.Count;
 
             [Obsolete("iterate fields and add their Count instead.")]
-            public override long UniqueTermCount
-            {
-                get
-                {
-                    return @in.UniqueTermCount;
-                }
-            }
+            public override long UniqueTermCount => @in.UniqueTermCount;
 
             public override long RamBytesUsed()
             {
@@ -200,13 +191,7 @@ namespace Lucene.Net.Codecs.Asserting
                 @in.Finish(sumTotalTermFreq, sumDocFreq, docCount);
             }
 
-            public override IComparer<BytesRef> Comparer
-            {
-                get
-                {
-                    return @in.Comparer;
-                }
-            }
+            public override IComparer<BytesRef> Comparer => @in.Comparer;
         }
 
         internal enum PostingsConsumerState

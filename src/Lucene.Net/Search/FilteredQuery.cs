@@ -98,10 +98,7 @@ namespace Lucene.Net.Search
                 this.weight = weight;
             }
 
-            public override bool ScoresDocsOutOfOrder
-            {
-                get { return true; }
-            }
+            public override bool ScoresDocsOutOfOrder => true;
 
             public override float GetValueForNormalization()
             {
@@ -136,13 +133,7 @@ namespace Lucene.Net.Search
             }
 
             // return this query
-            public override Query Query
-            {
-                get
-                {
-                    return outerInstance;
-                }
-            }
+            public override Query Query => outerInstance;
 
             // return a filtering scorer
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
@@ -220,20 +211,14 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public override int DocID
-            {
-                get { return scorerDoc; }
-            }
+            public override int DocID => scorerDoc;
 
             public override float GetScore()
             {
                 return scorer.GetScore();
             }
 
-            public override int Freq
-            {
-                get { return scorer.Freq; }
-            }
+            public override int Freq => scorer.Freq;
 
             public override ICollection<ChildScorer> GetChildren()
             {
@@ -348,20 +333,14 @@ namespace Lucene.Net.Search
                 return AdvanceToNextCommonDoc();
             }
 
-            public override sealed int DocID
-            {
-                get { return m_secondaryDoc; }
-            }
+            public override sealed int DocID => m_secondaryDoc;
 
             public override sealed float GetScore()
             {
                 return scorer.GetScore();
             }
 
-            public override sealed int Freq
-            {
-                get { return scorer.Freq; }
-            }
+            public override sealed int Freq => scorer.Freq;
 
             public override sealed ICollection<ChildScorer> GetChildren()
             {
@@ -424,33 +403,15 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns this <see cref="FilteredQuery"/>'s (unfiltered) <see cref="Query"/> </summary>
-        public Query Query
-        {
-            get
-            {
-                return query;
-            }
-        }
+        public Query Query => query;
 
         /// <summary>
         /// Returns this <see cref="FilteredQuery"/>'s filter </summary>
-        public Filter Filter
-        {
-            get
-            {
-                return filter;
-            }
-        }
+        public Filter Filter => filter;
 
         /// <summary>
         /// Returns this <see cref="FilteredQuery"/>'s <seealso cref="FilterStrategy"/> </summary>
-        public virtual FilterStrategy Strategy
-        {
-            get
-            {
-                return this.strategy;
-            }
-        }
+        public virtual FilterStrategy Strategy => this.strategy;
 
         /// <summary>
         /// Expert: adds all terms occurring in this query to the terms set. Only

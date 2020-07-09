@@ -90,13 +90,7 @@ namespace Lucene.Net.Index
                 result.Length = 0;
             }
 
-            public override int ValueCount
-            {
-                get
-                {
-                    return 0;
-                }
-            }
+            public override int ValueCount => 0;
         }
 
         /// <summary>
@@ -124,13 +118,7 @@ namespace Lucene.Net.Index
                 throw new System.IndexOutOfRangeException();
             }
 
-            public override long ValueCount
-            {
-                get
-                {
-                    return 0;
-                }
-            }
+            public override long ValueCount => 0;
 
             public override long OrdAt(int index)
             {
@@ -191,10 +179,7 @@ namespace Lucene.Net.Index
                 return dv.GetOrd(index) >= 0;
             }
 
-            public virtual int Length
-            {
-                get { return maxDoc; }
-            }
+            public virtual int Length => maxDoc;
         }
 
         /// <summary>
@@ -222,10 +207,7 @@ namespace Lucene.Net.Index
                 return dv.NextOrd() != SortedSetDocValues.NO_MORE_ORDS;
             }
 
-            public virtual int Length
-            {
-                get { return maxDoc; }
-            }
+            public virtual int Length => maxDoc;
         }
     }
 }

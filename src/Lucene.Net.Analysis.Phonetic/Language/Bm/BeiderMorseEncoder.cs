@@ -103,13 +103,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         // replacing a related instance.
         public virtual NameType NameType
         {
-            get { return this.engine.NameType; }
+            get => this.engine.NameType;
             set
             {
                 this.engine = new PhoneticEngine(value,
-                                             this.engine.RuleType,
-                                             this.engine.IsConcat,
-                                             this.engine.MaxPhonemes);
+                                                this.engine.RuleType,
+                                                this.engine.IsConcat,
+                                                this.engine.MaxPhonemes);
             }
         }
 
@@ -119,13 +119,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         /// </summary>
         public virtual RuleType RuleType
         {
-            get { return this.engine.RuleType; }
+            get => this.engine.RuleType;
             set
             {
                 this.engine = new PhoneticEngine(this.engine.NameType,
-                                             value,
-                                             this.engine.IsConcat,
-                                             this.engine.MaxPhonemes);
+                                                value,
+                                                this.engine.IsConcat,
+                                                this.engine.MaxPhonemes);
             }
         }
 
@@ -136,13 +136,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         /// </summary>
         public virtual bool IsConcat
         {
-            get { return this.engine.IsConcat; }
+            get => this.engine.IsConcat;
             set
             {
                 this.engine = new PhoneticEngine(this.engine.NameType,
-                                             this.engine.RuleType,
-                                             value,
-                                             this.engine.MaxPhonemes);
+                                                this.engine.RuleType,
+                                                value,
+                                                this.engine.MaxPhonemes);
             }
         }
 

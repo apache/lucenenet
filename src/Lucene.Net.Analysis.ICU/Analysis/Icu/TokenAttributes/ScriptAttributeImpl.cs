@@ -39,8 +39,8 @@ namespace Lucene.Net.Analysis.Icu.TokenAttributes
 
         public virtual int Code
         {
-            get { return code; }
-            set { code = value; }
+            get => code;
+            set => code = value;
         }
 
         public virtual string GetName()

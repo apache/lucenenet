@@ -89,33 +89,15 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Returns allowed time (milliseconds). </summary>
-            public virtual long TimeAllowed
-            {
-                get
-                {
-                    return timeAllowed;
-                }
-            }
+            public virtual long TimeAllowed => timeAllowed;
 
             /// <summary>
             /// Returns elapsed time (milliseconds). </summary>
-            public virtual long TimeElapsed
-            {
-                get
-                {
-                    return timeElapsed;
-                }
-            }
+            public virtual long TimeElapsed => timeElapsed;
 
             /// <summary>
             /// Returns last doc (absolute doc id) that was collected when the search time exceeded. </summary>
-            public virtual int LastDocCollected
-            {
-                get
-                {
-                    return lastDocCollected;
-                }
-            }
+            public virtual int LastDocCollected => lastDocCollected;
         }
 
         private long t0 = long.MinValue;
@@ -182,14 +164,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual bool IsGreedy
         {
-            get
-            {
-                return greedy;
-            }
-            set
-            {
-                this.greedy = value;
-            }
+            get => greedy;
+            set => this.greedy = value;
         }
 
         /// <summary>
@@ -230,10 +206,7 @@ namespace Lucene.Net.Search
             collector.SetScorer(scorer);
         }
 
-        public virtual bool AcceptsDocsOutOfOrder
-        {
-            get { return collector.AcceptsDocsOutOfOrder; }
-        }
+        public virtual bool AcceptsDocsOutOfOrder => collector.AcceptsDocsOutOfOrder;
 
         /// <summary>
         /// This is so the same timer can be used with a multi-phase search process such as grouping.
@@ -257,13 +230,7 @@ namespace Lucene.Net.Search
         /// @lucene.experimental
         /// </summary>
         /// <returns> the global TimerThreads <seealso cref="Counter"/> </returns>
-        public static Counter GlobalCounter
-        {
-            get
-            {
-                return TimerThreadHolder.THREAD.counter;
-            }
-        }
+        public static Counter GlobalCounter => TimerThreadHolder.THREAD.counter;
 
         /// <summary>
         /// Returns the global <see cref="TimerThread"/>.
@@ -276,13 +243,7 @@ namespace Lucene.Net.Search
         /// @lucene.experimental
         /// </summary>
         /// <returns> the global <see cref="TimerThread"/> </returns>
-        public static TimerThread GlobalTimerThread
-        {
-            get
-            {
-                return TimerThreadHolder.THREAD;
-            }
-        }
+        public static TimerThread GlobalTimerThread => TimerThreadHolder.THREAD;
 
         private sealed class TimerThreadHolder
         {
@@ -360,13 +321,7 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Get the timer value in milliseconds.
             /// </summary>
-            public long Milliseconds
-            {
-                get
-                {
-                    return time;
-                }
-            }
+            public long Milliseconds => time;
 
             /// <summary>
             /// Stops the timer thread
@@ -380,14 +335,8 @@ namespace Lucene.Net.Search
             /// Return the timer resolution. </summary>
             public long Resolution
             {
-                get
-                {
-                    return resolution;
-                }
-                set
-                {
-                    this.resolution = Math.Max(value, 5); // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
-                }
+                get => resolution;
+                set => this.resolution = Math.Max(value, 5); // 5 milliseconds is about the minimum reasonable time for a Object.wait(long) call.
             }
         }
     }

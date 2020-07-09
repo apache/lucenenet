@@ -59,10 +59,7 @@ namespace Lucene.Net.Search
             return reqScorer.Advance(target);
         }
 
-        public override int DocID
-        {
-            get { return reqScorer.DocID; }
-        }
+        public override int DocID => reqScorer.DocID;
 
         /// <summary>
         /// Returns the score of the current document matching the query.

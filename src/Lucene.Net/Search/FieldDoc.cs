@@ -53,8 +53,8 @@ namespace Lucene.Net.Search
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public object[] Fields
         {
-            get { return fields; }
-            set { fields = value; }
+            get => fields;
+            set => fields = value;
         }
         private object[] fields;
 

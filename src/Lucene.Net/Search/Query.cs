@@ -64,8 +64,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual float Boost
         {
-            get { return boost; }
-            set { boost = value; }
+            get => boost;
+            set => boost = value;
         }
 
         /// <summary>

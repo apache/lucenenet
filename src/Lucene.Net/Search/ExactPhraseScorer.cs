@@ -210,15 +210,9 @@ namespace Lucene.Net.Search
             return "ExactPhraseScorer(" + m_weight + ")";
         }
 
-        public override int Freq
-        {
-            get { return freq; }
-        }
+        public override int Freq => freq;
 
-        public override int DocID
-        {
-            get { return docID; }
-        }
+        public override int DocID => docID;
 
         public override float GetScore()
         {

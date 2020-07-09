@@ -35,8 +35,8 @@ namespace Lucene.Net.Spatial.Util
         private readonly IList<T>[] cache;
         public int DefaultLength
         {
-            get { return defaultLength; }
-            set { defaultLength = value; }
+            get => defaultLength;
+            set => defaultLength = value;
         }
         private int defaultLength;
 
