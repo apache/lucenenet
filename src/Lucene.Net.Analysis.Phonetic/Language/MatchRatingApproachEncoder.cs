@@ -2,7 +2,6 @@
 using System;
 using System.Globalization;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Phonetic.Language
 {
@@ -34,20 +33,20 @@ namespace Lucene.Net.Analysis.Phonetic.Language
     /// </summary>
     public class MatchRatingApproachEncoder : IStringEncoder
     {
-        private static readonly string SPACE = " ";
+        private const string SPACE = " ";
 
-        private static readonly string EMPTY = "";
+        private const string EMPTY = "";
 
         /// <summary>
         /// Constants used mainly for the min rating value.
         /// </summary>
-        private static readonly int ONE = 1, TWO = 2, THREE = 3, FOUR = 4, FIVE = 5, SIX = 6, SEVEN = 7, EIGHT = 8,
+        private const int ONE = 1, TWO = 2, THREE = 3, FOUR = 4, FIVE = 5, SIX = 6, SEVEN = 7, EIGHT = 8,
                                  ELEVEN = 11, TWELVE = 12;
 
         /// <summary>
         /// The plain letter equivalent of the accented letters.
         /// </summary>
-        private static readonly string PLAIN_ASCII = "AaEeIiOoUu" + // grave
+        private const string PLAIN_ASCII = "AaEeIiOoUu" + // grave
             "AaEeIiOoUuYy" + // acute
             "AaEeIiOoUuYy" + // circumflex
             "AaOoNn" + // tilde
@@ -59,7 +58,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Unicode characters corresponding to various accented letters. For example: \u00DA is U acute etc...
         /// </summary>
-        private static readonly string UNICODE = "\u00C0\u00E0\u00C8\u00E8\u00CC\u00EC\u00D2\u00F2\u00D9\u00F9" +
+        private const string UNICODE = "\u00C0\u00E0\u00C8\u00E8\u00CC\u00EC\u00D2\u00F2\u00D9\u00F9" +
                 "\u00C1\u00E1\u00C9\u00E9\u00CD\u00ED\u00D3\u00F3\u00DA\u00FA\u00DD\u00FD" +
                 "\u00C2\u00E2\u00CA\u00EA\u00CE\u00EE\u00D4\u00F4\u00DB\u00FB\u0176\u0177" +
                 "\u00C3\u00E3\u00D5\u00F5\u00D1\u00F1" +
@@ -72,6 +71,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
         private static readonly CultureInfo LOCALE_ENGLISH = new CultureInfo("en");
 
+        // LUCENENET: Use compiled invariant regexes and rollup all multi-char replacements for better performance
+        // on short strings
+        private static readonly Replacement WHITESPACE_REPLACEMENT = new Replacement("\\s+", EMPTY);
+        private static readonly Replacement NAME_CHARS_REPLACEMENT = new Replacement("\\-|[&]|\\'|\\.|[\\,]", EMPTY);
+        private static readonly Replacement VOWEL_REPLACEMENT = new Replacement("A|E|I|O|U", EMPTY);
+        private static readonly Replacement VOWEL_WHITESPACE_REPLACEMENT = new Replacement("\\s{2,}\\b", SPACE);
+
         /// <summary>
         /// Cleans up a name: 1. Upper-cases everything 2. Removes some common punctuation 3. Removes accents 4. Removes any
         /// spaces.
@@ -82,14 +88,12 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         {
             string upperName = LOCALE_ENGLISH.TextInfo.ToUpper(name);
 
-            string[] charsToTrim = { "\\-", "[&]", "\\'", "\\.", "[\\,]" };
-            foreach (string str in charsToTrim)
-            {
-                upperName = Regex.Replace(upperName, str, EMPTY);
-            }
+            // LUCENENET: Optimized chars to trim for short names by putting them into a single
+            // compiled regex that is statically cached
+            upperName = NAME_CHARS_REPLACEMENT.Replace(upperName);
 
             upperName = RemoveAccents(upperName);
-            upperName = Regex.Replace(upperName, "\\s+", EMPTY);
+            upperName = WHITESPACE_REPLACEMENT.Replace(upperName);
 
             return upperName;
         }
@@ -329,8 +333,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             }
 
             // Char arrays -> string & remove extraneous space
-            string strA = Regex.Replace(new string(name1Char), "\\s+", EMPTY);
-            string strB = Regex.Replace(new string(name2Char), "\\s+", EMPTY);
+            string strA = WHITESPACE_REPLACEMENT.Replace(new string(name1Char));
+            string strB = WHITESPACE_REPLACEMENT.Replace(new string(name2Char));
 
             // Final bit - subtract longest string from 6 and return this int value
             if (strA.Length > strB.Length)
@@ -405,13 +409,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             // Extract first letter
             string firstLetter = name.Substring(0, 1 - 0);
 
-            name = Regex.Replace(name, "A", EMPTY);
-            name = Regex.Replace(name, "E", EMPTY);
-            name = Regex.Replace(name, "I", EMPTY);
-            name = Regex.Replace(name, "O", EMPTY);
-            name = Regex.Replace(name, "U", EMPTY);
-
-            name = Regex.Replace(name, "\\s{2,}\\b", SPACE);
+            // LUCENENET specific - Optimized for short names by doing
+            // alteration in a single compiled statically cached regex
+            name = VOWEL_REPLACEMENT.Replace(name);
+            name = VOWEL_WHITESPACE_REPLACEMENT.Replace(name);
 
             // return isVowel(firstLetter) ? (firstLetter + name) : name;
             if (IsVowel(firstLetter))
