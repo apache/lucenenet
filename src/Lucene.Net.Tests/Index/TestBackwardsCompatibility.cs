@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
         public void testCreateCFS() throws IOException {
           createIndex("index.cfs", true, false);
         }
-	
+    
         public void testCreateNoCFS() throws IOException {
           createIndex("index.nocfs", false, false);
         }
@@ -112,15 +112,15 @@ namespace Lucene.Net.Index
           // that also single-segment indexes are correctly upgraded by IndexUpgrader.
           // You don't need them to be build for non-4.0 (the test is happy with just one
           // "old" segment format, version is unimportant:
-	  
+      
           public void testCreateSingleSegmentCFS() throws IOException {
             createIndex("index.singlesegment.cfs", true, true);
           }
-	
+    
           public void testCreateSingleSegmentNoCFS() throws IOException {
             createIndex("index.singlesegment.nocfs", false, true);
           }
-	
+    
         */
 
         /*
@@ -131,14 +131,14 @@ namespace Lucene.Net.Index
           File indexDir = new File("moreterms");
           TestUtil.rmDir(indexDir);
           Directory dir = NewFSDirectory(indexDir);
-	
+    
           LogByteSizeMergePolicy mp = new LogByteSizeMergePolicy();
           mp.SetUseCompoundFile(false);
           mp.setNoCFSRatio(1.0);
           mp.setMaxCFSSegmentSizeMB(Double.POSITIVE_INFINITY);
           MockAnalyzer analyzer = new MockAnalyzer(Random());
           analyzer.setMaxTokenLength(TestUtil.nextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH));
-	
+    
           // TODO: remove randomness
           IndexWriterConfig conf = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer)
             .SetMergePolicy(mp);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
           }
           writer.Dispose();
           dir.Dispose();
-	
+    
           // Gives you time to copy the index out!: (there is also
           // a test option to not remove temp dir...):
           Thread.sleep(100000);

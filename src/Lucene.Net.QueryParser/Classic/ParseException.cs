@@ -41,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Classic
     [Serializable]
 #endif
     public class ParseException : Exception
-	{
+    {
         /// <summary>
         /// This constructor is used by the method GenerateParseException()
         /// in the generated parser.  Calling this constructor generates
@@ -189,76 +189,76 @@ namespace Lucene.Net.QueryParsers.Classic
             retval += expected.ToString();
             return retval;
         }
-		
-		/// <summary> 
+        
+        /// <summary> 
         /// The end of line string for this machine.
         /// </summary>
-		protected static string eol = Environment.NewLine;
-		
-		/// <summary> 
+        protected static string eol = Environment.NewLine;
+        
+        /// <summary> 
         /// Used to convert raw characters to their escaped version
-		/// when these raw version cannot be used as part of an ASCII
-		/// string literal.
-		/// </summary>
-		internal static string AddEscapes(string str)
-		{
-			StringBuilder retval = new StringBuilder();
-			char ch;
-			for (int i = 0; i < str.Length; i++)
-			{
-				switch (str[i])
-				{
-					
-					case (char) (0): 
-						continue;
-					
-					case '\b': 
-						retval.Append("\\b");
-						continue;
-					
-					case '\t': 
-						retval.Append("\\t");
-						continue;
-					
-					case '\n': 
-						retval.Append("\\n");
-						continue;
-					
-					case '\f': 
-						retval.Append("\\f");
-						continue;
-					
-					case '\r': 
-						retval.Append("\\r");
-						continue;
-					
-					case '\"': 
-						retval.Append("\\\"");
-						continue;
-					
-					case '\'': 
-						retval.Append("\\\'");
-						continue;
-					
-					case '\\': 
-						retval.Append("\\\\");
-						continue;
-					
-					default: 
-						if ((ch = str[i]) < 0x20 || ch > 0x7e)
-						{
-							string s = "0000" + Convert.ToString(ch, 16);
-							retval.Append("\\u" + s.Substring(s.Length - 4, (s.Length) - (s.Length - 4)));
-						}
-						else
-						{
-							retval.Append(ch);
-						}
-						continue;
-					
-				}
-			}
-			return retval.ToString();
-		}
-	}
+        /// when these raw version cannot be used as part of an ASCII
+        /// string literal.
+        /// </summary>
+        internal static string AddEscapes(string str)
+        {
+            StringBuilder retval = new StringBuilder();
+            char ch;
+            for (int i = 0; i < str.Length; i++)
+            {
+                switch (str[i])
+                {
+                    
+                    case (char) (0): 
+                        continue;
+                    
+                    case '\b': 
+                        retval.Append("\\b");
+                        continue;
+                    
+                    case '\t': 
+                        retval.Append("\\t");
+                        continue;
+                    
+                    case '\n': 
+                        retval.Append("\\n");
+                        continue;
+                    
+                    case '\f': 
+                        retval.Append("\\f");
+                        continue;
+                    
+                    case '\r': 
+                        retval.Append("\\r");
+                        continue;
+                    
+                    case '\"': 
+                        retval.Append("\\\"");
+                        continue;
+                    
+                    case '\'': 
+                        retval.Append("\\\'");
+                        continue;
+                    
+                    case '\\': 
+                        retval.Append("\\\\");
+                        continue;
+                    
+                    default: 
+                        if ((ch = str[i]) < 0x20 || ch > 0x7e)
+                        {
+                            string s = "0000" + Convert.ToString(ch, 16);
+                            retval.Append("\\u" + s.Substring(s.Length - 4, (s.Length) - (s.Length - 4)));
+                        }
+                        else
+                        {
+                            retval.Append(ch);
+                        }
+                        continue;
+                    
+                }
+            }
+            return retval.ToString();
+        }
+    }
 }

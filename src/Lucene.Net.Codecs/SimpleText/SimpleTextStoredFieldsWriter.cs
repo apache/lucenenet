@@ -84,17 +84,17 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         public override void StartDocument(int numStoredFields)
-	    {
-	        Write(DOC);
-	        Write(Convert.ToString(_numDocsWritten, CultureInfo.InvariantCulture));
-	        NewLine();
+        {
+            Write(DOC);
+            Write(Convert.ToString(_numDocsWritten, CultureInfo.InvariantCulture));
+            NewLine();
 
-	        Write(NUM);
-	        Write(Convert.ToString(numStoredFields, CultureInfo.InvariantCulture));
-	        NewLine();
+            Write(NUM);
+            Write(Convert.ToString(numStoredFields, CultureInfo.InvariantCulture));
+            NewLine();
 
-	        _numDocsWritten++;
-	    }
+            _numDocsWritten++;
+        }
 
         public override void WriteField(FieldInfo info, IIndexableField field)
         {
@@ -185,43 +185,43 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         public override void Abort()
-	    {
-	        try
-	        {
-	            Dispose();
-	        }
-	        finally
-	        {
-	            IOUtils.DeleteFilesIgnoringExceptions(_directory,
-	                IndexFileNames.SegmentFileName(_segment, "", FIELDS_EXTENSION));
-	        }
-	    }
+        {
+            try
+            {
+                Dispose();
+            }
+            finally
+            {
+                IOUtils.DeleteFilesIgnoringExceptions(_directory,
+                    IndexFileNames.SegmentFileName(_segment, "", FIELDS_EXTENSION));
+            }
+        }
 
-	    public override void Finish(FieldInfos fis, int numDocs)
-	    {
-	        if (_numDocsWritten != numDocs)
-	        {
-	            throw new Exception("mergeFields produced an invalid result: docCount is " + numDocs + " but only saw " +
-	                                _numDocsWritten + " file=" + _output +
-	                                "; now aborting this merge to prevent index corruption");
-	        }
-	        Write(END);
-	        NewLine();
-	        SimpleTextUtil.WriteChecksum(_output, _scratch);
-	    }
+        public override void Finish(FieldInfos fis, int numDocs)
+        {
+            if (_numDocsWritten != numDocs)
+            {
+                throw new Exception("mergeFields produced an invalid result: docCount is " + numDocs + " but only saw " +
+                                    _numDocsWritten + " file=" + _output +
+                                    "; now aborting this merge to prevent index corruption");
+            }
+            Write(END);
+            NewLine();
+            SimpleTextUtil.WriteChecksum(_output, _scratch);
+        }
 
-	    protected override void Dispose(bool disposing)
-	    {
-	        if (!disposing) return;
-	        try
-	        {
-	            IOUtils.Dispose(_output);
-	        }
-	        finally
-	        {
-	            _output = null;
-	        }
-	    }
+        protected override void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+            try
+            {
+                IOUtils.Dispose(_output);
+            }
+            finally
+            {
+                _output = null;
+            }
+        }
 
         private void Write(string s)
         {

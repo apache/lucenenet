@@ -8,21 +8,21 @@ using Lucene.Net.Analysis.TokenAttributes;
 namespace Lucene.Net.Analysis.Cn
 {
     /*
-	 * Licensed to the Apache Software Foundation (ASF) under one or more
-	 * contributor license agreements.  See the NOTICE file distributed with
-	 * this work for additional information regarding copyright ownership.
-	 * The ASF licenses this file to You under the Apache License, Version 2.0
-	 * (the "License"); you may not use this file except in compliance with
-	 * the License.  You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     /// @deprecated Remove this test when ChineseAnalyzer is removed. 
     [Obsolete("Remove this test when ChineseAnalyzer is removed.")]
@@ -58,9 +58,9 @@ namespace Lucene.Net.Analysis.Cn
         }
 
         /*
-		 * Analyzer that just uses ChineseTokenizer, not ChineseFilter.
-		 * convenience to show the behavior of the tokenizer
-		 */
+         * Analyzer that just uses ChineseTokenizer, not ChineseFilter.
+         * convenience to show the behavior of the tokenizer
+         */
         private class JustChineseTokenizerAnalyzer : Analyzer
         {
             private readonly TestChineseTokenizer outerInstance;
@@ -77,9 +77,9 @@ namespace Lucene.Net.Analysis.Cn
         }
 
         /*
-		 * Analyzer that just uses ChineseFilter, not ChineseTokenizer.
-		 * convenience to show the behavior of the filter.
-		 */
+         * Analyzer that just uses ChineseFilter, not ChineseTokenizer.
+         * convenience to show the behavior of the filter.
+         */
         private class JustChineseFilterAnalyzer : Analyzer
         {
             private readonly TestChineseTokenizer outerInstance;
@@ -97,8 +97,8 @@ namespace Lucene.Net.Analysis.Cn
         }
 
         /*
-		 * ChineseTokenizer tokenizes numbers as one token, but they are filtered by ChineseFilter
-		 */
+         * ChineseTokenizer tokenizes numbers as one token, but they are filtered by ChineseFilter
+         */
         [Test]
         public virtual void TestNumerics()
         {
@@ -111,12 +111,12 @@ namespace Lucene.Net.Analysis.Cn
         }
 
         /*
-		 * ChineseTokenizer tokenizes english similar to SimpleAnalyzer.
-		 * it will lowercase terms automatically.
-		 * 
-		 * ChineseFilter has an english stopword list, it also removes any single character tokens.
-		 * the stopword list is case-sensitive.
-		 */
+         * ChineseTokenizer tokenizes english similar to SimpleAnalyzer.
+         * it will lowercase terms automatically.
+         * 
+         * ChineseFilter has an english stopword list, it also removes any single character tokens.
+         * the stopword list is case-sensitive.
+         */
         [Test]
         public virtual void TestEnglish()
         {

@@ -18,8 +18,8 @@
      */
 
     using SegmentReadState = Index.SegmentReadState;
-	using SegmentWriteState = Index.SegmentWriteState;
-	using ArrayUtil = Util.ArrayUtil;
+    using SegmentWriteState = Index.SegmentWriteState;
+    using ArrayUtil = Util.ArrayUtil;
 
     /// <summary>
     /// In-memory docvalues format that does no (or very little)

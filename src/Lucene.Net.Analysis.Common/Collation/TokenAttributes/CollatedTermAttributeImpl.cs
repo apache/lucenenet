@@ -27,28 +27,28 @@ namespace Lucene.Net.Collation.TokenAttributes
     /// text as a binary Unicode collation key instead of as UTF-8 bytes.
     /// </summary>
     public class CollatedTermAttributeImpl : CharTermAttribute
-	{
-		private readonly Collator collator;
+    {
+        private readonly Collator collator;
 
-		/// <summary>
-		/// Create a new <see cref="CollatedTermAttributeImpl"/> </summary>
-		/// <param name="collator"> Collation key generator </param>
-		public CollatedTermAttributeImpl(Collator collator)
-		{
+        /// <summary>
+        /// Create a new <see cref="CollatedTermAttributeImpl"/> </summary>
+        /// <param name="collator"> Collation key generator </param>
+        public CollatedTermAttributeImpl(Collator collator)
+        {
             // clone in case JRE doesn't properly sync,
             // or to reduce contention in case they do
             this.collator = (Collator)collator.Clone();
-		}
+        }
 
-		public override void FillBytesRef()
-		{
-			var bytes = this.BytesRef;
+        public override void FillBytesRef()
+        {
+            var bytes = this.BytesRef;
 
-			//LUCENENET TODO: Verify that this is correct. Java's byte[] is signed and Big Endian, .NET's is unsigned and Little Endian.
-			bytes.Bytes = this.collator.GetSortKey(this.ToString()).KeyData;
-			bytes.Offset = 0;
-			bytes.Length = bytes.Bytes.Length;
-		}
-	}
+            //LUCENENET TODO: Verify that this is correct. Java's byte[] is signed and Big Endian, .NET's is unsigned and Little Endian.
+            bytes.Bytes = this.collator.GetSortKey(this.ToString()).KeyData;
+            bytes.Offset = 0;
+            bytes.Length = bytes.Bytes.Length;
+        }
+    }
 }
 #endif

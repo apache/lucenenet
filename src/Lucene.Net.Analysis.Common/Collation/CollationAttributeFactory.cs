@@ -68,19 +68,19 @@ namespace Lucene.Net.Collation
     /// </para>
     /// </summary>
     public class CollationAttributeFactory : AttributeSource.AttributeFactory
-	{
-		private readonly Collator collator;
-		private readonly AttributeSource.AttributeFactory @delegate;
+    {
+        private readonly Collator collator;
+        private readonly AttributeSource.AttributeFactory @delegate;
 
-		/// <summary>
-		/// Create a <see cref="CollationAttributeFactory"/>, using 
-		/// <see cref="AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY"/> as the
-		/// factory for all other attributes. </summary>
-		/// <param name="collator"> <see cref="System.Globalization.SortKey"/> generator </param>
-		public CollationAttributeFactory(Collator collator) 
+        /// <summary>
+        /// Create a <see cref="CollationAttributeFactory"/>, using 
+        /// <see cref="AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY"/> as the
+        /// factory for all other attributes. </summary>
+        /// <param name="collator"> <see cref="System.Globalization.SortKey"/> generator </param>
+        public CollationAttributeFactory(Collator collator) 
             : this(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, collator)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Create a <see cref="CollationAttributeFactory"/>, using the supplied Attribute Factory 
@@ -88,17 +88,17 @@ namespace Lucene.Net.Collation
         /// <param name="delegate"> Attribute Factory </param>
         /// <param name="collator"> <see cref="System.Globalization.SortKey"/> generator </param>
         public CollationAttributeFactory(AttributeSource.AttributeFactory @delegate, Collator collator)
-		{
-			this.@delegate = @delegate;
-			this.collator = collator;
-		}
+        {
+            this.@delegate = @delegate;
+            this.collator = collator;
+        }
 
-		public override Attribute CreateAttributeInstance<T>()
-		{
-			return typeof(T).IsAssignableFrom(typeof(CollatedTermAttributeImpl))
-				? new CollatedTermAttributeImpl(this.collator)
-				: this.@delegate.CreateAttributeInstance<T>();
-		}
-	}
+        public override Attribute CreateAttributeInstance<T>()
+        {
+            return typeof(T).IsAssignableFrom(typeof(CollatedTermAttributeImpl))
+                ? new CollatedTermAttributeImpl(this.collator)
+                : this.@delegate.CreateAttributeInstance<T>();
+        }
+    }
 }
 #endif

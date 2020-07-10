@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
                         for (int j = 0; j < howMany; j++)
                         {
                             Assert.AreEqual(pos[j], docsAndPosEnum.NextPosition(), "iteration: " + i + " initDoc: " + initDoc + " doc: " + docID + " base: " + atomicReaderContext.DocBase + " positions: " + pos); /* TODO: + " usePayloads: "
-	                + usePayload*/
+                            + usePayload*/
                         }
 
                         if (Random.Next(10) == 0) // once is a while advance

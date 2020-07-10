@@ -31,10 +31,10 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     [Serializable]
 #endif
     public class TokenMgrError : Exception
-	{
+    {
         /*
-		* Ordinals for various reasons why an Error of this type can be thrown.
-		*/
+        * Ordinals for various reasons why an Error of this type can be thrown.
+        */
 
         /// <summary> Lexical error occurred.</summary>
         internal static readonly int LEXICAL_ERROR = 0;
@@ -139,38 +139,38 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 "after : \"" + AddEscapes(errorAfter) + "\"");
         }
 
-		/// <summary> 
+        /// <summary> 
         /// You can also modify the body of this method to customize your error messages.
-		/// For example, cases like LOOP_DETECTED and INVALID_LEXICAL_STATE are not
-		/// of end-users concern, so you can return something like :
-		/// 
-		/// "Internal Error : Please file a bug report .... "
-		/// 
-		/// from this method for such cases in the release version of your parser.
-		/// </summary>
-		public override string Message => base.Message;
+        /// For example, cases like LOOP_DETECTED and INVALID_LEXICAL_STATE are not
+        /// of end-users concern, so you can return something like :
+        /// 
+        /// "Internal Error : Please file a bug report .... "
+        /// 
+        /// from this method for such cases in the release version of your parser.
+        /// </summary>
+        public override string Message => base.Message;
 
         /*
-		* Constructors of various flavors follow.
-		*/
-		
-		/// <summary>No arg constructor. </summary>
-		public TokenMgrError()
-		{
-		}
-		
-		/// <summary>Constructor with message and reason. </summary>
-		public TokenMgrError(string message, int reason)
+        * Constructors of various flavors follow.
+        */
+        
+        /// <summary>No arg constructor. </summary>
+        public TokenMgrError()
+        {
+        }
+        
+        /// <summary>Constructor with message and reason. </summary>
+        public TokenMgrError(string message, int reason)
             : base(message)
-		{
-			errorCode = reason;
-		}
-		
-		/// <summary>Full Constructor. </summary>
-		public TokenMgrError(bool EOFSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar, int reason)
+        {
+            errorCode = reason;
+        }
+        
+        /// <summary>Full Constructor. </summary>
+        public TokenMgrError(bool EOFSeen, int lexState, int errorLine, int errorColumn, string errorAfter, char curChar, int reason)
             : this(LexicalError(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason)
-		{
-		}
+        {
+        }
 
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>

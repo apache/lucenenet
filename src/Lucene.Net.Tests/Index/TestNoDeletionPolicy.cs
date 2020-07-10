@@ -43,15 +43,15 @@ namespace Lucene.Net.Index
 
         [Test]
         public virtual void TestFinalSingleton()
-	    {
-		    assertTrue(typeof(NoDeletionPolicy).IsSealed);
-		    ConstructorInfo[] ctors = typeof(NoDeletionPolicy).GetConstructors(BindingFlags.Instance |
+        {
+            assertTrue(typeof(NoDeletionPolicy).IsSealed);
+            ConstructorInfo[] ctors = typeof(NoDeletionPolicy).GetConstructors(BindingFlags.Instance |
                     BindingFlags.NonPublic |
                     BindingFlags.Public |
                     BindingFlags.DeclaredOnly); // LUCENENET NOTE: It seems .NET automatically adds a private static constructor, so leaving off the static BindingFlag
-		    assertEquals("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
-		    assertTrue("that 1 should be private: " + ctors[0], ctors[0].IsPrivate);
-	    }
+            assertEquals("expected 1 private ctor only: " + Arrays.ToString(ctors), 1, ctors.Length);
+            assertTrue("that 1 should be private: " + ctors[0], ctors[0].IsPrivate);
+        }
 
         [Test]
         public virtual void TestMethodsOverridden()

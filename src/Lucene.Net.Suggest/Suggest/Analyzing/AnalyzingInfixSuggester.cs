@@ -312,13 +312,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             string textString = text.Utf8ToString();
             var ft = GetTextFieldType();
             var doc = new Document
-		{
-		    new Field(TEXT_FIELD_NAME, textString, ft),
-		    new Field("textgrams", textString, ft),
-		    new StringField(EXACT_TEXT_FIELD_NAME, textString, Field.Store.NO),
-		    new BinaryDocValuesField(TEXT_FIELD_NAME, text),
-		    new NumericDocValuesField("weight", weight)
-		};
+        {
+            new Field(TEXT_FIELD_NAME, textString, ft),
+            new Field("textgrams", textString, ft),
+            new StringField(EXACT_TEXT_FIELD_NAME, textString, Field.Store.NO),
+            new BinaryDocValuesField(TEXT_FIELD_NAME, text),
+            new NumericDocValuesField("weight", weight)
+        };
             if (payload != null)
             {
                 doc.Add(new BinaryDocValuesField("payloads", payload));

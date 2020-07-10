@@ -709,7 +709,7 @@ namespace Lucene.Net.Documents
         //        assertEquals(false, fieldType.tokenized());
 
         //        assertEquals(FieldType.NumericType.DOUBLE, fieldType.numericType());
-	
+    
         //        doc.add(field);
         //        writer.addDocument(doc);
         //        writer.commit();

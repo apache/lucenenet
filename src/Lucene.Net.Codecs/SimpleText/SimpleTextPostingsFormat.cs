@@ -18,8 +18,8 @@
      */
 
     using SegmentWriteState = Index.SegmentWriteState;
-	using SegmentReadState = Index.SegmentReadState;
-	using IndexFileNames = Index.IndexFileNames;
+    using SegmentReadState = Index.SegmentReadState;
+    using IndexFileNames = Index.IndexFileNames;
 
     /// <summary>
     /// For debugging, curiosity, transparency only!!  Do not

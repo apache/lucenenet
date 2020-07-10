@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
         public void testCreateCFS() throws IOException {
           createIndex("index.cfs", true, false);
         }
-	
+    
         public void testCreateNoCFS() throws IOException {
           createIndex("index.nocfs", false, false);
         }
@@ -97,15 +97,15 @@ namespace Lucene.Net.Index
           // that also single-segment indexes are correctly upgraded by IndexUpgrader.
           // You don't need them to be build for non-3.1 (the test is happy with just one
           // "old" segment format, version is unimportant:
-	  
+      
           public void testCreateSingleSegmentCFS() throws IOException {
             createIndex("index.singlesegment.cfs", true, true);
           }
-	
+    
           public void testCreateSingleSegmentNoCFS() throws IOException {
             createIndex("index.singlesegment.nocfs", false, true);
           }
-	
+    
         */
 
         // LUCENENET specific to load resources for this type

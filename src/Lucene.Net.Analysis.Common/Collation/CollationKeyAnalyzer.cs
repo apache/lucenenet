@@ -82,10 +82,10 @@ namespace Lucene.Net.Collation
     /// </para>
     /// </summary>
     public sealed class CollationKeyAnalyzer : Analyzer
-	{
-		private readonly Collator collator;
-		private readonly CollationAttributeFactory factory;
-		private readonly LuceneVersion matchVersion;
+    {
+        private readonly Collator collator;
+        private readonly CollationAttributeFactory factory;
+        private readonly LuceneVersion matchVersion;
 
         /// <summary>
         /// Create a new <see cref="CollationKeyAnalyzer"/>, using the specified collator.
@@ -93,36 +93,36 @@ namespace Lucene.Net.Collation
         /// <param name="matchVersion"> See <see cref="CollationKeyAnalyzer"/> </param>
         /// <param name="collator"> <see cref="System.Globalization.SortKey"/> generator </param>
         public CollationKeyAnalyzer(LuceneVersion matchVersion, Collator collator)
-		{
-			this.matchVersion = matchVersion;
-			this.collator = collator;
-			this.factory = new CollationAttributeFactory(collator);
-		}
-		
-		[Obsolete("Use <seealso cref=\"CollationKeyAnalyzer#CollationKeyAnalyzer(LuceneVersion, Collator)\"/> and specify a version instead. This ctor will be removed in Lucene 5.0")]
-		public CollationKeyAnalyzer(Collator collator) 
+        {
+            this.matchVersion = matchVersion;
+            this.collator = collator;
+            this.factory = new CollationAttributeFactory(collator);
+        }
+        
+        [Obsolete("Use <seealso cref=\"CollationKeyAnalyzer#CollationKeyAnalyzer(LuceneVersion, Collator)\"/> and specify a version instead. This ctor will be removed in Lucene 5.0")]
+        public CollationKeyAnalyzer(Collator collator) 
             : this(LuceneVersion.LUCENE_31, collator)
-		{
-		}
+        {
+        }
 
         protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-		{
+        {
 #pragma warning disable 612, 618
             if (this.matchVersion.OnOrAfter(LuceneVersion.LUCENE_40))
 #pragma warning restore 612, 618
             {
                 var tokenizer = new KeywordTokenizer(this.factory, reader, KeywordTokenizer.DEFAULT_BUFFER_SIZE);
-				return new TokenStreamComponents(tokenizer, tokenizer);
-			}
-			else
-			{
-				var tokenizer = new KeywordTokenizer(reader);
-				return new TokenStreamComponents(tokenizer,
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            }
+            else
+            {
+                var tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer,
 #pragma warning disable 612, 618
                     new CollationKeyFilter(tokenizer, this.collator));
 #pragma warning restore 612, 618
             }
         }
-	}
+    }
 }
 #endif

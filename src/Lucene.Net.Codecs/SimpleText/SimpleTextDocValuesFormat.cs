@@ -18,7 +18,7 @@
      */
 
     using SegmentReadState = Index.SegmentReadState;
-	using SegmentWriteState = Index.SegmentWriteState;
+    using SegmentWriteState = Index.SegmentWriteState;
 
     /// <summary>
     /// Plain text doc values format.

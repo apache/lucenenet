@@ -72,9 +72,9 @@ namespace Lucene.Net.Collation
     /// @since solr 3.1
     /// @deprecated use <see cref="CollationKeyAnalyzer"/> instead. 
     [Obsolete("use <seealso cref=\"CollationKeyAnalyzer\"/> instead.")]
-	public class CollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware
-	{
-		private Collator collator;
+    public class CollationKeyFilterFactory : TokenFilterFactory, IMultiTermAwareComponent, IResourceLoaderAware
+    {
+        private Collator collator;
         private readonly string custom;
         private readonly string language;
         private readonly string country;
@@ -82,68 +82,68 @@ namespace Lucene.Net.Collation
         private readonly string strength;
         private readonly string decomposition;
 
-		public CollationKeyFilterFactory(IDictionary<string, string> args) : base(args)
-		{
-			this.custom = this.RemoveFromDictionary(args, "custom");
-			this.language = this.RemoveFromDictionary(args, "language");
-			this.country = this.RemoveFromDictionary(args, "country");
-			this.variant = this.RemoveFromDictionary(args, "variant");
-			this.strength = this.RemoveFromDictionary(args, "strength");
+        public CollationKeyFilterFactory(IDictionary<string, string> args) : base(args)
+        {
+            this.custom = this.RemoveFromDictionary(args, "custom");
+            this.language = this.RemoveFromDictionary(args, "language");
+            this.country = this.RemoveFromDictionary(args, "country");
+            this.variant = this.RemoveFromDictionary(args, "variant");
+            this.strength = this.RemoveFromDictionary(args, "strength");
             this.decomposition = this.RemoveFromDictionary(args, "decomposition");
-			
-			if (this.custom == null && this.language == null)
-			{
-				throw new ArgumentException("Either custom or language is required.");
-			}
+            
+            if (this.custom == null && this.language == null)
+            {
+                throw new ArgumentException("Either custom or language is required.");
+            }
 
-			if (this.custom != null && (this.language != null || this.country != null || this.variant != null))
-			{
-				throw new ArgumentException("Cannot specify both language and custom. " + "To tailor rules for a built-in language, see the javadocs for RuleBasedCollator. " + "Then save the entire customized ruleset to a file, and use with the custom parameter");
-			}
+            if (this.custom != null && (this.language != null || this.country != null || this.variant != null))
+            {
+                throw new ArgumentException("Cannot specify both language and custom. " + "To tailor rules for a built-in language, see the javadocs for RuleBasedCollator. " + "Then save the entire customized ruleset to a file, and use with the custom parameter");
+            }
 
-			if (args.Count > 0)
-			{
-				throw new ArgumentException("Unknown parameters: " + args);
-			}
-		}
+            if (args.Count > 0)
+            {
+                throw new ArgumentException("Unknown parameters: " + args);
+            }
+        }
 
-		public virtual void Inform(IResourceLoader loader)
-		{
-			if (this.language != null)
-			{
-				// create from a system collator, based on Locale.
-				this.collator = this.CreateFromLocale(this.language, this.country, this.variant);
-			}
-			else
-			{
-				// create from a custom ruleset
-				this.collator = this.CreateFromRules(this.custom, loader);
-			}
+        public virtual void Inform(IResourceLoader loader)
+        {
+            if (this.language != null)
+            {
+                // create from a system collator, based on Locale.
+                this.collator = this.CreateFromLocale(this.language, this.country, this.variant);
+            }
+            else
+            {
+                // create from a custom ruleset
+                this.collator = this.CreateFromRules(this.custom, loader);
+            }
 
-			// set the strength flag, otherwise it will be the default.
-			if (this.strength != null)
-			{
-				if (this.strength.Equals("primary", StringComparison.OrdinalIgnoreCase))
-				{
-					this.collator.Strength = CollationStrength.Primary;
-				}
-				else if (this.strength.Equals("secondary", StringComparison.OrdinalIgnoreCase))
-				{
-					this.collator.Strength = CollationStrength.Secondary;
-				}
-				else if (this.strength.Equals("tertiary", StringComparison.OrdinalIgnoreCase))
-				{
+            // set the strength flag, otherwise it will be the default.
+            if (this.strength != null)
+            {
+                if (this.strength.Equals("primary", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.collator.Strength = CollationStrength.Primary;
+                }
+                else if (this.strength.Equals("secondary", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.collator.Strength = CollationStrength.Secondary;
+                }
+                else if (this.strength.Equals("tertiary", StringComparison.OrdinalIgnoreCase))
+                {
                     this.collator.Strength = CollationStrength.Tertiary;
-				}
-				else if (this.strength.Equals("identical", StringComparison.OrdinalIgnoreCase))
-				{
+                }
+                else if (this.strength.Equals("identical", StringComparison.OrdinalIgnoreCase))
+                {
                     this.collator.Strength = CollationStrength.Identical;
-				}
-				else
-				{
-					throw new ArgumentException("Invalid strength: " + this.strength);
-				}
-			}
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid strength: " + this.strength);
+                }
+            }
 
             // LUCENENET TODO: Verify Decomposition > NormalizationMode mapping between the JDK and icu-dotnet
 
@@ -167,33 +167,33 @@ namespace Lucene.Net.Collation
                     throw new ArgumentException("Invalid decomposition: " + this.decomposition);
                 }
             }
-		}
+        }
 
-		public override TokenStream Create(TokenStream input)
-		{
-			return new CollationKeyFilter(input, this.collator);
-		}
+        public override TokenStream Create(TokenStream input)
+        {
+            return new CollationKeyFilter(input, this.collator);
+        }
 
-		/// <summary>
-		/// Create a locale from language, with optional country and variant.
-		/// Then return the appropriate collator for the locale.
-		/// </summary>
-		private Collator CreateFromLocale(string language, string country, string variant)
-		{
-			CultureInfo cultureInfo;
+        /// <summary>
+        /// Create a locale from language, with optional country and variant.
+        /// Then return the appropriate collator for the locale.
+        /// </summary>
+        private Collator CreateFromLocale(string language, string country, string variant)
+        {
+            CultureInfo cultureInfo;
 
-			if (language == null)
-			{
-				throw new ArgumentException("Language is required");
-			}
+            if (language == null)
+            {
+                throw new ArgumentException("Language is required");
+            }
 
-			if (language != null && country == null && variant != null)
-			{
-				throw new ArgumentException("To specify variant, country is required");
-			}
+            if (language != null && country == null && variant != null)
+            {
+                throw new ArgumentException("To specify variant, country is required");
+            }
 
-			if (country != null && variant != null)
-			{
+            if (country != null && variant != null)
+            {
                 cultureInfo = new CultureInfo(string.Concat(language, "-", country, "-", variant));
 
                 // LUCENENET TODO: This method won't work on .NET core - confirm the above solution works as expected.
@@ -223,82 +223,82 @@ namespace Lucene.Net.Collation
                 //		.Equals(variant, StringComparison.OrdinalIgnoreCase);
                 //});
             }
-			else if (country != null)
-			{
-				cultureInfo = new CultureInfo(string.Concat(language, "-", country));
-			}
-			else
-			{
-				cultureInfo = new CultureInfo(language);
-			}
+            else if (country != null)
+            {
+                cultureInfo = new CultureInfo(string.Concat(language, "-", country));
+            }
+            else
+            {
+                cultureInfo = new CultureInfo(language);
+            }
 
-			return Collator.Create(cultureInfo);
-		}
+            return Collator.Create(cultureInfo);
+        }
 
          /// <summary>
          /// Read custom rules from a file, and create a RuleBasedCollator
          /// The file cannot support comments, as # might be in the rules!
          /// </summary>
-		private Collator CreateFromRules(string fileName, IResourceLoader loader)
-		{
-			Stream input = null;
-			try
-			{
-				input = loader.OpenResource(fileName);
-				var rules = ToUTF8String(input);
-				return new RuleBasedCollator(rules);
-			}
+        private Collator CreateFromRules(string fileName, IResourceLoader loader)
+        {
+            Stream input = null;
+            try
+            {
+                input = loader.OpenResource(fileName);
+                var rules = ToUTF8String(input);
+                return new RuleBasedCollator(rules);
+            }
             catch (TransliteratorParseException e)
             {
                 // invalid rules
                 throw new IOException("ParseException thrown while parsing rules", e);
             }
             catch (SyntaxErrorException e)
-			{
+            {
                 // invalid rules
                 throw new IOException("ParseException thrown while parsing rules", e);
-			}
-			finally
-			{
-				IOUtils.CloseWhileHandlingException(input);
-			}
-		}
+            }
+            finally
+            {
+                IOUtils.CloseWhileHandlingException(input);
+            }
+        }
 
-		public virtual AbstractAnalysisFactory GetMultiTermComponent()
+        public virtual AbstractAnalysisFactory GetMultiTermComponent()
         {
-			return this;
-		}
+            return this;
+        }
 
-		private static string ToUTF8String(Stream @in)
-		{
-			var builder = new StringBuilder();
-			var buffer = new char[1024];
-			var reader = IOUtils.GetDecodingReader(@in, Encoding.UTF8);
+        private static string ToUTF8String(Stream @in)
+        {
+            var builder = new StringBuilder();
+            var buffer = new char[1024];
+            var reader = IOUtils.GetDecodingReader(@in, Encoding.UTF8);
 
-			var index = 0;
-			while ((index = reader.Read(buffer, index, 1)) > 0)
-			{
-				builder.Append(buffer, 0, index);
-			}
+            var index = 0;
+            while ((index = reader.Read(buffer, index, 1)) > 0)
+            {
+                builder.Append(buffer, 0, index);
+            }
 
-			return builder.ToString();
-		}
+            return builder.ToString();
+        }
 
-		/// <summary>
-		/// Trys to gets the value of a key from a dictionary and removes the value after.
-		/// This is to mimic java's Dictionary.Remove method.
-		/// </summary>
-		/// <returns>The value for the given key; otherwise null.</returns>
-		private string RemoveFromDictionary(IDictionary<string, string> args, string key)
-		{
-			string value = null;
-			if (args.TryGetValue(key, out value))
-			{
-				args.Remove(key);
-			}
+        /// <summary>
+        /// Trys to gets the value of a key from a dictionary and removes the value after.
+        /// This is to mimic java's Dictionary.Remove method.
+        /// </summary>
+        /// <returns>The value for the given key; otherwise null.</returns>
+        private string RemoveFromDictionary(IDictionary<string, string> args, string key)
+        {
+            string value = null;
+            if (args.TryGetValue(key, out value))
+            {
+                args.Remove(key);
+            }
 
-			return value;
-		}
-	}
+            return value;
+        }
+    }
 }
 #endif

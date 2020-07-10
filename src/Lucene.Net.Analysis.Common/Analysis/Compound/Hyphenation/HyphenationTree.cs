@@ -25,12 +25,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
      */
 
     /// <summary>
-	/// This tree structure stores the hyphenation patterns in an efficient way for
-	/// fast lookup. It provides the provides the method to hyphenate a word.
-	/// <para/>
-	/// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified. 
-	/// </summary>
-	public class HyphenationTree : TernaryTree, IPatternConsumer
+    /// This tree structure stores the hyphenation patterns in an efficient way for
+    /// fast lookup. It provides the provides the method to hyphenate a word.
+    /// <para/>
+    /// This class has been taken from the Apache FOP project (http://xmlgraphics.apache.org/fop/). They have been slightly modified. 
+    /// </summary>
+    public class HyphenationTree : TernaryTree, IPatternConsumer
     {
         /// <summary>
         /// value space: stores the interletter values

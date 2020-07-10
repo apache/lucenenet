@@ -117,9 +117,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
 
             taxoWriter.SetCommitData(new Dictionary<string, string>()
-		    {
-			    {"just", "data"}
-		    });
+            {
+                {"just", "data"}
+            });
             taxoWriter.Commit();
 
             // verify taxoWriter.getCommitData()
@@ -191,9 +191,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             taxoWriter.AddCategory(cp);
             taxoWriter.SetCommitData(new Dictionary<string, string>()
-		    {
-			    {"just", "data"}
-		    });
+            {
+                {"just", "data"}
+            });
             taxoWriter.Commit();
         }
 

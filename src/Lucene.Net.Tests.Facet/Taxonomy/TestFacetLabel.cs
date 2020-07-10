@@ -1,13 +1,13 @@
-﻿using System;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
 
-    using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /*
@@ -164,14 +164,14 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             // LUCENE-4724: CategoryPath should not allow empty or null components
             string[][] components_tests = new string[][]
-		{
-			new string[] {"", "test"},
-			new string[] {"test", ""},
-			new string[] {"test", "", "foo"},
-			new string[] {null, "test"},
-			new string[] {"test", null},
-			new string[] {"test", null, "foo"}
-		};
+        {
+            new string[] {"", "test"},
+            new string[] {"test", ""},
+            new string[] {"test", "", "foo"},
+            new string[] {null, "test"},
+            new string[] {"test", null},
+            new string[] {"test", null, "foo"}
+        };
 
             foreach (string[] components in components_tests)
             {

@@ -29,77 +29,77 @@ namespace Lucene.Net.Collation
      */
 
     [TestFixture]
-	public class TestCollationKeyFilterFactory : BaseTokenStreamFactoryTestCase
-	{
-		/// <summary>
-		/// Turkish has some funny casing.
-		/// This test shows how you can solve this kind of thing easily with collation.
-		/// Instead of using LowerCaseFilter, use a turkish collator with primary strength.
-		/// Then things will sort and match correctly.
-		/// </summary>
-		public virtual void TestBasicUsage()
-		{
-			var turkishUpperCase = "I WİLL USE TURKİSH CASING";
-			var turkishLowerCase = "ı will use turkish casıng";
-			var factory = this.TokenFilterFactory("CollationKey", "language", "tr", "strength", "primary");
-			var tsUpper = factory.Create(new MockTokenizer(new StringReader(turkishUpperCase), MockTokenizer.KEYWORD, false));
-			var tsLower = factory.Create(new MockTokenizer(new StringReader(turkishLowerCase), MockTokenizer.KEYWORD, false));
-			AssertCollatesToSame(tsUpper, tsLower);
-		}
+    public class TestCollationKeyFilterFactory : BaseTokenStreamFactoryTestCase
+    {
+        /// <summary>
+        /// Turkish has some funny casing.
+        /// This test shows how you can solve this kind of thing easily with collation.
+        /// Instead of using LowerCaseFilter, use a turkish collator with primary strength.
+        /// Then things will sort and match correctly.
+        /// </summary>
+        public virtual void TestBasicUsage()
+        {
+            var turkishUpperCase = "I WİLL USE TURKİSH CASING";
+            var turkishLowerCase = "ı will use turkish casıng";
+            var factory = this.TokenFilterFactory("CollationKey", "language", "tr", "strength", "primary");
+            var tsUpper = factory.Create(new MockTokenizer(new StringReader(turkishUpperCase), MockTokenizer.KEYWORD, false));
+            var tsLower = factory.Create(new MockTokenizer(new StringReader(turkishLowerCase), MockTokenizer.KEYWORD, false));
+            AssertCollatesToSame(tsUpper, tsLower);
+        }
 
-		/// <summary>
-		/// Test usage of the decomposition option for unicode normalization.
-		/// </summary>
-		[Test]
-		public virtual void TestNormalization()
-		{
-			var turkishUpperCase = "I W\u0049\u0307LL USE TURKİSH CASING";
-			var turkishLowerCase = "ı will use turkish casıng";
-			var factory = this.TokenFilterFactory("CollationKey", "language", "tr", "strength", "primary", "decomposition", "canonical");
-			var tsUpper = factory.Create(new MockTokenizer(new StringReader(turkishUpperCase), MockTokenizer.KEYWORD, false));
-			var tsLower = factory.Create(new MockTokenizer(new StringReader(turkishLowerCase), MockTokenizer.KEYWORD, false));
-			AssertCollatesToSame(tsUpper, tsLower);
-		}
+        /// <summary>
+        /// Test usage of the decomposition option for unicode normalization.
+        /// </summary>
+        [Test]
+        public virtual void TestNormalization()
+        {
+            var turkishUpperCase = "I W\u0049\u0307LL USE TURKİSH CASING";
+            var turkishLowerCase = "ı will use turkish casıng";
+            var factory = this.TokenFilterFactory("CollationKey", "language", "tr", "strength", "primary", "decomposition", "canonical");
+            var tsUpper = factory.Create(new MockTokenizer(new StringReader(turkishUpperCase), MockTokenizer.KEYWORD, false));
+            var tsLower = factory.Create(new MockTokenizer(new StringReader(turkishLowerCase), MockTokenizer.KEYWORD, false));
+            AssertCollatesToSame(tsUpper, tsLower);
+        }
 
-		/// <summary>
-		/// Test usage of the K decomposition option for unicode normalization.
-		/// This works even with identical strength.
-		/// </summary>
-		[Test]
-		public virtual void TestFullDecomposition()
-		{
-			var fullWidth = "Ｔｅｓｔｉｎｇ";
-			var halfWidth = "Testing";
-			var factory = this.TokenFilterFactory("CollationKey", "language", "zh", "strength", "identical", "decomposition", "full");
-			var tsFull = factory.Create(new MockTokenizer(new StringReader(fullWidth), MockTokenizer.KEYWORD, false));
-			var tsHalf = factory.Create(new MockTokenizer(new StringReader(halfWidth), MockTokenizer.KEYWORD, false));
-			AssertCollatesToSame(tsFull, tsHalf);
-		}
+        /// <summary>
+        /// Test usage of the K decomposition option for unicode normalization.
+        /// This works even with identical strength.
+        /// </summary>
+        [Test]
+        public virtual void TestFullDecomposition()
+        {
+            var fullWidth = "Ｔｅｓｔｉｎｇ";
+            var halfWidth = "Testing";
+            var factory = this.TokenFilterFactory("CollationKey", "language", "zh", "strength", "identical", "decomposition", "full");
+            var tsFull = factory.Create(new MockTokenizer(new StringReader(fullWidth), MockTokenizer.KEYWORD, false));
+            var tsHalf = factory.Create(new MockTokenizer(new StringReader(halfWidth), MockTokenizer.KEYWORD, false));
+            AssertCollatesToSame(tsFull, tsHalf);
+        }
 
-		/// <summary>
-		/// Test secondary strength, for english case is not significant.
-		/// </summary>
-		[Test]
-		public virtual void TestSecondaryStrength()
-		{
-			var upperCase = "TESTING";
-			var lowerCase = "testing";
-			var factory = this.TokenFilterFactory("CollationKey", "language", "en", "strength", "secondary", "decomposition", "no");
-			var tsUpper = factory.Create(new MockTokenizer(new StringReader(upperCase), MockTokenizer.KEYWORD, false));
-			var tsLower = factory.Create(new MockTokenizer(new StringReader(lowerCase), MockTokenizer.KEYWORD, false));
-			AssertCollatesToSame(tsUpper, tsLower);
-		}
+        /// <summary>
+        /// Test secondary strength, for english case is not significant.
+        /// </summary>
+        [Test]
+        public virtual void TestSecondaryStrength()
+        {
+            var upperCase = "TESTING";
+            var lowerCase = "testing";
+            var factory = this.TokenFilterFactory("CollationKey", "language", "en", "strength", "secondary", "decomposition", "no");
+            var tsUpper = factory.Create(new MockTokenizer(new StringReader(upperCase), MockTokenizer.KEYWORD, false));
+            var tsLower = factory.Create(new MockTokenizer(new StringReader(lowerCase), MockTokenizer.KEYWORD, false));
+            AssertCollatesToSame(tsUpper, tsLower);
+        }
 
-		/// <summary>
-		/// For german, you might want oe to sort and match with o umlaut.
-		/// This is not the default, but you can make a customized ruleset to do this.
-		///
-		/// The default is DIN 5007-1, this shows how to tailor a collator to get DIN 5007-2 behavior.
-		///  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4423383
-		/// </summary>
-		[Test]
-		public virtual void TestCustomRules()
-		{
+        /// <summary>
+        /// For german, you might want oe to sort and match with o umlaut.
+        /// This is not the default, but you can make a customized ruleset to do this.
+        ///
+        /// The default is DIN 5007-1, this shows how to tailor a collator to get DIN 5007-2 behavior.
+        ///  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4423383
+        /// </summary>
+        [Test]
+        public virtual void TestCustomRules()
+        {
             // It is possible not to have the collator rules for a specific
             // country, fallback to the language if that is the case.
             var possiblelocales = new[] { new Locale("de-DE"), new Locale("de") };
@@ -132,24 +132,24 @@ namespace Lucene.Net.Collation
             TokenStream tsOE = factory.Create(new MockTokenizer(new StringReader(germanOE), MockTokenizer.KEYWORD, false));
 
             AssertCollatesToSame(tsUmlaut, tsOE);
-		}
-		
-		private static void AssertCollatesToSame(TokenStream stream1, TokenStream stream2)
-		{
-			stream1.Reset();
-			stream2.Reset();
+        }
+        
+        private static void AssertCollatesToSame(TokenStream stream1, TokenStream stream2)
+        {
+            stream1.Reset();
+            stream2.Reset();
             ICharTermAttribute term1 = stream1.AddAttribute<ICharTermAttribute>();
             ICharTermAttribute term2 = stream2.AddAttribute<ICharTermAttribute>();
-			assertTrue(stream1.IncrementToken());
-			assertTrue(stream2.IncrementToken());
-			assertEquals(term1.ToString(), term2.ToString());
-			assertFalse(stream1.IncrementToken());
-			assertFalse(stream2.IncrementToken());
-			stream1.End();
-			stream2.End();
-			stream1.Dispose();
-			stream2.Dispose();
-		}
-	}
+            assertTrue(stream1.IncrementToken());
+            assertTrue(stream2.IncrementToken());
+            assertEquals(term1.ToString(), term2.ToString());
+            assertFalse(stream1.IncrementToken());
+            assertFalse(stream2.IncrementToken());
+            stream1.End();
+            stream2.End();
+            stream1.Dispose();
+            stream2.Dispose();
+        }
+    }
 }
 #endif
