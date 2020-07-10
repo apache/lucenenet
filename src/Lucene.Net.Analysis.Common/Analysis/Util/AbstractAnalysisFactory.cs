@@ -418,12 +418,19 @@ namespace Lucene.Net.Analysis.Util
             }
 
             IList<string> result = new List<string>();
-            foreach (string file in Regex.Split(fileNames, "(?<!\\\\),"))
+            foreach (string file in SplitFileNameHolder.FILE_SPLIT_PATTERN.Split(fileNames))
             {
-                result.Add(Regex.Replace(file, "\\\\(?=,)", ""));
+                result.Add(SplitFileNameHolder.FILE_REPLACE_PATTERN.Replace(file, string.Empty));
             }
 
             return result;
+        }
+
+        // LUCENENET specific - optimize compilation and lazy-load the regular expressions
+        private static class SplitFileNameHolder
+        {
+            public static readonly Regex FILE_SPLIT_PATTERN = new Regex("(?<!\\\\),", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            public static readonly Regex FILE_REPLACE_PATTERN = new Regex("\\\\(?=,)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         }
 
         private const string CLASS_NAME = "class";
