@@ -1,6 +1,4 @@
 ﻿// commons-codec version compatibility level: 1.9
-using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Phonetic.Language
 {
@@ -37,7 +35,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
     /// </summary>
     public class Caverphone1 : AbstractCaverphone
     {
-        private static readonly string SIX_1 = "111111";
+        private const string SIX_1 = "111111";
 
         /// <summary>
         /// Encodes the given string into a Caverphone value.
@@ -55,71 +53,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             // 1. Convert to lowercase
             txt = txt.ToLowerInvariant(); // LUCENENET NOTE: This doesn't work right under "en" language, but does under invariant
 
-            // 2. Remove anything not A-Z
-            txt = Regex.Replace(txt, "[^a-z]", "");
-
-            // 3. Handle various start options
-            // 2 is a temporary placeholder to indicate a consonant which we are no longer interested in.
-            txt = Regex.Replace(txt, "^cough", "cou2f");
-            txt = Regex.Replace(txt, "^rough", "rou2f");
-            txt = Regex.Replace(txt, "^tough", "tou2f");
-            txt = Regex.Replace(txt, "^enough", "enou2f");
-            txt = Regex.Replace(txt, "^gn", "2n");
-
-            // End
-            txt = Regex.Replace(txt, "mb$", "m2");
-
-            // 4. Handle replacements
-            txt = Regex.Replace(txt, "cq", "2q");
-            txt = Regex.Replace(txt, "ci", "si");
-            txt = Regex.Replace(txt, "ce", "se");
-            txt = Regex.Replace(txt, "cy", "sy");
-            txt = Regex.Replace(txt, "tch", "2ch");
-            txt = Regex.Replace(txt, "c", "k");
-            txt = Regex.Replace(txt, "q", "k");
-            txt = Regex.Replace(txt, "x", "k");
-            txt = Regex.Replace(txt, "v", "f");
-            txt = Regex.Replace(txt, "dg", "2g");
-            txt = Regex.Replace(txt, "tio", "sio");
-            txt = Regex.Replace(txt, "tia", "sia");
-            txt = Regex.Replace(txt, "d", "t");
-            txt = Regex.Replace(txt, "ph", "fh");
-            txt = Regex.Replace(txt, "b", "p");
-            txt = Regex.Replace(txt, "sh", "s2");
-            txt = Regex.Replace(txt, "z", "s");
-            txt = Regex.Replace(txt, "^[aeiou]", "A");
-            // 3 is a temporary placeholder marking a vowel
-            txt = Regex.Replace(txt, "[aeiou]", "3");
-            txt = Regex.Replace(txt, "3gh3", "3kh3");
-            txt = Regex.Replace(txt, "gh", "22");
-            txt = Regex.Replace(txt, "g", "k");
-            txt = Regex.Replace(txt, "s+", "S");
-            txt = Regex.Replace(txt, "t+", "T");
-            txt = Regex.Replace(txt, "p+", "P");
-            txt = Regex.Replace(txt, "k+", "K");
-            txt = Regex.Replace(txt, "f+", "F");
-            txt = Regex.Replace(txt, "m+", "M");
-            txt = Regex.Replace(txt, "n+", "N");
-            txt = Regex.Replace(txt, "w3", "W3");
-            txt = Regex.Replace(txt, "wy", "Wy"); // 1.0 only
-            txt = Regex.Replace(txt, "wh3", "Wh3");
-            txt = Regex.Replace(txt, "why", "Why"); // 1.0 only
-            txt = Regex.Replace(txt, "w", "2");
-            txt = Regex.Replace(txt, "^h", "A");
-            txt = Regex.Replace(txt, "h", "2");
-            txt = Regex.Replace(txt, "r3", "R3");
-            txt = Regex.Replace(txt, "ry", "Ry"); // 1.0 only
-            txt = Regex.Replace(txt, "r", "2");
-            txt = Regex.Replace(txt, "l3", "L3");
-            txt = Regex.Replace(txt, "ly", "Ly"); // 1.0 only
-            txt = Regex.Replace(txt, "l", "2");
-            txt = Regex.Replace(txt, "j", "y"); // 1.0 only
-            txt = Regex.Replace(txt, "y3", "Y3"); // 1.0 only
-            txt = Regex.Replace(txt, "y", "2"); // 1.0 only
-
-            // 5. Handle removals
-            txt = Regex.Replace(txt, "2", "");
-            txt = Regex.Replace(txt, "3", "");
+            // 2. - 5 - Use pre-compiled regexes for replacements
+            foreach (var replacement in REPLACEMENTS)
+            {
+                txt = replacement.Replace(txt);
+            }
 
             // 6. put ten 1s on the end
             txt = txt + SIX_1;
@@ -127,5 +65,74 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             // 7. take the first six characters as the code
             return txt.Substring(0, SIX_1.Length - 0);
         }
+
+        private static readonly Replacement[] REPLACEMENTS = new Replacement[]
+        {
+            // 2. Remove anything not A-Z
+            new Replacement("[^a-z]", string.Empty),
+
+            // 3. Handle various start options
+            // 2 is a temporary placeholder to indicate a consonant which we are no longer interested in.
+            new Replacement("^cough", "cou2f"),
+            new Replacement("^rough", "rou2f"),
+            new Replacement("^tough", "tou2f"),
+            new Replacement("^enough", "enou2f"),
+            new Replacement("^gn", "2n"),
+
+            // End
+            new Replacement("mb$", "m2"),
+
+            // 4. Handle replacements
+            new Replacement("cq", "2q"),
+            new Replacement("ci", "si"),
+            new Replacement("ce", "se"),
+            new Replacement("cy", "sy"),
+            new Replacement("tch", "2ch"),
+            new Replacement("c", "k"),
+            new Replacement("q", "k"),
+            new Replacement("x", "k"),
+            new Replacement("v", "f"),
+            new Replacement("dg", "2g"),
+            new Replacement("tio", "sio"),
+            new Replacement("tia", "sia"),
+            new Replacement("d", "t"),
+            new Replacement("ph", "fh"),
+            new Replacement("b", "p"),
+            new Replacement("sh", "s2"),
+            new Replacement("z", "s"),
+            new Replacement("^[aeiou]", "A"),
+            // 3 is a temporary placeholder marking a vowel
+            new Replacement("[aeiou]", "3"),
+            new Replacement("3gh3", "3kh3"),
+            new Replacement("gh", "22"),
+            new Replacement("g", "k"),
+            new Replacement("s+", "S"),
+            new Replacement("t+", "T"),
+            new Replacement("p+", "P"),
+            new Replacement("k+", "K"),
+            new Replacement("f+", "F"),
+            new Replacement("m+", "M"),
+            new Replacement("n+", "N"),
+            new Replacement("w3", "W3"),
+            new Replacement("wy", "Wy"), // 1.0 only
+            new Replacement("wh3", "Wh3"),
+            new Replacement("why", "Why"), // 1.0 only
+            new Replacement("w", "2"),
+            new Replacement("^h", "A"),
+            new Replacement("h", "2"),
+            new Replacement("r3", "R3"),
+            new Replacement("ry", "Ry"), // 1.0 only
+            new Replacement("r", "2"),
+            new Replacement("l3", "L3"),
+            new Replacement("ly", "Ly"), // 1.0 only
+            new Replacement("l", "2"),
+            new Replacement("j", "y"), // 1.0 only
+            new Replacement("y3", "Y3"), // 1.0 only
+            new Replacement("y", "2"), // 1.0 only
+
+            // 5. Handle removals
+            new Replacement("2", string.Empty),
+            new Replacement("3", string.Empty),
+        };
     }
 }
