@@ -70,6 +70,16 @@ namespace Lucene.Net.Analysis.Cjk
         /// buffer size: </summary>
         private const int IO_BUFFER_SIZE = 256;
 
+        /// <summary>
+        /// Regular expression for testing Unicode character class <c>\p{IsHalfwidthandFullwidthForms}</c>.</summary>
+        // LUCENENET specific
+        private static readonly Regex HALFWIDTH_AND_FULLWIDTH_FORMS = new Regex(@"\p{IsHalfwidthandFullwidthForms}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// Regular expression for testing Unicode character class <c>\p{IsBasicLatin}</c>.</summary>
+        // LUCENENET specific
+        private static readonly Regex BASIC_LATIN = new Regex(@"\p{IsBasicLatin}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
         //~ Instance fields --------------------------------------------------------
 
         /// <summary>
@@ -205,9 +215,10 @@ namespace Lucene.Net.Analysis.Cjk
 
                     //if the current character is ASCII or Extend ASCII
                     // LUCENENET Port Reference: https://msdn.microsoft.com/en-us/library/20bw873z.aspx#SupportedNamedBlocks
-                    string charAsString = new string(new char[] { c });
-                    bool isHalfwidthAndFullwidthForms = Regex.IsMatch(charAsString, @"\p{IsHalfwidthandFullwidthForms}");
-                    if (Regex.IsMatch(charAsString, @"\p{IsBasicLatin}") || isHalfwidthAndFullwidthForms)
+                    string charAsString = c + "";
+                    bool isHalfwidthAndFullwidthForms = false;
+                    // LUCENENET: This condition only works because the ranges of BASIC_LATIN and HALFWIDTH_AND_FULLWIDTH_FORMS do not overlap
+                    if (BASIC_LATIN.IsMatch(charAsString) || (isHalfwidthAndFullwidthForms = HALFWIDTH_AND_FULLWIDTH_FORMS.IsMatch(charAsString)))
                     {
                         if (isHalfwidthAndFullwidthForms)
                         {
