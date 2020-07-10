@@ -2,6 +2,7 @@
 using ICU4N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
+using System.Text;
 
 namespace Lucene.Net.Analysis.Icu
 {
@@ -59,6 +60,7 @@ namespace Lucene.Net.Analysis.Icu
     {
         private readonly ICharTermAttribute termAtt;
         private readonly Normalizer2 normalizer;
+        private readonly StringBuilder buffer = new StringBuilder();
 
         /// <summary>
         /// Create a new <see cref="ICUNormalizer2Filter"/> that combines NFKC normalization, Case
@@ -86,10 +88,11 @@ namespace Lucene.Net.Analysis.Icu
         {
             if (m_input.IncrementToken())
             {
-                var term = termAtt.ToString();
-                if (normalizer.QuickCheck(term) != QuickCheckResult.Yes)
+                if (normalizer.QuickCheck(termAtt) != QuickCheckResult.Yes)
                 {
-                    termAtt.SetEmpty().Append(normalizer.Normalize(term));
+                    buffer.Length = 0;
+                    normalizer.Normalize(termAtt, buffer);
+                    termAtt.SetEmpty().Append(buffer);
                 }
                 return true;
             }
