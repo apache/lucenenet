@@ -107,7 +107,8 @@ namespace Lucene.Net.Analysis.Hunspell
         internal bool needsOutputCleaning;
 
         // LUCENENET: Added so we can get better performance than creating the regex in every tight loop.
-        private static Regex whitespacePattern = new Regex("\\s+", RegexOptions.Compiled);
+        private static readonly Regex whitespacePattern = new Regex("\\s+", RegexOptions.Compiled);
+        private static readonly Regex leadingDigitPattern = new Regex("[^0-9]", RegexOptions.Compiled);
 
         /// <summary>
         /// Creates a new <see cref="Dictionary"/> containing the information read from the provided <see cref="Stream"/>s to hunspell affix
@@ -675,8 +676,8 @@ namespace Lucene.Net.Analysis.Hunspell
             return Encoding.GetEncoding(encoding);
         }
 
-        private static Regex windowsCodePagePattern = new Regex("^(?:microsoft-)?cp-?(125[0-8])$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-        private static Regex thaiCodePagePattern = new Regex("^tis-?620(?:-?2533)?$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex windowsCodePagePattern = new Regex("^(?:microsoft-)?cp-?(125[0-8])$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex thaiCodePagePattern = new Regex("^tis-?620(?:-?2533)?$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
 
         /// <summary>
@@ -1053,7 +1054,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 for (int i = 0; i < rawFlagParts.Length; i++)
                 {
                     // note, removing the trailing X/leading I for nepali... what is the rule here?! 
-                    string replacement = Regex.Replace(rawFlagParts[i], "[^0-9]", "");
+                    string replacement = leadingDigitPattern.Replace(rawFlagParts[i], "");
                     // note, ignoring empty flags (this happens in danish, for example)
                     if (replacement.Length == 0)
                     {
