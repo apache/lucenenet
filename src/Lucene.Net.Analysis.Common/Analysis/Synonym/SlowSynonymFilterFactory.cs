@@ -46,6 +46,12 @@ namespace Lucene.Net.Analysis.Synonym
         private readonly string tf;
         private readonly IDictionary<string, string> tokArgs = new Dictionary<string, string>();
 
+        // LUCENENET: Optimized by pre-comiling regex and lazy-loading
+        private class Holder
+        {
+            public static readonly Regex TOKENIZER_FACTORY_REPLACEMENT_PATTERN = new Regex("^tokenizerFactory\\.", RegexOptions.Compiled);
+        }
+
         public SlowSynonymFilterFactory(IDictionary<string, string> args) 
             : base(args)
         {
@@ -62,7 +68,7 @@ namespace Lucene.Net.Analysis.Synonym
                 var keys = new List<string>(args.Keys);
                 foreach (string key in keys)
                 {
-                    tokArgs[Regex.Replace(key, "^tokenizerFactory\\.", "")] = args[key];
+                    tokArgs[Holder.TOKENIZER_FACTORY_REPLACEMENT_PATTERN.Replace(key, "")] = args[key];
                     args.Remove(key);
                 }
             }
