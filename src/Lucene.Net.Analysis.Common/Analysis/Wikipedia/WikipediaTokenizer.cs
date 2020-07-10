@@ -26,12 +26,12 @@ namespace Lucene.Net.Analysis.Wikipedia
      */
 
     /// <summary>
-	/// Extension of <see cref="Standard.StandardTokenizer"/> that is aware of Wikipedia syntax.  It is based off of the
-	/// Wikipedia tutorial available at http://en.wikipedia.org/wiki/Wikipedia:Tutorial, but it may not be complete.
-	/// <para/>
-	/// @lucene.experimental
-	/// </summary>
-	public sealed class WikipediaTokenizer : Tokenizer
+    /// Extension of <see cref="Standard.StandardTokenizer"/> that is aware of Wikipedia syntax.  It is based off of the
+    /// Wikipedia tutorial available at http://en.wikipedia.org/wiki/Wikipedia:Tutorial, but it may not be complete.
+    /// <para/>
+    /// @lucene.experimental
+    /// </summary>
+    public sealed class WikipediaTokenizer : Tokenizer
     {
         public const string INTERNAL_LINK = "il";
         public const string EXTERNAL_LINK = "el";

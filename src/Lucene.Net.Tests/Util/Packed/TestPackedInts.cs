@@ -503,7 +503,7 @@ namespace Lucene.Net.Util.Packed
         /*
           Check if the structures properly handle the case where
           index * bitsPerValue > Integer.MAX_VALUE
-	    
+        
           NOTE: this test allocates 256 MB
          */
         [Ignore("See LUCENE-4488 - LUCENENET NOTE: In .NET it is not possible to catch OOME")]

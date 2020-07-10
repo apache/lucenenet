@@ -23,10 +23,10 @@ namespace Lucene.Net.Analysis.Standard
      */
 
     /*
-	
+    
     WARNING: if you change ClassicTokenizerImpl.jflex and need to regenerate
           the tokenizer, only use the trunk version of JFlex 1.5 at the moment!
-	
+    
     */
     /// <summary>
     /// This class implements the classic lucene <see cref="StandardTokenizer"/> up until 3.0 

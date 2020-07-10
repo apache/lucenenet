@@ -171,7 +171,7 @@ namespace Lucene.Net.Search
             // bug isolation if we assign our own private ID:
             var version = ((DirectoryReader)searcher.IndexReader).Version;
             var factoryMethodCalled = false;
-				var tracker = _searchers.GetOrAdd(version, l => new Lazy<SearcherTracker>(() => { factoryMethodCalled = true; return new SearcherTracker(searcher); })).Value;
+            var tracker = _searchers.GetOrAdd(version, l => new Lazy<SearcherTracker>(() => { factoryMethodCalled = true; return new SearcherTracker(searcher); })).Value;
             if (!factoryMethodCalled && tracker.Searcher != searcher)
             {
                 throw new ArgumentException("the provided searcher has the same underlying reader version yet the searcher instance differs from before (new=" + searcher + " vs old=" + tracker.Searcher);

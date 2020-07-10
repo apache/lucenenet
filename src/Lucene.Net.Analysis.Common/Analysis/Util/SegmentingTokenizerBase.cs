@@ -167,9 +167,9 @@ namespace Lucene.Net.Analysis.Util
                 if (usableLength < 0)
                 {
                     usableLength = length; /*
-	                                * more than IOBUFFER of text without breaks,
-	                                * gonna possibly truncate tokens
-	                                */
+                                    * more than IOBUFFER of text without breaks,
+                                    * gonna possibly truncate tokens
+                                    */
                 }
             }
 

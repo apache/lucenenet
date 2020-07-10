@@ -23,8 +23,8 @@ namespace Lucene.Net.Analysis.CommonGrams
      */
 
     /*
-	 * TODO: Consider implementing https://issues.apache.org/jira/browse/LUCENE-1688 changes to stop list and associated constructors 
-	 */
+     * TODO: Consider implementing https://issues.apache.org/jira/browse/LUCENE-1688 changes to stop list and associated constructors 
+     */
 
     /// <summary>
     /// Construct bigrams for frequently occurring terms while indexing. Single terms

@@ -44,20 +44,20 @@ namespace Lucene.Net.Facet.Taxonomy
         ///  fillTaxonomy(), and tested by all tests below:
         /// </summary>
         private static readonly string[][] categories = new string[][]
-	  {
-		  new string[] {"Author", "Tom Clancy"},
-		  new string[] {"Author", "Richard Dawkins"},
-		  new string[] {"Author", "Richard Adams"},
-		  new string[] {"Price", "10", "11"},
-		  new string[] {"Price", "10", "12"},
-		  new string[] {"Price", "20", "27"},
-		  new string[] {"Date", "2006", "05"},
-		  new string[] {"Date", "2005"},
-		  new string[] {"Date", "2006"},
-		  new string[] {"Subject", "Nonfiction", "Children", "Animals"},
-		  new string[] {"Author", "Stephen Jay Gould"},
-		  new string[] {"Author", "\u05e0\u05d3\u05d1\u3042\u0628"}
-	  };
+      {
+          new string[] {"Author", "Tom Clancy"},
+          new string[] {"Author", "Richard Dawkins"},
+          new string[] {"Author", "Richard Adams"},
+          new string[] {"Price", "10", "11"},
+          new string[] {"Price", "10", "12"},
+          new string[] {"Price", "20", "27"},
+          new string[] {"Date", "2006", "05"},
+          new string[] {"Date", "2005"},
+          new string[] {"Date", "2006"},
+          new string[] {"Subject", "Nonfiction", "Children", "Animals"},
+          new string[] {"Author", "Stephen Jay Gould"},
+          new string[] {"Author", "\u05e0\u05d3\u05d1\u3042\u0628"}
+      };
 
         /// <summary>
         ///  When adding the above categories with ITaxonomyWriter.AddCategory(), 

@@ -72,53 +72,53 @@ namespace Lucene.Net.Collation
     ///  terms directly as bytes. This filter will be removed in Lucene 5.0 
     [Obsolete("Use CollationAttributeFactory instead, which encodes terms directly as bytes. This filter will be removed in Lucene 5.0.")]
     public sealed class CollationKeyFilter : TokenFilter
-	{
-		private readonly Collator collator;
-		private readonly ICharTermAttribute termAtt;
+    {
+        private readonly Collator collator;
+        private readonly ICharTermAttribute termAtt;
 
-		/// <param name="input"> Source token stream </param>
-		/// <param name="collator"> CollationKey generator </param>
-		public CollationKeyFilter(TokenStream input, Collator collator) 
+        /// <param name="input"> Source token stream </param>
+        /// <param name="collator"> CollationKey generator </param>
+        public CollationKeyFilter(TokenStream input, Collator collator) 
             : base(input)
-		{
-			this.collator = collator;
-			this.termAtt = this.AddAttribute<ICharTermAttribute>();
-		}
+        {
+            this.collator = collator;
+            this.termAtt = this.AddAttribute<ICharTermAttribute>();
+        }
 
-		public override bool IncrementToken()
-		{
-			if (this.m_input.IncrementToken())
-			{
-				var collationKey = this.collator.GetSortKey(this.termAtt.ToString()).KeyData.ToSByteArray();
-				var encodedLength = IndexableBinaryStringTools.GetEncodedLength(collationKey, 0, collationKey.Length);
-				this.termAtt.ResizeBuffer(encodedLength);
-				this.termAtt.Length = encodedLength;
+        public override bool IncrementToken()
+        {
+            if (this.m_input.IncrementToken())
+            {
+                var collationKey = this.collator.GetSortKey(this.termAtt.ToString()).KeyData.ToSByteArray();
+                var encodedLength = IndexableBinaryStringTools.GetEncodedLength(collationKey, 0, collationKey.Length);
+                this.termAtt.ResizeBuffer(encodedLength);
+                this.termAtt.Length = encodedLength;
 
-				IndexableBinaryStringTools.Encode(collationKey, 0, collationKey.Length, this.termAtt.Buffer, 0, encodedLength);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
+                IndexableBinaryStringTools.Encode(collationKey, 0, collationKey.Length, this.termAtt.Buffer, 0, encodedLength);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 
-	internal static class ByteArrayExtentions
-	{
-		internal static byte[] ToByteArray(this sbyte[] arr)
-		{
-			var unsigned = new byte[arr.Length];
-			System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
-			return unsigned;
-		}
+    internal static class ByteArrayExtentions
+    {
+        internal static byte[] ToByteArray(this sbyte[] arr)
+        {
+            var unsigned = new byte[arr.Length];
+            System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
+            return unsigned;
+        }
 
-		internal static sbyte[] ToSByteArray(this byte[] arr)
-		{
-			var unsigned = new sbyte[arr.Length];
-			System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
-			return unsigned;
-		}
-	}
+        internal static sbyte[] ToSByteArray(this byte[] arr)
+        {
+            var unsigned = new sbyte[arr.Length];
+            System.Buffer.BlockCopy(arr, 0, unsigned, 0, arr.Length);
+            return unsigned;
+        }
+    }
 }
 #endif

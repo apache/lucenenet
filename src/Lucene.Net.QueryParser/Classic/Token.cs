@@ -18,22 +18,22 @@ namespace Lucene.Net.QueryParsers.Classic
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-	
-	/// <summary> 
+    
+    /// <summary> 
     /// Describes the input token stream.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-	public class Token
-	{
-		
-		/// <summary> 
+    public class Token
+    {
+        
+        /// <summary> 
         /// An integer that describes the kind of this token.  This numbering
-		/// system is determined by JavaCCParser, and a table of these numbers is
-		/// stored in the file ...Constants.java.
-		/// </summary>
-		public int Kind { get; set; }
+        /// system is determined by JavaCCParser, and a table of these numbers is
+        /// stored in the file ...Constants.java.
+        /// </summary>
+        public int Kind { get; set; }
 
         /// <summary>The line number of the first character of this Token. </summary>
         public int BeginLine { get; set; }
@@ -84,58 +84,58 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary> 
         /// No-argument constructor
         /// </summary>
-		public Token()
-		{
-		}
-		
-		/// <summary> 
+        public Token()
+        {
+        }
+        
+        /// <summary> 
         /// Constructs a new token for the specified Image.
         /// </summary>
-		public Token(int kind)
+        public Token(int kind)
             : this(kind, null)
-		{
-		}
-		
-		/// <summary> 
+        {
+        }
+        
+        /// <summary> 
         /// Constructs a new token for the specified Image and Kind.
         /// </summary>
-		public Token(int kind, string image)
-		{
-			this.Kind = kind;
-			this.Image = image;
-		}
-		
-		/// <summary> 
+        public Token(int kind, string image)
+        {
+            this.Kind = kind;
+            this.Image = image;
+        }
+        
+        /// <summary> 
         /// Returns the image.
         /// </summary>
-		public override string ToString()
-		{
-			return Image;
-		}
-		
-		/// <summary> 
+        public override string ToString()
+        {
+            return Image;
+        }
+        
+        /// <summary> 
         /// Returns a new Token object, by default. However, if you want, you
-		/// can create and return subclass objects based on the value of ofKind.
-		/// Simply add the cases to the switch for all those special cases.
-		/// For example, if you have a subclass of Token called IDToken that
-		/// you want to create if ofKind is ID, simply add something like :
-		/// 
-		/// case MyParserConstants.ID : return new IDToken(ofKind, image);
-		/// 
-		/// to the following switch statement. Then you can cast matchedToken
-		/// variable to the appropriate type and use sit in your lexical actions.
-		/// </summary>
-		public static Token NewToken(int ofKind, string image)
-		{
-			switch (ofKind)
-			{
-				default:  return new Token(ofKind, image);
-			}
-		}
-		
-		public static Token NewToken(int ofKind)
-		{
-			return NewToken(ofKind, null);
-		}
-	}
+        /// can create and return subclass objects based on the value of ofKind.
+        /// Simply add the cases to the switch for all those special cases.
+        /// For example, if you have a subclass of Token called IDToken that
+        /// you want to create if ofKind is ID, simply add something like :
+        /// 
+        /// case MyParserConstants.ID : return new IDToken(ofKind, image);
+        /// 
+        /// to the following switch statement. Then you can cast matchedToken
+        /// variable to the appropriate type and use sit in your lexical actions.
+        /// </summary>
+        public static Token NewToken(int ofKind, string image)
+        {
+            switch (ofKind)
+            {
+                default:  return new Token(ofKind, image);
+            }
+        }
+        
+        public static Token NewToken(int ofKind)
+        {
+            return NewToken(ofKind, null);
+        }
+    }
 }

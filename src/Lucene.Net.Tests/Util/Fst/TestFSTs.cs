@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
@@ -11,10 +12,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using JCG = J2N.Collections.Generic;
-using Console = Lucene.Net.Util.SystemConsole;
-using J2N.Collections.Generic.Extensions;
 using Assert = Lucene.Net.TestFramework.Assert;
+using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -927,16 +927,16 @@ namespace Lucene.Net.Util.Fst
 
         /*
         public void testTrivial() throws Exception {
-	
+    
           // Get outputs -- passing true means FST will share
           // (delta code) the outputs.  this should result in
           // smaller FST if the outputs grow monotonically.  But
           // if numbers are "random", false should give smaller
           // final size:
           final NoOutputs outputs = NoOutputs.getSingleton();
-	
+    
           String[] strings = new String[] {"station", "commotion", "elation", "elastic", "plastic", "stop", "ftop", "ftation", "stat"};
-	
+    
           final Builder<Object> builder = new Builder<Object>(FST.INPUT_TYPE.BYTE1,
                                                               0, 0,
                                                               true,
@@ -955,9 +955,9 @@ namespace Lucene.Net.Util.Fst
           Writer w = new OutputStreamWriter(new FileOutputStream("/mnt/scratch/before.dot"));
           Util.toDot(fst, w, false, false);
           w.Dispose();
-	
+    
           final FST<Object> rewrite = new FST<Object>(fst, 1, 100);
-	
+    
           System.out.println("DOT after rewrite");
           w = new OutputStreamWriter(new FileOutputStream("/mnt/scratch/after.dot"));
           Util.toDot(rewrite, w, false, false);
