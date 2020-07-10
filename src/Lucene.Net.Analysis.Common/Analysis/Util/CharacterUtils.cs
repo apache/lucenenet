@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Text;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -135,6 +136,18 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Return the number of characters in <paramref name="seq"/>. </summary>
         public abstract int CodePointCount(string seq);
+
+        /// <summary>
+        /// Return the number of characters in <paramref name="seq"/>. </summary>
+        public abstract int CodePointCount(ICharSequence seq);
+
+        /// <summary>
+        /// Return the number of characters in <paramref name="seq"/>. </summary>
+        public abstract int CodePointCount(char[] seq);
+
+        /// <summary>
+        /// Return the number of characters in <paramref name="seq"/>. </summary>
+        public abstract int CodePointCount(StringBuilder seq);
 
         /// <summary>
         /// Creates a new <see cref="CharacterBuffer"/> and allocates a <see cref="T:char[]"/>
@@ -365,6 +378,33 @@ namespace Lucene.Net.Analysis.Util
 
             public override int CodePointCount(string seq)
             {
+                if (seq is null)
+                    throw new ArgumentNullException(nameof(seq));
+
+                return Character.CodePointCount(seq, 0, seq.Length);
+            }
+
+            public override int CodePointCount(ICharSequence seq)
+            {
+                if (seq is null)
+                    throw new ArgumentNullException(nameof(seq));
+
+                return Character.CodePointCount(seq, 0, seq.Length);
+            }
+
+            public override int CodePointCount(char[] seq)
+            {
+                if (seq is null)
+                    throw new ArgumentNullException(nameof(seq));
+
+                return Character.CodePointCount(seq, 0, seq.Length);
+            }
+
+            public override int CodePointCount(StringBuilder seq)
+            {
+                if (seq is null)
+                    throw new ArgumentNullException(nameof(seq));
+
                 return Character.CodePointCount(seq, 0, seq.Length);
             }
 
@@ -432,6 +472,33 @@ namespace Lucene.Net.Analysis.Util
 
             public override int CodePointCount(string seq)
             {
+                if (seq is null)
+                    throw new ArgumentNullException(nameof(seq));
+
+                return seq.Length;
+            }
+
+            public override int CodePointCount(ICharSequence seq)
+            {
+                if (seq is null)
+                    throw new ArgumentNullException(nameof(seq));
+
+                return seq.Length;
+            }
+
+            public override int CodePointCount(char[] seq)
+            {
+                if (seq is null)
+                    throw new ArgumentNullException(nameof(seq));
+
+                return seq.Length;
+            }
+
+            public override int CodePointCount(StringBuilder seq)
+            {
+                if (seq is null)
+                    throw new ArgumentNullException(nameof(seq));
+
                 return seq.Length;
             }
 
