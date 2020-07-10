@@ -280,13 +280,15 @@ namespace Lucene.Net.Util
 
         public class SuppressCodecsAttribute : System.Attribute // LUCENENET: API looks better with this nested
         {
+            private static readonly Regex WHITESPACE_REMOVAL = new Regex(@"\s*,\s*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
             /// <summary>
             /// Constructor for CLS compliance.
             /// </summary>
             /// <param name="codecs">A comma-deliminated set of codec names.</param>
             public SuppressCodecsAttribute(string codecs)
             {
-                this.Value = Regex.Split(codecs, @"\s*,\s*");
+                this.Value = WHITESPACE_REMOVAL.Split(codecs);
             }
 
             [CLSCompliant(false)]
