@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -526,9 +527,9 @@ namespace Lucene.Net.Analysis.Util
 
                 for (int i = offset; i < limit;)
                 {
-                    i += J2N.Character.ToChars(
-                        J2N.Character.ToLower(
-                            CodePointAt(buffer, i, limit)), buffer, i);
+                    i += Character.ToChars(
+                        Character.ToLower(
+                            CodePointAt(buffer, i, limit), CultureInfo.InvariantCulture), buffer, i);
                 }
             }
 
@@ -541,7 +542,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     i += Character.ToChars(
                         Character.ToUpper(
-                            CodePointAt(buffer, i, limit)), buffer, i);
+                            CodePointAt(buffer, i, limit), CultureInfo.InvariantCulture), buffer, i);
                 }
             }
         }
