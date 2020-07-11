@@ -38,11 +38,6 @@
     <ProjectReference Include="..\Lucene.Net.Grouping\Lucene.Net.Grouping.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
   <ItemGroup>
     <InternalsVisibleTo Include="Lucene.Net.Tests.Join" />
   </ItemGroup>

@@ -39,9 +39,4 @@
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
 </Project>
