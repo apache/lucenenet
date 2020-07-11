@@ -29,8 +29,6 @@
 
     <AssemblyTitle>Lucene.Net.Tests.Analysis.OpenNLP</AssemblyTitle>
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <!-- OpenNLP is not strong-named -->

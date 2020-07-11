@@ -26,7 +26,6 @@
   <PropertyGroup>
     <!--<TargetFrameworks>netstandard2.0;netstandard1.6</TargetFrameworks>-->
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
 
     <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>
     <Description>Analyzer for indexing phonetic signatures (for sounds-alike search) for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>

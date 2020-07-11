@@ -24,12 +24,8 @@
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
   
   <PropertyGroup>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-
     <AssemblyTitle>Lucene.Net.Tests._J-S</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
   </PropertyGroup>
   
   <ItemGroup>
@@ -53,10 +49,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <PackageReference Include="System.Net.Primitives" Version="$(SystemNetPrimitivesPackageVersion)" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
-    <Compile Remove="..\Lucene.Net.Tests\Support\TestCase.cs" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
