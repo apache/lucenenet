@@ -178,18 +178,23 @@ namespace Lucene.Net.Analysis.Util
             Debug.Assert(buffer.Length >= length);
             Debug.Assert(offset <= 0 && offset <= buffer.Length);
 
-            // Optimization provided by Vincent Van Den Berghe: 
-            // http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
-            new string(buffer, offset, length)
-                .ToLowerInvariant()
+            // Slight optimization, eliminating a few method calls internally
+            CultureInfo.InvariantCulture.TextInfo
+                .ToLower(new string(buffer, offset, length))
                 .CopyTo(0, buffer, offset, length);
+
+            //// Optimization provided by Vincent Van Den Berghe: 
+            //// http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
+            //new string(buffer, offset, length)
+            //    .ToLowerInvariant()
+            //    .CopyTo(0, buffer, offset, length);
 
             // Original (slow) Lucene implementation:
             //for (int i = offset; i < limit; )
             //{
             //    i += Character.ToChars(
             //        Character.ToLower(
-            //            CodePointAt(buffer, i, limit)), buffer, i);
+            //            CodePointAt(buffer, i, limit), CultureInfo.InvariantCulture), buffer, i);
             //}
         }
 
@@ -204,24 +209,29 @@ namespace Lucene.Net.Analysis.Util
             Debug.Assert(buffer.Length >= length);
             Debug.Assert(offset <= 0 && offset <= buffer.Length);
 
-            // Optimization provided by Vincent Van Den Berghe: 
-            // http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
-            new string(buffer, offset, length)
-                .ToUpperInvariant()
+            // Slight optimization, eliminating a few method calls internally
+            CultureInfo.InvariantCulture.TextInfo
+                .ToUpper(new string(buffer, offset, length))
                 .CopyTo(0, buffer, offset, length);
+
+            //// Optimization provided by Vincent Van Den Berghe: 
+            //// http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
+            //new string(buffer, offset, length)
+            //    .ToUpperInvariant()
+            //    .CopyTo(0, buffer, offset, length);
 
             // Original (slow) Lucene implementation:
             //for (int i = offset; i < limit; )
             //{
             //    i += Character.ToChars(
             //        Character.ToUpper(
-            //            CodePointAt(buffer, i, limit)), buffer, i);
+            //            CodePointAt(buffer, i, limit), CultureInfo.InvariantCulture), buffer, i);
             //}
         }
 
         /// <summary>
         /// Converts a sequence of .NET characters to a sequence of unicode code points. </summary>
-        ///  <returns> the number of code points written to the destination buffer  </returns>
+        ///  <returns> The number of code points written to the destination buffer.  </returns>
         public int ToCodePoints(char[] src, int srcOff, int srcLen, int[] dest, int destOff)
         {
             if (srcLen < 0)
