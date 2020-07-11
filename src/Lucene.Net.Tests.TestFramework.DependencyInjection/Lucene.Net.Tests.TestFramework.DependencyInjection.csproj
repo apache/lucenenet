@@ -24,12 +24,8 @@
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
 
   <PropertyGroup>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-
     <AssemblyTitle>Lucene.Net.Tests.TestFramework.DependencyInjection</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
 
     <DefineConstants>$(DefineConstants);TESTFRAMEWORK_NUNIT</DefineConstants>
   </PropertyGroup>
