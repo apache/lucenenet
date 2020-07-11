@@ -26,8 +26,6 @@
   <PropertyGroup>
     <AssemblyTitle>Lucene.Net.Tests.ICU</AssemblyTitle>
     <DefineConstants>$(DefineConstants);FEATURE_BREAKITERATOR</DefineConstants>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>

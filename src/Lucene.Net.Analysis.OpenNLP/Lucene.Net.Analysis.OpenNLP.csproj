@@ -24,7 +24,7 @@
   <Import Project="$(SolutionDir)build/NuGet.props" />
 
   <PropertyGroup>
-    <!--<TargetFrameworks>netstandard2.0;netstandard1.6</TargetFrameworks>-->
+    <!--<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>-->
     <TargetFrameworks Condition="$([MSBuild]::IsOsPlatform('Windows'))">$(TargetFrameworks);net451</TargetFrameworks>
 
     <AssemblyTitle>Lucene.Net.Analysis.OpenNLP</AssemblyTitle>
