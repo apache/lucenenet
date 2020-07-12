@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Numerics;
 using System.Text;
 
 namespace Lucene.Net.Codecs.SimpleText
@@ -182,20 +181,12 @@ namespace Lucene.Net.Codecs.SimpleText
                     _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * docId);
                     SimpleTextUtil.ReadLine(_input, _scratch);
 
-
-                    decimal bd;
-                    try
-                    {
-                        // LUCNENENET: .NET doesn't have a way to specify a pattern with decimal, but all of the standard ones are built in.
-                        bd = decimal.Parse(_scratch.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
-                    }
-                    catch (FormatException ex)
-                    {
-                        throw new CorruptIndexException("failed to parse long value (resource=" + _input + ")", ex);
-                    }
+                    // LUCNENENET: .NET doesn't have a way to specify a pattern with decimal, but all of the standard ones are built in.
+                    if (!decimal.TryParse(_scratch.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out decimal bd))
+                        throw new CorruptIndexException("failed to parse long value (resource=" + _input + ")");
 
                     SimpleTextUtil.ReadLine(_input, _scratch); // read the line telling us if its real or not
-                    return (long)BigInteger.Add(new BigInteger(_field.MinValue), new BigInteger(bd));
+                    return (long)((decimal)_field.MinValue + bd); // LUCENENET specific - use decimal rather than BigInteger
                 }
                 catch (IOException ioe)
                 {

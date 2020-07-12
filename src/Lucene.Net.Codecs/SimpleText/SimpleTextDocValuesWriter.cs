@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Numerics;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -97,22 +96,20 @@ namespace Lucene.Net.Codecs.SimpleText
             SimpleTextUtil.WriteNewline(data);
 
             // build up our fixed-width "simple text packed ints" format
-            BigInteger maxBig = maxValue;
-            BigInteger minBig = minValue;
-            var diffBig = BigInteger.Subtract(maxBig, minBig);
+            var diffBig = (decimal)maxValue - (decimal)minValue; // LUCENENET specific - use decimal rather than BigInteger
 
             var maxBytesPerValue = diffBig.ToString(CultureInfo.InvariantCulture).Length;
             var sb = new StringBuilder();
             for (var i = 0; i < maxBytesPerValue; i++)
                 sb.Append('0');
-         
+
+            var patternString = sb.ToString(); // LUCENENET specific - only get the string once
+
             // write our pattern to the .dat
             SimpleTextUtil.Write(data, PATTERN);
-            SimpleTextUtil.Write(data, sb.ToString(), scratch);
+            SimpleTextUtil.Write(data, patternString, scratch);
             SimpleTextUtil.WriteNewline(data);
 
-            var patternString = sb.ToString();
-            
             int numDocsWritten = 0;
 
             // second pass to write the values
@@ -122,7 +119,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 Debug.Assert(value >= minValue);
 
-                var delta = BigInteger.Subtract(value, minValue);
+                var delta = (decimal)value - (decimal)minValue; // LUCENENET specific - use decimal rather than BigInteger
                 string s = delta.ToString(patternString, CultureInfo.InvariantCulture);
                 Debug.Assert(s.Length == patternString.Length);
                 SimpleTextUtil.Write(data, s, scratch);
