@@ -33,9 +33,6 @@ using FieldInfo = Lucene.Net.Index.FieldInfo;
 using static Lucene.Net.Search.FieldCache;
 using static Lucene.Net.Util.FieldCacheSanityChecker;
 using J2N.Collections.Generic.Extensions;
-using Microsoft.Extensions.Configuration;
-using Lucene.Net.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 
 #if TESTFRAMEWORK_MSTEST
 using Before = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
@@ -51,6 +48,8 @@ using OneTimeSetUp = NUnit.Framework.OneTimeSetUpAttribute;
 using OneTimeTearDown = NUnit.Framework.OneTimeTearDownAttribute;
 using Test = NUnit.Framework.TestAttribute;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;
+using NUnit.Framework.Interfaces;
+using NUnit.Framework.Internal;
 #elif TESTFRAMEWORK_XUNIT
 using Before = Lucene.Net.Attributes.NoOpAttribute;
 using After = Lucene.Net.Attributes.NoOpAttribute;
@@ -213,10 +212,10 @@ namespace Lucene.Net.Util
         // Test groups, system properties and other annotations modifying tests
         // --------------------------------------------------------------------
 
-        internal const string SYSPROP_NIGHTLY = "tests:nightly"; // LUCENENET specific - made internal, because not fully implemented
-        internal const string SYSPROP_WEEKLY = "tests:weekly"; // LUCENENET specific - made internal, because not fully implemented
-        internal const string SYSPROP_AWAITSFIX = "tests:awaitsfix"; // LUCENENET specific - made internal, because not fully implemented
-        internal const string SYSPROP_SLOW = "tests:slow"; // LUCENENET specific - made internal, because not fully implemented
+        public const string SYSPROP_NIGHTLY = "tests:nightly";
+        public const string SYSPROP_WEEKLY = "tests:weekly";
+        public const string SYSPROP_AWAITSFIX = "tests:awaitsfix";
+        public const string SYSPROP_SLOW = "tests:slow";
         internal const string SYSPROP_BADAPPLES = "tests:badapples"; // LUCENENET specific - made internal, because not fully implemented
 
         ///// <seealso cref="IgnoreAfterMaxFailures"/>
@@ -225,38 +224,106 @@ namespace Lucene.Net.Util
         ///// <seealso cref="IgnoreAfterMaxFailures"/>
         internal const string SYSPROP_FAILFAST = "tests:failfast"; // LUCENENET specific - made internal, because not fully implemented
 
-        // LUCENENET: Not Implemented
-        /////// <summary>
-        /////// Annotation for tests that should only be run during nightly builds.
-        /////// </summary>
-        ////[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-        ////public class NightlyAttribute : System.Attribute { } // LUCENENET: API looks better with this nested
+        /// <summary>
+        /// Attribute for tests that should only be run during nightly builds.
+        /// </summary>
+        [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+        [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
+        public sealed class NightlyAttribute : System.Attribute
+#if TESTFRAMEWORK_NUNIT
+            , IApplyToTest
+        {
+            public void ApplyToTest(NUnit.Framework.Internal.Test test)
+            {
+                if (!TEST_NIGHTLY)
+                {
+                    test.RunState = RunState.Skipped;
+                    test.Properties.Set(PropertyNames.SkipReason, "This is a nightly test.");
+                }
+                test.Properties.Add(PropertyNames.Category, "Nightly");
+            }
+        }
+#else
+        { }
+#endif
+
+        /// <summary>
+        /// Attribute for tests that should only be run during weekly builds.
+        /// </summary>
+        [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+        [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
+        public sealed class WeeklyAttribute : System.Attribute
+#if TESTFRAMEWORK_NUNIT
+            , IApplyToTest
+        {
+            public void ApplyToTest(NUnit.Framework.Internal.Test test)
+            {
+                if (!TEST_WEEKLY)
+                {
+                    test.RunState = RunState.Skipped;
+                    test.Properties.Set(PropertyNames.SkipReason, "This is a weekly test.");
+                }
+                test.Properties.Add(PropertyNames.Category, "Weekly");
+            }
+        }
+#else
+        { }
+#endif
+
+        /// <summary>
+        /// Attribute for tests which exhibit a known issue and are temporarily disabled.
+        /// </summary>
+        [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+        [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
+        public sealed class AwaitsFixAttribute : System.Attribute
+#if TESTFRAMEWORK_NUNIT
+            , IApplyToTest
+        {
+            public void ApplyToTest(NUnit.Framework.Internal.Test test)
+            {
+                if (!TEST_AWAITSFIX)
+                {
+                    test.RunState = RunState.Ignored;
+                    test.Properties.Set(PropertyNames.SkipReason, BugUrl);
+                }
+                test.Properties.Add(PropertyNames.Category, "AwaitsFix");
+            }
+#else
+        {
+#endif
+            /// <summary>
+            /// Point to issue tracker entry. </summary>
+            public string BugUrl { get; set; } = "A known bug is being investigated regarding this issue.";
+        }
+
+        /// <summary>
+        /// Attribute for tests that are slow. Slow tests do run by default but can be
+        /// disabled if a quick run is needed.
+        /// </summary>
+        [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
+        [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
+        public sealed class SlowAttribute : System.Attribute
+#if TESTFRAMEWORK_NUNIT
+            , IApplyToTest
+        {
+            void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
+            {
+                // The test framework setting overrides the NUnit category setting, if false
+                if (!TEST_SLOW)
+                {
+                    test.RunState = RunState.Skipped;
+                    test.Properties.Set(PropertyNames.SkipReason, Description);
+                }
+                test.Properties.Add(PropertyNames.Category, "Slow");
+            }
+#else
+        {
+#endif
+            public string Description { get; set; } = "This test is slow.";
+        }
 
         /////// <summary>
-        /////// Annotation for tests that should only be run during weekly builds.
-        /////// </summary>
-        ////[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-        ////public class WeeklyAttribute : System.Attribute { } // LUCENENET: API looks better with this nested
-
-        /////// <summary>
-        /////// Annotation for tests which exhibit a known issue and are temporarily disabled.
-        /////// </summary>
-        ////[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-        ////public class AwaitsFix : System.Attribute // LUCENENET: API looks better with this nested
-        ////{
-        ////    /// <summary>
-        ////    /// Point to issue tracker entry. </summary>
-        ////    public virtual string BugUrl { get; set; }
-        ////}
-
-        /////// <summary>
-        /////// Annotation for tests that are slow. Slow tests do run by default but can be
-        /////// disabled if a quick run is needed.
-        /////// </summary>
-        ////public class SlowAttribute : System.Attribute { } // LUCENENET: API looks better with this nested
-
-        /////// <summary>
-        /////// Annotation for tests that fail frequently and should
+        /////// Attribute for tests that fail frequently and should
         /////// be moved to a <a href="https://builds.apache.org/job/Lucene-BadApples-trunk-java7/">"vault" plan in Jenkins</a>.
         ///////
         /////// Tests annotated with this will be turned off by default. If you want to enable
@@ -265,20 +332,22 @@ namespace Lucene.Net.Util
         /////// -Dtests.badapples=true
         /////// </pre>
         /////// </summary>
-        ////public class BadAppleAttribute : System.Attribute // LUCENENET: API looks better with this nested
+        ////[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
+        ////[SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
+        ////public class BadAppleAttribute : System.Attribute
         ////{
         ////    /// <summary>
         ////    /// Point to issue tracker entry. </summary>
-        ////    public virtual string BugUrl { get; set;}
+        ////    public virtual string BugUrl { get; set; }
         ////}
 
         /// <summary>
-        /// Annotation for test classes that should avoid certain codec types
+        /// Attribute for test classes that should avoid certain codec types
         /// (because they are expensive, for example).
         /// </summary>
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-
-        public class SuppressCodecsAttribute : System.Attribute // LUCENENET: API looks better with this nested
+        [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
+        public sealed class SuppressCodecsAttribute : System.Attribute
         {
             private static readonly Regex WHITESPACE_REMOVAL = new Regex(@"\s*,\s*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
@@ -310,11 +379,12 @@ namespace Lucene.Net.Util
         /// <seealso cref="LuceneTestCase.CreateTempDir()"/>
         /// <seealso cref="LuceneTestCase.CreateTempFile(String, String)"/>
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-        public class SuppressTempFileChecksAttribute : System.Attribute // LUCENENET: API looks better with this nested
+        [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
+        public sealed class SuppressTempFileChecksAttribute : System.Attribute
         {
             /// <summary>
             /// Point to issue tracker entry. </summary>
-            public virtual string BugUrl { get; set; } = "None";
+            public string BugUrl { get; set; } = "None";
         }
 
         // -----------------------------------------------------------------
@@ -379,21 +449,21 @@ namespace Lucene.Net.Util
         /// The line file used by LineFileDocs </summary>
         public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests:linedocsfile", DEFAULT_LINE_DOCS_FILE); // LUCENENET specific - reformatted with :
 
-        ///// <summary>
-        ///// Whether or not <see cref="Nightly"/> tests should run. </summary>
-        internal static readonly bool TEST_NIGHTLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_NIGHTLY, false); // LUCENENET specific - made internal, because not fully implemented
+        /// <summary>
+        /// Whether or not <see cref="NightlyAttribute"/> tests should run. </summary>
+        public static readonly bool TEST_NIGHTLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_NIGHTLY, false);
 
-        ///// <summary>
-        ///// Whether or not <see cref="Weekly"/> tests should run. </summary>
-        internal static readonly bool TEST_WEEKLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_WEEKLY, false); // LUCENENET specific - made internal, because not fully implemented
+        /// <summary>
+        /// Whether or not <see cref="WeeklyAttribute"/> tests should run. </summary>
+        public static readonly bool TEST_WEEKLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_WEEKLY, false);
 
-        ///// <summary>
-        ///// Whether or not <see cref="AwaitsFix"/> tests should run. </summary>
-        internal static readonly bool TEST_AWAITSFIX = SystemProperties.GetPropertyAsBoolean(SYSPROP_AWAITSFIX, false); // LUCENENET specific - made internal, because not fully implemented
+        /// <summary>
+        /// Whether or not <see cref="AwaitsFixAttribute"/> tests should run. </summary>
+        public static readonly bool TEST_AWAITSFIX = SystemProperties.GetPropertyAsBoolean(SYSPROP_AWAITSFIX, false); // LUCENENET specific - made internal, because not fully implemented
 
-        ///// <summary>
-        ///// Whether or not <see cref="Slow"/> tests should run. </summary>
-        internal static readonly bool TEST_SLOW = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, false); // LUCENENET specific - made internal, because not fully implemented
+        /// <summary>
+        /// Whether or not <see cref="SlowAttribute"/> tests should run. </summary>
+        public static readonly bool TEST_SLOW = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, true); // LUCENENET specific - made default true, as per the docs
 
         /// <summary>
         /// Throttling, see <see cref="MockDirectoryWrapper.Throttling"/>. </summary>

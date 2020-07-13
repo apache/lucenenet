@@ -1,5 +1,6 @@
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
 using Lucene.Net.Attributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace Lucene.Net.Support
      */
 
     [TestFixture]
-    public class TestWeakDictionaryBehavior
+    public class TestWeakDictionaryBehavior : LuceneTestCase
     {
         IDictionary<object, object> dictionary;
 

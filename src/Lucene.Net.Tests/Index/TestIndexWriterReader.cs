@@ -867,6 +867,7 @@ namespace Lucene.Net.Index
 
         // Stress test reopen during addIndexes
         [Test]
+        [Slow]
         public virtual void TestDuringAddIndexes()
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
