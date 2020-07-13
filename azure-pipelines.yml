@@ -70,9 +70,7 @@ variables:
 - name: NuGetArtifactDirectory # NuGet binaries directory
   value: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
 - name: PublishedArtifactZipFileName
-  value: 'published.zip'  
-- name: NUGET_PACKAGES
-  value: $(Build.SourcesDirectory)\.nuget\packages
+  value: 'published.zip'
 
 stages:
 - stage: Build_Stage
@@ -96,15 +94,6 @@ stages:
       displayName: 'Use .NET Core sdk 3.1.301'
       inputs:
         version: 3.1.301
-    
-    - task: Cache@2
-      displayName: 'Cache NuGet packages'
-      inputs:
-        key: 'nuget | "$(Agent.OS)" | **/*.csproj'
-        restoreKeys: |
-            nuget | "$(Agent.OS)"
-            nuget
-        path: $(NUGET_PACKAGES)
 
     - powershell: |
         Import-Module "$(BuildDirectory)/psake.psm1"
