@@ -1,0 +1,38 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+# Copies the provided test framework configuration file
+# to the binary publish subdirectory for the provided target
+# framework, and then publishes to an pipeline artifact.
+
+parameters:
+  publishDirectory: '' # The path of the root publish staging directory where the binaries can be found $(PublishTempDirectory)
+  framework: '' # The target framework
+  binaryArtifactName: '' # The prefix of the binary artifact to publish $(BinaryArtifactName)
+  testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/lucene.testsettings.json' #The name of the 
+
+steps:
+- pwsh: |
+    Copy-Item -Path "${{ parameters.testSettingsFilePath }}" -Destination "${{ parameters.publishDirectory }}/${{ parameters.framework }}/" -Force
+  displayName: 'Copy lucene.testsettings.json File to: ${{ parameters.publishDirectory }}/${{ parameters.framework }}'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Artifact: ${{ parameters.binaryArtifactName }}_${{ parameters.framework }}'
+  inputs:
+    targetPath: '${{ parameters.publishDirectory }}/${{ parameters.framework }}'
+    artifact: '${{ parameters.binaryArtifactName }}_${{ parameters.framework }}'
+    publishLocation: 'pipeline'

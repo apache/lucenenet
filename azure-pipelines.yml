@@ -18,14 +18,13 @@
 name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 
 # DevOps Setup: Define the following pipeline level variables in Azure DevOps build pipeline
-#
+
 # ArtifactFeedID: (Optional - set to your Azure DevOps Artifact (NuGet) feed. If not provided, publish job will be skipped.)
 # BuildConfiguration: (Optional. Defaults to 'Release')
 # BuildPlatform: (Optional. Defaults to 'Any CPU')
 # GenerateDocs: (Optional. Only builds documentation website if set to 'true'.)
 # GenerateWebsite: (Optional. Only builds lucene.net website if set to 'true'.)
 # IsRelease: (Optional. By default the Release job is disabled, setting this to 'true' will enable it)
-# RunTests: 'true' (Optional - set to 'false' to disable test jobs - useful for debugging. If not provided, tests will be run.)
 
 # Versioning Variables
 
@@ -33,6 +32,20 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # PackageVersion: (Optional - This can be used to explicitly set the whole version number to a specific version, i.e. 4.8.0-beta00005. It overrides all other version settings.)
 # PreReleaseCounterPattern: (Optional. Set to '0000000000' in ci pipeline or '00000' in release pipeline. The default is '0000000000'. This setting has no effect if VersionSuffix is ''.)
 # VersionSuffix: (Optional. Defaults to 'ci'. Set to 'beta' or 'rc' or '' in production pipeline.)
+
+# Testing variables
+
+# RunTests: 'true' (Optional - set to 'false' to disable test jobs - useful for debugging. If not provided, tests will be run.)
+# IsNightly: 'false' (Optional - set to 'true' to run additional tests for the nightly build)
+# IsWeekly: 'false' (Optional - set to 'true' to run additional tests for the weekly build)
+# RunSlowTests: 'true' (Optional - set to 'false' to skip slow tests to make testing time shorter)
+# RunAwaitsFixTests: 'false' (Optional - set to 'true' to run flakey tests)
+# Codec: 'random' (Optional - set to a specific codec to test the same codec throughout all tests)
+# DocValuesFormat: 'random' (Optional - set to a specific doc values format to test the same codec throughout all tests)
+# PostingsFormat: 'random' (Optional - set to a specific postings format to test the same codec throughout all tests)
+# Directory: 'random' (Optional - set to a specific directory implementation to test the same codec throughout all tests)
+# Verbose: 'false' (Optional - set to true for verbose logging output)
+# Multiplier: '1' (Optional - the number of iterations to multiply applicable tests by)
 
 variables:
 - name: BuildCounter
@@ -63,6 +76,8 @@ variables:
   value: 'packageVersion.txt'
 - name: FileVersionFileName
   value: 'fileVersion.txt'
+- name: TestSettingsFileName
+  value: 'lucene.testsettings.json'
 - name: BuildDirectory # Where the build scripts and configs are
   value: '$(System.DefaultWorkingDirectory)/build'
 - name: PublishDirectory # Test binaries directory
@@ -113,13 +128,39 @@ stages:
       displayName: 'PSake Build, Pack, and Publish'
     - template: 'build/azure-templates/show-all-environment-variables.yml'
         
-    - powershell: |
+    - pwsh: |
         $dir = '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
         if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path "$dir" -Force }
         '$(PackageVersion)' | Out-File -FilePath "$dir/$(PackageVersionFileName)" -Force
         '$(FileVersion)' | Out-File -FilePath "$dir/$(FileVersionFileName)" -Force
         '$(Build.BuildNumber)' | Out-File -FilePath "$dir/$(BuildNumberFileName)" -Force
-      displayName: 'Write Versions to Files'
+        
+        # Generate a lucene.testsettings.json file for use with the test framework
+        $nightly = if ($Env:IsNightly -eq 'true') { 'true' } else { 'false' }
+        $weekly = if ($Env:IsWeekly -eq 'true') { 'true' } else { 'false' }
+        $slow = if ($Env:RunSlowTests -ne 'false') { 'true' } else { 'false' }
+        $awaitsFix = if ($Env:RunAwaitsFixTests -eq 'true') { 'true' } else { 'false' }
+        $codec = if ($Env:Codec -eq $null) { 'random' } else { $Env:Codec }
+        $docValuesFormat = if ($Env:DocValuesFormat -eq $null) { 'random' } else { $Env:DocValuesFormat }
+        $postingsFormat = if ($Env:PostingsFormat -eq $null) { 'random' } else { $Env:PostingsFormat }
+        $directory = if ($Env:Directory -eq $null) { 'random' } else { $Env:Directory }
+        $verbose = if ($Env:Verbose -eq 'true') { 'true' } else { 'false' }
+        $multiplier = if ($Env:Multiplier -eq $null) { '1' } else { $Env:Multiplier }
+        $fileText = "{`n`t""tests"":`n`t{`n`t`t" +
+                        """nightly"": ""$nightly"",`n`t`t" +
+                        """weekly"": ""$weekly"",`n`t`t" +
+                        """slow"": ""$slow"",`n`t`t" +
+                        """awaitsfix"": ""$awaitsFix"",`n`t`t" +
+                        """codec"": ""$codec"",`n`t`t" +
+                        """docvaluesformat"": ""$docValuesFormat"",`n`t`t" +
+                        """postingsformat"": ""$postingsFormat"",`n`t`t" +
+                        """directory"": ""$directory"",`n`t`t" +
+                        """verbose"": ""$verbose"",`n`t`t" +
+                        """multiplier"": ""$multiplier""`n`t" +
+                    "}`n}"
+        Out-File -filePath "$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)" -encoding UTF8 -inputObject $fileText
+      displayName: 'Persist Variables to Files'
+
     # If this is a release pipeline, copy the build.bat and Version.props files as version artifacts, which will 
     # overwrite the build.bat and Version.props files of the release.
     - task: CopyFiles@2
@@ -148,30 +189,30 @@ stages:
         Contents: |
          **\**\bin\**\*.pdb
         TargetFolder: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
-        
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: $(BinaryArtifactName)_netcoreapp3.1'
-      inputs:
-        targetPath: '$(PublishTempDirectory)\netcoreapp3.1'
-        artifact: '$(BinaryArtifactName)_netcoreapp3.1'
-        publishLocation: 'pipeline'
-      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
-      
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: $(BinaryArtifactName)_netcoreapp2.1'
-      inputs:
-        targetPath: '$(PublishTempDirectory)\netcoreapp2.1'
-        artifact: '$(BinaryArtifactName)_netcoreapp2.1'
-        publishLocation: 'pipeline'
-      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
-      
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: $(BinaryArtifactName)_net48'
-      inputs:
-        targetPath: '$(PublishTempDirectory)\net48'
-        artifact: '$(BinaryArtifactName)_net48'
-        publishLocation: 'pipeline'
-      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+
+    - ${{ if ne(variables['RunTests'], 'false') }}:
+      - template: 'build/azure-templates/publish-test-binaries.yml'
+        parameters:
+          publishDirectory: $(PublishTempDirectory)
+          framework: 'netcoreapp3.1'
+          binaryArtifactName: '$(BinaryArtifactName)'
+          testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+
+    - ${{ if ne(variables['RunTests'], 'false') }}:
+      - template: 'build/azure-templates/publish-test-binaries.yml'
+        parameters:
+          publishDirectory: $(PublishTempDirectory)
+          framework: 'netcoreapp2.1'
+          binaryArtifactName: '$(BinaryArtifactName)'
+          testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+
+    - ${{ if ne(variables['RunTests'], 'false') }}:
+      - template: 'build/azure-templates/publish-test-binaries.yml'
+        parameters:
+          publishDirectory: $(PublishTempDirectory)
+          framework: 'net48'
+          binaryArtifactName: '$(BinaryArtifactName)'
+          testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(NuGetArtifactName)'

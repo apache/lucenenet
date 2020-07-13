@@ -21,6 +21,7 @@ MinimumVisualStudioVersion = 15.0.26730.8
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "azure-templates", "azure-templates", "{05CE3A39-40D4-452D-AFE0-E57E536A08C6}"
 	ProjectSection(SolutionItems) = preProject
 		build\azure-templates\publish-nuget-packages.yml = build\azure-templates\publish-nuget-packages.yml
+		build\azure-templates\publish-test-binaries.yml = build\azure-templates\publish-test-binaries.yml
 		build\azure-templates\publish-test-results-for-test-projects.yml = build\azure-templates\publish-test-results-for-test-projects.yml
 		build\azure-templates\publish-test-results.yml = build\azure-templates\publish-test-results.yml
 		build\azure-templates\run-tests-on-os.yml = build\azure-templates\run-tests-on-os.yml
