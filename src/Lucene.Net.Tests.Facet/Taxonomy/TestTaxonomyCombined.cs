@@ -1,6 +1,5 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
-using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -755,7 +754,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         // Test that getParentArrays is valid when retrieved during refresh
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestTaxonomyReaderRefreshRaces()
         {
             // compute base child arrays - after first chunk, and after the other

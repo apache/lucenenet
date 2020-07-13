@@ -187,6 +187,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         // A more comprehensive and big random test.
         [Test]
+        [Slow]
         public virtual void TestBig()
         {
             Dotest(200, 10000);

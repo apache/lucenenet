@@ -3,7 +3,6 @@ using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
@@ -716,7 +715,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public void TestRandom()
         {
 

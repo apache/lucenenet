@@ -78,7 +78,8 @@ namespace Lucene.Net.Index.Memory
         /**
          * runs random tests, up to ITERATIONS times.
          */
-         [Test]
+        [Test]
+        [Slow]
         public void TestRandomQueries()
         {
             MemoryIndex index = new MemoryIndex(Random.nextBoolean(), Random.nextInt(50) * 1024 * 1024);

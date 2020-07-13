@@ -199,6 +199,7 @@ namespace Lucene.Net.Analysis.Icu
 
         //@AwaitsFix(bugUrl = "https://issues.apache.org/jira/browse/LUCENE-5595")
         [Test]
+        [Slow]
         public void TestRandomStrings()
         {
             // nfkc_cf

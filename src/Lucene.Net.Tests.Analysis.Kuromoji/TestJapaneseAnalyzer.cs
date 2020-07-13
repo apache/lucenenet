@@ -23,6 +23,7 @@ namespace Lucene.Net.Analysis.Ja
     /// <summary>
     /// Test Kuromoji Japanese morphological analyzer
     /// </summary>
+    //[Slow] // LUCENENET specific - not very slow in .NET
     public class TestJapaneseAnalyzer : BaseTokenStreamTestCase
     {
         /** This test fails with NPE when the 

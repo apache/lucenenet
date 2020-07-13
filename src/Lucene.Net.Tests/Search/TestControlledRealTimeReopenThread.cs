@@ -75,6 +75,7 @@ namespace Lucene.Net.Search
         private bool warmCalled;
 
         [Test]
+        [Slow]
         public virtual void TestControlledRealTimeReopenThread_Mem()
         {
             RunTest("TestControlledRealTimeReopenThread");

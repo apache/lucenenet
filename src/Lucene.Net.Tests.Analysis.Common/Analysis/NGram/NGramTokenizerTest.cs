@@ -1,6 +1,5 @@
 ﻿using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -108,7 +107,8 @@ namespace Lucene.Net.Analysis.NGram
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestRandomStrings()
         {
             for (int i = 0; i < 10; i++)
@@ -211,6 +211,7 @@ namespace Lucene.Net.Analysis.NGram
                         }
                     }
                     assertTrue(grams.IncrementToken());
+
                     assertArrayEquals(Arrays.CopyOfRange(codePoints, start, end), toCodePoints(termAtt.ToString()));
                     assertEquals(1, posIncAtt.PositionIncrement);
                     assertEquals(1, posLenAtt.PositionLength);
@@ -293,7 +294,7 @@ namespace Lucene.Net.Analysis.NGram
             TestNGrams(minGram, maxGram, new string(chrs), " ");
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestFullUTF8Range()
         {
             int minGram = TestUtil.NextInt32(Random, 1, 100);

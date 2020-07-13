@@ -1,7 +1,5 @@
-﻿using J2N;
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Util;
 using NUnit.Framework;
-using System;
 using System.Diagnostics;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -124,11 +122,12 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
      * Patch applied, committed revision 1541234.
      * </p>
      */
-    public class PhoneticEnginePerformanceTest
+    public class PhoneticEnginePerformanceTest : LuceneTestCase
     {
         private const int LOOP = 80000;
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public void Test()
         {
             PhoneticEngine engine = new PhoneticEngine(NameType.GENERIC, RuleType.APPROX, true);

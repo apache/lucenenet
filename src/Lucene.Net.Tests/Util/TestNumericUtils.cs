@@ -1,5 +1,4 @@
 using J2N.Text;
-using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -360,7 +359,9 @@ namespace Lucene.Net.Util
             AssertLongRangeSplit(long.MinValue, long.MinValue + 0xfL, 4, true, new long[] { 0x000000000000000L, 0x000000000000000L }, new int[] { 4 });
             AssertLongRangeSplit(long.MinValue, long.MinValue + 0x10L, 4, true, new long[] { 0x0000000000000010L, 0x0000000000000010L, 0x000000000000000L, 0x000000000000000L }, new int[] { 0, 4 });
         }
-        [Test, LongRunningTest]
+
+        [Test]
+        [Slow]
         public virtual void TestRandomSplit()
         {
             long num = (long)AtLeast(10);

@@ -2,7 +2,6 @@ using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
@@ -1436,7 +1435,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestThreadInterruptDeadlock()
         {
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
@@ -1475,7 +1475,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// testThreadInterruptDeadlock but with 2 indexer threads </summary>
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestTwoThreadsInterruptDeadlock()
         {
             IndexerThreadInterrupt t1 = new IndexerThreadInterrupt(this);

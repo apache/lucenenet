@@ -1,6 +1,5 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -424,7 +423,8 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestAddIndexesAndDoDeletesThreads()
         {
             const int numIter = 2;
@@ -752,6 +752,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        [Slow]
         public virtual void TestMergeWarmer([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
@@ -992,6 +993,7 @@ namespace Lucene.Net.Index
 
         // Stress test reopen during add/delete
         [Test]
+        [Slow]
         public virtual void TestDuringAddDelete()
         {
             Directory dir1 = NewDirectory();
@@ -1423,6 +1425,7 @@ namespace Lucene.Net.Index
         ///  writer, we don't see merge starvation.
         /// </summary>
         [Test]
+        [Slow]
         public virtual void TestTooManySegments()
         {
             Directory dir = GetAssertNoDeletesDirectory(NewDirectory());

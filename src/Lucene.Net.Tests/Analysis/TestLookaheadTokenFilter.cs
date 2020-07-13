@@ -1,4 +1,3 @@
-using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 
@@ -24,7 +23,8 @@ namespace Lucene.Net.Analysis
     [TestFixture]
     public class TestLookaheadTokenFilter : BaseTokenStreamTestCase
     {
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestRandomStrings()
         {
             Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
@@ -55,7 +55,8 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestNeverCallingPeek()
         {
             Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>

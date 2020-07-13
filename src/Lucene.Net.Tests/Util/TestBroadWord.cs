@@ -1,5 +1,4 @@
 using J2N.Numerics;
-using Lucene.Net.Attributes;
 using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -106,7 +105,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestPerfSelectAllBitsBroad()
         {
             for (int j = 0; j < 100000; j++) // 1000000 for real perf test

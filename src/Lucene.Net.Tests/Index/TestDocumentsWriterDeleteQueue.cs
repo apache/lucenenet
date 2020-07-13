@@ -249,6 +249,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        [Slow]
         public virtual void TestStressDeleteQueue()
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();

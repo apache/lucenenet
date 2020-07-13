@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Lucene.Net.Analysis;
+﻿using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -10,8 +9,9 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using JCG = J2N.Collections.Generic;
+using System.Diagnostics;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Tests.Join
 {
@@ -31,7 +31,7 @@ namespace Lucene.Net.Tests.Join
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-     
+
     public class TestJoinUtil : LuceneTestCase
     {
         [Test]
@@ -386,6 +386,7 @@ namespace Lucene.Net.Tests.Join
         }
 
         [Test]
+        [Slow]
         public void TestSingleValueRandomJoin()
         {
             int maxIndexIter = TestUtil.NextInt32(Random, 6, 12);
@@ -394,6 +395,7 @@ namespace Lucene.Net.Tests.Join
         }
 
         [Test]
+        // [Slow] // LUCENENET specific - Not slow in .NET
         public void TestMultiValueRandomJoin()
             // this test really takes more time, that is why the number of iterations are smaller.
         {

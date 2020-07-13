@@ -1,6 +1,5 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Randomized.Generators;
@@ -495,7 +494,8 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestTonsOfUpdates()
         {
             // LUCENE-5248: make sure that when there are many updates, we don't use too much RAM

@@ -1,4 +1,3 @@
-using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -70,7 +69,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestMultipleWriterReader()
         {
             Counter bytesUsed = Util.Counter.NewCounter();

@@ -1,4 +1,3 @@
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using NUnit.Framework;
@@ -215,7 +214,8 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// blast some random strings through differently configured tokenizers </summary>
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestRandomRegexps()
         {
             int iters = AtLeast(30);

@@ -1,6 +1,5 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
-using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
@@ -64,6 +63,7 @@ namespace Lucene.Net.Util.Fst
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
     [SuppressCodecs("SimpleText", "Memory", "Direct")]
+    [Slow]
     [TestFixture]
     public class TestFSTs : LuceneTestCase
     {
@@ -267,7 +267,8 @@ namespace Lucene.Net.Util.Fst
         }
 
 
-        [Test, LongRunningTest] // Can take up to 15 minutes
+        [Test]
+        [Slow]
         public virtual void TestRandomWords()
         {
             // LUCENENET specific: NUnit will crash with an OOM if we do the full test
@@ -319,7 +320,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         [Test]
-        [Ignore("This test will take around 10-14 hours to finish. It was marked with a Nightly attribute in the original Java source, but we don't currently have a corresponding attribute")]
+        [Nightly]
         public virtual void TestBigSet()
         {
             TestRandomWords(TestUtil.NextInt32(Random, 50000, 60000), 1, false);

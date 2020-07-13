@@ -59,7 +59,9 @@ namespace Lucene.Net.Store
 
         // test is occasionally very slow, i dont know why
         // try this seed: 7D7E036AD12927F5:93333EF9E6DE44DE
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
+        //[Nightly] // This was marked Nightly in Java, but we are not seeing very bad performance, so leaving it in the normal flow
         public virtual void TestThreadSafety()
         {
             BaseDirectoryWrapper dir = NewDirectory();
@@ -426,7 +428,8 @@ namespace Lucene.Net.Store
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         [LuceneNetSpecific]
         public virtual void ConcurrentIndexAccessThrowsWithoutSynchronizedStaleFiles()
         {

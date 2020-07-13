@@ -1,5 +1,4 @@
 using J2N.IO;
-using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -1125,7 +1124,8 @@ namespace Lucene.Net.Util.Packed
         }
 
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestAppendingLongBuffer()
         {
 
@@ -1482,7 +1482,8 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Nightly]
         public virtual void TestBlockReaderOverflow()
         {
             long valueCount = TestUtil.NextInt64(Random, 1L + int.MaxValue, (long)int.MaxValue * 2);

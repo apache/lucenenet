@@ -1,5 +1,4 @@
 using J2N;
-using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
@@ -946,7 +945,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestCommandLineArgs()
         {
 

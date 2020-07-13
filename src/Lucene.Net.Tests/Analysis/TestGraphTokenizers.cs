@@ -1,6 +1,5 @@
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -331,7 +330,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestMockGraphTokenFilterRandom()
         {
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
@@ -356,7 +355,7 @@ namespace Lucene.Net.Analysis
         }
 
         // Two MockGraphTokenFilters
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestDoubleMockGraphTokenFilterRandom()
         {
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
@@ -389,7 +388,7 @@ namespace Lucene.Net.Analysis
         }
 
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestMockGraphTokenFilterBeforeHolesRandom()
         {
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
@@ -414,7 +413,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestMockGraphTokenFilterAfterHolesRandom()
         {
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)

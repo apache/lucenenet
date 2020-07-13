@@ -52,6 +52,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// </summary>
         // TODO: this only tests single-valued fields. we should also index multiple values per field!
         [Test]
+        [Slow]
         public void TestRanking()
         {
             // number of documents: we will check each one

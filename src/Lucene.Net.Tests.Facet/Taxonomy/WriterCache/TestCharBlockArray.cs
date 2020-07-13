@@ -1,5 +1,4 @@
-﻿using Lucene.Net.Attributes;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -26,7 +25,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     [TestFixture]
     public class TestCharBlockArray : FacetTestCase
     {
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestArray()
         {
             CharBlockArray array = new CharBlockArray();

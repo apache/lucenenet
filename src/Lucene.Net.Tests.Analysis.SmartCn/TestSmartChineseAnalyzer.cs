@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
-using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -331,7 +330,8 @@ namespace Lucene.Net.Analysis.Cn.Smart
         }
 
         /** blast some random large strings through the analyzer */
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public void TestRandomHugeStrings()
         {
             Random random = Random;

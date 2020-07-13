@@ -305,7 +305,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        [Test, LongRunningTest, LuceneNetSpecific, Ignore("For debugging only")]
+        [Test, Slow, LuceneNetSpecific, Ignore("For debugging only")]
         public virtual void TestMonotoneSequencesLonger()
         {
             for (int s = 2; s < 4422; s++)
@@ -334,7 +334,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        [Test, LongRunningTest, LuceneNetSpecific, Ignore("For debugging only")]
+        [Test, Slow, LuceneNetSpecific, Ignore("For debugging only")]
         public virtual void TestStrictMonotoneSequencesLonger()
         {
             for (int s = 2; s < 4422; s++)
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util.Packed
             TstEFS(values, expHighBits, expLowBits);
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestAdvanceToAndBackToMultiples()
         {
             for (int s = 2; s < 130; s++)

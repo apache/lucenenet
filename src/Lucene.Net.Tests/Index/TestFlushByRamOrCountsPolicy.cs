@@ -243,6 +243,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        [Slow] // LUCENENET: occasionally
         public virtual void TestStallControl()
         {
 

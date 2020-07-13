@@ -2,7 +2,6 @@
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -154,7 +153,7 @@ namespace Lucene.Net.Analysis.NGram
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestRandomStrings()
         {
             for (int i = 0; i < 10; i++)

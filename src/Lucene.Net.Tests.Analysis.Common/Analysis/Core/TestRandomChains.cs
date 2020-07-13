@@ -1,4 +1,5 @@
 ﻿
+using J2N.Runtime.CompilerServices;
 using J2N.Text;
 using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.Cjk;
@@ -16,7 +17,6 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Synonym;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Analysis.Wikipedia;
-using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Tartarus.Snowball;
 using Lucene.Net.TestFramework.Analysis;
@@ -32,9 +32,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
-using J2N.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -1122,7 +1121,8 @@ namespace Lucene.Net.Analysis.Core
             internal string toString;
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public void TestRandomChains_()
         {
             int numIterations = AtLeast(20);
@@ -1148,7 +1148,8 @@ namespace Lucene.Net.Analysis.Core
         }
 
         // we might regret this decision...
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public void TestRandomChainsWithLargeStrings()
         {
             int numIterations = AtLeast(20);

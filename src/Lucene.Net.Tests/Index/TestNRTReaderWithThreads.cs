@@ -1,8 +1,7 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
-using NUnit.Framework;
-using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
+using NUnit.Framework;
 using System;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -37,7 +36,8 @@ namespace Lucene.Net.Index
     {
         private readonly AtomicInt32 seq = new AtomicInt32(1);
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow] // (occasionally)
         public virtual void TestIndexing()
         {
             Directory mainDir = NewDirectory();

@@ -85,7 +85,8 @@ namespace Lucene.Net.Support
             }
         }
 
-        [Test, LongRunningTest, LuceneNetSpecific]
+        [Test, LuceneNetSpecific]
+        [Slow]
         public void B_TestOutOfMemory()
         {
             var wht = TestWeakDictionaryBehavior.CreateDictionary();
@@ -121,7 +122,8 @@ namespace Lucene.Net.Support
             return System.Diagnostics.Process.GetCurrentProcess().WorkingSet64 / 1024;
         }
 
-        [Test, LongRunningTest, LuceneNetSpecific]
+        [Test, LuceneNetSpecific]
+        [Slow]
         public void C_TestMemLeakage()
         {
 

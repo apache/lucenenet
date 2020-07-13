@@ -1,4 +1,3 @@
-using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
@@ -33,7 +32,8 @@ namespace Lucene.Net.Util.Fst
     public class TestBytesStore : LuceneTestCase
     {
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestRandom()
         {
 

@@ -1,5 +1,4 @@
 using J2N.Text;
-using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -78,7 +77,7 @@ namespace Lucene.Net.Util
 #pragma warning restore 612, 618
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestIntermediateMerges()
         {
             // Sort 20 mb worth of data with 1mb buffer, binary merging.
@@ -86,7 +85,7 @@ namespace Lucene.Net.Util
             Assert.IsTrue(info.MergeRounds > 10);
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestSmallRandom()
         {
             // Sort 20 mb worth of data with 1mb buffer.
@@ -94,7 +93,8 @@ namespace Lucene.Net.Util
             Assert.AreEqual(1, sortInfo.MergeRounds);
         }
 
-        [Test, LongRunningTest, Explicit] // LUCENENET specific - This was marked Nightly in Java, so we are marking explicit to keep this from running automatically
+        [Test]
+        [Nightly]
         public virtual void TestLargerRandom()
         {
             // Sort 100MB worth of data with 15mb buffer.

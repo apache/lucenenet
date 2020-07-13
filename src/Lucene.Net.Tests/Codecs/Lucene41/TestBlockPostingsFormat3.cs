@@ -1,6 +1,5 @@
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -74,7 +73,8 @@ namespace Lucene.Net.Codecs.Lucene41
         internal static readonly int MAXDOC = Lucene41PostingsFormat.BLOCK_SIZE * 20;
 
         // creates 8 fields with different options and does "duels" of fields against each other
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void Test()
         {
             Directory dir = NewDirectory();

@@ -225,6 +225,7 @@ namespace Lucene.Net.Index
         */
 
         [Test]
+        [Slow]
         public virtual void TestStressIndexAndSearching([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             Directory directory = NewDirectory();

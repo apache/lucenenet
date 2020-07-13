@@ -2,7 +2,6 @@ using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -1304,7 +1303,8 @@ namespace Lucene.Net.Index
 
         // Make sure buffered (pushed) deletes don't use up so
         // much RAM that it forces long tail of tiny segments:
-        [Test, LongRunningTest]
+        [Test]
+        [Nightly]
         public virtual void TestApplyDeletesOnFlush()
         {
             Directory dir = NewDirectory();

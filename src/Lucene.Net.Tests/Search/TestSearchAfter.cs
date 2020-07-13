@@ -1,4 +1,3 @@
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -235,7 +234,8 @@ namespace Lucene.Net.Search
             base.TearDown();
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestQueries()
         {
             // LUCENENET specific: NUnit will crash with an OOM if we do the full test

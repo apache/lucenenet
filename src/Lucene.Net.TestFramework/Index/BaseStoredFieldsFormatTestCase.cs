@@ -736,6 +736,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        [Nightly]
         public virtual void TestBigDocuments()
         {
             // "big" as "much bigger than the chunk size"

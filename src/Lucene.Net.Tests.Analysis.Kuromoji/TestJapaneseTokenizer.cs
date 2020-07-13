@@ -2,7 +2,6 @@
 using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Analysis.Ja.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -30,6 +29,7 @@ namespace Lucene.Net.Analysis.Ja
      * limitations under the License.
      */
 
+    [Slow]
     public class TestJapaneseTokenizer : BaseTokenStreamTestCase
     {
         public static UserDictionary ReadDict()
@@ -205,7 +205,8 @@ namespace Lucene.Net.Analysis.Ja
         }
 
         /** blast some random large strings through the analyzer */
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public void TestRandomHugeStrings()
         {
             Random random = Random;
@@ -705,8 +706,8 @@ namespace Lucene.Net.Analysis.Ja
             doTestBocchan(1);
         }
 
-        [Test]//@Nightly
-        [Ignore("This test takes a long time to run - do it manually")]
+        [Test]
+        [Nightly]
         public void TestBocchanBig()
         {
             doTestBocchan(100);

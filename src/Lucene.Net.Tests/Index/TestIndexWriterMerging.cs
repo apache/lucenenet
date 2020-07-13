@@ -1,5 +1,4 @@
 using J2N.Threading;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -236,7 +235,8 @@ namespace Lucene.Net.Index
 
         // LUCENE-325: test forceMergeDeletes without waiting, when
         // many adjacent merges are required
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestForceMergeDeletes3()
         {
             Directory dir = NewDirectory();
@@ -351,7 +351,8 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();

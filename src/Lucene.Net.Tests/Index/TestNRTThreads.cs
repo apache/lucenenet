@@ -171,6 +171,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        [Slow] // (occasionally)
         public virtual void TestNRTThreads_Mem()
         {
             RunTest("TestNRTThreads");

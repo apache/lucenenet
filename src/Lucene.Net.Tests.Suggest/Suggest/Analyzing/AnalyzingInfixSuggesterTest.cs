@@ -5,7 +5,6 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -639,7 +638,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public void TestRandomNRT()
         {
             DirectoryInfo tempDir = CreateTempDir("AnalyzingInfixSuggesterTest");

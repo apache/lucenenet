@@ -1,6 +1,5 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
-using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using NUnit.Framework;
@@ -8,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -31,7 +30,6 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-    using Directory = Lucene.Net.Store.Directory;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
     using Document = Lucene.Net.Documents.Document;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
@@ -258,7 +256,8 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestDirectory()
         {
             Store.Directory indexDir = NewDirectory();

@@ -204,7 +204,7 @@ namespace Lucene.Net.Util
 
         // large enough to flush obvious bugs, small enough to run in <.5 sec as part of a
         // larger testsuite.
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestSmall()
         {
             DoRandomSets(AtLeast(1200), AtLeast(1000), 1);

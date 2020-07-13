@@ -43,8 +43,8 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class Test2BPostings : LuceneTestCase
     {
-        [Ignore("Very slow. Enable manually by removing Ignore.")]
         [Test]
+        [Nightly]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostings"));

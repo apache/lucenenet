@@ -287,6 +287,7 @@ namespace Lucene.Net.Replicator
         // a client copies files from the server to the temporary space, or when the
         // handler copies them to the index directory.
         [Test]
+        [Slow]
         public void TestConsistencyOnExceptions()
         {
             // so the handler's index isn't empty

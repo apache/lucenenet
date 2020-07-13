@@ -1,7 +1,6 @@
 ﻿using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Attributes;
 using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Stats;
 using Lucene.Net.Benchmarks.ByTask.Tasks;
@@ -123,7 +122,7 @@ namespace Lucene.Net.Benchmarks.ByTask
 
         // disabled until we fix BG thread prio -- this test
         // causes build to hang
-        [Test, LongRunningTest]
+        [Test]
         public void TestBGSearchTaskThreads()
         {
             String[] algLines = {

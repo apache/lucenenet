@@ -375,6 +375,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        [Slow]
         public virtual void TestRandomExceptionsThreads([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             Directory dir = NewDirectory();
@@ -2152,9 +2153,6 @@ namespace Lucene.Net.Index
         // full), and then the exception stops (e.g., disk frees
         // up), so we successfully close IW or open an NRT
         // reader, we don't lose any deletes or updates:
-#if NETSTANDARD1_6
-        [LongRunningTest]
-#endif
         [Test]
         public virtual void TestNoLostDeletesOrUpdates()
         {
@@ -2542,7 +2540,7 @@ namespace Lucene.Net.Index
         }
 
 #if NETSTANDARD1_6
-        [LongRunningTest]
+        [Slow]
 #endif
         [Test]
         public virtual void TestRandomExceptionDuringRollback()

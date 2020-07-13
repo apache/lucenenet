@@ -22,6 +22,7 @@ namespace Lucene.Net.Analysis.Ja
      * limitations under the License.
      */
 
+    //[Slow] // LUCENENET specific - not slow in .NET
     public class TestExtendedMode : BaseTokenStreamTestCase
     {
         private readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>

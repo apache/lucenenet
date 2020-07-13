@@ -1,4 +1,3 @@
-using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -64,7 +63,8 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Test huge RAMFile with more than Integer.MAX_VALUE bytes. (LUCENE-957) </summary>
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestHugeFile()
         {
             var f = new DenseRAMFile();

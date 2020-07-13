@@ -196,6 +196,7 @@ namespace Lucene.Net.Index
         */
 
         [Test]
+        [Slow]
         public virtual void TestAtomicUpdates()
         {
             Directory directory;

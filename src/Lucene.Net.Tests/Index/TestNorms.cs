@@ -44,6 +44,7 @@ namespace Lucene.Net.Index
     /// separate norms, addDocument, addIndexes, forceMerge.
     /// </summary>
     [SuppressCodecs("Memory", "Direct", "SimpleText")]
+    //[Slow] // LUCENENET specific - not slow in .NET
     [TestFixture]
     public class TestNorms : LuceneTestCase
     {

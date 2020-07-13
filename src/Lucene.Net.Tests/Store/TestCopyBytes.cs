@@ -1,5 +1,4 @@
 using J2N.Threading;
-using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -36,7 +35,7 @@ namespace Lucene.Net.Store
             return unchecked((byte)((idx % 256) * (1 + (idx / 256))));
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestCopyBytesMem()
         {
             int num = AtLeast(10);

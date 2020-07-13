@@ -1,5 +1,4 @@
 using J2N.Text;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -186,7 +185,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-510
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestRandomUnicodeStrings()
         {
             char[] buffer = new char[20];
@@ -223,7 +222,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-510
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestAllUnicodeChars()
         {
             BytesRef utf8 = new BytesRef(10);

@@ -32,10 +32,10 @@ namespace Lucene.Net.Codecs.Pulsing
     /// <summary>
     /// Pulses 10k terms/docs, 
     /// originally designed to find JRE bugs (https://issues.apache.org/jira/browse/LUCENE-3335)
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-    // LUCENENET TODO: This was marked with the Nightly attribute in Java Lucene
+    [Nightly]
     public class Test10KPulsings : LuceneTestCase
     {
         [Test]

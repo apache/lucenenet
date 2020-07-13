@@ -51,6 +51,7 @@ namespace Lucene.Net.Index
     
     {
         [Test]
+        [Slow]
         public virtual void Test()
         {
             IList<string> postingsList = new List<string>();

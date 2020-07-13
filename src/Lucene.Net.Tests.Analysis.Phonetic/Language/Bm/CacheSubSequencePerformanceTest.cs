@@ -1,7 +1,6 @@
 ﻿using J2N.Text;
-using Lucene.Net.Attributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
-using System;
 using System.Diagnostics;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -25,9 +24,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
      * limitations under the License.
      */
 
-    public class CacheSubSequencePerformanceTest
+    public class CacheSubSequencePerformanceTest : LuceneTestCase
     {
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public void Test()
         {
             int times = 10000000;

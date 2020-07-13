@@ -50,6 +50,7 @@ namespace Lucene.Net.Search
         private SearcherLifetimeManager.IPruner pruner;
 
         [Test]
+        [Slow]
         public virtual void TestSearcherManager_Mem()
         {
             pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt32(Random, 1, 20) : 1);

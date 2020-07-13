@@ -1,6 +1,5 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -71,7 +70,7 @@ namespace Lucene.Net.Index
             committedModel.PutAll(model);
         }
 
-        [Test, LongRunningTest]
+        [Test]
         public virtual void Test()
         {
             // update variables

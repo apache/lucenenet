@@ -1,6 +1,5 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
-using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
@@ -29,7 +28,6 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
     using Directory = Lucene.Net.Store.Directory;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Document = Documents.Document;
@@ -165,7 +163,8 @@ namespace Lucene.Net.Index
             return ret;
         }
 
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestTermDocPerf()
         {
             // performance test for 10% of documents containing a term

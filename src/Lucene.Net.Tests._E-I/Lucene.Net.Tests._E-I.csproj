@@ -31,6 +31,7 @@
   <ItemGroup>
     <Compile Include="..\Lucene.Net.Tests\Index\BinaryTokenStream.cs" />
     <Compile Include="..\Lucene.Net.Tests\Index\Test2*.cs" LinkBase="Index" />
+    <Compile Include="..\Lucene.Net.Tests\Index\Test4*.cs" LinkBase="Index" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestA*.cs" LinkBase="Index" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestB*.cs" LinkBase="Index" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestC*.cs" LinkBase="Index" />

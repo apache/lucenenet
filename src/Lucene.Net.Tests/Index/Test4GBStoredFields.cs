@@ -1,9 +1,9 @@
-using System;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Store;
 using NUnit.Framework;
+using System;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -43,8 +43,8 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class Test4GBStoredFields : LuceneTestCase
     {
-        [Ignore("//LUCENENET NOTE: This was marked Nightly in Java")]
         [Test]
+        [Nightly]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new MMapDirectory(CreateTempDir("4GBStoredFields")));

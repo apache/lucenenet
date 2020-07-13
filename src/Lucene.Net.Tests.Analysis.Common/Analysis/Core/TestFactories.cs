@@ -1,5 +1,4 @@
 ﻿using Lucene.Net.Analysis.Util;
-using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -38,7 +37,8 @@ namespace Lucene.Net.Analysis.Core
     [TestFixture]
     public class TestFactories : BaseTokenStreamTestCase
     {
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void Test()
         {
             foreach (string tokenizer in TokenizerFactory.AvailableTokenizers)

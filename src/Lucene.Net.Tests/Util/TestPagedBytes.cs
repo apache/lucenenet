@@ -1,4 +1,3 @@
-using Lucene.Net.Attributes;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -38,7 +37,7 @@ namespace Lucene.Net.Util
         // Writes random byte/s to "normal" file in dir, then
         // copies into PagedBytes and verifies with
         // PagedBytes.Reader:
-        [Test, LongRunningTest]
+        [Test]
         public virtual void TestDataInputOutput()
         {
             Random random = Random;
@@ -115,7 +114,8 @@ namespace Lucene.Net.Util
         // Writes random byte/s into PagedBytes via
         // .getDataOutput(), then verifies with
         // PagedBytes.getDataInput():
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestDataInputOutput2()
         {
             Random random = Random;
@@ -180,7 +180,8 @@ namespace Lucene.Net.Util
         }
 
         [Ignore("// memory hole")]
-        [Test, LongRunningTest]
+        [Test]
+        [Slow]
         public virtual void TestOverflow()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));

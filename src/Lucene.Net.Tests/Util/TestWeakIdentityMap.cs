@@ -35,7 +35,7 @@
 //    public class TestWeakIdentityMap : LuceneTestCase
 //    {
 
-//        [Test, LongRunningTest]
+//        [Test, Slow]
 //        public virtual void TestSimpleHashMap()
 //        {
 //            WeakIdentityMap<string, string> map = WeakIdentityMap<string, string>.NewHashMap(Random.NextBoolean());
@@ -200,7 +200,7 @@
 //            Assert.IsTrue(map.IsEmpty);
 //        }
 
-//        [Test, LongRunningTest]
+//        [Test, Slow]
 //        public virtual void TestConcurrentHashMap()
 //        {
 //            // don't make threadCount and keyCount random, otherwise easily OOMs or fails otherwise:
