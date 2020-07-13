@@ -27,7 +27,6 @@ parameters:
   vsTestPlatform: 'x64' # Target platform architecture used for test execution. Valid values are x86, x64, and ARM.
   testBinaryFilesPattern: '\.*\.Tests\.?[^\\/]*?\.?[^\\/]*?.dll$' # The regex pattern (within $(System.DefaultWorkingDirectory)/**/<TargetFramework>/) where to look for test .dll files, so they can be distinguished from other .dll file types.
   testResultsFileName: 'TestResults.trx' # The name of the file (not path) of the test results. Default 'TestResults.trx'.
-  publishedArtifactZipFileName: 'published.zip' # The name of the zip file (within the Azure DevOps build artifact binaryArtifactName) where the published test binaries can be extracted from. Default 'published.zip'.
   maximumParallelJobs: 8
   maximumAllowedFailures: 0
   where: '' # A test filter expression, as defined by dotnet vstest
@@ -49,7 +48,6 @@ steps:
     EnsureNotNullOrEmpty('${{ parameters.vsTestPlatform }}', 'vsTestPlatform')
     EnsureNotNullOrEmpty('${{ parameters.testBinaryFilesPattern }}', 'testBinaryFilesPattern')
     EnsureNotNullOrEmpty('${{ parameters.testResultsFileName }}', 'testResultsFileName')
-    EnsureNotNullOrEmpty('${{ parameters.publishedArtifactZipFileName }}', 'publishedArtifactZipFileName')
     EnsureNotNullOrEmpty('${{ parameters.maximumParallelJobs }}', 'maximumParallelJobs')
     EnsureNotNullOrEmpty('${{ parameters.maximumAllowedFailures }}', 'maximumAllowedFailures')
   displayName: 'Validate Template Parameters'

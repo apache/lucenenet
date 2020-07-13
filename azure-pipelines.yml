@@ -69,8 +69,6 @@ variables:
   value: '$(Build.ArtifactStagingDirectory)/$(BinaryArtifactName)'
 - name: NuGetArtifactDirectory # NuGet binaries directory
   value: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
-- name: PublishedArtifactZipFileName
-  value: 'published.zip'
 
 stages:
 - stage: Build_Stage
@@ -273,7 +271,6 @@ stages:
         osName: $(osName)
         framework: 'netcoreapp3.1'
         testResultsArtifactName: '$(TestResultsArtifactName)'
-        publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
 
@@ -305,7 +302,6 @@ stages:
         osName: $(osName)
         framework: 'netcoreapp2.1'
         testResultsArtifactName: '$(TestResultsArtifactName)'
-        publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
 
@@ -320,7 +316,6 @@ stages:
         osName: 'Windows'
         framework: 'net48'
         testResultsArtifactName: '$(TestResultsArtifactName)'
-        publishedArtifactZipFileName: '$(PublishedArtifactZipFileName)'
         maximumParallelJobs: 7
         maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
 
