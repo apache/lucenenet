@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
 
                 do
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": TEST: IndexerThread: cycle");
                     }
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
                     }
                     catch (TestPoint1Exception re)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": EXC: ");
                             Console.WriteLine(re.StackTrace);
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
             {
                 if (outerInstance.doFail.Value != null && !name.Equals("startDoFlush", StringComparison.Ordinal) && r.Next(40) == 17)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": NOW FAIL: " + name);
                         Console.WriteLine((new Exception()).StackTrace);
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRandomExceptions([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: start testRandomExceptions");
             }
@@ -333,7 +333,7 @@ namespace Lucene.Net.Index
 
             IndexWriter writer = RandomIndexWriter.MockIndexWriter(dir, config , new TestPoint1(this));
             //writer.SetMaxBufferedDocs(10);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: initial commit");
             }
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("thread " + thread.Name + ": hit unexpected failure");
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: commit after thread start");
             }
@@ -771,7 +771,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 2; i++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: cycle i=" + i);
                 }
@@ -796,7 +796,7 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException ioe)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: hit expected exception");
                         Console.WriteLine(ioe.StackTrace);
@@ -812,7 +812,7 @@ namespace Lucene.Net.Index
                 }
                 writer.Dispose();
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: open reader");
                 }
@@ -1034,7 +1034,7 @@ namespace Lucene.Net.Index
                     if (m_doFail && foundMethod)
                     {
                         didFail = true;
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: now throw exc:");
                             Console.WriteLine(Environment.StackTrace);
@@ -1192,10 +1192,10 @@ namespace Lucene.Net.Index
             }
             w.Dispose();
 
-            int iter = TEST_NIGHTLY ? 200 : 10;
+            int iter = TestNightly ? 200 : 10;
             for (int i = 0; i < iter; i++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter " + i);
                 }
@@ -2166,10 +2166,10 @@ namespace Lucene.Net.Index
 
             RandomIndexWriter w = null;
 
-            for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 10 * RandomMultiplier; iter++)
             {
                 int numDocs = AtLeast(100);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter + " numDocs=" + numDocs + ".DocBase=" + docBase + " delCount=" + deleteCount);
                 }
@@ -2228,7 +2228,7 @@ namespace Lucene.Net.Index
                             if (fieldUpdate)
                             {
                                 long value = iter;
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("  update id=" + docBase + i + " to value " + value);
                                 }
@@ -2254,7 +2254,7 @@ namespace Lucene.Net.Index
                             // sometimes do both deletes and updates
                             if (!fieldUpdate || Random.NextBoolean())
                             {
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("  delete id=" + (docBase + i).ToString());
                                 }
@@ -2275,7 +2275,7 @@ namespace Lucene.Net.Index
                     // Sometimes close, so the disk full happens on close:
                     if (Random.NextBoolean())
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  now close writer");
                         }
@@ -2292,7 +2292,7 @@ namespace Lucene.Net.Index
                     if (ioe is FakeIOException || (ioe.InnerException != null && ioe.InnerException is FakeIOException))
                     {
                         // expected
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: w.Dispose() hit expected IOE");
                         }
@@ -2308,7 +2308,7 @@ namespace Lucene.Net.Index
 
                 if (doClose && w != null)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  now 2nd close writer");
                     }
@@ -2320,7 +2320,7 @@ namespace Lucene.Net.Index
                 {
                     // Open non-NRT reader, to make sure the "on
                     // disk" bits are good:
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: verify against non-NRT reader");
                     }
@@ -2332,7 +2332,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: verify against NRT reader");
                     }
@@ -2366,7 +2366,7 @@ namespace Lucene.Net.Index
                 // Sometimes re-use RIW, other times open new one:
                 if (w != null && Random.NextBoolean())
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: close writer");
                     }
@@ -2419,7 +2419,7 @@ namespace Lucene.Net.Index
                     // Only sometimes throw the exc, so we get
                     // it sometimes on creating the file, on
                     // flushing buffer, on closing the file:
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now fail; thread=" + Thread.CurrentThread.Name + " exc:");
                         Console.WriteLine((new Exception()).StackTrace);
@@ -2546,7 +2546,7 @@ namespace Lucene.Net.Index
         public virtual void TestRandomExceptionDuringRollback()
         {
             // fail in random places on i/o
-            int numIters = RANDOM_MULTIPLIER * 75;
+            int numIters = RandomMultiplier * 75;
             for (int iter = 0; iter < numIters; iter++)
             {
                 MockDirectoryWrapper dir = NewMockDirectory();
@@ -2617,7 +2617,7 @@ namespace Lucene.Net.Index
 
                 if (maybeFail && Random.Next(10) == 0)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now fail; thread=" + Thread.CurrentThread.Name + " exc:");
                         Console.WriteLine((new Exception()).StackTrace);

@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Snowball
         /// </summary>
         private void AssertCorrectOutput(string snowballLanguage, string dataDirectory)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("checking snowball language: " + snowballLanguage);
             }

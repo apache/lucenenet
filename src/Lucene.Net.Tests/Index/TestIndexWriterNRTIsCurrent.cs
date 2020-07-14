@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("writer stopped - forced by reader: " + holder.stop);
                 }
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
                         try
                         {
                             bool current = reader.IsCurrent();
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("Thread: " + Thread.CurrentThread + " Reader: " + reader + " isCurrent:" + current);
                             }
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception e)
                         {
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("FAILED Thread: " + Thread.CurrentThread + " Reader: " + reader + " isCurrent: false");
                             }

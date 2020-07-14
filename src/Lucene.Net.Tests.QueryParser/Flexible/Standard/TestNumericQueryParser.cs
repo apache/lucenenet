@@ -250,7 +250,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             foreach (NumberType numberType in Enum.GetValues(typeof(NumberType)))
             {
                 setFieldValues(numberType, numericFieldMap);
-                if (VERBOSE) Console.WriteLine("Indexing document: " + doc);
+                if (Verbose) Console.WriteLine("Indexing document: " + doc);
                 writer.AddDocument(doc);
             }
 
@@ -574,16 +574,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         private void TestQuery(String queryStr, int expectedDocCount)
         {
-            if (VERBOSE) Console.WriteLine("Parsing: " + queryStr);
+            if (Verbose) Console.WriteLine("Parsing: " + queryStr);
 
             Query query = qp.Parse(queryStr, FIELD_NAME);
-            if (VERBOSE) Console.WriteLine("Querying: " + query);
+            if (Verbose) Console.WriteLine("Querying: " + query);
             TopDocs topDocs = searcher.Search(query, 1000);
 
             String msg = "Query <" + queryStr + "> retrieved " + topDocs.TotalHits
                 + " document(s), " + expectedDocCount + " document(s) expected.";
 
-            if (VERBOSE) Console.WriteLine(msg);
+            if (Verbose) Console.WriteLine(msg);
 
 
             assertEquals(msg, expectedDocCount, topDocs.TotalHits);

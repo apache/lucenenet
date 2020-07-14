@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
         {
             for (int iter = 0; iter < 3; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
                 Field idField = NewStringField("id", "", Field.Store.YES);
                 doc.Add(idField);
                 int num = AtLeast(4097);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: numDocs=" + num);
                 }
@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
                     }
                     idField.SetStringValue("" + id);
                     w.AddDocument(doc);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: doc upto " + id);
                     }
@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
                 DocsEnum de = null;
                 for (int iter2 = 0; iter2 < 10; iter2++)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: iter=" + iter + " iter2=" + iter2);
                     }
@@ -122,14 +122,14 @@ namespace Lucene.Net.Index
 
         private void TestOne(DocsEnum docs, IList<int> expected)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("test");
             }
             int upto = -1;
             while (upto < expected.Count)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  cycle upto=" + upto + " of " + expected.Count);
                 }
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
                 if (Random.Next(4) == 1 || upto == expected.Count - 1)
                 {
                     // test nextDoc()
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("    do nextDoc");
                     }
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
                 {
                     // test advance()
                     int inc = TestUtil.NextInt32(Random, 1, expected.Count - 1 - upto);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("    do advance inc=" + inc);
                     }
@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
                 }
                 if (upto == expected.Count)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  expect docID=" + DocIdSetIterator.NO_MORE_DOCS + " actual=" + docID);
                     }
@@ -165,7 +165,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  expect docID=" + expected[upto] + " actual=" + docID);
                     }

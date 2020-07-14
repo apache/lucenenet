@@ -61,15 +61,15 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFlushByRam()
         {
-            double ramBuffer = (TEST_NIGHTLY ? 1 : 10) + AtLeast(2) + Random.NextDouble();
-            RunFlushByRam(1 + Random.Next(TEST_NIGHTLY ? 5 : 1), ramBuffer, false);
+            double ramBuffer = (TestNightly ? 1 : 10) + AtLeast(2) + Random.NextDouble();
+            RunFlushByRam(1 + Random.Next(TestNightly ? 5 : 1), ramBuffer, false);
         }
 
         [Test]
         public virtual void TestFlushByRamLargeBuffer()
         {
             // with a 256 mb ram buffer we should never stall
-            RunFlushByRam(1 + Random.Next(TEST_NIGHTLY ? 5 : 1), 256d, true);
+            RunFlushByRam(1 + Random.Next(TestNightly ? 5 : 1), 256d, true);
         }
 
         protected internal virtual void RunFlushByRam(int numThreads, double maxRamMB, bool ensureNotStalled)

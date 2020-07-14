@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Fr
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, analyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, analyzer, 1000 * RandomMultiplier);
         }
 
         [Test]

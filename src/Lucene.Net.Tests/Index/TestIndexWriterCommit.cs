@@ -305,7 +305,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(reader.Leaves.Count > 1, "Reader incorrectly sees one segment");
             reader.Dispose();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: do real full merge");
             }
@@ -313,7 +313,7 @@ namespace Lucene.Net.Index
             writer.ForceMerge(1);
             writer.Dispose();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: writer closed");
             }

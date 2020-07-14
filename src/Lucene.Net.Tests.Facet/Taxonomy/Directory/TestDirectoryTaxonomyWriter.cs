@@ -273,7 +273,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // this is the fastest, yet most memory consuming
                 cache = new Cl2oTaxonomyWriterCache(1024, 0.15f, 3);
             }
-            else if (TEST_NIGHTLY && d > 0.98)
+            else if (TestNightly && d > 0.98)
             {
                 // this is the slowest, but tests the writer concurrency when no caching is done.
                 // only pick it during NIGHTLY tests, and even then, with very low chances.
@@ -284,7 +284,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // this is slower than CL2O, but less memory consuming, and exercises finding categories on disk too.
                 cache = new LruTaxonomyWriterCache(ncats / 10);
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: use cache=" + cache);
             }

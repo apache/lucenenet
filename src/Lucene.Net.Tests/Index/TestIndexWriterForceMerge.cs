@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 
             Document doc = new Document();
             doc.Add(NewStringField("content", "aaa", Field.Store.NO));
-            int incrMin = TEST_NIGHTLY ? 15 : 40;
+            int incrMin = TestNightly ? 15 : 40;
             for (int numDocs = 10; numDocs < 500; numDocs += TestUtil.NextInt32(Random, incrMin, 5 * incrMin))
             {
                 LogDocMergePolicy ldmp = new LogDocMergePolicy();
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
         {
             MockDirectoryWrapper dir = NewMockDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy()));
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: config1=" + writer.Config);
             }
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
             AddDocWithIndex(writer, 500);
             writer.Dispose();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: start disk usage");
             }
@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < files.Length; i++)
             {
                 startDiskUsage += dir.FileLength(files[i]);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(files[i] + ": " + dir.FileLength(files[i]));
                 }

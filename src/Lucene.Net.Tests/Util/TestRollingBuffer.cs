@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
         {
             RollingBuffer<Position> buffer = new RollingBufferAnonymousInnerClassHelper(this);
 
-            for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 100 * RandomMultiplier; iter++)
             {
                 int freeBeforePos = 0;
                 int maxPos = AtLeast(10000);
@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
                         int inc = random.Next(limit);
                         int pos = freeBeforePos + inc;
                         posUpto = Math.Max(posUpto, pos);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  check pos=" + pos + " posUpto=" + posUpto);
                         }
@@ -76,7 +76,7 @@ namespace Lucene.Net.Util
                         {
                             freeBeforePos += random.Next(posUpto - freeBeforePos);
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  freeBeforePos=" + freeBeforePos);
                         }

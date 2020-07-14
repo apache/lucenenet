@@ -213,7 +213,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
 
-            int numRounds = RANDOM_MULTIPLIER * 10000;
+            int numRounds = RandomMultiplier * 10000;
             CheckRandomData(Random, analyzer, numRounds);
         }
 
@@ -348,7 +348,7 @@ namespace Lucene.Net.Analysis.CharFilters
             for (int iter = 0; iter < numIterations; iter++)
             {
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST iter=" + iter);
                 }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 IDictionary<string, string> map = new Dictionary<string, string>();
                 NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
                 int numMappings = AtLeast(5);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  mappings:");
                 }
@@ -369,7 +369,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         string value = TestUtil.RandomSimpleString(random);
                         map[key] = value;
                         builder.Add(key, value);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("    " + key + " -> " + value);
                         }
@@ -378,7 +378,7 @@ namespace Lucene.Net.Analysis.CharFilters
 
                 NormalizeCharMap charMap = builder.Build();
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  test random documents...");
                 }
@@ -387,7 +387,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 {
                     string content = TestUtil.RandomSimpleStringRange(random, 'a', endLetter, AtLeast(1000));
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  content=" + content);
                     }
@@ -440,7 +440,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         if (matchLen != -1)
                         {
                             // We found a match here!
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("    match=" + content.Substring(charIdx, matchLen) + " @ off=" + charIdx + " repl=" + matchRepl);
                             }
@@ -488,7 +488,7 @@ namespace Lucene.Net.Analysis.CharFilters
                     }
 
                     string expected = output.ToString();
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.Write("    expected:");
                         for (int charIdx2 = 0; charIdx2 < expected.Length; charIdx2++)

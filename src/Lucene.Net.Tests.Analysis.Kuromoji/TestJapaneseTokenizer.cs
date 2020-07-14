@@ -200,8 +200,8 @@ namespace Lucene.Net.Analysis.Ja
         [Test]
         public void TestRandomStrings()
         {
-            CheckRandomData(Random, analyzer, 1000 * RANDOM_MULTIPLIER);
-            CheckRandomData(Random, analyzerNoPunct, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, analyzer, 1000 * RandomMultiplier);
+            CheckRandomData(Random, analyzerNoPunct, 1000 * RandomMultiplier);
         }
 
         /** blast some random large strings through the analyzer */
@@ -210,8 +210,8 @@ namespace Lucene.Net.Analysis.Ja
         public void TestRandomHugeStrings()
         {
             Random random = Random;
-            CheckRandomData(random, analyzer, 100 * RANDOM_MULTIPLIER, 8192);
-            CheckRandomData(random, analyzerNoPunct, 100 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(random, analyzer, 100 * RandomMultiplier, 8192);
+            CheckRandomData(random, analyzerNoPunct, 100 * RandomMultiplier, 8192);
         }
 
         [Test]
@@ -226,7 +226,7 @@ namespace Lucene.Net.Analysis.Ja
                                 TokenStream graph = new MockGraphTokenFilter(Random, tokenizer);
                                 return new TokenStreamComponents(tokenizer, graph);
                             }),
-                    100 * RANDOM_MULTIPLIER, 8192);
+                    100 * RandomMultiplier, 8192);
         }
 
         [Test]
@@ -266,7 +266,7 @@ namespace Lucene.Net.Analysis.Ja
             int numIterations = AtLeast(10000);
             for (int i = 0; i < numIterations; i++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + i);
                 }
@@ -768,7 +768,7 @@ namespace Lucene.Net.Analysis.Ja
             String line = reader.ReadLine();
             reader.Dispose();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Test for Bocchan without pre-splitting sentences");
             }
@@ -800,7 +800,7 @@ namespace Lucene.Net.Analysis.Ja
                 }
             }
             String[] sentences = Regex.Split(line, "、|。").TrimEnd();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Total time : " + (Environment.TickCount - totalStart));
                 Console.WriteLine("Test for Bocchan with pre-splitting sentences (" + sentences.Length + " sentences)");
@@ -823,7 +823,7 @@ namespace Lucene.Net.Analysis.Ja
                     }
                 }
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Total time : " + (Environment.TickCount - totalStart));
             }

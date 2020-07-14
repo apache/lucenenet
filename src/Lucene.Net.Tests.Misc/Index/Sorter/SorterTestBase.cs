@@ -184,7 +184,7 @@ namespace Lucene.Net.Index.Sorter
             // shuffle them for indexing
             ids.Shuffle(Random);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Shuffled IDs for indexing: " + Arrays.ToString(ids.ToArray()));
             }
@@ -206,7 +206,7 @@ namespace Lucene.Net.Index.Sorter
                 {
                     if (random.NextDouble() < 0.2)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("delete doc_id " + id);
                         }

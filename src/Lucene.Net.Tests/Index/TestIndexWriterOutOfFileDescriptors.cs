@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
             for (int iter = 0; iter < iters; iter++)
             {
                 IndexWriter w = null;
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
                     analyzer.MaxTokenLength = TestUtil.NextInt32(Random, 1, IndexWriter.MAX_TERM_LENGTH);
                     IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         // Do this ourselves instead of relying on LTC so
                         // we see incrementing messageID:
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
                     {
                         if (Random.NextBoolean())
                         {
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("TEST: addIndexes IR[]");
                             }
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("TEST: addIndexes Directory[]");
                             }
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: addDocument");
                         }
@@ -135,14 +135,14 @@ namespace Lucene.Net.Index
                     dir.RandomIOExceptionRateOnOpen = rate;
 
                     any = true;
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: iter=" + iter + ": success");
                     }
                 }
                 catch (IOException ioe)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: iter=" + iter + ": exception");
                         Console.WriteLine(ioe.ToString());

@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.PerField
         public virtual void TestChangeCodecAndMerge()
         {
             Directory dir = NewDirectory();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: make new index");
             }
@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.PerField
             AddDocs(writer, 10);
             writer.Commit();
             AssertQuery(new Term("content", "aaa"), dir, 10);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: addDocs3");
             }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.PerField
             iwconf.SetCodec(new MockCodec2()); // uses standard for field content
             writer = NewWriter(dir, iwconf);
             // swap in new codec for currently written segments
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: add docs w/ Standard codec for content field");
             }
@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs.PerField
             AssertQuery(new Term("content", "ccc"), dir, 10); ////
             AssertQuery(new Term("content", "aaa"), dir, 10);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: add more docs w/ new codec");
             }
@@ -173,7 +173,7 @@ namespace Lucene.Net.Codecs.PerField
             AssertQuery(new Term("content", "aaa"), dir, 10);
             Assert.AreEqual(40, writer.MaxDoc);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: now optimize");
             }
@@ -189,7 +189,7 @@ namespace Lucene.Net.Codecs.PerField
 
         public virtual void AssertQuery(Term t, Directory dir, int num)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: assertQuery " + t);
             }

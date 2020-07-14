@@ -347,7 +347,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             AnalyzingSuggester suggester = new AnalyzingSuggester(analyzer);
             suggester.Build(new InputArrayIterator(keys));
             IList<Lookup.LookupResult> results = suggester.DoLookup("wifi network", false, 10);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Results: " + results);
             }
@@ -799,7 +799,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int numStopChars = Random.nextInt(10);
             bool preserveHoles = Random.nextBoolean();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: " + numQueries + " words; preserveSep=" + preserveSep + " numStopChars=" + numStopChars + " preserveHoles=" + preserveHoles);
             }
@@ -889,7 +889,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 slowCompletor.Add(new TermFreq2(key, analyzedKey, weight, payload));
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 // Don't just sort original list, to avoid VERBOSE
                 // altering the test:
@@ -917,7 +917,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             foreach (string prefix in allPrefixes)
             {
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: prefix=" + prefix);
                 }
@@ -982,7 +982,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     analyzedKey += SEP;
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  analyzed: " + analyzedKey);
                 }
@@ -1009,7 +1009,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     matches = matches.GetRange(0, topN);
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  expected:");
                     foreach (TermFreq2 lr in matches)

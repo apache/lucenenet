@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < 10; i++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + i);
                 }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
                     }
                     catch (IOException ioe)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine(ioe.StackTrace);
                         }
@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
             doc.Add(idField);
             for (int i = 0; i < 10; i++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: cycle");
                 }
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
                 int delID = i;
                 while (delID < 100 * (1 + i))
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: del " + delID);
                     }
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
 
             for (int iter = 0; iter < 7; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
@@ -292,7 +292,7 @@ namespace Lucene.Net.Index
             AtomicInt32 runningMergeCount = new AtomicInt32(0);
             AtomicBoolean failed = new AtomicBoolean();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: maxMergeCount=" + maxMergeCount + " maxMergeThreads=" + maxMergeThreads);
             }

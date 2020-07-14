@@ -140,61 +140,61 @@ namespace Lucene.Net.Analysis.Icu
         [Test]
         public void TestNFC()
         {
-            DoTestMode(Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Compose), 20, RANDOM_MULTIPLIER * 1000, 128);
+            DoTestMode(Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Compose), 20, RandomMultiplier * 1000, 128);
         }
 
         [Test]
         public void TestNFCHuge()
         {
-            DoTestMode(Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Compose), 256, RANDOM_MULTIPLIER * 500, 16);
+            DoTestMode(Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Compose), 256, RandomMultiplier * 500, 16);
         }
 
         [Test]
         public void TestNFD()
         {
-            DoTestMode(Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Decompose), 20, RANDOM_MULTIPLIER * 1000, 128);
+            DoTestMode(Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Decompose), 20, RandomMultiplier * 1000, 128);
         }
 
         [Test]
         public void TestNFDHuge()
         {
-            DoTestMode(Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Decompose), 256, RANDOM_MULTIPLIER * 500, 16);
+            DoTestMode(Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Decompose), 256, RandomMultiplier * 500, 16);
         }
 
         [Test]
         public void TestNFKC()
         {
-            DoTestMode(Normalizer2.GetInstance(null, "nfkc", Normalizer2Mode.Compose), 20, RANDOM_MULTIPLIER * 1000, 128);
+            DoTestMode(Normalizer2.GetInstance(null, "nfkc", Normalizer2Mode.Compose), 20, RandomMultiplier * 1000, 128);
         }
 
         [Test]
         public void TestNFKCHuge()
         {
-            DoTestMode(Normalizer2.GetInstance(null, "nfkc", Normalizer2Mode.Compose), 256, RANDOM_MULTIPLIER * 500, 16);
+            DoTestMode(Normalizer2.GetInstance(null, "nfkc", Normalizer2Mode.Compose), 256, RandomMultiplier * 500, 16);
         }
 
         [Test]
         public void TestNFKD()
         {
-            DoTestMode(Normalizer2.GetInstance(null, "nfkc", Normalizer2Mode.Decompose), 20, RANDOM_MULTIPLIER * 1000, 128);
+            DoTestMode(Normalizer2.GetInstance(null, "nfkc", Normalizer2Mode.Decompose), 20, RandomMultiplier * 1000, 128);
         }
 
         [Test]
         public void TestNFKDHuge()
         {
-            DoTestMode(Normalizer2.GetInstance(null, "nfkc", Normalizer2Mode.Decompose), 256, RANDOM_MULTIPLIER * 500, 16);
+            DoTestMode(Normalizer2.GetInstance(null, "nfkc", Normalizer2Mode.Decompose), 256, RandomMultiplier * 500, 16);
         }
 
         [Test]
         public void TestNFKC_CF()
         {
-            DoTestMode(Normalizer2.GetInstance(null, "nfkc_cf", Normalizer2Mode.Compose), 20, RANDOM_MULTIPLIER * 1000, 128);
+            DoTestMode(Normalizer2.GetInstance(null, "nfkc_cf", Normalizer2Mode.Compose), 20, RandomMultiplier * 1000, 128);
         }
 
         [Test]
         public void TestNFKC_CFHuge()
         {
-            DoTestMode(Normalizer2.GetInstance(null, "nfkc_cf", Normalizer2Mode.Compose), 256, RANDOM_MULTIPLIER * 500, 16);
+            DoTestMode(Normalizer2.GetInstance(null, "nfkc_cf", Normalizer2Mode.Compose), 256, RandomMultiplier * 500, 16);
         }
 
         //@AwaitsFix(bugUrl = "https://issues.apache.org/jira/browse/LUCENE-5595")
@@ -211,9 +211,9 @@ namespace Lucene.Net.Analysis.Icu
                 return new ICUNormalizer2CharFilter(reader, Normalizer2.GetInstance(null, "nfkc_cf", Normalizer2Mode.Compose));
             }))
             {
-                CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
+                CheckRandomData(Random, a, 1000 * RandomMultiplier);
                 // huge strings
-                CheckRandomData(Random, a, 100 * RANDOM_MULTIPLIER, 8192);
+                CheckRandomData(Random, a, 100 * RandomMultiplier, 8192);
             }
 
             // nfkd
@@ -225,9 +225,9 @@ namespace Lucene.Net.Analysis.Icu
                 return new ICUNormalizer2CharFilter(reader, Normalizer2.GetInstance(null, "nfkc", Normalizer2Mode.Decompose));
             }))
             {
-                CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
+                CheckRandomData(Random, a, 1000 * RandomMultiplier);
                 // huge strings
-                CheckRandomData(Random, a, 100 * RANDOM_MULTIPLIER, 8192);
+                CheckRandomData(Random, a, 100 * RandomMultiplier, 8192);
             }
         }
 

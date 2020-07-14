@@ -247,7 +247,7 @@ namespace Lucene.Net.Analysis.Core
             tokenizers.Sort(ctorComp);
             tokenfilters.Sort(ctorComp);
             charfilters.Sort(ctorComp);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("tokenizers = " + tokenizers);
                 Console.WriteLine("tokenfilters = " + tokenfilters);
@@ -904,7 +904,7 @@ namespace Lucene.Net.Analysis.Core
                     {
 
                         // thats ok, ignore
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("Ignoring IAE/UOE from ctor:");
                             //cause.printStackTrace(System.err);
@@ -1130,13 +1130,13 @@ namespace Lucene.Net.Analysis.Core
             for (int i = 0; i < numIterations; i++)
             {
                 MockRandomAnalyzer a = new MockRandomAnalyzer(random.Next());
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("Creating random analyzer:" + a);
                 }
                 try
                 {
-                    CheckRandomData(random, a, 500 * RANDOM_MULTIPLIER, 20, false,
+                    CheckRandomData(random, a, 500 * RandomMultiplier, 20, false,
                                     false /* We already validate our own offsets... */);
                 }
                 catch (Exception /*e*/)
@@ -1157,13 +1157,13 @@ namespace Lucene.Net.Analysis.Core
             for (int i = 0; i < numIterations; i++)
             {
                 MockRandomAnalyzer a = new MockRandomAnalyzer(random.Next());
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("Creating random analyzer:" + a);
                 }
                 try
                 {
-                    CheckRandomData(random, a, 50 * RANDOM_MULTIPLIER, 128, false,
+                    CheckRandomData(random, a, 50 * RandomMultiplier, 128, false,
                                     false /* We already validate our own offsets... */);
                 }
                 catch (Exception /*e*/)

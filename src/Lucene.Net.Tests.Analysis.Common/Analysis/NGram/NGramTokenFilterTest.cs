@@ -161,7 +161,7 @@ namespace Lucene.Net.Analysis.NGram
                 int min = TestUtil.NextInt32(Random, 2, 10);
                 int max = TestUtil.NextInt32(Random, min, 20);
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, min, max);
-                CheckRandomData(Random, a, 200 * RANDOM_MULTIPLIER, 20);
+                CheckRandomData(Random, a, 200 * RandomMultiplier, 20);
             }
         }
 

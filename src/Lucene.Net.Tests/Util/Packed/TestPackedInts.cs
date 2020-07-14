@@ -280,7 +280,7 @@ namespace Lucene.Net.Util.Packed
             int numIters = AtLeast(3);
             for (int iter = 0; iter < numIters; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -293,7 +293,7 @@ namespace Lucene.Net.Util.Packed
                     bits1 = bits2;
                     bits2 = tmp;
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  valueCount=" + valueCount + " bits1=" + bits1 + " bits2=" + bits2);
                 }
@@ -317,7 +317,7 @@ namespace Lucene.Net.Util.Packed
                     int start = Random.Next(valueCount - 1);
                     int len = TestUtil.NextInt32(Random, 1, valueCount - start);
                     int offset;
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  copy " + len + " values @ " + start);
                     }

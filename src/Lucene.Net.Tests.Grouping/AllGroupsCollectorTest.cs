@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Grouping
                 selected = new FunctionAllGroupsCollector(vs, new Hashtable());
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Selected implementation: " + selected.GetType().Name);
             }

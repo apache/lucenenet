@@ -112,7 +112,7 @@ namespace Lucene.Net.Util
             // LUCENENET specific - SOLR setup code removed
 
             // if verbose: print some debugging stuff about which codecs are loaded.
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 // LUCENENET: Only list the services if the underlying ICodecFactory
                 // implements IServiceListable
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
             savedInfoStream = InfoStream.Default;
             Random random = LuceneTestCase.Random; 
             bool v = random.NextBoolean();
-            if (LuceneTestCase.INFOSTREAM)
+            if (LuceneTestCase.UseInfoStream)
             {
                 InfoStream.Default = new ThreadNameFixingPrintStreamInfoStream(Console.Out);
             }
@@ -162,9 +162,9 @@ namespace Lucene.Net.Util
 
             savedCodec = Codec.Default;
             int randomVal = random.Next(10);
-            if ("Lucene3x".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) &&
-                                                                "random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT, StringComparison.Ordinal) &&
-                                                                "random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT, StringComparison.Ordinal) &&
+            if ("Lucene3x".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) &&
+                                                                "random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) &&
+                                                                "random".Equals(LuceneTestCase.TestDocValuesFormat, StringComparison.Ordinal) &&
                                                                 randomVal == 3 &&
                                                                 !ShouldAvoidCodec("Lucene3x"))) // preflex-only setup
             {
@@ -172,8 +172,8 @@ namespace Lucene.Net.Util
                 Debug.Assert((codec is PreFlexRWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
             }
-            else if ("Lucene40".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) &&
-                                                                    "random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT, StringComparison.Ordinal) &&
+            else if ("Lucene40".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) &&
+                                                                    "random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) &&
                                                                     randomVal == 0 &&
                                                                     !ShouldAvoidCodec("Lucene40"))) // 4.0 setup
             {
@@ -182,9 +182,9 @@ namespace Lucene.Net.Util
                 Debug.Assert((codec is Lucene40RWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
                 Debug.Assert((PostingsFormat.ForName("Lucene40") is Lucene40RWPostingsFormat), "fix your IPostingsFormatFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
             }
-            else if ("Lucene41".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) &&
-                                                                    "random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT, StringComparison.Ordinal) &&
-                                                                    "random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT, StringComparison.Ordinal) &&
+            else if ("Lucene41".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) &&
+                                                                    "random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) &&
+                                                                    "random".Equals(LuceneTestCase.TestDocValuesFormat, StringComparison.Ordinal) &&
                                                                     randomVal == 1 &&
                                                                     !ShouldAvoidCodec("Lucene41")))
             {
@@ -192,9 +192,9 @@ namespace Lucene.Net.Util
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
                 Debug.Assert((codec is Lucene41RWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
             }
-            else if ("Lucene42".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) &&
-                                                                    "random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT, StringComparison.Ordinal) &&
-                                                                    "random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT, StringComparison.Ordinal) &&
+            else if ("Lucene42".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) &&
+                                                                    "random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) &&
+                                                                    "random".Equals(LuceneTestCase.TestDocValuesFormat, StringComparison.Ordinal) &&
                                                                     randomVal == 2 &&
                                                                     !ShouldAvoidCodec("Lucene42")))
             {
@@ -202,9 +202,9 @@ namespace Lucene.Net.Util
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
                 Debug.Assert((codec is Lucene42RWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
             }
-            else if ("Lucene45".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) &&
-                                                                    "random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT, StringComparison.Ordinal) &&
-                                                                    "random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT, StringComparison.Ordinal) &&
+            else if ("Lucene45".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) &&
+                                                                    "random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) &&
+                                                                    "random".Equals(LuceneTestCase.TestDocValuesFormat, StringComparison.Ordinal) &&
                                                                     randomVal == 5 &&
                                                                     !ShouldAvoidCodec("Lucene45")))
             {
@@ -212,64 +212,64 @@ namespace Lucene.Net.Util
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
                 Debug.Assert((codec is Lucene45RWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
             }
-            else if (("random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT, StringComparison.Ordinal) == false) 
-                || ("random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT, StringComparison.Ordinal) == false))
+            else if (("random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) == false) 
+                || ("random".Equals(LuceneTestCase.TestDocValuesFormat, StringComparison.Ordinal) == false))
             {
                 // the user wired postings or DV: this is messy
                 // refactor into RandomCodec....
 
                 PostingsFormat format;
-                if ("random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT, StringComparison.Ordinal))
+                if ("random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal))
                 {
                     format = PostingsFormat.ForName("Lucene41");
                 }
-                else if ("MockRandom".Equals(LuceneTestCase.TEST_POSTINGSFORMAT, StringComparison.Ordinal))
+                else if ("MockRandom".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal))
                 {
                     format = new MockRandomPostingsFormat(new Random(random.Next()));
                 }
                 else
                 {
-                    format = PostingsFormat.ForName(LuceneTestCase.TEST_POSTINGSFORMAT);
+                    format = PostingsFormat.ForName(LuceneTestCase.TestPostingsFormat);
                 }
 
                 DocValuesFormat dvFormat;
-                if ("random".Equals(LuceneTestCase.TEST_DOCVALUESFORMAT, StringComparison.Ordinal))
+                if ("random".Equals(LuceneTestCase.TestDocValuesFormat, StringComparison.Ordinal))
                 {
                     dvFormat = DocValuesFormat.ForName("Lucene45");
                 }
                 else
                 {
-                    dvFormat = DocValuesFormat.ForName(LuceneTestCase.TEST_DOCVALUESFORMAT);
+                    dvFormat = DocValuesFormat.ForName(LuceneTestCase.TestDocValuesFormat);
                 }
 
                 codec = new Lucene46CodecAnonymousInnerClassHelper(this, format, dvFormat);
             }
-            else if ("SimpleText".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) 
-                || ("random".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) && randomVal == 9 && LuceneTestCase.Rarely(random) && !ShouldAvoidCodec("SimpleText")))
+            else if ("SimpleText".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) 
+                || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 9 && LuceneTestCase.Rarely(random) && !ShouldAvoidCodec("SimpleText")))
             {
                 codec = new SimpleTextCodec();
             }
-            else if ("CheapBastard".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) 
-                || ("random".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) && randomVal == 8 && !ShouldAvoidCodec("CheapBastard") && !ShouldAvoidCodec("Lucene41")))
+            else if ("CheapBastard".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) 
+                || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 8 && !ShouldAvoidCodec("CheapBastard") && !ShouldAvoidCodec("Lucene41")))
             {
                 // we also avoid this codec if Lucene41 is avoided, since thats the postings format it uses.
                 codec = new CheapBastardCodec();
             }
-            else if ("Asserting".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) 
-                || ("random".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) && randomVal == 6 && !ShouldAvoidCodec("Asserting")))
+            else if ("Asserting".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) 
+                || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 6 && !ShouldAvoidCodec("Asserting")))
             {
                 codec = new AssertingCodec();
             }
-            else if ("Compressing".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) 
-                || ("random".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal) && randomVal == 5 && !ShouldAvoidCodec("Compressing")))
+            else if ("Compressing".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) 
+                || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 5 && !ShouldAvoidCodec("Compressing")))
             {
                 codec = CompressingCodec.RandomInstance(random);
             }
-            else if (!"random".Equals(LuceneTestCase.TEST_CODEC, StringComparison.Ordinal))
+            else if (!"random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal))
             {
-                codec = Codec.ForName(LuceneTestCase.TEST_CODEC);
+                codec = Codec.ForName(LuceneTestCase.TestCodec);
             }
-            else if ("random".Equals(LuceneTestCase.TEST_POSTINGSFORMAT, StringComparison.Ordinal))
+            else if ("random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal))
             {
                 codec = new RandomCodec(random, avoidCodecs);
             }
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util
             PostingsFormat pf = codec.PostingsFormat;
             LuceneTestCase.AssumeFalse("Class not allowed to use postings format: " + pf.Name + ".", ShouldAvoidCodec(pf.Name));
 
-            LuceneTestCase.AssumeFalse("Class not allowed to use postings format: " + LuceneTestCase.TEST_POSTINGSFORMAT + ".", ShouldAvoidCodec(LuceneTestCase.TEST_POSTINGSFORMAT));
+            LuceneTestCase.AssumeFalse("Class not allowed to use postings format: " + LuceneTestCase.TestPostingsFormat + ".", ShouldAvoidCodec(LuceneTestCase.TestPostingsFormat));
         }
 
         /// <summary>

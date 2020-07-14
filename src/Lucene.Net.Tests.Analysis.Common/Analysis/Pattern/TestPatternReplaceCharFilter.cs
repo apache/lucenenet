@@ -264,7 +264,7 @@ namespace Lucene.Net.Analysis.Pattern
                 const int maxInputLength = 30;
                 /* ASCII only input?: */
                 const bool asciiOnly = true;
-                CheckRandomData(random, a, 250 * RANDOM_MULTIPLIER, maxInputLength, asciiOnly);
+                CheckRandomData(random, a, 250 * RandomMultiplier, maxInputLength, asciiOnly);
             }
         }
 

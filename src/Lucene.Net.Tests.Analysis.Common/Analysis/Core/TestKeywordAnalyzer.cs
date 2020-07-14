@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, new KeywordAnalyzer(), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new KeywordAnalyzer(), 1000 * RandomMultiplier);
         }
     }
 }

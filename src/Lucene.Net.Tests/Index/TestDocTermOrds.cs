@@ -138,14 +138,14 @@ namespace Lucene.Net.Index
 
                 doc.Add(new Int32Field("id", id, Field.Store.NO));
 
-                int termCount = TestUtil.NextInt32(Random, 0, 20 * RANDOM_MULTIPLIER);
+                int termCount = TestUtil.NextInt32(Random, 0, 20 * RandomMultiplier);
                 while (ordsForDocSet.Count < termCount)
                 {
                     ordsForDocSet.Add(Random.Next(termsArray.Length));
                 }
                 int[] ordsForDoc = new int[termCount];
                 int upto = 0;
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: doc id=" + id);
                 }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
                 {
                     ordsForDoc[upto++] = ord;
                     Field field = NewStringField("field", termsArray[ord].Utf8ToString(), Field.Store.NO);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  f=" + termsArray[ord].Utf8ToString());
                     }
@@ -168,14 +168,14 @@ namespace Lucene.Net.Index
             DirectoryReader r = w.GetReader();
             w.Dispose();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: reader=" + r);
             }
 
             foreach (AtomicReaderContext ctx in r.Leaves)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: sub=" + ctx.Reader);
                 }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
 
             // Also test top-level reader: its enum does not support
             // ord, so this forces the OrdWrapper to run:
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: top reader");
             }
@@ -204,7 +204,7 @@ namespace Lucene.Net.Index
 
             ISet<string> prefixes = new JCG.HashSet<string>();
             int numPrefix = TestUtil.NextInt32(Random, 2, 7);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: use " + numPrefix + " prefixes");
             }
@@ -251,14 +251,14 @@ namespace Lucene.Net.Index
 
                 doc.Add(new Int32Field("id", id, Field.Store.NO));
 
-                int termCount = TestUtil.NextInt32(Random, 0, 20 * RANDOM_MULTIPLIER);
+                int termCount = TestUtil.NextInt32(Random, 0, 20 * RandomMultiplier);
                 while (ordsForDocSet.Count < termCount)
                 {
                     ordsForDocSet.Add(Random.Next(termsArray.Length));
                 }
                 int[] ordsForDoc = new int[termCount];
                 int upto = 0;
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: doc id=" + id);
                 }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
                 {
                     ordsForDoc[upto++] = ord;
                     Field field = NewStringField("field", termsArray[ord].Utf8ToString(), Field.Store.NO);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  f=" + termsArray[ord].Utf8ToString());
                     }
@@ -281,7 +281,7 @@ namespace Lucene.Net.Index
             DirectoryReader r = w.GetReader();
             w.Dispose();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: reader=" + r);
             }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
 
                 foreach (AtomicReaderContext ctx in r.Leaves)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: sub=" + ctx.Reader);
                     }
@@ -323,7 +323,7 @@ namespace Lucene.Net.Index
 
                 // Also test top-level reader: its enum does not support
                 // ord, so this forces the OrdWrapper to run:
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: top reader");
                 }
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
               }
             */
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: verify prefix=" + (prefixRef == null ? "null" : prefixRef.Utf8ToString()));
                 Console.WriteLine("TEST: all TERMS:");
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
                 return;
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: TERMS:");
                 te.SeekExact(0);
@@ -408,7 +408,7 @@ namespace Lucene.Net.Index
             SortedSetDocValues iter = dto.GetIterator(r);
             for (int docID = 0; docID < r.MaxDoc; docID++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: docID=" + docID + " of " + r.MaxDoc + " (id=" + docIDToID.Get(docID) + ")");
                 }
@@ -420,7 +420,7 @@ namespace Lucene.Net.Index
                 {
                     te.SeekExact(ord);
                     BytesRef expected = termsArray[answers[upto++]];
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  exp=" + expected.Utf8ToString() + " actual=" + te.Term.Utf8ToString());
                     }

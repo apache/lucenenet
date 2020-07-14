@@ -107,7 +107,7 @@ namespace Lucene.Net.Replicator
                         {
                             return;
                         }
-                        else if (VERBOSE)
+                        else if (Verbose)
                         {
                             Console.WriteLine("expectedID=" + expectedId + " actual=" + handlerId + " generation=" + reader.IndexCommit.Generation);
                         }
@@ -339,7 +339,7 @@ namespace Lucene.Net.Replicator
             {
                 if (exception is IOException)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("hit exception during update: " + exception);
                     }
@@ -366,7 +366,7 @@ namespace Lucene.Net.Replicator
                         // count-down number of failures
                         failures.DecrementAndGet();
                         Debug.Assert(failures >= 0, "handler failed too many times: " + failures);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             if (failures == 0)
                             {

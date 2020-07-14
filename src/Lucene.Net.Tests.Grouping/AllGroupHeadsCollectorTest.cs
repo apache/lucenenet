@@ -165,15 +165,15 @@ namespace Lucene.Net.Search.Grouping
             int numberOfRuns = TestUtil.NextInt32(Random, 3, 6);
             for (int iter = 0; iter < numberOfRuns; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(string.Format("TEST: iter={0} total={1}", iter, numberOfRuns));
                 }
 
-                int numDocs = TestUtil.NextInt32(Random, 100, 1000) * RANDOM_MULTIPLIER;
+                int numDocs = TestUtil.NextInt32(Random, 100, 1000) * RandomMultiplier;
                 int numGroups = TestUtil.NextInt32(Random, 1, numDocs);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: numDocs=" + numDocs + " numGroups=" + numGroups);
                 }
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Grouping
                     groups.Add(new BytesRef(randomValue));
                 }
                 string[] contentStrings = new string[TestUtil.NextInt32(Random, 2, 20)];
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: create fake content");
                 }
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search.Grouping
                         sb.append("fake ");
                     }
                     contentStrings[contentIDX] = sb.toString();
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  content=" + sb.toString());
                     }
@@ -281,7 +281,7 @@ namespace Lucene.Net.Search.Grouping
                         contentStrings[Random.nextInt(contentStrings.Length)]
                     );
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  doc content=" + groupDoc.content + " id=" + i + " group=" + (groupDoc.group == null ? "null" : groupDoc.group.Utf8ToString()) + " sort1=" + groupDoc.sort1.Utf8ToString() + " sort2=" + groupDoc.sort2.Utf8ToString() + " sort3=" + groupDoc.sort3.Utf8ToString());
                     }
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search.Grouping
                     for (int searchIter = 0; searchIter < 100; searchIter++)
                     {
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: searchIter=" + searchIter);
                         }
@@ -376,7 +376,7 @@ namespace Lucene.Net.Search.Grouping
                         Array.Sort(expectedGroupHeads);
                         Array.Sort(actualGroupHeads);
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("Collector: " + allGroupHeadsCollector.GetType().Name);
                             Console.WriteLine("Sort within group: " + sortWithinGroup);
@@ -619,7 +619,7 @@ namespace Lucene.Net.Search.Grouping
                 collector = TermAllGroupHeadsCollector.Create(groupField, sortWithinGroup);
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Selected implementation: " + collector.GetType().Name);
             }

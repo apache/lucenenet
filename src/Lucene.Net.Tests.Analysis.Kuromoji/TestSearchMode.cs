@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Ja
                     {
                         continue;
                     }
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("Line no. " + lineNumber + ": " + line);
                     }

@@ -53,7 +53,7 @@ namespace Lucene.Net.Search
         [Slow]
         public virtual void TestSearcherManager_Mem()
         {
-            pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt32(Random, 1, 20) : 1);
+            pruner = new SearcherLifetimeManager.PruneByAge(TestNightly ? TestUtil.NextInt32(Random, 1, 20) : 1);
             RunTest("TestSearcherManager");
         }
 
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
             {
                 try
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("[" + Thread.CurrentThread.Name + "]: launch reopen thread");
                     }
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception t)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: reopen thread hit exc");
                         Console.Out.Write(t.StackTrace);
@@ -243,7 +243,7 @@ namespace Lucene.Net.Search
         protected override void DoClose()
         {
             assertTrue(warmCalled);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: now close SearcherManager");
             }
@@ -272,7 +272,7 @@ namespace Lucene.Net.Search
             TaskScheduler es = Random.NextBoolean() ? null : TaskScheduler.Default;
             SearcherFactory factory = new SearcherFactoryAnonymousInnerClassHelper2(this, awaitEnterWarm, awaitClose, triedReopen, es);
             SearcherManager searcherManager = Random.NextBoolean() ? new SearcherManager(dir, factory) : new SearcherManager(writer, Random.NextBoolean(), factory);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("sm created");
             }
@@ -291,12 +291,12 @@ namespace Lucene.Net.Search
             Exception[] exc = new Exception[1];
             ThreadJob thread = new ThreadJob(() => new RunnableAnonymousInnerClassHelper(this, triedReopen, searcherManager, success, exc).Run());
             thread.Start();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("THREAD started");
             }
             awaitEnterWarm.Wait();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("NOW call close");
             }
@@ -391,7 +391,7 @@ namespace Lucene.Net.Search
                 try
                 {
                     triedReopen.Value = (true);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("NOW call maybeReopen");
                     }
@@ -404,7 +404,7 @@ namespace Lucene.Net.Search
                 }
                 catch (Exception e)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("FAIL: unexpected exc");
                         Console.Out.Write(e.StackTrace);

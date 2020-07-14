@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
             while (Environment.TickCount < stopTime)
             {
                 IndexCommit ic = r.IndexCommit;
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: check files: " + ic.FileNames);
                 }

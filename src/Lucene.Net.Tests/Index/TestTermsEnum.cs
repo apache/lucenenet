@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
             {
                 terms.Add(BytesRef.DeepCopyOf(term));
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: " + terms.Count + " terms");
             }
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                 if (upto != -1 && LuceneTestCase.Random.NextBoolean())
                 {
                     // next
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: iter next");
                     }
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
                     upto++;
                     if (isEnd)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  end");
                         }
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  got term=" + termsEnum.Term.Utf8ToString() + " expected=" + terms[upto].Utf8ToString());
                         }
@@ -142,13 +142,13 @@ namespace Lucene.Net.Index
 
                     if (LuceneTestCase.Random.NextBoolean())
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: iter seekCeil target=" + target.Utf8ToString() + " exists=" + exists);
                         }
                         // seekCeil
                         TermsEnum.SeekStatus status = termsEnum.SeekCeil(target);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  got " + status);
                         }
@@ -175,13 +175,13 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: iter seekExact target=" + target.Utf8ToString() + " exists=" + exists);
                         }
                         // seekExact
                         bool result = termsEnum.SeekExact(target);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  got " + result);
                         }
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
         {
             Document doc = new Document();
             doc.Add(new Int32Field("id", id, Field.Store.NO));
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: addDoc id:" + id + " terms=" + terms);
             }
@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
                 Array.Sort(termsArray);
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: indexed terms (unicode order):");
                 foreach (BytesRef t in termsArray)
@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
             // NOTE: intentional insanity!!
             FieldCache.Int32s docIDToID = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(r), "id", false);
 
-            for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 10 * RandomMultiplier; iter++)
             {
                 // TODO: can we also test infinite As here...?
 
@@ -305,7 +305,7 @@ namespace Lucene.Net.Index
                 Automaton a;
                 if (iter == 0)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: empty automaton");
                     }
@@ -313,7 +313,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: keepPct=" + keepPct);
                     }
@@ -336,7 +336,7 @@ namespace Lucene.Net.Index
 
                 if (Random.NextBoolean())
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: reduce the automaton");
                     }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
                 }
                 Array.Sort(acceptTermsArray);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: accept terms (unicode order):");
                     foreach (BytesRef t in acceptTermsArray)
@@ -371,7 +371,7 @@ namespace Lucene.Net.Index
                 {
                     BytesRef startTerm = acceptTermsArray.Length == 0 || Random.NextBoolean() ? null : acceptTermsArray[Random.Next(acceptTermsArray.Length)];
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: iter2=" + iter2 + " startTerm=" + (startTerm == null ? "<null>" : startTerm.Utf8ToString()));
 
@@ -419,7 +419,7 @@ namespace Lucene.Net.Index
                     {
                         BytesRef expected = termsArray[loc];
                         BytesRef actual = te.Next();
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST:   next() expected=" + expected.Utf8ToString() + " actual=" + (actual == null ? "null" : actual.Utf8ToString()));
                         }
@@ -734,7 +734,7 @@ namespace Lucene.Net.Index
                 validTerms[termIDX] = new BytesRef(validTermStrings[termIDX]);
             }
             Array.Sort(validTerms);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: " + validTerms.Length + " terms:");
                 foreach (BytesRef t in validTerms)
@@ -748,7 +748,7 @@ namespace Lucene.Net.Index
 
             IList<TermAndState> termStates = new List<TermAndState>();
 
-            for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 100 * RandomMultiplier; iter++)
             {
                 BytesRef t;
                 int loc;
@@ -758,7 +758,7 @@ namespace Lucene.Net.Index
                     // pick term that doens't exist:
                     t = GetNonExistTerm(validTerms);
                     termState = null;
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: invalid term=" + t.Utf8ToString());
                     }
@@ -771,7 +771,7 @@ namespace Lucene.Net.Index
                     loc = Array.BinarySearch(validTerms, t);
                     Assert.IsTrue(loc >= 0);
                     termState = ts.State;
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: valid termState term=" + t.Utf8ToString());
                     }
@@ -782,7 +782,7 @@ namespace Lucene.Net.Index
                     loc = Random.Next(validTerms.Length);
                     t = BytesRef.DeepCopyOf(validTerms[loc]);
                     termState = null;
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: valid term=" + t.Utf8ToString());
                     }
@@ -792,7 +792,7 @@ namespace Lucene.Net.Index
                 bool doSeekExact = Random.NextBoolean();
                 if (termState != null)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  seekExact termState");
                     }
@@ -800,7 +800,7 @@ namespace Lucene.Net.Index
                 }
                 else if (doSeekExact)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  seekExact");
                     }
@@ -808,13 +808,13 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  seekCeil");
                     }
 
                     TermsEnum.SeekStatus result = te.SeekCeil(t);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  got " + result);
                     }
@@ -858,7 +858,7 @@ namespace Lucene.Net.Index
 
                 for (int nextCount = 0; nextCount < numNext; nextCount++)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: next loc=" + loc + " of " + validTerms.Length);
                     }

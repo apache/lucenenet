@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Util
             var builder = new StringBuilder();
             // create random input
             var num = 1024 + Random.Next(1024);
-            num *= RANDOM_MULTIPLIER;
+            num *= RandomMultiplier;
             for (var i = 1; i < num; i++)
             {
                 builder.Append("\ud801\udc1cabc");
@@ -121,7 +121,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestCrossPlaneNormalization()
         {
             var analyzer = new AnalyzerAnonymousInnerClassHelper();
-            var num = 1000 * RANDOM_MULTIPLIER;
+            var num = 1000 * RandomMultiplier;
             for (var i = 0; i < num; i++)
             {
                 var s = TestUtil.RandomUnicodeString(Random);
@@ -184,7 +184,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual void TestCrossPlaneNormalization2()
         {
             var analyzer = new AnalyzerAnonymousInnerClassHelper2();
-            var num = 1000 * RANDOM_MULTIPLIER;
+            var num = 1000 * RandomMultiplier;
             for (var i = 0; i < num; i++)
             {
                 var s = TestUtil.RandomUnicodeString(Random);

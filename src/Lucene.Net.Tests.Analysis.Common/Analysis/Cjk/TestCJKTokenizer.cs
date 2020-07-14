@@ -213,7 +213,7 @@ namespace Lucene.Net.Analysis.Cjk
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, new CJKAnalyzer(LuceneVersion.LUCENE_30), 10000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new CJKAnalyzer(LuceneVersion.LUCENE_30), 10000 * RandomMultiplier);
         }
     }
 }

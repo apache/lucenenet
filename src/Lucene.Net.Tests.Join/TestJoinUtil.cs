@@ -409,7 +409,7 @@ namespace Lucene.Net.Tests.Join
         {
             for (int indexIter = 1; indexIter <= maxIndexIter; indexIter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("indexIter=" + indexIter);
                 }
@@ -425,7 +425,7 @@ namespace Lucene.Net.Tests.Join
                 w.Dispose();
                 for (int searchIter = 1; searchIter <= maxSearchIter; searchIter++)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("searchIter=" + searchIter);
                     }
@@ -438,14 +438,14 @@ namespace Lucene.Net.Tests.Join
                         context);
 
                     Query actualQuery = new TermQuery(new Term("value", randomValue));
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("actualQuery=" + actualQuery);
                     }
                     
                     var scoreModeLength = Enum.GetNames(typeof(ScoreMode)).Length;
                     ScoreMode scoreMode = (ScoreMode) Random.Next(scoreModeLength);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("scoreMode=" + scoreMode);
                     }
@@ -461,7 +461,7 @@ namespace Lucene.Net.Tests.Join
                         joinQuery = JoinUtil.CreateJoinQuery("to", multipleValuesPerDocument, "from", actualQuery,
                             indexSearcher, scoreMode);
                     }
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("joinQuery=" + joinQuery);
                     }
@@ -473,7 +473,7 @@ namespace Lucene.Net.Tests.Join
                         new CollectorAnonymousInnerClassHelper2(this, scoreDocsInOrder, context, actualResult,
                             topScoreDocCollector));
                     // Asserting bit set...
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("expected cardinality:" + expectedResult.Cardinality());
                         DocIdSetIterator iterator = expectedResult.GetIterator();
@@ -507,7 +507,7 @@ namespace Lucene.Net.Tests.Join
                     assertEquals(expectedTopDocs.MaxScore, actualTopDocs.MaxScore, 0.0f);
                     for (int i = 0; i < expectedTopDocs.ScoreDocs.Length; i++)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             string.Format("Expected doc: {0} | Actual doc: {1}\n", expectedTopDocs.ScoreDocs[i].Doc, actualTopDocs.ScoreDocs[i].Doc);
                             string.Format("Expected score: {0} | Actual score: {1}\n", expectedTopDocs.ScoreDocs[i].Score, actualTopDocs.ScoreDocs[i].Score);
@@ -658,7 +658,7 @@ namespace Lucene.Net.Tests.Join
                 {
                     w.Commit();
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("Added document[" + docs[i].id + "]: " + document);
                 }

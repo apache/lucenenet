@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis
                                 break;
                         }
                     }
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         if (val == int.MaxValue)
                         {

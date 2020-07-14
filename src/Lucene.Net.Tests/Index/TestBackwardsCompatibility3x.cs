@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
         {
             for (int i = 0; i < unsupportedNames.Length; i++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: index " + unsupportedNames[i]);
                 }
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
                 catch (IndexFormatTooOldException e)
                 {
                     // pass
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: got expected exc:");
                         Console.WriteLine(e.StackTrace);
@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
         {
             foreach (string name in oldNames)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: index=" + name);
                 }
@@ -267,14 +267,14 @@ namespace Lucene.Net.Index
         {
             foreach (string name in oldNames)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: old index " + name);
                 }
                 Directory targetDir = NewDirectory();
                 IndexWriter w = new IndexWriter(targetDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
                 w.AddIndexes(oldIndexDirs[name]);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: done adding indices; now close");
                 }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
         {
             foreach (string name in oldNames)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: oldName=" + name);
                 }
@@ -343,7 +343,7 @@ namespace Lucene.Net.Index
         {
             foreach (string name in oldNames)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: oldName=" + name);
                 }
@@ -867,7 +867,7 @@ namespace Lucene.Net.Index
         {
             SegmentInfos infos = new SegmentInfos();
             infos.Read(dir);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("checkAllSegmentsUpgraded: " + infos);
             }
@@ -893,7 +893,7 @@ namespace Lucene.Net.Index
             names.AddRange(oldSingleSegmentNames);
             foreach (string name in names)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("testUpgradeOldIndex: index=" + name);
                 }
@@ -912,7 +912,7 @@ namespace Lucene.Net.Index
         {
             foreach (string name in oldSingleSegmentNames)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("testUpgradeOldSingleSegmentIndexWithAdditions: index=" + name);
                 }
@@ -930,7 +930,7 @@ namespace Lucene.Net.Index
                     IndexWriterConfig iwc = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(mp);
                     IndexWriter w = new IndexWriter(ramDir, iwc);
                     // add few more docs:
-                    for (int j = 0; j < RANDOM_MULTIPLIER * Random.Next(30); j++)
+                    for (int j = 0; j < RandomMultiplier * Random.Next(30); j++)
                     {
                         AddDoc(w, id++);
                     }

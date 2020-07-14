@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
         {
             Directory rd1 = NewDirectory();
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: make 1st writer");
                 }
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
                 iw.Dispose();
 
                 IndexWriterConfig dontMergeConfig = (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random))).SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: make 2nd writer");
                 }

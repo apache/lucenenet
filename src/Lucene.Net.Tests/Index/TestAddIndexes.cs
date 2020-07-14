@@ -423,7 +423,7 @@ namespace Lucene.Net.Index
 
             writer = NewWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetMaxBufferedDocs(4).SetMergePolicy(NewLogMergePolicy(4)));
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: now addIndexes");
             }
@@ -774,7 +774,7 @@ namespace Lucene.Net.Index
                 switch (j % 5)
                 {
                     case 0:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": TEST: addIndexes(Dir[]) then full merge");
                         }
@@ -783,7 +783,7 @@ namespace Lucene.Net.Index
                         break;
 
                     case 1:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": TEST: addIndexes(Dir[])");
                         }
@@ -791,7 +791,7 @@ namespace Lucene.Net.Index
                         break;
 
                     case 2:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": TEST: addIndexes(IndexReader[])");
                         }
@@ -799,7 +799,7 @@ namespace Lucene.Net.Index
                         break;
 
                     case 3:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": TEST: addIndexes(Dir[]) then maybeMerge");
                         }
@@ -808,7 +808,7 @@ namespace Lucene.Net.Index
                         break;
 
                     case 4:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": TEST: commit");
                         }
@@ -823,7 +823,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestAddIndexesWithThreads()
         {
-            int NUM_ITER = TEST_NIGHTLY ? 15 : 5;
+            int NUM_ITER = TestNightly ? 15 : 5;
             const int NUM_COPY = 3;
             CommitAndAddIndexes c = new CommitAndAddIndexes(this, NUM_COPY);
             c.LaunchThreads(NUM_ITER);
@@ -908,7 +908,7 @@ namespace Lucene.Net.Index
                 switch (j % 5)
                 {
                     case 0:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": addIndexes + full merge");
                         }
@@ -917,7 +917,7 @@ namespace Lucene.Net.Index
                         break;
 
                     case 1:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": addIndexes");
                         }
@@ -925,7 +925,7 @@ namespace Lucene.Net.Index
                         break;
 
                     case 2:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": addIndexes(IR[])");
                         }
@@ -933,7 +933,7 @@ namespace Lucene.Net.Index
                         break;
 
                     case 3:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": full merge");
                         }
@@ -941,7 +941,7 @@ namespace Lucene.Net.Index
                         break;
 
                     case 4:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": commit");
                         }
@@ -995,7 +995,7 @@ namespace Lucene.Net.Index
             Thread.Sleep(TestUtil.NextInt32(Random, 10, 500));
 
             // Close w/o first stopping/joining the threads
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: now close(false)");
             }
@@ -1003,7 +1003,7 @@ namespace Lucene.Net.Index
 
             c.JoinThreads();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: done join threads");
             }
@@ -1016,14 +1016,14 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestAddIndexesWithRollback()
         {
-            int NUM_COPY = TEST_NIGHTLY ? 50 : 5;
+            int NUM_COPY = TestNightly ? 50 : 5;
             CommitAndAddIndexes3 c = new CommitAndAddIndexes3(this, NUM_COPY);
             c.LaunchThreads(-1);
 
             Thread.Sleep(TestUtil.NextInt32(Random, 10, 500));
 
             // Close w/o first stopping/joining the threads
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: now force rollback");
             }

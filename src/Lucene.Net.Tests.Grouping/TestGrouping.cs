@@ -193,7 +193,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 selected = new TermFirstPassGroupingCollector(groupField, groupSort, topDocs);
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Selected implementation: " + selected.GetType().Name);
             }
@@ -766,18 +766,18 @@ namespace Lucene.Net.Search.Grouping
             int numberOfRuns = TestUtil.NextInt32(Random, 3, 6);
             for (int iter = 0; iter < numberOfRuns; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
 
-                int numDocs = TestUtil.NextInt32(Random, 100, 1000) * RANDOM_MULTIPLIER;
+                int numDocs = TestUtil.NextInt32(Random, 100, 1000) * RandomMultiplier;
                 //final int numDocs = TestUtil.nextInt(random, 5, 20);
 
                 int numGroups = TestUtil.NextInt32(Random, 1, numDocs);
 
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: numDocs=" + numDocs + " numGroups=" + numGroups);
                 }
@@ -798,7 +798,7 @@ namespace Lucene.Net.Search.Grouping
                     groups.Add(new BytesRef(randomValue));
                 }
                 string[] contentStrings = new string[TestUtil.NextInt32(Random, 2, 20)];
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: create fake content");
                 }
@@ -812,7 +812,7 @@ namespace Lucene.Net.Search.Grouping
                         sb.append("fake ");
                     }
                     contentStrings[contentIDX] = sb.toString();
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  content=" + sb.toString());
                     }
@@ -869,7 +869,7 @@ namespace Lucene.Net.Search.Grouping
                                                            groups[Random.nextInt(groups.size())],
                                                            groups[Random.nextInt(groups.size())],
                                                            contentStrings[Random.nextInt(contentStrings.Length)]);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  doc content=" + groupDoc.content + " id=" + i + " group=" + (groupDoc.group == null ? "null" : groupDoc.group.Utf8ToString()) + " sort1=" + groupDoc.sort1.Utf8ToString() + " sort2=" + groupDoc.sort2.Utf8ToString());
                     }
@@ -918,7 +918,7 @@ namespace Lucene.Net.Search.Grouping
                 try
                 {
                     IndexSearcher s = NewSearcher(r);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: searcher=" + s);
                     }
@@ -990,7 +990,7 @@ namespace Lucene.Net.Search.Grouping
                     for (int searchIter = 0; searchIter < 100; searchIter++)
                     {
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("\nTEST: searchIter=" + searchIter);
                         }
@@ -1034,7 +1034,7 @@ namespace Lucene.Net.Search.Grouping
 
                         bool doCache = Random.nextBoolean();
                         bool doAllGroups = Random.nextBoolean();
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: groupSort=" + groupSort + " docSort=" + docSort + " searchTerm=" + searchTerm + " dF=" + r.DocFreq(new Term("content", searchTerm)) + " dFBlock=" + rBlocks.DocFreq(new Term("content", searchTerm)) + " topNGroups=" + topNGroups + " groupOffset=" + groupOffset + " docOffset=" + docOffset + " doCache=" + doCache + " docsPerGroup=" + docsPerGroup + " doAllGroups=" + doAllGroups + " getScores=" + getScores + " getMaxScores=" + getMaxScores);
                         }
@@ -1044,7 +1044,7 @@ namespace Lucene.Net.Search.Grouping
                         {
                             groupField += "_dv";
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  groupField=" + groupField);
                         }
@@ -1067,7 +1067,7 @@ namespace Lucene.Net.Search.Grouping
                         if (doCache)
                         {
                             double maxCacheMB = Random.NextDouble();
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("TEST: maxCacheMB=" + maxCacheMB);
                             }
@@ -1136,7 +1136,7 @@ namespace Lucene.Net.Search.Grouping
                         // covariant in order to mimic Java's wildcard generics
                         IEnumerable<ISearchGroup<BytesRef>> topGroups = GetSearchGroups(c1, groupOffset, fillFields);
                         ITopGroups<BytesRef> groupsResult;
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: first pass topGroups");
                             if (topGroups == null)
@@ -1161,7 +1161,7 @@ namespace Lucene.Net.Search.Grouping
                         if (topGroups != null)
                         {
 
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("TEST: topGroups");
                                 foreach (SearchGroup<BytesRef> searchGroup in topGroups)
@@ -1175,7 +1175,7 @@ namespace Lucene.Net.Search.Grouping
                             {
                                 if (cCache.IsCached)
                                 {
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("TEST: cache is intact");
                                     }
@@ -1183,7 +1183,7 @@ namespace Lucene.Net.Search.Grouping
                                 }
                                 else
                                 {
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("TEST: cache was too large");
                                     }
@@ -1209,7 +1209,7 @@ namespace Lucene.Net.Search.Grouping
                         {
                             c2 = null;
                             groupsResult = null;
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("TEST:   no results");
                             }
@@ -1217,7 +1217,7 @@ namespace Lucene.Net.Search.Grouping
 
                         TopGroups<BytesRef> expectedGroups = SlowGrouping(groupDocs, searchTerm, fillFields, getScores, getMaxScores, doAllGroups, groupSort, docSort, topNGroups, docsPerGroup, groupOffset, docOffset);
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             if (expectedGroups == null)
                             {
@@ -1319,7 +1319,7 @@ namespace Lucene.Net.Search.Grouping
                             groupsResultBlocks = tempTopGroupsBlocks;
                         }
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             if (groupsResultBlocks == null)
                             {
@@ -1445,7 +1445,7 @@ namespace Lucene.Net.Search.Grouping
 
             // TODO: swap in caching, all groups collector hereassertEquals(expected.totalHitCount, actual.totalHitCount);
             // too...
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: " + subSearchers.Length + " shards: " + Arrays.ToString(subSearchers) + " canUseIDV=" + canUseIDV);
             }
@@ -1491,7 +1491,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     firstPassCollector = CreateFirstPassCollector(groupField, groupSort, groupOffset + topNGroups, firstPassCollector);
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  shard=" + shardIDX + " groupField=" + groupField);
                     Console.WriteLine("    1st pass collector=" + firstPassCollector);
@@ -1501,7 +1501,7 @@ namespace Lucene.Net.Search.Grouping
                 IEnumerable<ISearchGroup<BytesRef>> topGroups = GetSearchGroups(firstPassCollector, 0, true);
                 if (topGroups != null)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  shard " + shardIDX + " s=" + subSearchers[shardIDX] + " totalGroupedHitCount=?" + " " + topGroups.Count() + " groups:");
                         foreach (SearchGroup<BytesRef> group in topGroups)
@@ -1514,7 +1514,7 @@ namespace Lucene.Net.Search.Grouping
             }
 
             ICollection<SearchGroup<BytesRef>> mergedTopGroups = SearchGroup.Merge(shardGroups, groupOffset, topNGroups, groupSort);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(" top groups merged:");
                 if (mergedTopGroups == null)
@@ -1541,7 +1541,7 @@ namespace Lucene.Net.Search.Grouping
                         groupField, mergedTopGroups, groupSort, docSort, docOffset + topNDocs, getScores, getMaxScores, true);
                     subSearchers[shardIDX].Search(w, secondPassCollector);
                     shardTopGroups[shardIDX] = GetTopGroups(secondPassCollector, 0);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine(" " + shardTopGroups[shardIDX].Groups.Length + " shard[" + shardIDX + "] groups:");
                         foreach (GroupDocs<BytesRef> group in shardTopGroups[shardIDX].Groups)
@@ -1552,7 +1552,7 @@ namespace Lucene.Net.Search.Grouping
                 }
 
                 TopGroups<BytesRef> mergedGroups = TopGroups.Merge(shardTopGroups, groupSort, docSort, docOffset, topNDocs, TopGroups.ScoreMergeMode.None);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(" " + mergedGroups.Groups.Length + " merged groups:");
                     foreach (GroupDocs<BytesRef> group in mergedGroups.Groups)
@@ -1587,7 +1587,7 @@ namespace Lucene.Net.Search.Grouping
 
             for (int groupIDX = 0; groupIDX < expected.Groups.Length; groupIDX++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  check groupIDX=" + groupIDX);
                 }

@@ -280,13 +280,13 @@ namespace Lucene.Net.Util
                 items[i] = new Item(equal ? (i + 1) : -1, equal ? 0 : (rnd.Next(1000) + 1));
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Before: " + Arrays.ToString(items));
             }
             // if you replace this with ArrayUtil.quickSort(), test should fail:
             ArrayUtil.TimSort(items);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Sorted: " + Arrays.ToString(items));
             }
@@ -320,13 +320,13 @@ namespace Lucene.Net.Util
                 items[i] = new Item(equal ? (i + 1) : -1, equal ? 0 : (rnd.Next(1000) + 1));
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Before: " + Arrays.ToString(items));
             }
             // if you replace this with ArrayUtil.quickSort(), test should fail:
             ArrayUtil.TimSort(items);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Sorted: " + Arrays.ToString(items));
             }

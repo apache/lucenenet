@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
 
             TaskScheduler es = TaskScheduler.Default;
             searcher = new IndexSearcher(multireader, es);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("rewritten form: " + searcher.Rewrite(query));
             }
@@ -255,9 +255,9 @@ namespace Lucene.Net.Search
             IndexSearcher s = NewSearcher(r);
             w.Dispose();
 
-            for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 10 * RandomMultiplier; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("iter=" + iter);
                 }
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
                     terms.RemoveAt(Random.Next(terms.Count));
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  terms=" + terms);
                 }
@@ -290,7 +290,7 @@ namespace Lucene.Net.Search
                     hits.Add(new ScoreDoc(scorer.DocID, scorer.GetScore()));
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  " + hits.Count + " hits");
                 }
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search
                     weight = s.CreateNormalizedWeight(q);
                     scorer = weight.GetScorer(s.m_leafContexts[0], null);
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  iter2=" + iter2);
                     }

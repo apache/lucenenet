@@ -232,7 +232,7 @@ namespace Lucene.Net.Analysis.Morfologik
         public void TestRandom()
         {
             Analyzer a = getTestAnalyzer();
-            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
             a.Dispose();
         }
     }

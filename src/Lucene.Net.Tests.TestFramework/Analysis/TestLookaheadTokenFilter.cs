@@ -56,8 +56,8 @@ namespace Lucene.Net.Analysis
                 TokenStream output = new MockRandomLookaheadTokenFilter(random, tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
             });
-            int maxLength = TEST_NIGHTLY ? 8192 : 1024;
-            CheckRandomData(Random, a, 50 * RANDOM_MULTIPLIER, maxLength);
+            int maxLength = TestNightly ? 8192 : 1024;
+            CheckRandomData(Random, a, 50 * RandomMultiplier, maxLength);
         }
 
         private sealed class NeverPeeksLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
@@ -87,8 +87,8 @@ namespace Lucene.Net.Analysis
                 TokenStream output = new NeverPeeksLookaheadTokenFilter(tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
             });
-            int maxLength = TEST_NIGHTLY ? 8192 : 1024;
-            CheckRandomData(Random, a, 50 * RANDOM_MULTIPLIER, maxLength);
+            int maxLength = TestNightly ? 8192 : 1024;
+            CheckRandomData(Random, a, 50 * RandomMultiplier, maxLength);
         }
 
         [Test]

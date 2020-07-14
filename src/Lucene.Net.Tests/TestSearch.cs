@@ -148,7 +148,7 @@ namespace Lucene.Net
             foreach (Query query in BuildQueries())
             {
                 @out.WriteLine("Query: " + query.ToString("contents"));
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: query=" + query);
                 }

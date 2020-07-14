@@ -42,7 +42,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 sortedValues[docMap.OldToNew(i)] = (int)dv.Get(i);
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("docMap: " + docMap);
                 Console.WriteLine("sortedValues: " + Arrays.ToString(sortedValues));
@@ -51,7 +51,7 @@ namespace Lucene.Net.Index.Sorter
             // sort the index by id (as integer, in NUMERIC_DV_FIELD)
             reader = SortingAtomicReader.Wrap(reader, sort);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("mapped-deleted-docs: ");
                 IBits mappedLiveDocs = reader.LiveDocs;

@@ -270,14 +270,14 @@ namespace Lucene.Net.Search
 
             count = 0;
             bool sawZero = false;
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\ngetPayloadSpans test");
             }
             Search.Spans.Spans pspans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
             while (pspans.Next())
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("doc " + pspans.Doc + ": span " + pspans.Start + " to " + pspans.End);
                 }
@@ -286,7 +286,7 @@ namespace Lucene.Net.Search
                 foreach (var bytes in payloads)
                 {
                     count++;
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  payload: " + Encoding.UTF8.GetString(bytes));
                     }

@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             {
                 if (Random.NextBoolean())
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now reopen r=" + r);
                     }
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now close reader=" + r);
                     }
@@ -81,13 +81,13 @@ namespace Lucene.Net.Index
                     }
                     anyOpenDelFiles |= openDeletedFiles.Count > 0;
                     //Assert.AreEqual("open but deleted: " + openDeletedFiles, 0, openDeletedFiles.Size());
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now open");
                     }
                     r = DirectoryReader.Open(m_writer, true);
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: got new reader=" + r);
                 }

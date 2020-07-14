@@ -148,7 +148,7 @@ namespace Lucene.Net
                 MergePolicy.OneMerge merge = null;
                 while ((merge = writer.NextMerge()) != null)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("executing merge " + merge.SegString(writer.Directory));
                     }

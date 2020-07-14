@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
             reader = writer.GetReader();
             searcher = NewSearcher(reader);
             writer.Dispose();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: setUp searcher=" + searcher);
             }
@@ -102,7 +102,7 @@ namespace Lucene.Net.Search
         {
             // TODO: run with different rewrites
             string filledPattern = FillPattern(pattern);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: run wildcard pattern=" + pattern + " filled=" + filledPattern);
             }

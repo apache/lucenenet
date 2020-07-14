@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
                 writer.AddDocument(doc);
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 // utf16 order
                 terms.Sort();
@@ -165,11 +165,11 @@ namespace Lucene.Net.Search
         {
             // we generate aweful regexps: good for testing.
             // but for preflex codec, the test can be very slow, so use less iterations.
-            int num = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) ? 100 * RANDOM_MULTIPLIER : AtLeast(1000);
+            int num = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) ? 100 * RandomMultiplier : AtLeast(1000);
             for (int i = 0; i < num; i++)
             {
                 string reg = AutomatonTestUtil.RandomRegexp(Random);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: regexp=" + reg);
                 }

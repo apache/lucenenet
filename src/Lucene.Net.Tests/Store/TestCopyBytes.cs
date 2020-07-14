@@ -42,7 +42,7 @@ namespace Lucene.Net.Store
             for (int iter = 0; iter < num; iter++)
             {
                 Directory dir = NewDirectory();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter + " dir=" + dir);
                 }

@@ -468,7 +468,7 @@ namespace Lucene.Net.Facet
             //int numDims = 3;
             int numDocs = AtLeast(3000);
             //int numDocs = 20;
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("numDims=" + numDims + " numDocs=" + numDocs + " aChance=" + aChance + " bChance=" + bChance + " cChance=" + cChance);
             }
@@ -542,7 +542,7 @@ namespace Lucene.Net.Facet
             Directory td = NewDirectory();
 
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-            iwc.SetInfoStream(InfoStream.NO_OUTPUT);
+            iwc.SetInfoStream((InfoStream)InfoStream.NO_OUTPUT);
             var w = new RandomIndexWriter(Random, d, iwc);
             var tw = new DirectoryTaxonomyWriter(td, OpenMode.CREATE);
             FacetsConfig config = new FacetsConfig();
@@ -559,7 +559,7 @@ namespace Lucene.Net.Facet
                 doc.Add(NewStringField("id", rawDoc.id, Field.Store.YES));
                 doc.Add(NewStringField("content", rawDoc.contentToken, Field.Store.NO));
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  doc id=" + rawDoc.id + " token=" + rawDoc.contentToken);
                 }
@@ -577,7 +577,7 @@ namespace Lucene.Net.Facet
                             doc.Add(new FacetField("dim" + dim, dimValues[dim][dimValue]));
                         }
                         doc.Add(new StringField("dim" + dim, dimValues[dim][dimValue], Field.Store.YES));
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("    dim" + dim + "=" + new BytesRef(dimValues[dim][dimValue]));
                         }
@@ -594,7 +594,7 @@ namespace Lucene.Net.Facet
                             doc.Add(new FacetField("dim" + dim, dimValues[dim][dimValue2]));
                         }
                         doc.Add(new StringField("dim" + dim, dimValues[dim][dimValue2], Field.Store.YES));
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("      dim" + dim + "=" + new BytesRef(dimValues[dim][dimValue2]));
                         }
@@ -608,7 +608,7 @@ namespace Lucene.Net.Facet
             {
                 // Randomly delete a few docs:
                 int numDel = TestUtil.NextInt32(Random, 1, (int)(numDocs * 0.05));
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("delete " + numDel);
                 }
@@ -618,7 +618,7 @@ namespace Lucene.Net.Facet
                     Doc doc = docs[Random.Next(docs.Count)];
                     if (!doc.deleted)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  delete id=" + doc.id);
                         }
@@ -631,7 +631,7 @@ namespace Lucene.Net.Facet
 
             if (Random.NextBoolean())
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: forceMerge(1)...");
                 }
@@ -651,7 +651,7 @@ namespace Lucene.Net.Facet
                 sortedSetDVState = null;
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("r.numDocs() = " + r.NumDocs);
             }
@@ -666,7 +666,7 @@ namespace Lucene.Net.Facet
 
                 string contentToken = Random.Next(30) == 17 ? null : randomContentToken(true);
                 int numDrillDown = TestUtil.NextInt32(Random, 1, Math.Min(4, numDims));
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter + " baseQuery=" + contentToken + " numDrillDown=" + numDrillDown + " useSortedSetDV=" + doUseDV);
                 }
@@ -711,7 +711,7 @@ namespace Lucene.Net.Facet
                                 }
                             }
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             BytesRef[] values = new BytesRef[drillDowns[dim].Length];
                             for (int i = 0; i < values.Length; i++)
@@ -750,7 +750,7 @@ namespace Lucene.Net.Facet
                 Filter filter;
                 if (Random.Next(7) == 6)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  only-even filter");
                     }
@@ -801,7 +801,7 @@ namespace Lucene.Net.Facet
                 {
                     scores[s.Doc(sd.Doc).Get("id")] = sd.Score;
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  verify all facets");
                 }
@@ -1069,7 +1069,7 @@ namespace Lucene.Net.Facet
                 drillSidewaysCounts[dim] = new Counters(dimValues);
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("  compute expected");
             }
@@ -1120,7 +1120,7 @@ namespace Lucene.Net.Facet
 
                     if (failDim == -1)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("    exp: id=" + doc.id + " is a hit");
                         }
@@ -1134,7 +1134,7 @@ namespace Lucene.Net.Facet
                     }
                     else
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("    exp: id=" + doc.id + " is a near-miss on dim=" + failDim);
                         }
@@ -1185,7 +1185,7 @@ namespace Lucene.Net.Facet
 
         internal virtual void VerifyEquals(string[][] dimValues, IndexSearcher s, TestFacetResult expected, DrillSidewaysResult actual, IDictionary<string, float?> scores, bool isSortedSetDV)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("  verify totHits=" + expected.Hits.Count);
             }
@@ -1193,7 +1193,7 @@ namespace Lucene.Net.Facet
             Assert.AreEqual(expected.Hits.Count, actual.Hits.ScoreDocs.Length);
             for (int i = 0; i < expected.Hits.Count; i++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("    hit " + i + " expected=" + expected.Hits[i].id);
                 }
@@ -1206,7 +1206,7 @@ namespace Lucene.Net.Facet
             {
                 int topN = Random.NextBoolean() ? dimValues[dim].Length : TestUtil.NextInt32(Random, 1, dimValues[dim].Length);
                 FacetResult fr = actual.Facets.GetTopChildren(topN, "dim" + dim);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("    dim" + dim + " topN=" + topN + " (vs " + dimValues[dim].Length + " unique values)");
                     Console.WriteLine("      actual");
@@ -1220,7 +1220,7 @@ namespace Lucene.Net.Facet
                     foreach (LabelAndValue labelValue in fr.LabelValues)
                     {
                         actualValues[labelValue.Label] = (int)labelValue.Value;
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("        " + idx + ": " + new BytesRef(labelValue.Label) + ": " + labelValue.Value);
                             idx++;
@@ -1232,7 +1232,7 @@ namespace Lucene.Net.Facet
                 if (topN < dimValues[dim].Length)
                 {
                     int[] topNIDs = GetTopNOrds(expected.Counts[dim], dimValues[dim], topN);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         idx = 0;
                         Console.WriteLine("      expected (sorted)");
@@ -1244,7 +1244,7 @@ namespace Lucene.Net.Facet
                             idx++;
                         }
                     }
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("      topN=" + topN + " expectedTopN=" + topNIDs.Length);
                     }
@@ -1272,7 +1272,7 @@ namespace Lucene.Net.Facet
                 else
                 {
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         idx = 0;
                         Console.WriteLine("      expected (unsorted)");

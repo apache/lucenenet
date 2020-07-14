@@ -320,7 +320,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, new UAX29URLEmailAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new UAX29URLEmailAnalyzer(TEST_VERSION_CURRENT), 1000 * RandomMultiplier);
         }
     }
 }

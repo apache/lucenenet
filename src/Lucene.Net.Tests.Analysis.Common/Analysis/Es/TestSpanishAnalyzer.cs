@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Es
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, new SpanishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new SpanishAnalyzer(TEST_VERSION_CURRENT), 1000 * RandomMultiplier);
         }
     }
 }

@@ -1310,7 +1310,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     "a");
             assertNotNull("result is null and it shouldn't be", result);
             assertTrue("result is not a BooleanQuery", result is BooleanQuery);
-            if (VERBOSE)
+            if (Verbose)
                 Console.WriteLine("Result: " + result);
             assertTrue(((BooleanQuery)result).Clauses.size() + " does not equal: "
                 + 2, ((BooleanQuery)result).Clauses.size() == 2);

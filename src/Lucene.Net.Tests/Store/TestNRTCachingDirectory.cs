@@ -55,7 +55,7 @@ namespace Lucene.Net.Store
             LineFileDocs docs = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
             int numDocs = TestUtil.NextInt32(Random, 100, 400);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: numDocs=" + numDocs);
             }

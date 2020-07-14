@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Uk
         public void TestRandomStrings()
         {
             Analyzer analyzer = new UkrainianMorfologikAnalyzer(TEST_VERSION_CURRENT);
-            CheckRandomData(Random, analyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, analyzer, 1000 * RandomMultiplier);
             analyzer.Dispose();
         }
     }

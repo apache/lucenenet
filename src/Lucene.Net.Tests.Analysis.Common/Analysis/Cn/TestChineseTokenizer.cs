@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Cn
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, new ChineseAnalyzer(), 10000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new ChineseAnalyzer(), 10000 * RandomMultiplier);
         }
     }
 }

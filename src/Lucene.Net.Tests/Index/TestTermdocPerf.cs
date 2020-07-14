@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
             long start = Environment.TickCount;
             AddDocs(LuceneTestCase.Random, dir, ndocs, "foo", "val", maxTF, percentDocs);
             long end = Environment.TickCount;
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("milliseconds for creation of " + ndocs + " docs = " + (end - start));
             }
@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
             }
 
             end = Environment.TickCount;
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("milliseconds for " + iter + " TermDocs iteration: " + (end - start));
             }

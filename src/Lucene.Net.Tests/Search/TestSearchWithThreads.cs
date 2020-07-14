@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
             w.Dispose();
 
             long endTime = Environment.TickCount;
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("BUILD took " + (endTime - startTime));
             }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
                 t.Join();
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(NUM_SEARCH_THREADS + " threads did " + netSearch + " searches");
             }

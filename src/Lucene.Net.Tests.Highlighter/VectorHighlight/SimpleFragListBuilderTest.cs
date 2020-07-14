@@ -68,7 +68,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             FieldFragList ffl = sflb.CreateFieldFragList(fpl(phraseQuery, "abcdefgh   jklmnopqrs"), sflb.minFragCharSize);
             assertEquals(1, ffl.FragInfos.size());
-            if (VERBOSE) Console.WriteLine(ffl.FragInfos[0].toString());
+            if (Verbose) Console.WriteLine(ffl.FragInfos[0].toString());
             assertEquals("subInfos=(abcdefghjklmnopqrs((0,21)))/1.0(0,21)", ffl.FragInfos[0].toString());
         }
 

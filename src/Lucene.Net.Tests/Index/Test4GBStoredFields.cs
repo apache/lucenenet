@@ -84,14 +84,14 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; ++i)
             {
                 w.AddDocument(doc);
-                if (VERBOSE && i % (numDocs / 10) == 0)
+                if (Verbose && i % (numDocs / 10) == 0)
                 {
                     Console.WriteLine(i + " of " + numDocs + "...");
                 }
             }
             w.ForceMerge(1);
             w.Dispose();
-            if (VERBOSE)
+            if (Verbose)
             {
                 bool found = false;
                 foreach (string file in dir.ListAll())

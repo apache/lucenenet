@@ -645,7 +645,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             DirectoryInfo tempDir = CreateTempDir("AnalyzingInfixSuggesterTest");
             Analyzer a = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false);
             int minPrefixChars = Random.nextInt(7);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("  minPrefixChars=" + minPrefixChars);
             }
@@ -706,7 +706,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         update.weight = weight;
                         Input input = inputs[update.index];
                         pendingUpdates.Add(update);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: iter=" + iter + " update input=" + input.term.Utf8ToString() + "/" + weight);
                         }
@@ -717,7 +717,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         // Add a new suggestion
                         inputs.Add(new Input(text, weight, new BytesRef(text)));
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: iter=" + iter + " add input=" + text + "/" + weight);
                         }
@@ -727,7 +727,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     if (Random.nextInt(15) == 7)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: now refresh suggester");
                         }
@@ -744,7 +744,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                     if (Random.nextInt(50) == 7)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: now close/reopen suggester");
                         }
@@ -780,7 +780,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         bool allTermsRequired = Random.nextInt(10) == 7;
                         bool doHilite = Random.nextBoolean();
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: lookup \"" + query + "\" allTermsRequired=" + allTermsRequired + " doHilite=" + doHilite);
                         }
@@ -858,7 +858,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                             int expectedCount = Math.Min(topN, expected.size());
 
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("  expected:");
                                 for (int i = 0; i < expectedCount; i++)
@@ -883,7 +883,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
                         else
                         {
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("  no expected matches");
                             }

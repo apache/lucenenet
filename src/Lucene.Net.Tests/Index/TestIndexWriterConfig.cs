@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(typeof(FlushByRamOrCountsPolicy), conf.FlushPolicy.GetType());
             Assert.AreEqual(IndexWriterConfig.DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB, conf.RAMPerThreadHardLimitMB);
             Assert.AreEqual(Codec.Default, conf.Codec);
-            Assert.AreEqual(InfoStream.Default, conf.InfoStream);
+            Assert.AreEqual((object)InfoStream.Default, conf.InfoStream);
             Assert.AreEqual(IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM, conf.UseCompoundFile);
             // Sanity check - validate that all getters are covered.
             ISet<string> getters = new JCG.HashSet<string>();

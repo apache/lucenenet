@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String fragment = highlighter.GetBestFragment(stream, storedField);
 
-                if (VERBOSE) Console.WriteLine(fragment);
+                if (Verbose) Console.WriteLine(fragment);
             }
         }
 
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.Highlight
 
             String expected = "I call our <B>world</B> <B>Flatland</B>, not because we call it so,";
             String observed = highlightField(q, "SOME_FIELD_NAME", s1);
-            if (VERBOSE) Console.WriteLine("Expected: \"" + expected + "\n" + "Observed: \"" + observed);
+            if (Verbose) Console.WriteLine("Expected: \"" + expected + "\n" + "Observed: \"" + observed);
             assertEquals("Query in the default field results in text for *ANY* field being highlighted",
                 expected, observed);
 
@@ -225,7 +225,7 @@ namespace Lucene.Net.Search.Highlight
 
             expected = s1;
             observed = highlightField(q, FIELD_NAME, s1);
-            if (VERBOSE) Console.WriteLine("Expected: \"" + expected + "\n" + "Observed: \"" + observed);
+            if (Verbose) Console.WriteLine("Expected: \"" + expected + "\n" + "Observed: \"" + observed);
             assertEquals(
                 "Query in a named field does not result in highlighting when that field isn't in the query",
                 s1, highlightField(q, FIELD_NAME, s1));
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
 
             // Not sure we can assert anything here - just running to check we dont
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
 
             assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
@@ -380,7 +380,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
 
             assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
@@ -410,7 +410,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
 
             assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
@@ -438,7 +438,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
 
 
@@ -466,7 +466,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
 
 
@@ -494,7 +494,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
 
 
@@ -551,7 +551,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
 
             assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
@@ -580,7 +580,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
 
                 assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
                     numHighlights == 3);
@@ -611,7 +611,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text,
                     maxNumFragmentsRequired, "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
 
             }
 
@@ -635,7 +635,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text,
                     maxNumFragmentsRequired, "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
 
             }
         }
@@ -669,7 +669,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
 
                 assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
                     numHighlights == 4);
@@ -744,7 +744,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
             // Not sure we can assert anything here - just running to check we dont
             // throw any exceptions
@@ -929,7 +929,7 @@ namespace Lucene.Net.Search.Highlight
             // can't rewrite ConstantScore if you want to highlight it -
             // it rewrites to ConstantScoreQuery which cannot be highlighted
             // query = unReWrittenQuery.rewrite(reader);
-            if (VERBOSE) Console.WriteLine("Searching for: " + query.ToString(FIELD_NAME));
+            if (Verbose) Console.WriteLine("Searching for: " + query.ToString(FIELD_NAME));
             hits = searcher.Search(query, null, 1000);
 
             for (int i = 0; i < hits.TotalHits; i++)
@@ -946,7 +946,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     fragmentSeparator);
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
             assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
                 numHighlights == 5);
@@ -971,7 +971,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     fragmentSeparator);
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
             assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
                 numHighlights == 5);
@@ -996,7 +996,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     fragmentSeparator);
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
             }
             assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
                 numHighlights == 5);
@@ -1160,7 +1160,7 @@ namespace Lucene.Net.Search.Highlight
                         this);
                     highlighter.TextFragmenter = (new SimpleFragmenter(40));
                     String result = highlighter.GetBestFragment(tokenStream, text);
-                    if (VERBOSE) Console.WriteLine("\t" + result);
+                    if (Verbose) Console.WriteLine("\t" + result);
                 }
                 assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
                     numHighlights == 4);
@@ -1285,7 +1285,7 @@ namespace Lucene.Net.Search.Highlight
                     Highlighter highlighter = instance.GetHighlighter(query, FIELD_NAME,
                         this);
                     String result = highlighter.GetBestFragment(tokenStream, text);
-                    if (VERBOSE) Console.WriteLine("\t" + result);
+                    if (Verbose) Console.WriteLine("\t" + result);
                 }
                 assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
                     numHighlights == 4);
@@ -1320,7 +1320,7 @@ namespace Lucene.Net.Search.Highlight
                         + " vs " + stringResults.Length, fragmentResults.Length == stringResults.Length);
                     for (int j = 0; j < stringResults.Length; j++)
                     {
-                        if (VERBOSE) Console.WriteLine(fragmentResults[j]);
+                        if (Verbose) Console.WriteLine(fragmentResults[j]);
                         assertTrue("Failed to find same text Fragments: " + fragmentResults[j] + " found",
                             fragmentResults[j].toString().Equals(stringResults[j], StringComparison.Ordinal));
 
@@ -1442,7 +1442,7 @@ namespace Lucene.Net.Search.Highlight
                 query.Add(new WildcardQuery(new Term(FIELD_NAME, "jf?")), Occur.SHOULD);
                 query.Add(new WildcardQuery(new Term(FIELD_NAME, "kenned*")), Occur.SHOULD);
 
-                if (VERBOSE) Console.WriteLine("Searching with primitive query");
+                if (Verbose) Console.WriteLine("Searching with primitive query");
                 // forget to set this and...
                 // query=query.rewrite(reader);
                 TopDocs hits = searcher.Search(query, null, 1000);
@@ -1466,7 +1466,7 @@ namespace Lucene.Net.Search.Highlight
                     String highlightedText = highlighter.GetBestFragments(tokenStream, text,
                         maxNumFragmentsRequired, "...");
 
-                    if (VERBOSE) Console.WriteLine(highlightedText);
+                    if (Verbose) Console.WriteLine(highlightedText);
                 }
                 // We expect to have zero highlights if the query is multi-terms and is
                 // not
@@ -1880,7 +1880,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 Document doc = searcher.Doc(hits.ScoreDocs[i].Doc);
                 String result = h.GetBestFragment(a, "t_text1", doc.Get("t_text1"));
-                if (VERBOSE) Console.WriteLine("result:" + result);
+                if (Verbose) Console.WriteLine("result:" + result);
                 assertEquals("more <B>random</B> words for second field", result);
             }
             reader.Dispose();
@@ -1929,7 +1929,7 @@ namespace Lucene.Net.Search.Highlight
             // for any multi-term queries to work (prefix, wildcard, range,fuzzy etc)
             // you must use a rewritten query!
             query = unReWrittenQuery.Rewrite(reader);
-            if (VERBOSE) Console.WriteLine("Searching for: " + query.ToString(FIELD_NAME));
+            if (Verbose) Console.WriteLine("Searching for: " + query.ToString(FIELD_NAME));
             hits = searcher.Search(query, null, 1000);
         }
 
@@ -1947,7 +1947,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
-                if (VERBOSE) Console.WriteLine("\t" + result);
+                if (Verbose) Console.WriteLine("\t" + result);
 
                 assertTrue("Failed to find correct number of highlights " + numHighlights + " found",
                     numHighlights == expectedHighlights);
@@ -2265,7 +2265,7 @@ namespace Lucene.Net.Search.Highlight
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     fragmentSeparator);
-                if (LuceneTestCase.VERBOSE) Console.WriteLine("\t" + result);
+                if (LuceneTestCase.Verbose) Console.WriteLine("\t" + result);
             }
         }
 
@@ -2273,9 +2273,9 @@ namespace Lucene.Net.Search.Highlight
 
         internal void Start()
         {
-            if (LuceneTestCase.VERBOSE) Console.WriteLine("Run QueryScorer");
+            if (LuceneTestCase.Verbose) Console.WriteLine("Run QueryScorer");
             run(this);
-            if (LuceneTestCase.VERBOSE) Console.WriteLine("Run QueryTermScorer");
+            if (LuceneTestCase.Verbose) Console.WriteLine("Run QueryTermScorer");
             mode = QUERY_TERM;
             run(this);
         }

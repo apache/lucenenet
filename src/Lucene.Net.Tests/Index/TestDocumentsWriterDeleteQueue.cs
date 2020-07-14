@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
         public virtual void TestUpdateDelteSlices()
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-            int size = 200 + Random.Next(500) * RANDOM_MULTIPLIER;
+            int size = 200 + Random.Next(500) * RandomMultiplier;
             int?[] ids = new int?[size];
             for (int i = 0; i < ids.Length; i++)
             {
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
             Assert.IsFalse(queue.AnyChanges());
             queue.Clear();
             Assert.IsFalse(queue.AnyChanges());
-            int size = 200 + Random.Next(500) * RANDOM_MULTIPLIER;
+            int size = 200 + Random.Next(500) * RandomMultiplier;
             int termsSinceFreeze = 0;
             int queriesSinceFreeze = 0;
             for (int i = 0; i < size; i++)
@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
         public virtual void TestAnyChanges()
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
-            int size = 200 + Random.Next(500) * RANDOM_MULTIPLIER;
+            int size = 200 + Random.Next(500) * RandomMultiplier;
             int termsSinceFreeze = 0;
             int queriesSinceFreeze = 0;
             for (int i = 0; i < size; i++)
@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
         {
             DocumentsWriterDeleteQueue queue = new DocumentsWriterDeleteQueue();
             ISet<Term> uniqueValues = new JCG.HashSet<Term>();
-            int size = 10000 + Random.Next(500) * RANDOM_MULTIPLIER;
+            int size = 10000 + Random.Next(500) * RandomMultiplier;
             int?[] ids = new int?[size];
             for (int i = 0; i < ids.Length; i++)
             {

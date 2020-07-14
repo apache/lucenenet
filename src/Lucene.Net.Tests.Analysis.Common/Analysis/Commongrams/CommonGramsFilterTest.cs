@@ -288,11 +288,11 @@ namespace Lucene.Net.Analysis.CommonGrams
         {
             Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
 
-            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
 
             Analyzer b = new AnalyzerAnonymousInnerClassHelper4(this);
 
-            CheckRandomData(Random, b, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, b, 1000 * RandomMultiplier);
         }
 
         private class AnalyzerAnonymousInnerClassHelper3 : Analyzer

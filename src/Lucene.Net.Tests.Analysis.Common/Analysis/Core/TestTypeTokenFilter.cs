@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Core
         // print debug info depending on VERBOSE
         private static void log(string s)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(s);
             }

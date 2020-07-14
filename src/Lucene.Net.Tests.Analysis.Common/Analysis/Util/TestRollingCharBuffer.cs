@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     s = TestUtil.RandomUnicodeString(random, stringLen);
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter + " s.length()=" + s.Length);
                 }
@@ -55,14 +55,14 @@ namespace Lucene.Net.Analysis.Util
                 var availCount = 0;
                 while (nextRead < s.Length)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  cycle nextRead=" + nextRead + " avail=" + availCount);
                     }
                     if (availCount == 0 || random.NextBoolean())
                     {
                         // Read next char
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("    new char");
                         }
@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Util
                     {
                         // Read previous char
                         var pos = TestUtil.NextInt32(random, nextRead - availCount, nextRead - 1);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("    old char pos=" + pos);
                         }
@@ -101,7 +101,7 @@ namespace Lucene.Net.Analysis.Util
                         {
                             start = nextRead - availCount + random.Next(availCount - length);
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("    slice start=" + start + " length=" + length);
                         }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Util
                     if (availCount > 0 && random.Next(20) == 17)
                     {
                         var toFree = random.Next(availCount);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("    free " + toFree + " (avail=" + (availCount - toFree) + ")");
                         }

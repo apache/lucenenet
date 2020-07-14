@@ -59,7 +59,7 @@ namespace Lucene.Net.Search
             LiveFieldValues<IndexSearcher, int?> rt = new LiveFieldValuesAnonymousInnerClassHelper(mgr, missing);
 
             int numThreads = TestUtil.NextInt32(Random, 2, 5);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(numThreads + " threads");
             }
@@ -204,7 +204,7 @@ namespace Lucene.Net.Search
                         {
                             //System.out.println("refresh @ " + rt.Size());
                             mgr.MaybeRefresh();
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 IndexSearcher s = mgr.Acquire();
                                 try

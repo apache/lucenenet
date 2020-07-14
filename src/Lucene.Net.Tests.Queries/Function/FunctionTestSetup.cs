@@ -96,7 +96,7 @@ namespace Lucene.Net.Tests.Queries.Function
         /// </summary>
         protected internal void CreateIndex(bool doMultiSegment)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: setUp");
             }
@@ -126,14 +126,14 @@ namespace Lucene.Net.Tests.Queries.Function
             }
             if (!doMultiSegment)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: setUp full merge");
                 }
                 iw.ForceMerge(1);
             }
             iw.Dispose();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: setUp done close");
             }
@@ -195,7 +195,7 @@ namespace Lucene.Net.Tests.Queries.Function
         // debug messages (change DBG to true for anything to print)
         protected internal static void Log(object o)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(o.ToString());
             }

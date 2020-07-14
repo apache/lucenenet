@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(80, w.MaxDoc);
             Assert.AreEqual(80, w.NumDocs);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: delete docs");
             }
@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(80, w.MaxDoc);
             Assert.AreEqual(60, w.NumDocs);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: forceMergeDeletes2");
             }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
             int num = AtLeast(10);
             for (int iter = 0; iter < num; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
 
                 int segmentCount = w.SegmentCount;
                 int targetCount = TestUtil.NextInt32(Random, 1, segmentCount);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: merge to " + targetCount + " segs (current count=" + segmentCount + ")");
                 }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(numDocs, r.NumDocs);
             r.Dispose();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: delete doc");
             }

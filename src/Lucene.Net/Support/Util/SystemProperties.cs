@@ -35,7 +35,7 @@ namespace Lucene.Net.Util
     {
         // Calls ConfigurationSettings.GetConfigurationFactory internally to
         // get the currently set instance of IConfigurationFactory
-        private readonly static IProperties properties = new Properties(ConfigurationSettings.GetConfigurationFactory().GetConfiguration);
+        private readonly static IProperties properties = new Properties(ConfigurationSettings.GetConfigurationFactory);
 
         /// <summary>
         /// Retrieves the value of a property from the current process.

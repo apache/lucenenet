@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Lucene.Net.Configuration;
+using Microsoft.Extensions.Configuration;
 using System;
 
 namespace Lucene.Net.Util
@@ -28,16 +29,19 @@ namespace Lucene.Net.Util
     /// </summary>
     internal class Properties : IProperties
     {
-        private readonly Func<IConfiguration> getConfiguration;
+        private readonly Func<IConfigurationFactory> getConfigurationFactory;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="Properties"/> with the specified <see cref="Func{IConfiguration}"/>.
+        /// Initializes a new instance of <see cref="Properties"/> with the specified <see cref="Func{IConfigurationFactory}"/>.
         /// The delegate method ensures the current instance of <see cref="IConfiguration"/> is used.
         /// </summary>
-        /// <param name="getConfiguration">The <see cref="Func{IConfiguration}"/>.</param>
-        public Properties(Func<IConfiguration> getConfiguration)
+        /// <param name="getConfigurationFactory">The <see cref="Func{IConfigurationFactory}"/>.</param>
+        // NOTE: We are decoupling the configurationFactory here to create a seam that we can use to inject
+        // a custom one for testing purposes. We don't want to hold onto a reference to it because the user
+        // may change it to a different instance after the first time it is called.
+        public Properties(Func<IConfigurationFactory> getConfigurationFactory)
         {
-            this.getConfiguration = getConfiguration ?? throw new ArgumentNullException(nameof(getConfiguration));
+            this.getConfigurationFactory = getConfigurationFactory ?? throw new ArgumentNullException(nameof(getConfigurationFactory));
         }
 
         /// <summary>
@@ -131,7 +135,8 @@ namespace Lucene.Net.Util
 
         private T GetProperty<T>(string key, T defaultValue, Func<string, T> conversionFunction)
         {
-            IConfiguration configuration = getConfiguration();
+            IConfigurationFactory configurationFactory = getConfigurationFactory();
+            IConfiguration configuration = configurationFactory.GetConfiguration();
             string setting = configuration[key];
 
             return string.IsNullOrEmpty(setting)

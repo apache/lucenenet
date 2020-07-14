@@ -324,7 +324,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         [Test]
         public void TestRandomStrings()
         {
-            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
 
         /** blast some random large strings through the analyzer */
@@ -332,7 +332,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         public void TestRandomHugeStrings()
         {
             Random random = Random;
-            CheckRandomData(random, a, 100 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(random, a, 100 * RandomMultiplier, 8192);
         }
 
         [Test]
@@ -382,7 +382,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                         }
                         tokenizer.End();
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             SystemConsole.Out.WriteLine(tokenCount);
                         }

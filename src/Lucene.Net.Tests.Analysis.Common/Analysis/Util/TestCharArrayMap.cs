@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestCharArrayMap()
         {
-            int num = 5 * RANDOM_MULTIPLIER;
+            int num = 5 * RandomMultiplier;
             for (int i = 0; i < num; i++)
             { // pump this up for more random testing
                 DoRandom(1000, false);

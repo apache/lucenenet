@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
             Query q1 = searcher.Rewrite(mtq);
             Query q2 = multiSearcher.Rewrite(mtq);
             Query q3 = multiSearcherDupls.Rewrite(mtq);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine();
                 Console.WriteLine("single segment: " + q1);
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
             Query q1 = searcher.Rewrite(mtq);
             Query q2 = multiSearcher.Rewrite(mtq);
             Query q3 = multiSearcherDupls.Rewrite(mtq);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine();
                 Console.WriteLine("single segment: " + q1);

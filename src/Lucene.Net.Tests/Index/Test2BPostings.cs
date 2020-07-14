@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 w.AddDocument(doc);
-                if (VERBOSE && i % 100000 == 0)
+                if (Verbose && i % 100000 == 0)
                 {
                     Console.WriteLine(i + " of " + numDocs + "...");
                 }

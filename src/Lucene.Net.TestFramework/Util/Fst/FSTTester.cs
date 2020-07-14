@@ -308,7 +308,7 @@ namespace Lucene.Net.Util.Fst
 
         internal virtual FST<T> DoTest(int prune1, int prune2, bool allowRandomSuffixSharing)
         {
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("\nTEST: prune1=" + prune1 + " prune2=" + prune2);
             }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Util.Fst
                                                 PackedInt32s.DEFAULT, 
                                                 true, 
                                                 15);
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 if (willRewrite)
                 {
@@ -375,7 +375,7 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-            if (LuceneTestCase.VERBOSE && pairs.Count <= 20 && fst != null)
+            if (LuceneTestCase.Verbose && pairs.Count <= 20 && fst != null)
             {
                 using (TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.OpenOrCreate), Encoding.UTF8))
                 {
@@ -384,7 +384,7 @@ namespace Lucene.Net.Util.Fst
                 Console.WriteLine("SAVED out.dot");
             }
 
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 if (fst == null)
                 {
@@ -450,7 +450,7 @@ namespace Lucene.Net.Util.Fst
                 return;
             }
 
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("TEST: now verify " + pairs.Count + " terms");
                 foreach (InputOutput<T> pair in pairs)
@@ -467,7 +467,7 @@ namespace Lucene.Net.Util.Fst
             // visit valid pairs in order -- make sure all words
             // are accepted, and FSTEnum's next() steps through
             // them correctly
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("TEST: check valid terms/next()");
             }
@@ -476,7 +476,7 @@ namespace Lucene.Net.Util.Fst
                 foreach (InputOutput<T> pair in pairs)
                 {
                     Int32sRef term = pair.Input;
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         Console.WriteLine("TEST: check term=" + InputToString(inputMode, term) + " output=" + fst.Outputs.OutputToString(pair.Output));
                     }
@@ -516,7 +516,7 @@ namespace Lucene.Net.Util.Fst
             }
 
             // find random matching word and make sure it's valid
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("TEST: verify random accepted terms");
             }
@@ -539,7 +539,7 @@ namespace Lucene.Net.Util.Fst
             }
 
             // test IntsRefFSTEnum.Seek:
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("TEST: verify seek");
             }
@@ -547,7 +547,7 @@ namespace Lucene.Net.Util.Fst
             num_ = LuceneTestCase.AtLeast(random, 100);
             for (int iter = 0; iter < num_; iter++)
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("  iter=" + iter);
                 }
@@ -566,7 +566,7 @@ namespace Lucene.Net.Util.Fst
                             Int32sRefFSTEnum.InputOutput<T> seekResult;
                             if (random.Next(3) == 0)
                             {
-                                if (LuceneTestCase.VERBOSE)
+                                if (LuceneTestCase.Verbose)
                                 {
                                     Console.WriteLine("  do non-exist seekExact term=" + InputToString(inputMode, term));
                                 }
@@ -575,7 +575,7 @@ namespace Lucene.Net.Util.Fst
                             }
                             else if (random.NextBoolean())
                             {
-                                if (LuceneTestCase.VERBOSE)
+                                if (LuceneTestCase.Verbose)
                                 {
                                     Console.WriteLine("  do non-exist seekFloor term=" + InputToString(inputMode, term));
                                 }
@@ -584,7 +584,7 @@ namespace Lucene.Net.Util.Fst
                             }
                             else
                             {
-                                if (LuceneTestCase.VERBOSE)
+                                if (LuceneTestCase.Verbose)
                                 {
                                     Console.WriteLine("  do non-exist seekCeil term=" + InputToString(inputMode, term));
                                 }
@@ -595,7 +595,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 //System.out.println("    got " + inputToString(inputMode,seekResult.input) + " output=" + fst.Outputs.outputToString(seekResult.Output));
                                 Assert.IsNotNull(seekResult, "got null but expected term=" + InputToString(inputMode, pairs[pos].Input));
-                                if (LuceneTestCase.VERBOSE)
+                                if (LuceneTestCase.Verbose)
                                 {
                                     Console.WriteLine("    got " + InputToString(inputMode, seekResult.Input));
                                 }
@@ -607,7 +607,7 @@ namespace Lucene.Net.Util.Fst
                                 // seeked before start or beyond end
                                 //System.out.println("seek=" + seekTerm);
                                 Assert.IsNull(seekResult, "expected null but got " + (seekResult == null ? "null" : InputToString(inputMode, seekResult.Input)));
-                                if (LuceneTestCase.VERBOSE)
+                                if (LuceneTestCase.Verbose)
                                 {
                                     Console.WriteLine("    got null");
                                 }
@@ -624,7 +624,7 @@ namespace Lucene.Net.Util.Fst
                     Int32sRefFSTEnum.InputOutput<T> seekResult;
                     if (random.Next(3) == 2)
                     {
-                        if (LuceneTestCase.VERBOSE)
+                        if (LuceneTestCase.Verbose)
                         {
                             Console.WriteLine("  do exists seekExact term=" + InputToString(inputMode, pair.Input));
                         }
@@ -632,7 +632,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     else if (random.NextBoolean())
                     {
-                        if (LuceneTestCase.VERBOSE)
+                        if (LuceneTestCase.Verbose)
                         {
                             Console.WriteLine("  do exists seekFloor " + InputToString(inputMode, pair.Input));
                         }
@@ -640,7 +640,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     else
                     {
-                        if (LuceneTestCase.VERBOSE)
+                        if (LuceneTestCase.Verbose)
                         {
                             Console.WriteLine("  do exists seekCeil " + InputToString(inputMode, pair.Input));
                         }
@@ -652,7 +652,7 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("TEST: mixed next/seek");
             }
@@ -661,7 +661,7 @@ namespace Lucene.Net.Util.Fst
             num_ = LuceneTestCase.AtLeast(random, 100);
             for (int iter = 0; iter < num_; iter++)
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("TEST: iter " + iter);
                 }
@@ -675,7 +675,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         // next
                         upto++;
-                        if (LuceneTestCase.VERBOSE)
+                        if (LuceneTestCase.Verbose)
                         {
                             Console.WriteLine("  do next");
                         }
@@ -697,7 +697,7 @@ namespace Lucene.Net.Util.Fst
                                 {
                                     upto--;
                                     Assert.IsTrue(upto != -1);
-                                    if (LuceneTestCase.VERBOSE)
+                                    if (LuceneTestCase.Verbose)
                                     {
                                         Console.WriteLine("  do non-exist seekFloor(" + InputToString(inputMode, term) + ")");
                                     }
@@ -705,7 +705,7 @@ namespace Lucene.Net.Util.Fst
                                 }
                                 else
                                 {
-                                    if (LuceneTestCase.VERBOSE)
+                                    if (LuceneTestCase.Verbose)
                                     {
                                         Console.WriteLine("  do non-exist seekCeil(" + InputToString(inputMode, term) + ")");
                                     }
@@ -731,7 +731,7 @@ namespace Lucene.Net.Util.Fst
 
                         if (random.NextBoolean())
                         {
-                            if (LuceneTestCase.VERBOSE)
+                            if (LuceneTestCase.Verbose)
                             {
                                 Console.WriteLine("  do seekCeil(" + InputToString(inputMode, pairs[upto].Input) + ")");
                             }
@@ -739,14 +739,14 @@ namespace Lucene.Net.Util.Fst
                         }
                         else
                         {
-                            if (LuceneTestCase.VERBOSE)
+                            if (LuceneTestCase.Verbose)
                             {
                                 Console.WriteLine("  do seekFloor(" + InputToString(inputMode, pairs[upto].Input) + ")");
                             }
                             isDone = fstEnum_.SeekFloor(pairs[upto].Input) == null;
                         }
                     }
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         if (!isDone)
                         {
@@ -803,7 +803,7 @@ namespace Lucene.Net.Util.Fst
         // FST is pruned
         private void VerifyPruned(int inputMode, FST<T> fst, int prune1, int prune2)
         {
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("TEST: now verify pruned " + pairs.Count + " terms; outputs=" + outputs);
                 foreach (InputOutput<T> pair in pairs)
@@ -860,7 +860,7 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("TEST: now prune");
             }
@@ -874,7 +874,7 @@ namespace Lucene.Net.Util.Fst
                 KeyValuePair<Int32sRef, CountMinOutput<T>> ent = prefixes.ElementAt(i);
                 Int32sRef prefix = ent.Key;
                 CountMinOutput<T> cmo = ent.Value;
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("  term prefix=" + InputToString(inputMode, prefix, false) + " count=" + cmo.Count + " isLeaf=" + cmo.IsLeaf + " output=" + outputs.OutputToString(cmo.Output) + " isFinal=" + cmo.IsFinal);
                 }
@@ -932,7 +932,7 @@ namespace Lucene.Net.Util.Fst
                 }
             }
 
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("TEST: after prune");
                 foreach (KeyValuePair<Int32sRef, CountMinOutput<T>> ent in prefixes)
@@ -954,7 +954,7 @@ namespace Lucene.Net.Util.Fst
             Assert.IsNotNull(fst);
 
             // make sure FST only enums valid prefixes
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("TEST: check pruned enum");
             }
@@ -962,7 +962,7 @@ namespace Lucene.Net.Util.Fst
             Int32sRefFSTEnum.InputOutput<T> current;
             while ((current = fstEnum.Next()) != null)
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("  fstEnum.next prefix=" + InputToString(inputMode, current.Input, false) + " output=" + outputs.OutputToString(current.Output));
                 }
@@ -981,7 +981,7 @@ namespace Lucene.Net.Util.Fst
             }
 
             // make sure all non-pruned prefixes are present in the FST
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("TEST: verify all prefixes");
             }
@@ -992,7 +992,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     CountMinOutput<T> cmo = ent.Value;
                     T output = Run(fst, ent.Key, stopNode);
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         Console.WriteLine("TEST: verify prefix=" + InputToString(inputMode, ent.Key, false) + " output=" + outputs.OutputToString(cmo.Output));
                     }

@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private void Add(string input, string output, bool keepOrig)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("  add input=" + input + " output=" + output + " keepOrig=" + keepOrig);
             }
@@ -81,7 +81,7 @@ namespace Lucene.Net.Analysis.Synonym
         // the tests are a little messy
         private void Verify(string input, string output)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: verify input=" + input + " expectedOutput=" + output);
             }
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Synonym
             while (tokensOut.IncrementToken())
             {
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  incr token=" + termAtt.ToString() + " posIncr=" + posIncrAtt.PositionIncrement + " startOff=" + offsetAtt.StartOffset + " endOff=" + offsetAtt.EndOffset);
                 }
@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Synonym
                     if (atPos > 0)
                     {
                         assertTrue(tokensOut.IncrementToken());
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  incr token=" + termAtt.ToString() + " posIncr=" + posIncrAtt.PositionIncrement + " startOff=" + offsetAtt.StartOffset + " endOff=" + offsetAtt.EndOffset);
                         }
@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             tokensOut.End();
             tokensOut.Dispose();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("  incr: END");
             }
@@ -468,7 +468,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             string document = GetRandomString('a', alphabetSize, docLen);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: doc=" + document);
             }
@@ -479,7 +479,7 @@ namespace Lucene.Net.Analysis.Synonym
             IDictionary<string, OneSyn> synMap = new Dictionary<string, OneSyn>();
             IList<OneSyn> syns = new List<OneSyn>();
             bool dedup = Random.nextBoolean();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("  dedup=" + dedup);
             }
@@ -499,7 +499,7 @@ namespace Lucene.Net.Analysis.Synonym
                 string synOut = GetRandomString('0', 10, TestUtil.NextInt32(Random, 1, 5)).Trim();
                 s.@out.Add(synOut);
                 Add(synIn, synOut, s.keepOrig);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  syns[" + synIDX + "] = " + s.@in + " -> " + s.@out + " keepOrig=" + s.keepOrig);
                 }
@@ -525,7 +525,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             string expected = SlowSynMatcher(document, syns, 5);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: expected=" + expected);
             }
@@ -746,7 +746,7 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 b = new SynonymMap.Builder(random.nextBoolean());
                 int numEntries = AtLeast(10);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + i + " numEntries=" + numEntries);
                 }

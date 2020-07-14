@@ -326,7 +326,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         [Test]
         public void TestRandomStrings()
         {
-            CheckRandomData(Random, new SmartChineseAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new SmartChineseAnalyzer(TEST_VERSION_CURRENT), 1000 * RandomMultiplier);
         }
 
         /** blast some random large strings through the analyzer */
@@ -335,7 +335,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         public void TestRandomHugeStrings()
         {
             Random random = Random;
-            CheckRandomData(random, new SmartChineseAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(random, new SmartChineseAnalyzer(TEST_VERSION_CURRENT), 100 * RandomMultiplier, 8192);
         }
 
         [Test]

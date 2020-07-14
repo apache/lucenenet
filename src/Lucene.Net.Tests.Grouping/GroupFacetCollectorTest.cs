@@ -384,14 +384,14 @@ namespace Lucene.Net.Search.Grouping
                 IndexContext context = CreateIndexContext(multipleFacetsPerDocument);
                 IndexSearcher searcher = NewSearcher(context.indexReader);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: searcher=" + searcher);
                 }
 
                 for (int searchIter = 0; searchIter < 100; searchIter++)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: searchIter=" + searchIter);
                     }
@@ -431,7 +431,7 @@ namespace Lucene.Net.Search.Grouping
                     IList<TermGroupFacetCollector.FacetEntry> expectedFacetEntries = expectedFacetResult.GetFacetEntries();
                     IList<TermGroupFacetCollector.FacetEntry> actualFacetEntries = actualFacetResult.GetFacetEntries(offset, limit);
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("Use DV: " + useDv);
                         Console.WriteLine("Collector: " + groupFacetCollector.GetType().Name);
@@ -498,11 +498,11 @@ namespace Lucene.Net.Search.Grouping
         private IndexContext CreateIndexContext(bool multipleFacetValuesPerDocument)
         {
             Random random = Random;
-            int numDocs = TestUtil.NextInt32(random, 138, 1145) * RANDOM_MULTIPLIER;
+            int numDocs = TestUtil.NextInt32(random, 138, 1145) * RandomMultiplier;
             int numGroups = TestUtil.NextInt32(random, 1, numDocs / 4);
             int numFacets = TestUtil.NextInt32(random, 1, numDocs / 6);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: numDocs=" + numDocs + " numGroups=" + numGroups);
             }
@@ -518,14 +518,14 @@ namespace Lucene.Net.Search.Grouping
                 facetValues.Add(GenerateRandomNonEmptyString());
             }
             string[] contentBrs = new string[TestUtil.NextInt32(random, 2, 20)];
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: create fake content");
             }
             for (int contentIDX = 0; contentIDX < contentBrs.Length; contentIDX++)
             {
                 contentBrs[contentIDX] = GenerateRandomNonEmptyString();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  content=" + contentBrs[contentIDX]);
                 }
@@ -687,7 +687,7 @@ namespace Lucene.Net.Search.Grouping
                     }
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  doc content=" + contentStr + " group=" + (groupValue == null ? "null" : groupValue) + " facetVals=" + Collections.ToString(facetVals));
                 }

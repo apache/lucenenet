@@ -175,7 +175,7 @@ namespace Lucene.Net.Search.Payloads
             for (int i = 1; i < 10; i++)
             {
                 query = NewPhraseQuery("field", English.Int32ToEnglish(i) + " hundred", true, new AveragePayloadFunction());
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: run query=" + query);
                 }

@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
 
         private int AutomatonQueryNrHits(AutomatonQuery query)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: run aq=" + query);
             }

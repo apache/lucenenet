@@ -66,7 +66,7 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
             sortedValues = values.ToArray();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("sortedValues: " + sortedValues);
                 Console.WriteLine("Sorter: " + sorter);

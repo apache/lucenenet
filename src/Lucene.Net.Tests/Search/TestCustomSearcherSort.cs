@@ -203,7 +203,7 @@ namespace Lucene.Net.Search
         // Simply write to console - choosen to be independant of log4j etc
         private void Log(string message)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(message);
             }

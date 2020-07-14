@@ -379,7 +379,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, new StandardAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new StandardAnalyzer(TEST_VERSION_CURRENT), 1000 * RandomMultiplier);
         }
 
         /// <summary>
@@ -388,7 +388,7 @@ namespace Lucene.Net.Analysis.Core
         public virtual void TestRandomHugeStrings()
         {
             Random random = Random;
-            CheckRandomData(random, new StandardAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(random, new StandardAnalyzer(TEST_VERSION_CURRENT), 100 * RandomMultiplier, 8192);
         }
 
         // Adds random graph after:
@@ -396,7 +396,7 @@ namespace Lucene.Net.Analysis.Core
         public virtual void TestRandomHugeStringsGraphAfter()
         {
             Random random = Random;
-            CheckRandomData(random, new AnalyzerAnonymousInnerClassHelper4(this), 100 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(random, new AnalyzerAnonymousInnerClassHelper4(this), 100 * RandomMultiplier, 8192);
         }
 
         private class AnalyzerAnonymousInnerClassHelper4 : Analyzer

@@ -366,7 +366,7 @@ namespace Lucene.Net.Index
 
             for (int pass = 0; pass < 2; pass++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: pass=" + pass);
                 }
@@ -382,7 +382,7 @@ namespace Lucene.Net.Index
 
                 for (int iter = 0; iter < 10; iter++)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: iter=" + iter);
                     }

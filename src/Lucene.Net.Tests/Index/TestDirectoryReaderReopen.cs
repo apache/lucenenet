@@ -632,7 +632,7 @@ namespace Lucene.Net.Index
             {
                 case 0:
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: modify index");
                         }

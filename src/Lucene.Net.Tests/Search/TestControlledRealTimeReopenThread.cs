@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
 
         protected override IndexSearcher GetFinalSearcher()
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: finalSearcher maxGen=" + maxGen);
             }
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
             // Randomly swap in NRTCachingDir
             if (Random.NextBoolean())
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: wrap NRTCachingDir");
                 }
@@ -116,13 +116,13 @@ namespace Lucene.Net.Search
             // Randomly verify the update "took":
             if (Random.Next(20) == 2)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": nrt: verify " + id);
                 }
                 nrtDeletesThread.WaitForGeneration(gen);
                 IndexSearcher s = nrtDeletes.Acquire();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": nrt: got searcher=" + s);
                 }
@@ -146,13 +146,13 @@ namespace Lucene.Net.Search
             // Randomly verify the add "took":
             if (Random.Next(20) == 2)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": nrt: verify " + id);
                 }
                 nrtNoDeletesThread.WaitForGeneration(gen);
                 IndexSearcher s = nrtNoDeletes.Acquire();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": nrt: got searcher=" + s);
                 }
@@ -175,13 +175,13 @@ namespace Lucene.Net.Search
             // Randomly verify the add "took":
             if (Random.Next(20) == 2)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": nrt: verify " + id);
                 }
                 nrtNoDeletesThread.WaitForGeneration(gen);
                 IndexSearcher s = nrtNoDeletes.Acquire();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": nrt: got searcher=" + s);
                 }
@@ -203,13 +203,13 @@ namespace Lucene.Net.Search
             // Randomly verify the udpate "took":
             if (Random.Next(20) == 2)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": nrt: verify " + id);
                 }
                 nrtDeletesThread.WaitForGeneration(gen);
                 IndexSearcher s = nrtDeletes.Acquire();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": nrt: got searcher=" + s);
                 }
@@ -231,13 +231,13 @@ namespace Lucene.Net.Search
             // randomly verify the delete "took":
             if (Random.Next(20) == 7)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": nrt: verify del " + id);
                 }
                 nrtDeletesThread.WaitForGeneration(gen);
                 IndexSearcher s = nrtDeletes.Acquire();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": nrt: got searcher=" + s);
                 }
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search
             double minReopenSec = 0.01 + 0.05 * Random.NextDouble();
             double maxReopenSec = minReopenSec * (1.0 + 10 * Random.NextDouble());
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: make SearcherManager maxReopenSec=" + maxReopenSec + " minReopenSec=" + minReopenSec);
             }
@@ -361,7 +361,7 @@ namespace Lucene.Net.Search
         protected override void DoClose()
         {
             Assert.IsTrue(warmCalled);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: now close SearcherManagers");
             }
@@ -408,7 +408,7 @@ namespace Lucene.Net.Search
             }
             ControlledRealTimeReopenThread<IndexSearcher> thread = new ControlledRealTimeReopenThread<IndexSearcher>(writer, manager, 0.01, 0.01);
             thread.Start(); // start reopening
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("waiting now for generation " + lastGen);
             }

@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
 
-            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer

@@ -182,9 +182,9 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestMockGraphTokenFilterBasic()
         {
-            for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 10 * RandomMultiplier; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -204,9 +204,9 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestMockGraphTokenFilterOnGraphInput()
         {
-            for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 100 * RandomMultiplier; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -277,9 +277,9 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestMockGraphTokenFilterBeforeHoles()
         {
-            for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 100 * RandomMultiplier; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -305,9 +305,9 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestMockGraphTokenFilterAfterHoles()
         {
-            for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 100 * RandomMultiplier; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -333,9 +333,9 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestMockGraphTokenFilterRandom()
         {
-            for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 10 * RandomMultiplier; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -358,9 +358,9 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestDoubleMockGraphTokenFilterRandom()
         {
-            for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 10 * RandomMultiplier; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -391,9 +391,9 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestMockGraphTokenFilterBeforeHolesRandom()
         {
-            for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 10 * RandomMultiplier; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -416,9 +416,9 @@ namespace Lucene.Net.Analysis
         [Test]
         public virtual void TestMockGraphTokenFilterAfterHolesRandom()
         {
-            for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 10 * RandomMultiplier; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }

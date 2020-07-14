@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
                 {
                     // CRASH!
                     indexOutput.Dispose();
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now crash");
                         Console.WriteLine(new Exception().StackTrace);

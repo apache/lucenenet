@@ -51,7 +51,7 @@ namespace Lucene.Net.Index
             int docUpto = 0;
             while (docUpto < NUM_DOCS)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: " + docUpto + " of " + NUM_DOCS);
                 }
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
                 docsLeftInthisSegment--;
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: now delete...");
             }

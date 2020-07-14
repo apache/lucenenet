@@ -184,7 +184,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             lfd.NextDoc();
             FreeTextSuggester sug = new FreeTextSuggester(new MockAnalyzer(Random));
             sug.Build(new TestWikiInputIterator(this, lfd));
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(sug.GetSizeInBytes() + " bytes");
 
@@ -389,19 +389,19 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             for (int i = 0; i < numDocs; i++)
             {
                 docs[i] = new string[AtLeast(100)];
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.Write("  doc " + i + ":");
                 }
                 for (int j = 0; j < docs[i].Length; j++)
                 {
                     docs[i][j] = GetZipfToken(terms);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.Write(" " + docs[i][j]);
                     }
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine();
                 }
@@ -410,7 +410,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             int grams = TestUtil.NextInt32(Random, 1, 4);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: " + terms.Length + " terms; " + numDocs + " docs; " + grams + " grams");
             }
@@ -423,7 +423,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             List<IDictionary<string, int?>> gramCounts = new List<IDictionary<string, int?>>(grams);
             for (int gram = 0; gram < grams; gram++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: build model for gram=" + gram);
                 }
@@ -451,7 +451,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             model.Put(token, 1 + curCount);
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  add '" + token + "' -> count=" + (model.TryGetValue(token, out int? count) ? (count.HasValue ? count.ToString() : "null") : ""));
                         }
@@ -492,7 +492,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 string query = b.toString();
                 query = query.Substring(1);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter + " query='" + query + "' num=" + num);
                 }
@@ -502,13 +502,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 double backoff = 1.0;
                 seen = new JCG.HashSet<string>();
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  compute expected");
                 }
                 for (int i = grams - 1; i >= 0; i--)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("    grams=" + i);
                     }
@@ -516,7 +516,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     if (tokens.Length < i + 1)
                     {
                         // Don't have enough tokens to use this model
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("      skip");
                         }
@@ -526,7 +526,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     if (i == 0 && tokens[tokens.Length - 1].Length == 0)
                     {
                         // Never suggest unigrams from empty string:
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("      skip unigram priors only");
                         }
@@ -545,7 +545,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         context = context.Substring(1);
                     }
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("      context='" + context + "'");
                     }
@@ -562,7 +562,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             // We never saw this context:
                             backoff *= FreeTextSuggester.ALPHA;
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("      skip: never saw context");
                             }
@@ -570,14 +570,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         }
                         contextCount = count.GetValueOrDefault();
                     }
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("      contextCount=" + contextCount);
                     }
                     IDictionary<string, int?> model = gramCounts[i];
 
                     // First pass, gather all predictions for this model:
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("      find terms w/ prefix=" + tokens[tokens.Length - 1]);
                     }
@@ -586,13 +586,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         if (term.StartsWith(tokens[tokens.Length - 1], StringComparison.Ordinal))
                         {
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("        term=" + term);
                             }
                             if (seen.contains(term))
                             {
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("          skip seen");
                                 }
@@ -607,7 +607,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                 // This is also the way it is being done in the FreeTextSuggester to work around the issue.
                                 Lookup.LookupResult lr = new Lookup.LookupResult(ngram, (long)(long.MaxValue * ((decimal)backoff * (decimal)count / contextCount)));
                                 tmp.Add(lr);
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("      add tmp key='" + lr.Key + "' score=" + lr.Value);
                                 }
@@ -640,7 +640,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             seen.add(lastToken);
                             expected.Add(result);
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("      keep key='" + result.Key + "' score=" + result.Value);
                             }
@@ -660,7 +660,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Actual:
                 IList<Lookup.LookupResult> actual = sug.DoLookup(query, num);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  expected: " + expected);
                     Console.WriteLine("    actual: " + actual);

@@ -460,7 +460,7 @@ namespace Lucene.Net.Search
             }
 
             CheckTermCounts(precisionStep, totalTermCountT, totalTermCountC);
-            if (VERBOSE && precisionStep != int.MaxValue)
+            if (Verbose && precisionStep != int.MaxValue)
             {
                 Console.WriteLine("Average number of terms during random search on '" + field + "':");
                 Console.WriteLine(" Numeric query: " + (((double)totalTermCountT) / (num * 4)));

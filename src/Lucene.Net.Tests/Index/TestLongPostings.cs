@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
 
             int NUM_DOCS = AtLeast(2000);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS);
             }
@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
             string s1 = GetRandomTerm(null);
             string s2 = GetRandomTerm(s1);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: s1=" + s1 + " s2=" + s2);
                 /*
@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
                     doS1 = false;
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter + " doS1=" + doS1);
                 }
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
                     int what = Random.Next(3);
                     if (what == 0)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: docID=" + docID + "; do next()");
                         }
@@ -233,7 +233,7 @@ namespace Lucene.Net.Index
                             }
                         }
                         docID = postings.NextDoc();
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  got docID=" + docID);
                         }
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
                         {
                             targetDocID = docID + TestUtil.NextInt32(Random, 1, NUM_DOCS - docID);
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: docID=" + docID + "; do advance(" + targetDocID + ")");
                         }
@@ -296,7 +296,7 @@ namespace Lucene.Net.Index
                         }
 
                         docID = postings.Advance(targetDocID);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  got docID=" + docID);
                         }
@@ -346,7 +346,7 @@ namespace Lucene.Net.Index
 
             int NUM_DOCS = AtLeast(2000);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS);
             }
@@ -354,7 +354,7 @@ namespace Lucene.Net.Index
             string s1 = GetRandomTerm(null);
             string s2 = GetRandomTerm(s1);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: s1=" + s1 + " s2=" + s2);
                 /*
@@ -446,7 +446,7 @@ namespace Lucene.Net.Index
                     doS1 = false;
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter + " doS1=" + doS1 + " term=" + term);
                 }
@@ -472,7 +472,7 @@ namespace Lucene.Net.Index
                     int what = Random.Next(3);
                     if (what == 0)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: docID=" + docID + "; do next()");
                         }
@@ -495,7 +495,7 @@ namespace Lucene.Net.Index
                             }
                         }
                         docID = docs.NextDoc();
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  got docID=" + docID);
                         }
@@ -523,7 +523,7 @@ namespace Lucene.Net.Index
                         {
                             targetDocID = docID + TestUtil.NextInt32(Random, 1, NUM_DOCS - docID);
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: docID=" + docID + "; do advance(" + targetDocID + ")");
                         }
@@ -546,7 +546,7 @@ namespace Lucene.Net.Index
                         }
 
                         docID = docs.Advance(targetDocID);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  got docID=" + docID);
                         }

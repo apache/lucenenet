@@ -162,7 +162,7 @@ namespace Lucene.Net.Search
         // collection stats to all other nodes:
         internal virtual void BroadcastNodeReopen(int nodeID, long version, IndexSearcher newSearcher)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("REOPEN: nodeID=" + nodeID + " version=" + version + " maxDoc=" + newSearcher.IndexReader.MaxDoc);
             }
@@ -581,7 +581,7 @@ namespace Lucene.Net.Search
                 analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
                 IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
                 iwc.SetOpenMode(OpenMode.CREATE);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     iwc.SetInfoStream(new TextWriterInfoStream(Console.Out));
                 }

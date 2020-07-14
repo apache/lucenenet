@@ -71,7 +71,7 @@ namespace Lucene.Net.Store
                 ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER; // makes this test really slow
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(dir);
             }

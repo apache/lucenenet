@@ -210,7 +210,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                if (LuceneTestCase.INFOSTREAM)
+                if (LuceneTestCase.UseInfoStream)
                 {
                     checker.FlushInfoStream(); 
                     Console.WriteLine(bos.ToString());
@@ -252,7 +252,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                if (LuceneTestCase.INFOSTREAM)
+                if (LuceneTestCase.UseInfoStream)
                 {
                     Console.WriteLine(bos.ToString());
                 }
@@ -876,7 +876,7 @@ namespace Lucene.Net.Util
             // TODO: we really need for postings impls etc to announce themselves
             // (and maybe their params, too) to infostream on flush and merge.
             // otherwise in a real debugging situation we won't know whats going on!
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("forcing postings format to:" + format);
             }
@@ -908,7 +908,7 @@ namespace Lucene.Net.Util
             // TODO: we really need for docvalues impls etc to announce themselves
             // (and maybe their params, too) to infostream on flush and merge.
             // otherwise in a real debugging situation we won't know whats going on!
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("forcing docvalues format to:" + format);
             }

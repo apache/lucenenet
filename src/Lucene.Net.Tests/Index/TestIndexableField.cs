@@ -240,7 +240,7 @@ namespace Lucene.Net.Index
                 Random, dir);
 
             int NUM_DOCS = AtLeast(27);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: " + NUM_DOCS + " docs");
             }
@@ -253,7 +253,7 @@ namespace Lucene.Net.Index
                 fieldsPerDoc[docCount] = fieldCount - 1;
 
                 int finalDocCount = docCount;
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: " + fieldCount + " fields in doc " + docCount);
                 }
@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
             int counter = 0;
             for (int id = 0; id < NUM_DOCS; id++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: verify doc id=" + id + " (" + fieldsPerDoc[id] + " fields) counter=" + counter);
                 }

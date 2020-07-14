@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Hu
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, new HungarianAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new HungarianAnalyzer(TEST_VERSION_CURRENT), 1000 * RandomMultiplier);
         }
     }
 }

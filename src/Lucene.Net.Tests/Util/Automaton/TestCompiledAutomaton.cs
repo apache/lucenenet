@@ -64,7 +64,7 @@ namespace Lucene.Net.Util.Automaton
             }
             Array.Sort(termBytes);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: terms in unicode order");
                 foreach (BytesRef t in termBytes)
@@ -74,10 +74,10 @@ namespace Lucene.Net.Util.Automaton
                 //System.out.println(c.utf8.toDot());
             }
 
-            for (int iter = 0; iter < 100 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 100 * RandomMultiplier; iter++)
             {
                 string s = Random.Next(10) == 1 ? terms[Random.Next(terms.Length)] : RandomString();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: floor(" + s + ")");
                 }
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util.Automaton
                         expected = termBytes[loc - 1].Utf8ToString();
                     }
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  expected=" + expected);
                 }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Util.Automaton
         public void TestRandom()
         {
             int numTerms = AtLeast(400);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Testing with {0} terms", numTerms);
             }

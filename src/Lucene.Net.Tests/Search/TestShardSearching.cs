@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
 
             int maxSearcherAgeSeconds = TestUtil.NextInt32(Random, 1, 3);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: numNodes=" + numNodes + " runTimeSec=" + runTimeSec + " maxSearcherAgeSeconds=" + maxSearcherAgeSeconds);
             }
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
                     // Pretend user issued a followon query:
                     prevSearchState = priorSearches[Random.Next(priorSearches.Count)];
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: follow-on query age=" + ((Time.NanoTime() - prevSearchState.SearchTimeNanos) / 1000000000.0));
                     }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
                         // much time has passed; please re-run your
                         // search") or sneakily just switch to newest
                         // searcher w/o telling them...
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  searcher expired during local shard searcher init: " + see);
                         }
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: fresh query");
                     }
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
                     catch (SearcherExpiredException see)
                     {
                         // Expected
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  searcher expired during mock reader init: " + see);
                         }
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search
                             {
                                 terms.Add(BytesRef.DeepCopyOf(termsEnum.Term));
                             }
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("TEST: init terms: " + terms.Count + " terms");
                             }
@@ -215,7 +215,7 @@ namespace Lucene.Net.Search
                             }
                         }
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  maxDoc=" + mockReader.MaxDoc);
                         }
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search
                             // much time has passed; please re-run your
                             // search") or sneakily just switch to newest
                             // searcher w/o telling them...
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("  searcher expired during search: " + see);
                                 Console.Out.Write(see.StackTrace);
@@ -342,7 +342,7 @@ namespace Lucene.Net.Search
                 numHits += state.NumHitsPaged;
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: query=" + q + " sort=" + sort + " numHits=" + numHits);
                 if (state != null)
@@ -397,7 +397,7 @@ namespace Lucene.Net.Search
                 @base[nodeID] = subs[nodeID].DocBaseInParent;
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 /*
                 for(int shardID=0;shardID<shardSearchers.Length;shardID++) {
@@ -447,7 +447,7 @@ namespace Lucene.Net.Search
                     ScoreDoc sd = shardHits.ScoreDocs[shardHits.ScoreDocs.Length - 1];
                     // Must copy because below we rebase:
                     bottomHitShards = new ScoreDoc(sd.Doc, sd.Score, sd.ShardIndex);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  save bottomHit=" + bottomHit);
                     }

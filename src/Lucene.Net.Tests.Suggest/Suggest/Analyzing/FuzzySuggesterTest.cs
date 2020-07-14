@@ -297,7 +297,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             suggester.Build(new InputArrayIterator(keys));
 
             IList<Lookup.LookupResult> results = suggester.DoLookup("wifi network", false, 10);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Results: " + results);
             }
@@ -734,7 +734,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int numStopChars = Random.nextInt(10);
             bool preserveHoles = Random.nextBoolean();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: " + numQueries + " words; preserveSep=" + preserveSep + " ; unicodeAware=" + unicodeAware + " numStopChars=" + numStopChars + " preserveHoles=" + preserveHoles);
             }
@@ -812,7 +812,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 slowCompletor.Add(new TermFreqPayload2(key, analyzedKey, weight));
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 // Don't just sort original list, to avoid VERBOSE
                 // altering the test:
@@ -833,7 +833,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             foreach (string prefix in allPrefixes)
             {
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: prefix=" + prefix);
                 }
@@ -899,7 +899,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     analyzedKey += " ";
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  analyzed: " + analyzedKey);
                 }
@@ -956,7 +956,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     matches = new List<Lookup.LookupResult>(matches.SubList(0, topN));
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  expected:");
                     foreach (Lookup.LookupResult lr in matches)
@@ -1131,7 +1131,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             answers.Sort(new TestRandom2Comparer());
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: targets");
                 foreach (Input tf in answers)
@@ -1148,7 +1148,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // TODO: test exactFirst / preserveSep permutations
             FuzzySuggester suggest = new FuzzySuggester(a, a, 0, 256, -1, true, maxEdits, transpositions, prefixLen, prefixLen, false);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: maxEdits=" + maxEdits + " prefixLen=" + prefixLen + " transpositions=" + transpositions + " num=" + NUM);
             }
@@ -1160,12 +1160,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             for (int iter = 0; iter < ITERS; iter++)
             {
                 string frag = RandomSimpleString(6);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter frag=" + frag);
                 }
                 List<Lookup.LookupResult> expected = SlowFuzzyMatch(prefixLen, maxEdits, transpositions, answers, frag);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  expected: " + expected.size());
                     foreach (Lookup.LookupResult c in expected)
@@ -1174,7 +1174,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                 }
                 List<Lookup.LookupResult> actual = new List<Lookup.LookupResult>(suggest.DoLookup(frag, false, NUM));
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  actual: " + actual.size());
                     foreach (Lookup.LookupResult c in actual)

@@ -84,7 +84,7 @@ namespace Lucene.Net.Sandbox.Queries
 
         public void assertFromTestData(int[] codePointTable)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: codePointTable=" + codePointTable);
             }
@@ -109,7 +109,7 @@ namespace Lucene.Net.Sandbox.Queries
 
             IndexReader r = writer.GetReader();
             IndexSearcher searcher = NewSearcher(r);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: searcher=" + searcher);
             }

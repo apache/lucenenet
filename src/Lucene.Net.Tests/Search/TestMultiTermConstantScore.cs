@@ -99,7 +99,7 @@ namespace Lucene.Net.Search
         {
             TermRangeQuery query = TermRangeQuery.NewStringRange(f, l, h, il, ih);
             query.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: query=" + query);
             }
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
         {
             TermRangeQuery query = TermRangeQuery.NewStringRange(f, l, h, il, ih);
             query.MultiTermRewriteMethod = (method);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: query=" + query + " method=" + method);
             }
@@ -358,7 +358,7 @@ namespace Lucene.Net.Search
             IndexReader reader = signedIndexReader;
             IndexSearcher search = NewSearcher(reader);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: reader=" + reader);
             }

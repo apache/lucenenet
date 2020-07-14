@@ -211,14 +211,14 @@ namespace Lucene.Net.Analysis.Ja
         public void TestRandomStrings()
         {
             // Blast some random strings through
-            CheckRandomData(Random, keywordAnalyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, keywordAnalyzer, 1000 * RandomMultiplier);
         }
 
         [Test]
         public void TestRandomHugeStrings()
         {
             // Blast some random strings through
-            CheckRandomData(Random, keywordAnalyzer, 100 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(Random, keywordAnalyzer, 100 * RandomMultiplier, 8192);
         }
 
         private void assertCharFilterEquals(CharFilter filter, String expected)

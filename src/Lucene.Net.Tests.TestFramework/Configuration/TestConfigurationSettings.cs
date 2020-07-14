@@ -32,26 +32,28 @@ namespace Lucene.Net.Configuration
         // settings from the current test framework setup, and only get the mock values.
         private const string TestJsonFileName = "lucene.testsettings.mock.json";
         private const string TestParentJsonFileName = "parent.lucene.testsettings.mock.json";
-        private readonly static string ParentDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        private readonly static string TestDirectory = Path.Combine(ParentDirectory, "SubDirectory");
-        private readonly static string CurrentJsonFilePath = Path.Combine(TestDirectory, TestJsonFileName);
-        private readonly static string ParentJsonFilePath = Path.Combine(ParentDirectory, TestJsonFileName);
+        private readonly static string parentDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        private readonly static string testDirectory = Path.Combine(parentDirectory, "SubDirectory");
+        private readonly static string currentJsonFilePath = Path.Combine(testDirectory, TestJsonFileName);
+        private readonly static string parentJsonFilePath = Path.Combine(parentDirectory, TestJsonFileName);
 
         public override void BeforeClass()
         {
+            
+
             // Create directories if they do not exist
-            Directory.CreateDirectory(TestDirectory);
+            Directory.CreateDirectory(testDirectory);
 
             // Output the current test file to the file system
             using (var input = this.GetType().FindAndGetManifestResourceStream(TestJsonFileName))
-            using (var output = new FileStream(CurrentJsonFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
+            using (var output = new FileStream(currentJsonFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
             {
                 input.CopyTo(output);
             }
 
             // Output the parent test file to the file system
             using (var input = this.GetType().FindAndGetManifestResourceStream(TestParentJsonFileName))
-            using (var output = new FileStream(ParentJsonFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
+            using (var output = new FileStream(parentJsonFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete))
             {
                 input.CopyTo(output);
             }
@@ -71,7 +73,7 @@ namespace Lucene.Net.Configuration
 
             try
             {
-                dir = new DirectoryInfo(TestDirectory);
+                dir = new DirectoryInfo(testDirectory);
             }
             catch { }
 
@@ -97,13 +99,13 @@ namespace Lucene.Net.Configuration
 
             try
             {
-                File.Delete(ParentJsonFilePath);
+                File.Delete(parentJsonFilePath);
             }
             catch { }
 
             try
             {
-                Directory.Delete(ParentDirectory);
+                Directory.Delete(parentDirectory);
             }
             catch { }
 
@@ -112,7 +114,7 @@ namespace Lucene.Net.Configuration
 
         private static readonly IConfigurationFactory ConfigurationFactory = new TestConfigurationFactory
         {
-            TestDirectory = TestDirectory,
+            TestDirectory = testDirectory,
             JsonTestSettingsFileName = TestJsonFileName,
             EnvironmentVariablePrefix = EnvironmentVariablePrefix
         };

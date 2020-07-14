@@ -157,7 +157,7 @@ namespace Lucene.Net.QueryParsers.Xml
         {
             Query q = Parse("FuzzyLikeThisQuery.xml");
             //show rewritten fuzzyLikeThisQuery - see what is being matched on
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(q.Rewrite(reader));
             }
@@ -257,13 +257,13 @@ namespace Lucene.Net.QueryParsers.Xml
 
         private void DumpResults(String qType, Query q, int numDocs)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: query=" + q);
             }
             TopDocs hits = searcher.Search(q, null, numDocs);
             assertTrue(qType + " should produce results ", hits.TotalHits > 0);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("=========" + qType + "============");
                 ScoreDoc[] scoreDocs = hits.ScoreDocs;

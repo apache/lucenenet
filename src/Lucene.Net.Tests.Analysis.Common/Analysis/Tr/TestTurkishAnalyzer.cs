@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Tr
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, new TurkishAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new TurkishAnalyzer(TEST_VERSION_CURRENT), 1000 * RandomMultiplier);
         }
     }
 }

@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 // Must only use extension, because IW.addIndexes can
                 // rename segment!
                 Int32StreamFactory f = delegates[(Math.Abs(salt ^ GetExtension(fileName).GetHashCode())) % delegates.size()];
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: read using int factory " + f + " from fileName=" + fileName);
                 }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Codecs.MockRandom
             public override Int32IndexOutput CreateOutput(Directory dir, string fileName, IOContext context)
             {
                 Int32StreamFactory f = delegates[(Math.Abs(salt ^ GetExtension(fileName).GetHashCode())) % delegates.size()];
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: write using int factory " + f + " to fileName=" + fileName);
                 }
@@ -151,14 +151,14 @@ namespace Lucene.Net.Codecs.MockRandom
             // (the skipInterval is written into postings header)
             int skipInterval = TestUtil.NextInt32(seedRandom, minSkipInterval, 10);
 
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("MockRandomCodec: skipInterval=" + skipInterval);
             }
 
             long seed = seedRandom.nextLong();
 
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("MockRandomCodec: writing to seg=" + state.SegmentInfo.Name + " formatID=" + state.SegmentSuffix + " seed=" + seed);
             }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs.MockRandom
             }
             else
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: writing Standard postings");
                 }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.MockRandom
             if (random.nextBoolean())
             {
                 int totTFCutoff = TestUtil.NextInt32(random, 1, 20);
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: writing pulsing postings with totTFCutoff=" + totTFCutoff);
                 }
@@ -242,7 +242,7 @@ namespace Lucene.Net.Codecs.MockRandom
             {
                 // Use BlockTree terms dict
 
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: writing BlockTree terms dict");
                 }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Codecs.MockRandom
             else
             {
 
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: writing Block terms dict");
                 }
@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.MockRandom
                     if (random.nextBoolean())
                     {
                         state.TermIndexInterval = TestUtil.NextInt32(random, 1, 100);
-                        if (LuceneTestCase.VERBOSE)
+                        if (LuceneTestCase.Verbose)
                         {
                             Console.WriteLine("MockRandomCodec: fixed-gap terms index (tii=" + state.TermIndexInterval + ")");
                         }
@@ -296,7 +296,7 @@ namespace Lucene.Net.Codecs.MockRandom
                         {
                             int tii = TestUtil.NextInt32(random, 1, 100);
                             selector = new VariableGapTermsIndexWriter.EveryNTermSelector(tii);
-                            if (LuceneTestCase.VERBOSE)
+                            if (LuceneTestCase.Verbose)
                             {
                                 Console.WriteLine("MockRandomCodec: variable-gap terms index (tii=" + tii + ")");
                             }
@@ -311,7 +311,7 @@ namespace Lucene.Net.Codecs.MockRandom
                         {
                             int seed2 = random.Next();
                             int gap = TestUtil.NextInt32(random, 2, 40);
-                            if (LuceneTestCase.VERBOSE)
+                            if (LuceneTestCase.Verbose)
                             {
                                 Console.WriteLine("MockRandomCodec: random-gap terms index (max gap=" + gap + ")");
                             }
@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.MockRandom
             string seedFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, SEED_EXT);
             IndexInput @in = state.Directory.OpenInput(seedFileName, state.Context);
             long seed = @in.ReadInt64();
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("MockRandomCodec: reading from seg=" + state.SegmentInfo.Name + " formatID=" + state.SegmentSuffix + " seed=" + seed);
             }
@@ -384,7 +384,7 @@ namespace Lucene.Net.Codecs.MockRandom
             Random random = new Random((int)seed);
 
             int readBufferSize = TestUtil.NextInt32(random, 1, 4096);
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("MockRandomCodec: readBufferSize=" + readBufferSize);
             }
@@ -393,7 +393,7 @@ namespace Lucene.Net.Codecs.MockRandom
 
             if (random.nextBoolean())
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: reading Sep postings");
                 }
@@ -402,7 +402,7 @@ namespace Lucene.Net.Codecs.MockRandom
             }
             else
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: reading Standard postings");
                 }
@@ -412,7 +412,7 @@ namespace Lucene.Net.Codecs.MockRandom
             if (random.nextBoolean())
             {
                 int totTFCutoff = TestUtil.NextInt32(random, 1, 20);
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: reading pulsing postings with totTFCutoff=" + totTFCutoff);
                 }
@@ -456,7 +456,7 @@ namespace Lucene.Net.Codecs.MockRandom
             else if (t1 == 2)
             {
                 // Use BlockTree terms dict
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: reading BlockTree terms dict");
                 }
@@ -484,7 +484,7 @@ namespace Lucene.Net.Codecs.MockRandom
             else
             {
 
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("MockRandomCodec: reading Block terms dict");
                 }
@@ -504,7 +504,7 @@ namespace Lucene.Net.Codecs.MockRandom
                     {
                         // if termsIndexDivisor is set to -1, we should not touch it. It means a
                         // test explicitly instructed not to load the terms index.
-                        if (LuceneTestCase.VERBOSE)
+                        if (LuceneTestCase.Verbose)
                         {
                             Console.WriteLine("MockRandomCodec: fixed-gap terms index (divisor=" + state.TermsIndexDivisor + ")");
                         }
@@ -526,7 +526,7 @@ namespace Lucene.Net.Codecs.MockRandom
                         {
                             random.NextInt64();
                         }
-                        if (LuceneTestCase.VERBOSE)
+                        if (LuceneTestCase.Verbose)
                         {
                             Console.WriteLine("MockRandomCodec: variable-gap terms index (divisor=" + state.TermsIndexDivisor + ")");
                         }

@@ -87,13 +87,13 @@ namespace Lucene.Net.Search
             // First multiply small test index:
             mulFactor = 1;
             int docCount = 0;
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: now copy index...");
             }
             do
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: cycle...");
                 }

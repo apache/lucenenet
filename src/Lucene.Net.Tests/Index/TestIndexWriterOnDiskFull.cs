@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
         {
             for (int pass = 0; pass < 2; pass++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: pass=" + pass);
                 }
@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
                 long diskFree = TestUtil.NextInt32(Random, 100, 300);
                 while (true)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: cycle: diskFree=" + diskFree);
                     }
@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
                         {
                             AddDoc(writer);
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: done adding docs; now commit");
                         }
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
                     }
                     catch (IOException e)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: exception on addDoc");
                             Console.WriteLine(e.StackTrace);
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
                     {
                         if (doAbort)
                         {
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("TEST: now rollback");
                             }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
                         {
                             try
                             {
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("TEST: now close");
                                 }
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
                             }
                             catch (IOException e)
                             {
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("TEST: exception on close; retry w/ no disk space limit");
                                     Console.WriteLine(e.StackTrace);
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
                         dir.Dispose();
                         // Now try again w/ more space:
 
-                        diskFree += TEST_NIGHTLY ? TestUtil.NextInt32(Random, 400, 600) : TestUtil.NextInt32(Random, 3000, 5000);
+                        diskFree += TestNightly ? TestUtil.NextInt32(Random, 400, 600) : TestUtil.NextInt32(Random, 3000, 5000);
                     }
                     else
                     {
@@ -195,8 +195,8 @@ namespace Lucene.Net.Index
             AssumeFalse("this test cannot run with Memory codec", idFormat.Equals("Memory", StringComparison.Ordinal) || contentFormat.Equals("Memory", StringComparison.Ordinal));
 
             int START_COUNT = 57;
-            int NUM_DIR = TEST_NIGHTLY ? 50 : 5;
-            int END_COUNT = START_COUNT + NUM_DIR * (TEST_NIGHTLY ? 25 : 5);
+            int NUM_DIR = TestNightly ? 50 : 5;
+            int END_COUNT = START_COUNT + NUM_DIR * (TestNightly ? 25 : 5);
 
             // Build up a bunch of dirs that have indexes which we
             // will then merge together by calling addIndexes(*):
@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
 
             for (int iter = 0; iter < 3; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
 
                 while (!done)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: cycle...");
                     }
@@ -344,7 +344,7 @@ namespace Lucene.Net.Index
                             {
                                 rate = 0.0;
                             }
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 testName = "disk full test " + methodName + " with disk full at " + diskFree + " bytes";
                             }
@@ -354,13 +354,13 @@ namespace Lucene.Net.Index
                             dir.RandomIOExceptionRateOnOpen = 0.0;
                             thisDiskFree = 0;
                             rate = 0.0;
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 testName = "disk full test " + methodName + " with unlimited disk space";
                             }
                         }
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("\ncycle: " + testName);
                         }
@@ -373,12 +373,12 @@ namespace Lucene.Net.Index
                         {
                             if (0 == method)
                             {
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("TEST: now addIndexes count=" + dirs.Length);
                                 }
                                 indWriter.AddIndexes(dirs);
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("TEST: now forceMerge");
                                 }
@@ -409,7 +409,7 @@ namespace Lucene.Net.Index
                             }
 
                             success = true;
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("  success!");
                             }
@@ -423,7 +423,7 @@ namespace Lucene.Net.Index
                         {
                             success = false;
                             err = e;
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("  hit IOException: " + e);
                                 Console.WriteLine(e.StackTrace);
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
                         // ConcurrentMergeScheduler are done
                         TestUtil.SyncConcurrentMerges(indWriter);
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  now test readers");
                         }
@@ -508,7 +508,7 @@ namespace Lucene.Net.Index
                         }
 
                         reader.Dispose();
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  count is " + result);
                         }
@@ -519,7 +519,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  start disk = " + startDiskUsage + "; input disk = " + inputDiskUsage + "; max used = " + dir.MaxUsedSizeInBytes);
                     }
@@ -547,7 +547,7 @@ namespace Lucene.Net.Index
                     dir.Dispose();
 
                     // Try again with more free space:
-                    diskFree += TEST_NIGHTLY ? TestUtil.NextInt32(Random, 4000, 8000) : TestUtil.NextInt32(Random, 40000, 80000);
+                    diskFree += TestNightly ? TestUtil.NextInt32(Random, 4000, 8000) : TestUtil.NextInt32(Random, 40000, 80000);
                 }
             }
 

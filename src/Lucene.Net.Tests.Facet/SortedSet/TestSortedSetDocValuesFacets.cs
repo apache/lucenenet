@@ -343,7 +343,7 @@ namespace Lucene.Net.Facet.SortedSet
             for (int iter = 0; iter < iters; iter++)
             {
                 string searchToken = tokens[Random.Next(tokens.Length)];
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter content=" + searchToken);
                 }

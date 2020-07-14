@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
                 writer.AddDocument(doc);
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 // utf16 order
                 terms.Sort();

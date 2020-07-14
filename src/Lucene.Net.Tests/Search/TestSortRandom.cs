@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
             bool allowDups = random.NextBoolean();
             ISet<string> seen = new JCG.HashSet<string>();
             int maxLength = TestUtil.NextInt32(random, 5, 100);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS + " maxLength=" + maxLength + " allowDups=" + allowDups);
             }
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
                         seen.Add(s);
                     }
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  " + numDocs + ": s=" + s);
                     }
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     br = null;
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  " + numDocs + ": <missing>");
                     }
@@ -146,7 +146,7 @@ namespace Lucene.Net.Search
 
             IndexReader r = writer.GetReader();
             writer.Dispose();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("  reader=" + r);
             }
@@ -217,7 +217,7 @@ namespace Lucene.Net.Search
                     hits = idxS.Search(new MatchAllDocsQuery(), f, hitCount, sort, random.NextBoolean(), random.NextBoolean());
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter + " " + hits.TotalHits + " hits; topN=" + hitCount + "; reverse=" + reverse + "; sortMissingLast=" + sortMissingLast + " sort=" + sort);
                 }
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search
                     expected.Reverse();
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  expected:");
                     for (int idx = 0; idx < expected.Count; idx++)
@@ -282,7 +282,7 @@ namespace Lucene.Net.Search
                     }
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  actual:");
                     for (int hitIDX = 0; hitIDX < hits.ScoreDocs.Length; hitIDX++)

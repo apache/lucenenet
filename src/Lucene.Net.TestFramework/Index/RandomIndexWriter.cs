@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
             IndexWriter = MockIndexWriter(dir, c, r);
             flushAt = TestUtil.NextInt32(r, 10, 1000);
             codec = IndexWriter.Config.Codec;
-            if (LuceneTestCase.VERBOSE)
+            if (LuceneTestCase.Verbose)
             {
                 Console.WriteLine("RIW dir=" + dir + " config=" + IndexWriter.Config);
                 Console.WriteLine("codec default=" + codec.Name);
@@ -264,7 +264,7 @@ namespace Lucene.Net.Index
         {
             if (docCount++ == flushAt)
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("RIW.add/updateDocument: now doing a commit at docCount=" + docCount);
                 }
@@ -425,7 +425,7 @@ namespace Lucene.Net.Index
                 if (r.NextBoolean() || segCount == 0)
                 {
                     // full forceMerge
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         Console.WriteLine("RIW: doRandomForceMerge(1)");
                     }
@@ -435,7 +435,7 @@ namespace Lucene.Net.Index
                 {
                     // partial forceMerge
                     int limit = TestUtil.NextInt32(r, 1, segCount);
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         Console.WriteLine("RIW: doRandomForceMerge(" + limit + ")");
                     }
@@ -457,7 +457,7 @@ namespace Lucene.Net.Index
             // order during searching:
             if (!applyDeletions || !codec.Name.Equals("Lucene3x", StringComparison.Ordinal) && r.NextBoolean())
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("RIW.getReader: use NRT reader");
                 }
@@ -469,7 +469,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("RIW.getReader: open new reader");
                 }

@@ -531,7 +531,7 @@ namespace Lucene.Net.Tests.Join
             Directory dir = NewDirectory();
             Directory joinDir = NewDirectory();
 
-            int numParentDocs = TestUtil.NextInt32(Random, 100 * RANDOM_MULTIPLIER, 300 * RANDOM_MULTIPLIER);
+            int numParentDocs = TestUtil.NextInt32(Random, 100 * RandomMultiplier, 300 * RandomMultiplier);
             //final int numParentDocs = 30;
 
             // Values for parent fields:
@@ -579,7 +579,7 @@ namespace Lucene.Net.Tests.Join
 
                 IList<Document> joinDocs = new List<Document>();
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.Append("parentID=").Append(parentDoc.Get("parentID"));
@@ -616,7 +616,7 @@ namespace Lucene.Net.Tests.Join
                         }
                     }
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         StringBuilder sb = new StringBuilder();
                         sb.Append("childID=").Append(joinChildDoc.Get("childID"));
@@ -651,7 +651,7 @@ namespace Lucene.Net.Tests.Join
 
             foreach (int deleteID in toDelete)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("DELETE parentID=" + deleteID);
                 }
@@ -664,7 +664,7 @@ namespace Lucene.Net.Tests.Join
             IndexReader joinR = joinW.GetReader();
             joinW.Dispose();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: reader=" + r);
                 Console.WriteLine("TEST: joinReader=" + joinR);
@@ -681,11 +681,11 @@ namespace Lucene.Net.Tests.Join
 
             Filter parentsFilter = new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("isParent", "x"))));
 
-            int iters = 200 * RANDOM_MULTIPLIER;
+            int iters = 200 * RandomMultiplier;
 
             for (int iter = 0; iter < iters; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + (1 + iter) + " of " + iters);
                 }
@@ -799,7 +799,7 @@ namespace Lucene.Net.Tests.Join
                 Sort parentSort = GetRandomSort("parent", parentFields.Length);
                 Sort childSort = GetRandomSort("child", childFields.Length);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: query=" + parentQuery + " joinQuery=" + parentJoinQuery + " parentSort=" + parentSort + " childSort=" + childSort);
                 }
@@ -811,7 +811,7 @@ namespace Lucene.Net.Tests.Join
 
                 TopDocs results = s.Search(parentQuery, null, r.NumDocs, parentAndChildSort);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: normal index gets " + results.TotalHits + " hits");
                     ScoreDoc[] hits = results.ScoreDocs;
@@ -860,7 +860,7 @@ namespace Lucene.Net.Tests.Join
                 //final int hitsPerGroup = 100;
                 ITopGroups<int> joinResults = c.GetTopGroups(childJoinQuery, childSort, 0, hitsPerGroup, 0, true);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: block join index gets " + (joinResults == null ? 0 : joinResults.Groups.Length) + " groups; hitsPerGroup=" + hitsPerGroup);
                     if (joinResults != null)
@@ -963,7 +963,7 @@ namespace Lucene.Net.Tests.Join
                     bq.Add(new TermQuery(new Term("parent" + fieldID, parentFields[fieldID][Random.Next(parentFields[fieldID].Length)])), Random.NextBoolean() ? Occur.MUST : Occur.MUST_NOT);
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: top down: parentQuery2=" + parentQuery2);
                 }
@@ -1043,12 +1043,12 @@ namespace Lucene.Net.Tests.Join
                 Sort childSort2 = GetRandomSort("child", childFields.Length);
 
                 // Search denormalized index:
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: run top down query=" + childQuery2 + " filter=" + childFilter2 + " sort=" + childSort2);
                 }
                 TopDocs results2 = s.Search(childQuery2, childFilter2, r.NumDocs, childSort2);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  " + results2.TotalHits + " totalHits:");
                     foreach (ScoreDoc sd in results2.ScoreDocs)
@@ -1059,12 +1059,12 @@ namespace Lucene.Net.Tests.Join
                 }
 
                 // Search join index:
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: run top down join query=" + childJoinQuery2 + " filter=" + childJoinFilter2 + " sort=" + childSort2);
                 }
                 TopDocs joinResults2 = joinS.Search(childJoinQuery2, childJoinFilter2, joinR.NumDocs, childSort2);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  " + joinResults2.TotalHits + " totalHits:");
                     foreach (ScoreDoc sd in joinResults2.ScoreDocs)

@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
 
             Start(threads);
             int iters = AtLeast(10000);
-            float checkPointProbability = TEST_NIGHTLY ? 0.5f : 0.1f;
+            float checkPointProbability = TestNightly ? 0.5f : 0.1f;
             for (int i = 0; i < iters; i++)
             {
                 if (checkPoint)

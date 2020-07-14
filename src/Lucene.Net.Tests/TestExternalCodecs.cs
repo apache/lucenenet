@@ -75,7 +75,7 @@ namespace Lucene.Net
         {
 
             int NUM_DOCS = AtLeast(173);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS);
             }
@@ -104,7 +104,7 @@ namespace Lucene.Net
                             w.Commit();
                         }
                     }
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now delete id=77");
                     }
@@ -118,18 +118,18 @@ namespace Lucene.Net
                         Assert.AreEqual(NUM_DOCS - 1, s.Search(new TermQuery(new Term("field2", "pulsing")), 1).TotalHits);
                     }
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: now delete 2nd doc");
                     }
                     w.DeleteDocuments(new Term("id", "44"));
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: now force merge");
                     }
                     w.ForceMerge(1);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\nTEST: now open reader");
                     }
@@ -144,7 +144,7 @@ namespace Lucene.Net
                         Assert.AreEqual(0, s.Search(new TermQuery(new Term("id", "77")), 1).TotalHits);
                         Assert.AreEqual(0, s.Search(new TermQuery(new Term("id", "44")), 1).TotalHits);
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("\nTEST: now close NRT reader");
                         }

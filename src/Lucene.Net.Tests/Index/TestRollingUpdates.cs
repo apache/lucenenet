@@ -62,8 +62,8 @@ namespace Lucene.Net.Index
             int id = 0;
             IndexReader r = null;
             IndexSearcher s = null;
-            int numUpdates = (int)(SIZE * (2 + (TEST_NIGHTLY ? 200 * LuceneTestCase.Random.NextDouble() : 5 * LuceneTestCase.Random.NextDouble())));
-            if (VERBOSE)
+            int numUpdates = (int)(SIZE * (2 + (TestNightly ? 200 * LuceneTestCase.Random.NextDouble() : 5 * LuceneTestCase.Random.NextDouble())));
+            if (Verbose)
             {
                 Console.WriteLine("TEST: numUpdates=" + numUpdates);
             }
@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
                 {
                     id++;
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  docIter=" + docIter + " id=" + id);
                 }
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
                     TopDocs hits = s.Search(new TermQuery(idTerm), 1);
                     Assert.AreEqual(1, hits.TotalHits);
                     doUpdate = !w.TryDeleteDocument(r, hits.ScoreDocs[0].Doc);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         if (doUpdate)
                         {
@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     doUpdate = true;
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  no searcher: doUpdate=true");
                     }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
 
                     bool applyDeletions = LuceneTestCase.Random.NextBoolean();
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: reopen applyDeletions=" + applyDeletions);
                     }

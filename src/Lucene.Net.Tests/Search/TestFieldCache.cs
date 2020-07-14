@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
             unicodeStrings = new string[NUM_DOCS];
             //MultiValued = new BytesRef[NUM_DOCS, NUM_ORDS];
             multiValued = RectangularArrays.ReturnRectangularArray<BytesRef>(NUM_DOCS, NUM_ORDS);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: setUp");
             }
@@ -487,7 +487,7 @@ namespace Lucene.Net.Search
             ThreadJob[] threads = new ThreadJob[NUM_THREADS];
             AtomicBoolean failed = new AtomicBoolean();
             AtomicInt32 iters = new AtomicInt32();
-            int NUM_ITER = 200 * RANDOM_MULTIPLIER;
+            int NUM_ITER = 200 * RandomMultiplier;
             Barrier restart = new Barrier(NUM_THREADS, (barrier) => new RunnableAnonymousInnerClassHelper(this, cache, iters).Run());
             for (int threadIDX = 0; threadIDX < NUM_THREADS; threadIDX++)
             {

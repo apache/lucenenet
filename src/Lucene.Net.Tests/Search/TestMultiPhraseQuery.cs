@@ -537,7 +537,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
             IndexSearcher s = NewSearcher(r);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("QUERY=" + q);
             }
@@ -545,7 +545,7 @@ namespace Lucene.Net.Search
             TopDocs hits = s.Search(q, 1);
             Assert.AreEqual(nExpected, hits.TotalHits, "wrong number of results");
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 for (int hit = 0; hit < hits.TotalHits; hit++)
                 {

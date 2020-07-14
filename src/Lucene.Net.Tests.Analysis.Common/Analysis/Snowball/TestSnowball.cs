@@ -206,7 +206,7 @@ namespace Lucene.Net.Analysis.Snowball
         public virtual void CheckRandomStrings(string snowballLanguage)
         {
             Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, snowballLanguage);
-            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
 
         private class AnalyzerAnonymousInnerClassHelper2 : Analyzer

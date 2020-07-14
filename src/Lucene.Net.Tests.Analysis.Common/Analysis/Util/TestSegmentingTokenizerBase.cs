@@ -117,8 +117,8 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, sentence, 10000 * RANDOM_MULTIPLIER);
-            CheckRandomData(Random, sentenceAndWord, 10000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, sentence, 10000 * RandomMultiplier);
+            CheckRandomData(Random, sentenceAndWord, 10000 * RandomMultiplier);
         }
 
         // some tokenizers for testing

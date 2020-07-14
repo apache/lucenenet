@@ -59,7 +59,7 @@ namespace Lucene.Net.Util.Fst
             Random random = new Random(Random.Next());
             for (int iter = 0; iter < numIter; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter " + iter);
                 }
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Fst
             // Up to two positive ints, shared, generally but not
             // monotonically increasing
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: now test UpToTwoPositiveIntOutputs");
                 }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util.Fst
                 // ListOfOutputs(PositiveIntOutputs), generally but not
                 // monotonically increasing
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now test OneOrMoreOutputs");
                     }

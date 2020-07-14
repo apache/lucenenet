@@ -434,14 +434,14 @@ namespace Lucene.Net.Analysis.CharFilters
         [Test]
         public virtual void TestRandom()
         {
-            int numRounds = RANDOM_MULTIPLIER * 1000;
+            int numRounds = RandomMultiplier * 1000;
             CheckRandomData(Random, NewTestAnalyzer(), numRounds);
         }
 
         [Test]
         public virtual void TestRandomHugeStrings()
         {
-            int numRounds = RANDOM_MULTIPLIER * 100;
+            int numRounds = RandomMultiplier * 100;
             CheckRandomData(Random, NewTestAnalyzer(), numRounds, 8192);
         }
 

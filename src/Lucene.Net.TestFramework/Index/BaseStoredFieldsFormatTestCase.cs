@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
 
                     IDictionary<string, Document> docs = new Dictionary<string, Document>();
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: build index docCount=" + docCount);
                     }
@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
                         string id = "" + i;
                         idField.SetStringValue(id);
                         docs[id] = doc;
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: add doc id=" + id);
                         }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
                         if (rand.Next(5) == 3 && i > 0)
                         {
                             string delID = "" + rand.Next(i);
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("TEST: delete doc id=" + delID);
                             }
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: " + docs.Count + " docs in index; now load fields");
                     }
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
                             {
                                 IndexSearcher s = NewSearcher(r);
 
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("TEST: cycle x=" + x + " r=" + r);
                                 }
@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
                                 for (int iter = 0; iter < num; iter++)
                                 {
                                     string testID = idsList[rand.Next(idsList.Length)];
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("TEST: test id=" + testID);
                                     }

@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
             int num = AtLeast(2);
             for (int iter = 0; iter < num; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
                 ISet<int?> deleted = new JCG.HashSet<int?>();
                 IList<BytesRef> terms = new List<BytesRef>();
 
-                int numDocs = TestUtil.NextInt32(Random, 1, 100 * RANDOM_MULTIPLIER);
+                int numDocs = TestUtil.NextInt32(Random, 1, 100 * RandomMultiplier);
                 Documents.Document doc = new Documents.Document();
                 Field f = NewStringField("field", "", Field.Store.NO);
                 doc.Add(f);
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
                 doc.Add(id);
 
                 bool onlyUniqueTerms = Random.NextBoolean();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: onlyUniqueTerms=" + onlyUniqueTerms + " numDocs=" + numDocs);
                 }
@@ -101,14 +101,14 @@ namespace Lucene.Net.Index
                         int delID = Random.Next(i);
                         deleted.Add(delID);
                         w.DeleteDocuments(new Term("id", "" + delID));
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: delete " + delID);
                         }
                     }
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     List<BytesRef> termsList = new List<BytesRef>(uniqueTerms);
 #pragma warning disable 612, 618
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
 
                 IndexReader reader = w.GetReader();
                 w.Dispose();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: reader=" + reader);
                 }
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < 100; i++)
                 {
                     BytesRef term = terms[Random.Next(terms.Count)];
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: seek term=" + UnicodeUtil.ToHexString(term.Utf8ToString()) + " " + term);
                     }

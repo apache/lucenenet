@@ -115,7 +115,7 @@ namespace Lucene.Net.Facet.Taxonomy
                             throw new Exception(ioe.ToString(), ioe);
                         }
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TW size=" + tw.Count + " vs " + ordLimit);
                         }
@@ -155,7 +155,7 @@ namespace Lucene.Net.Facet.Taxonomy
             AtomicBoolean stop = new AtomicBoolean();
 
             // How many unique facets to index before stopping:
-            int ordLimit = TEST_NIGHTLY ? 100000 : 6000;
+            int ordLimit = TestNightly ? 100000 : 6000;
 
             var indexer = new IndexerThread(w, config, tw, null, ordLimit, stop);
 
@@ -204,7 +204,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 reopener.Join();
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: now stop");
             }
@@ -235,14 +235,14 @@ namespace Lucene.Net.Facet.Taxonomy
                         // Sleep for up to 20 msec:
                         Thread.Sleep(Random.Next(20));
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: reopen");
                         }
 
                         mgr.MaybeRefresh();
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: reopen done");
                         }
@@ -258,7 +258,7 @@ namespace Lucene.Net.Facet.Taxonomy
         
         [Test]
         [Slow]
-        public virtual void TestDirectory()
+        public virtual void Test_Directory() // LUCENENET specific - name collides with property of LuceneTestCase
         {
             Store.Directory indexDir = NewDirectory();
             Store.Directory taxoDir = NewDirectory();
@@ -273,7 +273,7 @@ namespace Lucene.Net.Facet.Taxonomy
             AtomicBoolean stop = new AtomicBoolean();
 
             // How many unique facets to index before stopping:
-            int ordLimit = TEST_NIGHTLY ? 100000 : 6000;
+            int ordLimit = TestNightly ? 100000 : 6000;
 
             var indexer = new IndexerThread(w, config, tw, mgr, ordLimit, stop);
             indexer.Start();
@@ -312,7 +312,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 indexer.Join();
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: now stop");
             }

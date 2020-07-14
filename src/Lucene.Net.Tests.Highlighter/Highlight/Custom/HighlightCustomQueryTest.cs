@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Highlight.Custom
 
             String expected = "I call our <B>world</B> Flatland, not because we call it so,";
             String observed = highlightField(q, "SOME_FIELD_NAME", s1);
-            if (VERBOSE)
+            if (Verbose)
                 Console.WriteLine("Expected: \"" + expected + "\n" + "Observed: \""
                     + observed);
             assertEquals(
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Highlight.Custom
 
             expected = s1;
             observed = highlightField(q, FIELD_NAME, s1);
-            if (VERBOSE)
+            if (Verbose)
                 Console.WriteLine("Expected: \"" + expected + "\n" + "Observed: \""
           + observed);
             assertEquals(

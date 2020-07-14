@@ -138,7 +138,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             Analyzer a = new PatternAnalyzer(TEST_VERSION_CURRENT, new Regex(",", RegexOptions.Compiled), true, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 
-            CheckRandomData(Random, a, 10000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 10000 * RandomMultiplier);
         }
     }
 #pragma warning restore 612, 618

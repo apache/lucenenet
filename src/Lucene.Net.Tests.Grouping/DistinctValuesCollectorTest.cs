@@ -258,7 +258,7 @@ namespace Lucene.Net.Search.Grouping
                     // LUCENENET TODO: Try to work out how to do this without an O(n) operation
                     List<AbstractDistinctValuesCollector.IGroupCount<IComparable>> actualResult = new List<AbstractDistinctValuesCollector.IGroupCount<IComparable>>(distinctValuesCollector.Groups);
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("Index iter=" + indexIter);
                         Console.WriteLine("Search iter=" + searchIter);
@@ -515,7 +515,7 @@ namespace Lucene.Net.Search.Grouping
             bool canUseDV = !"Lucene3x".Equals(w.IndexWriter.Config.Codec.Name, StringComparison.Ordinal);
             DocValuesType dvType = canUseDV ? dvTypes[random.nextInt(dvTypes.Length)] : DocValuesType.NONE;
 
-            int numDocs = 86 + random.nextInt(1087) * RANDOM_MULTIPLIER;
+            int numDocs = 86 + random.nextInt(1087) * RandomMultiplier;
             string[] groupValues = new string[numDocs / 5];
             string[] countValues = new string[numDocs / 10];
             for (int i = 0; i < groupValues.Length; i++)
@@ -564,7 +564,7 @@ namespace Lucene.Net.Search.Grouping
             }
 
             DirectoryReader reader = w.GetReader();
-            if (VERBOSE)
+            if (Verbose)
             {
                 for (int docID = 0; docID < reader.MaxDoc; docID++)
                 {

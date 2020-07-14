@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
             Codec codec = Codec.Default;
             SegmentInfo si = new SegmentInfo(mergedDir, Constants.LUCENE_MAIN_VERSION, mergedSegment, -1, false, codec, null);
 
-            SegmentMerger merger = new SegmentMerger(new List<AtomicReader> { reader1, reader2 }, si, InfoStream.Default, mergedDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, CheckAbort.NONE, new FieldInfos.FieldNumbers(), NewIOContext(Random), true);
+            SegmentMerger merger = new SegmentMerger(new List<AtomicReader> { reader1, reader2 }, si, (InfoStream)InfoStream.Default, mergedDir, IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL, CheckAbort.NONE, new FieldInfos.FieldNumbers(), NewIOContext(Random), true);
             MergeState mergeState = merger.Merge();
             int docsMerged = mergeState.SegmentInfo.DocCount;
             Assert.IsTrue(docsMerged == 2);

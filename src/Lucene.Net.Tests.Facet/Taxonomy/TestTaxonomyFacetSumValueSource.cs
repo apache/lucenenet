@@ -543,7 +543,7 @@ namespace Lucene.Net.Facet.Taxonomy
             for (int iter = 0; iter < iters; iter++)
             {
                 string searchToken = tokens[Random.Next(tokens.Length)];
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter content=" + searchToken);
                 }
@@ -604,7 +604,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 // Messy: fixup ties
                 SortTies(actual);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("expected=\n" + expected.ToString());
                     Console.WriteLine("actual=\n" + actual.ToString());

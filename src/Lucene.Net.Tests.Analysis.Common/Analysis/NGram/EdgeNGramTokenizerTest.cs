@@ -143,13 +143,13 @@ namespace Lucene.Net.Analysis.NGram
                 int max = TestUtil.NextInt32(Random, min, 20);
 
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, min, max);
-                CheckRandomData(Random, a, 100 * RANDOM_MULTIPLIER, 20);
-                CheckRandomData(Random, a, 10 * RANDOM_MULTIPLIER, 8192);
+                CheckRandomData(Random, a, 100 * RandomMultiplier, 20);
+                CheckRandomData(Random, a, 10 * RandomMultiplier, 8192);
             }
 
             Analyzer b = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckRandomData(Random, b, 1000 * RANDOM_MULTIPLIER, 20, false, false);
-            CheckRandomData(Random, b, 100 * RANDOM_MULTIPLIER, 8192, false, false);
+            CheckRandomData(Random, b, 1000 * RandomMultiplier, 20, false, false);
+            CheckRandomData(Random, b, 100 * RandomMultiplier, 8192, false, false);
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer

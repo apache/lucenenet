@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                     assertTrue(UnicodeUtil.ValidUTF16String(reading));
                 }
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("checked " + numTerms + " terms, " + numWords + " words.");
             }

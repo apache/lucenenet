@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Ca
         [Test]
         public virtual void TestRandomStrings()
         {
-            CheckRandomData(Random, new CatalanAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, new CatalanAnalyzer(TEST_VERSION_CURRENT), 1000 * RandomMultiplier);
         }
     }
 }

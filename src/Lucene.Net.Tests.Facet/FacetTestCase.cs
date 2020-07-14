@@ -114,7 +114,7 @@ namespace Lucene.Net.Facet
                         break;
                     }
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  doc " + i + ": content=" + doc.content);
                     for (int j = 0; j < numDims; j++)

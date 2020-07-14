@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (StackTraceHelper.DoesStackTraceContainMethod("Merge"))
                     {
                         unicodeSortOrder = false;
-                        if (LuceneTestCase.VERBOSE)
+                        if (LuceneTestCase.Verbose)
                         {
                             Console.WriteLine("NOTE: PreFlexRW codec: forcing legacy UTF16 term sort order");
                         }

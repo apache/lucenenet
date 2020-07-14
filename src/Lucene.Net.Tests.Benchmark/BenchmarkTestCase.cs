@@ -121,7 +121,7 @@ namespace Lucene.Net.Benchmarks
 
         private static void logTstLogic(String txt)
         {
-            if (!VERBOSE)
+            if (!Verbose)
                 return;
             Console.WriteLine("Test logic of:");
             Console.WriteLine(txt);

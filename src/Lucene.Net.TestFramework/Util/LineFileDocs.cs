@@ -52,12 +52,12 @@ namespace Lucene.Net.Util
         }
 
         public LineFileDocs(Random random)
-            : this(random, LuceneTestCase.TEST_LINE_DOCS_FILE, true)
+            : this(random, LuceneTestCase.TestLineDocsFile, true)
         {
         }
 
         public LineFileDocs(Random random, bool useDocValues)
-            : this(random, LuceneTestCase.TEST_LINE_DOCS_FILE, useDocValues)
+            : this(random, LuceneTestCase.TestLineDocsFile, useDocValues)
         {
         }
 
@@ -130,7 +130,7 @@ namespace Lucene.Net.Util
                         // optimized seek using RandomAccessFile:
                         seekTo = RandomSeekPos(random, size);
                         FileStream channel = new FileStream(path, FileMode.Open);
-                        if (LuceneTestCase.VERBOSE)
+                        if (LuceneTestCase.Verbose)
                         {
                             Console.WriteLine("TEST: LineFileDocs: file seek to fp=" + seekTo + " on open");
                         }
@@ -165,7 +165,7 @@ namespace Lucene.Net.Util
                 if (needSkip)
                 {
                     seekTo = RandomSeekPos(random, size);
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         Console.WriteLine("TEST: LineFileDocs: stream skip to fp=" + seekTo + " on open");
                     }
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util
                 if (line == null)
                 {
                     // Always rewind at end:
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         Console.WriteLine("TEST: LineFileDocs: now rewind file...");
                     }

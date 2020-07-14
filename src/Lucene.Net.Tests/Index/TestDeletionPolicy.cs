@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
 
             public override void OnInit<T>(IList<T> commits)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: onInit");
                 }
@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
 
             public override void OnCommit<T>(IList<T> commits)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: onCommit");
                 }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
         {
             for (int pass = 0; pass < 2; pass++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: cycle pass=" + pass);
                 }
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
                     conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.APPEND).SetIndexDeletionPolicy(policy);
                     mp = conf.MergePolicy;
                     mp.NoCFSRatio = useCompoundFile ? 1.0 : 0.0;
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: open writer for forceMerge");
                     }

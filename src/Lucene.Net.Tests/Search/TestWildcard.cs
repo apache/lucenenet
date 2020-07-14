@@ -322,7 +322,7 @@ namespace Lucene.Net.Search
             // test queries that must find all
             foreach (Query q in matchAll)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("matchAll: q=" + q + " " + q.GetType().Name);
                 }
@@ -333,7 +333,7 @@ namespace Lucene.Net.Search
             // test queries that must find none
             foreach (Query q in matchNone)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("matchNone: q=" + q + " " + q.GetType().Name);
                 }
@@ -347,7 +347,7 @@ namespace Lucene.Net.Search
                 for (int j = 0; j < matchOneDocPrefix[i].Length; j++)
                 {
                     Query q = matchOneDocPrefix[i][j];
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("match 1 prefix: doc=" + docs[i] + " q=" + q + " " + q.GetType().Name);
                     }
@@ -363,7 +363,7 @@ namespace Lucene.Net.Search
                 for (int j = 0; j < matchOneDocWild[i].Length; j++)
                 {
                     Query q = matchOneDocWild[i][j];
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("match 1 wild: doc=" + docs[i] + " q=" + q + " " + q.GetType().Name);
                     }

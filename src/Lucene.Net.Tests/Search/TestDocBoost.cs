@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
 
             for (int i = 0; i < 2; i++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(searcher.Explain(new TermQuery(new Term("field", "word")), i));
                 }

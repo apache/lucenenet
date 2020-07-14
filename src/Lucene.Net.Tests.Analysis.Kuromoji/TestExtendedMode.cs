@@ -70,14 +70,14 @@ namespace Lucene.Net.Analysis.Ja
         public void TestRandomStrings()
         {
             Random random = Random;
-            CheckRandomData(random, analyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(random, analyzer, 1000 * RandomMultiplier);
         }
 
         /** blast some random large strings through the analyzer */
         public void TestRandomHugeStrings()
         {
             Random random = Random;
-            CheckRandomData(random, analyzer, 100 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(random, analyzer, 100 * RandomMultiplier, 8192);
         }
     }
 }

@@ -280,8 +280,8 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestRandom()
         {
-            int numDocs = TestUtil.NextInt32(Random, (10 * RANDOM_MULTIPLIER),
-                (100 * RANDOM_MULTIPLIER));
+            int numDocs = TestUtil.NextInt32(Random, (10 * RandomMultiplier),
+                (100 * RandomMultiplier));
             Directory dir = null;
             RandomIndexWriter writer = null;
             IndexReader ir = null;

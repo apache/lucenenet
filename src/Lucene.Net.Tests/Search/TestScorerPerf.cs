@@ -262,7 +262,7 @@ namespace Lucene.Net.Search
                 }
                 // System.out.println(hc.getCount());
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Average number of matches=" + (nMatches / iter));
             }
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search
                 nMatches += hc.Count;
                 ret += hc.Sum;
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Average number of matches=" + (nMatches / iter));
             }
@@ -349,7 +349,7 @@ namespace Lucene.Net.Search
                 nMatches += hc.Count;
                 ret += hc.Sum;
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Average number of matches=" + (nMatches / iter));
             }

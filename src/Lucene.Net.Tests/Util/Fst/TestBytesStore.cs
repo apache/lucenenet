@@ -44,7 +44,7 @@ namespace Lucene.Net.Util.Fst
                 byte[] expected = new byte[numBytes];
                 int blockBits = TestUtil.NextInt32(Random, 8, 15);
                 BytesStore bytes = new BytesStore(blockBits);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter + " numBytes=" + numBytes + " blockBits=" + blockBits);
                 }
@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Fst
                 while (pos < numBytes)
                 {
                     int op = Random.Next(8);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  cycle pos=" + pos);
                     }
@@ -64,7 +64,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 // write random byte
                                 byte b = (byte)Random.Next(256);
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("    writeByte b=" + b);
                                 }
@@ -80,7 +80,7 @@ namespace Lucene.Net.Util.Fst
                                 int len = Random.Next(Math.Min(numBytes - pos, 100));
                                 byte[] temp = new byte[len];
                                 Random.NextBytes(temp);
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("    writeBytes len=" + len + " bytes=" + Arrays.ToString(temp));
                                 }
@@ -97,7 +97,7 @@ namespace Lucene.Net.Util.Fst
                                 {
                                     int x = Random.Next();
                                     int randomPos = Random.Next(pos - 4);
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("    abs writeInt pos=" + randomPos + " x=" + x);
                                     }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Util.Fst
                                         start = Random.Next(pos - len);
                                     }
                                     int end = start + len - 1;
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("    reverse start=" + start + " end=" + end + " len=" + len + " pos=" + pos);
                                     }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util.Fst
                                     int len = TestUtil.NextInt32(Random, 1, Math.Min(pos - randomPos - 1, 100));
                                     byte[] temp = new byte[len];
                                     Random.NextBytes(temp);
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("    abs writeBytes pos=" + randomPos + " len=" + len + " bytes=" + Arrays.ToString(temp));
                                     }
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util.Fst
                                     int src = Random.Next(pos - 1);
                                     int dest = TestUtil.NextInt32(Random, src + 1, pos - 1);
                                     int len = TestUtil.NextInt32(Random, 1, Math.Min(300, pos - dest));
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("    copyBytes src=" + src + " dest=" + dest + " len=" + len);
                                     }
@@ -186,7 +186,7 @@ namespace Lucene.Net.Util.Fst
                                 // skip
                                 int len = Random.Next(Math.Min(100, numBytes - pos));
 
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("    skip len=" + len);
                                 }
@@ -227,7 +227,7 @@ namespace Lucene.Net.Util.Fst
                         bytes.Truncate(pos - len);
                         pos -= len;
                         Arrays.Fill(expected, pos, pos + len, (byte)0);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("    truncate len=" + len + " newPos=" + pos);
                         }
@@ -243,7 +243,7 @@ namespace Lucene.Net.Util.Fst
 
                 if (Random.NextBoolean())
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: save/load final bytes");
                     }
@@ -272,7 +272,7 @@ namespace Lucene.Net.Util.Fst
             {
                 return;
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("  verify...");
             }
@@ -281,7 +281,7 @@ namespace Lucene.Net.Util.Fst
             byte[] actual = new byte[totalLength];
             if (Random.NextBoolean())
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("    bulk: reversed");
                 }
@@ -304,7 +304,7 @@ namespace Lucene.Net.Util.Fst
             else
             {
                 // forward
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("    bulk: forward");
                 }
@@ -324,7 +324,7 @@ namespace Lucene.Net.Util.Fst
             bool reversed = Random.NextBoolean();
             if (reversed)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("    ops: reversed");
                 }
@@ -332,7 +332,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("    ops: forward");
                 }
@@ -355,7 +355,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         pos = Random.Next(totalLength - numBytes);
                     }
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("    op iter=" + op + " reversed=" + reversed + " numBytes=" + numBytes + " pos=" + pos);
                     }
@@ -414,7 +414,7 @@ namespace Lucene.Net.Util.Fst
                             expectedInt |= (expected[expectedPos++] & 0xFF);
                         }
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("    skip numBytes=" + skipBytes);
                             Console.WriteLine("    readInt");

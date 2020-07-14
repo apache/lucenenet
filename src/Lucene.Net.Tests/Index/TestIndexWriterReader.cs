@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestIndexWriterReader : LuceneTestCase
     {
-        private readonly int numThreads = TEST_NIGHTLY ? 5 : 3;
+        private readonly int numThreads = TestNightly ? 5 : 3;
 
         public static int Count(Term t, IndexReader r)
         {
@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
             {
                 iwc.SetMergePolicy(NoMergePolicy.COMPOUND_FILES);
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: make index");
             }
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
             DirectoryReader r2 = writer.GetReader();
             Assert.IsTrue(r2.IsCurrent());
             Assert.AreEqual(0, Count(new Term("id", id10), r2));
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: verify id");
             }
@@ -1383,7 +1383,7 @@ namespace Lucene.Net.Index
 #pragma warning restore 168
                 {
                     // expected
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("hit expected fake IOE");
                     }
@@ -1409,7 +1409,7 @@ namespace Lucene.Net.Index
                 // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 if (shouldFail && StackTraceHelper.DoesStackTraceContainMethod("GetReadOnlyClone"))
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now fail; exc:");
                         Console.WriteLine((new Exception()).StackTrace);

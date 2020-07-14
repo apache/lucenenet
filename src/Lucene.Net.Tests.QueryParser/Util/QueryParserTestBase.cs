@@ -1132,7 +1132,7 @@ namespace Lucene.Net.QueryParsers.Util
             result = GetQuery("(fieldX:xxxxx OR fieldy:xxxxxxxx)^2 AND (fieldx:the OR fieldy:foo)", qp);
             assertNotNull("result is null and it shouldn't be", result);
             assertTrue("result is not a BooleanQuery", result is BooleanQuery);
-            if (VERBOSE) Console.WriteLine("Result: " + result);
+            if (Verbose) Console.WriteLine("Result: " + result);
             assertTrue(((BooleanQuery)result).Clauses.Count + " does not equal: " + 2, ((BooleanQuery)result).Clauses.Count == 2);
         }
 

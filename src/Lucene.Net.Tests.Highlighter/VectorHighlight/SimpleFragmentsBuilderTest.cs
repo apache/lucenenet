@@ -239,7 +239,7 @@ namespace Lucene.Net.Search.VectorHighlight
         [Test]
         public void TestRandomDiscreteMultiValueHighlighting()
         {
-            String[] randomValues = new String[3 + Random.nextInt(10 * RANDOM_MULTIPLIER)];
+            String[] randomValues = new String[3 + Random.nextInt(10 * RandomMultiplier)];
             for (int i = 0; i < randomValues.Length; i++)
             {
                 String randomValue;
@@ -294,7 +294,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             try
             {
-                int highlightIters = 1 + Random.nextInt(120 * RANDOM_MULTIPLIER);
+                int highlightIters = 1 + Random.nextInt(120 * RandomMultiplier);
                 for (int highlightIter = 0; highlightIter < highlightIters; highlightIter++)
                 {
                     Console.WriteLine($"Highlighter iter: {highlightIter}");

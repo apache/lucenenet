@@ -370,7 +370,7 @@ namespace Lucene.Net.Search.Spans
                 }
             }
             Assert.AreEqual(2, payloadSet.Count);
-            if (VERBOSE)
+            if (Verbose)
             {
                 foreach (String payload in payloadSet)
                 {
@@ -400,7 +400,7 @@ namespace Lucene.Net.Search.Spans
             PayloadSpanUtil psu = new PayloadSpanUtil(searcher.TopReaderContext);
 
             var payloads = psu.GetPayloadsForQuery(new TermQuery(new Term(PayloadHelper.FIELD, "rr")));
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Num payloads:" + payloads.Count);
                 foreach (var bytes in payloads)
@@ -476,14 +476,14 @@ namespace Lucene.Net.Search.Spans
 
             while (spans.Next() == true)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nSpans Dump --");
                 }
                 if (spans.IsPayloadAvailable)
                 {
                     var payload = spans.GetPayload();
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("payloads for span:" + payload.Count);
                         foreach (var bytes in payload)

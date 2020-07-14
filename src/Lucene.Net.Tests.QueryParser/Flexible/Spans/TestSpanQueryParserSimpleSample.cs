@@ -105,13 +105,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Spans
             spanProcessorPipeline.Add(new UniqueFieldQueryNodeProcessor());
 
             // print to show out the QueryNode tree before being processed
-            if (VERBOSE) Console.WriteLine(queryTree);
+            if (Verbose) Console.WriteLine(queryTree);
 
             // Process the QueryTree using our new Processors
             queryTree = spanProcessorPipeline.Process(queryTree);
 
             // print to show out the QueryNode tree after being processed
-            if (VERBOSE) Console.WriteLine(queryTree);
+            if (Verbose) Console.WriteLine(queryTree);
 
             // create a instance off the Builder
             SpansQueryTreeBuilder spansQueryTreeBuilder = new SpansQueryTreeBuilder();

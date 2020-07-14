@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
             {
                 FieldInfos fieldInfos = builder.Finish();
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: now write postings");
                 }
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
                 Codec codec = Codec.Default;
                 SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: now read postings");
                 }
@@ -661,7 +661,7 @@ namespace Lucene.Net.Index
                     }
 
                     // Test seek to non-existent terms:
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: seek non-exist terms");
                     }
@@ -673,7 +673,7 @@ namespace Lucene.Net.Index
                     }
 
                     // Seek to each term, backwards:
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: seek terms backwards");
                     }
@@ -809,7 +809,7 @@ namespace Lucene.Net.Index
             int termIndexInterval = TestUtil.NextInt32(Random, 13, 27);
             Codec codec = Codec.Default;
             SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
-            SegmentWriteState state = new SegmentWriteState(InfoStream.Default, dir, si, fieldInfos, termIndexInterval, null, NewIOContext(Random));
+            SegmentWriteState state = new SegmentWriteState((InfoStream)InfoStream.Default, dir, si, fieldInfos, termIndexInterval, null, NewIOContext(Random));
 
             // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
             using (FieldsConsumer consumer = codec.PostingsFormat.FieldsConsumer(state))

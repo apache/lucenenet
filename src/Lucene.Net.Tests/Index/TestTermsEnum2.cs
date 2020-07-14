@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
             base.SetUp();
             // we generate aweful regexps: good for testing.
             // but for preflex codec, the test can be very slow, so use less iterations.
-            numIterations = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) ? 10 * RANDOM_MULTIPLIER : AtLeast(50);
+            numIterations = Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal) ? 10 * RandomMultiplier : AtLeast(50);
             dir = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random, dir, (IndexWriterConfig)NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false)).SetMaxBufferedDocs(TestUtil.NextInt32(Random, 50, 1000)));
             Document doc = new Document();

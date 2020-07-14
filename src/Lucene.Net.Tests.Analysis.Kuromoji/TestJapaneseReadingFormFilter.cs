@@ -90,8 +90,8 @@ namespace Lucene.Net.Analysis.Ja
         public void TestRandomData()
         {
             Random random = Random;
-            CheckRandomData(random, katakanaAnalyzer, 1000 * RANDOM_MULTIPLIER);
-            CheckRandomData(random, romajiAnalyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(random, katakanaAnalyzer, 1000 * RandomMultiplier);
+            CheckRandomData(random, romajiAnalyzer, 1000 * RandomMultiplier);
         }
 
         [Test]

@@ -286,7 +286,7 @@ namespace Lucene.Net.Util
             Int64BitSet b2 = new Int64BitSet(numBits);
             Assert.IsTrue(b1.Equals(b2));
             Assert.IsTrue(b2.Equals(b1));
-            for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 10 * RandomMultiplier; iter++)
             {
                 int idx = Random.Next(numBits);
                 if (!b1.Get(idx))
@@ -313,7 +313,7 @@ namespace Lucene.Net.Util
             Int64BitSet b2 = new Int64BitSet(numBits);
             Assert.IsTrue(b1.Equals(b2));
             Assert.IsTrue(b2.Equals(b1));
-            for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 10 * RandomMultiplier; iter++)
             {
                 int idx = Random.Next(numBits);
                 if (!b1.Get(idx))

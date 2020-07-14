@@ -264,7 +264,7 @@ namespace Lucene.Net.Facet.Range
 
             IndexSearcher s = NewSearcher(r);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: searcher=" + s);
             }
@@ -415,7 +415,7 @@ namespace Lucene.Net.Facet.Range
                 Random, dir);
 
             int numDocs = AtLeast(1000);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: numDocs=" + numDocs);
             }
@@ -441,7 +441,7 @@ namespace Lucene.Net.Facet.Range
             int numIters = AtLeast(10);
             for (int iter = 0; iter < numIters; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
@@ -508,7 +508,7 @@ namespace Lucene.Net.Facet.Range
                         maxIncl = Random.NextBoolean();
                     }
                     ranges[rangeID] = new Int64Range("r" + rangeID, min, minIncl, max, maxIncl);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  range " + rangeID + ": " + ranges[rangeID]);
                     }
@@ -567,7 +567,7 @@ namespace Lucene.Net.Facet.Range
                 Assert.AreEqual(numRange, result.LabelValues.Length);
                 for (int rangeID = 0; rangeID < numRange; rangeID++)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  range " + rangeID + " expectedCount=" + expectedCounts[rangeID]);
                     }
@@ -634,7 +634,7 @@ namespace Lucene.Net.Facet.Range
             int numIters = AtLeast(10);
             for (int iter = 0; iter < numIters; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
@@ -643,7 +643,7 @@ namespace Lucene.Net.Facet.Range
                 int[] expectedCounts = new int[numRange];
                 float minAcceptedValue = float.PositiveInfinity;
                 float maxAcceptedValue = float.NegativeInfinity;
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: " + numRange + " ranges");
                 }
@@ -713,7 +713,7 @@ namespace Lucene.Net.Facet.Range
                     }
                     ranges[rangeID] = new DoubleRange("r" + rangeID, min, minIncl, max, maxIncl);
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST:   range " + rangeID + ": " + ranges[rangeID]);
                     }
@@ -739,7 +739,7 @@ namespace Lucene.Net.Facet.Range
                         {
                             accept &= values[i] < max;
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST:   check doc=" + i + " val=" + values[i] + " accept=" + accept);
                         }
@@ -776,7 +776,7 @@ namespace Lucene.Net.Facet.Range
                 Assert.AreEqual(numRange, result.LabelValues.Length);
                 for (int rangeID = 0; rangeID < numRange; rangeID++)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: verify range " + rangeID + " expectedCount=" + expectedCounts[rangeID]);
                     }
@@ -843,7 +843,7 @@ namespace Lucene.Net.Facet.Range
             int numIters = AtLeast(10);
             for (int iter = 0; iter < numIters; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
@@ -966,7 +966,7 @@ namespace Lucene.Net.Facet.Range
                 Assert.AreEqual(numRange, result.LabelValues.Length);
                 for (int rangeID = 0; rangeID < numRange; rangeID++)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  range " + rangeID + " expectedCount=" + expectedCounts[rangeID]);
                     }
@@ -1082,7 +1082,7 @@ namespace Lucene.Net.Facet.Range
                 fastMatchFilter = null;
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: fastMatchFilter=" + fastMatchFilter);
             }

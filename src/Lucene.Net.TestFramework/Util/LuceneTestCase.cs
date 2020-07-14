@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
@@ -212,10 +213,10 @@ namespace Lucene.Net.Util
         // Test groups, system properties and other annotations modifying tests
         // --------------------------------------------------------------------
 
-        public const string SYSPROP_NIGHTLY = "tests:nightly";
-        public const string SYSPROP_WEEKLY = "tests:weekly";
-        public const string SYSPROP_AWAITSFIX = "tests:awaitsfix";
-        public const string SYSPROP_SLOW = "tests:slow";
+        internal const string SYSPROP_NIGHTLY = "tests:nightly";
+        internal const string SYSPROP_WEEKLY = "tests:weekly";
+        internal const string SYSPROP_AWAITSFIX = "tests:awaitsfix";
+        internal const string SYSPROP_SLOW = "tests:slow";
         internal const string SYSPROP_BADAPPLES = "tests:badapples"; // LUCENENET specific - made internal, because not fully implemented
 
         ///// <seealso cref="IgnoreAfterMaxFailures"/>
@@ -235,7 +236,8 @@ namespace Lucene.Net.Util
         {
             public void ApplyToTest(NUnit.Framework.Internal.Test test)
             {
-                if (!TEST_NIGHTLY)
+                LuceneTestFrameworkInitializer.EnsureInitialized();
+                if (!TestNightly)
                 {
                     test.RunState = RunState.Skipped;
                     test.Properties.Set(PropertyNames.SkipReason, "This is a nightly test.");
@@ -258,7 +260,8 @@ namespace Lucene.Net.Util
         {
             public void ApplyToTest(NUnit.Framework.Internal.Test test)
             {
-                if (!TEST_WEEKLY)
+                LuceneTestFrameworkInitializer.EnsureInitialized();
+                if (!TestWeekly)
                 {
                     test.RunState = RunState.Skipped;
                     test.Properties.Set(PropertyNames.SkipReason, "This is a weekly test.");
@@ -281,7 +284,8 @@ namespace Lucene.Net.Util
         {
             public void ApplyToTest(NUnit.Framework.Internal.Test test)
             {
-                if (!TEST_AWAITSFIX)
+                LuceneTestFrameworkInitializer.EnsureInitialized();
+                if (!TestAwaitsFix)
                 {
                     test.RunState = RunState.Ignored;
                     test.Properties.Set(PropertyNames.SkipReason, BugUrl);
@@ -308,18 +312,19 @@ namespace Lucene.Net.Util
         {
             void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
+                LuceneTestFrameworkInitializer.EnsureInitialized();
                 // The test framework setting overrides the NUnit category setting, if false
-                if (!TEST_SLOW)
+                if (!TestSlow)
                 {
                     test.RunState = RunState.Skipped;
-                    test.Properties.Set(PropertyNames.SkipReason, Description);
+                    test.Properties.Set(PropertyNames.SkipReason, Message);
                 }
                 test.Properties.Add(PropertyNames.Category, "Slow");
             }
 #else
         {
 #endif
-            public string Description { get; set; } = "This test is slow.";
+            public string Message { get; set; } = "This test is slow.";
         }
 
         /////// <summary>
@@ -365,6 +370,7 @@ namespace Lucene.Net.Util
             {
                 this.Value = value;
             }
+
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public string[] Value { get; private set; }
@@ -397,97 +403,195 @@ namespace Lucene.Net.Util
         /// Use this constant when creating Analyzers and any other version-dependent stuff.
         /// <para/><b>NOTE:</b> Change this when development starts for new Lucene version:
         /// </summary>
-        public static readonly LuceneVersion TEST_VERSION_CURRENT = LuceneVersion.LUCENE_48;
+        public const LuceneVersion TEST_VERSION_CURRENT = LuceneVersion.LUCENE_48;
+
+        // LUCENENET specific - need to jump through a few hoops in order to
+        // ensure the test configuration data is loaded before anything utilizes
+        // it. We simply isolate this all in a SystemPropertyData class that is
+        // lazily loaded the first time the SystemPropertyHolder property is called.
+        private static SystemPropertyData testProperties;
+        private static SystemPropertyData TestProperties
+            => LazyInitializer.EnsureInitialized(ref testProperties, () => new SystemPropertyData());
+
+        /// <summary>
+        /// Used to defer static initialization of system properties
+        /// until they are called explicitly.
+        /// </summary>
+        private class SystemPropertyData // LUCENENET specific
+        {
+            public SystemPropertyData()
+            {
+                // LUCENENET: Always ensure the system properties are initailized before any attempt to read them.
+                LuceneTestFrameworkInitializer.EnsureInitialized();
+                Verbose = SystemProperties.GetPropertyAsBoolean("tests:verbose", // LUCENENET specific - reformatted with :
+#if DEBUG
+                    true
+#else
+                    false
+#endif
+                );
+                UseInfoStream = SystemProperties.GetPropertyAsBoolean("tests:infostream", Verbose); // LUCENENET specific - reformatted with :
+                RandomMultiplier = SystemProperties.GetPropertyAsInt32("tests:multiplier", 1); // LUCENENET specific - reformatted with :
+                TestCodec = SystemProperties.GetProperty("tests:codec", "random");// LUCENENET specific - reformatted with :
+                TestPostingsFormat = SystemProperties.GetProperty("tests:postingsformat", "random"); // LUCENENET specific - reformatted with :
+                TestDocValuesFormat = SystemProperties.GetProperty("tests:docvaluesformat", "random"); // LUCENENET specific - reformatted with :
+                TestDirectory = SystemProperties.GetProperty("tests:directory", "random"); // LUCENENET specific - reformatted with :
+                TestLineDocsFile = SystemProperties.GetProperty("tests:linedocsfile", DEFAULT_LINE_DOCS_FILE); // LUCENENET specific - reformatted with :
+                TestNightly = SystemProperties.GetPropertyAsBoolean(SYSPROP_NIGHTLY, false);
+                TestWeekly = SystemProperties.GetPropertyAsBoolean(SYSPROP_WEEKLY, false);
+                TestAwaitsFix = SystemProperties.GetPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
+                TestSlow = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, true); // LUCENENET specific - made default true, as per the docs
+                TestThrottling = TestNightly ? Throttling.SOMETIMES : Throttling.NEVER;
+                LeaveTemporary = LoadLeaveTemorary();
+            }
+
+
+            /// <summary>
+            /// True if and only if tests are run in verbose mode. If this flag is false
+            /// tests are not expected to print any messages.
+            /// </summary>
+            public bool Verbose { get; }
+
+            /// <summary>
+            /// TODO: javadoc? </summary>
+            public bool UseInfoStream { get; } 
+
+            /// <summary>
+            /// A random multiplier which you should use when writing random tests:
+            /// multiply it by the number of iterations to scale your tests (for nightly builds).
+            /// </summary>
+            public int RandomMultiplier { get; } // LUCENENET specific - changed from field to property, and renamed
+
+            /// <summary>
+            /// Gets the codec to run tests with. </summary>
+            public string TestCodec { get; } // LUCENENET specific - changed from field to property, and renamed
+
+            /// <summary>
+            /// Gets the postingsFormat to run tests with. </summary>
+            public string TestPostingsFormat { get; } // LUCENENET specific - changed from field to property, and renamed
+
+            /// <summary>
+            /// Gets the docValuesFormat to run tests with </summary>
+            public string TestDocValuesFormat { get; } // LUCENENET specific - changed from field to property, and renamed
+
+            /// <summary>
+            /// Gets the directory to run tests with </summary>
+            public string TestDirectory { get; } // LUCENENET specific - changed from field to property, and renamed
+
+            /// <summary>
+            /// The line file used by LineFileDocs </summary>
+            public string TestLineDocsFile { get; } // LUCENENET specific - changed from field to property, and renamed
+
+            /// <summary>
+            /// Whether or not <see cref="NightlyAttribute"/> tests should run. </summary>
+            public bool TestNightly { get; } // LUCENENET specific - changed from field to property, and renamed
+
+            /// <summary>
+            /// Whether or not <see cref="WeeklyAttribute"/> tests should run. </summary>
+            public bool TestWeekly { get; } // LUCENENET specific - changed from field to property, and renamed
+
+            /// <summary>
+            /// Whether or not <see cref="AwaitsFixAttribute"/> tests should run. </summary>
+            public bool TestAwaitsFix { get; } // LUCENENET specific - changed from field to property, and renamed
+
+            /// <summary>
+            /// Whether or not <see cref="SlowAttribute"/> tests should run. </summary>
+            public bool TestSlow { get; } // LUCENENET specific - changed from field to property, and renamed
+
+            /// <summary>
+            /// Throttling, see <see cref="MockDirectoryWrapper.Throttling"/>. </summary>
+            public Throttling TestThrottling { get; }
+
+            /// <summary>
+            /// Leave temporary files on disk, even on successful runs. </summary>
+            public bool LeaveTemporary { get; }
+
+            private static bool LoadLeaveTemorary()
+            {
+                bool defaultValue = false;
+                // LUCENENET specific - reformatted with :
+                foreach (string property in new string[] {
+                    "tests:leaveTemporary" /* ANT tasks's (junit4) flag. */,
+                    "tests:leavetemporary" /* lowercase */,
+                    "tests:leavetmpdir" /* default */,
+                    "solr:test:leavetmpdir" /* Solr's legacy */
+                })
+                {
+                    defaultValue |= SystemProperties.GetPropertyAsBoolean(property, false);
+                }
+                return defaultValue;
+            }
+        }
+
 
         /// <summary>
         /// True if and only if tests are run in verbose mode. If this flag is false
         /// tests are not expected to print any messages.
         /// </summary>
-        public static readonly bool VERBOSE = SystemProperties.GetPropertyAsBoolean("tests:verbose",
-#if DEBUG
-            true
-#else
-            false
-#endif
-); // LUCENENET specific - reformatted with :
+        public static bool Verbose => TestProperties.Verbose;
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static readonly bool INFOSTREAM = SystemProperties.GetPropertyAsBoolean("tests:infostream", VERBOSE); // LUCENENET specific - reformatted with :
+        public static bool UseInfoStream => TestProperties.UseInfoStream;
 
         /// <summary>
         /// A random multiplier which you should use when writing random tests:
         /// multiply it by the number of iterations to scale your tests (for nightly builds).
         /// </summary>
-        public static readonly int RANDOM_MULTIPLIER = SystemProperties.GetPropertyAsInt32("tests:multiplier", 1); // LUCENENET specific - reformatted with :
+        public static int RandomMultiplier => TestProperties.RandomMultiplier; // LUCENENET specific - changed from field to property, and renamed
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static readonly string DEFAULT_LINE_DOCS_FILE = "europarl.lines.txt.gz";
+        public const string DEFAULT_LINE_DOCS_FILE = "europarl.lines.txt.gz";
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static readonly string JENKINS_LARGE_LINE_DOCS_FILE = "enwiki.random.lines.txt";
+        public const string JENKINS_LARGE_LINE_DOCS_FILE = "enwiki.random.lines.txt";
 
         /// <summary>
         /// Gets the codec to run tests with. </summary>
-        public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests:codec", "random");// LUCENENET specific - reformatted with :
+        public static string TestCodec => TestProperties.TestCodec; // LUCENENET specific - changed from field to property, and renamed
 
         /// <summary>
         /// Gets the postingsFormat to run tests with. </summary>
-        public static readonly string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests:postingsformat", "random"); // LUCENENET specific - reformatted with :
+        public static string TestPostingsFormat => TestProperties.TestPostingsFormat; // LUCENENET specific - changed from field to property, and renamed
 
         /// <summary>
         /// Gets the docValuesFormat to run tests with </summary>
-        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests:docvaluesformat", "random"); // LUCENENET specific - reformatted with :
+        public static string TestDocValuesFormat => TestProperties.TestDocValuesFormat; // LUCENENET specific - changed from field to property, and renamed
 
         /// <summary>
         /// Gets the directory to run tests with </summary>
-        public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests:directory", "random"); // LUCENENET specific - reformatted with :
+        public static string TestDirectory => TestProperties.TestDirectory; // LUCENENET specific - changed from field to property, and renamed
 
         /// <summary>
         /// The line file used by LineFileDocs </summary>
-        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests:linedocsfile", DEFAULT_LINE_DOCS_FILE); // LUCENENET specific - reformatted with :
+        public static string TestLineDocsFile => TestProperties.TestLineDocsFile; // LUCENENET specific - changed from field to property, and renamed
 
         /// <summary>
         /// Whether or not <see cref="NightlyAttribute"/> tests should run. </summary>
-        public static readonly bool TEST_NIGHTLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_NIGHTLY, false);
+        public static bool TestNightly => TestProperties.TestNightly; // LUCENENET specific - changed from field to property, and renamed
 
         /// <summary>
         /// Whether or not <see cref="WeeklyAttribute"/> tests should run. </summary>
-        public static readonly bool TEST_WEEKLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_WEEKLY, false);
+        public static bool TestWeekly => TestProperties.TestWeekly; // LUCENENET specific - changed from field to property, and renamed
 
         /// <summary>
         /// Whether or not <see cref="AwaitsFixAttribute"/> tests should run. </summary>
-        public static readonly bool TEST_AWAITSFIX = SystemProperties.GetPropertyAsBoolean(SYSPROP_AWAITSFIX, false); // LUCENENET specific - made internal, because not fully implemented
+        public static bool TestAwaitsFix => TestProperties.TestAwaitsFix; // LUCENENET specific - changed from field to property, and renamed
 
         /// <summary>
         /// Whether or not <see cref="SlowAttribute"/> tests should run. </summary>
-        public static readonly bool TEST_SLOW = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, true); // LUCENENET specific - made default true, as per the docs
+        public static bool TestSlow => TestProperties.TestSlow; // LUCENENET specific - changed from field to property, and renamed
 
         /// <summary>
         /// Throttling, see <see cref="MockDirectoryWrapper.Throttling"/>. </summary>
-        internal static readonly Throttling TEST_THROTTLING = TEST_NIGHTLY ? Throttling.SOMETIMES : Throttling.NEVER; // LUCENENET specific - made internal, because not fully implemented
+        internal static Throttling TestThrottling => TestProperties.TestThrottling; // LUCENENET specific - made internal, because not fully implemented
 
         /// <summary>
         /// Leave temporary files on disk, even on successful runs. </summary>
-        public static readonly bool LEAVE_TEMPORARY = LoadLeaveTemorary();
+        public static bool LeaveTemporary => TestProperties.LeaveTemporary;
 
-        private static bool LoadLeaveTemorary()
-        {
-            bool defaultValue = false;
-            // LUCENENET specific - reformatted with :
-            foreach (string property in new string[] {
-                "tests:leaveTemporary" /* ANT tasks's (junit4) flag. */,
-                "tests:leavetemporary" /* lowercase */,
-                "tests:leavetmpdir" /* default */,
-                "solr:test:leavetmpdir" /* Solr's legacy */
-            })
-            {
-                defaultValue |= SystemProperties.GetPropertyAsBoolean(property, false);
-            }
-            return defaultValue;
-        }
 
         // LUCENENET: Not Implemented
         /////// <summary>
@@ -756,25 +860,25 @@ namespace Lucene.Net.Util
             Console.WriteLine(similarityName);
 
             Console.Write("Nightly: ");
-            Console.WriteLine(TEST_NIGHTLY);
+            Console.WriteLine(TestNightly);
 
             Console.Write("Weekly: ");
-            Console.WriteLine(TEST_WEEKLY);
+            Console.WriteLine(TestWeekly);
 
             Console.Write("Slow: ");
-            Console.WriteLine(TEST_SLOW);
+            Console.WriteLine(TestSlow);
 
             Console.Write("Awaits Fix: ");
-            Console.WriteLine(TEST_AWAITSFIX);
+            Console.WriteLine(TestAwaitsFix);
 
             Console.Write("Directory: ");
-            Console.WriteLine(TEST_DIRECTORY);
+            Console.WriteLine(TestDirectory);
 
             Console.Write("Verbose: ");
-            Console.WriteLine(VERBOSE);
+            Console.WriteLine(Verbose);
 
             Console.Write("Random Multiplier: ");
-            Console.WriteLine(RANDOM_MULTIPLIER);
+            Console.WriteLine(RandomMultiplier);
         }
 
         /// <summary>
@@ -1114,12 +1218,12 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns a number of at least <c>i</c>
         /// <para/>
-        /// The actual number returned will be influenced by whether <see cref="TEST_NIGHTLY"/>
-        /// is active and <see cref="RANDOM_MULTIPLIER"/>, but also with some random fudge.
+        /// The actual number returned will be influenced by whether <see cref="TestNightly"/>
+        /// is active and <see cref="RandomMultiplier"/>, but also with some random fudge.
         /// </summary>
         public static int AtLeast(Random random, int i)
         {
-            int min = (TEST_NIGHTLY ? 2 * i : i) * RANDOM_MULTIPLIER;
+            int min = (TestNightly ? 2 * i : i) * RandomMultiplier;
             int max = min + (min / 2);
             return TestUtil.NextInt32(random, min, max);
         }
@@ -1132,13 +1236,13 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns true if something should happen rarely,
         /// <para/>
-        /// The actual number returned will be influenced by whether <see cref="TEST_NIGHTLY"/>
-        /// is active and <see cref="RANDOM_MULTIPLIER"/>.
+        /// The actual number returned will be influenced by whether <see cref="TestNightly"/>
+        /// is active and <see cref="RandomMultiplier"/>.
         /// </summary>
         public static bool Rarely(Random random)
         {
-            int p = TEST_NIGHTLY ? 10 : 1;
-            p += (int)(p * Math.Log(RANDOM_MULTIPLIER));
+            int p = TestNightly ? 10 : 1;
+            p += (int)(p * Math.Log(RandomMultiplier));
             int min = 100 - Math.Min(p, 50); // never more than 50
             return random.Next(100) >= min;
         }
@@ -1280,7 +1384,7 @@ namespace Lucene.Net.Util
 #else
             c.SetSimilarity(luceneTestCase.ClassEnvRule.similarity);
 #endif
-            if (VERBOSE)
+            if (Verbose)
             {
                 // Even though TestRuleSetupAndRestoreClassEnv calls
                 // InfoStream.setDefault, we do it again here so that
@@ -1593,7 +1697,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static BaseDirectoryWrapper NewDirectory(Random random)
         {
-            var newDir = NewDirectoryImpl(random, TEST_DIRECTORY);
+            var newDir = NewDirectoryImpl(random, TestDirectory);
 
             return WrapDirectory(random, newDir, Rarely(random));
         }
@@ -1605,7 +1709,7 @@ namespace Lucene.Net.Util
 
         public static MockDirectoryWrapper NewMockDirectory(Random random)
         {
-            return (MockDirectoryWrapper)WrapDirectory(random, NewDirectoryImpl(random, TEST_DIRECTORY), false);
+            return (MockDirectoryWrapper)WrapDirectory(random, NewDirectoryImpl(random, TestDirectory), false);
         }
 
         public static MockDirectoryWrapper NewMockFSDirectory(DirectoryInfo d)
@@ -1639,7 +1743,7 @@ namespace Lucene.Net.Util
 
         private static BaseDirectoryWrapper NewFSDirectory(DirectoryInfo d, LockFactory lf, bool bare)
         {
-            string fsdirClass = TEST_DIRECTORY;
+            string fsdirClass = TestDirectory;
             if (fsdirClass.Equals("random", StringComparison.Ordinal))
             {
                 fsdirClass = RandomPicks.RandomFrom(Random, FS_DIRECTORIES);
@@ -1674,7 +1778,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static BaseDirectoryWrapper NewDirectory(Random random, Directory directory)
         {
-            Directory impl = NewDirectoryImpl(random, TEST_DIRECTORY);
+            Directory impl = NewDirectoryImpl(random, TestDirectory);
             foreach (string file in directory.ListAll())
             {
                 directory.Copy(impl, file, file, NewIOContext(random));
@@ -1692,7 +1796,7 @@ namespace Lucene.Net.Util
             if (Rarely(random))
             {
                 double maxMBPerSec = 10 + 5 * (random.NextDouble() - 0.5);
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine("LuceneTestCase: will rate limit output IndexOutput to " + maxMBPerSec + " MB/sec");
                 }
@@ -1725,7 +1829,7 @@ namespace Lucene.Net.Util
             {
                 MockDirectoryWrapper mock = new MockDirectoryWrapper(random, directory);
 
-                mock.Throttling = TEST_THROTTLING;
+                mock.Throttling = TestThrottling;
                 // LUCENENET TODO: CloseAfterSuite(new DisposableDirectory(mock, SuiteFailureMarker));
                 return mock;
             }
@@ -1868,7 +1972,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Trace.TraceInformation("Type of Directory is : {0}", clazzName);
             }
@@ -1961,7 +2065,7 @@ namespace Lucene.Net.Util
                     // prevent cache insanity caused by e.g. ParallelCompositeReader, to fix we wrap one more time:
                     r = new FCInvisibleMultiReader(r);
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("maybeWrapReader wrapped: " + r);
                 }
@@ -2181,7 +2285,7 @@ namespace Lucene.Net.Util
                 }
                 if (ex != null)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("NOTE: newSearcher using ExecutorService with " + threads + " threads");
                     }
@@ -3055,7 +3159,7 @@ namespace Lucene.Net.Util
         /// Returns true if the file exists (can be opened), false
         /// if it cannot be opened, and (unlike .NET's 
         /// <see cref="System.IO.File.Exists(string)"/>) if there's some
-        /// unexpected error.
+        /// unexpected error, returns <c>false</c>.
         /// </summary>
         public static bool SlowFileExists(Directory dir, string fileName)
         {
@@ -3246,7 +3350,7 @@ namespace Lucene.Net.Util
         {
             Debug.Assert(f != null);
 
-            if (LuceneTestCase.LEAVE_TEMPORARY)
+            if (LuceneTestCase.LeaveTemporary)
             {
                 Console.Error.WriteLine("INFO: Will leave temporary file: " + f.FullName);
                 return;

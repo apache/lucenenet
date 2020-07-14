@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Ja
             Analyzer a = new JapaneseAnalyzer(TEST_VERSION_CURRENT, null, JapaneseTokenizerMode.SEARCH,
                 JapaneseAnalyzer.GetDefaultStopSet(),
                 JapaneseAnalyzer.GetDefaultStopTags());
-            CheckRandomData(random, a, 100 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(random, a, 100 * RandomMultiplier, 8192);
         }
 
         // Copied from TestJapaneseTokenizer, to make sure passing

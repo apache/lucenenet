@@ -112,7 +112,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int ord1 = map.GetOrdinal(label);
                 int ord2 = compact.GetOrdinal(label);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("Testing label: " + label.ToString());
                 }
@@ -142,7 +142,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int ord1 = map.GetOrdinal(label);
                 int ord2 = compact.GetOrdinal(label);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("Testing label 2: " + label.ToString());
                 }
@@ -228,7 +228,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     int ord1 = map.GetOrdinal(label);
                     int ord2 = compact.GetOrdinal(label);
 
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("Testing label: " + label.ToString());
                     }
@@ -259,7 +259,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 int ord1 = map.GetOrdinal(label);
                 int ord2 = compact.GetOrdinal(label);
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("Testing label 2: " + label.ToString());
                 }

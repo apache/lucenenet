@@ -105,7 +105,7 @@ namespace Lucene.Net.Index
                     }
                     catch (IOException ioe)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: expected exc:");
                             Console.WriteLine(ioe.StackTrace);
@@ -165,10 +165,10 @@ namespace Lucene.Net.Index
         public virtual void TestImmediateDiskFullWithThreads([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             int NUM_THREADS = 3;
-            int numIterations = TEST_NIGHTLY ? 10 : 3;
+            int numIterations = TestNightly ? 10 : 3;
             for (int iter = 0; iter < numIterations; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -221,10 +221,10 @@ namespace Lucene.Net.Index
         public virtual void TestCloseWithThreads([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             int NUM_THREADS = 3;
-            int numIterations = TEST_NIGHTLY ? 7 : 3;
+            int numIterations = TestNightly ? 7 : 3;
             for (int iter = 0; iter < numIterations; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter=" + iter);
                 }
@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: now close");
                 }
@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
 
             for (int iter = 0; iter < 2; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter);
                 }
@@ -368,7 +368,7 @@ namespace Lucene.Net.Index
                     failure.ClearDoFail();
                     writer.Dispose(false);
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: success=" + success);
                 }
@@ -742,14 +742,14 @@ namespace Lucene.Net.Index
                         {
                             case 0:
                                 rollbackLock.@Lock();
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("\nTEST: " + Thread.CurrentThread.Name + ": now rollback");
                                 }
                                 try
                                 {
                                     writerRef.Value.Rollback();
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": rollback done; now open new writer");
                                     }
@@ -768,7 +768,7 @@ namespace Lucene.Net.Index
 
                             case 1:
                                 commitLock.@Lock();
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("\nTEST: " + Thread.CurrentThread.Name + ": now commit");
                                 }
@@ -795,7 +795,7 @@ namespace Lucene.Net.Index
                                 break;
 
                             case 2:
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("\nTEST: " + Thread.CurrentThread.Name + ": now add");
                                 }

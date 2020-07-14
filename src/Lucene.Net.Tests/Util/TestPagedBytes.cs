@@ -41,7 +41,7 @@ namespace Lucene.Net.Util
         public virtual void TestDataInputOutput()
         {
             Random random = Random;
-            for (int iter = 0; iter < 5 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 5 * RandomMultiplier; iter++)
             {
                 BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));
                 if (dir is MockDirectoryWrapper)
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util
         public virtual void TestDataInputOutput2()
         {
             Random random = Random;
-            for (int iter = 0; iter < 5 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 5 * RandomMultiplier; iter++)
             {
                 int blockBits = TestUtil.NextInt32(random, 1, 20);
                 int blockSize = 1 << blockBits;

@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         // single straight enum
         private void DoTestStraightEnum(IList<Term> fieldTerms, IndexReader reader, int uniqueTermCount)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: top now enum reader=" + reader);
             }
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     while ((text = termsEnum.Next()) != null)
                     {
                         Term exp = fieldTerms[termCount];
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  got term=" + field + ":" + UnicodeUtil.ToHexString(text.Utf8ToString()));
                             Console.WriteLine("       exp=" + exp.Field + ":" + UnicodeUtil.ToHexString(exp.Text()));
@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         Assert.AreEqual(exp.Bytes, text);
                         termCount++;
                     }
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("  no more terms for field=" + field);
                     }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             IDictionary<string, TermsEnum> tes = new Dictionary<string, TermsEnum>();
 
             // Test random seek to existing term, then enum:
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: top now seek");
             }
@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 Term term = fieldTerms[spot];
                 string field = term.Field;
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: exist seek field=" + field + " term=" + UnicodeUtil.ToHexString(term.Text()));
                 }
@@ -205,7 +205,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     tes[field] = te;
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  done get enum");
                 }
@@ -217,7 +217,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 int ct = TestUtil.NextInt32(r, 5, 100);
                 for (int i = 0; i < ct; i++)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now next()");
                     }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         BytesRef t = te.Next();
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  got term=" + (t == null ? null : UnicodeUtil.ToHexString(t.Utf8ToString())));
                             Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text().ToString()));
@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             IDictionary<string, TermsEnum> tes = new Dictionary<string, TermsEnum>();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: top random seeks");
             }
@@ -268,7 +268,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     if (spot < 0)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: non-exist seek to " + field + ":" + UnicodeUtil.ToHexString(tx.Text()));
                         }
@@ -281,7 +281,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             tes[field] = te;
                         }
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  got enum");
                         }
@@ -296,7 +296,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         {
                             Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, te.SeekCeil(tx.Bytes));
 
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("  got term=" + UnicodeUtil.ToHexString(te.Term.Utf8ToString()));
                                 Console.WriteLine("  exp term=" + UnicodeUtil.ToHexString(fieldTerms[spot].Text()));
@@ -308,7 +308,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             int ct = TestUtil.NextInt32(r, 5, 100);
                             for (int i = 0; i < ct; i++)
                             {
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("TEST: now next()");
                                 }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                                 {
                                     BytesRef t = te.Next();
 
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("  got term=" + (t == null ? null : UnicodeUtil.ToHexString(t.Utf8ToString())));
                                         Console.WriteLine("       exp=" + UnicodeUtil.ToHexString(term.Text().ToString()));
@@ -378,7 +378,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             IndexReader reader = w.GetReader();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 fieldTerms.Sort(termAsUTF16Comparer);
 
@@ -392,7 +392,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // sorts in code point order:
             fieldTerms.Sort();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: codepoint order");
                 foreach (Term t in fieldTerms)

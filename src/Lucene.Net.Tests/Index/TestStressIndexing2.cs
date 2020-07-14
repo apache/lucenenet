@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
             int num = AtLeast(3);
             for (int i = 0; i < num; i++) // increase iterations for better testing
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\n\nTEST: top iter=" + i);
                 }
@@ -132,17 +132,17 @@ namespace Lucene.Net.Index
                 int range = Random.Next(20) + 1;
                 Directory dir1 = NewDirectory();
                 Directory dir2 = NewDirectory();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  nThreads=" + nThreads + " iter=" + iter + " range=" + range + " doPooling=" + doReaderPooling + " maxThreadStates=" + maxThreadStates + " sameFieldOrder=" + sameFieldOrder + " mergeFactor=" + mergeFactor + " maxBufferedDocs=" + maxBufferedDocs);
                 }
                 IDictionary<string, Document> docs = IndexRandom(nThreads, iter, range, dir1, maxThreadStates, doReaderPooling);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: index serial");
                 }
                 IndexSerial(Random, docs, dir2);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: verify");
                 }
@@ -338,7 +338,7 @@ namespace Lucene.Net.Index
 
         public virtual void VerifyEquals(DirectoryReader r1, DirectoryReader r2, string idField)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nr1 docs:");
                 PrintDocs(r1);
@@ -983,7 +983,7 @@ namespace Lucene.Net.Index
                 {
                     d.Add(fields[i]);
                 }
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": indexing id:" + idString);
                 }
@@ -995,7 +995,7 @@ namespace Lucene.Net.Index
             public virtual void DeleteDoc()
             {
                 string idString = IdString;
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": del id:" + idString);
                 }
@@ -1006,7 +1006,7 @@ namespace Lucene.Net.Index
             public virtual void DeleteByQuery()
             {
                 string idString = IdString;
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": del query id:" + idString);
                 }

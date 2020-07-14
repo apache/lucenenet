@@ -44,7 +44,7 @@ namespace Lucene.Net.Index.Memory
     {
         private ISet<string> queries = new JCG.HashSet<string>();
 
-        public static readonly int ITERATIONS = 100 * RANDOM_MULTIPLIER;
+        public static readonly int ITERATIONS = 100 * RandomMultiplier;
 
 
         public override void SetUp()
@@ -100,7 +100,7 @@ namespace Lucene.Net.Index.Memory
             StringBuilder termField = new StringBuilder();
 
             // add up to 250 terms to field "foo"
-            int numFooTerms = Random.nextInt(250 * RANDOM_MULTIPLIER);
+            int numFooTerms = Random.nextInt(250 * RandomMultiplier);
             for (int i = 0; i < numFooTerms; i++)
             {
                 fooField.append(" ");
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index.Memory
             }
 
             // add up to 250 terms to field "term"
-            int numTermTerms = Random.nextInt(250 * RANDOM_MULTIPLIER);
+            int numTermTerms = Random.nextInt(250 * RandomMultiplier);
             for (int i = 0; i < numTermTerms; i++)
             {
                 termField.append(" ");
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index.Memory
             memory.AddField("foo", fooField.toString(), analyzer);
             memory.AddField("term", termField.toString(), analyzer);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("Random MemoryIndex:\n" + memory.toString());
                 Console.WriteLine("Same index as RAMDirectory: " +

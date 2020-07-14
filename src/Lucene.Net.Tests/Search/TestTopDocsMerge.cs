@@ -213,7 +213,7 @@ namespace Lucene.Net.Search
             sortFields.Add(new SortField(null, SortFieldType.DOC, true));
             sortFields.Add(new SortField(null, SortFieldType.DOC, false));
 
-            for (int iter = 0; iter < 1000 * RANDOM_MULTIPLIER; iter++)
+            for (int iter = 0; iter < 1000 * RandomMultiplier; iter++)
             {
                 // TODO: custom FieldComp...
                 Query query = new TermQuery(new Term("text", tokens[Random.Next(tokens.Length)]));

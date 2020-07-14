@@ -85,14 +85,14 @@ namespace Lucene.Net.Index
             Term term = new Term("city", "Amsterdam");
             int hitCount = GetHitCount(dir, term);
             Assert.AreEqual(1, hitCount);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: now delete by term=" + term);
             }
             modifier.DeleteDocuments(term);
             modifier.Commit();
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: now getHitCount");
             }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
         {
             for (int t = 0; t < 2; t++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: t=" + t);
                 }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
             while (!doneLatch.Wait(new TimeSpan(0, 0, 0, 0, 1)))
             {
                 modifier.DeleteAll();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("del all");
                 }
@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
                             doc.Add(new NumericDocValuesField("dv", value));
                         }
                         modifier.AddDocument(doc);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("\tThread[" + offset + "]: add doc: " + id);
                         }
@@ -428,7 +428,7 @@ namespace Lucene.Net.Index
                 finally
                 {
                     doneLatch.Signal();
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("\tThread[" + offset + "]: done indexing");
                     }
@@ -602,7 +602,7 @@ namespace Lucene.Net.Index
             // Iterate w/ ever increasing free disk space:
             while (!done)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: cycle");
                 }
@@ -631,7 +631,7 @@ namespace Lucene.Net.Index
 
                 for (int x = 0; x < 2; x++)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: x=" + x);
                     }
@@ -656,7 +656,7 @@ namespace Lucene.Net.Index
                         {
                             rate = 0.0;
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("\ncycle: " + diskFree + " bytes");
                         }
@@ -667,7 +667,7 @@ namespace Lucene.Net.Index
                     {
                         thisDiskFree = 0;
                         rate = 0.0;
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("\ncycle: same writer: unlimited disk space");
                         }
@@ -713,7 +713,7 @@ namespace Lucene.Net.Index
                     }
                     catch (IOException e)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("  hit IOException: " + e);
                             Console.WriteLine(e.StackTrace);
@@ -736,7 +736,7 @@ namespace Lucene.Net.Index
                     {
                         // Must force the close else the writer can have
                         // open files which cause exc in MockRAMDir.close
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: now rollback");
                         }
@@ -860,13 +860,13 @@ namespace Lucene.Net.Index
             }
             // flush (and commit if ac)
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: now full merge");
             }
 
             modifier.ForceMerge(1);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: now commit");
             }
@@ -883,7 +883,7 @@ namespace Lucene.Net.Index
             // delete the doc
             // max buf del terms is two, so this is buffered
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: delete term=" + term);
             }
@@ -893,7 +893,7 @@ namespace Lucene.Net.Index
             // add a doc (needed for the !ac case; see below)
             // doc remains buffered
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: add empty doc");
             }
@@ -915,7 +915,7 @@ namespace Lucene.Net.Index
             bool failed = false;
             try
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: now commit for failure");
                 }
@@ -987,7 +987,7 @@ namespace Lucene.Net.Index
                     {
                         // Only fail once we are no longer in applyDeletes
                         failed = true;
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: mock failure: now fail");
                             Console.WriteLine(Environment.StackTrace);
@@ -1001,7 +1001,7 @@ namespace Lucene.Net.Index
                     // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     if (StackTraceHelper.DoesStackTraceContainMethod("ApplyDeletesAndUpdates"))
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: mock failure: saw applyDeletes");
                             Console.WriteLine(Environment.StackTrace);
@@ -1046,7 +1046,7 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException io)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: got expected exc:");
                         Console.WriteLine(io.StackTrace);
@@ -1173,7 +1173,7 @@ namespace Lucene.Net.Index
                 int count = 0;
 
                 bool doIndexing = r.NextBoolean();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter doIndexing=" + doIndexing);
                 }
@@ -1236,7 +1236,7 @@ namespace Lucene.Net.Index
                 // TODO: fix this test
                 if (SlowFileExists(dir, "_0_1.del") || SlowFileExists(dir, "_0_1.liv"))
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: deletes created @ count=" + count);
                     }
@@ -1334,7 +1334,7 @@ namespace Lucene.Net.Index
                 // TODO: fix this test
                 if (SlowFileExists(dir, "_0_1.del") || SlowFileExists(dir, "_0_1.liv"))
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: deletes created @ id=" + id);
                     }

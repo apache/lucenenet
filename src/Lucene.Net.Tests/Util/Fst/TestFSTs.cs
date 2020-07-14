@@ -98,7 +98,7 @@ namespace Lucene.Net.Util.Fst
             Int32sRef[] terms2 = new Int32sRef[strings2.Length];
             for (int inputMode = 0; inputMode < 2; inputMode++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: inputMode=" + InputModeToString(inputMode));
                 }
@@ -358,7 +358,7 @@ namespace Lucene.Net.Util.Fst
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doRewrite, PackedInt32s.DEFAULT, true, 15);
 
             bool storeOrd = Random.NextBoolean();
-            if (VERBOSE)
+            if (Verbose)
             {
                 if (storeOrd)
                 {
@@ -374,7 +374,7 @@ namespace Lucene.Net.Util.Fst
             {
                 Int32sRef scratchIntsRef = new Int32sRef();
                 TermsEnum termsEnum = terms.GetIterator(null);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: got termsEnum=" + termsEnum);
                 }
@@ -402,7 +402,7 @@ namespace Lucene.Net.Util.Fst
                         catch (NotSupportedException uoe)
 #pragma warning restore 168
                         {
-                            if (VERBOSE)
+                            if (Verbose)
                             {
                                 Console.WriteLine("TEST: codec doesn't support ord; FST stores docFreq");
                             }
@@ -420,13 +420,13 @@ namespace Lucene.Net.Util.Fst
                     }
                     builder.Add(Util.ToInt32sRef(term, scratchIntsRef), (long)output);
                     ord++;
-                    if (VERBOSE && ord % 100000 == 0 && LuceneTestCase.TEST_NIGHTLY)
+                    if (Verbose && ord % 100000 == 0 && LuceneTestCase.TestNightly)
                     {
                         Console.WriteLine(ord + " terms...");
                     }
                 }
                 FST<long?> fst = builder.Finish();
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("FST: " + docCount + " docs; " + ord + " terms; " + fst.NodeCount + " nodes; " + fst.ArcCount + " arcs;" + " " + fst.GetSizeInBytes() + " bytes");
                 }
@@ -442,7 +442,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         BytesRef randomTerm = new BytesRef(FSTTester<object>.GetRandomString(random));
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: seek non-exist " + randomTerm.Utf8ToString() + " " + randomTerm);
                         }
@@ -459,7 +459,7 @@ namespace Lucene.Net.Util.Fst
                             AssertSame(termsEnum, fstEnum, storeOrd);
                             for (int nextIter = 0; nextIter < 10; nextIter++)
                             {
-                                if (VERBOSE)
+                                if (Verbose)
                                 {
                                     Console.WriteLine("TEST: next");
                                     if (storeOrd)
@@ -469,7 +469,7 @@ namespace Lucene.Net.Util.Fst
                                 }
                                 if (termsEnum.Next() != null)
                                 {
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("  term=" + termsEnum.Term.Utf8ToString());
                                     }
@@ -478,7 +478,7 @@ namespace Lucene.Net.Util.Fst
                                 }
                                 else
                                 {
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("  end!");
                                     }
@@ -1024,7 +1024,7 @@ namespace Lucene.Net.Util.Fst
 
             for (int cycle = 0; cycle < 2; cycle++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: cycle=" + cycle);
                 }
@@ -1035,7 +1035,7 @@ namespace Lucene.Net.Util.Fst
 
                 int NUM_IDS = AtLeast(200);
                 //final int NUM_IDS = (int) (377 * (1.0+random.nextDouble()));
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: NUM_IDS=" + NUM_IDS);
                 }
@@ -1105,7 +1105,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     string id = allIDsList[Random.Next(allIDsList.Count)];
                     bool exists = !outOfBounds.Contains(id);
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: TermQuery " + (exists ? "" : "non-exist ") + " id=" + id);
                     }
@@ -1125,7 +1125,7 @@ namespace Lucene.Net.Util.Fst
                         id = allIDsList[Random.Next(allIDsList.Count)];
                         exists = !outOfBounds.Contains(id);
                         nextID = null;
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: exactOnly " + (exists ? "" : "non-exist ") + "id=" + id);
                         }
@@ -1145,7 +1145,7 @@ namespace Lucene.Net.Util.Fst
                             id = sortedAllIDsList[idv] + "a";
                             nextID = sortedAllIDsList[idv + 1];
                         }
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: not exactOnly id=" + id + " nextID=" + nextID);
                         }
@@ -1199,8 +1199,8 @@ namespace Lucene.Net.Util.Fst
             Field f = NewStringField("field", "", Field.Store.NO);
             doc.Add(f);
 
-            int NUM_TERMS = (int)(1000 * RANDOM_MULTIPLIER * (1 + Random.NextDouble()));
-            if (VERBOSE)
+            int NUM_TERMS = (int)(1000 * RandomMultiplier * (1 + Random.NextDouble()));
+            if (Verbose)
             {
                 Console.WriteLine("TEST: NUM_TERMS=" + NUM_TERMS);
             }
@@ -1218,12 +1218,12 @@ namespace Lucene.Net.Util.Fst
             }
 
             // turn writer into reader:
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: get reader");
             }
             IndexReader r = w.GetReader();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: got reader=" + r);
             }
@@ -1236,7 +1236,7 @@ namespace Lucene.Net.Util.Fst
             // verify exact lookup
             foreach (string term in allTermsList)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: term=" + term);
                 }

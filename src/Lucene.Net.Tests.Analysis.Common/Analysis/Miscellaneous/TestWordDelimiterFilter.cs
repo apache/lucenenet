@@ -435,7 +435,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
 
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper6(this, flags, protectedWords);
-                CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
+                CheckRandomData(Random, a, 1000 * RandomMultiplier);
             }
         }
 
@@ -481,7 +481,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
 
                 Analyzer a = new AnalyzerAnonymousInnerClassHelper7(this, flags, protectedWords);
-                CheckRandomData(Random, a, 100 * RANDOM_MULTIPLIER, 8192);
+                CheckRandomData(Random, a, 100 * RandomMultiplier, 8192);
             }
         }
 

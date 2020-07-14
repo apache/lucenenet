@@ -79,21 +79,21 @@ namespace Lucene.Net.Index
             int deletePercent = Random.Next(50);
             int deleteByQueryPercent = Random.Next(25);
             int ndocs = AtLeast(50);
-            int nWriteThreads = TestUtil.NextInt32(Random, 1, TEST_NIGHTLY ? 10 : 5);
-            int maxConcurrentCommits = TestUtil.NextInt32(Random, 1, TEST_NIGHTLY ? 10 : 5); // number of committers at a time... needed if we want to avoid commit errors due to exceeding the max
+            int nWriteThreads = TestUtil.NextInt32(Random, 1, TestNightly ? 10 : 5);
+            int maxConcurrentCommits = TestUtil.NextInt32(Random, 1, TestNightly ? 10 : 5); // number of committers at a time... needed if we want to avoid commit errors due to exceeding the max
 
             bool tombstones = Random.NextBoolean();
 
             // query variables
             AtomicInt64 operations = new AtomicInt64(AtLeast(10000)); // number of query operations to perform in total
 
-            int nReadThreads = TestUtil.NextInt32(Random, 1, TEST_NIGHTLY ? 10 : 5);
+            int nReadThreads = TestUtil.NextInt32(Random, 1, TestNightly ? 10 : 5);
             InitModel(ndocs);
 
             FieldType storedOnlyType = new FieldType();
             storedOnlyType.IsStored = true;
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\n");
                 Console.WriteLine("TEST: commitPercent=" + commitPercent);
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
             }
 
             writer.Dispose();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: close reader=" + reader);
             }
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
                                     // assertU(h.Commit("softCommit","true"));
                                     if (Random.NextBoolean())
                                     {
-                                        if (VERBOSE)
+                                        if (Verbose)
                                         {
                                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": call writer.getReader");
                                         }
@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
                                     }
                                     else
                                     {
-                                        if (VERBOSE)
+                                        if (Verbose)
                                         {
                                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": reopen reader=" + oldReader + " version=" + version);
                                         }
@@ -237,12 +237,12 @@ namespace Lucene.Net.Index
                                 else
                                 {
                                     // assertU(commit());
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": commit+reopen reader=" + oldReader + " version=" + version);
                                     }
                                     writer.Commit();
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": now reopen after commit");
                                     }
@@ -267,7 +267,7 @@ namespace Lucene.Net.Index
                                     Debug.Assert(outerInstance.reader.RefCount > 0);
                                     if (newReader.Version > outerInstance.reader.Version)
                                     {
-                                        if (VERBOSE)
+                                        if (Verbose)
                                         {
                                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": install new reader=" + newReader);
                                         }
@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
                                         // install this snapshot only if it's newer than the current one
                                         if (version >= outerInstance.committedModelClock)
                                         {
-                                            if (VERBOSE)
+                                            if (Verbose)
                                             {
                                                 Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": install new model version=" + version);
                                             }
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
                                         }
                                         else
                                         {
-                                            if (VERBOSE)
+                                            if (Verbose)
                                             {
                                                 Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": skip install new model version=" + version);
                                             }
@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
                                     else
                                     {
                                         // if the same reader, don't decRef.
-                                        if (VERBOSE)
+                                        if (Verbose)
                                         {
                                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": skip install new reader=" + newReader);
                                         }
@@ -343,7 +343,7 @@ namespace Lucene.Net.Index
                                         writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
                                     }
 
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": term delDocs id:" + id + " nextVal=" + nextVal);
                                     }
@@ -363,7 +363,7 @@ namespace Lucene.Net.Index
                                         writer.UpdateDocument(new Term("id", "-" + Convert.ToString(id)), d);
                                     }
 
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": query delDocs id:" + id + " nextVal=" + nextVal);
                                     }
@@ -376,7 +376,7 @@ namespace Lucene.Net.Index
                                     Document d = new Document();
                                     d.Add(NewStringField("id", Convert.ToString(id), Documents.Field.Store.YES));
                                     d.Add(NewField(outerInstance.field, Convert.ToString(nextVal), storedOnlyType));
-                                    if (VERBOSE)
+                                    if (Verbose)
                                     {
                                         Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": u id:" + id + " val=" + nextVal);
                                     }
@@ -450,7 +450,7 @@ namespace Lucene.Net.Index
                             r.IncRef();
                         }
 
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine("TEST: " + Thread.CurrentThread.Name + ": s id=" + id + " val=" + val + " r=" + r.Version);
                         }

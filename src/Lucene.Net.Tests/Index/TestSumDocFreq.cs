@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
                 long sumDocFreq = terms.SumDocFreq;
                 if (sumDocFreq == -1)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("skipping field: " + f + ", codec does not support sumDocFreq");
                     }

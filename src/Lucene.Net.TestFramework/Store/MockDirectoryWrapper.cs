@@ -392,7 +392,7 @@ namespace Lucene.Net.Store
                                 @out.Length = 0;
                             }
                         }
-                        if (LuceneTestCase.VERBOSE)
+                        if (LuceneTestCase.Verbose)
                         {
                             Console.WriteLine("MockDirectoryWrapper: " + action + " unsynced file: " + name);
                         }
@@ -476,7 +476,7 @@ namespace Lucene.Net.Store
         {
             if (randomState.NextDouble() < randomIOExceptionRate)
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception" + (message == null ? "" : " (" + message + ")"));
                 }
@@ -488,7 +488,7 @@ namespace Lucene.Net.Store
         {
             if (randomState.NextDouble() < randomIOExceptionRateOnOpen)
             {
-                if (LuceneTestCase.VERBOSE)
+                if (LuceneTestCase.Verbose)
                 {
                   Console.WriteLine(Thread.CurrentThread.Name + ": MockDirectoryWrapper: now throw random exception during open file=" + name);
                 }
@@ -688,7 +688,7 @@ namespace Lucene.Net.Store
                 // throttling REALLY slows down tests, so don't do it very often for SOMETIMES.
                 if (throttling == Throttling.ALWAYS || (throttling == Throttling.SOMETIMES && randomState.Next(50) == 0) && !(m_input is RateLimitedDirectoryWrapper))
                 {
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         Console.WriteLine("MockDirectoryWrapper: throttling indexOutput (" + name + ")");
                     }
@@ -767,7 +767,7 @@ namespace Lucene.Net.Store
                 int randomInt = randomState.Next(500);
                 if (randomInt == 0)
                 {
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         Console.WriteLine("MockDirectoryWrapper: using SlowClosingMockIndexInputWrapper for file " + name);
                     }
@@ -775,7 +775,7 @@ namespace Lucene.Net.Store
                 }
                 else if (randomInt == 1)
                 {
-                    if (LuceneTestCase.VERBOSE)
+                    if (LuceneTestCase.Verbose)
                     {
                         Console.WriteLine("MockDirectoryWrapper: using SlowOpeningMockIndexInputWrapper for file " + name);
                     }
@@ -895,12 +895,12 @@ namespace Lucene.Net.Store
                         randomIOExceptionRateOnOpen = 0.0;
                         if (DirectoryReader.IndexExists(this))
                         {
-                            if (LuceneTestCase.VERBOSE)
+                            if (LuceneTestCase.Verbose)
                             {
                                 Console.WriteLine("\nNOTE: MockDirectoryWrapper: now crush");
                             }
                             Crash(); // corrupt any unsynced-files
-                            if (LuceneTestCase.VERBOSE)
+                            if (LuceneTestCase.Verbose)
                             {
                                 Console.WriteLine("\nNOTE: MockDirectoryWrapper: now run CheckIndex");
                             }
@@ -926,7 +926,7 @@ namespace Lucene.Net.Store
                                     // this is possible if we hit an exception while writing segments.gen, we try to delete it
                                     // and it ends out in pendingDeletions (but IFD wont remove this).
                                     startSet.Add("segments.gen");
-                                    if (LuceneTestCase.VERBOSE)
+                                    if (LuceneTestCase.Verbose)
                                     {
                                         Console.WriteLine("MDW: Unreferenced check: Ignoring segments.gen that we could not delete.");
                                     }
@@ -940,7 +940,7 @@ namespace Lucene.Net.Store
                                     if (file.StartsWith("segments", StringComparison.Ordinal) && !file.Equals("segments.gen", StringComparison.Ordinal) && endSet.Contains(file))
                                     {
                                         startSet.Add(file);
-                                        if (LuceneTestCase.VERBOSE)
+                                        if (LuceneTestCase.Verbose)
                                         {
                                             Console.WriteLine("MDW: Unreferenced check: Ignoring segments file: " + file + " that we could not delete.");
                                         }
@@ -964,7 +964,7 @@ namespace Lucene.Net.Store
                                                 if (endSet.Contains(s) && !startSet.Contains(s))
                                                 {
                                                     Debug.Assert(pendingDeletions.Contains(s));
-                                                    if (LuceneTestCase.VERBOSE)
+                                                    if (LuceneTestCase.Verbose)
                                                     {
                                                         Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + 
                                                             "from " + file + " that we could not delete.");

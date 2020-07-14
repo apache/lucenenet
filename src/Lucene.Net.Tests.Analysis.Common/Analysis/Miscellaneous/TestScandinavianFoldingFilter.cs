@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestRandomData()
         {
-            CheckRandomData(Random, analyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, analyzer, 1000 * RandomMultiplier);
         }
     }
 }

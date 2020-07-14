@@ -61,12 +61,12 @@ namespace Lucene.Net.Index
 
             IndexWriterConfig iwc = NewIndexWriterConfig(Random, TEST_VERSION_CURRENT, new MockAnalyzer(Random));
 
-            if ((isSimpleText || iwc.MergePolicy is MockRandomMergePolicy) && (TEST_NIGHTLY || RANDOM_MULTIPLIER > 1))
+            if ((isSimpleText || iwc.MergePolicy is MockRandomMergePolicy) && (TestNightly || RandomMultiplier > 1))
             {
                 // Otherwise test can take way too long (> 2 hours)
                 numTerms /= 2;
             }
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("maxTermsPerDoc=" + maxTermsPerDoc);
                 Console.WriteLine("numTerms=" + numTerms);
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
             RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwc);
 
             int threadCount = TestUtil.NextInt32(Random, 1, 5);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("config: " + iw.IndexWriter.Config);
                 Console.WriteLine("threadCount=" + threadCount);

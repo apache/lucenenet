@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
                 random, dir);
             bool allowDups = random.NextBoolean();
             ISet<string> seen = new JCG.HashSet<string>();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS + " allowDups=" + allowDups);
             }
@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
                     seen.Add(s);
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  " + numDocs + ": s=" + s);
                 }
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
 
             AtomicReader sr = GetOnlySegmentReader(r);
 
-            long END_TIME = Environment.TickCount + (TEST_NIGHTLY ? 30 : 1);
+            long END_TIME = Environment.TickCount + (TestNightly ? 30 : 1);
 
             int NUM_THREADS = TestUtil.NextInt32(LuceneTestCase.Random, 1, 10);
             ThreadJob[] threads = new ThreadJob[NUM_THREADS];

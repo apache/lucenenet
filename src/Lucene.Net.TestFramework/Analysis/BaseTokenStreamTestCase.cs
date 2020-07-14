@@ -1012,7 +1012,7 @@ namespace Lucene.Net.Analysis
 
         private static void CheckAnalysisConsistency(Random random, Analyzer a, bool useCharFilter, string text, bool offsetsAreCorrect, Field field)
         {
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: get first token stream now text=" + text);
             }
@@ -1110,7 +1110,7 @@ namespace Lucene.Net.Analysis
                     int evilness = random.Next(50);
                     if (evilness == 17)
                     {
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: re-run analysis w/ exception");
                         }
@@ -1161,7 +1161,7 @@ namespace Lucene.Net.Analysis
                     {
                         // Only consume a subset of the tokens:
                         int numTokensToRead = random.Next(tokens.Count);
-                        if (VERBOSE)
+                        if (Verbose)
                         {
                             Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: re-run analysis, only consuming " + numTokensToRead + " of " + tokens.Count + " tokens");
                         }
@@ -1196,7 +1196,7 @@ namespace Lucene.Net.Analysis
             // Final pass: verify clean tokenization matches
             // results from first pass:
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: re-run analysis; " + tokens.Count + " tokens");
             }
@@ -1206,7 +1206,7 @@ namespace Lucene.Net.Analysis
             random = new Random((int)seed);
             if (random.Next(30) == 7)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: using spoon-feed reader");
                 }
@@ -1252,7 +1252,7 @@ namespace Lucene.Net.Analysis
                 random = new Random((int)seed);
                 if (random.Next(30) == 7)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": NOTE: baseTokenStreamTestCase: indexing using spoon-feed reader");
                     }

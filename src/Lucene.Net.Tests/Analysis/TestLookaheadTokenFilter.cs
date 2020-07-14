@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis
                 TokenStream output = new MockRandomLookaheadTokenFilter(random, tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
             });
-            CheckRandomData(Random, a, 200 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(Random, a, 200 * RandomMultiplier, 8192);
         }
 
         private class NeverPeeksLookaheadTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis
                 TokenStream output = new NeverPeeksLookaheadTokenFilter(tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
             });
-            CheckRandomData(Random, a, 200 * RANDOM_MULTIPLIER, 8192);
+            CheckRandomData(Random, a, 200 * RandomMultiplier, 8192);
         }
 
         [Test]

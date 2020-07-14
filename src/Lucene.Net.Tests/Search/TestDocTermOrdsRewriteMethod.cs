@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
                 writer.AddDocument(doc);
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 // utf16 order
                 terms.Sort();
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
             for (int i = 0; i < num; i++)
             {
                 string reg = AutomatonTestUtil.RandomRegexp(Random);
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: regexp=" + reg);
                 }

@@ -102,7 +102,7 @@ namespace Lucene.Net.Collation
         [Test]
         public void TestThreadSafe()
         {
-            int iters = 20 * RANDOM_MULTIPLIER;
+            int iters = 20 * RandomMultiplier;
             for (int i = 0; i < iters; i++)
             {
                 CultureInfo locale = new CultureInfo("de");

@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Phonetic
         [Test]
         public void TestRandom()
         {
-            CheckRandomData(Random, analyzer, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, analyzer, 1000 * RandomMultiplier);
         }
 
         [Test]

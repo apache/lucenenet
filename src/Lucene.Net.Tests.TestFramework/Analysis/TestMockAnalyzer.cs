@@ -265,7 +265,7 @@ namespace Lucene.Net.Analysis
         [Test]
         public void TestRandomRegexps()
         {
-            int iters = TEST_NIGHTLY ? AtLeast(30) : AtLeast(1);
+            int iters = TestNightly ? AtLeast(30) : AtLeast(1);
             for (int i = 0; i < iters; i++)
             {
                 CharacterRunAutomaton dfa = new CharacterRunAutomaton(AutomatonTestUtil.RandomAutomaton(Random) /*, int.MaxValue*/);

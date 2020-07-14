@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Phonetic
                 return new TokenStreamComponents(tokenizer, new DoubleMetaphoneFilter(tokenizer, codeLen, false));
             });
 
-            CheckRandomData(Random, a, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
 
             Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Phonetic
                 return new TokenStreamComponents(tokenizer, new DoubleMetaphoneFilter(tokenizer, codeLen, true));
             });
 
-            CheckRandomData(Random, b, 1000 * RANDOM_MULTIPLIER);
+            CheckRandomData(Random, b, 1000 * RandomMultiplier);
         }
 
         [Test]

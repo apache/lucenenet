@@ -51,7 +51,7 @@ namespace Lucene.Net.Benchmarks.Quality
             int maxResults = 1000;
             String docNameField = "doctitle"; // orig docID is in the linedoc format title 
 
-            TextWriter logger = VERBOSE ? Console.Out : null;
+            TextWriter logger = Verbose ? Console.Out : null;
 
             // prepare topics
             Stream topics = GetType().getResourceAsStream("trecTopics.txt");
@@ -72,7 +72,7 @@ namespace Lucene.Net.Benchmarks.Quality
             IQualityQueryParser qqParser = new SimpleQQParser("title", "body");
             QualityBenchmark qrun = new QualityBenchmark(qqs, qqParser, searcher, docNameField);
 
-            SubmissionReport submitLog = VERBOSE ? new SubmissionReport(logger, "TestRun") : null;
+            SubmissionReport submitLog = Verbose ? new SubmissionReport(logger, "TestRun") : null;
             qrun.MaxResults = (maxResults);
             QualityStats[] stats = qrun.Execute(judge, submitLog, logger);
 

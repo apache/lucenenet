@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
                 if (merge.MaxNumSegments != -1 && (first || merge.Segments.Count == 1))
                 {
                     first = false;
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: maxNumSegments merge");
                     }

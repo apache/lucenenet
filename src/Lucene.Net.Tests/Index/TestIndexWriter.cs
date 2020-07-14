@@ -756,7 +756,7 @@ namespace Lucene.Net.Index
             doc.Add(NewField("field", "aaa", customType));
             writer.AddDocument(doc);
             writer.Commit();
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("\nTEST: now add empty doc");
             }
@@ -825,7 +825,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             for (int i = 0; i < 20; i++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + i);
                 }
@@ -1365,7 +1365,7 @@ namespace Lucene.Net.Index
 
                 if (!failed)
                 {
-                    if (VERBOSE)
+                    if (Verbose)
                     {
                         Console.WriteLine("TEST: now rollback");
                     }
@@ -2477,7 +2477,7 @@ namespace Lucene.Net.Index
                     docCount++;
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("TEST: iter=" + iter + " flushed after docCount=" + docCount);
                 }
@@ -2707,7 +2707,7 @@ namespace Lucene.Net.Index
                     iwc.SetOpenMode(OpenMode.CREATE_OR_APPEND);
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: i=" + i);
                 }
@@ -2738,7 +2738,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("  at close: " + Arrays.ToString(dir.ListAll()));
                 }

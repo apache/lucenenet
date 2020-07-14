@@ -81,7 +81,7 @@ namespace Lucene.Net
             MergePolicy mp = conf.MergePolicy;
             mp.NoCFSRatio = useCompoundFiles ? 1.0 : 0.0;
             IndexWriter writer = new IndexWriter(directory, conf);
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: now build index MAX_DOCS=" + MAX_DOCS);
             }
@@ -101,7 +101,7 @@ namespace Lucene.Net
 
             Query query = new TermQuery(new Term(PRIORITY_FIELD, HIGH_PRIORITY));
             @out.WriteLine("Query: " + query.ToString(PRIORITY_FIELD));
-            if (VERBOSE)
+            if (Verbose)
             {
                 Console.WriteLine("TEST: search query=" + query);
             }
