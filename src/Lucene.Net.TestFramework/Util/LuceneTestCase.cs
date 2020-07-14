@@ -754,6 +754,27 @@ namespace Lucene.Net.Util
 
             Console.Write("Default Similarity: ");
             Console.WriteLine(similarityName);
+
+            Console.Write("Nightly: ");
+            Console.WriteLine(TEST_NIGHTLY);
+
+            Console.Write("Weekly: ");
+            Console.WriteLine(TEST_WEEKLY);
+
+            Console.Write("Slow: ");
+            Console.WriteLine(TEST_SLOW);
+
+            Console.Write("Awaits Fix: ");
+            Console.WriteLine(TEST_AWAITSFIX);
+
+            Console.Write("Directory: ");
+            Console.WriteLine(TEST_DIRECTORY);
+
+            Console.Write("Verbose: ");
+            Console.WriteLine(VERBOSE);
+
+            Console.Write("Random Multiplier: ");
+            Console.WriteLine(RANDOM_MULTIPLIER);
         }
 
         /// <summary>
