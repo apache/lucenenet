@@ -69,7 +69,7 @@ steps:
     } else {
         Write-Host "WARNING: File not found: $testResultsFileName"
     }
-    Write-Host "##vso[task.setvariable variable=TestResultsFileExists;]$testResultsFileExists"      
+    Write-Host "##vso[task.setvariable variable=TestResultsFileExists;]$testResultsFileExists"
   displayName: 'Parse Test Results File'
 
 - task: PublishTestResults@2

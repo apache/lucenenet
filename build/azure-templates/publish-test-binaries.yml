@@ -19,16 +19,19 @@
 # to the binary publish subdirectory for the provided target
 # framework, and then publishes to an pipeline artifact.
 
+# NOTE: Depends on environment varable $(RunTests)
+
 parameters:
   publishDirectory: '' # The path of the root publish staging directory where the binaries can be found $(PublishTempDirectory)
   framework: '' # The target framework
   binaryArtifactName: '' # The prefix of the binary artifact to publish $(BinaryArtifactName)
-  testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/lucene.testsettings.json' #The name of the 
+  testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/lucene.testsettings.json' #The name of the lucene test settings file
 
 steps:
 - pwsh: |
     Copy-Item -Path "${{ parameters.testSettingsFilePath }}" -Destination "${{ parameters.publishDirectory }}/${{ parameters.framework }}/" -Force
   displayName: 'Copy lucene.testsettings.json File to: ${{ parameters.publishDirectory }}/${{ parameters.framework }}'
+  condition: and(succeeded(), ne(variables['RunTests'], 'false'))
 
 - task: PublishPipelineArtifact@1
   displayName: 'Publish Artifact: ${{ parameters.binaryArtifactName }}_${{ parameters.framework }}'
@@ -36,3 +39,4 @@ steps:
     targetPath: '${{ parameters.publishDirectory }}/${{ parameters.framework }}'
     artifact: '${{ parameters.binaryArtifactName }}_${{ parameters.framework }}'
     publishLocation: 'pipeline'
+  condition: and(succeeded(), ne(variables['RunTests'], 'false'))

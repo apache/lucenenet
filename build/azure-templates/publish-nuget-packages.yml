@@ -44,13 +44,13 @@ steps:
   displayName: 'Download Build Artifacts: ${{ parameters.nugetArtifactName }}'
   inputs:
     artifactName: '${{ parameters.nugetArtifactName }}'
-    targetPath: nuget
+    targetPath: '$(System.DefaultWorkingDirectory)/${{ parameters.nugetArtifactName }}'
 
 - task: DownloadPipelineArtifact@0
   displayName: 'Download Build Artifacts: ${{ parameters.debugArtifactName }}'
   inputs:
     artifactName: '${{ parameters.debugArtifactName }}'
-    targetPath: debug
+    targetPath: '$(System.DefaultWorkingDirectory)/${{ parameters.debugArtifactName }}'
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
@@ -63,7 +63,7 @@ steps:
 - task: PublishSymbols@2
   displayName: 'Publish symbols path'
   inputs:
-    SymbolsFolder: '${{ parameters.debugArtifactName }}'
+    SymbolsFolder: '$(System.DefaultWorkingDirectory)/${{ parameters.debugArtifactName }}'
     SearchPattern: |
       **/bin/**/*.pdb
       !${{ parameters.testSymbolFilesConvention }}

@@ -85,6 +85,7 @@ variables:
 - name: NuGetArtifactDirectory # NuGet binaries directory
   value: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
 
+
 stages:
 - stage: Build_Stage
   displayName: 'Build Stage:'
@@ -94,7 +95,6 @@ stages:
     pool:
       vmImage: 'windows-2019'
 
-
     variables:
       PublishTempDirectory: '$(Build.BinariesDirectory)/publish'
 
@@ -102,6 +102,11 @@ stages:
     
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       fetchDepth: 1  # the depth of commits to ask Git to fetch
+
+    - powershell: |
+        $configuration = if ($env:BUILDCONFIGURATION) { $env:BUILDCONFIGURATION } else { "Release" }
+        Write-Host "##vso[task.setvariable variable=BuildConfiguration;]$configuration"
+      displayName: 'Setup Default Variable Values'
 
     - task: UseDotNet@2
       displayName: 'Use .NET Core sdk 3.1.301'
@@ -134,7 +139,9 @@ stages:
         '$(PackageVersion)' | Out-File -FilePath "$dir/$(PackageVersionFileName)" -Force
         '$(FileVersion)' | Out-File -FilePath "$dir/$(FileVersionFileName)" -Force
         '$(Build.BuildNumber)' | Out-File -FilePath "$dir/$(BuildNumberFileName)" -Force
-        
+      displayName: 'Persist Versions to Files'
+
+    - pwsh: |
         # Generate a lucene.testsettings.json file for use with the test framework
         $nightly = if ($Env:IsNightly -eq 'true') { 'true' } else { 'false' }
         $weekly = if ($Env:IsWeekly -eq 'true') { 'true' } else { 'false' }
@@ -159,7 +166,8 @@ stages:
                         """multiplier"": ""$multiplier""`n`t" +
                     "}`n}"
         Out-File -filePath "$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)" -encoding UTF8 -inputObject $fileText
-      displayName: 'Persist Variables to Files'
+      displayName: 'Persist Test Settings to lucene.testsettings.json'
+      condition: and(succeeded(), ne(variables['RunTests'], 'false'))
 
     # If this is a release pipeline, copy the build.bat and Version.props files as version artifacts, which will 
     # overwrite the build.bat and Version.props files of the release.
@@ -186,33 +194,29 @@ stages:
       displayName: 'Copy .pdb Files to: /$(DebugArtifactName)'
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)'
-        Contents: |
-         **\**\bin\**\*.pdb
+        Contents: '**/bin/$(BuildConfiguration)/**/*.pdb'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
 
-    - ${{ if ne(variables['RunTests'], 'false') }}:
-      - template: 'build/azure-templates/publish-test-binaries.yml'
-        parameters:
-          publishDirectory: $(PublishTempDirectory)
-          framework: 'netcoreapp3.1'
-          binaryArtifactName: '$(BinaryArtifactName)'
-          testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+    - template: 'build/azure-templates/publish-test-binaries.yml'
+      parameters:
+        publishDirectory: $(PublishTempDirectory)
+        framework: 'netcoreapp3.1'
+        binaryArtifactName: '$(BinaryArtifactName)'
+        testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
-    - ${{ if ne(variables['RunTests'], 'false') }}:
-      - template: 'build/azure-templates/publish-test-binaries.yml'
-        parameters:
-          publishDirectory: $(PublishTempDirectory)
-          framework: 'netcoreapp2.1'
-          binaryArtifactName: '$(BinaryArtifactName)'
-          testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+    - template: 'build/azure-templates/publish-test-binaries.yml'
+      parameters:
+        publishDirectory: $(PublishTempDirectory)
+        framework: 'netcoreapp2.1'
+        binaryArtifactName: '$(BinaryArtifactName)'
+        testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
-    - ${{ if ne(variables['RunTests'], 'false') }}:
-      - template: 'build/azure-templates/publish-test-binaries.yml'
-        parameters:
-          publishDirectory: $(PublishTempDirectory)
-          framework: 'net48'
-          binaryArtifactName: '$(BinaryArtifactName)'
-          testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
+    - template: 'build/azure-templates/publish-test-binaries.yml'
+      parameters:
+        publishDirectory: $(PublishTempDirectory)
+        framework: 'net48'
+        binaryArtifactName: '$(BinaryArtifactName)'
+        testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(NuGetArtifactName)'
@@ -372,20 +376,24 @@ stages:
       vmImage: 'windows-2019'
 
     steps:
-    - checkout: none # self represents the repo where the initial Pipelines YAML file was found
+      # We checkout here because we need to publish the source code along with the symbols for debugging
+    - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+      fetchDepth: 1  # the depth of commits to ask Git to fetch
+
     - template: 'build/azure-templates/show-all-environment-variables.yml'
 
     - task: DownloadPipelineArtifact@0
       displayName: 'Download Build Artifacts: $(VersionArtifactName)'
       inputs:
         artifactName: '$(VersionArtifactName)'
-        targetPath: version
+        targetPath: '$(System.DefaultWorkingDirectory)/$(VersionArtifactName)'
 
-        
+      # For debugging this pipeline
     - powershell: | 
         Get-ChildItem -Path $(System.DefaultWorkingDirectory)
     - powershell: | 
-        Get-ChildItem -Path version
+        Get-ChildItem -Path '$(VersionArtifactName)'
+
       # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
       # the version cannot be passed to the Index Sources & Publish Symbols task.
     - powershell: |
@@ -419,14 +427,14 @@ stages:
       displayName: 'Download Build Artifacts: $(NuGetArtifactName)'
       inputs:
         artifactName: '$(NuGetArtifactName)'
-        targetPath: nuget
+        targetPath: '$(System.DefaultWorkingDirectory)/$(NuGetArtifactName)'
 
 
     - task: DownloadPipelineArtifact@0
       displayName: 'Download Build Artifacts: $(VersionArtifactName)'
       inputs:
         artifactName: '$(VersionArtifactName)'
-        targetPath: version
+        targetPath: '$(System.DefaultWorkingDirectory)/$(VersionArtifactName)'
         
     - template: 'build/azure-templates/show-all-files.yml' # Uncomment for debugging
 
