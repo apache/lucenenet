@@ -40,7 +40,7 @@ namespace Lucene.Net.Facet.Range
         {
             if (label == null)
             {
-                throw new System.NullReferenceException("label cannot be null");
+                throw new NullReferenceException("label cannot be null");
             }
             this.Label = label;
         }

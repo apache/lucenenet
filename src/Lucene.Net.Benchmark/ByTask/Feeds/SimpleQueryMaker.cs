@@ -4,6 +4,7 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
@@ -36,7 +37,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// Extending classes can override this method for preparing different queries.
         /// </summary>
         /// <returns>Prepared queries.</returns>
-        /// <exception cref="System.Exception">If cannot prepare the queries.</exception>
+        /// <exception cref="Exception">If cannot prepare the queries.</exception>
         protected override Query[] PrepareQueries()
         {
             // analyzer (default is standard analyzer)

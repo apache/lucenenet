@@ -220,7 +220,7 @@ namespace Lucene.Net.Util
                     continue;
                 }
 #pragma warning disable 168
-                catch (System.IndexOutOfRangeException e1)
+                catch (IndexOutOfRangeException e1)
 #pragma warning restore 168
                 {
                     // Ignored.

@@ -54,7 +54,7 @@ namespace Lucene.Net.Replicator
                 assertNotNull(new IndexAndTaxonomyRevision(indexWriter, taxoWriter));
                 fail("should have failed when there are no commits to snapshot");
             }
-            catch (System.InvalidOperationException)
+            catch (InvalidOperationException)
             {
                 // expected
             }

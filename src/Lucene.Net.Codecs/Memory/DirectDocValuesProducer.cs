@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
 
                 default:
-                    throw new System.InvalidOperationException();
+                    throw new InvalidOperationException();
             }
         }
 

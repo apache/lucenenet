@@ -1,5 +1,6 @@
 using J2N.Runtime.CompilerServices;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -395,7 +396,7 @@ namespace Lucene.Net.Index
         {
             if (docID < 0 || docID >= MaxDoc)
             {
-                throw new System.IndexOutOfRangeException("docID must be >= 0 and < maxDoc=" + MaxDoc + " (got docID=" + docID + ")");
+                throw new IndexOutOfRangeException("docID must be >= 0 and < maxDoc=" + MaxDoc + " (got docID=" + docID + ")");
             }
         }
 

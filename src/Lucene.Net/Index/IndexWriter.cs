@@ -396,7 +396,7 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-                    catch (System.OutOfMemoryException oom)
+                    catch (OutOfMemoryException oom)
                     {
                         HandleOOM(oom, "getReader");
                         // never reached but javac disagrees:
@@ -1278,7 +1278,7 @@ namespace Lucene.Net.Index
                 }
                 Debug.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates, "" + docWriter.perThreadPool.NumDeactivatedThreadStates() + " " + docWriter.perThreadPool.MaxThreadStates);
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "closeInternal");
             }
@@ -1577,7 +1577,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "updateDocuments");
             }
@@ -1603,7 +1603,7 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "deleteDocuments(Term)");
             }
@@ -1727,7 +1727,7 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "deleteDocuments(Term..)");
             }
@@ -1753,7 +1753,7 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "deleteDocuments(Query)");
             }
@@ -1781,7 +1781,7 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "deleteDocuments(Query..)");
             }
@@ -1851,7 +1851,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "updateDocument");
             }
@@ -1893,7 +1893,7 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "updateNumericDocValue");
             }
@@ -1939,7 +1939,7 @@ namespace Lucene.Net.Index
                     ProcessEvents(true, false);
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "updateBinaryDocValue");
             }
@@ -2591,7 +2591,7 @@ namespace Lucene.Net.Index
 
                 success = true;
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "rollbackInternal");
             }
@@ -2702,7 +2702,7 @@ namespace Lucene.Net.Index
                             globalFieldNumberMap.Clear();
                             success = true;
                         }
-                        catch (System.OutOfMemoryException oom)
+                        catch (OutOfMemoryException oom)
                         {
                             HandleOOM(oom, "deleteAll");
                         }
@@ -3133,7 +3133,7 @@ namespace Lucene.Net.Index
 
                 successTop = true;
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "addIndexes(Directory...)");
             }
@@ -3320,7 +3320,7 @@ namespace Lucene.Net.Index
                     Checkpoint();
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "addIndexes(IndexReader...)");
             }
@@ -3605,7 +3605,7 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                catch (System.OutOfMemoryException oom)
+                catch (OutOfMemoryException oom)
                 {
                     HandleOOM(oom, "prepareCommit");
                 }
@@ -3894,7 +3894,7 @@ namespace Lucene.Net.Index
                     return anySegmentFlushed;
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "doFlush");
                 // never hit
@@ -4591,7 +4591,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "merge");
             }
@@ -5542,7 +5542,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            catch (System.OutOfMemoryException oom)
+            catch (OutOfMemoryException oom)
             {
                 HandleOOM(oom, "startCommit");
             }
@@ -5605,7 +5605,7 @@ namespace Lucene.Net.Index
             public abstract void Warm(AtomicReader reader);
         }
 
-        private void HandleOOM(System.OutOfMemoryException oom, string location)
+        private void HandleOOM(OutOfMemoryException oom, string location)
         {
             if (infoStream.IsEnabled("IW"))
             {

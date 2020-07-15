@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Linq;
 
 namespace Lucene.Net.Replicator.AspNetCore
@@ -52,7 +53,7 @@ namespace Lucene.Net.Replicator.AspNetCore
         /// </summary>
         /// <param name="name">the name of the requested parameter</param>
         /// <returns>the value of the requested parameter or null if not present</returns>
-        /// <exception cref="System.InvalidOperationException">More than one parameter with the name was given.</exception>
+        /// <exception cref="InvalidOperationException">More than one parameter with the name was given.</exception>
         public string QueryParam(string name)
         {
             return request.Query[name].SingleOrDefault();

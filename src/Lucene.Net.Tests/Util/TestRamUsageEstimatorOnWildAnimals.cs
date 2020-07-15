@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Util
 {
@@ -53,7 +54,7 @@ namespace Lucene.Net.Util
                     lower = mid;
                 }
 #pragma warning disable 168
-                catch (System.StackOverflowException e)
+                catch (StackOverflowException e)
 #pragma warning restore 168
                 {
                     upper = mid;

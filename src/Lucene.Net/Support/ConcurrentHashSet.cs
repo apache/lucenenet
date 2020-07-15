@@ -282,7 +282,7 @@ namespace Lucene.Net.Support
         /// <param name="item">The item to add.</param>
         /// <returns>true if the items was added to the <see cref="ConcurrentHashSet{T}"/>
         /// successfully; false if it already exists.</returns>
-        /// <exception cref="T:System.OverflowException">The <see cref="ConcurrentHashSet{T}"/>
+        /// <exception cref="T:OverflowException">The <see cref="ConcurrentHashSet{T}"/>
         /// contains too many items.</exception>
         public bool Add(T item) =>
             AddInternal(item, _comparer.GetHashCode(item), true);

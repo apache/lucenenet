@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Lucene.Net.Analysis
@@ -69,7 +70,7 @@ namespace Lucene.Net.Analysis
         /// <para/>
         /// If you override this method, always call <c>base.Dispose(disposing)</c>, otherwise
         /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
-        /// throw <see cref="System.InvalidOperationException"/> on reuse).
+        /// throw <see cref="InvalidOperationException"/> on reuse).
         /// <para/>
         /// <b>NOTE:</b>
         /// The default implementation chains the call to the input TokenStream, so
@@ -92,7 +93,7 @@ namespace Lucene.Net.Analysis
         /// <para/>
         /// If you override this method, always call <c>base.Reset()</c>, otherwise
         /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
-        /// throw <see cref="System.InvalidOperationException"/> on further usage).
+        /// throw <see cref="InvalidOperationException"/> on further usage).
         /// </summary>
         /// <remarks>
         /// <b>NOTE:</b>

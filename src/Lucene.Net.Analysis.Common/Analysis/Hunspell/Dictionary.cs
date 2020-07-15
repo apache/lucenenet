@@ -564,7 +564,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
                 if (mappings.Put(parts[1], parts[2]) != null)
                 {
-                    throw new System.InvalidOperationException("duplicate mapping specified for: " + parts[1]);
+                    throw new InvalidOperationException("duplicate mapping specified for: " + parts[1]);
                 }
             }
 
@@ -993,7 +993,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 return aliases[id - 1];
             }
-            catch (System.IndexOutOfRangeException ex)
+            catch (IndexOutOfRangeException ex)
             {
                 throw new ArgumentException("Bad flag alias number:" + id, ex);
             }

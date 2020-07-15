@@ -96,7 +96,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (bit >= size)
             {
-                throw new System.IndexOutOfRangeException("bit=" + bit + " size=" + size);
+                throw new IndexOutOfRangeException("bit=" + bit + " size=" + size);
             }
             bits[bit >> 3] |= (byte)(1 << (bit & 7));
             count = -1;
@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (bit >= size)
             {
-                throw new System.IndexOutOfRangeException("bit=" + bit + " size=" + size);
+                throw new IndexOutOfRangeException("bit=" + bit + " size=" + size);
             }
             int pos = bit >> 3;
             int v = bits[pos];
@@ -137,7 +137,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (bit >= size)
             {
-                throw new System.IndexOutOfRangeException(bit.ToString());
+                throw new IndexOutOfRangeException(bit.ToString());
             }
             bits[bit >> 3] &= (byte)(~(1 << (bit & 7)));
             count = -1;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (bit >= size)
             {
-                throw new System.IndexOutOfRangeException(bit.ToString());
+                throw new IndexOutOfRangeException(bit.ToString());
             }
             int pos = bit >> 3;
             int v = bits[pos];

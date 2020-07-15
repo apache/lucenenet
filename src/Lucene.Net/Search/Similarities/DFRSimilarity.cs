@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -110,7 +112,7 @@ namespace Lucene.Net.Search.Similarities
         {
             if (basicModel == null || afterEffect == null || normalization == null)
             {
-                throw new System.NullReferenceException("null parameters not allowed.");
+                throw new NullReferenceException("null parameters not allowed.");
             }
             this.m_basicModel = basicModel;
             this.m_afterEffect = afterEffect;

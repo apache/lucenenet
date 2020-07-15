@@ -518,7 +518,7 @@ namespace Lucene.Net.Util.Packed
                 p64 = new Packed64(INDEX, BITS);
             }
 #pragma warning disable 168
-            catch (System.OutOfMemoryException oome)
+            catch (OutOfMemoryException oome)
 #pragma warning restore 168
             {
                 // this can easily happen: we're allocating a
@@ -540,7 +540,7 @@ namespace Lucene.Net.Util.Packed
                 p64sb = Packed64SingleBlock.Create(INDEX, BITS);
             }
 #pragma warning disable 168
-            catch (System.OutOfMemoryException oome)
+            catch (OutOfMemoryException oome)
 #pragma warning restore 168
             {
                 // Ignore: see comment above
@@ -558,7 +558,7 @@ namespace Lucene.Net.Util.Packed
                 p8 = new Packed8ThreeBlocks(index);
             }
 #pragma warning disable 168
-            catch (System.OutOfMemoryException oome)
+            catch (OutOfMemoryException oome)
 #pragma warning restore 168
             {
                 // Ignore: see comment above
@@ -577,7 +577,7 @@ namespace Lucene.Net.Util.Packed
                 p16 = new Packed16ThreeBlocks(index);
             }
 #pragma warning disable 168
-            catch (System.OutOfMemoryException oome)
+            catch (OutOfMemoryException oome)
 #pragma warning restore 168
             {
                 // Ignore: see comment above

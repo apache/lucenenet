@@ -163,7 +163,7 @@ namespace Lucene.Net.Index
             codec = Codec.Default;
             if (codec == null)
             {
-                throw new System.NullReferenceException();
+                throw new NullReferenceException();
             }
             infoStream = Util.InfoStream.Default;
             mergePolicy = new TieredMergePolicy();
@@ -506,7 +506,7 @@ namespace Lucene.Net.Index
                 {
                     return ((ThreadAffinityDocumentsWriterThreadPool)indexerThreadPool).MaxThreadStates;
                 }
-                catch (System.InvalidCastException cce)
+                catch (InvalidCastException cce)
                 {
                     throw new InvalidOperationException(cce.Message, cce);
                 }

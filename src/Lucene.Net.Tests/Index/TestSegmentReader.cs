@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.IndexOutOfRangeException expected)
+            catch (IndexOutOfRangeException expected)
 #pragma warning restore 168
             {
             }
@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.IndexOutOfRangeException expected)
+            catch (IndexOutOfRangeException expected)
 #pragma warning restore 168
             {
             }
@@ -258,7 +258,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.IndexOutOfRangeException expected)
+            catch (IndexOutOfRangeException expected)
 #pragma warning restore 168
             {
             }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
                 Assert.Fail();
             }
 #pragma warning disable 168
-            catch (System.IndexOutOfRangeException expected)
+            catch (IndexOutOfRangeException expected)
 #pragma warning restore 168
             {
             }

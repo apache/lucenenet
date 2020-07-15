@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (valueCount > MAX_SIZE)
             {
-                throw new System.IndexOutOfRangeException("MAX_SIZE exceeded");
+                throw new IndexOutOfRangeException("MAX_SIZE exceeded");
             }
             blocks = new byte[valueCount * 3];
         }

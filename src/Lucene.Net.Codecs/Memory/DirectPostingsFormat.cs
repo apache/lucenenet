@@ -2278,7 +2278,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         return docID = docIDs[upto];
                     }
-                    catch (System.IndexOutOfRangeException)
+                    catch (IndexOutOfRangeException)
                     {
                     }
                 }

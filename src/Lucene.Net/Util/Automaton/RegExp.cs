@@ -1263,7 +1263,7 @@ namespace Lucene.Net.Util.Automaton
                         return MakeInterval(imin, imax, digits);
                     }
 #pragma warning disable 168
-                    catch (System.FormatException e)
+                    catch (FormatException e)
 #pragma warning restore 168
                     {
                         throw new ArgumentException("interval syntax error at position " + (pos - 1), e);

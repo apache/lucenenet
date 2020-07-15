@@ -862,7 +862,7 @@ namespace Lucene.Net.Index
 
             internal override void Handle(Exception t)
             {
-                if (!(t is ObjectDisposedException) && !(t is System.NullReferenceException))
+                if (!(t is ObjectDisposedException) && !(t is NullReferenceException))
                 {
                     Console.Error.WriteLine(t.StackTrace);
                     lock (failures)
@@ -954,7 +954,7 @@ namespace Lucene.Net.Index
             {
                 bool report = true;
 
-                if (t is ObjectDisposedException || t is MergePolicy.MergeAbortedException || t is System.NullReferenceException)
+                if (t is ObjectDisposedException || t is MergePolicy.MergeAbortedException || t is NullReferenceException)
                 {
                     report = !didClose;
                 }

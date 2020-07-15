@@ -431,7 +431,7 @@ namespace Lucene.Net.Index
                 {
                     return ((ThreadAffinityDocumentsWriterThreadPool)indexerThreadPool).MaxThreadStates;
                 }
-                catch (System.InvalidCastException cce)
+                catch (InvalidCastException cce)
                 {
                     throw new InvalidOperationException(cce.Message, cce);
                 }

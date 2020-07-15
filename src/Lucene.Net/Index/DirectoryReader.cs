@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
         /// <para><b>NOTE</b>: Once the writer is disposed, any
         /// outstanding readers may continue to be used.  However,
         /// if you attempt to reopen any of those readers, you'll
-        /// hit an <see cref="System.ObjectDisposedException"/>.</para>
+        /// hit an <see cref="ObjectDisposedException"/>.</para>
         /// 
         /// @lucene.experimental
         /// </summary>

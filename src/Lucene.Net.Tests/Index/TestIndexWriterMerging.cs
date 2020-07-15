@@ -465,7 +465,7 @@ namespace Lucene.Net.Index
                             break;
                         }
 #pragma warning disable 168
-                        catch (System.NullReferenceException e)
+                        catch (NullReferenceException e)
 #pragma warning restore 168
                         {
                             done = true;

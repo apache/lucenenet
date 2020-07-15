@@ -807,7 +807,7 @@ namespace Lucene.Net.Index
                                 {
                                     // ok
                                 }
-                                catch (System.NullReferenceException)
+                                catch (NullReferenceException)
                                 {
                                     // ok
                                 }

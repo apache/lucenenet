@@ -41,7 +41,7 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="index">The attribute index (zero-based).</param>
         /// <returns>true if the attribute was declared in the DTD, false otherwise.</returns>
-        /// <exception cref="System.IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
+        /// <exception cref="IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
         bool IsDeclared(int index);
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="index">The attribute index (zero-based).</param>
         /// <returns>true if the value was found in the XML text, false if the value was provided by DTD defaulting.</returns>
-        /// <exception cref="System.IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
+        /// <exception cref="IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
         bool IsSpecified(int index);
 
         /// <summary>

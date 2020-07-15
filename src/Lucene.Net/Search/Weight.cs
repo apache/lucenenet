@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Lucene.Net.Search
@@ -148,11 +149,7 @@ namespace Lucene.Net.Search
 
             public DefaultBulkScorer(Scorer scorer)
             {
-                if (scorer == null)
-                {
-                    throw new System.NullReferenceException();
-                }
-                this.scorer = scorer;
+                this.scorer = scorer ?? throw new NullReferenceException();
             }
 
             public override bool Score(ICollector collector, int max)

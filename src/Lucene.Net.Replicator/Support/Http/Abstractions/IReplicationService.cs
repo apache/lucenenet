@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Replicator.Http.Abstractions
+﻿using System;
+
+namespace Lucene.Net.Replicator.Http.Abstractions
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -25,7 +27,7 @@
         /// <summary>
         /// Executes the replication task.
         /// </summary>
-        /// <exception cref="System.InvalidOperationException">required parameters are missing</exception>
+        /// <exception cref="InvalidOperationException">required parameters are missing</exception>
         void Perform(IReplicationRequest request, IReplicationResponse response);
     }
 }

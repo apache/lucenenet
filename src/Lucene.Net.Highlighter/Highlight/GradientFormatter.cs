@@ -208,7 +208,7 @@ namespace Lucene.Net.Search.Highlight
             try
             {
                 // LUCENENET NOTE: Convert.ToInt32(string, int) throws a
-                // System.FormatException if the character does not fall in
+                // FormatException if the character does not fall in
                 // the correct range, which is the behavior we are expecting.
                 // But throws an ArgumentException if passed a negative number.
                 // So we need to convert to FormatException to provide the correct behavior.

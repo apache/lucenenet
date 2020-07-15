@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 f.ParseString("\\u123x");
                 fail("invalid hex number check.");
             }
-            catch (System.FormatException)
+            catch (FormatException)
             {
             }
         }

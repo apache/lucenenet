@@ -1240,7 +1240,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("OutOfMemoryError expected");
             }
 #pragma warning disable 168
-            catch (System.OutOfMemoryException expected)
+            catch (OutOfMemoryException expected)
 #pragma warning restore 168
             {
             }
@@ -1266,7 +1266,7 @@ namespace Lucene.Net.Index
             {
                 if (message.StartsWith("now flush at close", StringComparison.Ordinal) && thrown.CompareAndSet(false, true))
                 {
-                    throw new System.OutOfMemoryException("fake OOME at " + message);
+                    throw new OutOfMemoryException("fake OOME at " + message);
                 }
             }
 

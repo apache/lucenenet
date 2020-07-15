@@ -6,6 +6,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;// Used only for WRITE_LOCK_NAME in deprecated create=true case:
 using System.Runtime.CompilerServices;
+using System.Security;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Store
 {
@@ -52,8 +55,8 @@ namespace Lucene.Net.Store
     ///         href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265734">Sun
     ///         JRE bug</a> this is a poor choice for Windows, but
     ///         on all other platforms this is the preferred
-    ///         choice. Applications using <see cref="System.Threading.Thread.Interrupt()"/> or
-    ///         <see cref="System.Threading.Tasks.Task{TResult}"/> should use
+    ///         choice. Applications using <see cref="Thread.Interrupt()"/> or
+    ///         <see cref="Task{TResult}"/> should use
     ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="NIOFSDirectory"/> java doc
     ///         for details.</description></item>
     ///
@@ -64,8 +67,8 @@ namespace Lucene.Net.Store
     ///         running on a 32 bit runtime but your index sizes are
     ///         small enough to fit into the virtual memory space.
     ///         <para/>
-    ///         Applications using <see cref="System.Threading.Thread.Interrupt()"/> or
-    ///         <see cref="System.Threading.Tasks.Task"/> should use
+    ///         Applications using <see cref="Thread.Interrupt()"/> or
+    ///         <see cref="Task{TResult}"/> should use
     ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="MMapDirectory"/>
     ///         doc for details.</description></item>
     /// </list>
@@ -232,7 +235,7 @@ namespace Lucene.Net.Store
         /// <exception cref="DirectoryNotFoundException"> if the directory
         /// does not exist, or does exist but is not a
         /// directory or is invalid (for example, it is on an unmapped drive). </exception>
-        /// <exception cref="System.Security.SecurityException">The caller does not have the required permission.</exception>
+        /// <exception cref="SecurityException">The caller does not have the required permission.</exception>
         public static string[] ListAll(DirectoryInfo dir)
         {
             if (!System.IO.Directory.Exists(dir.FullName))

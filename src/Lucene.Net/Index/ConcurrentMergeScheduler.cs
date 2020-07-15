@@ -3,6 +3,7 @@ using J2N.Threading;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Security;
 using System.Text;
 using System.Threading;
 
@@ -599,12 +600,12 @@ namespace Lucene.Net.Index
                     Priority = priority;
                 }
 #pragma warning disable 168
-                catch (System.NullReferenceException npe)
+                catch (NullReferenceException npe)
                 {
                     // Strangely, Sun's JDK 1.5 on Linux sometimes
                     // throws NPE out of here...
                 }
-                catch (System.Security.SecurityException se)
+                catch (SecurityException se)
 #pragma warning restore 168
                 {
                     // Ignore this because we will still run fine with

@@ -882,7 +882,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // was allocated bigger than it really needs to be.
             if (ordinal >= nextID)
             {
-                throw new System.IndexOutOfRangeException("requested ordinal is bigger than the largest ordinal in the taxonomy");
+                throw new IndexOutOfRangeException("requested ordinal is bigger than the largest ordinal in the taxonomy");
             }
 
             int[] parents = GetTaxoArrays().Parents;

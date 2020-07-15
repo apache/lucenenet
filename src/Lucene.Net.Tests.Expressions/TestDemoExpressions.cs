@@ -176,7 +176,7 @@ namespace Lucene.Net.Expressions
 
         // TODO: ideally we'd test > Short.MAX_VALUE too, but compilation is currently recursive.
         // so if we want to test such huge expressions, we need to instead change parser to use an explicit Stack
-        /// <exception cref="System.Exception"></exception>
+        /// <exception cref="Exception"></exception>
         private void DoTestLotsOfBindings(int n)
         {
             SimpleBindings bindings = new SimpleBindings();

@@ -133,7 +133,7 @@ namespace Lucene.Net.Util
         //        c.CharAt(-1);
         //        Assert.Fail();
         //    }
-        //    catch (System.IndexOutOfRangeException expected)
+        //    catch (IndexOutOfRangeException expected)
         //    {
         //        // expected exception
         //    }
@@ -143,7 +143,7 @@ namespace Lucene.Net.Util
         //        c.CharAt(3);
         //        Assert.Fail();
         //    }
-        //    catch (System.IndexOutOfRangeException expected)
+        //    catch (IndexOutOfRangeException expected)
         //    {
         //        // expected exception
         //    }

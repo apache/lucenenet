@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis.Core
                 ClassicAnalyzer analyzer = new ClassicAnalyzer(TEST_VERSION_CURRENT);
                 AssertAnalyzesTo(analyzer, "www.nutch.org.", new string[] { "www.nutch.org" }, new string[] { "<HOST>" });
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 fail("Should not throw an NPE and it did");
             }

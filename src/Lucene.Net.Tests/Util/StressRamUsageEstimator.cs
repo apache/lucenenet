@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
                 }
             }
 #pragma warning disable 168
-            catch (System.OutOfMemoryException e)
+            catch (OutOfMemoryException e)
 #pragma warning restore 168
             {
                 // Release and quit.
@@ -151,7 +151,7 @@ namespace Lucene.Net.Util
                 }
             }
 #pragma warning disable 168
-            catch (System.OutOfMemoryException e)
+            catch (OutOfMemoryException e)
 #pragma warning restore 168
             {
                 // Release and quit.

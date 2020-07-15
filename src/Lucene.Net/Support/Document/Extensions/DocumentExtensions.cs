@@ -35,7 +35,7 @@ namespace Lucene.Net.Documents.Extensions
         /// </summary>
         /// <param name="document">This <see cref="Document"/>.</param>
         /// <param name="name">Field name</param>
-        /// <exception cref="System.InvalidCastException">If the field type cannot be cast to <typeparamref name="T"/>.</exception>
+        /// <exception cref="InvalidCastException">If the field type cannot be cast to <typeparamref name="T"/>.</exception>
         public static T GetField<T>(this Document document, string name) where T : IIndexableField
         {
             return (T)document.GetField(name);
@@ -49,7 +49,7 @@ namespace Lucene.Net.Documents.Extensions
         /// <param name="document">This <see cref="Document"/>.</param>
         /// <param name="name"> the name of the field </param>
         /// <returns> a <see cref="T:IndexableField[]"/> array </returns>
-        /// <exception cref="System.InvalidCastException">If the field type cannot be cast to <typeparam name="T"/>.</exception>
+        /// <exception cref="InvalidCastException">If the field type cannot be cast to <typeparam name="T"/>.</exception>
         public static T[] GetFields<T>(this Document document, string name) where T : IIndexableField
         {
             var fields = document.GetFields(name);

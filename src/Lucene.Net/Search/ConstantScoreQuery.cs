@@ -45,12 +45,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public ConstantScoreQuery(Query query)
         {
-            if (query == null)
-            {
-                throw new System.NullReferenceException("Query may not be null");
-            }
             this.m_filter = null;
-            this.m_query = query;
+            this.m_query = query ?? throw new NullReferenceException("Query may not be null");
         }
 
         /// <summary>
@@ -62,11 +58,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public ConstantScoreQuery(Filter filter)
         {
-            if (filter == null)
-            {
-                throw new System.NullReferenceException("Filter may not be null");
-            }
-            this.m_filter = filter;
+            this.m_filter = filter ?? throw new NullReferenceException("Filter may not be null");
             this.m_query = null;
         }
 

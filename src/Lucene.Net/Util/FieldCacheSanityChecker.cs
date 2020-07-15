@@ -319,7 +319,7 @@ namespace Lucene.Net.Util
                             }
                         }
                     }
-                    catch (System.ObjectDisposedException)
+                    catch (ObjectDisposedException)
                     {
                         // ignore this reader
                     }

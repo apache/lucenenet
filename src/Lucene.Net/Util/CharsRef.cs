@@ -281,7 +281,7 @@ namespace Lucene.Net.Util
         //    // NOTE: must do a real check here to meet the specs of CharSequence
         //    if (index < 0 || index >= Length)
         //    {
-        //        throw new System.IndexOutOfRangeException();
+        //        throw new IndexOutOfRangeException();
         //    }
         //    return Chars[Offset + index];
         //}
@@ -305,7 +305,7 @@ namespace Lucene.Net.Util
             // NOTE: must do a real check here to meet the specs of CharSequence
             //if (start < 0 || end > Length || start > end)
             //{
-            //    throw new System.IndexOutOfRangeException();
+            //    throw new IndexOutOfRangeException();
             //}
 
             // LUCENENET specific - changed semantics from start/end to startIndex/length to match .NET

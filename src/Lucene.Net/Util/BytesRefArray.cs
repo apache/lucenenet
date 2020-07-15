@@ -103,7 +103,7 @@ namespace Lucene.Net.Util
                 pool.ReadBytes(offset, spare.Bytes, spare.Offset, spare.Length);
                 return spare;
             }
-            throw new System.IndexOutOfRangeException("index " + index + " must be less than the size: " + lastElement);
+            throw new IndexOutOfRangeException("index " + index + " must be less than the size: " + lastElement);
         }
 
         private int[] Sort(IComparer<BytesRef> comp)
