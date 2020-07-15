@@ -190,6 +190,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4D0ED7D9
 		src\dotnet\Lucene.Net.CodeAnalysis\tools\install.ps1 = src\dotnet\Lucene.Net.CodeAnalysis\tools\install.ps1
 		src\dotnet\Lucene.Net.CodeAnalysis\tools\uninstall.ps1 = src\dotnet\Lucene.Net.CodeAnalysis\tools\uninstall.ps1
 	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.BenchmarkDotNet", "src\Lucene.Net.Tests.BenchmarkDotNet\Lucene.Net.Tests.BenchmarkDotNet.csproj", "{0C476146-411E-4C94-8A59-726A5F982A89}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.AllProjects", "src\Lucene.Net.Tests.AllProjects\Lucene.Net.Tests.AllProjects.csproj", "{9880B87D-8D14-476B-B093-9C3AA0DA8B24}"
 EndProject
@@ -491,6 +492,12 @@ Global
 		{E71152A0-48CC-4334-981F-F5FBFFA50891}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E71152A0-48CC-4334-981F-F5FBFFA50891}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E71152A0-48CC-4334-981F-F5FBFFA50891}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8988CDA4-8420-4BEE-869A-66825055EED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8988CDA4-8420-4BEE-869A-66825055EED2}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C476146-411E-4C94-8A59-726A5F982A89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C476146-411E-4C94-8A59-726A5F982A89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C476146-411E-4C94-8A59-726A5F982A89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C476146-411E-4C94-8A59-726A5F982A89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
