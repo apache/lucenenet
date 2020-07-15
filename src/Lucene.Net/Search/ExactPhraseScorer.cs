@@ -1,3 +1,5 @@
+using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -19,8 +21,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using Lucene.Net.Index;
-    using Lucene.Net.Support;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
     internal sealed class ExactPhraseScorer : Scorer

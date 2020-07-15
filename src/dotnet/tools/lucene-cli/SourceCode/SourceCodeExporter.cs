@@ -1,8 +1,6 @@
 ﻿using J2N;
-using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 namespace Lucene.Net.Cli.SourceCode
 {

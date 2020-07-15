@@ -1,6 +1,5 @@
 using J2N;
 using J2N.Text;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
