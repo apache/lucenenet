@@ -49,9 +49,9 @@ namespace Lucene.Net.Index
     /// </code>
     /// 
     /// However, if you prefer to match the syntax of Lucene using chained setter methods, 
-    /// there are extension methods in the Lucene.Net.Support namespace. Example usage:
+    /// there are extension methods in the Lucene.Net.Index.Extensions namespace. Example usage:
     /// <code>
-    ///     using Lucene.Net.Support;
+    ///     using Lucene.Net.Index.Extensions;
     ///     
     ///     ..
     ///     
