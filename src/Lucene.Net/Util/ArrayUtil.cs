@@ -797,9 +797,11 @@ namespace Lucene.Net.Util
 #endif
         private class NaturalComparer<T> : IComparer<T> //where T : IComparable<T>
         {
-            internal NaturalComparer()
+            private NaturalComparer()
             {
             }
+
+            public static NaturalComparer<T> Default { get; } = new NaturalComparer<T>();
 
             public virtual int Compare(T o1, T o2)
             {
@@ -841,7 +843,7 @@ namespace Lucene.Net.Util
             // to implement IComparable<T>.
             else if (typeof(IComparable<T>).IsAssignableFrom(genericClosingType))
             {
-                return new NaturalComparer<T>();
+                return NaturalComparer<T>.Default;
             }
 
             return Comparer<T>.Default;
