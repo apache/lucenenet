@@ -210,6 +210,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4D0ED7D9
 		src\dotnet\Lucene.Net.CodeAnalysis\tools\install.ps1 = src\dotnet\Lucene.Net.CodeAnalysis\tools\install.ps1
 		src\dotnet\Lucene.Net.CodeAnalysis\tools\uninstall.ps1 = src\dotnet\Lucene.Net.CodeAnalysis\tools\uninstall.ps1
 	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.BenchmarkDotNet", "src\Lucene.Net.Tests.BenchmarkDotNet\Lucene.Net.Tests.BenchmarkDotNet.csproj", "{0C476146-411E-4C94-8A59-726A5F982A89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -477,6 +478,10 @@ Global
 		{5CD4D4E8-6132-4384-98FC-6AB1C97E0B80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CD4D4E8-6132-4384-98FC-6AB1C97E0B80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CD4D4E8-6132-4384-98FC-6AB1C97E0B80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C476146-411E-4C94-8A59-726A5F982A89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C476146-411E-4C94-8A59-726A5F982A89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C476146-411E-4C94-8A59-726A5F982A89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C476146-411E-4C94-8A59-726A5F982A89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
