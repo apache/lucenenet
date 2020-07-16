@@ -419,7 +419,10 @@ stages:
       vmImage: 'windows-2019'
 
     steps:
-    - checkout: none # self represents the repo where the initial Pipelines YAML file was found
+    # We checkout here because we need to publish the source code along with the binaries per Apache's releae policy
+    - checkout: self # self represents the repo where the initial Pipelines YAML file was found
+      fetchDepth: 1  # the depth of commits to ask Git to fetch
+
     - template: 'build/azure-templates/show-all-environment-variables.yml'
 
 
