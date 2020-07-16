@@ -361,7 +361,6 @@ namespace Lucene.Net.Util
         }
 
         [Test]
-        [Slow]
         public virtual void TestRandomSplit()
         {
             long num = (long)AtLeast(10);
