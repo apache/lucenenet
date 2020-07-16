@@ -430,21 +430,21 @@ stages:
       displayName: 'Download Build Artifacts: $(NuGetArtifactName)'
       inputs:
         artifactName: '$(NuGetArtifactName)'
-        targetPath: '$(System.DefaultWorkingDirectory)/$(NuGetArtifactName)'
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
 
 
     - task: DownloadPipelineArtifact@0
       displayName: 'Download Build Artifacts: $(VersionArtifactName)'
       inputs:
         artifactName: '$(VersionArtifactName)'
-        targetPath: '$(System.DefaultWorkingDirectory)/$(VersionArtifactName)'
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
         
     - template: 'build/azure-templates/show-all-files.yml' # Uncomment for debugging
 
       # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
       # the version cannot be passed to the Index Sources & Publish Symbols task.
     - powershell: |
-        $version = Get-Content '$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
+        $version = Get-Content '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
         $vcsLabel = 'Lucene.Net_' + $version.Replace('.', '_').Replace('-', '_')
         Write-Host "##vso[task.setvariable variable=VCSLabel;]$vcsLabel"
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
@@ -453,7 +453,7 @@ stages:
     - powershell: |
         $files = 'build.bat','Version.props'
         foreach ($file in $files) {
-            Copy-Item -Path "$(VersionArtifactName)/$file" -Destination "$(Build.SourcesDirectory)/$file" -Force -ErrorAction Continue
+            Copy-Item -Path "$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$file" -Destination "$(Build.SourcesDirectory)/$file" -Force -ErrorAction Continue
         }
       displayName: 'Update build.bat and Version.props to build only version $(PackageVersion)'
     - template: 'build/azure-templates/show-all-environment-variables.yml'
@@ -486,12 +486,12 @@ stages:
         Contents: |
          LICENSE.txt
          NOTICE.txt
-        TargetFolder: '$(NuGetArtifactName)'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
 
     - task: ArchiveFiles@2
       displayName: 'Archive Binary Files'
       inputs:
-        rootFolderOrFile: '$(NuGetArtifactName)'
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
         includeRootFolder: false
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)/Apache-Lucene.Net-$(PackageVersion).bin.zip'
 
@@ -507,6 +507,7 @@ stages:
         "TODO: Push release artifacts to dev (https://dist.apache.org/repos/dist/dev/lucenenet/)" + $nl + `
         "TODO: Start release [VOTE] (see https://www.apache.org/foundation/voting.html)" + $nl | Out-File -FilePath "$dir/RELEASE-TODO.txt" -Force
       displayName: 'Write RELEASE-TODO.txt'
+
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(ReleaseArtifactName)'
       inputs:
