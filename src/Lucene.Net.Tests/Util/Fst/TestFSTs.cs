@@ -501,7 +501,7 @@ namespace Lucene.Net.Util.Fst
             dir.Dispose();
         }
 
-        private void AssertSame<T1>(TermsEnum termsEnum, BytesRefFSTEnum<T1> fstEnum, bool storeOrd)
+        private void AssertSame(TermsEnum termsEnum, BytesRefFSTEnum<long?> fstEnum, bool storeOrd) // LUCENENET specific - changed to long? so we don't need a cast
         {
             if (termsEnum.Term == null)
             {

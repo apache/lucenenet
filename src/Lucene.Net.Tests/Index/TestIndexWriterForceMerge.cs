@@ -38,6 +38,7 @@ namespace Lucene.Net.Index
         private static readonly FieldType storedTextType = new FieldType(TextField.TYPE_NOT_STORED);
 
         [Test]
+        [Slow] // Occasionally
         public virtual void TestPartialMerge()
         {
             Directory dir = NewDirectory();

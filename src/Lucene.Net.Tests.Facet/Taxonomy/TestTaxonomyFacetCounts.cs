@@ -683,7 +683,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Facets facets = GetTaxonomyFacetCounts(taxoReader, config, sfc);
             IList<FacetResult> res1 = facets.GetAllDims(10);
             IList<FacetResult> res2 = facets.GetAllDims(10);
-            Assert.AreEqual(res1, res2, "calling getFacetResults twice should return the .equals()=true result");
+            Assert.AreEqual(res1, res2, aggressive: false, "calling getFacetResults twice should return the .equals()=true result");
 
             IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }

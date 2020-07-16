@@ -39,7 +39,7 @@ namespace Lucene.Net.Tests.TestFramework
         [TestCase(typeof(Lucene.Net.RandomExtensions))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly, @"ApiScanTestBase|TestUtil.MaxRecursionBound");
+            base.TestPrivateFieldNames(typeFromTargetAssembly, @"ApiScanTestBase|TestUtil.MaxRecursionBound|Assert.FailureFormat");
         }
 
         [Test, LuceneNetSpecific]
