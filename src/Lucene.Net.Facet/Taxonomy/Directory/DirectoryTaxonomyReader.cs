@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
@@ -55,7 +55,15 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             /// <summary>
             /// NOTE: This was intItem (field) in Lucene
             /// </summary>
-            public int Value { get; set; }
+            public int Value { get; private set; }
+
+            public Int32Class(int value)
+            {
+                Value = value;
+            }
+
+            public static implicit operator int(Int32Class integer) => integer.Value;
+            public static implicit operator Int32Class(int integer) => new Int32Class(integer);
         }
         private const int DEFAULT_CACHE_VALUE = 4000;
 
@@ -67,7 +75,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private LRUHashMap<FacetLabel, Int32Class> ordinalCache;
         private LRUHashMap<int, FacetLabel> categoryCache;
 
-        private volatile TaxonomyIndexArrays taxoArrays;
+        private /*volatile*/ TaxonomyIndexArrays taxoArrays; // LUCENENET specific: LazyInitalizer negates the need for volatile
 
         /// <summary>
         /// Called only from <see cref="DoOpenIfChanged()"/>. If the taxonomy has been
@@ -128,20 +136,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             categoryCache = new LRUHashMap<int, FacetLabel>(DEFAULT_CACHE_VALUE);
         }
 
-        private void InitTaxoArrays()
-        {
-            lock (this)
-            {
-                if (taxoArrays == null)
-                {
-                    // according to Java Concurrency in Practice, this might perform better on
-                    // some JVMs, because the array initialization doesn't happen on the
-                    // volatile member.
-                    TaxonomyIndexArrays tmpArrays = new TaxonomyIndexArrays(indexReader);
-                    taxoArrays = tmpArrays;
-                }
-            }
-        }
+        // LUCENENET specific - eliminated the InitTaxoArrays() method in favor of LazyInitializer
 
         protected internal override void DoClose()
         {
@@ -267,10 +262,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             get
             {
                 EnsureOpen();
-                if (taxoArrays == null)
-                {
-                    InitTaxoArrays();
-                }
+
+                // LUCENENET specific - eliminated the InitTaxoArrays() method in favor of LazyInitializer
+                if (null == taxoArrays)
+                    return LazyInitializer.EnsureInitialized(ref taxoArrays, () => new TaxonomyIndexArrays(indexReader));
+
                 return taxoArrays;
             }
         }
@@ -296,15 +292,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
             // and removing the lock seems to make the performance better.
-            Int32Class res = ordinalCache.Get(cp);
-            if (res != null)
+            if (ordinalCache.TryGetValue(cp, out Int32Class res) && res != null)
             {
-                if ((int)res.Value < indexReader.MaxDoc)
+                if (res < indexReader.MaxDoc)
                 {
                     // Since the cache is shared with DTR instances allocated from
                     // doOpenIfChanged, we need to ensure that the ordinal is one that
                     // this DTR instance recognizes.
-                    return (int)res.Value;
+                    return res;
                 }
                 else
                 {
@@ -332,7 +327,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
                 // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
                 // and removing the lock seems to make the performance better.
-                ordinalCache.Put(cp, new Int32Class { Value = Convert.ToInt32(ret, CultureInfo.InvariantCulture) });
+                ordinalCache.Put(cp, ret);
             }
 
             return ret;
@@ -355,10 +350,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // wrapped as LRU?
 
             // LUCENENET NOTE: We don't need to convert ordinal from int to int here as was done in Java.
-            FacetLabel res;
             // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
             // and removing the lock seems to make the performance better.
-            if (categoryCache.TryGetValue(ordinal, out res))
+            if (categoryCache.TryGetValue(ordinal, out FacetLabel res))
             {
                 return res;
             }
@@ -392,14 +386,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         public virtual void SetCacheSize(int size)
         {
             EnsureOpen();
-            lock (categoryCache)
-            {
-                categoryCache.Limit = size;
-            }
-            lock (ordinalCache)
-            {
-                ordinalCache.Limit = size;
-            }
+            // LUCENENET specific - removed locking here because these collections
+            // internally use Interlocked.Exchange
+            categoryCache.Limit = size;
+            ordinalCache.Limit = size;
         }
 
         /// <summary>
