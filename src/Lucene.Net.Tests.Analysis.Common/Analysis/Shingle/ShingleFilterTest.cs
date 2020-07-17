@@ -510,24 +510,12 @@ namespace Lucene.Net.Analysis.Shingle
         [Test]
         public virtual void TestRandomStrings()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random, a, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly ShingleFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(ShingleFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new ShingleFilter(tokenizer));
-            }
+            });
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
 
         /// <summary>
@@ -536,47 +524,23 @@ namespace Lucene.Net.Analysis.Shingle
         public virtual void TestRandomHugeStrings()
         {
             Random random = Random;
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckRandomData(random, a, 100 * RandomMultiplier, 8192);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly ShingleFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(ShingleFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new ShingleFilter(tokenizer));
-            }
+            });
+            CheckRandomData(random, a, 100 * RandomMultiplier, 8192);
         }
 
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly ShingleFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(ShingleFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new ShingleFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
 
         [Test]
