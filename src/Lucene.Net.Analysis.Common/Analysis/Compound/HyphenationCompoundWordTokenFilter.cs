@@ -250,7 +250,7 @@ namespace Lucene.Net.Analysis.Compound
                         }
                         else
                         {
-                            m_tokens.AddLast(new CompoundToken(this, start, partLength));
+                            m_tokens.Enqueue(new CompoundToken(this, start, partLength));
                         }
                     }
                     else if (m_dictionary.Contains(m_termAtt.Buffer, start, partLength - 1))
@@ -275,13 +275,13 @@ namespace Lucene.Net.Analysis.Compound
                         }
                         else
                         {
-                            m_tokens.AddLast(new CompoundToken(this, start, partLength - 1));
+                            m_tokens.Enqueue(new CompoundToken(this, start, partLength - 1));
                         }
                     }
                 }
                 if (this.m_onlyLongestMatch && longestMatchToken != null)
                 {
-                    m_tokens.AddLast(longestMatchToken);
+                    m_tokens.Enqueue(longestMatchToken);
                 }
             }
         }
