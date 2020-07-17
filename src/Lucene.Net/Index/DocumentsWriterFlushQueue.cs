@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class DocumentsWriterFlushQueue
     {
-        private readonly LinkedList<FlushTicket> queue = new LinkedList<FlushTicket>();
+        private readonly Queue<FlushTicket> queue = new Queue<FlushTicket>();
 
         // we track tickets separately since count must be present even before the ticket is
         // constructed ie. queue.size would not reflect it.
@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    queue.AddLast(new GlobalDeletesTicket(deleteQueue.FreezeGlobalBuffer(null)));
+                    queue.Enqueue(new GlobalDeletesTicket(deleteQueue.FreezeGlobalBuffer(null)));
                     success = true;
                 }
                 finally
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
                 {
                     // prepare flush freezes the global deletes - do in synced block!
                     SegmentFlushTicket ticket = new SegmentFlushTicket(dwpt.PrepareFlush());
-                    queue.AddLast(ticket);
+                    queue.Enqueue(ticket);
                     success = true;
                     return ticket;
                 }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Index
                 bool canPublish;
                 lock (this)
                 {
-                    head = queue.Count <= 0 ? null : queue.First.Value;
+                    head = queue.Count <= 0 ? null : queue.Peek();
                     canPublish = head != null && head.CanPublish; // do this synced
                 }
                 if (canPublish)
@@ -156,8 +156,7 @@ namespace Lucene.Net.Index
                         lock (this)
                         {
                             // finally remove the published ticket from the queue
-                            FlushTicket poll = queue.First.Value;
-                            queue.Remove(poll);
+                            FlushTicket poll = queue.Dequeue();
                             ticketCount.DecrementAndGet();
                             Debug.Assert(poll == head);
                         }
