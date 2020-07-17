@@ -254,7 +254,7 @@ namespace Lucene.Net.Index
 
         private readonly MergePolicy mergePolicy;
         private readonly IMergeScheduler mergeScheduler;
-        private readonly LinkedList<MergePolicy.OneMerge> pendingMerges = new LinkedList<MergePolicy.OneMerge>();
+        private readonly Queue<MergePolicy.OneMerge> pendingMerges = new Queue<MergePolicy.OneMerge>();
         private readonly JCG.HashSet<MergePolicy.OneMerge> runningMerges = new JCG.HashSet<MergePolicy.OneMerge>();
         private IList<MergePolicy.OneMerge> mergeExceptions = new List<MergePolicy.OneMerge>();
         private long mergeGen;
@@ -2467,8 +2467,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // Advance the merge from pending to running
-                    MergePolicy.OneMerge merge = pendingMerges.First.Value;
-                    pendingMerges.Remove(merge);
+                    MergePolicy.OneMerge merge = pendingMerges.Dequeue();
                     runningMerges.Add(merge);
                     return merge;
                 }
@@ -4665,7 +4664,7 @@ namespace Lucene.Net.Index
 
                 EnsureValidMerge(merge);
 
-                pendingMerges.AddLast(merge);
+                pendingMerges.Enqueue(merge);
 
                 if (infoStream.IsEnabled("IW"))
                 {
