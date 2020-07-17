@@ -295,17 +295,17 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-2019'
-          maximumParallelJobs: 7
+          maximumParallelJobs: 8
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-16.04'
-          maximumParallelJobs: 6
+          maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-10.14'
-          maximumParallelJobs: 6
+          maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp3.1 on'
     pool:
@@ -326,17 +326,17 @@ stages:
         Windows:
           osName: 'Windows'
           imageName: 'windows-2019'
-          maximumParallelJobs: 7
+          maximumParallelJobs: 8
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
           imageName: 'ubuntu-16.04'
-          maximumParallelJobs: 6
+          maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
           osName: 'macOS'
           imageName: 'macOS-10.14'
-          maximumParallelJobs: 6
+          maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
     displayName: 'Test netcoreapp2.1 on'
     pool:
@@ -361,7 +361,7 @@ stages:
         osName: 'Windows'
         framework: 'net48'
         testResultsArtifactName: '$(TestResultsArtifactName)'
-        maximumParallelJobs: 7
+        maximumParallelJobs: 8
         maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
 
 - stage: Publish_Stage
