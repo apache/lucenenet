@@ -300,7 +300,7 @@ namespace Lucene.Net.Search
 
             internal BytesRef currentLowerBound, currentUpperBound;
 
-            internal readonly LinkedList<BytesRef> rangeBounds = new LinkedList<BytesRef>();
+            internal readonly Queue<BytesRef> rangeBounds = new Queue<BytesRef>();
             internal readonly IComparer<BytesRef> termComp;
 
             internal NumericRangeTermsEnum(NumericRangeQuery<T> outerInstance, TermsEnum tenum)
@@ -422,8 +422,8 @@ namespace Lucene.Net.Search
 
                 public override sealed void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
                 {
-                    outerInstance.rangeBounds.AddLast(minPrefixCoded);
-                    outerInstance.rangeBounds.AddLast(maxPrefixCoded);
+                    outerInstance.rangeBounds.Enqueue(minPrefixCoded);
+                    outerInstance.rangeBounds.Enqueue(maxPrefixCoded);
                 }
             }
 
@@ -438,8 +438,8 @@ namespace Lucene.Net.Search
 
                 public override sealed void AddRange(BytesRef minPrefixCoded, BytesRef maxPrefixCoded)
                 {
-                    outerInstance.rangeBounds.AddLast(minPrefixCoded);
-                    outerInstance.rangeBounds.AddLast(maxPrefixCoded);
+                    outerInstance.rangeBounds.Enqueue(minPrefixCoded);
+                    outerInstance.rangeBounds.Enqueue(maxPrefixCoded);
                 }
             }
 
@@ -447,12 +447,10 @@ namespace Lucene.Net.Search
             {
                 Debug.Assert(rangeBounds.Count % 2 == 0);
 
-                currentLowerBound = rangeBounds.First.Value;
-                rangeBounds.Remove(currentLowerBound);
+                currentLowerBound = rangeBounds.Dequeue();
                 Debug.Assert(currentUpperBound == null || termComp.Compare(currentUpperBound, currentLowerBound) <= 0, "The current upper bound must be <= the new lower bound");
 
-                currentUpperBound = rangeBounds.First.Value;
-                rangeBounds.Remove(currentUpperBound);
+                currentUpperBound = rangeBounds.Dequeue();
             }
 
             protected override sealed BytesRef NextSeekTerm(BytesRef term)
@@ -485,7 +483,7 @@ namespace Lucene.Net.Search
                         return AcceptStatus.END;
                     }
                     // peek next sub-range, only seek if the current term is smaller than next lower bound
-                    if (termComp.Compare(term, rangeBounds.First.Value) < 0)
+                    if (termComp.Compare(term, rangeBounds.Peek()) < 0)
                     {
                         return AcceptStatus.NO_AND_SEEK;
                     }
