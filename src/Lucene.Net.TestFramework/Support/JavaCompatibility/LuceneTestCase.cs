@@ -223,6 +223,16 @@ namespace Lucene.Net.Util
             Assert.AreEqual(a1, a2);
         }
 
+        internal static void assertArrayEquals<T>(string message, T[] a1, T[] a2)
+        {
+            Assert.AreEqual(a1, a2, message);
+        }
+
+        internal static void assertArrayEquals<T>(Func<string> getMessage, T[] a1, T[] a2)
+        {
+            Assert.AreEqual(a1, a2, getMessage());
+        }
+
         internal static void assertSame(object expected, object actual)
         {
             Assert.AreSame(expected, actual);

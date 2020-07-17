@@ -83,9 +83,8 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             Array.Sort(actual);
 
-            // LUCENENET: Originally, the code was as follows, but it failed to properly compare the arrays.
-            //assertArrayEquals("expected=" + Arrays.ToString(expected) + ",actual=" + Arrays.ToString(actual), expected, actual);
-            Assert.AreEqual(expected, actual, "expected=" + Arrays.ToString(expected) + ",actual=" + Arrays.ToString(actual));
+            // LUCENENET: Use delegate to build the string so we don't have the expensive operation unless there is a failure
+            assertArrayEquals(() => "expected=" + Arrays.ToString(expected) + ",actual=" + Arrays.ToString(actual), expected, actual);
         }
     }
 }
