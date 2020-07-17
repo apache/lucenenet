@@ -822,7 +822,9 @@ namespace Lucene.Net.Util.Fst
             //System.out.println("TEST: tally prefixes");
 
             // build all prefixes
-            IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new JCG.Dictionary<Int32sRef, CountMinOutput<T>>();
+
+            // LUCENENET: We don't want to use a J2N dictionary here because of performance
+            IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new Dictionary<Int32sRef, CountMinOutput<T>>();
             Int32sRef scratch = new Int32sRef(10);
             foreach (InputOutput<T> pair in pairs)
             {
