@@ -396,15 +396,14 @@ namespace Lucene.Net.Util.Automaton
             Transition[][] transitions1 = a1.GetSortedTransitions();
             Transition[][] transitions2 = a2.GetSortedTransitions();
             Automaton c = new Automaton();
-            LinkedList<StatePair> worklist = new LinkedList<StatePair>();
+            Queue<StatePair> worklist = new Queue<StatePair>(); // LUCENENET specific - Queue is much more performant than LinkedList
             Dictionary<StatePair, StatePair> newstates = new Dictionary<StatePair, StatePair>();
             StatePair p = new StatePair(c.initial, a1.initial, a2.initial);
-            worklist.AddLast(p);
+            worklist.Enqueue(p);
             newstates[p] = p;
             while (worklist.Count > 0)
             {
-                p = worklist.First.Value;
-                worklist.Remove(p);
+                p = worklist.Dequeue();
                 p.s.accept = p.s1.accept && p.s2.accept;
                 Transition[] t1 = transitions1[p.s1.number];
                 Transition[] t2 = transitions2[p.s2.number];
@@ -419,12 +418,10 @@ namespace Lucene.Net.Util.Automaton
                         if (t2[n2].max >= t1[n1].min)
                         {
                             StatePair q = new StatePair(t1[n1].to, t2[n2].to);
-                            StatePair r;
-                            newstates.TryGetValue(q, out r);
-                            if (r == null)
+                            if (!newstates.TryGetValue(q, out StatePair r) || r is null)
                             {
                                 q.s = new State();
-                                worklist.AddLast(q);
+                                worklist.Enqueue(q);
                                 newstates[q] = q;
                                 r = q;
                             }
@@ -492,15 +489,14 @@ namespace Lucene.Net.Util.Automaton
             a2.Determinize();
             Transition[][] transitions1 = a1.GetSortedTransitions();
             Transition[][] transitions2 = a2.GetSortedTransitions();
-            LinkedList<StatePair> worklist = new LinkedList<StatePair>();
+            Queue<StatePair> worklist = new Queue<StatePair>(); // LUCENENET specific - Queue is much more performant than LinkedList
             JCG.HashSet<StatePair> visited = new JCG.HashSet<StatePair>();
             StatePair p = new StatePair(a1.initial, a2.initial);
-            worklist.AddLast(p);
+            worklist.Enqueue(p);
             visited.Add(p);
             while (worklist.Count > 0)
             {
-                p = worklist.First.Value;
-                worklist.Remove(p);
+                p = worklist.Dequeue();
                 if (p.s1.accept && !p.s2.accept)
                 {
                     return false;
@@ -533,7 +529,7 @@ namespace Lucene.Net.Util.Automaton
                         StatePair q = new StatePair(t1[n1].to, t2[n2].to);
                         if (!visited.Contains(q))
                         {
-                            worklist.AddLast(q);
+                            worklist.Enqueue(q);
                             visited.Add(q);
                         }
                     }
@@ -792,10 +788,10 @@ namespace Lucene.Net.Util.Automaton
             a.initial = new State();
             SortedInt32Set.FrozenInt32Set initialset = new SortedInt32Set.FrozenInt32Set(initNumber, a.initial);
 
-            LinkedList<SortedInt32Set.FrozenInt32Set> worklist = new LinkedList<SortedInt32Set.FrozenInt32Set>();
+            Queue<SortedInt32Set.FrozenInt32Set> worklist = new Queue<SortedInt32Set.FrozenInt32Set>(); // LUCENENET specific - Queue is much more performant than LinkedList
             IDictionary<SortedInt32Set.FrozenInt32Set, State> newstate = new Dictionary<SortedInt32Set.FrozenInt32Set, State>();
 
-            worklist.AddLast(initialset);
+            worklist.Enqueue(initialset);
 
             a.initial.accept = initAccept;
             newstate[initialset] = a.initial;
@@ -812,13 +808,10 @@ namespace Lucene.Net.Util.Automaton
             // like SortedMap<Integer,Integer>
             SortedInt32Set statesSet = new SortedInt32Set(5);
 
-            // LUCENENET NOTE: The problem here is almost certainly 
-            // due to the conversion to FrozenIntSet along with its
-            // differing equality checking.
             while (worklist.Count > 0)
             {
-                SortedInt32Set.FrozenInt32Set s = worklist.First.Value;
-                worklist.Remove(s);
+                SortedInt32Set.FrozenInt32Set s = worklist.Dequeue();
+                //worklist.Remove(s);
 
                 // Collate all outgoing transitions by min/1+max:
                 for (int i = 0; i < s.values.Length; i++)
@@ -857,7 +850,7 @@ namespace Lucene.Net.Util.Automaton
                             q = new State();
 
                             SortedInt32Set.FrozenInt32Set p = statesSet.Freeze(q);
-                            worklist.AddLast(p);
+                            worklist.Enqueue(p);
                             if (newStateUpto == newStatesArray.Length)
                             {
                                 // LUCENENET: Resize rather than copy

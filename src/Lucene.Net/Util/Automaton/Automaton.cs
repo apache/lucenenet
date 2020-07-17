@@ -252,25 +252,24 @@ namespace Lucene.Net.Util.Automaton
             {
                 ExpandSingleton();
                 JCG.HashSet<State> visited = new JCG.HashSet<State>();
-                LinkedList<State> worklist = new LinkedList<State>();
+                Queue<State> worklist = new Queue<State>(); // LUCENENET specific - Queue is much more performant than LinkedList
                 State[] states = new State[4];
                 int upto = 0;
-                worklist.AddLast(initial);
+                worklist.Enqueue(initial);
                 visited.Add(initial);
                 initial.number = upto;
                 states[upto] = initial;
                 upto++;
                 while (worklist.Count > 0)
                 {
-                    State s = worklist.First.Value;
-                    worklist.Remove(s);
+                    State s = worklist.Dequeue();
                     for (int i = 0; i < s.numTransitions; i++)
                     {
                         Transition t = s.TransitionsArray[i];
                         if (!visited.Contains(t.to))
                         {
                             visited.Add(t.to);
-                            worklist.AddLast(t.to);
+                            worklist.Enqueue(t.to);
                             t.to.number = upto;
                             if (upto == states.Length)
                             {
@@ -328,13 +327,12 @@ namespace Lucene.Net.Util.Automaton
             ExpandSingleton();
             JCG.HashSet<State> accepts = new JCG.HashSet<State>();
             JCG.HashSet<State> visited = new JCG.HashSet<State>();
-            LinkedList<State> worklist = new LinkedList<State>();
-            worklist.AddLast(initial);
+            Queue<State> worklist = new Queue<State>(); // LUCENENET specific - Queue is much more performant than LinkedList
+            worklist.Enqueue(initial);
             visited.Add(initial);
             while (worklist.Count > 0)
             {
-                State s = worklist.First.Value;
-                worklist.Remove(s);
+                State s = worklist.Dequeue();
                 if (s.accept)
                 {
                     accepts.Add(s);
@@ -344,7 +342,7 @@ namespace Lucene.Net.Util.Automaton
                     if (!visited.Contains(t.to))
                     {
                         visited.Add(t.to);
-                        worklist.AddLast(t.to);
+                        worklist.Enqueue(t.to);
                     }
                 }
             }
@@ -468,7 +466,7 @@ namespace Lucene.Net.Util.Automaton
                     map[s.TransitionsArray[i].to.Number].Add(s);
                 }
             }
-            LinkedList<State> worklist = new LinkedList<State>(live);
+            LinkedList<State> worklist = new LinkedList<State>(live); // LUCENENET: Queue would be slower in this case because of the copy constructor
             while (worklist.Count > 0)
             {
                 State s = worklist.First.Value;
@@ -629,16 +627,15 @@ namespace Lucene.Net.Util.Automaton
             this.Determinize(); // LUCENENET: should we do this ?
 
             Transition[][] transitions = this.GetSortedTransitions();
-            LinkedList<State> worklist = new LinkedList<State>();
+            Queue<State> worklist = new Queue<State>(); // LUCENENET specific - Queue is much more performant than LinkedList
             JCG.HashSet<State> visited = new JCG.HashSet<State>();
 
-            State current = this.initial;
-            worklist.AddLast(this.initial);
+            State current;
+            worklist.Enqueue(this.initial);
             visited.Add(this.initial);
             while (worklist.Count > 0)
             {
-                current = worklist.First.Value;
-                worklist.Remove(current);
+                current = worklist.Dequeue();
                 hash = 31 * hash + current.accept.GetHashCode();
 
                 Transition[] t1 = transitions[current.number];
@@ -653,7 +650,7 @@ namespace Lucene.Net.Util.Automaton
                     State next = t1[n1].to;
                     if (!visited.Contains(next))
                     {
-                        worklist.AddLast(next);
+                        worklist.Enqueue(next);
                         visited.Add(next);
                     }
                 }
