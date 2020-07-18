@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Expressions.JS
 {
