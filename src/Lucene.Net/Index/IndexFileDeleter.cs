@@ -122,14 +122,6 @@ namespace Lucene.Net.Index
             //LUCENENET TODO: This always returns true - probably incorrect
             writer == null || true /*Monitor.IsEntered(writer)*/;
 
-        // LUCENENET specific - optimized empty array creation
-        private static readonly string[] EMPTY_STRINGS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<string>();
-#else
-            new string[0];
-#endif
-
         /// <summary>
         /// Initialize the deleter: find all previous commits in
         /// the <see cref="Directory"/>, incref the files they reference, call
@@ -166,7 +158,7 @@ namespace Lucene.Net.Index
 #pragma warning restore 168
             {
                 // it means the directory is empty, so ignore it.
-                files = EMPTY_STRINGS;
+                files = Arrays.Empty<string>();
             }
 
             if (currentSegmentsFile != null)

@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -171,16 +171,8 @@ namespace Lucene.Net.Analysis.Query
         public string[] GetStopWords(string fieldName)
         {            
             var stopWords = stopWordsPerField[fieldName];
-            return stopWords != null ? stopWords.ToArray() : EMPTY_STRINGS;
+            return stopWords != null ? stopWords.ToArray() : Arrays.Empty<string>();
         }
-
-        // LUCENENET specific - optimized empty array creation
-        private static readonly string[] EMPTY_STRINGS =
-#if FEATURE_ARRAYEMPTY
-                Array.Empty<string>();
-#else
-                new string[0];
-#endif
 
         /// <summary>
         /// Provides information on which stop words have been identified for all fields

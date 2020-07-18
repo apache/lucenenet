@@ -1501,12 +1501,8 @@ namespace Lucene.Net.Codecs
                 private FST.Arc<BytesRef>[] arcs = new FST.Arc<BytesRef>[1];
 
                 // LUCENENET specific - optimized empty array creation
-                private static readonly Frame[] EMPTY_FRAMES =
-#if FEATURE_ARRAYEMPTY
-                    Array.Empty<Frame>();
-#else
-                    new Frame[0];
-#endif
+                private static readonly Frame[] EMPTY_FRAMES = Arrays.Empty<Frame>();
+
                 public SegmentTermsEnum(BlockTreeTermsReader.FieldReader outerInstance)
                 {
                     this.outerInstance = outerInstance;

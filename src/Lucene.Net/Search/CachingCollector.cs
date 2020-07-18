@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -56,12 +57,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was EMPTY_INT_ARRAY in Lucene
         /// </summary>
-        private static readonly int[] EMPTY_INT32_ARRAY =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<int>();
-#else
-            new int[0];
-#endif
+        private static readonly int[] EMPTY_INT32_ARRAY = Arrays.Empty<int>();
 
         private class SegStart
         {

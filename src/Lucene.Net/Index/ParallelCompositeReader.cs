@@ -1,4 +1,5 @@
 using J2N.Runtime.CompilerServices;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -53,14 +54,6 @@ namespace Lucene.Net.Index
         private readonly bool closeSubReaders;
         private readonly ISet<IndexReader> completeReaderSet = new JCG.HashSet<IndexReader>(IdentityEqualityComparer<IndexReader>.Default);
 
-        // LUCENENET specific - optimized empty array creation
-        private static readonly IndexReader[] EMPTY_INDEXREADERS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<IndexReader>();
-#else
-            new IndexReader[0];
-#endif
-
         /// <summary>
         /// Create a <see cref="ParallelCompositeReader"/> based on the provided
         /// readers; auto-disposes the given <paramref name="readers"/> on <see cref="IndexReader.Dispose()"/>.
@@ -111,7 +104,7 @@ namespace Lucene.Net.Index
                     throw new ArgumentException("There must be at least one main reader if storedFieldsReaders are used.");
                 }
                 // LUCENENET: Optimized empty string array creation
-                return EMPTY_INDEXREADERS;
+                return Arrays.Empty<IndexReader>();
             }
             else
             {

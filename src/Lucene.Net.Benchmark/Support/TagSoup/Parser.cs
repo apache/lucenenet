@@ -15,6 +15,7 @@
 // The TagSoup parser
 
 using J2N.Text;
+using Lucene.Net.Support;
 using Sax;
 using Sax.Ext;
 using Sax.Helpers;
@@ -1082,14 +1083,6 @@ namespace TagSoup
             return value;
         }
 
-        // LUCENENET: Optimized empty array creation
-        private static readonly string[] EMPTY_STRINGS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<string>();
-#else
-            new string[0];
-#endif
-
         /// <summary>
         ///   Split the supplied string into words or phrases seperated by spaces.
         ///   Recognises quotes around a phrase and doesn't split it.
@@ -1101,7 +1094,7 @@ namespace TagSoup
             val = val.Trim();
             if (val.Length == 0)
             {
-                return EMPTY_STRINGS;
+                return Arrays.Empty<string>();
             }
             var l = new List<string>();
             int s = 0;

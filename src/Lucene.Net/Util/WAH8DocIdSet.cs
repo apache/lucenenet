@@ -87,17 +87,10 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Default index interval. </summary>
         public const int DEFAULT_INDEX_INTERVAL = 24;
-
-        // LUCENENET specific - optimized empty array creation
-        private static readonly byte[] EMPTY_BYTES =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<byte>();
-#else
-            new byte[0];
-#endif
-
+        
         private static readonly MonotonicAppendingInt64Buffer SINGLE_ZERO_BUFFER = LoadSingleZeroBuffer();
-        private static readonly WAH8DocIdSet EMPTY = new WAH8DocIdSet(EMPTY_BYTES, 0, 1, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
+        // LUCENENET specific - optimized empty array creation
+        private static readonly WAH8DocIdSet EMPTY = new WAH8DocIdSet(Arrays.Empty<byte>(), 0, 1, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
         private static MonotonicAppendingInt64Buffer LoadSingleZeroBuffer() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             var buffer = new MonotonicAppendingInt64Buffer(1, 64, PackedInt32s.COMPACT);

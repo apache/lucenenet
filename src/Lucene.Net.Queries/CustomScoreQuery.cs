@@ -43,27 +43,11 @@ namespace Lucene.Net.Queries
         private Query[] scoringQueries; // never null (empty array if there are no valSrcQueries).
         private bool strict = false; // if true, valueSource part of query does not take part in weights normalization.
 
-        // LUCENENET specific - optimized empty array creation
-        private static readonly FunctionQuery[] EMPTY_FUNCTION_QUERIES =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<FunctionQuery>();
-#else
-            new FunctionQuery[0];
-#endif
-
-        // LUCENENET specific - optimized empty array creation
-        private static readonly Query[] EMPTY_QUERIES =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<Query>();
-#else
-            new Query[0];
-#endif
-
         /// <summary>
         /// Create a <see cref="CustomScoreQuery"/> over input <paramref name="subQuery"/>. </summary>
         /// <param name="subQuery"> the sub query whose scored is being customized. Must not be <c>null</c>.  </param>
         public CustomScoreQuery(Query subQuery)
-            : this(subQuery, EMPTY_FUNCTION_QUERIES)
+            : this(subQuery, Arrays.Empty<FunctionQuery>())
         {
         }
 
@@ -73,7 +57,7 @@ namespace Lucene.Net.Queries
         /// <param name="scoringQuery"> a value source query whose scores are used in the custom score
         /// computation.  This parameter is optional - it can be null. </param>
         public CustomScoreQuery(Query subQuery, FunctionQuery scoringQuery)
-            : this(subQuery, scoringQuery != null ? new FunctionQuery[] { scoringQuery } : EMPTY_FUNCTION_QUERIES)
+            : this(subQuery, scoringQuery != null ? new FunctionQuery[] { scoringQuery } : Arrays.Empty<FunctionQuery>())
         // don't want an array that contains a single null..
         {
         }
@@ -86,7 +70,7 @@ namespace Lucene.Net.Queries
         public CustomScoreQuery(Query subQuery, params FunctionQuery[] scoringQueries)
         {
             this.subQuery = subQuery;
-            this.scoringQueries = scoringQueries != null ? scoringQueries : EMPTY_QUERIES;
+            this.scoringQueries = scoringQueries ?? Arrays.Empty<Query>();
             if (subQuery == null)
             {
                 throw new ArgumentException("<subquery> must not be null!");

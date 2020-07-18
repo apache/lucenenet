@@ -1,4 +1,4 @@
-using System;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -28,12 +28,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Zero-length <see cref="ReaderSlice"/> array. </summary>
-        public static readonly ReaderSlice[] EMPTY_ARRAY =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<ReaderSlice>();
-#else
-            new ReaderSlice[0];
-#endif
+        public static readonly ReaderSlice[] EMPTY_ARRAY = Arrays.Empty<ReaderSlice>();
 
         /// <summary>
         /// Document ID this slice starts from. </summary>

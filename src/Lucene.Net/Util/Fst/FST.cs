@@ -1,4 +1,5 @@
 using J2N.Collections;
+using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -105,12 +106,7 @@ namespace Lucene.Net.Util.Fst
         /// <seealso cref= #shouldExpand(UnCompiledNode) </seealso>
         internal const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;*/
 
-        private int[] bytesPerArc =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<int>();
-#else
-            new int[0];
-#endif
+        private int[] bytesPerArc = Arrays.Empty<int>();
 
         /*// Increment version to change it
         private const string FILE_FORMAT_NAME = "FST";
