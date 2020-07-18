@@ -50,14 +50,6 @@ namespace Lucene.Net.Queries
         private readonly int hashCode; // cached hashcode for fast cache lookups
         private const int PRIME = 31;
 
-        // LUCENENET specific - optimized empty array creation
-        private static readonly byte[] EMPTY_BYTES =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<byte>();
-#else
-            new byte[0];
-#endif
-
         /// <summary>
         /// Creates a new <see cref="TermsFilter"/> from the given list. The list
         /// can contain duplicate terms and multiple fields.
@@ -168,7 +160,7 @@ namespace Lucene.Net.Queries
             // an automaton an call intersect on the termsenum if the density is high
             
             int hash = 9;
-            var serializedTerms = EMPTY_BYTES;
+            var serializedTerms = Arrays.Empty<byte>();
             this.offsets = new int[length + 1];
             int lastEndOffset = 0;
             int index = 0;

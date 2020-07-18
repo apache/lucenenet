@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -306,16 +307,8 @@ namespace Lucene.Net.Analysis.Shingle
         /// <param name="fillerToken"> string to insert at each position where there is no token </param>
         public void SetFillerToken(string fillerToken)
         {
-            this.fillerToken = null == fillerToken ? EMPTY_CHARS : fillerToken.ToCharArray();
+            this.fillerToken = null == fillerToken ? Arrays.Empty<char>() : fillerToken.ToCharArray();
         }
-
-        // LUCENENET specific - optimized empty array creation
-        private static readonly char[] EMPTY_CHARS =
-#if FEATURE_ARRAYEMPTY
-                Array.Empty<char>();
-#else
-                new char[0];
-#endif
 
         public override bool IncrementToken()
         {

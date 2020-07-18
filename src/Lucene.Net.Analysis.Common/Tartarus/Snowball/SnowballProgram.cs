@@ -49,12 +49,8 @@ namespace Lucene.Net.Tartarus.Snowball
     /// </summary>
     public abstract class SnowballProgram
     {
-        private static readonly object[] EMPTY_ARGS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<object>();
-#else
-            new object[0];
-#endif
+        private static readonly object[] EMPTY_ARGS = Arrays.Empty<object>();
+
         protected SnowballProgram()
         {
             m_current = new char[8];

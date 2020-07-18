@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
@@ -218,12 +219,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public IList<IIndexableField> Fields => fields;
 
-        private static readonly string[] NO_STRINGS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<string>();
-#else
-            new string[0];
-#endif
+        private static readonly string[] NO_STRINGS = Arrays.Empty<string>();
 
         /// <summary>
         /// Returns an array of values of the field specified as the method parameter.

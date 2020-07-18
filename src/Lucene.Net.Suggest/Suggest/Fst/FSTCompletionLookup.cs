@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
@@ -90,14 +91,6 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// Number of entries the lookup was built with </summary>
         private long count = 0;
 
-        // LUCENENET specific - optimized empty array creation
-        private static readonly byte[] EMPTY_BYTES =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<byte>();
-#else
-            new byte[0];
-#endif
-
 
         /// <summary>
         /// This constructor prepares for creating a suggested FST using the
@@ -167,7 +160,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             count = 0;
             try
             {
-                byte[] buffer = EMPTY_BYTES;
+                byte[] buffer = Arrays.Empty<byte>();
                 ByteArrayDataOutput output = new ByteArrayDataOutput(buffer);
                 BytesRef spare;
                 while ((spare = iterator.Next()) != null)

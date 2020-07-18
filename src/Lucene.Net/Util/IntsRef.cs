@@ -45,12 +45,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// NOTE: This was EMPTY_INTS in Lucene
         /// </summary>
-        public static readonly int[] EMPTY_INT32S =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<int>();
-#else
-            new int[0];
-#endif
+        public static readonly int[] EMPTY_INT32S = Arrays.Empty<int>();
 
         /// <summary>
         /// The contents of the <see cref="Int32sRef"/>. Should never be <c>null</c>. 

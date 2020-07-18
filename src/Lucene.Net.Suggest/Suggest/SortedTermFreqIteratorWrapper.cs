@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Search.Spell;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using System;
@@ -41,14 +42,6 @@ namespace Lucene.Net.Search.Suggest
 
         private long weight;
         private readonly BytesRef scratch = new BytesRef();
-
-        // LUCENENET specific - optimized empty array creation
-        private static readonly byte[] EMPTY_BYTES =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<byte>();
-#else
-            new byte[0];
-#endif
 
         /// <summary>
         /// Creates a new sorted wrapper, using <see cref="BytesRef.UTF8SortedAsUnicodeComparer"/>
@@ -144,7 +137,7 @@ namespace Lucene.Net.Search.Suggest
             try
             {
                 BytesRef spare;
-                byte[] buffer = EMPTY_BYTES;
+                byte[] buffer = Arrays.Empty<byte>();
                 ByteArrayDataOutput output = new ByteArrayDataOutput(buffer);
 
                 while ((spare = source.Next()) != null)

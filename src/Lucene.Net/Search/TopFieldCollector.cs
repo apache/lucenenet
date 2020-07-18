@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -1128,12 +1129,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private static readonly ScoreDoc[] EMPTY_SCOREDOCS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<ScoreDoc>();
-#else
-            new ScoreDoc[0];
-#endif
+        private static readonly ScoreDoc[] EMPTY_SCOREDOCS = Arrays.Empty<ScoreDoc>();
 
         private readonly bool fillFields;
 

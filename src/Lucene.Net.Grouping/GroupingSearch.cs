@@ -58,25 +58,6 @@ namespace Lucene.Net.Search.Grouping
         private ICollection /* Collection<?> */ matchingGroups;
         private IBits matchingGroupHeads;
 
-        // LUCENENET specific - optimized empty array creation
-        private static readonly SortField[] EMPTY_SORTFIELDS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<SortField>();
-#else
-            new SortField[0];
-#endif
-
-        // LUCENENET specific - optimized empty array creation
-        private class EmptyGroupDocsHolder<TGroupValue>
-        {
-            public static readonly GroupDocs<TGroupValue>[] EMPTY_GROUPDOCS =
-#if FEATURE_ARRAYEMPTY
-                Array.Empty<GroupDocs<TGroupValue>>();
-#else
-                new GroupDocs<TGroupValue>[0];
-#endif
-        }
-
         /// <summary>
         /// Constructs a <see cref="GroupingSearch"/> instance that groups documents by index terms using the <see cref="FieldCache"/>.
         /// The group field can only have one token per document. This means that the field must not be analysed.
@@ -310,7 +291,7 @@ namespace Lucene.Net.Search.Grouping
             if (topSearchGroups == null)
             {
                 // LUCENENET specific - optimized empty array creation
-                return new TopGroups<TGroupValue>(EMPTY_SORTFIELDS, EMPTY_SORTFIELDS, 0, 0, EmptyGroupDocsHolder<TGroupValue>.EMPTY_GROUPDOCS, float.NaN);
+                return new TopGroups<TGroupValue>(Arrays.Empty<SortField>(), Arrays.Empty<SortField>(), 0, 0, Arrays.Empty<GroupDocs<TGroupValue>>(), float.NaN);
             }
 
             int topNInsideGroup = groupDocsOffset + groupDocsLimit;

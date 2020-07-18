@@ -43,21 +43,13 @@ namespace Lucene.Net.Util.Automaton
     /// </summary>
     public class State : IComparable<State>, IEquatable<State> // LUCENENET specific: Implemented IEquatable, since this class is used in hashtables
     {
-        // LUCENENET specific - optimized empty array creation
-        private static readonly Transition[] EMPTY_TRANSITIONS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<Transition>();
-#else
-            new Transition[0];
-#endif
-
         internal bool accept;
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public Transition[] TransitionsArray => transitionsArray;
 
         // LUCENENET NOTE: Setter removed because it is apparently not in use outside of this class
-        private Transition[] transitionsArray = EMPTY_TRANSITIONS;
+        private Transition[] transitionsArray = Arrays.Empty<Transition>();
 
         internal int numTransitions = 0;// LUCENENET NOTE: Made internal because we already have a public property for access
 
@@ -80,7 +72,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         internal void ResetTransitions()
         {
-            transitionsArray = EMPTY_TRANSITIONS;
+            transitionsArray = Arrays.Empty<Transition>();
             numTransitions = 0;
         }
 
