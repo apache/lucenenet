@@ -3,7 +3,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using _NUnit = NUnit.Framework;
 using JCG = J2N.Collections.Generic;
@@ -82,7 +81,7 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual<T>(T expected, T actual, string message, params object[] args)
         {
             if (!JCG.EqualityComparer<T>.Default.Equals(expected, actual))
-                Fail(string.Concat(string.Format(FailureFormat, expected, actual), Environment.NewLine, Environment.NewLine, string.Format(message, args)));
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
 
         //
@@ -123,7 +122,7 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual(string expected, string actual, string message, params object[] args)
         {
             if (!StringComparer.Ordinal.Equals(expected, actual))
-                Fail(string.Concat(string.Format(FailureFormat, expected, actual), Environment.NewLine, Environment.NewLine, string.Format(message, args)));
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
 
         //
@@ -166,7 +165,7 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual(bool expected, bool actual, string message, params object[] args)
         {
             if (!expected.Equals(actual))
-                Fail(string.Concat(string.Format(FailureFormat, expected, actual), Environment.NewLine, Environment.NewLine, string.Format(message, args)));
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
 
         //
@@ -299,7 +298,7 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual(int expected, int actual, string message, params object[] args)
         {
             if (!expected.Equals(actual))
-                Fail(string.Concat(string.Format(FailureFormat, expected, actual), Environment.NewLine, Environment.NewLine, string.Format(message, args)));
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
 
         //
@@ -340,7 +339,7 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual(long expected, long actual, string message, params object[] args)
         {
             if (!expected.Equals(actual))
-                Fail(string.Concat(string.Format(FailureFormat, expected, actual), Environment.NewLine, Environment.NewLine, string.Format(message, args)));
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
 
         //
@@ -381,7 +380,7 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual(byte expected, byte actual, string message, params object[] args)
         {
             if (!expected.Equals(actual))
-                Fail(string.Concat(string.Format(FailureFormat, expected, actual), Environment.NewLine, Environment.NewLine, string.Format(message, args)));
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
 
 
@@ -406,6 +405,13 @@ namespace Lucene.Net.TestFramework
                 : JCG.DictionaryEqualityComparer<TKey, TValue>.Default;
         }
 
+        private static string FormatErrorMessage(object expected, object actual, string message, params object[] args)
+        {
+            string failureHeader = string.Format(FailureFormat, expected, actual);
+            string msg = args == null || args.Length == 0 ? message : string.Format(message, args);
+            return string.Concat(failureHeader, Environment.NewLine, Environment.NewLine, msg);
+        }
+
         public static string FormatCollection(object collection)
         {
             return string.Format(StringFormatter.CurrentCulture, "{0}", collection);
@@ -419,14 +425,15 @@ namespace Lucene.Net.TestFramework
 
         public static void AreEqual<T>(ISet<T> expected, ISet<T> actual, bool aggressive, string message, params object[] args)
         {
+            //Fail(FormatErrorMessage(expected, actual, message, args));
             if (!GetSetComparer<T>(aggressive).Equals(expected, actual))
-                Fail(string.Concat(string.Format(FailureFormat, FormatCollection(expected), FormatCollection(actual)), Environment.NewLine, Environment.NewLine, string.Format(message, args)));
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), message, args));
         }
 
         public static void AreEqual<T>(ISet<T> expected, ISet<T> actual, bool aggressive, Func<string> getMessage)
         {
             if (!GetSetComparer<T>(aggressive).Equals(expected, actual))
-                Fail(string.Concat(string.Format(FailureFormat, FormatCollection(expected), FormatCollection(actual)), Environment.NewLine, Environment.NewLine, getMessage()));
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), getMessage()));
         }
 
         public static void AreEqual<T>(IList<T> expected, IList<T> actual, bool aggressive = true)
@@ -438,13 +445,13 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual<T>(IList<T> expected, IList<T> actual, bool aggressive, string message, params object[] args)
         {
             if (!GetListComparer<T>(aggressive).Equals(expected, actual))
-                Fail(string.Concat(string.Format(FailureFormat, FormatCollection(expected), FormatCollection(actual)), Environment.NewLine, Environment.NewLine, string.Format(message, args)));
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), message, args));
         }
 
         public static void AreEqual<T>(IList<T> expected, IList<T> actual, bool aggressive, Func<string> getMessage)
         {
             if (!GetListComparer<T>(aggressive).Equals(expected, actual))
-                Fail(string.Concat(string.Format(FailureFormat, FormatCollection(expected), FormatCollection(actual)), Environment.NewLine, Environment.NewLine, getMessage()));
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), getMessage()));
         }
 
         public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive = true)
@@ -456,13 +463,13 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive, string message, params object[] args)
         {
             if (!GetDictionaryComparer<TKey, TValue>(aggressive).Equals(expected, actual))
-                Fail(string.Concat(string.Format(FailureFormat, FormatCollection(expected), FormatCollection(actual)), Environment.NewLine, Environment.NewLine, string.Format(message, args)));
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), message, args));
         }
 
         public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive, Func<string> getMessage)
         {
             if (!GetDictionaryComparer<TKey, TValue>(aggressive).Equals(expected, actual))
-                Fail(string.Concat(string.Format(FailureFormat, FormatCollection(expected), FormatCollection(actual)), Environment.NewLine, Environment.NewLine, getMessage()));
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), getMessage()));
         }
 
 
@@ -477,7 +484,14 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual<T>(T[] expected, T[] actual, string message, params object[] args)
         {
             if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
-                Fail(string.Concat(string.Format(FailureFormat, FormatCollection(expected), FormatCollection(actual)), Environment.NewLine, Environment.NewLine, string.Format(message, args)));
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), message, args));
+        }
+
+        // From CollectionAssert
+        public static void AreEqual<T>(T[] expected, T[] actual, Func<string> getMessage)
+        {
+            if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), getMessage()));
         }
 
         //
@@ -790,7 +804,8 @@ namespace Lucene.Net.TestFramework
         //     The object that is to be tested
         public static void NotNull(object anObject)
         {
-            _NUnit.Assert.NotNull(anObject);
+            if (!(anObject is null))
+                _NUnit.Assert.NotNull(anObject);
         }
         //
         // Summary:
@@ -808,7 +823,8 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void NotNull(object anObject, string message, params object[] args)
         {
-            _NUnit.Assert.NotNull(anObject, message, args);
+            if (anObject is null)
+                _NUnit.Assert.NotNull(anObject, message, args);
         }
 
         //
@@ -827,7 +843,8 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void Null(object anObject, string message, params object[] args)
         {
-            _NUnit.Assert.Null(anObject, message, args);
+            if (!(anObject is null))
+                _NUnit.Assert.Null(anObject, message, args);
         }
         //
         // Summary:
@@ -839,7 +856,8 @@ namespace Lucene.Net.TestFramework
         //     The object that is to be tested
         public static void Null(object anObject)
         {
-            _NUnit.Assert.Null(anObject);
+            if (!(anObject is null))
+                _NUnit.Assert.Null(anObject);
         }
 
         //
@@ -946,12 +964,14 @@ namespace Lucene.Net.TestFramework
 
         public static void LessOrEqual(int arg1, int arg2)
         {
-            _NUnit.Assert.LessOrEqual(arg1, arg2);
+            if (arg1 > arg2)
+                _NUnit.Assert.LessOrEqual(arg1, arg2);
         }
 
         public static void Greater(int arg1, int arg2)
         {
-            _NUnit.Assert.Greater(arg1, arg2);
+            if (arg1 <= arg2)
+                _NUnit.Assert.Greater(arg1, arg2);
         }
 
         public static Exception Throws<TException>(Action action, string message, params object[] args)
