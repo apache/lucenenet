@@ -14,7 +14,7 @@ using Test = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
 using Assert = Lucene.Net.TestFramework.Assert;
 #elif TESTFRAMEWORK_NUNIT
 using Test = NUnit.Framework.TestAttribute;
-using Assert = NUnit.Framework.Assert;
+using Assert = Lucene.Net.TestFramework.Assert;
 #elif TESTFRAMEWORK_XUNIT
 using Test = Lucene.Net.TestFramework.SkippableFactAttribute;
 using Assert = Lucene.Net.TestFramework.Assert;

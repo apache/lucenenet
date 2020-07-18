@@ -877,6 +877,73 @@ namespace Lucene.Net.TestFramework
         }
 
 
+        //
+        // Summary:
+        //     Verifies that the object that is passed in is not equal to null If the object
+        //     is null then an NUnit.Framework.AssertionException is thrown.
+        //
+        // Parameters:
+        //   anObject:
+        //     The object that is to be tested
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   args:
+        //     Array of objects to be used in formatting the message
+        public static void IsNotEmpty(string aString, string message, params object[] args)
+        {
+            if (string.Empty.Equals(aString))
+                _NUnit.Assert.IsNotEmpty(aString, message, args);
+        }
+        //
+        // Summary:
+        //     Verifies that the object that is passed in is not equal to null If the object
+        //     is null then an NUnit.Framework.AssertionException is thrown.
+        //
+        // Parameters:
+        //   anObject:
+        //     The object that is to be tested
+        public static void IsNotEmpty(string aString)
+        {
+            if (string.Empty.Equals(aString))
+                _NUnit.Assert.IsNotEmpty(aString);
+        }
+
+
+        //
+        // Summary:
+        //     Verifies that the object that is passed in is not equal to null If the object
+        //     is null then an NUnit.Framework.AssertionException is thrown.
+        //
+        // Parameters:
+        //   anObject:
+        //     The object that is to be tested
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   args:
+        //     Array of objects to be used in formatting the message
+        public static void IsEmpty(string aString, string message, params object[] args)
+        {
+            if (!string.Empty.Equals(aString))
+                _NUnit.Assert.IsEmpty(aString, message, args);
+        }
+        //
+        // Summary:
+        //     Verifies that the object that is passed in is not equal to null If the object
+        //     is null then an NUnit.Framework.AssertionException is thrown.
+        //
+        // Parameters:
+        //   anObject:
+        //     The object that is to be tested
+        public static void IsEmpty(string aString)
+        {
+            if (!string.Empty.Equals(aString))
+                _NUnit.Assert.IsEmpty(aString);
+        }
+
         public static void LessOrEqual(int arg1, int arg2)
         {
             _NUnit.Assert.LessOrEqual(arg1, arg2);
