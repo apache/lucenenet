@@ -12,6 +12,13 @@
 
   <ItemGroup>
     <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00005" />
+    <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00005" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="..\Lucene.Net.TestFramework\Support\Randomized\Generators\RandomPicks.cs" LinkBase="Util" />
+    <Compile Include="..\Lucene.Net.TestFramework\Support\Randomized\Generators\RandomInts.cs" LinkBase="Util" />
+    <Compile Include="..\Lucene.Net\Support\ExceptionToNetNumericConventionAttribute.cs" LinkBase="Util" />
   </ItemGroup>
 
 </Project>
