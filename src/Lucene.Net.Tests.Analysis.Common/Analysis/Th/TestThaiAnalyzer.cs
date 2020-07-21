@@ -175,6 +175,8 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// blast some random strings through the analyzer </summary>
         [Test]
+        [Category("CategoryA")]
+        [FindFirstFailingSeed(TimeoutMilliseconds = 100000)]
         public virtual void TestRandomStrings()
         {
             CheckRandomData(Random, new ThaiAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
