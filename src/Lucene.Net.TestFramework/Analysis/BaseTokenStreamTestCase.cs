@@ -883,6 +883,9 @@ namespace Lucene.Net.Analysis
 
             try
             {
+
+                long seed = random.Next();
+
                 for (int i = 0; i < iterations; i++)
                 {
                     string text;
@@ -913,12 +916,12 @@ namespace Lucene.Net.Analysis
                     else
                     {
                         // synthetic
-                        text = TestUtil.RandomAnalysisString(random, maxWordLength, simple);
+                        text = TestUtil.RandomAnalysisString(new Random((int)seed), maxWordLength, simple);
                     }
 
                     try
                     {
-                        CheckAnalysisConsistency(random, a, useCharFilter, text, offsetsAreCorrect, currentField);
+                        CheckAnalysisConsistency(new Random((int)seed), a, useCharFilter, text, offsetsAreCorrect, currentField);
                         if (iw != null)
                         {
                             if (random.Next(7) == 0)
