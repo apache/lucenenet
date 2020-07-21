@@ -39,8 +39,6 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONBUILDER_PROPERTIES_AS_IDICTIONARY</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONBUILDER_SOURCES_AS_ILIST</DefineConstants>
 
   </PropertyGroup>
 

@@ -36,7 +36,7 @@ namespace Lucene.Net.Cli.Configuration
 
         protected override IConfiguration LoadConfiguration()
         {
-            IConfigurationRoot configuration = new Lucene.Net.Configuration.ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddEnvironmentVariables(prefix: EnvironmentVariablePrefix) // Use a custom prefix to only load Lucene.NET settings 
                 .AddJsonFile(TestJsonFilePath)
                 .Build();
