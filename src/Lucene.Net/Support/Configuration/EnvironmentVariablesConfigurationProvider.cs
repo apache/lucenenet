@@ -26,9 +26,9 @@ namespace Lucene.Net.Configuration
      */
 
     /// <summary>
-    /// An environment variable based <see cref="ConfigurationProvider"/>.
+    /// An environment variable based <see cref="IConfigurationProvider"/>.
     /// </summary>
-    internal class LuceneDefaultConfigurationProvider : IConfigurationProvider
+    internal class EnvironmentVariablesConfigurationProvider : IConfigurationProvider
     {
         private readonly bool ignoreSecurityExceptionsOnRead;
         private readonly string _prefix;
@@ -36,14 +36,14 @@ namespace Lucene.Net.Configuration
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
-        public LuceneDefaultConfigurationProvider(bool ignoreSecurityExceptionsOnRead) : this(string.Empty, ignoreSecurityExceptionsOnRead)
+        public EnvironmentVariablesConfigurationProvider(bool ignoreSecurityExceptionsOnRead = true) : this(string.Empty, ignoreSecurityExceptionsOnRead)
         { }
 
         /// <summary>
         /// Initializes a new instance with the specified prefix.
         /// </summary>
         /// <param name="prefix">A prefix used to filter the environment variables.</param>
-        public LuceneDefaultConfigurationProvider(string prefix, bool ignoreSecurityExceptionsOnRead = true)
+        public EnvironmentVariablesConfigurationProvider(string prefix, bool ignoreSecurityExceptionsOnRead = true)
         {
             _prefix = prefix ?? string.Empty;
             this.ignoreSecurityExceptionsOnRead = ignoreSecurityExceptionsOnRead;
