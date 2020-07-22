@@ -9,6 +9,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using Lucene.Net.Attributes;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -135,7 +136,7 @@ namespace Lucene.Net.Analysis.Util
                         var highlightedText = s.Substring(offsetAtt.StartOffset, offsetAtt.EndOffset - offsetAtt.StartOffset);
                         for (int j = 0, cp = 0; j < highlightedText.Length; j += Character.CharCount(cp))
                         {
-                            cp = char.ConvertToUtf32(highlightedText, j);
+                            cp = highlightedText.CodePointAt(j);
                             assertTrue("non-letter:" + cp.ToString("x"), Character.IsLetter(cp));
                         }
                     }
@@ -198,7 +199,7 @@ namespace Lucene.Net.Analysis.Util
                         string highlightedText = s.Substring(offsetAtt.StartOffset, offsetAtt.EndOffset - offsetAtt.StartOffset);
                         for (int j = 0, cp = 0; j < highlightedText.Length; j += Character.CharCount(cp))
                         {
-                            cp = char.ConvertToUtf32(highlightedText, j);
+                            cp = highlightedText.CodePointAt(j);
                             assertTrue("non-letter:" + cp.ToString("x"), Character.IsLetter(cp));
                         }
                     }
@@ -248,6 +249,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestSurrogates()
         {
             var analyzer = new AnalyzerAnonymousInnerClassHelper3();
