@@ -1,9 +1,9 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 namespace Lucene.Net.Util
 {

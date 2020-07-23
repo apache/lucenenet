@@ -1,8 +1,8 @@
-﻿using J2N.Text;
+﻿using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Benchmarks.Quality.Trec
@@ -114,7 +114,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
             {
                 reader.Dispose();
             }
-            // sort result array (by ID) 
+            // sort result array (by ID)
             QualityQuery[] qq = res.ToArray();
             Array.Sort(qq);
             return qq;

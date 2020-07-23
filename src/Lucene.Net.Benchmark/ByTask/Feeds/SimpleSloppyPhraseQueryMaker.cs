@@ -2,7 +2,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -42,7 +41,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             words = w.ToArray();
 
             // create queries (that would find stuff) with varying slops
-            IList<Query> queries = new List<Query>();
+            List<Query> queries = new List<Query>();
             for (int slop = 0; slop < 8; slop++)
             {
                 for (int qlen = 2; qlen < 6; qlen++)

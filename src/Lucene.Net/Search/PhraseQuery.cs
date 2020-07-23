@@ -1,10 +1,10 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 

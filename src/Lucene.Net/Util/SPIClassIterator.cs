@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util

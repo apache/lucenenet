@@ -1,4 +1,5 @@
-﻿using J2N.Text;
+﻿using J2N.Collections.Generic.Extensions;
+using J2N.Text;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -1061,7 +1062,7 @@ namespace Lucene.Net.Facet
         {
             int numDims = dimValues.Length;
 
-            IList<Doc> hits = new List<Doc>();
+            List<Doc> hits = new List<Doc>();
             Counters drillDownCounts = new Counters(dimValues);
             Counters[] drillSidewaysCounts = new Counters[dimValues.Length];
             for (int dim = 0; dim < numDims; dim++)
@@ -1151,9 +1152,7 @@ namespace Lucene.Net.Facet
                 idToDocID[s.Doc(i).Get("id")] = i;
             }
 
-            var hitsSorted = hits.ToArray();
-            Array.Sort(hitsSorted);
-            hits = hitsSorted.ToList();
+            hits.Sort();
 
             TestFacetResult res = new TestFacetResult();
             res.Hits = hits;

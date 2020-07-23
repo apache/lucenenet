@@ -1,10 +1,10 @@
+using J2N.Collections.Generic.Extensions;
 using J2N.Numerics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace Lucene.Net.Util
 {

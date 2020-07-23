@@ -38,11 +38,11 @@ namespace Lucene.Net.Support
         private int _gcCollections = 0;
 
         public WeakDictionary(int initialCapacity)
-            : this(initialCapacity, Enumerable.Empty<KeyValuePair<TKey, TValue>>())
+            : this(initialCapacity, Arrays.Empty<KeyValuePair<TKey, TValue>>())
         { }
 
         public WeakDictionary()
-            : this(32, Enumerable.Empty<KeyValuePair<TKey, TValue>>())
+            : this(32, Arrays.Empty<KeyValuePair<TKey, TValue>>())
         { }
 
         public WeakDictionary(IEnumerable<KeyValuePair<TKey, TValue>> otherDictionary)

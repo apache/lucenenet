@@ -12,7 +12,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index.Sorter
@@ -186,7 +185,7 @@ namespace Lucene.Net.Index.Sorter
 
             if (Verbose)
             {
-                Console.WriteLine("Shuffled IDs for indexing: " + Arrays.ToString(ids.ToArray()));
+                Console.WriteLine("Shuffled IDs for indexing: " + Collections.ToString(ids));
             }
 
             PositionsTokenStream positions = new PositionsTokenStream();

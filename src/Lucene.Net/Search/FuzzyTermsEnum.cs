@@ -1,4 +1,5 @@
 using J2N;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -6,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search

@@ -1,8 +1,8 @@
+using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Lucene.Net.Index
 {
@@ -68,7 +68,8 @@ namespace Lucene.Net.Index
         {
             this.isSegmentPrivate = isSegmentPrivate;
             Debug.Assert(!isSegmentPrivate || deletes.terms.Count == 0, "segment private package should only have del queries");
-            Term[] termsArray = deletes.terms.Keys.ToArray(/*new Term[deletes.Terms.Count]*/);
+            Term[] termsArray = deletes.terms.Keys.ToArray(/*new Term[deletes.terms.Count]*/);
+
             termCount = termsArray.Length;
             ArrayUtil.TimSort(termsArray);
             PrefixCodedTerms.Builder builder = new PrefixCodedTerms.Builder();

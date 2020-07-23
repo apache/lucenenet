@@ -1,14 +1,14 @@
-﻿using Lucene.Net.Benchmarks.Quality.Utils;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Benchmarks.Quality.Utils;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.Quality.Trec
 {

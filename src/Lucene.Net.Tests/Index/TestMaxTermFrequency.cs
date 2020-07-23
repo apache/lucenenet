@@ -5,7 +5,6 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Index
@@ -109,7 +108,7 @@ namespace Lucene.Net.Index
             expected.Add(max);
 
             terms.Shuffle(Random);
-            return Arrays.ToString(terms.ToArray());
+            return Collections.ToString(terms);
         }
 
         /// <summary>

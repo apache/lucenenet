@@ -1,6 +1,5 @@
 using Lucene.Net.Util;
 using System;
-using System.Linq;
 
 namespace Lucene.Net.Index
 {
@@ -56,7 +55,7 @@ namespace Lucene.Net.Index
             if (hourOfDay < 6 || hourOfDay > 20 || random.Next(23) == 5)
             // its 5 o'clock somewhere
             {
-                Drink[] values = Enum.GetValues(typeof(Drink)).Cast<Drink>().ToArray();
+                Drink[] values = (Drink[])Enum.GetValues(typeof(Drink));
                 // pick a random drink during the day
                 Drink drink = values[random.Next(values.Length - 1)];
                 return (long)drink * info.GetSizeInBytes();
