@@ -1,8 +1,9 @@
+using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Documents;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lucene.Net.Documents;
-using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 

@@ -1,11 +1,11 @@
-﻿using Lucene.Net.Analysis.Core;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Query

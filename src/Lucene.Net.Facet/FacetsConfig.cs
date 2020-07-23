@@ -1,9 +1,9 @@
-﻿using Lucene.Net.Support;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
@@ -34,15 +34,15 @@ namespace Lucene.Net.Facet
     using Document = Lucene.Net.Documents.Document;
     using FacetLabel = Lucene.Net.Facet.Taxonomy.FacetLabel;
     using Field = Lucene.Net.Documents.Field;
-    using SingleAssociationFacetField = Lucene.Net.Facet.Taxonomy.SingleAssociationFacetField;
     using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IIndexableFieldType = Lucene.Net.Index.IIndexableFieldType;
     using Int32AssociationFacetField = Lucene.Net.Facet.Taxonomy.Int32AssociationFacetField;
     using Int32sRef = Lucene.Net.Util.Int32sRef;
+    using ITaxonomyWriter = Lucene.Net.Facet.Taxonomy.ITaxonomyWriter;
+    using SingleAssociationFacetField = Lucene.Net.Facet.Taxonomy.SingleAssociationFacetField;
     using SortedSetDocValuesFacetField = Lucene.Net.Facet.SortedSet.SortedSetDocValuesFacetField;
     using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
     using StringField = Lucene.Net.Documents.StringField;
-    using ITaxonomyWriter = Lucene.Net.Facet.Taxonomy.ITaxonomyWriter;
 
     /// <summary>
     /// Records per-dimension configuration.  By default a

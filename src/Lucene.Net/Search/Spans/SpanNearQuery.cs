@@ -1,6 +1,6 @@
+using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 

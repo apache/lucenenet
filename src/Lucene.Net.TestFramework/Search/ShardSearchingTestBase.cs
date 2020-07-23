@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Index;
@@ -8,7 +9,6 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!

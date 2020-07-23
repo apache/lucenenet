@@ -1,10 +1,10 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Synonym

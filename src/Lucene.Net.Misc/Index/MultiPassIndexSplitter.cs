@@ -1,11 +1,11 @@
-﻿using Lucene.Net.Store;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Index

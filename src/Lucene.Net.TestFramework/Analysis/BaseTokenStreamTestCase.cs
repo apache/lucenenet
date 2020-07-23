@@ -1,3 +1,4 @@
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
@@ -8,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;

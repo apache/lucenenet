@@ -1,10 +1,10 @@
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 
 namespace Lucene.Net.Store
 {

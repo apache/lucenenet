@@ -1,10 +1,10 @@
-﻿using Lucene.Net.Facet.SortedSet;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Facet.SortedSet;
 using Lucene.Net.Facet.Taxonomy;
 using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Lucene.Net.Facet
 {

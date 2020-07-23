@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.OpenNlp.Tools;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Analysis.OpenNlp
 {
@@ -92,8 +91,8 @@ namespace Lucene.Net.Analysis.OpenNlp
 
         private void NextSentence()
         {
-            IList<string> tokenList = new List<string>();
-            IList<string> typeList = new List<string>();
+            var tokenList = new List<string>();
+            var typeList = new List<string>();
             sentenceTokenAttrs.Clear();
             bool endOfSentence = false;
             while (!endOfSentence && (moreTokensAvailable = m_input.IncrementToken()))
