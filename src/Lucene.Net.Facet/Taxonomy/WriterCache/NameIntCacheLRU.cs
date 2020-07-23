@@ -1,6 +1,6 @@
 ﻿using J2N.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -39,6 +39,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         internal long nMisses = 0; // for debug
         internal long nHits = 0; // for debug
         private readonly int maxCacheSize;
+        private readonly object syncLock = new object(); // LUCENENET specific so we don't lock this
 
         internal NameInt32CacheLRU(int limit)
         {
@@ -60,11 +61,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             if (maxSize < int.MaxValue)
             {
-                cache = new LurchTable<object, int>(1000, LurchTableOrder.Access); //for LRU
+                cache = new LurchTable<object, int>(capacity: 1000, ordering: LurchTableOrder.Access); //for LRU
             }
             else
             {
-                cache = new Dictionary<object, int>(1000); //no need for LRU
+                // LUCENENET specific - we use ConcurrentDictionary here because it supports deleting while
+                // iterating through the collection, but Dictionary does not.
+                cache = new ConcurrentDictionary<object, int>(concurrencyLevel: 3, capacity: 1000); //no need for LRU
             }
         }
 
@@ -149,7 +152,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 return false;
             }
 
-            lock (this)
+            lock (syncLock)
             {
                 // Double-check that another thread didn't beat us to the operation
                 n = cache.Count - (2 * maxCacheSize) / 3;
@@ -159,13 +162,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
 
                 //System.Diagnostics.Debug.WriteLine("Removing cache entries in MakeRoomLRU");
-
-                // LUCENENET: Loop in reverse so we can safely delete
-                // a range of items (0 - n) without a 
-                // "Collection was modified" conflict
-                for (int i = n - 1; i >= 0; i--)
+                using (var it = cache.GetEnumerator())
                 {
-                    cache.Remove(cache.Keys.ElementAt(i));
+                    int i = 0;
+                    while (i < n && it.MoveNext())
+                    {
+                        cache.Remove(it.Current.Key);
+                        i++;
+                    }
                 }
             }
             return true;
