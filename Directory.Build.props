@@ -23,6 +23,9 @@
 
   <PropertyGroup>
     <LangVersion>8.0</LangVersion>
+    <!-- Disabling warnings that require .NET Standard 2.1 -->
+    <NoWarn>$(NoWarn);IDE0056</NoWarn>
+    <NoWarn>$(NoWarn);IDE0057</NoWarn>
   </PropertyGroup>
   
   <!-- IMPORTANT: When these values are changed, the CI counter number should also be reset. -->
