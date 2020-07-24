@@ -171,15 +171,12 @@ namespace Lucene.Net.Codecs.Lucene40
             int minLength = int.MaxValue;
             int maxLength = int.MinValue;
 
-            var vals = values.ToArray();
-
-            for (int i = 0; i < vals.Length; i++)
+            foreach (var value in values)
             {
-                var b = vals[i];
-
+                BytesRef b = value;
                 if (b == null)
                 {
-                    b = vals[i] = new BytesRef(); // 4.0 doesnt distinguish
+                    b = new BytesRef(); // 4.0 doesnt distinguish
                 }
                 if (b.Length > Lucene40DocValuesFormat.MAX_BINARY_FIELD_LENGTH)
                 {
