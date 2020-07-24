@@ -5,11 +5,9 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
-
 
 namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 {
@@ -483,7 +481,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             {
                 // not a multi-word name
                 //input = words.iterator().next();
-                input = words.FirstOrDefault();
+                input = words[0];
             }
             else
             {

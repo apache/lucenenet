@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Grouping
@@ -390,7 +389,7 @@ namespace Lucene.Net.Search.Grouping
                 // Prune un-competitive groups:
                 while (queue.Count > topN)
                 {
-                    MergedGroup<T> group = queue.Last();
+                    MergedGroup<T> group = queue.Max;
                     queue.Remove(group);
                     //System.out.println("PRUNE: " + group);
                     group.IsInQueue = false;
@@ -421,7 +420,7 @@ namespace Lucene.Net.Search.Grouping
 
                 while (queue.Count != 0)
                 {
-                    MergedGroup<T> group = queue.First();
+                    MergedGroup<T> group = queue.Min;
                     queue.Remove(group);
                     group.IsProcessed = true;
                     //System.out.println("  pop: shards=" + group.shards + " group=" + (group.groupValue == null ? "null" : (((BytesRef) group.groupValue).utf8ToString())) + " sortValues=" + Arrays.toString(group.topValues));

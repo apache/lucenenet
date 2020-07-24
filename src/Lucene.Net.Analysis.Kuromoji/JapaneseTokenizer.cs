@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -379,7 +378,7 @@ namespace Lucene.Net.Analysis.Ja
                 Parse();
             }
 
-            Token token = pending.LastOrDefault();
+            Token token = pending[pending.Count - 1]; // LUCENENET: The above loop ensures we don't get here unless we have at least 1 item
             if (token != null)
             {
                 pending.Remove(token);

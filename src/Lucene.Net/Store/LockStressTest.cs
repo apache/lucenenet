@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -78,7 +77,7 @@ namespace Lucene.Net.Store
             int count = Convert.ToInt32(args[arg++], CultureInfo.InvariantCulture);
 
             IPAddress[] addresses = Dns.GetHostAddressesAsync(verifierHost).Result;
-            IPAddress addr = addresses.FirstOrDefault();
+            IPAddress addr = addresses.Length > 0 ? addresses[0] : null;
 
             Type c;
             try
