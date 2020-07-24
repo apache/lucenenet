@@ -1,8 +1,9 @@
+using Lucene.Net.Support.Text;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Support.IO
@@ -29,6 +30,8 @@ namespace Lucene.Net.Support.IO
     /// </summary>
     internal static class FileSupport
     {
+        private static readonly char[] INVALID_FILENAME_CHARS = Path.GetInvalidFileNameChars();
+
         // LUCNENENET NOTE: Lookup the HResult value we are interested in for the current OS
         // by provoking the exception during initialization and caching its HResult value for later.
         // We optimize for Windows because those HResult values are known and documented, but for
@@ -157,12 +160,10 @@ namespace Lucene.Net.Support.IO
                 throw new ArgumentException("Prefix string too short");
 
             // Ensure the strings passed don't contain invalid characters
-            char[] invalid = Path.GetInvalidFileNameChars();
-
-            if (prefix.ToCharArray().Intersect(invalid).Any())
-                throw new ArgumentException(string.Format("Prefix contains invalid characters. You may not use any of '{0}'", string.Join(", ", invalid)));
-            if (suffix != null && suffix.ToCharArray().Intersect(invalid).Any())
-                throw new ArgumentException(string.Format("Suffix contains invalid characters. You may not use any of '{0}'", string.Join(", ", invalid)));
+            if (prefix.ContainsAny(INVALID_FILENAME_CHARS))
+                throw new ArgumentException(string.Format("Prefix contains invalid characters. You may not use any of '{0}'", string.Join(", ", INVALID_FILENAME_CHARS)));
+            if (suffix != null && suffix.ContainsAny(INVALID_FILENAME_CHARS))
+                throw new ArgumentException(string.Format("Suffix contains invalid characters. You may not use any of '{0}'", string.Join(", ", INVALID_FILENAME_CHARS)));
 
             // If no directory supplied, create one.
             if (directory == null)
