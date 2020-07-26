@@ -1,7 +1,7 @@
 using J2N;
 using J2N.Collections;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Collections;
@@ -9,11 +9,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
-using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Fst
 {
