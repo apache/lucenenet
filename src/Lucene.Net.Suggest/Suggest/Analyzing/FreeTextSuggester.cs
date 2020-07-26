@@ -7,15 +7,14 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -798,7 +797,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (results.Count > num)
                 {
-                    results.SubList(num, results.Count).Clear();
+                    results.RemoveRange(num, results.Count - num); //results.SubList(num, results.Count).Clear();
                 }
 
                 return results;
