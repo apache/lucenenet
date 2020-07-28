@@ -58,7 +58,7 @@
     <MicrosoftExtensionsConfigurationXmlPackageVersion>$(MicrosoftExtensionsConfigurationPackageVersion)</MicrosoftExtensionsConfigurationXmlPackageVersion>
     <MicrosoftExtensionsDependencyInjectionPackageVersion>3.1.4</MicrosoftExtensionsDependencyInjectionPackageVersion>
     <MicrosoftNETTestSdkPackageVersion>16.6.1</MicrosoftNETTestSdkPackageVersion>
-    <MorfologikFsaPackageVersion>2.1.6-beta-0005</MorfologikFsaPackageVersion>
+    <MorfologikFsaPackageVersion>2.1.6-beta-0007</MorfologikFsaPackageVersion>
     <MorfologikPolishPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikPolishPackageVersion>
     <MorfologikStemmingPackageVersion>$(MorfologikFsaPackageVersion)</MorfologikStemmingPackageVersion>
     <MSTestTestFrameworkPackageVersion>2.0.0</MSTestTestFrameworkPackageVersion>
