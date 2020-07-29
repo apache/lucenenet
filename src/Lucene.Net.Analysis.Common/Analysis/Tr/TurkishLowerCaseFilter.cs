@@ -1,5 +1,4 @@
 ﻿using J2N;
-using J2N.Globalization;
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Globalization;
@@ -35,11 +34,12 @@ namespace Lucene.Net.Analysis.Tr
     public sealed class TurkishLowerCaseFilter : TokenFilter
     {
         private const int LATIN_CAPITAL_LETTER_I = '\u0049';
-        private const int LATIN_CAPITAL_LETTER_DOTTED_I = '\u0130';
         private const int LATIN_SMALL_LETTER_I = '\u0069';
         private const int LATIN_SMALL_LETTER_DOTLESS_I = '\u0131';
         private const int COMBINING_DOT_ABOVE = '\u0307';
         private readonly ICharTermAttribute termAtt;
+
+        private static readonly CultureInfo culture = new CultureInfo("tr"); // LUCENENET specific - we need to do a culture-sensitive lowercase operation in Turkish
 
         /// <summary>
         /// Create a new <see cref="TurkishLowerCaseFilter"/>, that normalizes Turkish token text 
@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Tr
                 {
                     int ch = Character.CodePointAt(buffer, i, length);
 
-                    iOrAfter = (ch == LATIN_CAPITAL_LETTER_I || (iOrAfter && CharUnicodeInfo.GetUnicodeCategory((char)ch) == UnicodeCategory.NonSpacingMark));
+                    iOrAfter = (ch == LATIN_CAPITAL_LETTER_I || (iOrAfter && Character.GetType(ch) == UnicodeCategory.NonSpacingMark));
 
                     if (iOrAfter) // all the special I turkish handling happens here.
                     {
@@ -93,32 +93,8 @@ namespace Lucene.Net.Analysis.Tr
                         }
                     }
 
-                    using (var culture = new CultureContext("tr"))
-                    {
-                        switch (ch)
-                        {
-                            // LUCENENET: The .NET char.ToLower() function works correctly in 
-                            // Turkish as long as the current thread is set to tr-TR (well, technically the 
-                            // culture change is only required for the LATIN_CAPITAL_LETTER_I case). .NET does 
-                            // not split these characters into separate letter/non-spacing mark characters,
-                            // but the user might still input them that way so we still need the above
-                            // block to handle that case.
-                            //
-                            // LUCENENET TODO: Oddly, the Character.ToLowerCase() function below does not work right
-                            // for Turkish. Which begs the question, should this special case be there so Turkish works
-                            // everywhere? Or should we leave it a special case here because that is the way it works in Java?
-                            //
-                            // References:
-                            // http://haacked.com/archive/2012/07/05/turkish-i-problem-and-why-you-should-care.aspx/
-                            // http://www.i18nguy.com/unicode/turkish-i18n.html
-                            case LATIN_CAPITAL_LETTER_I:
-                            case LATIN_CAPITAL_LETTER_DOTTED_I:
-                                i += Character.ToChars(char.ToLower((char)ch), buffer, i);
-                                continue;
-                        }
-                    }
-
-                    i += Character.ToChars(Character.ToLower(ch), buffer, i);
+                    // LUCENENET specific - need to pass Turkish culture to get the correct lowercase results
+                    i += Character.ToChars(Character.ToLower(ch, culture), buffer, i);
                 }
 
                 termAtt.Length = length;
@@ -139,8 +115,7 @@ namespace Lucene.Net.Analysis.Tr
             for (int i = pos; i < len;)
             {
                 int ch = Character.CodePointAt(s, i, len);
-                //if (char.getType(ch) != char.NON_SPACING_MARK)
-                if (CharUnicodeInfo.GetUnicodeCategory((char)ch) != UnicodeCategory.NonSpacingMark)
+                if (Character.GetType(ch) != UnicodeCategory.NonSpacingMark)
                 {
                     return false;
                 }
@@ -161,9 +136,7 @@ namespace Lucene.Net.Analysis.Tr
         private int Delete(char[] s, int pos, int len)
         {
             if (pos < len)
-            {
                 Array.Copy(s, pos + 1, s, pos, len - pos - 1);
-            }
 
             return len - 1;
         }

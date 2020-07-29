@@ -8,6 +8,7 @@ using Morfologik.Stemming;
 using Morfologik.Stemming.Polish;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -54,6 +55,8 @@ namespace Lucene.Net.Analysis.Morfologik
         private readonly List<StringBuilder> tagsList = new List<StringBuilder>();
 
         private int lemmaListIndex;
+
+        private static readonly CultureInfo culture = new CultureInfo("pl"); // LUCENENET specific - do lowercasing in Polish culture
 
         /// <summary>
         /// Creates a filter with the default (Polish) dictionary.
@@ -166,7 +169,7 @@ namespace Lucene.Net.Analysis.Morfologik
             for (int i = 0; i < length;)
             {
                 i += Character.ToChars(
-                    Character.ToLower(Character.CodePointAt(chs, i)), buffer, i);
+                    Character.ToLower(Character.CodePointAt(chs, i), culture), buffer, i); // LUCENENET specific - need to use explicit culture to override current thread
             }
 
             return scratch.ToString();

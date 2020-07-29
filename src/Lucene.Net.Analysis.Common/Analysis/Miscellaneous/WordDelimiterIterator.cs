@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using J2N;
+using System.Globalization;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -84,17 +85,17 @@ namespace Lucene.Net.Analysis.Miscellaneous
             for (int i = 0; i < 256; i++)
             {
                 byte code = 0;
-                if (char.IsLower((char)i))
+                if (Character.IsLower(i))
                 {
-                    code |= (byte)WordDelimiterFilter.LOWER;
+                    code |= WordDelimiterFilter.LOWER;
                 }
-                else if (char.IsUpper((char)i))
+                else if (Character.IsUpper(i))
                 {
-                    code |= (byte)WordDelimiterFilter.UPPER;
+                    code |= WordDelimiterFilter.UPPER;
                 }
-                else if (char.IsDigit((char)i))
+                else if (Character.IsDigit(i))
                 {
-                    code |= (byte)WordDelimiterFilter.DIGIT;
+                    code |= WordDelimiterFilter.DIGIT;
                 }
                 if (code == 0)
                 {
@@ -318,7 +319,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> Type of the character </returns>
         public static byte GetType(int ch)
         {
-            switch (CharUnicodeInfo.GetUnicodeCategory((char)ch))
+            switch (Character.GetType(ch))
             {
                 case UnicodeCategory.UppercaseLetter:
                     return WordDelimiterFilter.UPPER;

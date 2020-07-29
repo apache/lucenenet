@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Payloads
@@ -39,7 +40,7 @@ namespace Lucene.Net.Analysis.Payloads
             nptf.Reset();
             while (nptf.IncrementToken())
             {
-                assertTrue(typeAtt.Type + " is not null and it should be", typeAtt.Type.Equals(char.ToUpper(termAtt.Buffer[0]).ToString(), StringComparison.Ordinal));
+                assertTrue(typeAtt.Type + " is not null and it should be", typeAtt.Type.Equals(char.ToUpper(termAtt.Buffer[0]).ToString(), StringComparison.Ordinal)); // LUCENENET specific - intentionally using current culture
                 assertTrue("nextToken.getPayload() is null and it shouldn't be", payloadAtt.Payload != null);
                 string type = payloadAtt.Payload.Utf8ToString();
                 assertTrue(type + " is not equal to " + typeAtt.Type, type.Equals(typeAtt.Type, StringComparison.Ordinal));
@@ -67,7 +68,7 @@ namespace Lucene.Net.Analysis.Payloads
             {
                 if (m_input.IncrementToken())
                 {
-                    typeAtt.Type = char.ToUpper(termAtt.Buffer[0]).ToString();
+                    typeAtt.Type = char.ToUpper(termAtt.Buffer[0]).ToString(); // LUCENENET specific - intentionally using current culture
                     return true;
                 }
                 else

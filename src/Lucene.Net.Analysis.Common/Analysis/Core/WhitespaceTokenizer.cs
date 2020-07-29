@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿using J2N;
+using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
 using System.IO;
 
@@ -65,7 +66,7 @@ namespace Lucene.Net.Analysis.Core
         /// </summary>
         protected override bool IsTokenChar(int c)
         {
-            return !char.IsWhiteSpace((char)c);
+            return !Character.IsWhiteSpace(c);
         }
     }
 }

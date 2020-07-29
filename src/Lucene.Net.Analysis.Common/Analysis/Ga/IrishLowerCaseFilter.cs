@@ -1,5 +1,6 @@
 ﻿using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
+using System.Globalization;
 
 namespace Lucene.Net.Analysis.Ga
 {
@@ -27,6 +28,8 @@ namespace Lucene.Net.Analysis.Ga
     public sealed class IrishLowerCaseFilter : TokenFilter
     {
         private readonly ICharTermAttribute termAtt;
+
+        private static readonly CultureInfo culture = new CultureInfo("ga"); // LUCENENET specific - use Irish culture when lowercasing.
 
         /// <summary>
         /// Create an <see cref="IrishLowerCaseFilter"/> that normalises Irish token text.
@@ -60,7 +63,7 @@ namespace Lucene.Net.Analysis.Ga
 
                 for (int i = idx; i < chLen;)
                 {
-                    i += Character.ToChars(Character.ToLower(chArray[i]), chArray, i);
+                    i += Character.ToChars(Character.ToLower(chArray[i], culture), chArray, i); // LUCENENET specific - use Irish culture when lowercasing
                 }
                 return true;
             }
