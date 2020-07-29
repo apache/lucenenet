@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Th
 
             // find the next set of boundaries, skipping over non-tokens
             int end = wordBreaker.Next();
-            while (end != BreakIterator.Done && !char.IsLetterOrDigit((char)Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
+            while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
             {
                 start = end;
                 end = wordBreaker.Next();

@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 for (int j = 0; j < charArray.Length;)
                 {
                     int cp = Character.CodePointAt(charArray, j, charArray.Length);
-                    if (!char.IsWhiteSpace((char)cp))
+                    if (!Character.IsWhiteSpace(cp))
                     {
                         sb.AppendCodePoint(cp);
                     }

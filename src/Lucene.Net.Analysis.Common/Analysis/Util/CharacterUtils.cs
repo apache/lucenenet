@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.Util
 
 
         /// <summary>
-        /// Converts each unicode codepoint to lowerCase via <see cref="Character.ToLower(int)"/> starting 
+        /// Converts each unicode codepoint to lowerCase via <see cref="TextInfo.ToLower(string)"/> in the invariant culture starting 
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to lowercase </param>
         /// <param name="offset"> the offset to start at </param>
@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Converts each unicode codepoint to UpperCase via <see cref="Character.ToUpper(int)"/> starting 
+        /// Converts each unicode codepoint to UpperCase via <see cref="TextInfo.ToUpper(string)"/> in the invariant culture starting 
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to UPPERCASE </param>
         /// <param name="offset"> the offset to start at </param>

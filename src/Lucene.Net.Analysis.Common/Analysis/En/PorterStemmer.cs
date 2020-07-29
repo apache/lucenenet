@@ -841,9 +841,9 @@ namespace Lucene.Net.Analysis.En
         //                            ch = buffer[offset++];
         //                    }
 
-        //                    if (char.IsLetter((char)ch))
+        //                    if (Character.IsLetter(ch))
         //                    {
-        //                        s.Add(char.ToLowerInvariant((char)ch));
+        //                        s.Add(Character.ToLower(ch, CultureInfo.InvariantCulture));
         //                    }
         //                    else
         //                    {

@@ -110,7 +110,7 @@ namespace Lucene.Net.Support
         public void Test_Dictionary_AddReplace()
         {
             string key = "A";
-            string key2 = "a".ToUpper();
+            string key2 = "a".ToUpperInvariant();
 
             dictionary.Add(key, "value");
             dictionary[key2] = "value2";
