@@ -1,4 +1,5 @@
 ﻿#if FEATURE_BREAKITERATOR
+using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using ICU4N.Text;
 using Lucene.Net.Analysis;
@@ -11,7 +12,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 

@@ -1,3 +1,5 @@
+using J2N;
+using J2N.IO;
 using J2N.Text;
 using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.Lucene46;
@@ -68,11 +70,11 @@ namespace Lucene.Net.Util
                 StringBuilder b = new StringBuilder("Could not remove the following files (in the order of attempts):\n");
                 foreach (var f in unremoved)
                 {
-                    b.append("   ")
-                     .append(f.FullName)
-                     .append("\n");
+                    b.Append("   ")
+                     .Append(f.FullName)
+                     .Append("\n");
                 }
-                throw new IOException(b.toString());
+                throw new IOException(b.ToString());
             }
         }
 
@@ -362,7 +364,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static string RandomSimpleString(Random r)
         {
-            return RandomSimpleString(r, 0, 20);
+            return RandomSimpleString(r, 0, 10);
         }
 
         /// <summary>
@@ -714,7 +716,7 @@ namespace Lucene.Net.Util
                 string toRecase;
 
                 // check if the next char sequence is a surrogate pair
-                if (pos + 1 < str.Length && char.IsSurrogatePair(str[pos], str[pos+1]))
+                if (pos + 1 < str.Length && char.IsSurrogatePair(str[pos], str[pos + 1]))
                 {
                     toRecase = str.Substring(pos, 2);
                 }
@@ -885,7 +887,7 @@ namespace Lucene.Net.Util
 
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
-            private PostingsFormat format;
+            private readonly PostingsFormat format;
 
             public Lucene46CodecAnonymousInnerClassHelper(PostingsFormat format)
             {
@@ -917,7 +919,7 @@ namespace Lucene.Net.Util
 
         private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
         {
-            private DocValuesFormat format;
+            private readonly DocValuesFormat format;
 
             public Lucene46CodecAnonymousInnerClassHelper2(DocValuesFormat format)
             {
@@ -1031,15 +1033,12 @@ namespace Lucene.Net.Util
         {
             IDictionary<string, object> map = new JCG.Dictionary<string, object>();
             att.ReflectWith(new AttributeReflectorAnonymousInnerClassHelper(map));
-            IDictionary<string, object> newReflectedObjects = new JCG.Dictionary<string, object>();
-            foreach (KeyValuePair<string, object> de in reflectedValues)
-                newReflectedObjects.Add(de.Key, (object)de.Value);
-            Assert.AreEqual(newReflectedObjects, map, aggressive: false, "Reflection does not produce same map");
+            Assert.AreEqual(reflectedValues, map, aggressive: false, "Reflection does not produce same map");
         }
 
         private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
         {
-            private IDictionary<string, object> map;
+            private readonly IDictionary<string, object> map;
 
             public AttributeReflectorAnonymousInnerClassHelper(IDictionary<string, object> map)
             {
@@ -1222,8 +1221,8 @@ namespace Lucene.Net.Util
                     CharsRef chars = new CharsRef(@ref.Length);
                     UnicodeUtil.UTF8toUTF16(@ref.Bytes, @ref.Offset, @ref.Length, chars);
                     return chars;
-                //case 3: // LUCENENET: Not ported
-                //    return CharBuffer.Wrap(@ref.Utf8ToString());
+                case 3:
+                    return CharBuffer.Wrap(@ref.Utf8ToString());
                 default:
                     return new StringCharSequence(@ref.Utf8ToString());
             }
@@ -1308,10 +1307,6 @@ namespace Lucene.Net.Util
 
         private class RandomAccessFilterStrategyAnonymousInnerClassHelper : FilteredQuery.RandomAccessFilterStrategy
         {
-            public RandomAccessFilterStrategyAnonymousInnerClassHelper()
-            {
-            }
-
             protected override bool UseRandomAccess(IBits bits, int firstFilterDoc)
             {
                 return LuceneTestCase.Random.NextBoolean();

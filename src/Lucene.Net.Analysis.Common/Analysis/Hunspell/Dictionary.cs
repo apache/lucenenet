@@ -1079,19 +1079,11 @@ namespace Lucene.Net.Analysis.Hunspell
         /// </summary>
         private class DoubleASCIIFlagParsingStrategy : FlagParsingStrategy
         {
-            // LUCENENET specific - optimized empty array creation
-            private static readonly char[] EMPTY_CHARS =
-#if FEATURE_ARRAYEMPTY
-                Array.Empty<char>();
-#else
-                new char[0];
-#endif
-
             internal override char[] ParseFlags(string rawFlags)
             {
                 if (rawFlags.Length == 0)
                 {
-                    return EMPTY_CHARS; // LUCENENET: Optimized char[] creation
+                    return Arrays.Empty<char>(); ; // LUCENENET: Optimized char[] creation
                 }
 
                 StringBuilder builder = new StringBuilder();

@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Search;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
 {
@@ -34,12 +33,19 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public override Search.Query MakeLuceneQueryFieldNoBoost(string fieldName, BasicQueryFactory qf)
         {
             var luceneSubQueries = MakeLuceneSubQueriesField(fieldName, qf);
-            BooleanQuery bq = new BooleanQuery();
-            bq.Add(luceneSubQueries.FirstOrDefault(), Occur.MUST);
+            BooleanQuery bq = new BooleanQuery
+            {
+                { luceneSubQueries.Count > 0 ? luceneSubQueries[0] : null, Occur.MUST }
+            };
+
+            // LUCENENET: SubList() is slow, so we do an array copy operation instead
+            var luceneSubQueriesArray = new Search.Query[luceneSubQueries.Count - 1];
+            for (int i = 1, j = 0; i < luceneSubQueries.Count; i++, j++)
+                luceneSubQueriesArray[j] = luceneSubQueries[i];
+
             SrndBooleanQuery.AddQueriesToBoolean(bq,
-                // FIXME: do not allow weights on prohibited subqueries.
-                    //luceneSubQueries.subList(1, luceneSubQueries.size()),
-                    luceneSubQueries.Skip(1).ToList(),
+                    // FIXME: do not allow weights on prohibited subqueries.
+                    luceneSubQueriesArray,
                 // later subqueries: not required, prohibited
                     Occur.MUST_NOT);
             return bq;

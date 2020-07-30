@@ -40,7 +40,7 @@ namespace Lucene.Net.Configuration
         internal string TestDirectory { get; set; }
 
         /// <summary>
-        /// Initializes a cache containing a <see cref="LuceneDefaultConfigurationSource"/> and a JSON source by default. 
+        /// Initializes a cache containing a <see cref="EnvironmentVariablesConfigurationProvider"/> and a JSON source by default. 
         /// Uses the supplied <see cref="JsonTestSettingsFileName"/>.
         /// </summary>
         /// <returns>An <see cref="IConfiguration"/> instance.</returns>

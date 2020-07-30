@@ -27,19 +27,7 @@ namespace Lucene.Net.Configuration
     /// </summary>
     internal sealed class DefaultConfigurationFactory : IConfigurationFactory
     {
-        private readonly IConfigurationBuilder builder;
         private IConfiguration configuration;
-
-        public DefaultConfigurationFactory()
-        {
-            this.builder = new ConfigurationBuilder()
-                .Add(new LuceneDefaultConfigurationSource()
-                {
-                    Prefix = "lucene:",
-                    // Always ignore security exceptions when they are thrown during static initialization
-                    IgnoreSecurityExceptionsOnRead = true
-                });
-        }
 
         /// <summary>
         /// Returns the default configuration instance, creating it first if necessary.
@@ -47,7 +35,10 @@ namespace Lucene.Net.Configuration
         /// <returns>The default <see cref="IConfiguration"/> instance.</returns>
         public IConfiguration GetConfiguration()
         {
-            return LazyInitializer.EnsureInitialized(ref this.configuration, builder.Build);
+            return LazyInitializer.EnsureInitialized(ref this.configuration,
+                () => new ConfigurationRoot(new IConfigurationProvider[] {
+                    new EnvironmentVariablesConfigurationProvider(prefix: "lucene:", ignoreSecurityExceptionsOnRead: true)
+                }));
         }
     }
 }

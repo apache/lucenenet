@@ -300,16 +300,15 @@ namespace Lucene.Net.Util.Automaton
             int[] points = a.GetStartPoints();
             // subset construction
             IDictionary<ISet<State>, ISet<State>> sets = new Dictionary<ISet<State>, ISet<State>>();
-            LinkedList<ISet<State>> worklist = new LinkedList<ISet<State>>();
+            Queue<ISet<State>> worklist = new Queue<ISet<State>>(); // LUCENENET specific - Queue is much more performant than LinkedList
             IDictionary<ISet<State>, State> newstate = new Dictionary<ISet<State>, State>();
             sets[initialset] = initialset;
-            worklist.AddLast(initialset);
+            worklist.Enqueue(initialset);
             a.initial = new State();
             newstate[initialset] = a.initial;
             while (worklist.Count > 0)
             {
-                ISet<State> s = worklist.First.Value;
-                worklist.Remove(s);
+                ISet<State> s = worklist.Dequeue();
                 State r = newstate[s];
                 foreach (State q in s)
                 {
@@ -335,7 +334,7 @@ namespace Lucene.Net.Util.Automaton
                     if (!sets.ContainsKey(p))
                     {
                         sets[p] = p;
-                        worklist.AddLast(p);
+                        worklist.Enqueue(p);
                         newstate[p] = new State();
                     }
                     State q_ = newstate[p];
@@ -442,7 +441,7 @@ namespace Lucene.Net.Util.Automaton
             leadsToAccept = new JCG.Dictionary<Transition, bool?>(IdentityEqualityComparer<Transition>.Default);
             IDictionary<State, IList<ArrivingTransition>> allArriving = new Dictionary<State, IList<ArrivingTransition>>();
 
-            LinkedList<State> q = new LinkedList<State>();
+            Queue<State> q = new Queue<State>();
             ISet<State> seen = new JCG.HashSet<State>();
 
             // reverse map the transitions, so we can quickly look
@@ -452,9 +451,7 @@ namespace Lucene.Net.Util.Automaton
                 for (int i = 0; i < s.numTransitions; i++)
                 {
                     Transition t = s.TransitionsArray[i];
-                    IList<ArrivingTransition> tl;
-                    allArriving.TryGetValue(t.to, out tl);
-                    if (tl == null)
+                    if (!allArriving.TryGetValue(t.to, out IList<ArrivingTransition> tl) || tl == null)
                     {
                         tl = new List<ArrivingTransition>();
                         allArriving[t.to] = tl;
@@ -463,7 +460,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 if (s.Accept)
                 {
-                    q.AddLast(s);
+                    q.Enqueue(s);
                     seen.Add(s);
                 }
             }
@@ -472,18 +469,15 @@ namespace Lucene.Net.Util.Automaton
             // backwards:
             while (q.Count > 0)
             {
-                State s = q.First.Value;
-                q.Remove(s);
-                IList<ArrivingTransition> arriving;
-                allArriving.TryGetValue(s, out arriving);
-                if (arriving != null)
+                State s = q.Dequeue();
+                if (allArriving.TryGetValue(s, out IList<ArrivingTransition> arriving) && arriving != null)
                 {
                     foreach (ArrivingTransition at in arriving)
                     {
                         State from = at.from;
                         if (!seen.Contains(from))
                         {
-                            q.AddLast(from);
+                            q.Enqueue(from);
                             seen.Add(from);
                             leadsToAccept[at.t] = true;
                         }

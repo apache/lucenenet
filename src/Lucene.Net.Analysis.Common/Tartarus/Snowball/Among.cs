@@ -47,12 +47,7 @@ namespace Lucene.Net.Tartarus.Snowball
     /// </summary>
     public class Among
     {
-        private readonly Type[] EMPTY_PARAMS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<Type>();
-#else
-            new Type[0];
-#endif
+        private readonly Type[] EMPTY_PARAMS = Arrays.Empty<Type>();
 
         public Among(string s, int substring_i, int result,
             string methodname, SnowballProgram methodobject)

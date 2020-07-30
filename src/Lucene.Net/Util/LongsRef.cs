@@ -45,12 +45,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// NOTE: This was EMPTY_LONGS in Lucene
         /// </summary>
-        public static readonly long[] EMPTY_INT64S =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<long>();
-#else
-            new long[0];
-#endif
+        public static readonly long[] EMPTY_INT64S = Arrays.Empty<long>();
 
         /// <summary>
         /// The contents of the <see cref="Int64sRef"/>. Should never be <c>null</c>. 

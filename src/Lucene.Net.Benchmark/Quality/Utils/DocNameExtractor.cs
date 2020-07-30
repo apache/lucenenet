@@ -3,7 +3,6 @@ using Lucene.Net.Search;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Lucene.Net.Benchmarks.Quality.Utils
 {
@@ -52,7 +51,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             IList<string> name = new List<string>();
             searcher.IndexReader.Document(docid, new StoredFieldVisitorAnonymousHelper(this, name));
 
-            return name.FirstOrDefault();
+            return name.Count > 0 ? name[0] : null;
         }
 
         private class StoredFieldVisitorAnonymousHelper : StoredFieldVisitor

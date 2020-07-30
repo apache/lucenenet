@@ -42,20 +42,11 @@ namespace Lucene.Net.Util.Automaton
         {
             /// <summary>
             /// An empty set of labels. </summary>
-            private static readonly int[] NO_LABELS =
-#if FEATURE_ARRAYEMPTY
-                Array.Empty<int>();
-#else
-                new int[0];
-#endif
+            private static readonly int[] NO_LABELS = Arrays.Empty<int>();
+
             /// <summary>
             /// An empty set of states. </summary>
-            private static readonly State[] NO_STATES =
-#if FEATURE_ARRAYEMPTY
-                Array.Empty<State>();
-#else
-                new State[0];
-#endif
+            private static readonly State[] NO_STATES = Arrays.Empty<State>();
 
             /// <summary>
             /// Labels of outgoing transitions. Indexed identically to <see cref="states"/>.

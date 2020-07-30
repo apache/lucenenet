@@ -327,9 +327,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
             //              "01234567890123456789012345678901234567890123456789"
             Assert.AreEqual("0123456789012345678901234567890123456789012345678934567890123456789012345678901234567890123456789", t.ToString());
             t.SetEmpty().Append(/*(ICharSequence)*/ new StringBuilder("01234567890123456789"), 5, 17 - 5); // LUCENENET: StringBuilder doesn't implement ICharSequence
-            Assert.AreEqual(new StringCharSequence("567890123456"), t.ToString());
+            Assert.AreEqual((ICharSequence)new StringCharSequence("567890123456"), t /*.ToString()*/);
             t.Append(new StringBuilder(t.ToString()));
-            Assert.AreEqual(new StringCharSequence("567890123456567890123456"), t.ToString());
+            Assert.AreEqual((ICharSequence)new StringCharSequence("567890123456567890123456"), t /*.ToString()*/);
             // very wierd, to test if a subSlice is wrapped correct :)
             //CharBuffer buf = CharBuffer.wrap("012345678901234567890123456789".ToCharArray(), 3, 15); // LUCENENET: No CharBuffer in .NET
             StringBuilder buf = new StringBuilder("012345678901234567890123456789", 3, 15, 16);

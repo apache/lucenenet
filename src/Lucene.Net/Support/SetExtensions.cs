@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Support
 {
@@ -24,15 +23,6 @@ namespace Lucene.Net.Support
 
     internal static class SetExtensions
     {
-        [DebuggerStepThrough]
-        public static void RemoveAll<T>(this ICollection<T> theSet, IEnumerable<T> removeList)
-        {
-            foreach (var elt in removeList)
-            {
-                theSet.Remove(elt);
-            }
-        }
-
         /// <summary>
         /// Returns a concurrent wrapper for the current <see cref="ISet{T}"/>.
         /// </summary>

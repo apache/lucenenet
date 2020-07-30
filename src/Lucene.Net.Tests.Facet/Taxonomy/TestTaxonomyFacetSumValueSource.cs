@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +9,6 @@ using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +27,6 @@ namespace Lucene.Net.Facet.Taxonomy
      */
 
 
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using ConstantScoreQuery = Lucene.Net.Search.ConstantScoreQuery;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
@@ -59,6 +58,7 @@ namespace Lucene.Net.Facet.Taxonomy
     using TestUtil = Lucene.Net.Util.TestUtil;
     using TopDocs = Lucene.Net.Search.TopDocs;
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
+
     [TestFixture]
     public class TestTaxonomyFacetSumValueSource : FacetTestCase
     {

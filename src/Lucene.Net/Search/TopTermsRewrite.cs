@@ -1,7 +1,7 @@
+using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -77,7 +77,8 @@ namespace Lucene.Net.Search
             CollectTerms(reader, query, new TermCollectorAnonymousInnerClassHelper(this, maxSize, stQueue));
 
             var q = GetTopLevelQuery();
-            ScoreTerm[] scoreTerms = stQueue.ToArray(/*new ScoreTerm[stQueue.size()]*/);
+            ScoreTerm[] scoreTerms = stQueue.ToArray(/*new ScoreTerm[stQueue.Count]*/);
+
             ArrayUtil.TimSort(scoreTerms, scoreTermSortByTermComp);
 
             foreach (ScoreTerm st in scoreTerms)

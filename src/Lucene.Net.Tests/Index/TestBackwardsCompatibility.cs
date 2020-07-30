@@ -1,4 +1,5 @@
 using J2N;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;

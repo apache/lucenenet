@@ -51,7 +51,11 @@ namespace Lucene.Net.Replicator
             assertEquals(session1.Version, session2.Version);
             assertEquals(1, session2.SourceFiles.Count);
             assertEquals(session1.SourceFiles.Count, session2.SourceFiles.Count);
-            assertEquals(session1.SourceFiles.Keys, session2.SourceFiles.Keys);
+
+            // LUCENENET: Collections don't compare automatically in .NET and J2N has no structural equality
+            // checking on Keys, so using CollectionAssert here. This is set
+            // equality (where order doesn't matter) because in Java the keys and values collections are sets.
+            CollectionAssert.AreEquivalent(session1.SourceFiles.Keys, session2.SourceFiles.Keys);
             IList<RevisionFile> files1 = session1.SourceFiles.Values.First();
             IList<RevisionFile> files2 = session2.SourceFiles.Values.First();
             assertEquals(files1, files2, aggressive: false);

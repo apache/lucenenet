@@ -1,4 +1,5 @@
 ﻿using J2N;
+using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -165,11 +166,22 @@ namespace Lucene.Net.Analysis.NGram
             return codePoints;
         }
 
+        internal static int[] toCodePoints(ICharSequence s)
+        {
+            int[] codePoints = new int[Character.CodePointCount(s, 0, s.Length)];
+            for (int i = 0, j = 0; i < s.Length; ++j)
+            {
+                codePoints[j] = Character.CodePointAt(s, i);
+                i += Character.CharCount(codePoints[j]);
+            }
+            return codePoints;
+        }
+
         internal static bool isTokenChar(string nonTokenChars, int codePoint)
         {
             for (int i = 0; i < nonTokenChars.Length;)
             {
-                int cp = char.ConvertToUtf32(nonTokenChars, i);
+                int cp = nonTokenChars.CodePointAt(i);
                 if (cp == codePoint)
                 {
                     return false;
@@ -211,8 +223,7 @@ namespace Lucene.Net.Analysis.NGram
                         }
                     }
                     assertTrue(grams.IncrementToken());
-
-                    assertArrayEquals(Arrays.CopyOfRange(codePoints, start, end), toCodePoints(termAtt.ToString()));
+                    assertArrayEquals(Arrays.CopyOfRange(codePoints, start, end), toCodePoints(termAtt));
                     assertEquals(1, posIncAtt.PositionIncrement);
                     assertEquals(1, posLenAtt.PositionLength);
                     assertEquals(offsets[start], offsetAtt.StartOffset);
@@ -229,7 +240,7 @@ namespace Lucene.Net.Analysis.NGram
 
         private class NGramTokenizerAnonymousInnerClassHelper : NGramTokenizer
         {
-            private string nonTokenChars;
+            private readonly string nonTokenChars;
 
             public NGramTokenizerAnonymousInnerClassHelper(LuceneVersion TEST_VERSION_CURRENT, StringReader java, int minGram, int maxGram, bool edgesOnly, string nonTokenChars)
                   : base(TEST_VERSION_CURRENT, java, minGram, maxGram, edgesOnly)
@@ -239,7 +250,7 @@ namespace Lucene.Net.Analysis.NGram
 
             protected override bool IsTokenChar(int chr)
             {
-                return nonTokenChars.IndexOf((char)chr) < 0;
+                return nonTokenChars.IndexOf(chr) < 0;
             }
         }
 

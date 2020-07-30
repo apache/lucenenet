@@ -169,5 +169,29 @@ namespace Lucene.Net.Support
             sb.Append(']');
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Returns an empty array.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of the array.</typeparam>
+        /// <returns>An empty array.</returns>
+        // LUCENENET: Since Array.Empty<T>() doesn't exist in all supported platforms, we
+        // have this wrapper method to add support.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T[] Empty<T>()
+        {
+#if FEATURE_ARRAYEMPTY
+            return Array.Empty<T>();
+#else
+            return EmptyArrayHolder<T>.EMPTY;
+#endif
+        }
+
+        private static class EmptyArrayHolder<T>
+        {
+#pragma warning disable CA1825 // Avoid zero-length array allocations.
+            public static readonly T[] EMPTY = new T[0];
+#pragma warning restore CA1825 // Avoid zero-length array allocations.
+        }
     }
 }

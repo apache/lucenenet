@@ -1,9 +1,9 @@
+using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 

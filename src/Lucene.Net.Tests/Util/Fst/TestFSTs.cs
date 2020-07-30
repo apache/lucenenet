@@ -268,18 +268,9 @@ namespace Lucene.Net.Util.Fst
 
 
         [Test]
-        [Slow]
         public virtual void TestRandomWords()
         {
-            // LUCENENET specific: NUnit will crash with an OOM if we do the full test
-            // with verbosity enabled. So, making this a manual setting that can be
-            // turned on if, and only if, needed for debugging. If the setting is turned
-            // on, we are decresing the number of iterations by 9/10, which seems to
-            // keep it from crashing.
-            bool isVerbose = false; // Enable manually
-            int maxNumWords = isVerbose ? 500 : 1000;
-          
-            TestRandomWords(maxNumWords, AtLeast(2), isVerbose);
+            TestRandomWords(1000, AtLeast(2));
             //testRandomWords(100, 1);
         }
 
@@ -295,12 +286,12 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private void TestRandomWords(int maxNumWords, int numIter, bool VERBOSE)
+        private void TestRandomWords(int maxNumWords, int numIter)
         {
             Random random = new Random(Random.Next());
             for (int iter = 0; iter < numIter; iter++)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
                     Console.WriteLine("\nTEST: iter " + iter);
                 }
@@ -323,7 +314,7 @@ namespace Lucene.Net.Util.Fst
         [Nightly]
         public virtual void TestBigSet()
         {
-            TestRandomWords(TestUtil.NextInt32(Random, 50000, 60000), 1, false);
+            TestRandomWords(TestUtil.NextInt32(Random, 50000, 60000), 1);
         }
 
         // Build FST for all unique terms in the test line docs
@@ -501,7 +492,7 @@ namespace Lucene.Net.Util.Fst
             dir.Dispose();
         }
 
-        private void AssertSame<T1>(TermsEnum termsEnum, BytesRefFSTEnum<T1> fstEnum, bool storeOrd)
+        private void AssertSame(TermsEnum termsEnum, BytesRefFSTEnum<long?> fstEnum, bool storeOrd) // LUCENENET specific - changed to long? so we don't need a cast
         {
             if (termsEnum.Term == null)
             {

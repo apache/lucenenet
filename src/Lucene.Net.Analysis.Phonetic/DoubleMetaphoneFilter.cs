@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Phonetic
     {
         //private static readonly string TOKEN_TYPE = "DoubleMetaphone"; // LUCENENET: Not used
 
-        private readonly LinkedList<State> remainingTokens = new LinkedList<State>();
+        private readonly Queue<State> remainingTokens = new Queue<State>();
         private readonly DoubleMetaphone encoder = new DoubleMetaphone();
         private readonly bool inject;
         private readonly ICharTermAttribute termAtt;
@@ -57,9 +57,8 @@ namespace Lucene.Net.Analysis.Phonetic
                 if (!(remainingTokens.Count == 0))
                 {
                     // clearAttributes();  // not currently necessary
-                    var first = remainingTokens.First;
-                    remainingTokens.Remove(first);
-                    RestoreState(first.Value);
+                    var first = remainingTokens.Dequeue();
+                    RestoreState(first);
                     return true;
                 }
 
@@ -82,7 +81,7 @@ namespace Lucene.Net.Analysis.Phonetic
                 {
                     if (saveState)
                     {
-                        remainingTokens.AddLast(CaptureState());
+                        remainingTokens.Enqueue(CaptureState());
                     }
                     posAtt.PositionIncrement = firstAlternativeIncrement;
                     firstAlternativeIncrement = 0;
@@ -96,7 +95,7 @@ namespace Lucene.Net.Analysis.Phonetic
                 {
                     if (saveState)
                     {
-                        remainingTokens.AddLast(CaptureState());
+                        remainingTokens.Enqueue(CaptureState());
                         saveState = false;
                     }
                     posAtt.PositionIncrement = firstAlternativeIncrement;
@@ -113,7 +112,7 @@ namespace Lucene.Net.Analysis.Phonetic
 
                 if (saveState)
                 {
-                    remainingTokens.AddLast(CaptureState());
+                    remainingTokens.Enqueue(CaptureState());
                 }
             }
         }

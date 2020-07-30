@@ -31,6 +31,8 @@ namespace Lucene.Net.TestFramework
     /// </summary>
     internal partial class Assert
     {
+        private const string FailureFormat = "Expected: {0}, Actual: {1}";
+
         //
         // Summary:
         //     We don't actually want any instances of this object, but some people like to
@@ -52,9 +54,10 @@ namespace Lucene.Net.TestFramework
         //
         //   actual:
         //     The actual value
-        public static void AreEqual(object expected, object actual)
+        public static void AreEqual<T>(T expected, T actual)
         {
-            _NUnit.Assert.AreEqual(expected, actual);
+            if (!JCG.EqualityComparer<T>.Default.Equals(expected, actual))
+                Fail(FailureFormat, expected, actual);
         }
         //
         // Summary:
@@ -75,10 +78,53 @@ namespace Lucene.Net.TestFramework
         //
         //   args:
         //     Array of objects to be used in formatting the message
-        public static void AreEqual(object expected, object actual, string message, params object[] args)
+        public static void AreEqual<T>(T expected, T actual, string message, params object[] args)
         {
-            _NUnit.Assert.AreEqual(expected, actual, message, args);
+            if (!JCG.EqualityComparer<T>.Default.Equals(expected, actual))
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(string expected, string actual)
+        {
+            if (!StringComparer.Ordinal.Equals(expected, actual))
+                Fail(FailureFormat, expected, actual);
+        }
+
+        //
+        // Summary:
+        //     Verifies that two objects are equal. Two objects are considered equal if both
+        //     are null, or if both have the same value. NUnit has special semantics for some
+        //     object types. If they are not equal an NUnit.Framework.AssertionException is
+        //     thrown.
+        //
+        // Parameters:
+        //   expected:
+        //     The value that is expected
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   actual:
+        //     The actual value
+        public static void AreEqual(string expected, string actual, string message, params object[] args)
+        {
+            if (!StringComparer.Ordinal.Equals(expected, actual))
+                Fail(FormatErrorMessage(expected, actual, message, args));
+        }
+
         //
         // Summary:
         //     Verifies that two objects are equal. Two objects are considered equal if both
@@ -94,7 +140,8 @@ namespace Lucene.Net.TestFramework
         //     The actual value
         public static void AreEqual(bool expected, bool actual)
         {
-            _NUnit.Assert.IsTrue(expected.Equals(actual));
+            if (!expected.Equals(actual))
+                Fail(FailureFormat, expected, actual);
         }
         //
         // Summary:
@@ -117,8 +164,10 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void AreEqual(bool expected, bool actual, string message, params object[] args)
         {
-            _NUnit.Assert.IsTrue(expected.Equals(actual), message, args);
+            if (!expected.Equals(actual))
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
+
         //
         // Summary:
         //     Verifies that two doubles are equal considering a delta. If the expected value
@@ -142,7 +191,8 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void AreEqual(double expected, double actual, double delta, string message, params object[] args)
         {
-            _NUnit.Assert.AreEqual(expected, actual, delta, message, args);
+            if (Math.Abs(expected - actual) > delta)
+                _NUnit.Assert.AreEqual(expected, actual, delta, message, args);
         }
         //
         // Summary:
@@ -161,7 +211,8 @@ namespace Lucene.Net.TestFramework
         //     The maximum acceptable difference between the the expected and the actual
         public static void AreEqual(double expected, double actual, double delta)
         {
-            _NUnit.Assert.AreEqual(expected, actual, delta);
+            if (Math.Abs(expected - actual) > delta)
+                _NUnit.Assert.AreEqual(expected, actual, delta);
         }
         //
         // Summary:
@@ -187,9 +238,7 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual(float expected, float actual, float delta, string message, params object[] args)
         {
             if (Math.Abs(expected - actual) > delta)
-            {
                 _NUnit.Assert.AreEqual(expected, actual, delta, message, args);
-            }
         }
         //
         // Summary:
@@ -209,9 +258,7 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual(float expected, float actual, float delta)
         {
             if (Math.Abs(expected - actual) > delta)
-            {
                 _NUnit.Assert.AreEqual(expected, actual, delta);
-            }
         }
         //
         // Summary:
@@ -228,7 +275,8 @@ namespace Lucene.Net.TestFramework
         //     The actual value
         public static void AreEqual(int expected, int actual)
         {
-            _NUnit.Assert.True(expected.Equals(actual));
+            if (!expected.Equals(actual))
+                Fail(FailureFormat, expected, actual);
         }
 
         //
@@ -247,9 +295,10 @@ namespace Lucene.Net.TestFramework
         //
         //   actual:
         //     The actual value
-        public static void AreEqual(int expected, int actual, string message)
+        public static void AreEqual(int expected, int actual, string message, params object[] args)
         {
-            _NUnit.Assert.True(expected.Equals(actual), message);
+            if (!expected.Equals(actual))
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
 
         //
@@ -267,7 +316,8 @@ namespace Lucene.Net.TestFramework
         //     The actual value
         public static void AreEqual(long expected, long actual)
         {
-            _NUnit.Assert.True(expected.Equals(actual));
+            if (!expected.Equals(actual))
+                Fail(FailureFormat, expected, actual);
         }
 
         //
@@ -286,9 +336,10 @@ namespace Lucene.Net.TestFramework
         //
         //   actual:
         //     The actual value
-        public static void AreEqual(long expected, long actual, string message)
+        public static void AreEqual(long expected, long actual, string message, params object[] args)
         {
-            _NUnit.Assert.True(expected.Equals(actual), message);
+            if (!expected.Equals(actual))
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
 
         //
@@ -306,7 +357,8 @@ namespace Lucene.Net.TestFramework
         //     The actual value
         public static void AreEqual(byte expected, byte actual)
         {
-            _NUnit.Assert.True(expected.Equals(actual));
+            if (!expected.Equals(actual))
+                Fail(FailureFormat, expected, actual);
         }
 
         //
@@ -325,9 +377,10 @@ namespace Lucene.Net.TestFramework
         //
         //   actual:
         //     The actual value
-        public static void AreEqual(byte expected, byte actual, string message)
+        public static void AreEqual(byte expected, byte actual, string message, params object[] args)
         {
-            _NUnit.Assert.True(expected.Equals(actual), message);
+            if (!expected.Equals(actual))
+                Fail(FormatErrorMessage(expected, actual, message, args));
         }
 
 
@@ -352,6 +405,13 @@ namespace Lucene.Net.TestFramework
                 : JCG.DictionaryEqualityComparer<TKey, TValue>.Default;
         }
 
+        private static string FormatErrorMessage(object expected, object actual, string message, params object[] args)
+        {
+            string failureHeader = string.Format(FailureFormat, expected, actual);
+            string msg = args == null || args.Length == 0 ? message : string.Format(message, args);
+            return string.Concat(failureHeader, Environment.NewLine, Environment.NewLine, msg);
+        }
+
         public static string FormatCollection(object collection)
         {
             return string.Format(StringFormatter.CurrentCulture, "{0}", collection);
@@ -360,74 +420,56 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual<T>(ISet<T> expected, ISet<T> actual, bool aggressive = true)
         {
             if (!GetSetComparer<T>(aggressive).Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail("Expected: '{0}', Actual: '{1}'", FormatCollection(expected), FormatCollection(actual));
-            }
+                Fail(FailureFormat, FormatCollection(expected), FormatCollection(actual));
         }
 
         public static void AreEqual<T>(ISet<T> expected, ISet<T> actual, bool aggressive, string message, params object[] args)
         {
+            //Fail(FormatErrorMessage(expected, actual, message, args));
             if (!GetSetComparer<T>(aggressive).Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail(message, args);
-            }
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), message, args));
         }
 
         public static void AreEqual<T>(ISet<T> expected, ISet<T> actual, bool aggressive, Func<string> getMessage)
         {
             if (!GetSetComparer<T>(aggressive).Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail(getMessage());
-            }
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), getMessage()));
         }
 
         public static void AreEqual<T>(IList<T> expected, IList<T> actual, bool aggressive = true)
         {
             if (!GetListComparer<T>(aggressive).Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail("Expected: '{0}', Actual: '{1}'", FormatCollection(expected), FormatCollection(actual));
-            }
-
+                Fail(string.Format(FailureFormat, FormatCollection(expected), FormatCollection(actual)));
         }
 
         public static void AreEqual<T>(IList<T> expected, IList<T> actual, bool aggressive, string message, params object[] args)
         {
             if (!GetListComparer<T>(aggressive).Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail(message, args);
-            }
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), message, args));
         }
 
         public static void AreEqual<T>(IList<T> expected, IList<T> actual, bool aggressive, Func<string> getMessage)
         {
             if (!GetListComparer<T>(aggressive).Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail(getMessage());
-            }
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), getMessage()));
         }
 
         public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive = true)
         {
             if (!GetDictionaryComparer<TKey, TValue>(aggressive).Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail("Expected: '{0}', Actual: '{1}'", FormatCollection(expected), FormatCollection(actual));
-            }
+                Fail(FailureFormat, FormatCollection(expected), FormatCollection(actual));
         } 
 
         public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive, string message, params object[] args)
         {
             if (!GetDictionaryComparer<TKey, TValue>(aggressive).Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail(message, args);
-            }
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), message, args));
         }
 
         public static void AreEqual<TKey, TValue>(IDictionary<TKey, TValue> expected, IDictionary<TKey, TValue> actual, bool aggressive, Func<string> getMessage)
         {
             if (!GetDictionaryComparer<TKey, TValue>(aggressive).Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail(getMessage());
-            }
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), getMessage()));
         }
 
 
@@ -435,18 +477,21 @@ namespace Lucene.Net.TestFramework
         public static void AreEqual<T>(T[] expected, T[] actual)
         {
             if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail("Expected: '{0}', Actual: '{1}'", FormatCollection(expected), FormatCollection(actual));
-            }
+                Fail(FailureFormat, FormatCollection(expected), FormatCollection(actual));
         }
 
         // From CollectionAssert
         public static void AreEqual<T>(T[] expected, T[] actual, string message, params object[] args)
         {
             if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
-            {
-                _NUnit.Assert.Fail(message, args);
-            }
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), message, args));
+        }
+
+        // From CollectionAssert
+        public static void AreEqual<T>(T[] expected, T[] actual, Func<string> getMessage)
+        {
+            if (!J2N.Collections.ArrayEqualityComparer<T>.OneDimensional.Equals(expected, actual))
+                Fail(FormatErrorMessage(FormatCollection(expected), FormatCollection(actual), getMessage()));
         }
 
         //
@@ -603,7 +648,8 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void False(bool condition, string message, params object[] args)
         {
-            _NUnit.Assert.False(condition, message, args);
+            if (condition)
+                _NUnit.Assert.Fail(message, args);
         }
         //
         // Summary:
@@ -615,7 +661,8 @@ namespace Lucene.Net.TestFramework
         //     The evaluated condition
         public static void False(bool condition)
         {
-            _NUnit.Assert.False(condition);
+            if (condition)
+                _NUnit.Assert.Fail("Expected: False  Actual: True");
         }
 
         //
@@ -628,7 +675,8 @@ namespace Lucene.Net.TestFramework
         //     The evaluated condition
         public static void IsFalse(bool condition)
         {
-            _NUnit.Assert.IsFalse(condition);
+            if (condition)
+                _NUnit.Assert.Fail("Expected: False  Actual: True");
         }
 
         //
@@ -647,7 +695,8 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void IsFalse(bool condition, string message, params object[] args)
         {
-            _NUnit.Assert.IsFalse(condition, message, args);
+            if (condition)
+                _NUnit.Assert.Fail(message, args);
         }
 
         //
@@ -727,7 +776,8 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void IsTrue(bool condition, string message, params object[] args)
         {
-            _NUnit.Assert.IsTrue(condition, message, args);
+            if (!condition)
+                _NUnit.Assert.Fail(message, args);
         }
 
         //
@@ -740,7 +790,8 @@ namespace Lucene.Net.TestFramework
         //     The evaluated condition
         public static void IsTrue(bool condition)
         {
-            _NUnit.Assert.IsTrue(condition);
+            if (!condition)
+                _NUnit.Assert.Fail("Expected: True  Actual: False");
         }
 
         //
@@ -753,7 +804,8 @@ namespace Lucene.Net.TestFramework
         //     The object that is to be tested
         public static void NotNull(object anObject)
         {
-            _NUnit.Assert.NotNull(anObject);
+            if (!(anObject is null))
+                _NUnit.Assert.NotNull(anObject);
         }
         //
         // Summary:
@@ -771,7 +823,8 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void NotNull(object anObject, string message, params object[] args)
         {
-            _NUnit.Assert.NotNull(anObject, message, args);
+            if (anObject is null)
+                _NUnit.Assert.NotNull(anObject, message, args);
         }
 
         //
@@ -790,7 +843,8 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void Null(object anObject, string message, params object[] args)
         {
-            _NUnit.Assert.Null(anObject, message, args);
+            if (!(anObject is null))
+                _NUnit.Assert.Null(anObject, message, args);
         }
         //
         // Summary:
@@ -802,7 +856,8 @@ namespace Lucene.Net.TestFramework
         //     The object that is to be tested
         public static void Null(object anObject)
         {
-            _NUnit.Assert.Null(anObject);
+            if (!(anObject is null))
+                _NUnit.Assert.Null(anObject);
         }
 
         //
@@ -821,7 +876,8 @@ namespace Lucene.Net.TestFramework
         //     Array of objects to be used in formatting the message
         public static void True(bool condition, string message, params object[] args)
         {
-            _NUnit.Assert.True(condition, message, args);
+            if (!condition)
+                _NUnit.Assert.Fail(message, args);
         }
 
         //
@@ -834,21 +890,91 @@ namespace Lucene.Net.TestFramework
         //     The evaluated condition
         public static void True(bool condition)
         {
-            _NUnit.Assert.True(condition);
+            if (!condition)
+                _NUnit.Assert.Fail("Expected: True  Actual: False");
         }
 
 
+        //
+        // Summary:
+        //     Verifies that the object that is passed in is not equal to null If the object
+        //     is null then an NUnit.Framework.AssertionException is thrown.
+        //
+        // Parameters:
+        //   anObject:
+        //     The object that is to be tested
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   args:
+        //     Array of objects to be used in formatting the message
+        public static void IsNotEmpty(string aString, string message, params object[] args)
+        {
+            if (string.Empty.Equals(aString))
+                _NUnit.Assert.IsNotEmpty(aString, message, args);
+        }
+        //
+        // Summary:
+        //     Verifies that the object that is passed in is not equal to null If the object
+        //     is null then an NUnit.Framework.AssertionException is thrown.
+        //
+        // Parameters:
+        //   anObject:
+        //     The object that is to be tested
+        public static void IsNotEmpty(string aString)
+        {
+            if (string.Empty.Equals(aString))
+                _NUnit.Assert.IsNotEmpty(aString);
+        }
+
+
+        //
+        // Summary:
+        //     Verifies that the object that is passed in is not equal to null If the object
+        //     is null then an NUnit.Framework.AssertionException is thrown.
+        //
+        // Parameters:
+        //   anObject:
+        //     The object that is to be tested
+        //
+        //   message:
+        //     The message to display in case of failure
+        //
+        //   args:
+        //     Array of objects to be used in formatting the message
+        public static void IsEmpty(string aString, string message, params object[] args)
+        {
+            if (!string.Empty.Equals(aString))
+                _NUnit.Assert.IsEmpty(aString, message, args);
+        }
+        //
+        // Summary:
+        //     Verifies that the object that is passed in is not equal to null If the object
+        //     is null then an NUnit.Framework.AssertionException is thrown.
+        //
+        // Parameters:
+        //   anObject:
+        //     The object that is to be tested
+        public static void IsEmpty(string aString)
+        {
+            if (!string.Empty.Equals(aString))
+                _NUnit.Assert.IsEmpty(aString);
+        }
+
         public static void LessOrEqual(int arg1, int arg2)
         {
-            _NUnit.Assert.LessOrEqual(arg1, arg2);
+            if (arg1 > arg2)
+                _NUnit.Assert.LessOrEqual(arg1, arg2);
         }
 
         public static void Greater(int arg1, int arg2)
         {
-            _NUnit.Assert.Greater(arg1, arg2);
+            if (arg1 <= arg2)
+                _NUnit.Assert.Greater(arg1, arg2);
         }
 
-        public static Exception Throws<TException>(Action action, string message, params string[] args)
+        public static Exception Throws<TException>(Action action, string message, params object[] args)
         {
             return Throws(typeof(TException), action, message, args);
         }
@@ -863,7 +989,7 @@ namespace Lucene.Net.TestFramework
             return _NUnit.Assert.Throws(expectedExceptionType, () => action());
         }
 
-        public static Exception Throws(Type expectedExceptionType, Action action, string message, params string[] args)
+        public static Exception Throws(Type expectedExceptionType, Action action, string message, params object[] args)
         {
             return _NUnit.Assert.Throws(expectedExceptionType, () => action(), message, args);
         }

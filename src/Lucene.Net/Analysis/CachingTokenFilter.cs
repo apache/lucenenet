@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis
     /// </summary>
     public sealed class CachingTokenFilter : TokenFilter
     {
-        private LinkedList<AttributeSource.State> cache = null;
+        private IList<AttributeSource.State> cache = null;
         private IEnumerator<AttributeSource.State> iterator = null;
         private AttributeSource.State finalState;
 
@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis
             if (cache == null)
             {
                 // fill cache lazily
-                cache = new LinkedList<AttributeSource.State>();
+                cache = new List<AttributeSource.State>();
                 FillCache();
                 iterator = cache.GetEnumerator();
             }
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis
         {
             while (m_input.IncrementToken())
             {
-                cache.AddLast(CaptureState());
+                cache.Add(CaptureState());
             }
             // capture final state
             m_input.End();

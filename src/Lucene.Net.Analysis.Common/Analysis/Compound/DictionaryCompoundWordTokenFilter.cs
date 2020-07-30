@@ -120,13 +120,13 @@ namespace Lucene.Net.Analysis.Compound
                         }
                         else
                         {
-                            m_tokens.AddLast(new CompoundToken(this, i, j));
+                            m_tokens.Enqueue(new CompoundToken(this, i, j));
                         }
                     }
                 }
                 if (this.m_onlyLongestMatch && longestMatchToken != null)
                 {
-                    m_tokens.AddLast(longestMatchToken);
+                    m_tokens.Enqueue(longestMatchToken);
                 }
             }
         }

@@ -1,8 +1,8 @@
 ﻿using J2N;
+using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.En;
-using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;

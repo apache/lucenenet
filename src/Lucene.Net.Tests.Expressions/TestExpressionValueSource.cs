@@ -9,6 +9,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Expressions
 {
@@ -95,7 +96,7 @@ namespace Lucene.Net.Expressions
             Assert.AreEqual(10, values.Int64Val(0));
             Assert.AreEqual(10, values.Int32Val(0));
             Assert.AreEqual(10, values.Int16Val(0));
-            Assert.AreEqual(10, values.ByteVal(0));
+            Assert.AreEqual((byte)10, values.ByteVal(0));
             Assert.AreEqual("10", values.StrVal(0));
             Assert.AreEqual(System.Convert.ToDouble(10), values.ObjectVal(0));
             Assert.AreEqual(40, values.DoubleVal(1), 0);
@@ -103,7 +104,7 @@ namespace Lucene.Net.Expressions
             Assert.AreEqual(40, values.Int64Val(1));
             Assert.AreEqual(40, values.Int32Val(1));
             Assert.AreEqual(40, values.Int16Val(1));
-            Assert.AreEqual(40, values.ByteVal(1));
+            Assert.AreEqual((byte)40, values.ByteVal(1));
             Assert.AreEqual("40", values.StrVal(1));
             Assert.AreEqual(System.Convert.ToDouble(40), values.ObjectVal(1));
             Assert.AreEqual(4, values.DoubleVal(2), 0);
@@ -111,7 +112,7 @@ namespace Lucene.Net.Expressions
             Assert.AreEqual(4, values.Int64Val(2));
             Assert.AreEqual(4, values.Int32Val(2));
             Assert.AreEqual(4, values.Int16Val(2));
-            Assert.AreEqual(4, values.ByteVal(2));
+            Assert.AreEqual((byte)4, values.ByteVal(2));
             Assert.AreEqual("4", values.StrVal(2));
             Assert.AreEqual(System.Convert.ToDouble(4), values.ObjectVal(2));
         }

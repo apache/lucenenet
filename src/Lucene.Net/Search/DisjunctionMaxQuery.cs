@@ -1,8 +1,8 @@
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -66,7 +66,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Multiple of the non-max disjunct scores added into our final score.  Non-zero values support tie-breaking.
         /// </summary>
-        private float tieBreakerMultiplier = 0.0f;
+        private readonly float tieBreakerMultiplier = 0.0f;
 
         /// <summary>
         /// Creates a new empty <see cref="DisjunctionMaxQuery"/>.  Use <see cref="Add(Query)"/> to add the subqueries. </summary>

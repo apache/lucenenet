@@ -68,12 +68,22 @@ namespace Lucene.Net.Util
             Assert.IsFalse(condition, message);
         }
 
-        internal static void assertEquals(object expected, object actual)
+        internal static void assertEquals<T>(T expected, T actual)
         {
             Assert.AreEqual(expected, actual);
         }
 
-        internal static void assertEquals(string message, object expected, object actual)
+        internal static void assertEquals<T>(string message, T expected, T actual)
+        {
+            Assert.AreEqual(expected, actual, message);
+        }
+
+        internal static void assertEquals(string expected, string actual)
+        {
+            Assert.AreEqual(expected, actual);
+        }
+
+        internal static void assertEquals(string message, string expected, string actual)
         {
             Assert.AreEqual(expected, actual, message);
         }
@@ -213,12 +223,22 @@ namespace Lucene.Net.Util
             Assert.AreEqual(a1, a2);
         }
 
-        internal static void assertSame(Object expected, Object actual)
+        internal static void assertArrayEquals<T>(string message, T[] a1, T[] a2)
+        {
+            Assert.AreEqual(a1, a2, message);
+        }
+
+        internal static void assertArrayEquals<T>(Func<string> getMessage, T[] a1, T[] a2)
+        {
+            Assert.AreEqual(a1, a2, getMessage());
+        }
+
+        internal static void assertSame(object expected, object actual)
         {
             Assert.AreSame(expected, actual);
         }
 
-        internal static void assertSame(string message, Object expected, Object actual)
+        internal static void assertSame(string message, object expected, object actual)
         {
             Assert.AreSame(expected, actual, message);
         }

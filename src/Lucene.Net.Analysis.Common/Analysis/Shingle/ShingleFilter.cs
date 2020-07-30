@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -69,7 +70,7 @@ namespace Lucene.Net.Analysis.Shingle
         /// The sequence of input stream tokens (or filler tokens, if necessary)
         /// that will be composed to form output shingles.
         /// </summary>
-        private LinkedList<InputWindowToken> inputWindow = new LinkedList<InputWindowToken>();
+        private readonly Queue<InputWindowToken> inputWindow = new Queue<InputWindowToken>();
 
         /// <summary>
         /// The number of input tokens in the next output token.  This is the "n" in
@@ -80,7 +81,7 @@ namespace Lucene.Net.Analysis.Shingle
         /// <summary>
         /// Shingle and unigram text is composed here.
         /// </summary>
-        private StringBuilder gramBuilder = new StringBuilder();
+        private readonly StringBuilder gramBuilder = new StringBuilder();
 
         /// <summary>
         /// The token type attribute value to use - default is "shingle"
@@ -296,7 +297,7 @@ namespace Lucene.Net.Analysis.Shingle
         /// <param name="tokenSeparator"> used to separate input stream tokens in output shingles </param>
         public void SetTokenSeparator(string tokenSeparator)
         {
-            this.tokenSeparator = null == tokenSeparator ? "" : tokenSeparator;
+            this.tokenSeparator = tokenSeparator ?? string.Empty;
         }
 
         /// <summary>
@@ -306,16 +307,8 @@ namespace Lucene.Net.Analysis.Shingle
         /// <param name="fillerToken"> string to insert at each position where there is no token </param>
         public void SetFillerToken(string fillerToken)
         {
-            this.fillerToken = null == fillerToken ? EMPTY_CHARS : fillerToken.ToCharArray();
+            this.fillerToken = null == fillerToken ? Arrays.Empty<char>() : fillerToken.ToCharArray();
         }
-
-        // LUCENENET specific - optimized empty array creation
-        private static readonly char[] EMPTY_CHARS =
-#if FEATURE_ARRAYEMPTY
-                Array.Empty<char>();
-#else
-                new char[0];
-#endif
 
         public override bool IncrementToken()
         {
@@ -363,7 +356,7 @@ namespace Lucene.Net.Analysis.Shingle
                 }
                 if (!isAllFiller && builtGramSize == gramSize.Value)
                 {
-                    inputWindow.First.Value.attSource.CopyTo(this);
+                    inputWindow.Peek().attSource.CopyTo(this);
                     posIncrAtt.PositionIncrement = isOutputHere ? 0 : 1;
                     termAtt.SetEmpty().Append(gramBuilder);
                     if (gramSize.Value > 1)
@@ -401,7 +394,7 @@ namespace Lucene.Net.Analysis.Shingle
             {
                 if (null == target)
                 {
-                    newTarget = new InputWindowToken(this, nextInputStreamToken.CloneAttributes());
+                    newTarget = new InputWindowToken(nextInputStreamToken.CloneAttributes());
                 }
                 else
                 {
@@ -417,7 +410,7 @@ namespace Lucene.Net.Analysis.Shingle
             {
                 if (null == target)
                 {
-                    newTarget = new InputWindowToken(this, nextInputStreamToken.CloneAttributes());
+                    newTarget = new InputWindowToken(nextInputStreamToken.CloneAttributes());
                 }
                 else
                 {
@@ -432,7 +425,7 @@ namespace Lucene.Net.Analysis.Shingle
                 {
                     if (null == target)
                     {
-                        newTarget = new InputWindowToken(this, CloneAttributes());
+                        newTarget = new InputWindowToken(CloneAttributes());
                     }
                     else
                     {
@@ -518,8 +511,7 @@ namespace Lucene.Net.Analysis.Shingle
             InputWindowToken firstToken = null;
             if (inputWindow.Count > 0)
             {
-                firstToken = inputWindow.First.Value;
-                inputWindow.Remove(firstToken);
+                firstToken = inputWindow.Dequeue();
             }
             while (inputWindow.Count < maxShingleSize)
             {
@@ -527,7 +519,7 @@ namespace Lucene.Net.Analysis.Shingle
                 {
                     if (null != GetNextToken(firstToken))
                     {
-                        inputWindow.AddLast(firstToken); // the firstToken becomes the last
+                        inputWindow.Enqueue(firstToken); // the firstToken becomes the last
                         firstToken = null;
                     }
                     else
@@ -540,7 +532,7 @@ namespace Lucene.Net.Analysis.Shingle
                     InputWindowToken nextToken = GetNextToken(null);
                     if (null != nextToken)
                     {
-                        inputWindow.AddLast(nextToken);
+                        inputWindow.Enqueue(nextToken);
                     }
                     else
                     {
@@ -678,16 +670,13 @@ namespace Lucene.Net.Analysis.Shingle
 
         private class InputWindowToken
         {
-            private readonly ShingleFilter outerInstance;
-
             internal readonly AttributeSource attSource;
             internal readonly ICharTermAttribute termAtt;
             internal readonly IOffsetAttribute offsetAtt;
             internal bool isFiller = false;
 
-            public InputWindowToken(ShingleFilter outerInstance, AttributeSource attSource)
+            public InputWindowToken(AttributeSource attSource)
             {
-                this.outerInstance = outerInstance;
                 this.attSource = attSource;
                 this.termAtt = attSource.GetAttribute<ICharTermAttribute>();
                 this.offsetAtt = attSource.GetAttribute<IOffsetAttribute>();

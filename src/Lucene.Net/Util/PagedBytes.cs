@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -51,12 +52,7 @@ namespace Lucene.Net.Util
         private byte[] currentBlock;
         private readonly long bytesUsedPerBlock;
 
-        private static readonly byte[] EMPTY_BYTES =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<byte>();
-#else
-            new byte[0];
-#endif
+        private static readonly byte[] EMPTY_BYTES = Arrays.Empty<byte>();
 
         /// <summary>
         /// Provides methods to read <see cref="BytesRef"/>s from a frozen

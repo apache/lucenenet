@@ -7,6 +7,12 @@
 
 # Exclude build assets
 lib/*
+obj/*
+bin/*
+
+# Exclude SVN release folders
+svn-dev/*
+svn-release/*
 
 # Exclude auto-generated designers
 .*\.Designer\.cs
@@ -25,8 +31,6 @@ LimitedConcurrencyLevelTaskScheduler\.cs
 Automaton/*
 ConcurrentHashSet\.cs
 NullableAttributes\.cs
-ConfigurationBuilder\.cs
-ConfigurationProvider\.cs
 ConfigurationReloadToken\.cs
 ConfigurationRoot\.cs
 ConfigurationSection\.cs

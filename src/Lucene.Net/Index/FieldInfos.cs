@@ -1,8 +1,8 @@
+using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -365,8 +365,8 @@ namespace Lucene.Net.Index
 
             private FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions, DocValuesType docValues, DocValuesType normType)
             {
-                FieldInfo fi = FieldInfo(name);
-                if (fi == null)
+                // LUCENENET: Bypass FieldInfo method so we can access the quick boolean check
+                if (!TryGetFieldInfo(name, out FieldInfo fi) || fi is null)
                 {
                     // this field wasn't yet added to this in-RAM
                     // segment's FieldInfo, so now we get a global
@@ -410,11 +410,9 @@ namespace Lucene.Net.Index
                 return AddOrUpdateInternal(fi.Name, fi.Number, fi.IsIndexed, fi.HasVectors, fi.OmitsNorms, fi.HasPayloads, fi.IndexOptions, fi.DocValuesType, fi.NormType);
             }
 
-            public FieldInfo FieldInfo(string fieldName)
+            public bool TryGetFieldInfo(string fieldName, out FieldInfo ret) // LUCENENET specific - changed from FieldInfo to TryGetFieldInfo
             {
-                FieldInfo ret;
-                byName.TryGetValue(fieldName, out ret);
-                return ret;
+                return byName.TryGetValue(fieldName, out ret);
             }
 
             public FieldInfos Finish()

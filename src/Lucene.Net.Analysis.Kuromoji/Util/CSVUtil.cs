@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -34,14 +35,6 @@ namespace Lucene.Net.Analysis.Ja.Util
         private static readonly Regex QUOTE_REPLACE_PATTERN = new Regex("^\"([^\"]+)\"$", RegexOptions.Compiled);
 
         private const string ESCAPED_QUOTE = "\"\"";
-
-        // LUCENENET specific - optimized empty array creation
-        private static readonly string[] EMPTY_STRINGS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<string>();
-#else
-            new string[0];
-#endif
 
         private CSVUtil() { } // no instance!!!
 
@@ -83,7 +76,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             // Validate
             if (quoteCount % 2 != 0)
             {
-                return EMPTY_STRINGS;
+                return Arrays.Empty<string>();
             }
 
             return result.ToArray(/*new String[result.size()]*/);

@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 
@@ -31,20 +32,10 @@ namespace Lucene.Net.Codecs.BlockTerms
     public abstract class TermsIndexWriterBase : IDisposable
     {
         // LUCENENET specific - optimized empty array creation
-        internal static readonly short[] EMPTY_INT16S =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<short>();
-#else
-            new short[0];
-#endif
+        internal static readonly short[] EMPTY_INT16S = Arrays.Empty<short>();
 
         // LUCENENET specific - optimized empty array creation
-        internal static readonly int[] EMPTY_INT32S =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<int>();
-#else
-            new int[0];
-#endif
+        internal static readonly int[] EMPTY_INT32S = Arrays.Empty<int>();
 
         /// <summary>Terms index API for a single field.</summary>
         public abstract class FieldWriter

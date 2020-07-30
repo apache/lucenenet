@@ -26,7 +26,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     public class TestCharBlockArray : FacetTestCase
     {
         [Test]
-        [Slow]
         public virtual void TestArray()
         {
             CharBlockArray array = new CharBlockArray();

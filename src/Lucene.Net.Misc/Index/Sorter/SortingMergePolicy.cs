@@ -1,11 +1,11 @@
-﻿using Lucene.Net.Search;
+﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Lucene.Net.Index.Sorter
 {

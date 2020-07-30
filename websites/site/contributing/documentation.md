@@ -110,7 +110,7 @@ We don't want to manually change the converted resulting markdown files (`.md`) 
   * Ensure the correct version number is listed in the header and the nuget download snippet.
   * Update the `Status` and `Released` heading information. 
   * Ensure the download links are correct.
-  * Update the `/websites/site/download/toc.yml` file to include a reference to the new page which should maintain descending version order.
+  * Update the `/websites/site/download/toc.yml` and `/websites/site/download/download.md` files to include a reference to the new page which should maintain descending version order.
   * Update the `/websites/site/docs.md` file and add a link to the new documentation for the current version which should maintain descending version order.
   * [Build the website](#website) and test locally, then deploy the changes
 * Once the website is committed/pushed, the last step is to create a named branch on the main [`lucenenet`](https://github.com/apache/lucenenet) repository with the name: `docs/[Version]`, for example `docs/4.8.0-beta00008` based on commit of the latest (if any) changes made to the docs in the `lucenenet` repository on the main branch. This branch is used for linking to on the API docs "Improve this Doc" button.  

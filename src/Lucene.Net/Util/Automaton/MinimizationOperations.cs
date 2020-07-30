@@ -1,6 +1,7 @@
 using J2N;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using JCG = J2N.Collections.Generic;
 
 /*
@@ -83,7 +84,7 @@ namespace Lucene.Net.Util.Automaton
             int[] block = new int[statesLen];
             StateList[,] active = new StateList[statesLen, sigmaLen];
             StateListNode[,] active2 = new StateListNode[statesLen, sigmaLen];
-            LinkedList<Int32Pair> pending = new LinkedList<Int32Pair>();
+            Queue<Int32Pair> pending = new Queue<Int32Pair>(); // LUCENENET specific - Queue is much more performant than LinkedList
             OpenBitSet pending2 = new OpenBitSet(sigmaLen * statesLen);
             OpenBitSet split = new OpenBitSet(statesLen), 
                 refine = new OpenBitSet(statesLen), refine2 = new OpenBitSet(statesLen);
@@ -132,17 +133,16 @@ namespace Lucene.Net.Util.Automaton
             for (int x = 0; x < sigmaLen; x++)
             {
                 int j = (active[0, x].Count <= active[1, x].Count) ? 0 : 1;
-                pending.AddLast(new Int32Pair(j, x));
+                pending.Enqueue(new Int32Pair(j, x));
                 pending2.Set(x * statesLen + j);
             }
             // process pending until fixed point
             int k = 2;
             while (pending.Count > 0)
             {
-                Int32Pair ip = pending.First.Value;
-                pending.Remove(ip);
-                int p = ip.N1;
-                int x = ip.N2;
+                Int32Pair ip = pending.Dequeue();
+                int p = ip.n1;
+                int x = ip.n2;
                 pending2.Clear(x * statesLen + p);
                 // find states that need to be split off their blocks
                 for (StateListNode m = active[p, x].First; m != null; m = m.Next)
@@ -197,12 +197,12 @@ namespace Lucene.Net.Util.Automaton
                             if (!pending2.Get(ofs + j) && 0 < aj && aj <= ak)
                             {
                                 pending2.Set(ofs + j);
-                                pending.AddLast(new Int32Pair(j, c));
+                                pending.Enqueue(new Int32Pair(j, c));
                             }
                             else
                             {
                                 pending2.Set(ofs + k);
-                                pending.AddLast(new Int32Pair(k, c));
+                                pending.Enqueue(new Int32Pair(k, c));
                             }
                         }
                         k++;
@@ -250,14 +250,15 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// NOTE: This was IntPair in Lucene
         /// </summary>
-        internal sealed class Int32Pair
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct Int32Pair
         {
-            internal int N1 { get; private set; }
-            internal int N2 { get; private set; }
+            internal int n1;
+            internal int n2;
             internal Int32Pair(int n1, int n2)
             {
-                this.N1 = n1;
-                this.N2 = n2;
+                this.n1 = n1;
+                this.n2 = n2;
             }
         }
 

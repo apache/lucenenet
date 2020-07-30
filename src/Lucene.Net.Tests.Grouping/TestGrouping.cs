@@ -317,13 +317,13 @@ namespace Lucene.Net.Search.Grouping
 
             if (group.GroupValue.GetType().IsAssignableFrom(typeof(BytesRef)))
             {
-                assertEquals(new BytesRef(expected), group.GroupValue);
+                assertEquals<object>(new BytesRef(expected), group.GroupValue);
             }
             else if (group.GroupValue.GetType().IsAssignableFrom(typeof(MutableValueStr)))
             {
                 MutableValueStr v = new MutableValueStr();
                 v.Value = new BytesRef(expected);
-                assertEquals(v, group.GroupValue);
+                assertEquals<object>(v, group.GroupValue);
             }
             else
             {

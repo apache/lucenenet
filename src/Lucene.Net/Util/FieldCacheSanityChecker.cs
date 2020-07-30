@@ -55,14 +55,6 @@ namespace Lucene.Net.Util
     {
         private readonly bool estimateRam;
 
-        // LUCENENET specific - optimized empty array creation
-        private static readonly Insanity[] EMPTY_INSANTITIES =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<Insanity>();
-#else
-            new Insanity[0];
-#endif
-
         public FieldCacheSanityChecker()
         {
             /* NOOP */
@@ -113,7 +105,7 @@ namespace Lucene.Net.Util
         {
             if (null == cacheEntries || 0 == cacheEntries.Length)
             {
-                return EMPTY_INSANTITIES;
+                return Arrays.Empty<Insanity>();
             }
 
             if (estimateRam)

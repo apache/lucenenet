@@ -138,10 +138,15 @@ namespace Lucene.Net.Util
                 "Private field names should be camelCase.");
         }
 
-        //[Test, LuceneNetSpecific]
         public virtual void TestPublicFields(Type typeFromTargetAssembly)
         {
-            var names = GetInvalidPublicFields(typeFromTargetAssembly.Assembly);
+            TestPublicFields(typeFromTargetAssembly, null);
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestPublicFields(Type typeFromTargetAssembly, string exceptionRegex)
+        {
+            var names = GetInvalidPublicFields(typeFromTargetAssembly.Assembly, exceptionRegex);
 
             //if (VERBOSE)
             //{
@@ -433,11 +438,6 @@ namespace Lucene.Net.Util
                     if ((field.IsPrivate || field.IsAssembly) && !PrivateFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         var name = string.Concat(c.FullName, ".", field.Name);
-                        //bool hasExceptions = !string.IsNullOrWhiteSpace(exceptionRegex);
-                        //if (!hasExceptions || (hasExceptions && !Regex.IsMatch(name, exceptionRegex)))
-                        //{
-                        //    result.Add(name);
-                        //}
                         if (!IsException(name, exceptionRegex))
                         {
                             result.Add(name);
@@ -495,7 +495,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        private static IEnumerable<string> GetInvalidPublicFields(Assembly assembly)
+        private static IEnumerable<string> GetInvalidPublicFields(Assembly assembly, string exceptionRegex)
         {
             var result = new List<string>();
 
@@ -529,7 +529,11 @@ namespace Lucene.Net.Util
 
                     if (field.IsPublic && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
-                        result.Add(string.Concat(c.FullName, ".", field.Name));
+                        var name = string.Concat(c.FullName, ".", field.Name);
+                        if (!IsException(name, exceptionRegex))
+                        {
+                            result.Add(name);
+                        }
                     }
                 }
             }

@@ -1,4 +1,5 @@
 using J2N.Text;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -41,12 +42,8 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// An empty character array for convenience </summary>
-        public static readonly char[] EMPTY_CHARS =
-#if FEATURE_ARRAYEMPTY
-            Array.Empty<char>();
-#else
-            new char[0];
-#endif
+        public static readonly char[] EMPTY_CHARS = Arrays.Empty<char>();
+
         bool ICharSequence.HasValue => true;
 
         /// <summary>

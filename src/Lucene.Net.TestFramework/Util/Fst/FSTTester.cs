@@ -1,19 +1,19 @@
 using J2N;
 using J2N.Collections;
+using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using JCG = J2N.Collections.Generic;
+using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
-using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -822,7 +822,10 @@ namespace Lucene.Net.Util.Fst
             //System.out.println("TEST: tally prefixes");
 
             // build all prefixes
-            IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new JCG.Dictionary<Int32sRef, CountMinOutput<T>>();
+
+            // LUCENENET: We use ConcurrentDictionary<TKey, TValue> because Dictionary<TKey, TValue> doesn't support
+            // deletion while iterating, but ConcurrentDictionary does.
+            IDictionary<Int32sRef, CountMinOutput<T>> prefixes = new ConcurrentDictionary<Int32sRef, CountMinOutput<T>>();
             Int32sRef scratch = new Int32sRef(10);
             foreach (InputOutput<T> pair in pairs)
             {
@@ -865,69 +868,69 @@ namespace Lucene.Net.Util.Fst
                 Console.WriteLine("TEST: now prune");
             }
 
-
             // prune 'em
-            // LUCENENET NOTE: Altered this a bit to go in reverse rather than use an enumerator since
-            // in .NET you cannot delete records while enumerating forward through a dictionary.
-            for (int i = prefixes.Count - 1; i >= 0; i--)
+            using (var it = prefixes.GetEnumerator())
             {
-                KeyValuePair<Int32sRef, CountMinOutput<T>> ent = prefixes.ElementAt(i);
-                Int32sRef prefix = ent.Key;
-                CountMinOutput<T> cmo = ent.Value;
-                if (LuceneTestCase.Verbose)
+                while (it.MoveNext())
                 {
-                    Console.WriteLine("  term prefix=" + InputToString(inputMode, prefix, false) + " count=" + cmo.Count + " isLeaf=" + cmo.IsLeaf + " output=" + outputs.OutputToString(cmo.Output) + " isFinal=" + cmo.IsFinal);
-                }
-                bool keep;
-                if (prune1 > 0)
-                {
-                    keep = cmo.Count >= prune1;
-                }
-                else
-                {
-                    Debug.Assert(prune2 > 0);
-                    if (prune2 > 1 && cmo.Count >= prune2)
+                    var ent = it.Current;
+                    Int32sRef prefix = ent.Key;
+                    CountMinOutput<T> cmo = ent.Value;
+                    if (LuceneTestCase.Verbose)
                     {
-                        keep = true;
+                        Console.WriteLine("  term prefix=" + InputToString(inputMode, prefix, false) + " count=" + cmo.Count + " isLeaf=" + cmo.IsLeaf + " output=" + outputs.OutputToString(cmo.Output) + " isFinal=" + cmo.IsFinal);
                     }
-                    else if (prefix.Length > 0)
+                    bool keep;
+                    if (prune1 > 0)
                     {
-                        // consult our parent
-                        scratch.Length = prefix.Length - 1;
-                        Array.Copy(prefix.Int32s, prefix.Offset, scratch.Int32s, 0, scratch.Length);
-                        prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo2);
-                        //System.out.println("    parent count = " + (cmo2 == null ? -1 : cmo2.count));
-                        keep = cmo2 != null && ((prune2 > 1 && cmo2.Count >= prune2) || (prune2 == 1 && (cmo2.Count >= 2 || prefix.Length <= 1)));
-                    }
-                    else if (cmo.Count >= prune2)
-                    {
-                        keep = true;
+                        keep = cmo.Count >= prune1;
                     }
                     else
                     {
-                        keep = false;
-                    }
-                }
-
-                if (!keep)
-                {
-                    prefixes.Remove(prefix);
-                    //System.out.println("    remove");
-                }
-                else
-                {
-                    // clear isLeaf for all ancestors
-                    //System.out.println("    keep");
-                    scratch.CopyInt32s(prefix);
-                    scratch.Length--;
-                    while (scratch.Length >= 0)
-                    {
-                        if (prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo2) && cmo2 != null)
+                        Debug.Assert(prune2 > 0);
+                        if (prune2 > 1 && cmo.Count >= prune2)
                         {
-                            //System.out.println("    clear isLeaf " + inputToString(inputMode, scratch));
-                            cmo2.IsLeaf = false;
+                            keep = true;
                         }
+                        else if (prefix.Length > 0)
+                        {
+                            // consult our parent
+                            scratch.Length = prefix.Length - 1;
+                            Array.Copy(prefix.Int32s, prefix.Offset, scratch.Int32s, 0, scratch.Length);
+                            keep = prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo2) && cmo2 != null && ((prune2 > 1 && cmo2.Count >= prune2) || (prune2 == 1 && (cmo2.Count >= 2 || prefix.Length <= 1)));
+                            //System.out.println("    parent count = " + (cmo2 == null ? -1 : cmo2.count));
+                        }
+                        else if (cmo.Count >= prune2)
+                        {
+                            keep = true;
+                        }
+                        else
+                        {
+                            keep = false;
+                        }
+                    }
+
+                    if (!keep)
+                    {
+                        //it.remove();
+                        prefixes.Remove(ent);
+                        //System.out.println("    remove");
+                    }
+                    else
+                    {
+                        // clear isLeaf for all ancestors
+                        //System.out.println("    keep");
+                        scratch.CopyInt32s(prefix);
                         scratch.Length--;
+                        while (scratch.Length >= 0)
+                        {
+                            if (prefixes.TryGetValue(scratch, out CountMinOutput<T> cmo2) && cmo2 != null)
+                            {
+                                //System.out.println("    clear isLeaf " + inputToString(inputMode, scratch));
+                                cmo2.IsLeaf = false;
+                            }
+                            scratch.Length--;
+                        }
                     }
                 }
             }
