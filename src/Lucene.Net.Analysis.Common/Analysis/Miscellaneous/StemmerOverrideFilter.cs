@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -134,7 +135,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 while (bufUpto < bufferLen)
                 {
                     int codePoint = Character.CodePointAt(buffer, bufUpto, bufferLen);
-                    if (fst.FindTargetArc(ignoreCase ? Character.ToLower(codePoint) : codePoint, scratchArc, scratchArc, fstReader) == null)
+                    if (fst.FindTargetArc(ignoreCase ? Character.ToLower(codePoint, CultureInfo.InvariantCulture) : codePoint, scratchArc, scratchArc, fstReader) == null)
                     {
                         return null;
                     }
@@ -192,7 +193,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     char[] buffer = charsSpare.Chars;
                     for (int i = 0; i < length;)
                     {
-                        i += Character.ToChars(Character.ToLower(Character.CodePointAt(input, i)), buffer, i);
+                        i += Character.ToChars(Character.ToLower(Character.CodePointAt(input, i), CultureInfo.InvariantCulture), buffer, i);
                     }
                     UnicodeUtil.UTF16toUTF8(buffer, 0, length, spare);
                 }
