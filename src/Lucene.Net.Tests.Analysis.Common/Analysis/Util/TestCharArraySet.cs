@@ -419,7 +419,7 @@ namespace Lucene.Net.Analysis.Util
             IList<string> stopwordsUpper = new List<string>();
             foreach (string @string in stopwords)
             {
-                stopwordsUpper.Add(@string.ToUpper());
+                stopwordsUpper.Add(@string.ToUpperInvariant());
             }
             setIngoreCase.addAll(TEST_STOP_WORDS);
             setIngoreCase.Add(Convert.ToInt32(1));
@@ -472,7 +472,7 @@ namespace Lucene.Net.Analysis.Util
             IList<string> stopwordsUpper = new List<string>();
             foreach (string @string in stopwords)
             {
-                stopwordsUpper.Add(@string.ToUpper());
+                stopwordsUpper.Add(@string.ToUpperInvariant());
             }
             setIngoreCase.addAll(TEST_STOP_WORDS);
             setIngoreCase.Add(Convert.ToInt32(1));
@@ -523,7 +523,7 @@ namespace Lucene.Net.Analysis.Util
             IList<string> stopwordsUpper = new List<string>();
             foreach (string @string in stopwords)
             {
-                stopwordsUpper.Add(@string.ToUpper());
+                stopwordsUpper.Add(@string.ToUpperInvariant());
             }
             set.addAll(TEST_STOP_WORDS);
 

@@ -7,6 +7,7 @@ using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
 using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using RegExp = Lucene.Net.Util.Automaton.RegExp;
 using Assert = Lucene.Net.TestFramework.Assert;
+using System.Globalization;
 
 namespace Lucene.Net.Analysis
 {
@@ -290,7 +291,7 @@ namespace Lucene.Net.Analysis
 
         protected virtual int Normalize(int c)
         {
-            return lowerCase ? Character.ToLower(c) : c;
+            return lowerCase ? Character.ToLower(c, CultureInfo.InvariantCulture) : c; // LUCENENET specific - need to use invariant culture to match Java
         }
 
         public override void Reset()

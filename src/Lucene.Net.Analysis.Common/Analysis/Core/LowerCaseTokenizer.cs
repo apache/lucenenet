@@ -1,5 +1,6 @@
 ﻿using J2N;
 using Lucene.Net.Util;
+using System.Globalization;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Core
@@ -73,11 +74,11 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Converts char to lower case
-        /// <see cref="Character.ToLower(int)"/>.
+        /// <see cref="Character.ToLower(int, CultureInfo)"/> in the invariant culture.
         /// </summary>
         protected override int Normalize(int c)
         {
-            return Character.ToLower(c);
+            return Character.ToLower(c, CultureInfo.InvariantCulture); // LUCENENET specific - need to use invariant culture to match Java
         }
     }
 }

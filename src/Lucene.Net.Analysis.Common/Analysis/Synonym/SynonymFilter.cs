@@ -5,6 +5,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -252,9 +253,10 @@ namespace Lucene.Net.Analysis.Synonym
 
         /// <param name="input"> input tokenstream </param>
         /// <param name="synonyms"> synonym map </param>
-        /// <param name="ignoreCase"> case-folds input for matching with <see cref="Character.ToLower(int)"/>.
-        ///                   Note, if you set this to true, its your responsibility to lowercase
-        ///                   the input entries when you create the <see cref="SynonymMap"/> </param>
+        /// <param name="ignoreCase"> case-folds input for matching with <see cref="Character.ToLower(int, CultureInfo)"/>
+        ///                   in using <see cref="CultureInfo.InvariantCulture"/>.
+        ///                   Note, if you set this to <c>true</c>, its your responsibility to lowercase
+        ///                   the input entries when you create the <see cref="SynonymMap"/>.</param>
         public SynonymFilter(TokenStream input, SynonymMap synonyms, bool ignoreCase) 
             : base(input)
         {
@@ -411,7 +413,7 @@ namespace Lucene.Net.Analysis.Synonym
                 while (bufUpto < bufferLen)
                 {
                     int codePoint = Character.CodePointAt(buffer, bufUpto, bufferLen);
-                    if (fst.FindTargetArc(ignoreCase ? Character.ToLower(codePoint) : codePoint, scratchArc, scratchArc, fstReader) == null)
+                    if (fst.FindTargetArc(ignoreCase ? Character.ToLower(codePoint, CultureInfo.InvariantCulture) : codePoint, scratchArc, scratchArc, fstReader) == null)
                     {
                         //System.out.println("    stop");
                         goto byTokenBreak;
