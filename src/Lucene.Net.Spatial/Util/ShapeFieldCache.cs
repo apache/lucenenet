@@ -33,19 +33,12 @@ namespace Lucene.Net.Spatial.Util
     public class ShapeFieldCache<T> where T : IShape
     {
         private readonly IList<T>[] cache;
-        public int DefaultLength
-        {
-            get => defaultLength;
-            set => defaultLength = value;
-        }
-        private int defaultLength;
+        public int DefaultLength { get; set; }
 
         public ShapeFieldCache(int length, int defaultLength)
         {
-            IList<int> test = new int[66];
-
             cache = new IList<T>[length];
-            this.defaultLength = defaultLength;
+            this.DefaultLength = defaultLength;
         }
 
         public virtual void Add(int docid, T s)
@@ -53,7 +46,7 @@ namespace Lucene.Net.Spatial.Util
             IList<T> list = cache[docid];
             if (list == null)
             {
-                list = cache[docid] = new List<T>(defaultLength);
+                list = cache[docid] = new List<T>(DefaultLength);
             }
             list.Add(s);
         }
