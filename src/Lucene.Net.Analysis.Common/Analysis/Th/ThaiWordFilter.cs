@@ -3,7 +3,6 @@ using ICU4N.Text;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
