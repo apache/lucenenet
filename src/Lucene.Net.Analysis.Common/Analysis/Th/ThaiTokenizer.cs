@@ -42,12 +42,12 @@ namespace Lucene.Net.Analysis.Th
     public class ThaiTokenizer : SegmentingTokenizerBase
     {
         // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
-        private static readonly BreakIterator proto = BreakIterator.GetWordInstance(new CultureInfo("th"));
+        private static readonly BreakIterator proto = (BreakIterator)BreakIterator.GetWordInstance(new CultureInfo("th")).Clone();
 
         /// <summary>
         /// used for breaking the text into sentences
         /// </summary>
-        private static readonly BreakIterator sentenceProto = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
+        private static readonly BreakIterator sentenceProto = (BreakIterator)BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture).Clone();
 
         private readonly ThaiWordBreaker wordBreaker;
         private readonly CharArrayIterator wrapper = Analysis.Util.CharArrayIterator.NewWordInstance();
@@ -57,6 +57,8 @@ namespace Lucene.Net.Analysis.Th
 
         private readonly ICharTermAttribute termAtt;
         private readonly IOffsetAttribute offsetAtt;
+
+        private readonly object syncLock = new object();
 
         /// <summary>
         /// Creates a new <see cref="ThaiTokenizer"/> </summary>
@@ -79,42 +81,54 @@ namespace Lucene.Net.Analysis.Th
 
         protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
         {
-            this.sentenceStart = sentenceStart;
-            this.sentenceEnd = sentenceEnd;
-            wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
-            wordBreaker.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
+            // LUCENENET TODO: This class isn't passing thread safety checks.
+            // Adding locking and extra cloning of BreakIterator seems to help, but
+            // it is not a complete fix.
+            lock (syncLock)
+            {
+                this.sentenceStart = sentenceStart;
+                this.sentenceEnd = sentenceEnd;
+                wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
+                wordBreaker.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
+            }
         }
 
         protected override bool IncrementWord()
         {
-            int start = wordBreaker.Current;
-            if (start == BreakIterator.Done)
+            // LUCENENET TODO: This class isn't passing thread safety checks.
+            // Adding locking and extra cloning of BreakIterator seems to help, but
+            // it is not a complete fix.
+            lock (syncLock)
             {
-                return false; // BreakIterator exhausted
-            }
+                int start = wordBreaker.Current;
+                if (start == BreakIterator.Done)
+                {
+                    return false; // BreakIterator exhausted
+                }
 
-            // find the next set of boundaries, skipping over non-tokens
-            int end = wordBreaker.Next();
-            while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
-            {
-                start = end;
-                end = wordBreaker.Next();
-            }
+                // find the next set of boundaries, skipping over non-tokens
+                int end = wordBreaker.Next();
+                while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
+                {
+                    start = end;
+                    end = wordBreaker.Next();
+                }
 
-            if (end == BreakIterator.Done)
-            {
-                return false; // BreakIterator exhausted
-            }
+                if (end == BreakIterator.Done)
+                {
+                    return false; // BreakIterator exhausted
+                }
 
-            ClearAttributes();
-            termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
-            offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
-            return true;
+                ClearAttributes();
+                termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
+                offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
+                return true;
+            }
         }
     }
 
     /// <summary>
-    /// LUCENENET specific class to patch the behavior of the ICU BreakIterator.
+    /// LUCENENET specific class to patch the behavior of the ICU BreakIterator to match the behavior of the JDK.
     /// Corrects the breaking of words by finding transitions between Thai and non-Thai
     /// characters.
     /// </summary>
@@ -122,16 +136,12 @@ namespace Lucene.Net.Analysis.Th
     {
         private readonly BreakIterator wordBreaker;
         private string text;
-        private readonly IList<int> transitions = new List<int>();
-        private readonly static Regex thaiPattern = new Regex(@"\p{IsThai}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private readonly Queue<int> transitions = new Queue<int>();
+        private static readonly Regex thaiPattern = new Regex(@"\p{IsThai}+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         public ThaiWordBreaker(BreakIterator wordBreaker)
         {
-            if (wordBreaker == null)
-            {
-                throw new ArgumentNullException("wordBreaker");
-            }
-            this.wordBreaker = wordBreaker;
+            this.wordBreaker = wordBreaker ?? throw new ArgumentNullException(nameof(wordBreaker));
         }
 
         public void SetText(string text)
@@ -145,9 +155,8 @@ namespace Lucene.Net.Analysis.Th
             get
             {
                 if (transitions.Count > 0)
-                {
-                    return transitions[0];
-                }
+                    return transitions.Peek();
+
                 return wordBreaker.Current;
             }
         }
@@ -155,36 +164,50 @@ namespace Lucene.Net.Analysis.Th
         public int Next()
         {
             if (transitions.Count > 0)
-            {
-                transitions.RemoveAt(0);
-            }
+                transitions.Dequeue();
+
             if (transitions.Count > 0)
-            {
-                return transitions[0];
-            }
+                return transitions.Peek();
+
             return GetNext();
         }
 
         private int GetNext()
         {
-            bool isThai = false, isNonThai = false;
+            bool isThai, isNonThai;
             bool prevWasThai = false, prevWasNonThai = false;
             int prev = wordBreaker.Current;
             int current = wordBreaker.Next();
 
             if (current != BreakIterator.Done && current - prev > 0)
             {
+                int length = text.Length;
+                string toMatch;
                 // Find all of the transitions between Thai and non-Thai characters and digits
                 for (int i = prev; i < current; i++)
                 {
-                    char c = text[i];
-                    isThai = char.IsLetter(c) && thaiPattern.IsMatch(c.ToString());
-                    isNonThai = char.IsLetter(c) && !isThai;
+                    char high = text[i];
+                    // Account for surrogate pairs
+                    if (char.IsHighSurrogate(high) && i < length && i + 1 < current && char.IsLowSurrogate(text[i + 1]))
+                        toMatch = string.Empty + high + text[++i];
+                    else
+                        toMatch = string.Empty + high;
+
+                    if (char.IsLetter(toMatch, 0)) // Always break letters apart from digits to match the JDK
+                    {
+                        isThai = thaiPattern.IsMatch(toMatch);
+                        isNonThai = !isThai;
+                    }
+                    else
+                    {
+                        isThai = false;
+                        isNonThai = false;
+                    }
 
                     if ((prevWasThai && isNonThai) ||
                         (prevWasNonThai && isThai))
                     {
-                        transitions.Add(i);
+                        transitions.Enqueue(i);
                     }
 
                     // record the values for comparison with the next loop
@@ -194,8 +217,8 @@ namespace Lucene.Net.Analysis.Th
 
                 if (transitions.Count > 0)
                 {
-                    transitions.Add(current);
-                    return transitions[0];
+                    transitions.Enqueue(current);
+                    return transitions.Peek();
                 }
             }
 
