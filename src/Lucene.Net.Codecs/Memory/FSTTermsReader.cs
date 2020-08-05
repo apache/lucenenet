@@ -1,8 +1,6 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -28,7 +26,6 @@ namespace Lucene.Net.Codecs.Memory
      */
 
     using ArrayUtil = Util.ArrayUtil;
-    using IBits = Util.IBits;
     using ByteArrayDataInput = Store.ByteArrayDataInput;
     using ByteRunAutomaton = Util.Automaton.ByteRunAutomaton;
     using BytesRef = Util.BytesRef;
@@ -38,6 +35,7 @@ namespace Lucene.Net.Codecs.Memory
     using DocsEnum = Index.DocsEnum;
     using FieldInfo = Index.FieldInfo;
     using FieldInfos = Index.FieldInfos;
+    using IBits = Util.IBits;
     using IndexFileNames = Index.IndexFileNames;
     using IndexInput = Store.IndexInput;
     using IndexOptions = Index.IndexOptions;
@@ -809,39 +807,39 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        internal static void Walk<T>(FST<T> fst) // LUCENENET NOTE: Not referenced
-        {
-            List<FST.Arc<T>> queue = new List<FST.Arc<T>>();
-            FST.BytesReader reader = fst.GetBytesReader();
-            FST.Arc<T> startArc = fst.GetFirstArc(new FST.Arc<T>());
-            queue.Add(startArc);
-            BitArray seen = new BitArray(queue.Count);
-            while (queue.Count > 0)
-            {
-                FST.Arc<T> arc = queue[0];
-                queue.RemoveAt(0);
+        //internal static void Walk<T>(FST<T> fst) // LUCENENET NOTE: Not referenced
+        //{
+        //    List<FST.Arc<T>> queue = new List<FST.Arc<T>>();
+        //    FST.BytesReader reader = fst.GetBytesReader();
+        //    FST.Arc<T> startArc = fst.GetFirstArc(new FST.Arc<T>());
+        //    queue.Add(startArc);
+        //    BitSet seen = new BitSet(queue.Count);
+        //    while (queue.Count > 0)
+        //    {
+        //        FST.Arc<T> arc = queue[0];
+        //        queue.RemoveAt(0);
 
-                long node = arc.Target;
-                //System.out.println(arc);
-                if (FST<T>.TargetHasArcs(arc) && !seen.SafeGet((int)node))
-                {
-                    seen.SafeSet((int)node, true);
-                    fst.ReadFirstRealTargetArc(node, arc, reader);
-                    while (true)
-                    {
-                        queue.Add((new FST.Arc<T>()).CopyFrom(arc));
-                        if (arc.IsLast)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            fst.ReadNextRealArc(arc, reader);
-                        }
-                    }
-                }
-            }
-        }
+        //        long node = arc.Target;
+        //        //System.out.println(arc);
+        //        if (FST<T>.TargetHasArcs(arc) && !seen.Get((int)node))
+        //        {
+        //            seen.Set((int)node);
+        //            fst.ReadFirstRealTargetArc(node, arc, reader);
+        //            while (true)
+        //            {
+        //                queue.Add((new FST.Arc<T>()).CopyFrom(arc));
+        //                if (arc.IsLast)
+        //                {
+        //                    break;
+        //                }
+        //                else
+        //                {
+        //                    fst.ReadNextRealArc(arc, reader);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         public override long RamBytesUsed()
         {
