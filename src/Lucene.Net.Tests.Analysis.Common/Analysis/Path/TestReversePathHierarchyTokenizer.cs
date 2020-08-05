@@ -124,24 +124,12 @@ namespace Lucene.Net.Analysis.Path
         [Test]
         public virtual void TestRandomStrings()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random, a, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestReversePathHierarchyTokenizer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestReversePathHierarchyTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new ReversePathHierarchyTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
-            }
+            });
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
 
         /// <summary>
@@ -150,24 +138,12 @@ namespace Lucene.Net.Analysis.Path
         public virtual void TestRandomHugeStrings()
         {
             Random random = Random;
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckRandomData(random, a, 100 * RandomMultiplier, 1027);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestReversePathHierarchyTokenizer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestReversePathHierarchyTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new ReversePathHierarchyTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
-            }
+            });
+            CheckRandomData(random, a, 100 * RandomMultiplier, 1027);
         }
     }
 }

@@ -32,25 +32,14 @@ namespace Lucene.Net.Analysis.CharFilters
 
         private static Analyzer NewTestAnalyzer()
         {
-            return new AnalyzerAnonymousInnerClassHelper();
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            return Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, tokenizer);
-            }
-
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
+            }, initReader: (fieldName, reader) =>
             {
                 return new HTMLStripCharFilter(reader);
-            }
+            });
         }
 
         //this is some text  here is a  link  and another  link . This is an entity: & plus a <.  Here is an &

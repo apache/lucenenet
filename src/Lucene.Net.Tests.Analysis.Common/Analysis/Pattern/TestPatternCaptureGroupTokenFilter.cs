@@ -178,25 +178,13 @@ namespace Lucene.Net.Analysis.Pattern
         [Test]
         public virtual void TestRandomString()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-
-            CheckRandomData(Random, a, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestPatternCaptureGroupTokenFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestPatternCaptureGroupTokenFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new PatternCaptureGroupTokenFilter(tokenizer, false, new Regex("((..)(..))", RegexOptions.Compiled)));
-            }
+            });
+
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
 
         private void TestPatterns(string input, string[] regexes, string[] tokens, int[] startOffsets, int[] endOffsets, int[] positions, bool preserveOriginal)

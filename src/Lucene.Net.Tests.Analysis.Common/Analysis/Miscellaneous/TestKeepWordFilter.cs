@@ -70,29 +70,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
             words.Add("a");
             words.Add("b");
 
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, words);
-
-            CheckRandomData(Random, a, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestKeepWordFilter outerInstance;
-
-            private ISet<string> words;
-
-            public AnalyzerAnonymousInnerClassHelper(TestKeepWordFilter outerInstance, ISet<string> words)
-            {
-                this.outerInstance = outerInstance;
-                this.words = words;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream stream = new KeepWordFilter(TEST_VERSION_CURRENT, tokenizer, new CharArraySet(TEST_VERSION_CURRENT, words, true));
                 return new TokenStreamComponents(tokenizer, stream);
-            }
+            });
+
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
     }
 }

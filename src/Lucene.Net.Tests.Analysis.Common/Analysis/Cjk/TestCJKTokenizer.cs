@@ -26,15 +26,8 @@ namespace Lucene.Net.Analysis.Cjk
     public class TestCJKTokenizer : BaseTokenStreamTestCase
     {
 
-        internal class TestToken
+        internal sealed class TestToken
         {
-            private readonly TestCJKTokenizer outerInstance;
-
-            public TestToken(TestCJKTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             internal string termText;
             internal int start;
             internal int end;
@@ -43,7 +36,7 @@ namespace Lucene.Net.Analysis.Cjk
 
         internal virtual TestToken newToken(string termText, int start, int end, int type)
         {
-            TestToken token = new TestToken(this);
+            TestToken token = new TestToken();
             token.termText = termText;
             token.type = CJKTokenizer.TOKEN_TYPE_NAMES[type];
             token.start = start;

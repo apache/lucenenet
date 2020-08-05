@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Fa
 {
@@ -22,24 +21,10 @@ namespace Lucene.Net.Analysis.Fa
 
     public class TestPersianCharFilter : BaseTokenStreamTestCase
     {
-        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                return new TokenStreamComponents(new MockTokenizer(reader));
-            }
-
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
-            {
-                return new PersianCharFilter(reader);
-            }
-        }
+            return new TokenStreamComponents(new MockTokenizer(reader));
+        }, initReader: (fieldName, reader) => new PersianCharFilter(reader));
 
         [Test]
         public virtual void TestBasics()

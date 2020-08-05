@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Id
 {
@@ -27,20 +26,11 @@ namespace Lucene.Net.Analysis.Id
     public class TestIndonesianStemmer : BaseTokenStreamTestCase
     {
         /* full stemming, no stopwords */
-        internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        internal static readonly Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer));
-            }
-        }
+            Tokenizer tokenizer = new KeywordTokenizer(reader);
+            return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer));
+        });
 
         /// <summary>
         /// Some examples from the paper </summary>
@@ -121,20 +111,11 @@ namespace Lucene.Net.Analysis.Id
         }
 
         /* inflectional-only stemming */
-        internal Analyzer b = new AnalyzerAnonymousInnerClassHelper2();
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        internal static readonly Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper2()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer, false));
-            }
-        }
+            Tokenizer tokenizer = new KeywordTokenizer(reader);
+            return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer, false));
+        });
 
         /// <summary>
         /// Test stemming only inflectional suffixes </summary>
@@ -158,24 +139,12 @@ namespace Lucene.Net.Analysis.Id
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestIndonesianStemmer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestIndonesianStemmer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new IndonesianStemFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

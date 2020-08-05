@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using System.IO;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Analysis.Snowball
@@ -71,28 +70,13 @@ namespace Lucene.Net.Analysis.Snowball
                 Console.WriteLine("checking snowball language: " + snowballLanguage);
             }
 
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, snowballLanguage);
-
-            VocabularyAssert.AssertVocabulary(a, GetDataFile("TestSnowballVocabData.zip"), dataDirectory + "/voc.txt", dataDirectory + "/output.txt");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestSnowballVocab outerInstance;
-
-            private string snowballLanguage;
-
-            public AnalyzerAnonymousInnerClassHelper(TestSnowballVocab outerInstance, string snowballLanguage)
-            {
-                this.outerInstance = outerInstance;
-                this.snowballLanguage = snowballLanguage;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer t = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(t, new SnowballFilter(t, snowballLanguage));
-            }
+            });
+
+            VocabularyAssert.AssertVocabulary(a, GetDataFile("TestSnowballVocabData.zip"), dataDirectory + "/voc.txt", dataDirectory + "/output.txt");
         }
     }
 }

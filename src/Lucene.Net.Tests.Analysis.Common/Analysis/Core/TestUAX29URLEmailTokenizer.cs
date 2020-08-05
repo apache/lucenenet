@@ -44,26 +44,15 @@ namespace Lucene.Net.Analysis.Core
             BaseTokenStreamTestCase.AssertTokenStreamContents(tokenizer, new string[] { "testing", "1234" });
         }
 
-        private Analyzer a = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-
-                Tokenizer tokenizer = new UAX29URLEmailTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer);
-            }
-        }
-
+            Tokenizer tokenizer = new UAX29URLEmailTokenizer(TEST_VERSION_CURRENT, reader);
+            return new TokenStreamComponents(tokenizer);
+        });
 
         /// <summary>
         /// Passes through tokens with type "<URL>" and blocks all other types. </summary>
-        private class URLFilter : TokenFilter
+        private sealed class URLFilter : TokenFilter
         {
             internal readonly ITypeAttribute typeAtt;
             public URLFilter(TokenStream @in) : base(@in)
@@ -88,7 +77,7 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Passes through tokens with type "<EMAIL>" and blocks all other types. </summary>
-        private class EmailFilter : TokenFilter
+        private sealed class EmailFilter : TokenFilter
         {
             internal readonly ITypeAttribute typeAtt;
             public EmailFilter(TokenStream @in) : base(@in)
@@ -111,39 +100,20 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        private Analyzer urlAnalyzer = new UrlAnalyzerAnonymousInnerClassHelper();
-
-        private class UrlAnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer urlAnalyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public UrlAnalyzerAnonymousInnerClassHelper()
-            {
-            }
+            UAX29URLEmailTokenizer tokenizer = new UAX29URLEmailTokenizer(TEST_VERSION_CURRENT, reader);
+            tokenizer.MaxTokenLength = int.MaxValue; // Tokenize arbitrary length URLs
+            TokenFilter filter = new URLFilter(tokenizer);
+            return new TokenStreamComponents(tokenizer, filter);
+        });
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                UAX29URLEmailTokenizer tokenizer = new UAX29URLEmailTokenizer(TEST_VERSION_CURRENT, reader);
-                tokenizer.MaxTokenLength = int.MaxValue; // Tokenize arbitrary length URLs
-                TokenFilter filter = new URLFilter(tokenizer);
-                return new TokenStreamComponents(tokenizer, filter);
-            }
-        }
-
-        private Analyzer emailAnalyzer = new AnalyzerAnonymousInnerClassHelper2();
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        private static readonly Analyzer emailAnalyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper2()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                UAX29URLEmailTokenizer tokenizer = new UAX29URLEmailTokenizer(TEST_VERSION_CURRENT, reader);
-                TokenFilter filter = new EmailFilter(tokenizer);
-                return new TokenStreamComponents(tokenizer, filter);
-            }
-        }
-
+            UAX29URLEmailTokenizer tokenizer = new UAX29URLEmailTokenizer(TEST_VERSION_CURRENT, reader);
+            TokenFilter filter = new EmailFilter(tokenizer);
+            return new TokenStreamComponents(tokenizer, filter);
+        });
 
         [Test]
         public virtual void TestArmenian()
@@ -571,29 +541,17 @@ namespace Lucene.Net.Analysis.Core
         [Obsolete("remove this and sophisticated backwards layer in 5.0")]
         public virtual void TestCombiningMarksBackwards()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckOneTerm(a, "ざ", "さ"); // hiragana Bug
-            CheckOneTerm(a, "ザ", "ザ"); // katakana Works
-            CheckOneTerm(a, "壹゙", "壹"); // ideographic Bug
-            CheckOneTerm(a, "아゙", "아゙"); // hangul Works
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestUAX29URLEmailTokenizer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestUAX29URLEmailTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new UAX29URLEmailTokenizer(LuceneVersion.LUCENE_31, reader);
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer);
-            }
+            });
+            CheckOneTerm(a, "ざ", "さ"); // hiragana Bug
+            CheckOneTerm(a, "ザ", "ザ"); // katakana Works
+            CheckOneTerm(a, "壹゙", "壹"); // ideographic Bug
+            CheckOneTerm(a, "아゙", "아゙"); // hangul Works
         }
 
         // LUCENE-3880
@@ -602,26 +560,14 @@ namespace Lucene.Net.Analysis.Core
         [Obsolete("remove this and sophisticated backwards layer in 5.0")]
         public virtual void TestMailtoBackwards()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this);
-            AssertAnalyzesTo(a, "mailto:test@example.org", new string[] { "mailto:test", "example.org" });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly TestUAX29URLEmailTokenizer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper4(TestUAX29URLEmailTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new UAX29URLEmailTokenizer(LuceneVersion.LUCENE_34, reader);
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer);
-            }
+            });
+            AssertAnalyzesTo(a, "mailto:test@example.org", new string[] { "mailto:test", "example.org" });
         }
 
         /// @deprecated uses older unicode (6.0). simple test to make sure its basically working 
@@ -629,26 +575,14 @@ namespace Lucene.Net.Analysis.Core
         [Obsolete("uses older unicode (6.0). simple test to make sure its basically working")]
         public virtual void TestVersion36()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper5(this);
-            AssertAnalyzesTo(a, "this is just a t\u08E6st lucene@apache.org", new string[] { "this", "is", "just", "a", "t", "st", "lucene@apache.org" }); // new combining mark in 6.1
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper5 : Analyzer
-        {
-            private readonly TestUAX29URLEmailTokenizer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper5(TestUAX29URLEmailTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new UAX29URLEmailTokenizer(LuceneVersion.LUCENE_36, reader);
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer);
-            }
+            });
+            AssertAnalyzesTo(a, "this is just a t\u08E6st lucene@apache.org", new string[] { "this", "is", "just", "a", "t", "st", "lucene@apache.org" }); // new combining mark in 6.1
         }
 
         /// @deprecated uses older unicode (6.1). simple test to make sure its basically working 
@@ -656,28 +590,16 @@ namespace Lucene.Net.Analysis.Core
         [Obsolete("uses older unicode (6.1). simple test to make sure its basically working")]
         public virtual void TestVersion40()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper6(this);
-            // U+061C is a new combining mark in 6.3, found using "[[\p{WB:Format}\p{WB:Extend}]&[^\p{Age:6.2}]]"
-            // on the online UnicodeSet utility: <http://unicode.org/cldr/utility/list-unicodeset.jsp>
-            AssertAnalyzesTo(a, "this is just a t\u061Cst lucene@apache.org", new string[] { "this", "is", "just", "a", "t", "st", "lucene@apache.org" });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper6 : Analyzer
-        {
-            private readonly TestUAX29URLEmailTokenizer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper6(TestUAX29URLEmailTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new UAX29URLEmailTokenizer(LuceneVersion.LUCENE_40, reader);
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer);
-            }
+            });
+            // U+061C is a new combining mark in 6.3, found using "[[\p{WB:Format}\p{WB:Extend}]&[^\p{Age:6.2}]]"
+            // on the online UnicodeSet utility: <http://unicode.org/cldr/utility/list-unicodeset.jsp>
+            AssertAnalyzesTo(a, "this is just a t\u061Cst lucene@apache.org", new string[] { "this", "is", "just", "a", "t", "st", "lucene@apache.org" });
         }
 
         /// <summary>

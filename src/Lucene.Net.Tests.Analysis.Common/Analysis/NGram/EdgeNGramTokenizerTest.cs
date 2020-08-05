@@ -3,7 +3,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
-using Reader = System.IO.TextReader;
 using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Analysis.NGram
@@ -142,53 +141,24 @@ namespace Lucene.Net.Analysis.NGram
                 int min = TestUtil.NextInt32(Random, 2, 10);
                 int max = TestUtil.NextInt32(Random, min, 20);
 
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, min, max);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new EdgeNGramTokenizer(TEST_VERSION_CURRENT, reader, min, max);
+                    return new TokenStreamComponents(tokenizer, tokenizer);
+                });
                 CheckRandomData(Random, a, 100 * RandomMultiplier, 20);
                 CheckRandomData(Random, a, 10 * RandomMultiplier, 8192);
             }
 
-            Analyzer b = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckRandomData(Random, b, 1000 * RandomMultiplier, 20, false, false);
-            CheckRandomData(Random, b, 100 * RandomMultiplier, 8192, false, false);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly EdgeNGramTokenizerTest outerInstance;
-
-            private int min;
-            private int max;
-
-            public AnalyzerAnonymousInnerClassHelper(EdgeNGramTokenizerTest outerInstance, int min, int max)
-            {
-                this.outerInstance = outerInstance;
-                this.min = min;
-                this.max = max;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
-            {
-                Tokenizer tokenizer = new EdgeNGramTokenizer(TEST_VERSION_CURRENT, reader, min, max);
-                return new TokenStreamComponents(tokenizer, tokenizer);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly EdgeNGramTokenizerTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(EdgeNGramTokenizerTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, Reader reader)
+            Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new Lucene43EdgeNGramTokenizer(Version.LUCENE_43, reader, Lucene43EdgeNGramTokenizer.Side.BACK, 2, 4);
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer, tokenizer);
-            }
+            });
+            CheckRandomData(Random, b, 1000 * RandomMultiplier, 20, false, false);
+            CheckRandomData(Random, b, 100 * RandomMultiplier, 8192, false, false);
         }
 
         [Test]

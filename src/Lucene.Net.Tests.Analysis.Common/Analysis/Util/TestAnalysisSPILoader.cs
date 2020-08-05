@@ -30,17 +30,13 @@ namespace Lucene.Net.Analysis.Util
 
         private IDictionary<string, string> VersionArgOnly()
         {
-            return new HashMapAnonymousInnerClassHelper(this);
+            return new HashMapAnonymousInnerClassHelper();
         }
 
-        private class HashMapAnonymousInnerClassHelper : Dictionary<string, string>
+        private sealed class HashMapAnonymousInnerClassHelper : Dictionary<string, string>
         {
-            private readonly TestAnalysisSPILoader outerInstance;
-
-            public HashMapAnonymousInnerClassHelper(TestAnalysisSPILoader outerInstance)
+            public HashMapAnonymousInnerClassHelper()
             {
-                this.outerInstance = outerInstance;
-
                 this["luceneMatchVersion"] = TEST_VERSION_CURRENT.ToString();
             }
 

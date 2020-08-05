@@ -129,26 +129,14 @@ namespace Lucene.Net.Analysis.NGram
         [Test]
         public virtual void TestInvalidOffsets()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
-            AssertAnalyzesTo(analyzer, "mosfellsbær", new string[] { "mo", "os", "sf", "fe", "el", "ll", "ls", "sb", "ba", "ae", "er" }, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11 }, new int[] { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly NGramTokenFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(NGramTokenFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenFilter filters = new ASCIIFoldingFilter(tokenizer);
                 filters = new NGramTokenFilter(TEST_VERSION_CURRENT, filters, 2, 2);
                 return new TokenStreamComponents(tokenizer, filters);
-            }
+            });
+            AssertAnalyzesTo(analyzer, "mosfellsbær", new string[] { "mo", "os", "sf", "fe", "el", "ll", "ls", "sb", "ba", "ae", "er" }, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11 }, new int[] { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
         }
 
         /// <summary>
@@ -160,29 +148,12 @@ namespace Lucene.Net.Analysis.NGram
             {
                 int min = TestUtil.NextInt32(Random, 2, 10);
                 int max = TestUtil.NextInt32(Random, min, 20);
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, min, max);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    return new TokenStreamComponents(tokenizer, new NGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, min, max));
+                });
                 CheckRandomData(Random, a, 200 * RandomMultiplier, 20);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly NGramTokenFilterTest outerInstance;
-
-            private int min;
-            private int max;
-
-            public AnalyzerAnonymousInnerClassHelper2(NGramTokenFilterTest outerInstance, int min, int max)
-            {
-                this.outerInstance = outerInstance;
-                this.min = min;
-                this.max = max;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new NGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, min, max));
             }
         }
 
@@ -190,24 +161,12 @@ namespace Lucene.Net.Analysis.NGram
         public virtual void TestEmptyTerm()
         {
             Random random = Random;
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckAnalysisConsistency(random, a, random.nextBoolean(), "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly NGramTokenFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(NGramTokenFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new NGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, 2, 15));
-            }
+            });
+            CheckAnalysisConsistency(random, a, random.nextBoolean(), "");
         }
 
         [Test]

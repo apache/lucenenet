@@ -261,7 +261,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(new BufferedCharFilter(new StringReader(new string(new char[5], 1, 0)), 2).Read() == -1);
         }
 
-        private class ReaderAnonymousInnerClassHelper : CharFilter
+        private sealed class ReaderAnonymousInnerClassHelper : CharFilter
         {
             private const int SIZE = 2;
             private int size = SIZE, pos = 0;

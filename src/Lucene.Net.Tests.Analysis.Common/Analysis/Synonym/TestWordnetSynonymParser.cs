@@ -33,7 +33,11 @@ namespace Lucene.Net.Analysis.Synonym
             parser.Parse(new StringReader(synonymsFile));
             SynonymMap map = parser.Build();
 
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, map);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
+            });
 
             /* all expansions */
             AssertAnalyzesTo(analyzer, "Lost in the woods", new string[] { "Lost", "in", "the", "woods", "wood", "forest" }, new int[] { 0, 5, 8, 12, 12, 12 }, new int[] { 4, 7, 11, 17, 17, 17 }, new int[] { 1, 1, 1, 1, 0, 0 });
@@ -43,25 +47,6 @@ namespace Lucene.Net.Analysis.Synonym
 
             /* multi words */
             AssertAnalyzesTo(analyzer, "king's evil", new string[] { "king's", "king's", "evil", "meany" });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestWordnetSynonymParser outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper(TestWordnetSynonymParser outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
-            }
         }
     }
 }

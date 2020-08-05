@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.TokenAttributes;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using NUnit.Framework;
-using Lucene.Net.Analysis.TokenAttributes;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Wikipedia
@@ -114,24 +114,12 @@ namespace Lucene.Net.Analysis.Wikipedia
         [Test]
         public virtual void TestRandomStrings()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random, a, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly WikipediaTokenizerTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(WikipediaTokenizerTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new WikipediaTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
-            }
+            });
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
 
         /// <summary>
@@ -140,24 +128,12 @@ namespace Lucene.Net.Analysis.Wikipedia
         public virtual void TestRandomHugeStrings()
         {
             Random random = Random;
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckRandomData(random, a, 100 * RandomMultiplier, 8192);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly WikipediaTokenizerTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(WikipediaTokenizerTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new WikipediaTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
-            }
+            });
+            CheckRandomData(random, a, 100 * RandomMultiplier, 8192);
         }
     }
 }

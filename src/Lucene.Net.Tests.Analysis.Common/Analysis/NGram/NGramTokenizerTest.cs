@@ -116,30 +116,13 @@ namespace Lucene.Net.Analysis.NGram
             {
                 int min = TestUtil.NextInt32(Random, 2, 10);
                 int max = TestUtil.NextInt32(Random, min, 20);
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, min, max);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new NGramTokenizer(TEST_VERSION_CURRENT, reader, min, max);
+                    return new TokenStreamComponents(tokenizer, tokenizer);
+                });
                 CheckRandomData(Random, a, 200 * RandomMultiplier, 20);
                 CheckRandomData(Random, a, 10 * RandomMultiplier, 1027);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly NGramTokenizerTest outerInstance;
-
-            private int min;
-            private int max;
-
-            public AnalyzerAnonymousInnerClassHelper(NGramTokenizerTest outerInstance, int min, int max)
-            {
-                this.outerInstance = outerInstance;
-                this.min = min;
-                this.max = max;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new NGramTokenizer(TEST_VERSION_CURRENT, reader, min, max);
-                return new TokenStreamComponents(tokenizer, tokenizer);
             }
         }
 
@@ -238,7 +221,7 @@ namespace Lucene.Net.Analysis.NGram
             assertEquals(s.Length, offsetAtt.EndOffset);
         }
 
-        private class NGramTokenizerAnonymousInnerClassHelper : NGramTokenizer
+        private sealed class NGramTokenizerAnonymousInnerClassHelper : NGramTokenizer
         {
             private readonly string nonTokenChars;
 

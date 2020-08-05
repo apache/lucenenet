@@ -330,7 +330,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         /// @deprecated (3.0) does not support custom attributes 
         [Obsolete("(3.0) does not support custom attributes")]
-        private class IterTokenStream : TokenStream
+        private sealed class IterTokenStream : TokenStream
         {
             internal readonly Token[] tokens;
             internal int index = 0;

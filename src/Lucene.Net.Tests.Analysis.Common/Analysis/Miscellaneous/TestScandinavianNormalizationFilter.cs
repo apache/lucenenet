@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -23,23 +22,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
     public class TestScandinavianNormalizationFilter : BaseTokenStreamTestCase
     {
-
-
-        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenStream stream = new ScandinavianNormalizationFilter(tokenizer);
-                return new TokenStreamComponents(tokenizer, stream);
-            }
-        }
+            Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            TokenStream stream = new ScandinavianNormalizationFilter(tokenizer);
+            return new TokenStreamComponents(tokenizer, stream);
+        });
 
         [Test]
         public virtual void Test()
@@ -115,24 +103,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestScandinavianNormalizationFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestScandinavianNormalizationFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new ScandinavianNormalizationFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
 
         /// <summary>

@@ -90,7 +90,11 @@ namespace Lucene.Net.Analysis.CommonGrams
         [Test]
         public virtual void TestCommonGramsQueryFilter()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new CommonGramsQueryFilter(new CommonGramsFilter(TEST_VERSION_CURRENT, tokenizer, commonWords)));
+            });
 
             // Stop words used below are "of" "the" and "s"
 
@@ -130,26 +134,14 @@ namespace Lucene.Net.Analysis.CommonGrams
             AssertAnalyzesTo(a, "of the of", new string[] { "of_the", "the_of" });
         }
 
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly CommonGramsFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(CommonGramsFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new CommonGramsQueryFilter(new CommonGramsFilter(TEST_VERSION_CURRENT, tokenizer, commonWords)));
-            }
-        }
-
         [Test]
         public virtual void TestCommonGramsFilter()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new CommonGramsFilter(TEST_VERSION_CURRENT, tokenizer, commonWords));
+            });
 
             // Stop words used below are "of" "the" and "s"
             // one word queries
@@ -186,22 +178,6 @@ namespace Lucene.Net.Analysis.CommonGrams
 
             AssertAnalyzesTo(a, "s s s", new string[] { "s", "s_s", "s", "s_s", "s" }, new int[] { 1, 0, 1, 0, 1 });
             AssertAnalyzesTo(a, "of the of", new string[] { "of", "of_the", "the", "the_of", "of" }, new int[] { 1, 0, 1, 0, 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly CommonGramsFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(CommonGramsFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new CommonGramsFilter(TEST_VERSION_CURRENT, tokenizer, commonWords));
-            }
         }
 
         /// <summary>
@@ -286,49 +262,23 @@ namespace Lucene.Net.Analysis.CommonGrams
         [Test]
         public virtual void TestRandomStrings()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-
-            CheckRandomData(Random, a, 1000 * RandomMultiplier);
-
-            Analyzer b = new AnalyzerAnonymousInnerClassHelper4(this);
-
-            CheckRandomData(Random, b, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly CommonGramsFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(CommonGramsFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 CommonGramsFilter cgf = new CommonGramsFilter(TEST_VERSION_CURRENT, t, commonWords);
                 return new TokenStreamComponents(t, cgf);
-            }
-        }
+            });
 
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly CommonGramsFilterTest outerInstance;
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
 
-            public AnalyzerAnonymousInnerClassHelper4(CommonGramsFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer t = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 CommonGramsFilter cgf = new CommonGramsFilter(TEST_VERSION_CURRENT, t, commonWords);
                 return new TokenStreamComponents(t, new CommonGramsQueryFilter(cgf));
-            }
+            });
+
+            CheckRandomData(Random, b, 1000 * RandomMultiplier);
         }
     }
 }

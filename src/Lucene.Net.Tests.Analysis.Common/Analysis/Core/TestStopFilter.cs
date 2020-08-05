@@ -212,30 +212,18 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestFirstPosInc()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
-
-            AssertAnalyzesTo(analyzer, "the quick brown fox", new string[] { "hte", "quick", "brown", "fox" }, new int[] { 1, 1, 1, 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestStopFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestStopFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenFilter filter = new MockSynonymFilter(outerInstance, tokenizer);
+                TokenFilter filter = new MockSynonymFilter(this, tokenizer);
 #pragma warning disable 612, 618
                 StopFilter stopfilter = new StopFilter(Version.LUCENE_43, filter, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
                 stopfilter.SetEnablePositionIncrements(false);
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer, stopfilter);
-            }
+            });
+
+            AssertAnalyzesTo(analyzer, "the quick brown fox", new string[] { "hte", "quick", "brown", "fox" }, new int[] { 1, 1, 1, 1 });
         }
     }
 }

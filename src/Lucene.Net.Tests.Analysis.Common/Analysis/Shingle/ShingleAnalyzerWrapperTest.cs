@@ -6,7 +6,6 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Shingle
 {
@@ -212,7 +211,13 @@ namespace Lucene.Net.Analysis.Shingle
         [Test]
         public virtual void TestAltFillerToken()
         {
-            Analyzer @delegate = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer @delegate = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                CharArraySet stopSet = StopFilter.MakeStopSet(TEST_VERSION_CURRENT, "into");
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenFilter filter = new StopFilter(TEST_VERSION_CURRENT, tokenizer, stopSet);
+                return new TokenStreamComponents(tokenizer, filter);
+            });
 
             ShingleAnalyzerWrapper analyzer = new ShingleAnalyzerWrapper(@delegate, ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE, ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE, ShingleFilter.DEFAULT_TOKEN_SEPARATOR, true, false, "--");
             AssertAnalyzesTo(analyzer, "please divide into shingles", new string[] { "please", "please divide", "divide", "divide --", "-- shingles", "shingles" }, new int[] { 0, 0, 7, 7, 19, 19 }, new int[] { 6, 13, 13, 19, 27, 27 }, new int[] { 1, 0, 1, 0, 1, 1 });
@@ -222,24 +227,6 @@ namespace Lucene.Net.Analysis.Shingle
 
             analyzer = new ShingleAnalyzerWrapper(@delegate, ShingleFilter.DEFAULT_MIN_SHINGLE_SIZE, ShingleFilter.DEFAULT_MAX_SHINGLE_SIZE, ShingleFilter.DEFAULT_TOKEN_SEPARATOR, false, false, "");
             AssertAnalyzesTo(analyzer, "please divide into shingles", new string[] { "please divide", "divide ", " shingles" }, new int[] { 0, 7, 19 }, new int[] { 13, 19, 27 }, new int[] { 1, 1, 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly ShingleAnalyzerWrapperTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(ShingleAnalyzerWrapperTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                CharArraySet stopSet = StopFilter.MakeStopSet(TEST_VERSION_CURRENT, "into");
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenFilter filter = new StopFilter(TEST_VERSION_CURRENT, tokenizer, stopSet);
-                return new TokenStreamComponents(tokenizer, filter);
-            }
         }
 
         [Test]

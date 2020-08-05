@@ -47,42 +47,23 @@ namespace Lucene.Net.Analysis.Core
             builder.Add("tcgyreo", "zpfpajyws");
             NormalizeCharMap map = builder.Build();
 
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, cas, map);
-            CheckAnalysisConsistency(Random, a, false, "wmgddzunizdomqyj");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestBugInSomething outerInstance;
-
-            private CharArraySet cas;
-            private NormalizeCharMap map;
-
-            public AnalyzerAnonymousInnerClassHelper(TestBugInSomething outerInstance, CharArraySet cas, NormalizeCharMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.cas = cas;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer t = new MockTokenizer(new TestRandomChains.CheckThatYouDidntReadAnythingReaderWrapper(reader), MockTokenFilter.ENGLISH_STOPSET, false, -65);
                 TokenFilter f = new CommonGramsFilter(TEST_VERSION_CURRENT, t, cas);
                 return new TokenStreamComponents(t, f);
-            }
-
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
+            }, initReader: (fieldName, reader) =>
             {
                 reader = new MockCharFilter(reader, 0);
                 reader = new MappingCharFilter(map, reader);
-                return reader;
-            }
+                return reader;            
+            });
+            CheckAnalysisConsistency(Random, a, false, "wmgddzunizdomqyj");
         }
 
         internal CharFilter wrappedStream = new CharFilterAnonymousInnerClassHelper(new StringReader("bogus"));
 
-        private class CharFilterAnonymousInnerClassHelper : CharFilter
+        private sealed class CharFilterAnonymousInnerClassHelper : CharFilter
         {
             public CharFilterAnonymousInnerClassHelper(StringReader java) : base(java)
             {
@@ -300,20 +281,7 @@ namespace Lucene.Net.Analysis.Core
         [Slow]
         public virtual void TestUnicodeShinglesAndNgrams()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper100(this);
-            CheckRandomData(Random, analyzer, 2000);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper100 : Analyzer
-        {
-            private readonly TestBugInSomething outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper100(TestBugInSomething outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new EdgeNGramTokenizer(TEST_VERSION_CURRENT, reader, 2, 94);
                 //TokenStream stream = new SopTokenFilter(tokenizer);
@@ -322,7 +290,8 @@ namespace Lucene.Net.Analysis.Core
                 stream = new NGramTokenFilter(TEST_VERSION_CURRENT, stream, 55, 83);
                 //stream = new SopTokenFilter(stream);
                 return new TokenStreamComponents(tokenizer, stream);
-            }
+            });
+            CheckRandomData(Random, analyzer, 2000);
         }
 
         [Test]
@@ -330,32 +299,15 @@ namespace Lucene.Net.Analysis.Core
         {
             CharArraySet protWords = new CharArraySet(TEST_VERSION_CURRENT, new JCG.HashSet<string> { "rrdpafa", "pupmmlu", "xlq", "dyy", "zqrxrrck", "o", "hsrlfvcha" }, false);
             byte[] table = (byte[])(Array)new sbyte[] { -57, 26, 1, 48, 63, -23, 55, -84, 18, 120, -97, 103, 58, 13, 84, 89, 57, -13, -63, 5, 28, 97, -54, -94, 102, -108, -5, 5, 46, 40, 43, 78, 43, -72, 36, 29, 124, -106, -22, -51, 65, 5, 31, -42, 6, -99, 97, 14, 81, -128, 74, 100, 54, -55, -25, 53, -71, -98, 44, 33, 86, 106, -42, 47, 115, -89, -18, -26, 22, -95, -43, 83, -125, 105, -104, -24, 106, -16, 126, 115, -105, 97, 65, -33, 57, 44, -1, 123, -68, 100, 13, -41, -64, -119, 0, 92, 94, -36, 53, -9, -102, -18, 90, 94, -26, 31, 71, -20 };
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, protWords, table);
-            CheckAnalysisConsistency(Random, a, false, "B\u28c3\ue0f8[ \ud800\udfc2 </p> jb");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestBugInSomething outerInstance;
-
-            private CharArraySet protWords;
-            private byte[] table;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestBugInSomething outerInstance, CharArraySet protWords, byte[] table)
-            {
-                this.outerInstance = outerInstance;
-                this.protWords = protWords;
-                this.table = table;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new WikipediaTokenizer(reader);
                 TokenStream stream = new SopTokenFilter(tokenizer);
                 stream = new WordDelimiterFilter(TEST_VERSION_CURRENT, stream, table, (WordDelimiterFlags)(object)-50, protWords);
                 stream = new SopTokenFilter(stream);
                 return new TokenStreamComponents(tokenizer, stream);
-            }
+            });
+            CheckAnalysisConsistency(Random, a, false, "B\u28c3\ue0f8[ \ud800\udfc2 </p> jb");
         }
     }
 }

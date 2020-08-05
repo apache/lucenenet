@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         // testLain1Accents() is a copy of TestLatin1AccentFilter.testU().
         [Test]
-        public virtual void testLatin1Accents()
+        public virtual void TestLatin1Accents()
         {
             TokenStream stream = new MockTokenizer(new StringReader("Des mot clés À LA CHAÎNE À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ĳ Ð Ñ" + " Ò Ó Ô Õ Ö Ø Œ Þ Ù Ú Û Ü Ý Ÿ à á â ã ä å æ ç è é ê ë ì í î ï ĳ" + " ð ñ ò ó ô õ ö ø œ ß þ ù ú û ü ý ÿ ﬁ ﬂ"), MockTokenizer.WHITESPACE, false);
             ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream, Random.nextBoolean());
@@ -177,7 +177,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         //    ============== end get.test.cases.pl ==============
         //
         [Test]
-        public virtual void testAllFoldings()
+        public virtual void TestAllFoldings()
         {
             // Alternating strings of:
             //   1. All non-ASCII characters to be folded, concatenated together as a
@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
 
             TokenStream stream = new MockTokenizer(new StringReader(inputText.ToString()), MockTokenizer.WHITESPACE, false);
-            ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream, Random.nextBoolean());
+            ASCIIFoldingFilter filter = new ASCIIFoldingFilter(stream, Random.NextBoolean());
             ICharTermAttribute termAtt = filter.GetAttribute<ICharTermAttribute>();
             IEnumerator<string> unfoldedIter = expectedUnfoldedTokens.GetEnumerator();
             IEnumerator<string> foldedIter = expectedFoldedTokens.GetEnumerator();
@@ -228,49 +228,25 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <summary>
         /// blast some random strings through the analyzer </summary>
         [Test]
-        public virtual void testRandomStrings()
+        public virtual void TestRandomStrings()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new ASCIIFoldingFilter(tokenizer, Random.NextBoolean()));
+            });
             CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
 
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestASCIIFoldingFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestASCIIFoldingFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new ASCIIFoldingFilter(tokenizer, Random.nextBoolean()));
-            }
-        }
-
         [Test]
-        public virtual void testEmptyTerm()
+        public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestASCIIFoldingFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestASCIIFoldingFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new ASCIIFoldingFilter(tokenizer, Random.nextBoolean()));
-            }
+                return new TokenStreamComponents(tokenizer, new ASCIIFoldingFilter(tokenizer, Random.NextBoolean()));
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

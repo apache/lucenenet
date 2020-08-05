@@ -41,20 +41,11 @@ namespace Lucene.Net.Analysis.Core
             BaseTokenStreamTestCase.AssertTokenStreamContents(tokenizer, new string[] { "testing", "1234" });
         }
 
-        private Analyzer a = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer);
-            }
-        }
+            Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
+            return new TokenStreamComponents(tokenizer);
+        });
 
         [Test]
         public virtual void TestArmenian()
@@ -323,26 +314,14 @@ namespace Lucene.Net.Analysis.Core
         [Obsolete("uses older unicode (6.0). simple test to make sure its basically working")]
         public virtual void TestVersion36()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            AssertAnalyzesTo(a, "this is just a t\u08E6st lucene@apache.org", new string[] { "this", "is", "just", "a", "t", "st", "lucene", "apache.org" }); // new combining mark in 6.1
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestStandardAnalyzer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestStandardAnalyzer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new StandardTokenizer(LuceneVersion.LUCENE_36, reader);
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer);
-            }
+            });
+            AssertAnalyzesTo(a, "this is just a t\u08E6st lucene@apache.org", new string[] { "this", "is", "just", "a", "t", "st", "lucene", "apache.org" }); // new combining mark in 6.1
         }
 
         /// @deprecated uses older unicode (6.1). simple test to make sure its basically working 
@@ -350,28 +329,16 @@ namespace Lucene.Net.Analysis.Core
         [Obsolete("uses older unicode (6.1). simple test to make sure its basically working")]
         public virtual void TestVersion40()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            // U+061C is a new combining mark in 6.3, found using "[[\p{WB:Format}\p{WB:Extend}]&[^\p{Age:6.2}]]"
-            // on the online UnicodeSet utility: <http://unicode.org/cldr/utility/list-unicodeset.jsp>
-            AssertAnalyzesTo(a, "this is just a t\u061Cst lucene@apache.org", new string[] { "this", "is", "just", "a", "t", "st", "lucene", "apache.org" });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestStandardAnalyzer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestStandardAnalyzer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
 #pragma warning disable 612, 618
                 Tokenizer tokenizer = new StandardTokenizer(LuceneVersion.LUCENE_40, reader);
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer);
-            }
+            });
+            // U+061C is a new combining mark in 6.3, found using "[[\p{WB:Format}\p{WB:Extend}]&[^\p{Age:6.2}]]"
+            // on the online UnicodeSet utility: <http://unicode.org/cldr/utility/list-unicodeset.jsp>
+            AssertAnalyzesTo(a, "this is just a t\u061Cst lucene@apache.org", new string[] { "this", "is", "just", "a", "t", "st", "lucene", "apache.org" });
         }
 
         /// <summary>
@@ -396,24 +363,14 @@ namespace Lucene.Net.Analysis.Core
         public virtual void TestRandomHugeStringsGraphAfter()
         {
             Random random = Random;
-            CheckRandomData(random, new AnalyzerAnonymousInnerClassHelper4(this), 100 * RandomMultiplier, 8192);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly TestStandardAnalyzer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper4(TestStandardAnalyzer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                TokenStream tokenStream = new MockGraphTokenFilter(Random, tokenizer);
-                return new TokenStreamComponents(tokenizer, tokenStream);
-            }
+            CheckRandomData(random,
+                Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
+                    TokenStream tokenStream = new MockGraphTokenFilter(Random, tokenizer);
+                    return new TokenStreamComponents(tokenizer, tokenStream);
+                })
+                , 100 * RandomMultiplier, 8192);
         }
     }
 }

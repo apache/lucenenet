@@ -63,7 +63,7 @@ namespace Lucene.Net.Analysis.Sinks
             assertTrue("sink Size: " + sinkCount + " is not: " + 1, sinkCount == 1);
         }
 
-        private class WordTokenFilter : TokenFilter
+        private sealed class WordTokenFilter : TokenFilter
         {
             private readonly TokenTypeSinkTokenizerTest outerInstance;
 
