@@ -2,7 +2,6 @@
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Ru
 {
@@ -28,20 +27,11 @@ namespace Lucene.Net.Analysis.Ru
     /// </summary>
     public class TestRussianLightStemFilter : BaseTokenStreamTestCase
     {
-        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(source, new RussianLightStemFilter(source));
-            }
-        }
+            Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            return new TokenStreamComponents(source, new RussianLightStemFilter(source));
+        });
 
         /// <summary>
         /// Test against a vocabulary from the reference impl </summary>
@@ -55,28 +45,13 @@ namespace Lucene.Net.Analysis.Ru
         public virtual void TestKeyword()
         {
             CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("энергии"), false);
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
-            CheckOneTerm(a, "энергии", "энергии");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestRussianLightStemFilter outerInstance;
-
-            private CharArraySet exclusionSet;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestRussianLightStemFilter outerInstance, CharArraySet exclusionSet)
-            {
-                this.outerInstance = outerInstance;
-                this.exclusionSet = exclusionSet;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
                 return new TokenStreamComponents(source, new RussianLightStemFilter(sink));
-            }
+            });
+            CheckOneTerm(a, "энергии", "энергии");
         }
 
         /// <summary>
@@ -90,24 +65,12 @@ namespace Lucene.Net.Analysis.Ru
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestRussianLightStemFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestRussianLightStemFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new RussianLightStemFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Analysis.Standard;
 using NUnit.Framework;
-using System.IO;
-using Lucene.Net.Analysis.Standard;
+using System;
 
 namespace Lucene.Net.Analysis.Cjk
 {
@@ -24,35 +23,17 @@ namespace Lucene.Net.Analysis.Cjk
 
     public class TestCJKBigramFilter : BaseTokenStreamTestCase
     {
-        internal Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        internal static readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
+            Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
+            return new TokenStreamComponents(t, new CJKBigramFilter(t));
+        });
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(t, new CJKBigramFilter(t));
-            }
-        }
-
-        internal Analyzer unibiAnalyzer = new AnalyzerAnonymousInnerClassHelper2();
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        internal static readonly Analyzer unibiAnalyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper2()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(t, new CJKBigramFilter(t, (CJKScript)0xff, true));
-            }
-        }
+            Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
+            return new TokenStreamComponents(t, new CJKBigramFilter(t, (CJKScript)0xff, true));
+        });
 
         [Test]
         public virtual void TestHuge()
@@ -63,47 +44,23 @@ namespace Lucene.Net.Analysis.Cjk
         [Test]
         public virtual void TestHanOnly()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            AssertAnalyzesTo(a, "多くの学生が試験に落ちた。", new string[] { "多", "く", "の", "学生", "が", "試験", "に", "落", "ち", "た" }, new int[] { 0, 1, 2, 3, 5, 6, 8, 9, 10, 11 }, new int[] { 1, 2, 3, 5, 6, 8, 9, 10, 11, 12 }, new string[] { "<SINGLE>", "<HIRAGANA>", "<HIRAGANA>", "<DOUBLE>", "<HIRAGANA>", "<DOUBLE>", "<HIRAGANA>", "<SINGLE>", "<HIRAGANA>", "<HIRAGANA>", "<SINGLE>" }, new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestCJKBigramFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestCJKBigramFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(t, new CJKBigramFilter(t, CJKScript.HAN));
-            }
+            });
+            AssertAnalyzesTo(a, "多くの学生が試験に落ちた。", new string[] { "多", "く", "の", "学生", "が", "試験", "に", "落", "ち", "た" }, new int[] { 0, 1, 2, 3, 5, 6, 8, 9, 10, 11 }, new int[] { 1, 2, 3, 5, 6, 8, 9, 10, 11, 12 }, new string[] { "<SINGLE>", "<HIRAGANA>", "<HIRAGANA>", "<DOUBLE>", "<HIRAGANA>", "<DOUBLE>", "<HIRAGANA>", "<SINGLE>", "<HIRAGANA>", "<HIRAGANA>", "<SINGLE>" }, new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 });
         }
 
         [Test]
         public virtual void TestAllScripts()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this);
-            AssertAnalyzesTo(a, "多くの学生が試験に落ちた。", new string[] { "多く", "くの", "の学", "学生", "生が", "が試", "試験", "験に", "に落", "落ち", "ちた" });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly TestCJKBigramFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper4(TestCJKBigramFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(t, new CJKBigramFilter(t, (CJKScript)0xff, false));
-            }
+            });
+            AssertAnalyzesTo(a, "多くの学生が試験に落ちた。", new string[] { "多く", "くの", "の学", "学生", "生が", "が試", "試験", "験に", "に落", "落ち", "ちた" });
         }
 
         [Test]
@@ -115,24 +72,12 @@ namespace Lucene.Net.Analysis.Cjk
         [Test]
         public virtual void TestUnigramsAndBigramsHanOnly()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper5(this);
-            AssertAnalyzesTo(a, "多くの学生が試験に落ちた。", new string[] { "多", "く", "の", "学", "学生", "生", "が", "試", "試験", "験", "に", "落", "ち", "た" }, new int[] { 0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 10, 11 }, new int[] { 1, 2, 3, 4, 5, 5, 6, 7, 8, 8, 9, 10, 11, 12 }, new string[] { "<SINGLE>", "<HIRAGANA>", "<HIRAGANA>", "<SINGLE>", "<DOUBLE>", "<SINGLE>", "<HIRAGANA>", "<SINGLE>", "<DOUBLE>", "<SINGLE>", "<HIRAGANA>", "<SINGLE>", "<HIRAGANA>", "<HIRAGANA>", "<SINGLE>" }, new int[] { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1 }, new int[] { 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper5 : Analyzer
-        {
-            private readonly TestCJKBigramFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper5(TestCJKBigramFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(t, new CJKBigramFilter(t, CJKScript.HAN, true));
-            }
+            });
+            AssertAnalyzesTo(a, "多くの学生が試験に落ちた。", new string[] { "多", "く", "の", "学", "学生", "生", "が", "試", "試験", "験", "に", "落", "ち", "た" }, new int[] { 0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 10, 11 }, new int[] { 1, 2, 3, 4, 5, 5, 6, 7, 8, 8, 9, 10, 11, 12 }, new string[] { "<SINGLE>", "<HIRAGANA>", "<HIRAGANA>", "<SINGLE>", "<DOUBLE>", "<SINGLE>", "<HIRAGANA>", "<SINGLE>", "<DOUBLE>", "<SINGLE>", "<HIRAGANA>", "<SINGLE>", "<HIRAGANA>", "<HIRAGANA>", "<SINGLE>" }, new int[] { 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1 }, new int[] { 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1 });
         }
 
         [Test]

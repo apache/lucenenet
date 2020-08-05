@@ -5,7 +5,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -56,7 +55,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// @deprecated (3.0) does not support custom attributes 
         [Obsolete("(3.0) does not support custom attributes")]
-        private class IterTokenStream : TokenStream
+        private sealed class IterTokenStream : TokenStream
         {
             internal readonly Token[] tokens;
             internal int index = 0;
@@ -110,68 +109,32 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestRandomStrings()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random, a, 1000 * RandomMultiplier);
-
-            Analyzer b = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckRandomData(Random, b, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestTrimFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestTrimFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
                 return new TokenStreamComponents(tokenizer, new TrimFilter(LuceneVersion.LUCENE_43, tokenizer, true));
-            }
-        }
+            });
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
 
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestTrimFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestTrimFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
                 return new TokenStreamComponents(tokenizer, new TrimFilter(TEST_VERSION_CURRENT, tokenizer, false));
-            }
+            });
+            CheckRandomData(Random, b, 1000 * RandomMultiplier);
         }
 
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestTrimFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestTrimFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 bool updateOffsets = Random.nextBoolean();
                 LuceneVersion version = updateOffsets ? LuceneVersion.LUCENE_43 : TEST_VERSION_CURRENT;
                 return new TokenStreamComponents(tokenizer, new TrimFilter(version, tokenizer, updateOffsets));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 #pragma warning restore 612, 618

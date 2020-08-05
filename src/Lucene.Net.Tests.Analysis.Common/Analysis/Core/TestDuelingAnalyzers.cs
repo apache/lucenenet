@@ -61,27 +61,15 @@ namespace Lucene.Net.Analysis.Core
         {
             Random random = Random;
             Analyzer left = new MockAnalyzer(random, jvmLetter, false);
-            Analyzer right = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer right = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            });
             for (int i = 0; i < 1000; i++)
             {
                 string s = TestUtil.RandomSimpleString(random);
                 assertEquals(s, left.GetTokenStream("foo", newStringReader(s)), right.GetTokenStream("foo", newStringReader(s)));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestDuelingAnalyzers outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestDuelingAnalyzers outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer, tokenizer);
             }
         }
 
@@ -93,7 +81,11 @@ namespace Lucene.Net.Analysis.Core
             int maxLength = 8192; // CharTokenizer.IO_BUFFER_SIZE*2
             MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
             left.MaxTokenLength = 255; // match CharTokenizer's max token length
-            Analyzer right = new AnalyzerAnonymousInnerClassHelper2(this);
+            Analyzer right = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            });
             int numIterations = AtLeast(50);
             for (int i = 0; i < numIterations; i++)
             {
@@ -102,48 +94,20 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestDuelingAnalyzers outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestDuelingAnalyzers outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer, tokenizer);
-            }
-        }
-
         [Test]
         public virtual void TestLetterHtmlish()
         {
             Random random = Random;
             Analyzer left = new MockAnalyzer(random, jvmLetter, false);
-            Analyzer right = new AnalyzerAnonymousInnerClassHelper3(this);
+            Analyzer right = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            });
             for (int i = 0; i < 1000; i++)
             {
                 string s = TestUtil.RandomHtmlishString(random, 20);
                 assertEquals(s, left.GetTokenStream("foo", newStringReader(s)), right.GetTokenStream("foo", newStringReader(s)));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestDuelingAnalyzers outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestDuelingAnalyzers outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer, tokenizer);
             }
         }
 
@@ -154,7 +118,11 @@ namespace Lucene.Net.Analysis.Core
             int maxLength = 1024; // this is number of elements, not chars!
             MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
             left.MaxTokenLength = 255; // match CharTokenizer's max token length
-            Analyzer right = new AnalyzerAnonymousInnerClassHelper4(this);
+            Analyzer right = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            });
             int numIterations = AtLeast(50);
             for (int i = 0; i < numIterations; i++)
             {
@@ -163,48 +131,20 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly TestDuelingAnalyzers outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper4(TestDuelingAnalyzers outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer, tokenizer);
-            }
-        }
-
         [Test]
         public virtual void TestLetterUnicode()
         {
             Random random = Random;
             Analyzer left = new MockAnalyzer(LuceneTestCase.Random, jvmLetter, false);
-            Analyzer right = new AnalyzerAnonymousInnerClassHelper5(this);
+            Analyzer right = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            });
             for (int i = 0; i < 1000; i++)
             {
                 string s = TestUtil.RandomUnicodeString(random);
                 assertEquals(s, left.GetTokenStream("foo", newStringReader(s)), right.GetTokenStream("foo", newStringReader(s)));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper5 : Analyzer
-        {
-            private readonly TestDuelingAnalyzers outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper5(TestDuelingAnalyzers outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer, tokenizer);
             }
         }
 
@@ -215,28 +155,16 @@ namespace Lucene.Net.Analysis.Core
             int maxLength = 4300; // CharTokenizer.IO_BUFFER_SIZE + fudge
             MockAnalyzer left = new MockAnalyzer(random, jvmLetter, false);
             left.MaxTokenLength = 255; // match CharTokenizer's max token length
-            Analyzer right = new AnalyzerAnonymousInnerClassHelper6(this);
+            Analyzer right = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, tokenizer);
+            });
             int numIterations = AtLeast(50);
             for (int i = 0; i < numIterations; i++)
             {
                 string s = TestUtil.RandomUnicodeString(random, maxLength);
                 assertEquals(s, left.GetTokenStream("foo", newStringReader(s)), right.GetTokenStream("foo", newStringReader(s)));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper6 : Analyzer
-        {
-            private readonly TestDuelingAnalyzers outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper6(TestDuelingAnalyzers outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new LetterTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer, tokenizer);
             }
         }
 

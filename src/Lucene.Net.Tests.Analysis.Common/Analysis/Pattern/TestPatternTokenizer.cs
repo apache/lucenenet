@@ -120,43 +120,19 @@ namespace Lucene.Net.Analysis.Pattern
         [Test]
         public virtual void TestRandomStrings()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random, a, 1000 * RandomMultiplier);
-
-            Analyzer b = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckRandomData(Random, b, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestPatternTokenizer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestPatternTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new PatternTokenizer(reader, new Regex("a", RegexOptions.Compiled), -1);
                 return new TokenStreamComponents(tokenizer);
-            }
-        }
+            });
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
 
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestPatternTokenizer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestPatternTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new PatternTokenizer(reader, new Regex("a", RegexOptions.Compiled), 0);
                 return new TokenStreamComponents(tokenizer);
-            }
+            });
+            CheckRandomData(Random, b, 1000 * RandomMultiplier);
         }
     }
 }

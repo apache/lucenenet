@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Pt
 {
@@ -29,21 +28,12 @@ namespace Lucene.Net.Analysis.Pt
     /// </summary>
     public class TestPortugueseLightStemFilter : BaseTokenStreamTestCase
     {
-        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
-                return new TokenStreamComponents(source, new PortugueseLightStemFilter(result));
-            }
-        }
+            Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
+            TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
+            return new TokenStreamComponents(source, new PortugueseLightStemFilter(result));
+        });
 
         /// <summary>
         /// Test the example from the paper "Assessing the impact of stemming accuracy
@@ -95,28 +85,13 @@ namespace Lucene.Net.Analysis.Pt
         public virtual void TestKeyword()
         {
             CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("quilométricas"), false);
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
-            CheckOneTerm(a, "quilométricas", "quilométricas");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestPortugueseLightStemFilter outerInstance;
-
-            private CharArraySet exclusionSet;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestPortugueseLightStemFilter outerInstance, CharArraySet exclusionSet)
-            {
-                this.outerInstance = outerInstance;
-                this.exclusionSet = exclusionSet;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
                 return new TokenStreamComponents(source, new PortugueseLightStemFilter(sink));
-            }
+            });
+            CheckOneTerm(a, "quilométricas", "quilométricas");
         }
 
         /// <summary>
@@ -130,24 +105,12 @@ namespace Lucene.Net.Analysis.Pt
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestPortugueseLightStemFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestPortugueseLightStemFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new PortugueseLightStemFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

@@ -40,7 +40,11 @@ namespace Lucene.Net.Analysis.Synonym
             parser.Parse(new StringReader(testFile));
             SynonymMap map = parser.Build();
 
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, map);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
+                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
+            });
 
             AssertAnalyzesTo(analyzer, "ball", new string[] { "ball" }, new int[] { 1 });
 
@@ -49,25 +53,6 @@ namespace Lucene.Net.Analysis.Synonym
             AssertAnalyzesTo(analyzer, "foo", new string[] { "foo", "baz", "bar" }, new int[] { 1, 0, 1 });
 
             AssertAnalyzesTo(analyzer, "this test", new string[] { "this", "that", "test", "testing" }, new int[] { 1, 0, 1, 0 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestSolrSynonymParser outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper(TestSolrSynonymParser outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
         }
 
         /// <summary>
@@ -129,32 +114,17 @@ namespace Lucene.Net.Analysis.Synonym
             SolrSynonymParser parser = new SolrSynonymParser(true, true, new MockAnalyzer(Random, MockTokenizer.KEYWORD, false));
             parser.Parse(new StringReader(testFile));
             SynonymMap map = parser.Build();
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this, map);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
+                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
+            });
 
             AssertAnalyzesTo(analyzer, "ball", new string[] { "ball" }, new int[] { 1 });
 
             AssertAnalyzesTo(analyzer, "a=>a", new string[] { "b=>b" }, new int[] { 1 });
 
             AssertAnalyzesTo(analyzer, "a,a", new string[] { "b,b" }, new int[] { 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestSolrSynonymParser outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestSolrSynonymParser outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
-            }
         }
     }
 }

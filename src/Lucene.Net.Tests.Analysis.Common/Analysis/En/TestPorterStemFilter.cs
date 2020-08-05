@@ -28,19 +28,11 @@ namespace Lucene.Net.Analysis.En
     /// </summary>
     public class TestPorterStemFilter_ : BaseTokenStreamTestCase
     {
-        internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        internal static readonly Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer t = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
-                return new TokenStreamComponents(t, new PorterStemFilter(t));
-            }
-        }
+            Tokenizer t = new MockTokenizer(reader, MockTokenizer.KEYWORD, false);
+            return new TokenStreamComponents(t, new PorterStemFilter(t));
+        });
 
         /// <summary>
         /// Run the stemmer against all strings in voc.txt
@@ -73,17 +65,12 @@ namespace Lucene.Net.Analysis.En
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2();
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new PorterStemFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

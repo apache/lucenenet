@@ -31,7 +31,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             foreach (bool consumeAll in new bool[] { true, false })
             {
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper(consumeAll);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    // if we are consuming all tokens, we can use the checks, otherwise we can't
+                    tokenizer.EnableChecks = consumeAll;
+                    return new TokenStreamComponents(tokenizer, new LimitTokenPositionFilter(tokenizer, 2, consumeAll));
+                });
 
                 // don't use assertAnalyzesTo here, as the end offset is not the end of the string (unless consumeAll is true, in which case its correct)!
                 AssertTokenStreamContents(a.GetTokenStream("dummy", "1  2     3  4  5"), new string[] { "1", "2" }, new int[] { 0, 3 }, new int[] { 1, 4 }, consumeAll ? 16 : (int?)null);
@@ -42,24 +48,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
                 // equal to limit
                 AssertTokenStreamContents(a.GetTokenStream("dummy", "1  2  "), new string[] { "1", "2" }, new int[] { 0, 3 }, new int[] { 1, 4 }, consumeAll ? 6 : (int?)null);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly bool consumeAll;
-
-            public AnalyzerAnonymousInnerClassHelper(bool consumeAll)
-            {
-                this.consumeAll = consumeAll;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                // if we are consuming all tokens, we can use the checks, otherwise we can't
-                tokenizer.EnableChecks = consumeAll;
-                return new TokenStreamComponents(tokenizer, new LimitTokenPositionFilter(tokenizer, 2, consumeAll));
             }
         }
 

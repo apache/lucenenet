@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Lv
 {
@@ -26,20 +25,11 @@ namespace Lucene.Net.Analysis.Lv
     /// </summary>
     public class TestLatvianStemmer : BaseTokenStreamTestCase
     {
-        private Analyzer a = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new LatvianStemFilter(tokenizer));
-            }
-        }
+            Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            return new TokenStreamComponents(tokenizer, new LatvianStemFilter(tokenizer));
+        });
 
         [Test]
         public virtual void TestNouns1()
@@ -294,24 +284,12 @@ namespace Lucene.Net.Analysis.Lv
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestLatvianStemmer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestLatvianStemmer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new LatvianStemFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

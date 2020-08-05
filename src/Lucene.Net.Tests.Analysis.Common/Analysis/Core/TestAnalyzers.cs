@@ -111,27 +111,17 @@ namespace Lucene.Net.Analysis.Core
 #pragma warning restore 219, 612, 618
         }
 
-        private class LowerCaseWhitespaceAnalyzer : Analyzer
+        private static readonly Analyzer LOWERCASE_WHITESPACE_ANALYZER = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
+            Tokenizer tokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, reader);
+            return new TokenStreamComponents(tokenizer, new LowerCaseFilter(TEST_VERSION_CURRENT, tokenizer));
+        });
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer, new LowerCaseFilter(TEST_VERSION_CURRENT, tokenizer));
-            }
-
-        }
-
-        private class UpperCaseWhitespaceAnalyzer : Analyzer
+        private static readonly Analyzer UPPERCASE_WHITESPACE_ANALYZER = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer, new UpperCaseFilter(TEST_VERSION_CURRENT, tokenizer));
-            }
-
-        }
+            Tokenizer tokenizer = new WhitespaceTokenizer(TEST_VERSION_CURRENT, reader);
+            return new TokenStreamComponents(tokenizer, new UpperCaseFilter(TEST_VERSION_CURRENT, tokenizer));
+        });
 
 
         /// <summary>
@@ -140,7 +130,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestLowerCaseFilter()
         {
-            Analyzer a = new LowerCaseWhitespaceAnalyzer();
+            Analyzer a = LOWERCASE_WHITESPACE_ANALYZER;
             // BMP
             AssertAnalyzesTo(a, "AbaCaDabA", new string[] { "abacadaba" });
             // supplementary
@@ -158,7 +148,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestUpperCaseFilter()
         {
-            Analyzer a = new UpperCaseWhitespaceAnalyzer();
+            Analyzer a = UPPERCASE_WHITESPACE_ANALYZER;
             // BMP
             AssertAnalyzesTo(a, "AbaCaDabA", new string[] { "ABACADABA" });
             // supplementary

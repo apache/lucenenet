@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Ckb
 {
@@ -26,20 +25,11 @@ namespace Lucene.Net.Analysis.Ckb
     /// </summary>
     public class TestSoraniNormalizationFilter : BaseTokenStreamTestCase
     {
-        internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        internal static readonly Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new SoraniNormalizationFilter(tokenizer));
-            }
-        }
+            Tokenizer tokenizer = new KeywordTokenizer(reader);
+            return new TokenStreamComponents(tokenizer, new SoraniNormalizationFilter(tokenizer));
+        });
 
         [Test]
         public virtual void TestY()

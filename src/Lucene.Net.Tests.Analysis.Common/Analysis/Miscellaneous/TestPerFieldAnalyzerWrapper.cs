@@ -6,7 +6,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.IO;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -92,33 +91,16 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestCharFilters()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                return new TokenStreamComponents(new MockTokenizer(reader));
+            }, initReader: (fieldName, reader) => new MockCharFilter(reader, 7));
             AssertAnalyzesTo(a, "ab", new string[] { "aab" }, new int[] { 0 }, new int[] { 2 });
 
             // now wrap in PFAW
             PerFieldAnalyzerWrapper p = new PerFieldAnalyzerWrapper(a, Collections.EmptyMap<string, Analyzer>());
 
             AssertAnalyzesTo(p, "ab", new string[] { "aab" }, new int[] { 0 }, new int[] { 2 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestPerFieldAnalyzerWrapper outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestPerFieldAnalyzerWrapper outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                return new TokenStreamComponents(new MockTokenizer(reader));
-            }
-
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
-            {
-                return new MockCharFilter(reader, 7);
-            }
         }
     }
 }

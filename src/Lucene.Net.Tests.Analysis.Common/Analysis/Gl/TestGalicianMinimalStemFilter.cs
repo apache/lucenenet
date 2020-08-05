@@ -2,7 +2,6 @@
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Gl
 {
@@ -28,20 +27,11 @@ namespace Lucene.Net.Analysis.Gl
     /// </summary>
     public class TestGalicianMinimalStemFilter : BaseTokenStreamTestCase
     {
-        internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        internal static readonly Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new GalicianMinimalStemFilter(tokenizer));
-            }
-        }
+            Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            return new TokenStreamComponents(tokenizer, new GalicianMinimalStemFilter(tokenizer));
+        });
 
         [Test]
         public virtual void TestPlural()
@@ -63,28 +53,13 @@ namespace Lucene.Net.Analysis.Gl
         public virtual void TestKeyword()
         {
             CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("elefantes"), false);
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, exclusionSet);
-            CheckOneTerm(a, "elefantes", "elefantes");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestGalicianMinimalStemFilter outerInstance;
-
-            private CharArraySet exclusionSet;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestGalicianMinimalStemFilter outerInstance, CharArraySet exclusionSet)
-            {
-                this.outerInstance = outerInstance;
-                this.exclusionSet = exclusionSet;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
                 return new TokenStreamComponents(source, new GalicianMinimalStemFilter(sink));
-            }
+            });
+            CheckOneTerm(a, "elefantes", "elefantes");
         }
 
         /// <summary>
@@ -98,24 +73,12 @@ namespace Lucene.Net.Analysis.Gl
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestGalicianMinimalStemFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestGalicianMinimalStemFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new GalicianMinimalStemFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

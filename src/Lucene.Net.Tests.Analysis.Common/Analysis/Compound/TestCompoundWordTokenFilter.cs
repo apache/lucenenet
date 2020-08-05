@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Compound
             }
         }
 
-        private class MockRetainAttributeFilter : TokenFilter
+        private sealed class MockRetainAttributeFilter : TokenFilter
         {
 
             internal IMockRetainAttribute retainAtt;
@@ -236,37 +236,14 @@ namespace Lucene.Net.Analysis.Compound
             builder.Add("ü", "ue");
             NormalizeCharMap normMap = builder.Build();
 
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, dict, normMap);
-
-            AssertAnalyzesTo(analyzer, "banküberfall", new string[] { "bankueberfall", "fall" }, new int[] { 0, 0 }, new int[] { 12, 12 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestCompoundWordTokenFilter outerInstance;
-
-            private CharArraySet dict;
-            private NormalizeCharMap normMap;
-
-            public AnalyzerAnonymousInnerClassHelper(TestCompoundWordTokenFilter outerInstance, CharArraySet dict, NormalizeCharMap normMap)
-            {
-                this.outerInstance = outerInstance;
-                this.dict = dict;
-                this.normMap = normMap;
-            }
-
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenFilter filter = new DictionaryCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, dict);
                 return new TokenStreamComponents(tokenizer, filter);
-            }
+            }, initReader: (fieldName, reader) => new MappingCharFilter(normMap, reader));
 
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
-            {
-                return new MappingCharFilter(normMap, reader);
-            }
+            AssertAnalyzesTo(analyzer, "banküberfall", new string[] { "bankueberfall", "fall" }, new int[] { 0, 0 }, new int[] { 12, 12 });
         }
 
         /// <summary>
@@ -275,56 +252,24 @@ namespace Lucene.Net.Analysis.Compound
         public virtual void TestRandomStrings()
         {
             CharArraySet dict = makeDictionary("a", "e", "i", "o", "u", "y", "bc", "def");
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, dict);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new DictionaryCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, dict));
+            });
             CheckRandomData(Random, a, 1000 * RandomMultiplier);
 
             //InputSource @is = new InputSource(this.GetType().getResource("da_UTF8.xml").toExternalForm());
             using (var @is = this.GetType().getResourceAsStream("da_UTF8.xml"))
             {
                 HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
-                Analyzer b = new AnalyzerAnonymousInnerClassHelper3(this, hyphenator);
+                Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    TokenFilter filter = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, hyphenator);
+                    return new TokenStreamComponents(tokenizer, filter);
+                });
                 CheckRandomData(Random, b, 1000 * RandomMultiplier);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestCompoundWordTokenFilter outerInstance;
-
-            private CharArraySet dict;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestCompoundWordTokenFilter outerInstance, CharArraySet dict)
-            {
-                this.outerInstance = outerInstance;
-                this.dict = dict;
-            }
-
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new DictionaryCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, dict));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestCompoundWordTokenFilter outerInstance;
-
-            private HyphenationTree hyphenator;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestCompoundWordTokenFilter outerInstance, HyphenationTree hyphenator)
-            {
-                this.outerInstance = outerInstance;
-                this.hyphenator = hyphenator;
-            }
-
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                TokenFilter filter = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, hyphenator);
-                return new TokenStreamComponents(tokenizer, filter);
             }
         }
 
@@ -332,7 +277,11 @@ namespace Lucene.Net.Analysis.Compound
         public virtual void TestEmptyTerm()
         {
             CharArraySet dict = makeDictionary("a", "e", "i", "o", "u", "y", "bc", "def");
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this, dict);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                return new TokenStreamComponents(tokenizer, new DictionaryCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, dict));
+            });
             CheckOneTerm(a, "", "");
 
             //InputSource @is = new InputSource(this.GetType().getResource("da_UTF8.xml").toExternalForm());
@@ -340,49 +289,13 @@ namespace Lucene.Net.Analysis.Compound
             {
 
                 HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
-                Analyzer b = new AnalyzerAnonymousInnerClassHelper5(this, hyphenator);
+                Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new KeywordTokenizer(reader);
+                    TokenFilter filter = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, hyphenator);
+                    return new TokenStreamComponents(tokenizer, filter);
+                });
                 CheckOneTerm(b, "", "");
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly TestCompoundWordTokenFilter outerInstance;
-
-            private CharArraySet dict;
-
-            public AnalyzerAnonymousInnerClassHelper4(TestCompoundWordTokenFilter outerInstance, CharArraySet dict)
-            {
-                this.outerInstance = outerInstance;
-                this.dict = dict;
-            }
-
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new DictionaryCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, dict));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper5 : Analyzer
-        {
-            private readonly TestCompoundWordTokenFilter outerInstance;
-
-            private HyphenationTree hyphenator;
-
-            public AnalyzerAnonymousInnerClassHelper5(TestCompoundWordTokenFilter outerInstance, HyphenationTree hyphenator)
-            {
-                this.outerInstance = outerInstance;
-                this.hyphenator = hyphenator;
-            }
-
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new KeywordTokenizer(reader);
-                TokenFilter filter = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, hyphenator);
-                return new TokenStreamComponents(tokenizer, filter);
             }
         }
     }

@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.Gl
 {
@@ -27,22 +26,12 @@ namespace Lucene.Net.Analysis.Gl
     /// </summary>
     public class TestGalicianStemFilter : BaseTokenStreamTestCase
     {
-        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
-                return new TokenStreamComponents(source, new GalicianStemFilter(result));
-            }
-        }
-
+            Tokenizer source = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
+            TokenStream result = new LowerCaseFilter(TEST_VERSION_CURRENT, source);
+            return new TokenStreamComponents(source, new GalicianStemFilter(result));
+        });
 
         /// <summary>
         /// Test against a vocabulary from the reference impl </summary>
@@ -55,24 +44,12 @@ namespace Lucene.Net.Analysis.Gl
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestGalicianStemFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestGalicianStemFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new GalicianStemFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

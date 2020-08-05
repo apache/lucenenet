@@ -71,68 +71,32 @@ namespace Lucene.Net.Analysis.Pattern
         [Test]
         public virtual void TestRandomStrings()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random, a, 1000 * RandomMultiplier);
-
-            Analyzer b = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckRandomData(Random, b, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestPatternReplaceFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestPatternReplaceFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream filter = new PatternReplaceFilter(tokenizer, new Regex("a", RegexOptions.Compiled), "b", false);
                 return new TokenStreamComponents(tokenizer, filter);
-            }
-        }
+            });
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
 
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestPatternReplaceFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestPatternReplaceFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream filter = new PatternReplaceFilter(tokenizer, new Regex("a", RegexOptions.Compiled), "b", true);
                 return new TokenStreamComponents(tokenizer, filter);
-            }
+            });
+            CheckRandomData(Random, b, 1000 * RandomMultiplier);
         }
 
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestPatternReplaceFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestPatternReplaceFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new PatternReplaceFilter(tokenizer, new Regex("a", RegexOptions.Compiled), "b", true));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

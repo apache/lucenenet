@@ -61,12 +61,8 @@ namespace Lucene.Net.Analysis.Sinks
 
         internal static readonly TeeSinkTokenFilter.SinkFilter theFilter = new SinkFilterAnonymousInnerClassHelper();
 
-        private class SinkFilterAnonymousInnerClassHelper : TeeSinkTokenFilter.SinkFilter
+        private sealed class SinkFilterAnonymousInnerClassHelper : TeeSinkTokenFilter.SinkFilter
         {
-            public SinkFilterAnonymousInnerClassHelper()
-            {
-            }
-
             public override bool Accept(AttributeSource a)
             {
                 ICharTermAttribute termAtt = a.GetAttribute<ICharTermAttribute>();
@@ -76,12 +72,8 @@ namespace Lucene.Net.Analysis.Sinks
 
         internal static readonly TeeSinkTokenFilter.SinkFilter dogFilter = new SinkFilterAnonymousInnerClassHelper2();
 
-        private class SinkFilterAnonymousInnerClassHelper2 : TeeSinkTokenFilter.SinkFilter
+        private sealed class SinkFilterAnonymousInnerClassHelper2 : TeeSinkTokenFilter.SinkFilter
         {
-            public SinkFilterAnonymousInnerClassHelper2()
-            {
-            }
-
             public override bool Accept(AttributeSource a)
             {
                 ICharTermAttribute termAtt = a.GetAttribute<ICharTermAttribute>();
@@ -268,7 +260,7 @@ namespace Lucene.Net.Analysis.Sinks
         }
 
 
-        internal class ModuloTokenFilter : TokenFilter
+        internal sealed class ModuloTokenFilter : TokenFilter
         {
             private readonly TestTeeSinkTokenFilter outerInstance;
 
@@ -296,7 +288,7 @@ namespace Lucene.Net.Analysis.Sinks
             }
         }
 
-        internal class ModuloSinkFilter : TeeSinkTokenFilter.SinkFilter
+        internal sealed class ModuloSinkFilter : TeeSinkTokenFilter.SinkFilter
         {
             private readonly TestTeeSinkTokenFilter outerInstance;
 

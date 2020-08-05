@@ -1,11 +1,10 @@
-﻿using System;
-using NUnit.Framework;
-using Lucene.Net.Analysis.CharFilters;
+﻿using Lucene.Net.Analysis.CharFilters;
 using Lucene.Net.Analysis.Core;
-using System.IO;
-using Lucene.Net.Analysis.Util;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Analysis.Util;
+using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Analysis.Cjk
 {
@@ -135,7 +134,11 @@ namespace Lucene.Net.Analysis.Cjk
             builder.Add("a", "一二");
             builder.Add("b", "二三");
             NormalizeCharMap norm = builder.Build();
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, norm);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
+                return new TokenStreamComponents(tokenizer, new CJKBigramFilter(tokenizer));
+            }, initReader: (fieldName, reader) => new MappingCharFilter(norm, reader));
 
             AssertAnalyzesTo(analyzer, "ab", new string[] { "一二", "二二", "二三" }, new int[] { 0, 0, 1 }, new int[] { 1, 1, 2 });
 
@@ -145,31 +148,7 @@ namespace Lucene.Net.Analysis.Cjk
             //   { 0, 1, 1, 2 }
         }
 
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestCJKAnalyzer outerInstance;
-
-            private NormalizeCharMap norm;
-
-            public AnalyzerAnonymousInnerClassHelper(TestCJKAnalyzer outerInstance, NormalizeCharMap norm)
-            {
-                this.outerInstance = outerInstance;
-                this.norm = norm;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(tokenizer, new CJKBigramFilter(tokenizer));
-            }
-
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
-            {
-                return new MappingCharFilter(norm, reader);
-            }
-        }
-
-        private class FakeStandardTokenizer : TokenFilter
+        private sealed class FakeStandardTokenizer : TokenFilter
         {
             internal readonly ITypeAttribute typeAtt;
 
@@ -196,29 +175,16 @@ namespace Lucene.Net.Analysis.Cjk
         [Test]
         public virtual void TestSingleChar2()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this);
-
-            AssertAnalyzesTo(analyzer, "一", new string[] { "一" }, new int[] { 0 }, new int[] { 1 }, new string[] { "<SINGLE>" }, new int[] { 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestCJKAnalyzer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestCJKAnalyzer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenFilter filter = new FakeStandardTokenizer(tokenizer);
                 filter = new StopFilter(TEST_VERSION_CURRENT, filter, CharArraySet.EMPTY_SET);
                 filter = new CJKBigramFilter(filter);
                 return new TokenStreamComponents(tokenizer, filter);
-            }
+            });
+
+            AssertAnalyzesTo(analyzer, "一", new string[] { "一" }, new int[] { 0 }, new int[] { 1 }, new string[] { "<SINGLE>" }, new int[] { 1 });
         }
 
         /// <summary>
@@ -241,24 +207,12 @@ namespace Lucene.Net.Analysis.Cjk
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestCJKAnalyzer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestCJKAnalyzer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new CJKBigramFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

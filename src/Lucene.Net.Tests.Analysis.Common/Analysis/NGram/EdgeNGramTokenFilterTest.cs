@@ -146,7 +146,7 @@ namespace Lucene.Net.Analysis.NGram
             AssertTokenStreamContents(tokenizer, new string[] { "a", "ab", "abc", "v", "vw", "vwx" }, new int[] { 0, 0, 0, 6, 6, 6 }, new int[] { 5, 5, 5, 11, 11, 11 }, null, new int[] { 1, 0, 0, 1, 0, 0 }, null, null, false);
         }
 
-        private class PositionFilter : TokenFilter
+        private sealed class PositionFilter : TokenFilter
         {
 
             internal readonly IPositionIncrementAttribute posIncrAtt;
@@ -227,20 +227,7 @@ namespace Lucene.Net.Analysis.NGram
         [Test]
         public virtual void TestInvalidOffsets()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
-            AssertAnalyzesTo(analyzer, "mosfellsbær", new string[] { "mo", "mos", "mosf", "mosfe", "mosfel", "mosfell", "mosfells", "mosfellsb", "mosfellsba", "mosfellsbae", "mosfellsbaer" }, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly EdgeNGramTokenFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(EdgeNGramTokenFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenFilter filters = new ASCIIFoldingFilter(tokenizer);
@@ -248,7 +235,8 @@ namespace Lucene.Net.Analysis.NGram
                 filters = new EdgeNGramTokenFilter(LuceneVersion.LUCENE_43, filters, EdgeNGramTokenFilter.Side.FRONT, 2, 15);
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer, filters);
-            }
+            });
+            AssertAnalyzesTo(analyzer, "mosfellsbær", new string[] { "mo", "mos", "mosf", "mosfe", "mosfel", "mosfell", "mosfells", "mosfellsb", "mosfellsba", "mosfellsbae", "mosfellsbaer" }, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new int[] { 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11 });
         }
 
         /// <summary>
@@ -261,98 +249,45 @@ namespace Lucene.Net.Analysis.NGram
                 int min = TestUtil.NextInt32(Random, 2, 10);
                 int max = TestUtil.NextInt32(Random, min, 20);
 
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this, min, max);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    return new TokenStreamComponents(tokenizer, new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, min, max));
+                });
                 CheckRandomData(Random, a, 100 * RandomMultiplier);
             }
 
-            Analyzer b = new AnalyzerAnonymousInnerClassHelper3(this);
-            CheckRandomData(Random, b, 1000 * RandomMultiplier, 20, false, false);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly EdgeNGramTokenFilterTest outerInstance;
-
-            private int min;
-            private int max;
-
-            public AnalyzerAnonymousInnerClassHelper2(EdgeNGramTokenFilterTest outerInstance, int min, int max)
-            {
-                this.outerInstance = outerInstance;
-                this.min = min;
-                this.max = max;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, min, max));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly EdgeNGramTokenFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper3(EdgeNGramTokenFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
 #pragma warning disable 612, 618
                 return new TokenStreamComponents(tokenizer, new EdgeNGramTokenFilter(LuceneVersion.LUCENE_43, tokenizer, EdgeNGramTokenFilter.Side.BACK, 2, 4));
 #pragma warning restore 612, 618 
-            }
+            });
+            CheckRandomData(Random, b, 1000 * RandomMultiplier, 20, false, false);
         }
 
         [Test]
         public virtual void TestEmptyTerm()
         {
             Random random = Random;
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this);
-            CheckAnalysisConsistency(random, a, random.nextBoolean(), "");
-
-            Analyzer b = new AnalyzerAnonymousInnerClassHelper5(this);
-            CheckAnalysisConsistency(random, b, random.nextBoolean(), "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly EdgeNGramTokenFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper4(EdgeNGramTokenFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
 #pragma warning disable 612, 618
                 return new TokenStreamComponents(tokenizer, new EdgeNGramTokenFilter(TEST_VERSION_CURRENT, tokenizer, EdgeNGramTokenFilter.Side.FRONT, 2, 15));
 #pragma warning restore 612, 618
-            }
-        }
+            });
+            CheckAnalysisConsistency(random, a, random.nextBoolean(), "");
 
-        private class AnalyzerAnonymousInnerClassHelper5 : Analyzer
-        {
-            private readonly EdgeNGramTokenFilterTest outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper5(EdgeNGramTokenFilterTest outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
 #pragma warning disable 612, 618
                 return new TokenStreamComponents(tokenizer, new EdgeNGramTokenFilter(LuceneVersion.LUCENE_43, tokenizer, EdgeNGramTokenFilter.Side.BACK, 2, 15));
 #pragma warning restore 612, 618
-            }
+            });
+            CheckAnalysisConsistency(random, b, random.nextBoolean(), "");
         }
 
         [Test]

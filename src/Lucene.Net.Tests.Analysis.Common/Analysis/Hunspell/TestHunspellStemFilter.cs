@@ -84,47 +84,23 @@ namespace Lucene.Net.Analysis.Hunspell
         [Test]
         public virtual void TestRandomStrings()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
-            CheckRandomData(Random, analyzer, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestHunspellStemFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestHunspellStemFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new HunspellStemFilter(tokenizer, dictionary));
-            }
+            });
+            CheckRandomData(Random, analyzer, 1000 * RandomMultiplier);
         }
 
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestHunspellStemFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestHunspellStemFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new HunspellStemFilter(tokenizer, dictionary));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
 
         [Test]
@@ -141,27 +117,12 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 IOUtils.DisposeWhileHandlingException(affixStream, dictStream);
             }
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this, d);
-            CheckOneTerm(a, "NoChAnGy", "NoChAnGy");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestHunspellStemFilter outerInstance;
-
-            private Dictionary d;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestHunspellStemFilter outerInstance, Dictionary d)
-            {
-                this.outerInstance = outerInstance;
-                this.d = d;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new HunspellStemFilter(tokenizer, d));
-            }
+            });
+            CheckOneTerm(a, "NoChAnGy", "NoChAnGy");
         }
     }
 }

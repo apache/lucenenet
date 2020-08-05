@@ -94,48 +94,24 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestRandomString()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this);
-
-            CheckRandomData(Random, a, 1000 * RandomMultiplier);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestCapitalizationFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestCapitalizationFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new CapitalizationFilter(tokenizer));
-            }
+            });
+
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
 
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestCapitalizationFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestCapitalizationFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new CapitalizationFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
 
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
 using NUnit.Framework;
-using System.IO;
 
 namespace Lucene.Net.Analysis.En
 {
@@ -26,20 +25,11 @@ namespace Lucene.Net.Analysis.En
     /// </summary>
     public class TestKStemmer : BaseTokenStreamTestCase
     {
-        internal Analyzer a = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        internal static readonly Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
-                return new TokenStreamComponents(tokenizer, new KStemFilter(tokenizer));
-            }
-        }
+            Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
+            return new TokenStreamComponents(tokenizer, new KStemFilter(tokenizer));
+        });
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>
@@ -63,26 +53,13 @@ namespace Lucene.Net.Analysis.En
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper2(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestKStemmer outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestKStemmer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new KStemFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
-
 
         // requires original java kstem source code to create map
         //public void TestCreateMap() throws Exception

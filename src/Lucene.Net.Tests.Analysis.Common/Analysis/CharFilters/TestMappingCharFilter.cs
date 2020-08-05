@@ -211,32 +211,17 @@ namespace Lucene.Net.Analysis.CharFilters
         [Test]
         public virtual void TestRandom()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
-
-            int numRounds = RandomMultiplier * 10000;
-            CheckRandomData(Random, analyzer, numRounds);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestMappingCharFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper(TestMappingCharFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, tokenizer);
-            }
+            }, initReader: (fieldName, reader) =>
+            { 
+                return new MappingCharFilter(normMap, reader);
+            });
 
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
-            {
-                return new MappingCharFilter(outerInstance.normMap, reader);
-            }
+            int numRounds = RandomMultiplier * 10000;
+            CheckRandomData(Random, analyzer, numRounds);
         }
 
         [Ignore("wrong finalOffset: https://issues.apache.org/jira/browse/LUCENE-3971")]
@@ -250,34 +235,14 @@ namespace Lucene.Net.Analysis.CharFilters
 
             NormalizeCharMap map = builder.Build();
 
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this, map);
-
-            string text = "gzw f quaxot";
-            CheckAnalysisConsistency(Random, analyzer, false, text);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestMappingCharFilter outerInstance;
-
-            private NormalizeCharMap map;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestMappingCharFilter outerInstance, NormalizeCharMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, tokenizer);
-            }
+            }, initReader: (fieldName, reader) => new MappingCharFilter(map, reader));
 
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
-            {
-                return new MappingCharFilter(map, reader);
-            }
+            string text = "gzw f quaxot";
+            CheckAnalysisConsistency(Random, analyzer, false, text);
         }
 
         [Ignore("wrong finalOffset: https://issues.apache.org/jira/browse/LUCENE-3971")]
@@ -288,33 +253,13 @@ namespace Lucene.Net.Analysis.CharFilters
             for (int i = 0; i < numIterations; i++)
             {
                 NormalizeCharMap map = RandomMap();
-                Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper3(this, map);
+                Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    return new TokenStreamComponents(tokenizer, tokenizer);
+                }, initReader: (fieldName, reader) => new MappingCharFilter(map, reader));
                 int numRounds = 100;
                 CheckRandomData(Random, analyzer, numRounds);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestMappingCharFilter outerInstance;
-
-            private NormalizeCharMap map;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestMappingCharFilter outerInstance, NormalizeCharMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, tokenizer);
-            }
-
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
-            {
-                return new MappingCharFilter(map, reader);
             }
         }
 

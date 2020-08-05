@@ -163,7 +163,11 @@ namespace Lucene.Net.Analysis.Synonym
             Add("a b", "foo", false);
 
             SynonymMap map = b.Build();
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, map);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
+                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
+            });
 
             AssertAnalyzesTo(analyzer, "a b c", 
                             new string[] { "foo", "c" }, 
@@ -176,25 +180,6 @@ namespace Lucene.Net.Analysis.Synonym
             CheckAnalysisConsistency(Random, analyzer, false, "a b c");
         }
 
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
-            }
-        }
-
         [Test]
         public virtual void TestDoKeepOrig()
         {
@@ -203,7 +188,11 @@ namespace Lucene.Net.Analysis.Synonym
 
             SynonymMap map = b.Build();
 
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this, map);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
+                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
+            });
 
             AssertAnalyzesTo(analyzer, "a b c", 
                             new string[] { "a", "foo", "b", "c" }, 
@@ -214,25 +203,6 @@ namespace Lucene.Net.Analysis.Synonym
                             new int[] { 1, 2, 1, 1 }, 
                             true);
             CheckAnalysisConsistency(Random, analyzer, false, "a b c");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));
-            }
         }
 
         [Test]
@@ -587,30 +557,13 @@ namespace Lucene.Net.Analysis.Synonym
                 SynonymMap map = b.Build();
                 bool ignoreCase = Random.nextBoolean();
 
-                Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper100(this, map, ignoreCase);
+                Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
+                    return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, ignoreCase));
+                });
 
                 CheckRandomData(Random, analyzer, 100);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper100 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-            private bool ignoreCase;
-
-            public AnalyzerAnonymousInnerClassHelper100(TestSynonymMapFilter outerInstance, SynonymMap map, bool ignoreCase)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-                this.ignoreCase = ignoreCase;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, ignoreCase));
             }
         }
 
@@ -662,32 +615,15 @@ namespace Lucene.Net.Analysis.Synonym
                 SynonymMap map = b.Build();
                 bool ignoreCase = random.nextBoolean();
 
-                Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper101(this, map, ignoreCase);
+                Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
+                    TokenStream syns = new SynonymFilter(tokenizer, map, ignoreCase);
+                    TokenStream graph = new MockGraphTokenFilter(Random, syns);
+                    return new TokenStreamComponents(tokenizer, graph);
+                });
 
                 CheckRandomData(random, analyzer, 100);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper101 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-            private bool ignoreCase;
-
-            public AnalyzerAnonymousInnerClassHelper101(TestSynonymMapFilter outerInstance, SynonymMap map, bool ignoreCase)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-                this.ignoreCase = ignoreCase;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                TokenStream syns = new SynonymFilter(tokenizer, map, ignoreCase);
-                TokenStream graph = new MockGraphTokenFilter(Random, syns);
-                return new TokenStreamComponents(tokenizer, graph);
             }
         }
 
@@ -702,35 +638,18 @@ namespace Lucene.Net.Analysis.Synonym
                 int numEntries = AtLeast(10);
                 for (int j = 0; j < numEntries; j++)
                 {
-                    Add(RandomNonEmptyString(), RandomNonEmptyString(), random.nextBoolean());
+                    Add(RandomNonEmptyString(), RandomNonEmptyString(), random.NextBoolean());
                 }
                 SynonymMap map = b.Build();
                 bool ignoreCase = random.nextBoolean();
 
-                Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper3(this, map, ignoreCase);
+                Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new KeywordTokenizer(reader);
+                    return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, ignoreCase));
+                });
 
-                CheckAnalysisConsistency(random, analyzer, random.nextBoolean(), "");
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-            private bool ignoreCase;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestSynonymMapFilter outerInstance, SynonymMap map, bool ignoreCase)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-                this.ignoreCase = ignoreCase;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, ignoreCase));
+                CheckAnalysisConsistency(random, analyzer, random.NextBoolean(), "");
             }
         }
 
@@ -744,7 +663,7 @@ namespace Lucene.Net.Analysis.Synonym
             int numIters = AtLeast(3);
             for (int i = 0; i < numIters; i++)
             {
-                b = new SynonymMap.Builder(random.nextBoolean());
+                b = new SynonymMap.Builder(random.NextBoolean());
                 int numEntries = AtLeast(10);
                 if (Verbose)
                 {
@@ -752,35 +671,18 @@ namespace Lucene.Net.Analysis.Synonym
                 }
                 for (int j = 0; j < numEntries; j++)
                 {
-                    Add(RandomNonEmptyString(), RandomNonEmptyString(), random.nextBoolean());
+                    Add(RandomNonEmptyString(), RandomNonEmptyString(), random.NextBoolean());
                 }
                 SynonymMap map = b.Build();
-                bool ignoreCase = random.nextBoolean();
+                bool ignoreCase = random.NextBoolean();
 
-                Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper4(this, map, ignoreCase);
+                Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
+                    return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, ignoreCase));
+                });
 
                 CheckRandomData(random, analyzer, 100, 1024);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-            private bool ignoreCase;
-
-            public AnalyzerAnonymousInnerClassHelper4(TestSynonymMapFilter outerInstance, SynonymMap map, bool ignoreCase)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-                this.ignoreCase = ignoreCase;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.SIMPLE, true);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, ignoreCase));
             }
         }
 
@@ -794,7 +696,11 @@ namespace Lucene.Net.Analysis.Synonym
             parser.Parse(new StringReader(testFile));
             SynonymMap map = parser.Build();
 
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper5(this, map);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
+                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
+            });
 
             // where did my pot go?!
             AssertAnalyzesTo(analyzer, "xyzzy bbb pot of gold", new string[] { "xyzzy", "bbbb1", "pot", "bbbb2", "of", "gold" });
@@ -802,25 +708,6 @@ namespace Lucene.Net.Analysis.Synonym
             // this one nukes 'pot' and 'of'
             // xyzzy aaa pot of gold -> xyzzy aaaa1 aaaa2 aaaa3 gold
             AssertAnalyzesTo(analyzer, "xyzzy aaa pot of gold", new string[] { "xyzzy", "aaaa1", "pot", "aaaa2", "of", "aaaa3", "gold" });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper5 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper5(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, true);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
         }
 
         [Test]
@@ -869,7 +756,11 @@ namespace Lucene.Net.Analysis.Synonym
             Add("z x c v", "zxcv", keepOrig);
             Add("x c", "xc", keepOrig);
             SynonymMap map = b.Build();
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper6(this, map);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
+            });
 
             CheckOneTerm(a, "$", "$");
             CheckOneTerm(a, "a", "aa");
@@ -886,25 +777,6 @@ namespace Lucene.Net.Analysis.Synonym
             AssertAnalyzesTo(a, "z x c $", new string[] { "z", "xc", "$" }, new int[] { 1, 1, 1 });
         }
 
-        private class AnalyzerAnonymousInnerClassHelper6 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper6(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
-        }
-
         [Test]
         public virtual void TestRepeatsOff()
         {
@@ -914,28 +786,13 @@ namespace Lucene.Net.Analysis.Synonym
             Add("a b", "ab", keepOrig);
             Add("a b", "ab", keepOrig);
             SynonymMap map = b.Build();
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper7(this, map);
-
-            AssertAnalyzesTo(a, "a b", new string[] { "ab" }, new int[] { 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper7 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper7(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
+            });
+
+            AssertAnalyzesTo(a, "a b", new string[] { "ab" }, new int[] { 1 });
         }
 
         [Test]
@@ -947,28 +804,13 @@ namespace Lucene.Net.Analysis.Synonym
             Add("a b", "ab", keepOrig);
             Add("a b", "ab", keepOrig);
             SynonymMap map = b.Build();
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper8(this, map);
-
-            AssertAnalyzesTo(a, "a b", new string[] { "ab", "ab", "ab" }, new int[] { 1, 0, 0 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper8 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper8(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
+            });
+
+            AssertAnalyzesTo(a, "a b", new string[] { "ab", "ab", "ab" }, new int[] { 1, 0, 0 });
         }
 
         [Test]
@@ -978,28 +820,13 @@ namespace Lucene.Net.Analysis.Synonym
             const bool keepOrig = false;
             Add("zoo", "zoo", keepOrig);
             SynonymMap map = b.Build();
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper9(this, map);
-
-            AssertAnalyzesTo(a, "zoo zoo $ zoo", new string[] { "zoo", "zoo", "$", "zoo" }, new int[] { 1, 1, 1, 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper9 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper9(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
+            });
+
+            AssertAnalyzesTo(a, "zoo zoo $ zoo", new string[] { "zoo", "zoo", "$", "zoo" }, new int[] { 1, 1, 1, 1 });
         }
 
         [Test]
@@ -1010,29 +837,14 @@ namespace Lucene.Net.Analysis.Synonym
             Add("zoo", "zoo", keepOrig);
             Add("zoo", "zoo zoo", keepOrig);
             SynonymMap map = b.Build();
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper10(this, map);
-
-            // verify("zoo zoo $ zoo", "zoo/zoo zoo/zoo/zoo $/zoo zoo/zoo zoo");
-            AssertAnalyzesTo(a, "zoo zoo $ zoo", new string[] { "zoo", "zoo", "zoo", "zoo", "zoo", "$", "zoo", "zoo", "zoo", "zoo" }, new int[] { 1, 0, 1, 0, 0, 1, 0, 1, 0, 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper10 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper10(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
+            });
+
+            // verify("zoo zoo $ zoo", "zoo/zoo zoo/zoo/zoo $/zoo zoo/zoo zoo");
+            AssertAnalyzesTo(a, "zoo zoo $ zoo", new string[] { "zoo", "zoo", "zoo", "zoo", "zoo", "$", "zoo", "zoo", "zoo", "zoo" }, new int[] { 1, 0, 1, 0, 0, 1, 0, 1, 0, 1 });
         }
 
         [Test]
@@ -1071,7 +883,11 @@ namespace Lucene.Net.Analysis.Synonym
             Add("z x c v", "zxcv", keepOrig);
             Add("x c", "xc", keepOrig);
             SynonymMap map = b.Build();
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper11(this, map);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
+            });
 
             AssertAnalyzesTo(a, "$", new string[] { "$" }, new int[] { 1 });
             AssertAnalyzesTo(a, "a", new string[] { "a", "aa" }, new int[] { 1, 0 });
@@ -1085,25 +901,6 @@ namespace Lucene.Net.Analysis.Synonym
             AssertAnalyzesTo(a, "z x c $", new string[] { "z", "x", "xc", "c", "$" }, new int[] { 1, 1, 0, 1, 1 });
         }
 
-        private class AnalyzerAnonymousInnerClassHelper11 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper11(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
-        }
-
         [Test]
         public virtual void TestRecursion3()
         {
@@ -1111,28 +908,13 @@ namespace Lucene.Net.Analysis.Synonym
             const bool keepOrig = true;
             Add("zoo zoo", "zoo", keepOrig);
             SynonymMap map = b.Build();
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper12(this, map);
-
-            AssertAnalyzesTo(a, "zoo zoo $ zoo", new string[] { "zoo", "zoo", "zoo", "$", "zoo" }, new int[] { 1, 0, 1, 1, 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper12 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper12(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
+            });
+
+            AssertAnalyzesTo(a, "zoo zoo $ zoo", new string[] { "zoo", "zoo", "zoo", "$", "zoo" }, new int[] { 1, 0, 1, 1, 1 });
         }
 
         [Test]
@@ -1143,28 +925,13 @@ namespace Lucene.Net.Analysis.Synonym
             Add("zoo zoo", "zoo", keepOrig);
             Add("zoo", "zoo zoo", keepOrig);
             SynonymMap map = b.Build();
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper13(this, map);
-
-            AssertAnalyzesTo(a, "zoo zoo $ zoo", new string[] { "zoo", "zoo", "zoo", "$", "zoo", "zoo", "zoo" }, new int[] { 1, 0, 1, 1, 1, 0, 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper13 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper13(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
+            });
+
+            AssertAnalyzesTo(a, "zoo zoo $ zoo", new string[] { "zoo", "zoo", "zoo", "$", "zoo", "zoo", "zoo" }, new int[] { 1, 0, 1, 1, 1, 0, 1 });
         }
 
         [Test]
@@ -1174,28 +941,13 @@ namespace Lucene.Net.Analysis.Synonym
             const bool keepOrig = true;
             Add("national hockey league", "nhl", keepOrig);
             SynonymMap map = b.Build();
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper14(this, map);
-
-            AssertAnalyzesTo(a, "national hockey league", new string[] { "national", "nhl", "hockey", "league" }, new int[] { 0, 0, 9, 16 }, new int[] { 8, 22, 15, 22 }, new int[] { 1, 0, 1, 1 });
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper14 : Analyzer
-        {
-            private readonly TestSynonymMapFilter outerInstance;
-
-            private SynonymMap map;
-
-            public AnalyzerAnonymousInnerClassHelper14(TestSynonymMapFilter outerInstance, SynonymMap map)
-            {
-                this.outerInstance = outerInstance;
-                this.map = map;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, true));
-            }
+            });
+
+            AssertAnalyzesTo(a, "national hockey league", new string[] { "national", "nhl", "hockey", "league" }, new int[] { 0, 0, 9, 16 }, new int[] { 8, 22, 15, 22 }, new int[] { 1, 0, 1, 1 });
         }
 
         [Test]

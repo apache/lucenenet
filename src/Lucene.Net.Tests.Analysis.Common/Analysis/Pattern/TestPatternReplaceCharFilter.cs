@@ -257,7 +257,11 @@ namespace Lucene.Net.Analysis.Pattern
                 Regex p = TestUtil.RandomRegex(LuceneTestCase.Random);
 
                 string replacement = TestUtil.RandomSimpleString(random);
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, p, replacement);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    return new TokenStreamComponents(tokenizer, tokenizer);
+                }, initReader: (fieldName, reader) => new PatternReplaceCharFilter(p, replacement, reader));
 
                 /* max input length. don't make it longer -- exponential processing
                  * time for certain patterns. */
@@ -265,31 +269,6 @@ namespace Lucene.Net.Analysis.Pattern
                 /* ASCII only input?: */
                 const bool asciiOnly = true;
                 CheckRandomData(random, a, 250 * RandomMultiplier, maxInputLength, asciiOnly);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestPatternReplaceCharFilter outerInstance;
-
-            private Regex p;
-            private string replacement;
-
-            public AnalyzerAnonymousInnerClassHelper(TestPatternReplaceCharFilter outerInstance, Regex p, string replacement)
-            {
-                this.outerInstance = outerInstance;
-                this.p = p;
-                this.replacement = replacement;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, tokenizer);
-            }
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
-            {
-                return new PatternReplaceCharFilter(p, replacement, reader);
             }
         }
     }

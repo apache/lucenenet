@@ -3,7 +3,6 @@ using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System;
-using System.IO;
 
 namespace Lucene.Net.Analysis.No
 {
@@ -29,20 +28,11 @@ namespace Lucene.Net.Analysis.No
     /// </summary>
     public class TestNorwegianLightStemFilter : BaseTokenStreamTestCase
     {
-        private Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            public AnalyzerAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(source, new NorwegianLightStemFilter(source, NorwegianStandard.BOKMAAL));
-            }
-        }
+            Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+            return new TokenStreamComponents(source, new NorwegianLightStemFilter(source, NorwegianStandard.BOKMAAL));
+        });
 
         /// <summary>
         /// Test against a vocabulary file </summary>
@@ -57,52 +47,25 @@ namespace Lucene.Net.Analysis.No
         [Test]
         public virtual void TestNynorskVocabulary()
         {
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper2(this);
-            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("nn_light.txt"));
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestNorwegianLightStemFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestNorwegianLightStemFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(source, new NorwegianLightStemFilter(source, NorwegianStandard.NYNORSK));
-            }
+            });
+            VocabularyAssert.AssertVocabulary(analyzer, GetDataFile("nn_light.txt"));
         }
 
         [Test]
         public virtual void TestKeyword()
         {
             CharArraySet exclusionSet = new CharArraySet(TEST_VERSION_CURRENT, AsSet("sekretæren"), false);
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this, exclusionSet);
-            CheckOneTerm(a, "sekretæren", "sekretæren");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestNorwegianLightStemFilter outerInstance;
-
-            private CharArraySet exclusionSet;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestNorwegianLightStemFilter outerInstance, CharArraySet exclusionSet)
-            {
-                this.outerInstance = outerInstance;
-                this.exclusionSet = exclusionSet;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
                 return new TokenStreamComponents(source, new NorwegianLightStemFilter(sink));
-            }
+            });
+            CheckOneTerm(a, "sekretæren", "sekretæren");
         }
 
         /// <summary>
@@ -117,24 +80,12 @@ namespace Lucene.Net.Analysis.No
         [Test]
         public virtual void TestEmptyTerm()
         {
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this);
-            CheckOneTerm(a, "", "");
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly TestNorwegianLightStemFilter outerInstance;
-
-            public AnalyzerAnonymousInnerClassHelper4(TestNorwegianLightStemFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new NorwegianLightStemFilter(tokenizer));
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

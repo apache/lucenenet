@@ -37,25 +37,15 @@ namespace Lucene.Net.Analysis.Util
             base.SetUp();
         }
 
-        private Analyzer sentence = new AnalyzerAnonymousInnerClassHelper();
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
+        private static readonly Analyzer sentence = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                return new TokenStreamComponents(new WholeSentenceTokenizer(reader));
-            }
-        }
+            return new TokenStreamComponents(new WholeSentenceTokenizer(reader));
+        });
 
-        private Analyzer sentenceAndWord = new AnalyzerAnonymousInnerClassHelper2();
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
+        private static readonly Analyzer sentenceAndWord = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
         {
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                return new TokenStreamComponents(new SentenceAndWordTokenizer(reader));
-            }
-        }
+            return new TokenStreamComponents(new SentenceAndWordTokenizer(reader));
+        });
 
         [Test]
         public virtual void TestBasics()

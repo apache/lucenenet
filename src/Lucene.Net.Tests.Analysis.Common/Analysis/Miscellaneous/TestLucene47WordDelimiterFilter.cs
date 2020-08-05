@@ -247,7 +247,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
             CharArraySet protWords = new CharArraySet(TEST_VERSION_CURRENT, new string[] { "NUTCH" }, false);
 
             /* analyzer that uses whitespace + wdf */
-            Analyzer a = new AnalyzerAnonymousInnerClassHelper(this, flags, protWords);
+            Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(tokenizer, flags, protWords));
+            });
 
             /* in this case, works as expected. */
             AssertAnalyzesTo(a, "LUCENE / SOLR", new string[] { "LUCENE", "SOLR" }, new int[] { 0, 9 }, new int[] { 6, 13 }, null, new int[] { 1, 1 }, null, false);
@@ -258,7 +262,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
             AssertAnalyzesTo(a, "LUCENE / NUTCH SOLR", new string[] { "LUCENE", "NUTCH", "SOLR" }, new int[] { 0, 9, 15 }, new int[] { 6, 14, 19 }, null, new int[] { 1, 1, 1 }, null, false);
 
             /* analyzer that will consume tokens with large position increments */
-            Analyzer a2 = new AnalyzerAnonymousInnerClassHelper2(this, flags, protWords);
+            Analyzer a2 = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(new LargePosIncTokenFilter(this, tokenizer), flags, protWords));
+            });
 
             /* increment of "largegap" is preserved */
             AssertAnalyzesTo(a2, "LUCENE largegap SOLR", new string[] { "LUCENE", "largegap", "SOLR" }, new int[] { 0, 7, 16 }, new int[] { 6, 15, 20 }, null, new int[] { 1, 10, 1 }, null, false);
@@ -271,76 +279,17 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             AssertAnalyzesTo(a2, "LUCENE / NUTCH SOLR", new string[] { "LUCENE", "NUTCH", "SOLR" }, new int[] { 0, 9, 15 }, new int[] { 6, 14, 19 }, null, new int[] { 1, 11, 1 }, null, false);
 
-            Analyzer a3 = new AnalyzerAnonymousInnerClassHelper3(this, flags, protWords);
+            Analyzer a3 = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                StopFilter filter = new StopFilter(TEST_VERSION_CURRENT, tokenizer, StandardAnalyzer.STOP_WORDS_SET);
+                return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(filter, flags, protWords));
+            });
 
             AssertAnalyzesTo(a3, "lucene.solr", new string[] { "lucene", "solr", "lucenesolr" }, new int[] { 0, 7, 0 }, new int[] { 6, 11, 11 }, null, new int[] { 1, 1, 0 }, null, false);
 
             /* the stopword should add a gap here */
             AssertAnalyzesTo(a3, "the lucene.solr", new string[] { "lucene", "solr", "lucenesolr" }, new int[] { 4, 11, 4 }, new int[] { 10, 15, 15 }, null, new int[] { 2, 1, 0 }, null, false);
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly TestLucene47WordDelimiterFilter outerInstance;
-
-            private WordDelimiterFlags flags;
-            private CharArraySet protWords;
-
-            public AnalyzerAnonymousInnerClassHelper(TestLucene47WordDelimiterFilter outerInstance, WordDelimiterFlags flags, CharArraySet protWords)
-            {
-                this.outerInstance = outerInstance;
-                this.flags = flags;
-                this.protWords = protWords;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(tokenizer, flags, protWords));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper2 : Analyzer
-        {
-            private readonly TestLucene47WordDelimiterFilter outerInstance;
-
-            private WordDelimiterFlags flags;
-            private CharArraySet protWords;
-
-            public AnalyzerAnonymousInnerClassHelper2(TestLucene47WordDelimiterFilter outerInstance, WordDelimiterFlags flags, CharArraySet protWords)
-            {
-                this.outerInstance = outerInstance;
-                this.flags = flags;
-                this.protWords = protWords;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(new LargePosIncTokenFilter(outerInstance, tokenizer), flags, protWords));
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper3 : Analyzer
-        {
-            private readonly TestLucene47WordDelimiterFilter outerInstance;
-
-            private WordDelimiterFlags flags;
-            private CharArraySet protWords;
-
-            public AnalyzerAnonymousInnerClassHelper3(TestLucene47WordDelimiterFilter outerInstance, WordDelimiterFlags flags, CharArraySet protWords)
-            {
-                this.outerInstance = outerInstance;
-                this.flags = flags;
-                this.protWords = protWords;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                StopFilter filter = new StopFilter(TEST_VERSION_CURRENT, tokenizer, StandardAnalyzer.STOP_WORDS_SET);
-                return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(filter, flags, protWords));
-            }
         }
 
         /// <summary>
@@ -362,29 +311,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     protectedWords = null;
                 }
 
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper4(this, flags, protectedWords);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                    return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(tokenizer, flags, protectedWords));
+                });
                 CheckRandomData(Random, a, 200, 20, false, false);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper4 : Analyzer
-        {
-            private readonly TestLucene47WordDelimiterFilter outerInstance;
-
-            private WordDelimiterFlags flags;
-            private CharArraySet protectedWords;
-
-            public AnalyzerAnonymousInnerClassHelper4(TestLucene47WordDelimiterFilter outerInstance, WordDelimiterFlags flags, CharArraySet protectedWords)
-            {
-                this.outerInstance = outerInstance;
-                this.flags = flags;
-                this.protectedWords = protectedWords;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(tokenizer, flags, protectedWords));
             }
         }
 
@@ -405,30 +337,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     protectedWords = null;
                 }
 
-                Analyzer a = new AnalyzerAnonymousInnerClassHelper5(this, flags, protectedWords);
+                Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+                {
+                    Tokenizer tokenizer = new KeywordTokenizer(reader);
+                    return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(tokenizer, flags, protectedWords));
+                });
                 // depending upon options, this thing may or may not preserve the empty term
                 CheckAnalysisConsistency(random, a, random.nextBoolean(), "");
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper5 : Analyzer
-        {
-            private readonly TestLucene47WordDelimiterFilter outerInstance;
-
-            private WordDelimiterFlags flags;
-            private CharArraySet protectedWords;
-
-            public AnalyzerAnonymousInnerClassHelper5(TestLucene47WordDelimiterFilter outerInstance, WordDelimiterFlags flags, CharArraySet protectedWords)
-            {
-                this.outerInstance = outerInstance;
-                this.flags = flags;
-                this.protectedWords = protectedWords;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-                Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(tokenizer, flags, protectedWords));
             }
         }
     }

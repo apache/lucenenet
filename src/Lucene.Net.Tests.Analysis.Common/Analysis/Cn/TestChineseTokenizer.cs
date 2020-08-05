@@ -61,15 +61,8 @@ namespace Lucene.Net.Analysis.Cn
          * Analyzer that just uses ChineseTokenizer, not ChineseFilter.
          * convenience to show the behavior of the tokenizer
          */
-        private class JustChineseTokenizerAnalyzer : Analyzer
+        private sealed class JustChineseTokenizerAnalyzer : Analyzer
         {
-            private readonly TestChineseTokenizer outerInstance;
-
-            public JustChineseTokenizerAnalyzer(TestChineseTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new ChineseTokenizer(reader));
@@ -80,15 +73,8 @@ namespace Lucene.Net.Analysis.Cn
          * Analyzer that just uses ChineseFilter, not ChineseTokenizer.
          * convenience to show the behavior of the filter.
          */
-        private class JustChineseFilterAnalyzer : Analyzer
+        private sealed class JustChineseFilterAnalyzer : Analyzer
         {
-            private readonly TestChineseTokenizer outerInstance;
-
-            public JustChineseFilterAnalyzer(TestChineseTokenizer outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader);
@@ -102,7 +88,7 @@ namespace Lucene.Net.Analysis.Cn
         [Test]
         public virtual void TestNumerics()
         {
-            Analyzer justTokenizer = new JustChineseTokenizerAnalyzer(this);
+            Analyzer justTokenizer = new JustChineseTokenizerAnalyzer();
             AssertAnalyzesTo(justTokenizer, "中1234", new string[] { "中", "1234" });
 
             // in this case the ChineseAnalyzer (which applies ChineseFilter) will remove the numeric token.
@@ -123,10 +109,10 @@ namespace Lucene.Net.Analysis.Cn
             Analyzer chinese = new ChineseAnalyzer();
             AssertAnalyzesTo(chinese, "This is a Test. b c d", new string[] { "test" });
 
-            Analyzer justTokenizer = new JustChineseTokenizerAnalyzer(this);
+            Analyzer justTokenizer = new JustChineseTokenizerAnalyzer();
             AssertAnalyzesTo(justTokenizer, "This is a Test. b c d", new string[] { "this", "is", "a", "test", "b", "c", "d" });
 
-            Analyzer justFilter = new JustChineseFilterAnalyzer(this);
+            Analyzer justFilter = new JustChineseFilterAnalyzer();
             AssertAnalyzesTo(justFilter, "This is a Test. b c d", new string[] { "This", "Test." });
         }
 
