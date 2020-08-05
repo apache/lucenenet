@@ -94,11 +94,8 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual string Require(IDictionary<string, string> args, string name)
         {
-            string s;
-            if (!args.TryGetValue(name, out s))
-            {
-                throw new ArgumentException("Configuration Error: missing parameter '" + name + "'");
-            }
+            if (!args.TryGetValue(name, out string s))
+                throw new ArgumentException($"Configuration Error: missing parameter '{name}'");
             args.Remove(name);
             return s;
         }
@@ -110,56 +107,45 @@ namespace Lucene.Net.Analysis.Util
         public virtual string Require(IDictionary<string, string> args, string name, ICollection<string> allowedValues,
             bool caseSensitive)
         {
-            string s;
-            if (!args.TryGetValue(name, out s) || s == null)
-            {
-                throw new ArgumentException("Configuration Error: missing parameter '" + name + "'");
-            }
-
+            if (!args.TryGetValue(name, out string s))
+                throw new ArgumentException($"Configuration Error: missing parameter '{name}'");
             args.Remove(name);
             foreach (var allowedValue in allowedValues)
             {
                 if (caseSensitive)
                 {
                     if (s.Equals(allowedValue, StringComparison.Ordinal))
-                    {
                         return s;
-                    }
                 }
                 else
                 {
                     if (s.Equals(allowedValue, StringComparison.OrdinalIgnoreCase))
-                    {
                         return s;
-                    }
                 }
             }
-            throw new ArgumentException("Configuration Error: '" + name + "' value must be one of " +
-                                               allowedValues);
+            throw new ArgumentException($"Configuration Error: '{name}' value must be one of {Collections.ToString(allowedValues)}");
         }
 
         public virtual string Get(IDictionary<string, string> args, string name, string defaultVal = null)
         {
-            string s;
-            if (args.TryGetValue(name, out s))
+            if (args.TryGetValue(name, out string s))
                 args.Remove(name);
             return s ?? defaultVal;
         }
 
         public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues)
         {
-            return Get(args, name, allowedValues, null); // defaultVal = null
+            return Get(args, name, allowedValues, defaultVal: null);
         }
 
         public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal)
         {
-            return Get(args, name, allowedValues, defaultVal, true);
+            return Get(args, name, allowedValues, defaultVal, caseSensitive: true);
         }
 
         public virtual string Get(IDictionary<string, string> args, string name, ICollection<string> allowedValues, string defaultVal, bool caseSensitive)
         {
-            string s = null;
-            if (!args.TryGetValue(name, out s) || s == null)
+            if (!args.TryGetValue(name, out string s) || s is null)
             {
                 return defaultVal;
             }
@@ -183,8 +169,7 @@ namespace Lucene.Net.Analysis.Util
                         }
                     }
                 }
-                throw new ArgumentException("Configuration Error: '" + name + "' value must be one of " +
-                                                   allowedValues);
+                throw new ArgumentException($"Configuration Error: '{name}' value must be one of {Collections.ToString(allowedValues)}");
             }
         }
 
@@ -201,8 +186,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected int GetInt32(IDictionary<string, string> args, string name, int defaultVal)
         {
-            string s;
-            if (args.TryGetValue(name, out s))
+            if (args.TryGetValue(name, out string s))
             {
                 args.Remove(name);
                 return int.Parse(s, CultureInfo.InvariantCulture);
@@ -217,8 +201,7 @@ namespace Lucene.Net.Analysis.Util
 
         protected bool GetBoolean(IDictionary<string, string> args, string name, bool defaultVal)
         {
-            string s;
-            if (args.TryGetValue(name, out s))
+            if (args.TryGetValue(name, out string s))
             {
                 args.Remove(name);
                 return bool.Parse(s);
@@ -239,8 +222,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected float GetSingle(IDictionary<string, string> args, string name, float defaultVal)
         {
-            string s;
-            if (args.TryGetValue(name, out s))
+            if (args.TryGetValue(name, out string s))
             {
                 args.Remove(name);
                 return float.Parse(s, CultureInfo.InvariantCulture);
@@ -255,13 +237,12 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual char GetChar(IDictionary<string, string> args, string name, char defaultVal)
         {
-            string s;
-            if (args.TryGetValue(name, out s))
+            if (args.TryGetValue(name, out string s))
             {
                 args.Remove(name);
                 if (s.Length != 1)
                 {
-                    throw new ArgumentException(name + " should be a char. \"" + s + "\" is invalid");
+                    throw new ArgumentException($"{name} should be a char. \"{s}\" is invalid");
                 }
                 else
                 {
@@ -277,8 +258,7 @@ namespace Lucene.Net.Analysis.Util
         /// Returns whitespace- and/or comma-separated set of values, or null if none are found </summary>
         public virtual ISet<string> GetSet(IDictionary<string, string> args, string name)
         {
-            string s;
-            if (args.TryGetValue(name, out s))
+            if (args.TryGetValue(name, out string s))
             {
                 args.Remove(name);
                 ISet<string> set = null;
@@ -325,8 +305,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected CultureInfo GetCulture(IDictionary<string, string> args, string name, CultureInfo defaultVal)
         {
-            string culture;
-            if (args.TryGetValue(name, out culture))
+            if (args.TryGetValue(name, out string culture))
             {
                 args.Remove(name);
                 try
@@ -393,11 +372,9 @@ namespace Lucene.Net.Analysis.Util
                 foreach (string file in files)
                 {
                     using (Stream stream = loader.OpenResource(file.Trim()))
+                    using (TextReader reader = new StreamReader(stream, Encoding.UTF8))
                     {
-                        using (TextReader reader = new StreamReader(stream, Encoding.UTF8))
-                        {
-                            WordlistLoader.GetSnowballWordSet(reader, words);
-                        }
+                        WordlistLoader.GetSnowballWordSet(reader, words);
                     }
                 }
             }

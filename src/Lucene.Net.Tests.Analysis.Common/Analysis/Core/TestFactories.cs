@@ -126,21 +126,24 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
+        // LUCENENET specific - remove overhead of converting to a string on each loop
+        private static readonly string TEST_VERSION_CURRENT_STRING = TEST_VERSION_CURRENT.ToString();
+
         /// <summary>
         /// tries to initialize a factory with no arguments </summary>
         private AbstractAnalysisFactory Initialize(Type factoryClazz)
         {
-            IDictionary<string, string> args = new Dictionary<string, string>();
-            args["luceneMatchVersion"] = TEST_VERSION_CURRENT.ToString();
+            IDictionary<string, string> args =
+                new Dictionary<string, string> { ["luceneMatchVersion"] = TEST_VERSION_CURRENT_STRING };
 
             ConstructorInfo ctor;
             try
             {
                 ctor = factoryClazz.GetConstructor(new Type[] { typeof(IDictionary<string, string>) });
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new Exception("factory '" + factoryClazz + "' does not have a proper ctor!");
+                throw new Exception("factory '" + factoryClazz + "' does not have a proper ctor!", e);
             }
 
             AbstractAnalysisFactory factory = null;
@@ -186,7 +189,7 @@ namespace Lucene.Net.Analysis.Core
         // some silly classes just so we can use checkRandomData
         private TokenizerFactory assertingTokenizer = new AnonymousInnerClassHelperTokenizerFactory(new Dictionary<string, string>());
 
-        private class AnonymousInnerClassHelperTokenizerFactory : TokenizerFactory
+        private sealed class AnonymousInnerClassHelperTokenizerFactory : TokenizerFactory
         {
             public AnonymousInnerClassHelperTokenizerFactory(IDictionary<string, string> java) : base(java)
             {
@@ -198,7 +201,7 @@ namespace Lucene.Net.Analysis.Core
             }
         }
 
-        private class FactoryAnalyzer : Analyzer
+        private sealed class FactoryAnalyzer : Analyzer
         {
             internal readonly TokenizerFactory tokenizer;
             internal readonly CharFilterFactory charFilter;
