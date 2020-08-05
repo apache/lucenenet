@@ -2,6 +2,8 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Util
@@ -26,13 +28,14 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestCollectionUtil : LuceneTestCase
     {
-        private IList<int> CreateRandomList(int maxSize)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int[] CreateRandomList(int maxSize)
         {
             Random rnd = Random;
             int[] a = new int[rnd.Next(maxSize) + 1];
             for (int i = 0; i < a.Length; i++)
             {
-                a[i] = Convert.ToInt32(rnd.Next(a.Length));
+                a[i] = rnd.Next(a.Length);
             }
             return a;
         }
@@ -40,21 +43,26 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestIntroSort()
         {
+            // LUCENENET: Use array for comparison rather than list for better performance
             for (int i = 0, c = AtLeast(500); i < c; i++)
             {
-                IList<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
+                IList<int> list1 = CreateRandomList(2000);
+                int[] list2 = new int[list1.Count];
+                list1.CopyTo(list2, 0);
                 CollectionUtil.IntroSort(list1);
-                list2.Sort();
+                Array.Sort(list2);
                 assertEquals(list2, list1, aggressive: false);
 
                 list1 = CreateRandomList(2000);
-                list2 = new List<int>(list1);
+                list2 = new int[list1.Count];
+                list1.CopyTo(list2, 0);
+
                 CollectionUtil.IntroSort(list1, Collections.ReverseOrder<int>());
-                list2.Sort(Collections.ReverseOrder<int>());
+                Array.Sort(list2, Collections.ReverseOrder<int>());
                 assertEquals(list2, list1, aggressive: false);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 CollectionUtil.IntroSort(list1);
-                list2.Sort();
+                Array.Sort(list2);
                 assertEquals(list2, list1, aggressive: false);
             }
         }
@@ -62,21 +70,26 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestTimSort()
         {
+            // LUCENENET: Use array for comparison rather than list for better performance
             for (int i = 0, c = AtLeast(500); i < c; i++)
             {
-                IList<int> list1 = CreateRandomList(2000), list2 = new List<int>(list1);
+                IList<int> list1 = CreateRandomList(2000);
+                int[] list2 = new int[list1.Count];
+                list1.CopyTo(list2, 0);
+
                 CollectionUtil.TimSort(list1);
-                list2.Sort();
+                Array.Sort(list2);
                 assertEquals(list2, list1, aggressive: false);
 
                 list1 = CreateRandomList(2000);
-                list2 = new List<int>(list1);
+                list2 = new int[list1.Count];
+                list1.CopyTo(list2, 0);
                 CollectionUtil.TimSort(list1, Collections.ReverseOrder<int>());
-                list2.Sort(Collections.ReverseOrder<int>());
+                Array.Sort(list2, Collections.ReverseOrder<int>());
                 assertEquals(list2, list1, aggressive: false);
                 // reverse back, so we can test that completely backwards sorted array (worst case) is working:
                 CollectionUtil.TimSort(list1);
-                list2.Sort();
+                Array.Sort(list2);
                 assertEquals(list2, list1, aggressive: false);
             }
         }
