@@ -69,13 +69,16 @@ namespace Lucene.Net.Util
         {
             lock (syncLock)
             {
-                threadDocs?.Dispose();
                 if (reader != null)
                 {
                     reader.Dispose();
                     reader = null;
                 }
-                DeleteAsync(tempFilePath);
+                if (!string.IsNullOrEmpty(tempFilePath))
+                {
+                    DeleteAsync(tempFilePath);
+                    tempFilePath = null;
+                }
             }
         }
 
@@ -86,9 +89,11 @@ namespace Lucene.Net.Util
                 if (string.IsNullOrEmpty(path) || !File.Exists(path))
                     return; // Nothing to do
 
-                try {
+                try
+                {
                     File.Delete(path);
-                } catch { }
+                }
+                catch { }
             });
         }
 
@@ -103,7 +108,11 @@ namespace Lucene.Net.Util
         {
             if (disposing)
             {
-                Close();
+                lock (syncLock)
+                {
+                    Close();
+                    threadDocs?.Dispose();
+                }
             }
         }
 
@@ -128,7 +137,7 @@ namespace Lucene.Net.Util
                 Stream result = new FileStream(tempFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
                 gzs.CopyTo(result);
                 // Use the decompressed stream now
-                return result;
+                return new BufferedStream(result);
             }
         }
 
@@ -136,8 +145,8 @@ namespace Lucene.Net.Util
         {
             lock (syncLock)
             {
-                Stream @is;
-                bool needSkip = true, failed = false;
+                Stream @is = null;
+                bool needSkip = true, isExternal = false;
                 long size = 0L, seekTo = 0L;
 
                 try
@@ -145,17 +154,16 @@ namespace Lucene.Net.Util
                     // LUCENENET: We have embedded the default file, so if that filename is passed,
                     // open the local resource instead of an external file.
                     if (path == LuceneTestCase.DEFAULT_LINE_DOCS_FILE)
-                    {
                         @is = this.GetType().FindAndGetManifestResourceStream(path);
-                    }
                     else
-                    {
-                        @is = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    }
+                        isExternal = true;
                 }
                 catch (Exception)
                 {
-                    failed = true;
+                    isExternal = true;
+                }
+                if (isExternal)
+                {
                     // if its not in classpath, we load it as absolute filesystem path (e.g. Hudson's home dir)
                     FileInfo file = new FileInfo(path);
                     size = file.Length;
@@ -172,14 +180,14 @@ namespace Lucene.Net.Util
                         {
                             Console.WriteLine("TEST: LineFileDocs: file seek to fp=" + seekTo + " on open");
                         }
-                        @is = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)
+                        @is = new BufferedStream(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)
                         {
                             Position = seekTo
-                        };
+                        });
                         needSkip = false;
                     }
                 }
-                if (!failed)
+                else
                 {
                     // if the file comes from Classpath:
                     size = @is.Length;// available();
@@ -199,7 +207,7 @@ namespace Lucene.Net.Util
                     seekTo = RandomSeekPos(random, size);
                     if (LuceneTestCase.Verbose)
                     {
-                        Console.WriteLine("TEST: LineFileDocs: stream skip to fp=" + seekTo + " on open");
+                        Console.WriteLine($"TEST: LineFileDocs: stream skip to fp={seekTo} on open");
                     }
                     @is.Position = seekTo;
                 }
@@ -207,13 +215,13 @@ namespace Lucene.Net.Util
                 // if we seeked somewhere, read until newline char
                 if (seekTo > 0L)
                 {
-                    int b;
-                    byte[] bytes = new byte[sizeof(int)];
-                    do
-                    {
-                        @is.Read(bytes, 0, sizeof(int));
-                        b = BitConverter.ToInt32(bytes, 0);
-                    } while (b >= 0 && b != 13 && b != 10);
+                    //int b;
+                    //do
+                    //{
+                    //    b = @is.ReadByte();
+                    //} while (b >= 0 && b != 13 && b != 10);
+                    
+                    SeekToNextLineBreakOrEnd(@is);
                 }
 
                 reader = new StreamReader(@is, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: BUFFER_SIZE);
@@ -222,6 +230,28 @@ namespace Lucene.Net.Util
                 {
                     // read one more line, to make sure we are not inside a Windows linebreak (\r\n):
                     reader.ReadLine();
+                }
+            }
+        }
+
+        private void SeekToNextLineBreakOrEnd(Stream @is)
+        {
+            int b, read, chunkSize = sizeof(int) * 1024;
+            byte[] bytes = new byte[chunkSize];
+            while (true)
+            {
+                read = @is.Read(bytes, 0, chunkSize);
+                if (read == 0) return;
+
+                for (int i = 0; i < read; i += sizeof(int))
+                {
+                    b = BitConverter.ToInt32(bytes, i);
+                    if (b == 13 || b == 10)
+                    {
+                        // Move the stream back from the current position to where we found the line break
+                        @is.Seek(-(read - i), SeekOrigin.Current);
+                        return;
+                    }
                 }
             }
         }
