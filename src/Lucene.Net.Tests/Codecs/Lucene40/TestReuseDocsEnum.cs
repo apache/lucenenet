@@ -51,6 +51,7 @@ namespace Lucene.Net.Codecs.Lucene40
         [OneTimeSetUp]
         public override void BeforeClass()
         {
+            UseTempLineDocsFile = true;
             base.BeforeClass();
             OldFormatImpersonationIsActive = true; // explicitly instantiates ancient codec
         }

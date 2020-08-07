@@ -82,6 +82,14 @@ namespace Lucene.Net.Search
 #else
     {
 #endif
+        // LUCENENET specific - Specify to unzip the line file docs
+        public override void BeforeClass()
+        {
+            UseTempLineDocsFile = true;
+            base.BeforeClass();
+        }
+
+
         // LUCENENET specific - de-nested SearcherExpiredException
 
         internal class FieldAndShardVersion

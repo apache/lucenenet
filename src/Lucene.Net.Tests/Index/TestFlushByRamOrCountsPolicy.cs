@@ -46,6 +46,7 @@ namespace Lucene.Net.Index
         [OneTimeSetUp]
         public override void BeforeClass()
         {
+            UseTempLineDocsFile = true; // LUCENENET specific - Specify to unzip the line file docs
             base.BeforeClass();
             lineDocFile = new LineFileDocs(Random, DefaultCodecSupportsDocValues);
         }
