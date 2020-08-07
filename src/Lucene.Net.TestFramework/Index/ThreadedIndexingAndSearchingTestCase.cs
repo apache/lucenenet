@@ -78,6 +78,13 @@ namespace Lucene.Net.Index
             }
         }
 
+        // LUCENENET specific - Specify to unzip the line file docs
+        public override void BeforeClass()
+        {
+            UseTempLineDocsFile = true;
+            base.BeforeClass();
+        }
+
         // Called per-search
         protected abstract IndexSearcher GetCurrentSearcher();
 

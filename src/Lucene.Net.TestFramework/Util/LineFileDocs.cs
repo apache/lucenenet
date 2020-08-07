@@ -56,12 +56,12 @@ namespace Lucene.Net.Util
         }
 
         public LineFileDocs(Random random)
-            : this(random, LuceneTestCase.TestLineDocsFile, true)
+            : this(random, LuceneTestCase.TempLineDocsFile ?? LuceneTestCase.TestLineDocsFile, true)
         {
         }
 
         public LineFileDocs(Random random, bool useDocValues)
-            : this(random, LuceneTestCase.TestLineDocsFile, useDocValues)
+            : this(random, LuceneTestCase.TempLineDocsFile ?? LuceneTestCase.TestLineDocsFile, useDocValues)
         {
         }
 
@@ -370,29 +370,29 @@ namespace Lucene.Net.Util
             return docState.Doc;
         }
 
-        //private static string MaybeCreateTempFile()
-        //{
-        //    string result = null;
-        //    Stream temp = null;
-        //    if (LuceneTestCase.TestLineDocsFile == LuceneTestCase.DEFAULT_LINE_DOCS_FILE) // Always GZipped
-        //    {
-        //        temp = typeof(LineFileDocs).FindAndGetManifestResourceStream(LuceneTestCase.TestLineDocsFile);
-        //    }
-        //    else if (LuceneTestCase.TestLineDocsFile.EndsWith(".gz", StringComparison.Ordinal))
-        //    {
-        //        temp = new FileStream(LuceneTestCase.TestLineDocsFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-        //    }
-        //    if (null != temp)
-        //    {
-        //        var file = LuceneTestCase.CreateTempFile("lucene-linefiledocs-", null);
-        //        result = file.FullName;
-        //        using (var gzs = new GZipStream(temp, CompressionMode.Decompress, leaveOpen: false))
-        //        using (Stream output = new FileStream(result, FileMode.Open, FileAccess.Write, FileShare.Read))
-        //        {
-        //            gzs.CopyTo(output);
-        //        }
-        //    }
-        //    return result;
-        //}
+        internal static string MaybeCreateTempFile()
+        {
+            string result = null;
+            Stream temp = null;
+            if (LuceneTestCase.TestLineDocsFile == LuceneTestCase.DEFAULT_LINE_DOCS_FILE) // Always GZipped
+            {
+                temp = typeof(LineFileDocs).FindAndGetManifestResourceStream(LuceneTestCase.TestLineDocsFile);
+            }
+            else if (LuceneTestCase.TestLineDocsFile.EndsWith(".gz", StringComparison.Ordinal))
+            {
+                temp = new FileStream(LuceneTestCase.TestLineDocsFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+            if (null != temp)
+            {
+                var file = LuceneTestCase.CreateTempFile("lucene-linefiledocs-", null);
+                result = file.FullName;
+                using (var gzs = new GZipStream(temp, CompressionMode.Decompress, leaveOpen: false))
+                using (Stream output = new FileStream(result, FileMode.Open, FileAccess.Write, FileShare.Read))
+                {
+                    gzs.CopyTo(output);
+                }
+            }
+            return result;
+        }
     }
 }
