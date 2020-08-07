@@ -1,11 +1,14 @@
+using J2N;
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
+using Lucene.Net.Support.IO;
 using System;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Util
@@ -35,10 +38,12 @@ namespace Lucene.Net.Util
     public class LineFileDocs : IDisposable
     {
         private TextReader reader;
-        //private static readonly int BUFFER_SIZE = 1 << 16; // 64K // LUCENENET NOTE: Not used because we don't have a BufferedReader in .NET
+        private const int BUFFER_SIZE = 1 << 16; // 64K // LUCENENET NOTE: Not used because we don't have a BufferedReader in .NET
         private readonly AtomicInt32 id = new AtomicInt32();
         private readonly string path;
         private readonly bool useDocValues;
+        private readonly object syncLock = new object();
+        private string tempFilePath;
 
         /// <summary>
         /// If forever is true, we rewind the file at EOF (repeat
@@ -61,6 +66,33 @@ namespace Lucene.Net.Util
         {
         }
 
+        public void Close()
+        {
+            lock (syncLock)
+            {
+                DeleteAsync(tempFilePath);
+                threadDocs?.Dispose();
+                if (reader != null)
+                {
+                    reader.Dispose();
+                    reader = null;
+                }
+            }
+        }
+
+        private static Task DeleteAsync(string path)
+        {
+            return Task.Run(() =>
+            {
+                if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                    return; // Nothing to do
+
+                try {
+                    File.Delete(path);
+                } catch { }
+            });
+        }
+
         public void Dispose()
         {
             Dispose(true);
@@ -72,15 +104,7 @@ namespace Lucene.Net.Util
         {
             if (disposing)
             {
-                lock (this)
-                {
-                    threadDocs?.Dispose();
-                    if (reader != null)
-                    {
-                        reader.Dispose();
-                        reader = null;
-                    }
-                }
+                Close();
             }
         }
 
@@ -93,9 +117,25 @@ namespace Lucene.Net.Util
             return (random.NextInt64() & long.MaxValue) % (size / 3);
         }
 
+
+        // LUCENENET specific - this was added to unzip our LineDocsFile to a specific folder
+        // so tests can be run without the overhead of seeking within a MemoryStream
+        private Stream PrepareGZipStream(Stream input)
+        {
+            using (var gzs = new GZipStream(input, CompressionMode.Decompress, leaveOpen: false))
+            {
+                FileInfo tempFile = FileSupport.CreateTempFile("lucene-linefiledocs-", null);
+                tempFilePath = tempFile.FullName;
+                Stream result = new FileStream(tempFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                gzs.CopyTo(result);
+                // Use the decompressed stream now
+                return result;
+            }
+        }
+
         private void Open(Random random)
         {
-            lock (this)
+            lock (syncLock)
             {
                 Stream @is;
                 bool needSkip = true, failed = false;
@@ -107,7 +147,7 @@ namespace Lucene.Net.Util
                     // open the local resource instead of an external file.
                     if (path == LuceneTestCase.DEFAULT_LINE_DOCS_FILE)
                     {
-                        @is = this.GetType().getResourceAsStream(path);
+                        @is = this.GetType().FindAndGetManifestResourceStream(path);
                     }
                     else
                     {
@@ -123,7 +163,7 @@ namespace Lucene.Net.Util
                     if (path.EndsWith(".gz", StringComparison.Ordinal))
                     {
                         // if it is a gzip file, we need to use InputStream and slowly skipTo:
-                        @is = new FileStream(file.FullName, FileMode.Append, FileAccess.Write, FileShare.Read);
+                        @is = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.None);
                     }
                     else
                     {
@@ -135,7 +175,7 @@ namespace Lucene.Net.Util
                             Console.WriteLine("TEST: LineFileDocs: file seek to fp=" + seekTo + " on open");
                         }
                         channel.Position = seekTo;
-                        @is = new FileStream(channel.ToString(), FileMode.Append, FileAccess.Write, FileShare.Read);
+                        @is = new FileStream(channel.ToString(), FileMode.Append, FileAccess.Read, FileShare.None);
                         needSkip = false;
                     }
                 }
@@ -147,15 +187,7 @@ namespace Lucene.Net.Util
 
                 if (path.EndsWith(".gz", StringComparison.Ordinal))
                 {
-                    using (var gzs = new GZipStream(@is, CompressionMode.Decompress))
-                    {
-                        var temp = new MemoryStream();
-                        gzs.CopyTo(temp);
-                        // Free up the previous stream
-                        @is.Dispose();
-                        // Use the decompressed stream now
-                        @is = temp;
-                    }
+                    @is = PrepareGZipStream(@is);
                     // guestimate:
                     size = (long)(size * 2.8);
                 }
@@ -184,26 +216,21 @@ namespace Lucene.Net.Util
                     } while (b >= 0 && b != 13 && b != 10);
                 }
 
-                //CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT);
-                MemoryStream ms = new MemoryStream();
-                @is.CopyTo(ms);
-                reader = new StringReader(Encoding.UTF8.GetString(ms.ToArray()));//, BUFFER_SIZE);
+                reader = new StreamReader(@is, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: BUFFER_SIZE);
 
                 if (seekTo > 0L)
                 {
                     // read one more line, to make sure we are not inside a Windows linebreak (\r\n):
                     reader.ReadLine();
                 }
-
-                @is.Dispose();
             }
         }
 
         public virtual void Reset(Random random)
         {
-            lock (this)
+            lock (syncLock)
             {
-                Dispose();
+                Close();
                 Open(random);
                 id.Value = 0;
             }
@@ -228,10 +255,12 @@ namespace Lucene.Net.Util
                 Title = new StringField("title", "", Field.Store.NO);
                 Doc.Add(Title);
 
-                FieldType ft = new FieldType(TextField.TYPE_STORED);
-                ft.StoreTermVectors = true;
-                ft.StoreTermVectorOffsets = true;
-                ft.StoreTermVectorPositions = true;
+                FieldType ft = new FieldType(TextField.TYPE_STORED)
+                {
+                    StoreTermVectors = true,
+                    StoreTermVectorOffsets = true,
+                    StoreTermVectorPositions = true
+                };
 
                 TitleTokenized = new Field("titleTokenized", "", ft);
                 Doc.Add(TitleTokenized);
@@ -264,7 +293,7 @@ namespace Lucene.Net.Util
         public virtual Document NextDoc()
         {
             string line;
-            lock (this)
+            lock (syncLock)
             {
                 line = reader.ReadLine();
                 if (line == null)
@@ -274,7 +303,7 @@ namespace Lucene.Net.Util
                     {
                         Console.WriteLine("TEST: LineFileDocs: now rewind file...");
                     }
-                    Dispose();
+                    Close();
                     Open(null);
                     line = reader.ReadLine();
                 }
