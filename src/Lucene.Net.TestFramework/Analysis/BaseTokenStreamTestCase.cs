@@ -103,25 +103,55 @@ namespace Lucene.Net.Analysis
 #else
     {
 #endif
-//#if TESTFRAMEWORK_MSTEST
-//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-//        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
-//        {
-//            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
-//        }
+        //#if TESTFRAMEWORK_MSTEST
+        //        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassInitializeAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+        //        new public static void BeforeClass(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext context)
+        //        {
+        //            Lucene.Net.Util.LuceneTestCase.BeforeClass(context);
+        //        }
 
-//        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
-//        new public static void AfterClass()
-//        {
-//            Lucene.Net.Util.LuceneTestCase.AfterClass();
-//        }
-//#endif
+        //        [Microsoft.VisualStudio.TestTools.UnitTesting.ClassCleanupAttribute(Microsoft.VisualStudio.TestTools.UnitTesting.InheritanceBehavior.BeforeEachDerivedClass)]
+        //        new public static void AfterClass()
+        //        {
+        //            Lucene.Net.Util.LuceneTestCase.AfterClass();
+        //        }
+        //#endif
 
         // some helpers to test Analyzers and TokenStreams:
 
         // LUCENENET specific - de-nested ICheckClearAttributesAttribute
 
         // LUCENENET specific - de-nested CheckClearAttributesAttribute
+
+        private static string tempLineFileDocs;
+
+        // LUCENENET specific - LineFileDocs is extemely slow because GZipStream is not seekable. We can
+        // drastically improve performance by unzipping the file here in the base class and seeking within
+        // that file in each test.
+        public override void BeforeClass()
+        {
+            base.BeforeClass();
+
+            Stream temp = null;
+            if (TestLineDocsFile == DEFAULT_LINE_DOCS_FILE) // Always GZipped
+            {
+                temp = typeof(LineFileDocs).FindAndGetManifestResourceStream(TestLineDocsFile);
+            }
+            else if (TestLineDocsFile.EndsWith(".gz", StringComparison.Ordinal))
+            {
+                temp = new FileStream(TestLineDocsFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+            if (null != temp)
+            {
+                var file = CreateTempFile("lucene-linefiledocs-", null);
+                tempLineFileDocs = file.FullName;
+                using (var gzs = new GZipStream(temp, CompressionMode.Decompress, leaveOpen: false))
+                using (Stream output = new FileStream(tempLineFileDocs, FileMode.Open, FileAccess.Write, FileShare.Read))
+                {
+                    gzs.CopyTo(output);
+                }
+            }
+        }
 
         // offsetsAreCorrect also validates:
         //   - graph offsets are correct (all tokens leaving from
@@ -828,61 +858,69 @@ namespace Lucene.Net.Analysis
 
         private static void CheckRandomData(Random random, Analyzer a, int iterations, int maxWordLength, bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw)
         {
-            LineFileDocs docs = new LineFileDocs(random);
-            Document doc = null;
-            Field field = null, currentField = null;
-            StringReader bogus = new StringReader("");
-            if (iw != null)
-            {
-                doc = new Document();
-                FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-                if (random.NextBoolean())
-                {
-                    ft.StoreTermVectors = true;
-                    ft.StoreTermVectorOffsets = random.NextBoolean();
-                    ft.StoreTermVectorPositions = random.NextBoolean();
-                    if (ft.StoreTermVectorPositions && !OldFormatImpersonationIsActive)
-                    {
-                        ft.StoreTermVectorPayloads = random.NextBoolean();
-                    }
-                }
-                if (random.NextBoolean())
-                {
-                    ft.OmitNorms = true;
-                }
-                string pf = TestUtil.GetPostingsFormat("dummy");
-                bool supportsOffsets = !DoesntSupportOffsets.Contains(pf);
-                switch (random.Next(4))
-                {
-                    case 0:
-                        ft.IndexOptions = IndexOptions.DOCS_ONLY;
-                        break;
-
-                    case 1:
-                        ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
-                        break;
-
-                    case 2:
-                        ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                        break;
-
-                    default:
-                        if (supportsOffsets && offsetsAreCorrect)
-                        {
-                            ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
-                        }
-                        else
-                        {
-                            ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                        }
-                        break;
-                }
-                currentField = field = new Field("dummy", bogus, ft);
-                doc.Add(currentField);
-            }
+            // LUCENENET specific - LineFileDocs is extemely slow because GZipStream is not seekable. We can
+            // drastically improve performance by unzipping the once in the base class and seeking within
+            // that file in each test. If the file wasn't GZipped, we simply use the default behavior.
+            LineFileDocs docs;
+            if (!string.IsNullOrEmpty(tempLineFileDocs))
+                docs = new LineFileDocs(random, tempLineFileDocs, useDocValues: false);
+            else
+                docs = new LineFileDocs(random);
 
             try
             {
+                Document doc = null;
+                Field field = null, currentField = null;
+                StringReader bogus = new StringReader("");
+                if (iw != null)
+                {
+                    doc = new Document();
+                    FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
+                    if (random.NextBoolean())
+                    {
+                        ft.StoreTermVectors = true;
+                        ft.StoreTermVectorOffsets = random.NextBoolean();
+                        ft.StoreTermVectorPositions = random.NextBoolean();
+                        if (ft.StoreTermVectorPositions && !OldFormatImpersonationIsActive)
+                        {
+                            ft.StoreTermVectorPayloads = random.NextBoolean();
+                        }
+                    }
+                    if (random.NextBoolean())
+                    {
+                        ft.OmitNorms = true;
+                    }
+                    string pf = TestUtil.GetPostingsFormat("dummy");
+                    bool supportsOffsets = !DoesntSupportOffsets.Contains(pf);
+                    switch (random.Next(4))
+                    {
+                        case 0:
+                            ft.IndexOptions = IndexOptions.DOCS_ONLY;
+                            break;
+
+                        case 1:
+                            ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
+                            break;
+
+                        case 2:
+                            ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                            break;
+
+                        default:
+                            if (supportsOffsets && offsetsAreCorrect)
+                            {
+                                ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                            }
+                            else
+                            {
+                                ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                            }
+                            break;
+                    }
+                    currentField = field = new Field("dummy", bogus, ft);
+                    doc.Add(currentField);
+                }
+
                 for (int i = 0; i < iterations; i++)
                 {
                     string text;
