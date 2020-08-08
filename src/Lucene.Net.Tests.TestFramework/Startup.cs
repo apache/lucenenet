@@ -46,7 +46,7 @@ public class Startup : LuceneTestFrameworkInitializer
         ConfigurationFactory = new MockConfigurationFactory(ConfigurationFactory);
     }
 
-    internal override void IncrementInitalizationCount()
+    internal override void AfterInitialization()
     {
         initializationCount.IncrementAndGet();
     }
