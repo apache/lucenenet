@@ -39,14 +39,13 @@ namespace Lucene.Net.Util
     {
         private TextReader reader;
         private const int BUFFER_SIZE = 1 << 16; // 64K
-        private const int CHAR_SIZE = sizeof(int);
-        private const string TEMP_FILE_PREFIX = "lucene-linefiledocs-";
-        private const string TEMP_FILE_SUFFIX = ".tmp";
+        private const string TEMP_FILE_PREFIX = "lucene-linefiledocs-"; // LUCENENET specific
+        private const string TEMP_FILE_SUFFIX = ".tmp"; // LUCENENET specific
         private readonly AtomicInt32 id = new AtomicInt32();
         private readonly string path;
         private readonly bool useDocValues;
-        private readonly object syncLock = new object();
-        private string tempFilePath;
+        private readonly object syncLock = new object(); // LUCENENET specific
+        private string tempFilePath; // LUCENENET specific
 
         /// <summary>
         /// If forever is true, we rewind the file at EOF (repeat
@@ -127,9 +126,6 @@ namespace Lucene.Net.Util
                 return 0L;
             }
             var result = (random.NextInt64() & long.MaxValue) % (size / 3);
-            if (result > size - 7) result = size - 8;
-            while (!(result % CHAR_SIZE == 0))
-                result++;
             return result;
         }
 
@@ -223,13 +219,11 @@ namespace Lucene.Net.Util
                 // if we seeked somewhere, read until newline char
                 if (seekTo > 0L)
                 {
-                    //int b;
-                    //do
-                    //{
-                    //    b = @is.ReadByte();
-                    //} while (b >= 0 && b != 13 && b != 10);
-                    
-                    SeekToNextLineBreakOrEnd(@is);
+                    int b;
+                    do
+                    {
+                        b = @is.ReadByte();
+                    } while (b >= 0 && b != 13 && b != 10);
                 }
 
                 reader = new StreamReader(@is, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: BUFFER_SIZE);
@@ -238,28 +232,6 @@ namespace Lucene.Net.Util
                 {
                     // read one more line, to make sure we are not inside a Windows linebreak (\r\n):
                     reader.ReadLine();
-                }
-            }
-        }
-
-        private void SeekToNextLineBreakOrEnd(Stream @is)
-        {
-            int b, read, chunkSize = CHAR_SIZE * 1024;
-            byte[] bytes = new byte[chunkSize];
-            while (true)
-            {
-                read = @is.Read(bytes, 0, chunkSize);
-                if (read == 0) return;
-
-                for (int i = 0; i < read; i += CHAR_SIZE)
-                {
-                    b = BitConverter.ToInt32(bytes, i);
-                    if (b == 13 || b == 10)
-                    {
-                        // Move the stream back from the current position to where we found the line break
-                        @is.Seek(-(read - i), SeekOrigin.Current);
-                        return;
-                    }
                 }
             }
         }
