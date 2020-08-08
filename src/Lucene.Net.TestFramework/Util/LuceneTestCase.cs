@@ -34,7 +34,6 @@ using FieldInfo = Lucene.Net.Index.FieldInfo;
 using static Lucene.Net.Search.FieldCache;
 using static Lucene.Net.Util.FieldCacheSanityChecker;
 using J2N.Collections.Generic.Extensions;
-using NUnit.Framework.Internal.Commands;
 
 #if TESTFRAMEWORK_MSTEST
 using Before = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
@@ -52,6 +51,7 @@ using Test = NUnit.Framework.TestAttribute;
 using TestFixture = NUnit.Framework.TestFixtureAttribute;
 using NUnit.Framework.Interfaces;
 using NUnit.Framework.Internal;
+using NUnit.Framework.Internal.Commands;
 #elif TESTFRAMEWORK_XUNIT
 using Before = Lucene.Net.Attributes.NoOpAttribute;
 using After = Lucene.Net.Attributes.NoOpAttribute;
@@ -277,16 +277,38 @@ namespace Lucene.Net.Util
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
         public sealed class NightlyAttribute : System.Attribute
 #if TESTFRAMEWORK_NUNIT
-            , IApplyToTest, IWrapSetUpTearDown
+            , IApplyToTest, IApplyToContext, IWrapTestMethod
         {
+            private const string SKIP_REASON = "This is a nightly test.";
+
             void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
+                // This method is called before initialization. The only thing
+                // we can do here is set the category.
                 test.Properties.Add(PropertyNames.Category, "Nightly");
+            }
+
+            void IApplyToContext.ApplyToContext(TestExecutionContext context)
+            {
+                // Cover the case where this attribute is applied to the whole test fixture
+                var currentTest = context.CurrentTest;
+                if (!TestNightly && currentTest is NUnit.Framework.Internal.TestFixture)
+                {
+                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
+                    foreach (var testInterface in fixture.Tests)
+                    {
+                        var test = (NUnit.Framework.Internal.Test)testInterface;
+                        test.RunState = RunState.Skipped;
+                        test.Properties.Set(PropertyNames.SkipReason, SKIP_REASON);
+                    }
+                }
             }
 
             TestCommand ICommandWrapper.Wrap(TestCommand command)
             {
-                return new LuceneDelegatingTestCommand(command, () => !TestNightly, "This is a nightly test.");
+                // This is to cover the case where the test is decorated with the attribute
+                // directly.
+                return new LuceneDelegatingTestCommand(command, () => !TestNightly, SKIP_REASON);
             }
         }
 #else
@@ -300,16 +322,38 @@ namespace Lucene.Net.Util
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
         public sealed class WeeklyAttribute : System.Attribute
 #if TESTFRAMEWORK_NUNIT
-            , IApplyToTest, IWrapSetUpTearDown
+            , IApplyToTest, IApplyToContext, IWrapTestMethod
         {
+            private const string SKIP_REASON = "This is a weekly test.";
+
             void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
+                // This method is called before initialization. The only thing
+                // we can do here is set the category.
                 test.Properties.Add(PropertyNames.Category, "Weekly");
+            }
+
+            void IApplyToContext.ApplyToContext(TestExecutionContext context)
+            {
+                // Cover the case where this attribute is applied to the whole test fixture
+                var currentTest = context.CurrentTest;
+                if (!TestWeekly && currentTest is NUnit.Framework.Internal.TestFixture)
+                {
+                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
+                    foreach (var testInterface in fixture.Tests)
+                    {
+                        var test = (NUnit.Framework.Internal.Test)testInterface;
+                        test.RunState = RunState.Skipped;
+                        test.Properties.Set(PropertyNames.SkipReason, SKIP_REASON);
+                    }
+                }
             }
 
             TestCommand ICommandWrapper.Wrap(TestCommand command)
             {
-                return new LuceneDelegatingTestCommand(command, () => !TestWeekly, "This is a weekly test.");
+                // This is to cover the case where the test is decorated with the attribute
+                // directly.
+                return new LuceneDelegatingTestCommand(command, () => !TestWeekly, SKIP_REASON);
             }
         }
 #else
@@ -323,15 +367,35 @@ namespace Lucene.Net.Util
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
         public sealed class AwaitsFixAttribute : System.Attribute
 #if TESTFRAMEWORK_NUNIT
-            , IApplyToTest, IWrapSetUpTearDown
+            , IApplyToTest, IApplyToContext, IWrapTestMethod
         {
             void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
+                // This method is called before initialization. The only thing
+                // we can do here is set the category.
                 test.Properties.Add(PropertyNames.Category, "AwaitsFix");
+            }
+
+            void IApplyToContext.ApplyToContext(TestExecutionContext context)
+            {
+                // Cover the case where this attribute is applied to the whole test fixture
+                var currentTest = context.CurrentTest;
+                if (!TestAwaitsFix && currentTest is NUnit.Framework.Internal.TestFixture)
+                {
+                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
+                    foreach (var testInterface in fixture.Tests)
+                    {
+                        var test = (NUnit.Framework.Internal.Test)testInterface;
+                        test.RunState = RunState.Skipped;
+                        test.Properties.Set(PropertyNames.SkipReason, BugUrl);
+                    }
+                }
             }
 
             TestCommand ICommandWrapper.Wrap(TestCommand command)
             {
+                // This is to cover the case where the test is decorated with the attribute
+                // directly.
                 return new LuceneDelegatingTestCommand(command, () => !TestAwaitsFix, BugUrl) { RunState = RunState.Ignored };
             }
 #else
@@ -350,15 +414,35 @@ namespace Lucene.Net.Util
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
         public sealed class SlowAttribute : System.Attribute
 #if TESTFRAMEWORK_NUNIT
-            , IApplyToTest, IWrapSetUpTearDown
+            , IApplyToTest, IApplyToContext, IWrapTestMethod
         {
             void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
+                // This method is called before initialization. The only thing
+                // we can do here is set the category.
                 test.Properties.Add(PropertyNames.Category, "Slow");
+            }
+
+            void IApplyToContext.ApplyToContext(TestExecutionContext context)
+            {
+                // Cover the case where this attribute is applied to the whole test fixture
+                var currentTest = context.CurrentTest;
+                if (!TestSlow && currentTest is NUnit.Framework.Internal.TestFixture)
+                {
+                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
+                    foreach (var testInterface in fixture.Tests)
+                    {
+                        var test = (NUnit.Framework.Internal.Test)testInterface;
+                        test.RunState = RunState.Skipped;
+                        test.Properties.Set(PropertyNames.SkipReason, Message);
+                    }
+                }
             }
 
             TestCommand ICommandWrapper.Wrap(TestCommand command)
             {
+                // This is to cover the case where the test is decorated with the attribute
+                // directly.
                 return new LuceneDelegatingTestCommand(command, () => !TestSlow, Message);
             }
 #else
