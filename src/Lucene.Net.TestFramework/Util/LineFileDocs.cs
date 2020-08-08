@@ -1,6 +1,7 @@
 using J2N;
 using J2N.Threading.Atomic;
 using Lucene.Net.Documents;
+using Lucene.Net.Support.IO;
 using System;
 using System.Globalization;
 using System.IO;
@@ -38,6 +39,9 @@ namespace Lucene.Net.Util
     {
         private TextReader reader;
         private const int BUFFER_SIZE = 1 << 16; // 64K
+        private const int CHAR_SIZE = sizeof(int);
+        private const string TEMP_FILE_PREFIX = "lucene-linefiledocs-";
+        private const string TEMP_FILE_SUFFIX = ".tmp";
         private readonly AtomicInt32 id = new AtomicInt32();
         private readonly string path;
         private readonly bool useDocValues;
@@ -122,7 +126,11 @@ namespace Lucene.Net.Util
             {
                 return 0L;
             }
-            return (random.NextInt64() & long.MaxValue) % (size / 3);
+            var result = (random.NextInt64() & long.MaxValue) % (size / 3);
+            if (result > size - 7) result = size - 8;
+            while (!(result % CHAR_SIZE == 0))
+                result++;
+            return result;
         }
 
 
@@ -132,7 +140,7 @@ namespace Lucene.Net.Util
         {
             using (var gzs = new GZipStream(input, CompressionMode.Decompress, leaveOpen: false))
             {
-                FileInfo tempFile = LuceneTestCase.CreateTempFile("lucene-linefiledocs-", null);
+                FileInfo tempFile = LuceneTestCase.CreateTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
                 tempFilePath = tempFile.FullName;
                 Stream result = new FileStream(tempFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
                 gzs.CopyTo(result);
@@ -178,7 +186,7 @@ namespace Lucene.Net.Util
                         seekTo = RandomSeekPos(random, size);
                         if (LuceneTestCase.Verbose)
                         {
-                            Console.WriteLine("TEST: LineFileDocs: file seek to fp=" + seekTo + " on open");
+                            Console.WriteLine($"TEST: LineFileDocs: file seek to fp={seekTo} on open");
                         }
                         @is = new BufferedStream(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read)
                         {
@@ -236,14 +244,14 @@ namespace Lucene.Net.Util
 
         private void SeekToNextLineBreakOrEnd(Stream @is)
         {
-            int b, read, chunkSize = sizeof(int) * 1024;
+            int b, read, chunkSize = CHAR_SIZE * 1024;
             byte[] bytes = new byte[chunkSize];
             while (true)
             {
                 read = @is.Read(bytes, 0, chunkSize);
                 if (read == 0) return;
 
-                for (int i = 0; i < read; i += sizeof(int))
+                for (int i = 0; i < read; i += CHAR_SIZE)
                 {
                     b = BitConverter.ToInt32(bytes, i);
                     if (b == 13 || b == 10)
@@ -370,7 +378,7 @@ namespace Lucene.Net.Util
             return docState.Doc;
         }
 
-        internal static string MaybeCreateTempFile()
+        internal static string MaybeCreateTempFile(bool removeAfterClass = true)
         {
             string result = null;
             Stream temp = null;
@@ -384,7 +392,9 @@ namespace Lucene.Net.Util
             }
             if (null != temp)
             {
-                var file = LuceneTestCase.CreateTempFile("lucene-linefiledocs-", null);
+                var file = removeAfterClass
+                    ? LuceneTestCase.CreateTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX)
+                    : FileSupport.CreateTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
                 result = file.FullName;
                 using (var gzs = new GZipStream(temp, CompressionMode.Decompress, leaveOpen: false))
                 using (Stream output = new FileStream(result, FileMode.Open, FileAccess.Write, FileShare.Read))

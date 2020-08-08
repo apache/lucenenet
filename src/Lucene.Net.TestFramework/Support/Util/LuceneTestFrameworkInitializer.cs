@@ -2,6 +2,7 @@ using Lucene.Net.Codecs;
 using Lucene.Net.Configuration;
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Threading;
 
 namespace Lucene.Net.Util
@@ -149,6 +150,12 @@ namespace Lucene.Net.Util
                 // Initialize of the test factories here, so that doesn't happen
                 // when EnsureInitialized() is called.
                 Initialize();
+
+                // If we can cleanup, unzip the LineDocsFile 1 time for the entire test run,
+                // which will dramatically improve performance.
+                var temp = LineFileDocs.MaybeCreateTempFile(removeAfterClass: false);
+                if (null != temp)
+                    LuceneTestCase.TestLineDocsFile = temp;
             }
             catch (Exception ex)
             {
@@ -172,6 +179,19 @@ namespace Lucene.Net.Util
             {
                 // Write the stack trace so we have something to go on if an error occurs here.
                 throw new Exception($"An exception occurred during OneTimeTearDownAfterTests:\n{ex.ToString()}", ex);
+            }
+
+            // Cleanup our LineDocsFile and reset LuceneTestCase back to its original state.
+            var originalLineDocsFile = SystemProperties.GetProperty("tests:linedocsfile", LuceneTestCase.DEFAULT_LINE_DOCS_FILE);
+            if (!originalLineDocsFile.Equals(LuceneTestCase.TestLineDocsFile))
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(LuceneTestCase.TestLineDocsFile) && File.Exists(LuceneTestCase.TestLineDocsFile))
+                        File.Delete(LuceneTestCase.TestLineDocsFile);
+                }
+                catch { }
+                LuceneTestCase.TestLineDocsFile = originalLineDocsFile;
             }
         }
 
@@ -207,13 +227,13 @@ namespace Lucene.Net.Util
                 // the ConfigurationFactory is set.
                 Lucene.Net.Diagnostics.Debugging.AssertsEnabled = SystemProperties.GetPropertyAsBoolean("assert", true);
 
-                IncrementInitalizationCount(); // For testing
+                AfterInitialization();
 
                 return new object(); // Placeholder to indicate our initializer has been run already
             });
         }
 
-        internal virtual void IncrementInitalizationCount()
+        internal virtual void AfterInitialization() // LUCENENET TODO: Consider making this public
         {
         }
     }

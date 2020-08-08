@@ -34,6 +34,7 @@ using FieldInfo = Lucene.Net.Index.FieldInfo;
 using static Lucene.Net.Search.FieldCache;
 using static Lucene.Net.Util.FieldCacheSanityChecker;
 using J2N.Collections.Generic.Extensions;
+using NUnit.Framework.Internal.Commands;
 
 #if TESTFRAMEWORK_MSTEST
 using Before = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
@@ -225,6 +226,50 @@ namespace Lucene.Net.Util
         ///// <seealso cref="IgnoreAfterMaxFailures"/>
         internal const string SYSPROP_FAILFAST = "tests:failfast"; // LUCENENET specific - made internal, because not fully implemented
 
+#if TESTFRAMEWORK_NUNIT
+        private class LuceneDelegatingTestCommand : DelegatingTestCommand
+        {
+            private readonly Func<bool> shouldSkip;
+            public LuceneDelegatingTestCommand(TestCommand command, Func<bool> shouldSkip, string skipReason) : base(command)
+            {
+                this.shouldSkip = shouldSkip ?? throw new ArgumentNullException(nameof(shouldSkip));
+                SkipReason = skipReason ?? throw new ArgumentNullException(nameof(skipReason));
+            }
+
+            public RunState RunState { get; set; } = RunState.Skipped;
+            public string SkipReason { get; }
+
+            public override TestResult Execute(TestExecutionContext context)
+            {
+                var test = context.CurrentTest;
+                // The test framework setting overrides the NUnit category setting, if false
+                bool skip = shouldSkip();
+                if (skip)
+                {
+                    test.RunState = RunState;
+                    test.Properties.Set(PropertyNames.SkipReason, SkipReason);
+                }
+
+                context.CurrentResult = test.MakeTestResult();
+
+                if (!skip)
+                {
+                    try
+                    {
+                        context.CurrentResult = innerCommand.Execute(context);
+                    }
+                    catch (Exception ex)
+                    {
+                        context.CurrentResult.RecordException(ex);
+                    }
+                }
+
+                return context.CurrentResult;
+            }
+        }
+#endif
+
+
         /// <summary>
         /// Attribute for tests that should only be run during nightly builds.
         /// </summary>
@@ -232,17 +277,16 @@ namespace Lucene.Net.Util
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
         public sealed class NightlyAttribute : System.Attribute
 #if TESTFRAMEWORK_NUNIT
-            , IApplyToTest
+            , IApplyToTest, IWrapSetUpTearDown
         {
-            public void ApplyToTest(NUnit.Framework.Internal.Test test)
+            void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
-                LuceneTestFrameworkInitializer.EnsureInitialized();
-                if (!TestNightly)
-                {
-                    test.RunState = RunState.Skipped;
-                    test.Properties.Set(PropertyNames.SkipReason, "This is a nightly test.");
-                }
                 test.Properties.Add(PropertyNames.Category, "Nightly");
+            }
+
+            TestCommand ICommandWrapper.Wrap(TestCommand command)
+            {
+                return new LuceneDelegatingTestCommand(command, () => !TestNightly, "This is a nightly test.");
             }
         }
 #else
@@ -256,17 +300,16 @@ namespace Lucene.Net.Util
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
         public sealed class WeeklyAttribute : System.Attribute
 #if TESTFRAMEWORK_NUNIT
-            , IApplyToTest
+            , IApplyToTest, IWrapSetUpTearDown
         {
-            public void ApplyToTest(NUnit.Framework.Internal.Test test)
+            void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
-                LuceneTestFrameworkInitializer.EnsureInitialized();
-                if (!TestWeekly)
-                {
-                    test.RunState = RunState.Skipped;
-                    test.Properties.Set(PropertyNames.SkipReason, "This is a weekly test.");
-                }
                 test.Properties.Add(PropertyNames.Category, "Weekly");
+            }
+
+            TestCommand ICommandWrapper.Wrap(TestCommand command)
+            {
+                return new LuceneDelegatingTestCommand(command, () => !TestWeekly, "This is a weekly test.");
             }
         }
 #else
@@ -280,17 +323,16 @@ namespace Lucene.Net.Util
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
         public sealed class AwaitsFixAttribute : System.Attribute
 #if TESTFRAMEWORK_NUNIT
-            , IApplyToTest
+            , IApplyToTest, IWrapSetUpTearDown
         {
-            public void ApplyToTest(NUnit.Framework.Internal.Test test)
+            void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
-                LuceneTestFrameworkInitializer.EnsureInitialized();
-                if (!TestAwaitsFix)
-                {
-                    test.RunState = RunState.Ignored;
-                    test.Properties.Set(PropertyNames.SkipReason, BugUrl);
-                }
                 test.Properties.Add(PropertyNames.Category, "AwaitsFix");
+            }
+
+            TestCommand ICommandWrapper.Wrap(TestCommand command)
+            {
+                return new LuceneDelegatingTestCommand(command, () => !TestAwaitsFix, BugUrl) { RunState = RunState.Ignored };
             }
 #else
         {
@@ -308,18 +350,16 @@ namespace Lucene.Net.Util
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
         public sealed class SlowAttribute : System.Attribute
 #if TESTFRAMEWORK_NUNIT
-            , IApplyToTest
+            , IApplyToTest, IWrapSetUpTearDown
         {
             void IApplyToTest.ApplyToTest(NUnit.Framework.Internal.Test test)
             {
-                LuceneTestFrameworkInitializer.EnsureInitialized();
-                // The test framework setting overrides the NUnit category setting, if false
-                if (!TestSlow)
-                {
-                    test.RunState = RunState.Skipped;
-                    test.Properties.Set(PropertyNames.SkipReason, Message);
-                }
                 test.Properties.Add(PropertyNames.Category, "Slow");
+            }
+
+            TestCommand ICommandWrapper.Wrap(TestCommand command)
+            {
+                return new LuceneDelegatingTestCommand(command, () => !TestSlow, Message);
             }
 #else
         {
@@ -480,7 +520,7 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// The line file used by LineFileDocs </summary>
-            public string TestLineDocsFile { get; } // LUCENENET specific - changed from field to property, and renamed
+            public string TestLineDocsFile { get; set; } // LUCENENET specific - changed from field to property, and renamed
 
             /// <summary>
             /// Whether or not <see cref="NightlyAttribute"/> tests should run. </summary>
@@ -566,7 +606,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The line file used by <see cref="LineFileDocs"/> </summary>
-        public static string TestLineDocsFile => TestProperties.TestLineDocsFile; // LUCENENET specific - changed from field to property, and renamed
+        public static string TestLineDocsFile // LUCENENET specific - changed from field to property, and renamed
+        {
+            get => TestProperties.TestLineDocsFile;
+            set => TestProperties.TestLineDocsFile = value;
+        }
 
         /// <summary>
         /// The line file used by <see cref="LineFileDocs"/> to override <see cref="TestLineDocsFile"/> if it exists (points to an unzipped file).</summary>
