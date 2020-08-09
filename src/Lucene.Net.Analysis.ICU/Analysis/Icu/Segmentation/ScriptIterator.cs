@@ -152,12 +152,14 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         }
 
         /// <summary>Linear fast-path for basic latin case.</summary>
-        private static readonly int[] basicLatin = new int[128];
+        private static readonly int[] basicLatin = LoadBasicLatin();
 
-        static ScriptIterator()
+        private static int[] LoadBasicLatin() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
+            var basicLatin = new int[128];
             for (int i = 0; i < basicLatin.Length; i++)
                 basicLatin[i] = UScript.GetScript(i);
+            return basicLatin;
         }
 
         /// <summary>Fast version of <see cref="UScript.GetScript(int)"/>. Basic Latin is an array lookup.</summary>
