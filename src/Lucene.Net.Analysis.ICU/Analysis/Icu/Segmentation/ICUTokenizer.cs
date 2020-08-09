@@ -1,4 +1,5 @@
 ﻿// Lucene version compatibility level 4.8.1
+using ICU4N;
 using ICU4N.Text;
 using Lucene.Net.Analysis.Icu.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -38,7 +39,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
     [ExceptionToClassNameConvention]
     public sealed class ICUTokenizer : Tokenizer
     {
-        private static readonly int IOBUFFER = 4096;
+        private const int IOBUFFER = 4096;
         private readonly char[] buffer = new char[IOBUFFER];
         /// <summary>true length of text in the buffer</summary>
         private int length = 0;
@@ -154,7 +155,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         private int FindSafeEnd()
         {
             for (int i = length - 1; i >= 0; i--)
-                if (char.IsWhiteSpace(buffer[i]))
+                if (UChar.IsWhiteSpace(buffer[i]))
                     return i + 1;
             return -1;
         }
