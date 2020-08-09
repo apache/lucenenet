@@ -1,4 +1,5 @@
 using J2N.Threading;
+using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
@@ -986,6 +987,7 @@ namespace Lucene.Net.Index
         // LUCENE-1335: test simultaneous addIndexes & close
         [Test]
         [Slow]
+        [Deadlock]
         public virtual void TestAddIndexesWithCloseNoWait()
         {
             const int NUM_COPY = 50;

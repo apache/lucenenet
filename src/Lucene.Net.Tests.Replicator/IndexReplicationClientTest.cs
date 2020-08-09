@@ -1,4 +1,5 @@
 using J2N.Threading.Atomic;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -219,6 +220,7 @@ namespace Lucene.Net.Replicator
         // a client copies files from the server to the temporary space, or when the
         // handler copies them to the index directory.
         [Test]
+        [Deadlock]
         public void TestConsistencyOnExceptions()
         {
             // so the handler's index isn't empty

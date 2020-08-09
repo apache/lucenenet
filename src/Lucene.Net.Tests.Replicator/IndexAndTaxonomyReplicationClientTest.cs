@@ -1,4 +1,5 @@
 ﻿using J2N.Threading.Atomic;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Facet;
 using Lucene.Net.Facet.Taxonomy;
@@ -288,6 +289,7 @@ namespace Lucene.Net.Replicator
         // handler copies them to the index directory.
         [Test]
         [Slow]
+        [Deadlock]
         public void TestConsistencyOnExceptions()
         {
             // so the handler's index isn't empty

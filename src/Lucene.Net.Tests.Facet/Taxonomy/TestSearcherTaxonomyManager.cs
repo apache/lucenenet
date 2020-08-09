@@ -1,5 +1,6 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Attributes;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using NUnit.Framework;
@@ -258,6 +259,7 @@ namespace Lucene.Net.Facet.Taxonomy
         
         [Test]
         [Slow]
+        [Deadlock]
         public virtual void Test_Directory() // LUCENENET specific - name collides with property of LuceneTestCase
         {
             Store.Directory indexDir = NewDirectory();

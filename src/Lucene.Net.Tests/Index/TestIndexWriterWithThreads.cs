@@ -1,5 +1,6 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -53,6 +54,7 @@ namespace Lucene.Net.Index
     /// </summary>
     [SuppressCodecs("Lucene3x")]
     [Slow]
+    [Deadlock]
     [TestFixture]
     public class TestIndexWriterWithThreads : LuceneTestCase
     {

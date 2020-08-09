@@ -1,6 +1,7 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -66,6 +67,7 @@ namespace Lucene.Net.Index
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     [TestFixture]
+    [Deadlock]
     public class TestIndexWriterExceptions : LuceneTestCase
     {
         private class DocCopyIterator : IEnumerable<Document>

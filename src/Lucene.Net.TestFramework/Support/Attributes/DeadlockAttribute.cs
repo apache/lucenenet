@@ -1,7 +1,10 @@
-﻿using Lucene.Net.Attributes;
-using Lucene.Net.Index;
+﻿#if TESTFRAMEWORK_NUNIT
+using NUnit.Framework;
+using NUnit.Framework.Interfaces;
+using NUnit.Framework.Internal;
+using System;
 
-namespace Lucene.Net.Codecs.SimpleText
+namespace Lucene.Net.Attributes
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,18 +23,18 @@ namespace Lucene.Net.Codecs.SimpleText
      * limitations under the License.
      */
 
-    public class TestSimpleTextStoredFieldsFormat : BaseStoredFieldsFormatTestCase
+    /// <summary>
+    /// Indicates a test has contention between concurrent processes and may deadlock.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    internal class DeadlockAttribute : TimeoutAttribute, IApplyToTest
     {
+        public DeadlockAttribute() : base(600000) { }
 
-        protected override Codec GetCodec()
+        void IApplyToTest.ApplyToTest(Test test)
         {
-            return new SimpleTextCodec();
-        }
-
-        [Deadlock]
-        public override void TestConcurrentReads()
-        {
-            base.TestConcurrentReads();
+            test.Properties.Add(PropertyNames.Category, "Deadlock");
         }
     }
 }
+#endif
