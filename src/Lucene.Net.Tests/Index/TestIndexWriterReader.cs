@@ -1,5 +1,6 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -50,6 +51,7 @@ namespace Lucene.Net.Index
     using TopDocs = Lucene.Net.Search.TopDocs;
 
     [TestFixture]
+    [Deadlock]
     public class TestIndexWriterReader : LuceneTestCase
     {
         private readonly int numThreads = TestNightly ? 5 : 3;

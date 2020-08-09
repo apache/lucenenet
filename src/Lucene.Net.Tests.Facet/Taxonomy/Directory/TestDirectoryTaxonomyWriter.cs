@@ -1,5 +1,6 @@
 ﻿using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
@@ -259,6 +260,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         [Test]
         [Slow]
+        [Deadlock]
         public virtual void TestConcurrency()
         {
             int ncats = AtLeast(100000); // add many categories
