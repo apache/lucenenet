@@ -40,12 +40,8 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed class BasicAutomata
+    public static class BasicAutomata // LUCENENET specific - made static
     {
-        private BasicAutomata()
-        {
-        }
-
         /// <summary>
         /// Returns a new (deterministic) automaton with the empty language.
         /// </summary>
@@ -63,10 +59,11 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static Automaton MakeEmptyString()
         {
-            Automaton a = new Automaton();
-            a.singleton = "";
-            a.deterministic = true;
-            return a;
+            return new Automaton
+            {
+                singleton = string.Empty,
+                deterministic = true
+            };
         }
 
         /// <summary>
@@ -97,10 +94,11 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static Automaton MakeChar(int c)
         {
-            Automaton a = new Automaton();
-            a.singleton = new string(Character.ToChars(c));
-            a.deterministic = true;
-            return a;
+            return new Automaton
+            {
+                singleton = new string(Character.ToChars(c)),
+                deterministic = true
+            };
         }
 
         /// <summary>
@@ -306,16 +304,19 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static Automaton MakeString(string s)
         {
-            Automaton a = new Automaton();
-            a.singleton = s;
-            a.deterministic = true;
-            return a;
+            return new Automaton
+            {
+                singleton = s,
+                deterministic = true
+            };
         }
 
         public static Automaton MakeString(int[] word, int offset, int length)
         {
-            Automaton a = new Automaton();
-            a.IsDeterministic = true;
+            Automaton a = new Automaton
+            {
+                deterministic = true
+            };
             State s = new State();
             a.initial = s;
             for (int i = offset; i < offset + length; i++)

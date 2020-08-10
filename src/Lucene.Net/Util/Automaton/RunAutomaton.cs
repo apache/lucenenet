@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="a"> An automaton. </param>
         /// <param name="maxInterval"></param>
         /// <param name="tableize"></param>
-        public RunAutomaton(Automaton a, int maxInterval, bool tableize)
+        protected RunAutomaton(Automaton a, int maxInterval, bool tableize) // LUCENENET specific - marked protected instead of public
         {
             this._maxInterval = maxInterval;
             a.Determinize();

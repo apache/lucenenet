@@ -125,7 +125,8 @@ namespace Lucene.Net.Util.Automaton
         {
             int length = Character.CodePointCount(input, 0, input.Length);
             int[] word = new int[length];
-            for (int i = 0, j = 0, cp = 0; i < input.Length; i += Character.CharCount(cp))
+            int cp; // LUCENENET: Removed unnecessary assignment
+            for (int i = 0, j = 0; i < input.Length; i += Character.CharCount(cp))
             {
                 word[j++] = cp = Character.CodePointAt(input, i);
             }
@@ -162,9 +163,11 @@ namespace Lucene.Net.Util.Automaton
             // create all states, and mark as accept states if appropriate
             for (int i = 0; i < states.Length; i++)
             {
-                states[i] = new State();
-                states[i].number = i;
-                states[i].Accept = description.IsAccept(i);
+                states[i] = new State
+                {
+                    number = i,
+                    accept = description.IsAccept(i)
+                };
             }
             // create transitions from state to state
             for (int k = 0; k < states.Length; k++)
@@ -200,8 +203,10 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            Automaton a = new Automaton(states[0]);
-            a.IsDeterministic = true;
+            Automaton a = new Automaton(states[0])
+            {
+                deterministic = true
+            };
             // we create some useless unconnected states, and its a net-win overall to remove these,
             // as well as to combine any adjacent transitions (it makes later algorithms more efficient).
             // so, while we could set our numberedStates here, its actually best not to, and instead to

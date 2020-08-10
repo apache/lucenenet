@@ -799,11 +799,12 @@ namespace Lucene.Net.Util.Automaton
 
         internal static RegExp MakeUnion(RegExp exp1, RegExp exp2)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_UNION;
-            r.exp1 = exp1;
-            r.exp2 = exp2;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_UNION,
+                exp1 = exp1,
+                exp2 = exp2
+            };
         }
 
         internal static RegExp MakeConcatenation(RegExp exp1, RegExp exp2)
@@ -812,8 +813,10 @@ namespace Lucene.Net.Util.Automaton
             {
                 return MakeString(exp1, exp2);
             }
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_CONCATENATION;
+            RegExp r = new RegExp
+            {
+                kind = Kind.REGEXP_CONCATENATION
+            };
             if (exp1.kind == Kind.REGEXP_CONCATENATION && (exp1.exp2.kind == Kind.REGEXP_CHAR || exp1.exp2.kind == Kind.REGEXP_STRING) && (exp2.kind == Kind.REGEXP_CHAR || exp2.kind == Kind.REGEXP_STRING))
             {
                 r.exp1 = exp1.exp1;
@@ -856,122 +859,136 @@ namespace Lucene.Net.Util.Automaton
 
         internal static RegExp MakeIntersection(RegExp exp1, RegExp exp2)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_INTERSECTION;
-            r.exp1 = exp1;
-            r.exp2 = exp2;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_INTERSECTION,
+                exp1 = exp1,
+                exp2 = exp2
+            };
         }
 
         internal static RegExp MakeOptional(RegExp exp)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_OPTIONAL;
-            r.exp1 = exp;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_OPTIONAL,
+                exp1 = exp
+            };
         }
 
         internal static RegExp MakeRepeat(RegExp exp)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_REPEAT;
-            r.exp1 = exp;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_REPEAT,
+                exp1 = exp
+            };
         }
 
         internal static RegExp MakeRepeat(RegExp exp, int min)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_REPEAT_MIN;
-            r.exp1 = exp;
-            r.min = min;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_REPEAT_MIN,
+                exp1 = exp,
+                min = min
+            };
         }
 
         internal static RegExp MakeRepeat(RegExp exp, int min, int max)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_REPEAT_MINMAX;
-            r.exp1 = exp;
-            r.min = min;
-            r.max = max;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_REPEAT_MINMAX,
+                exp1 = exp,
+                min = min,
+                max = max
+            };
         }
 
         internal static RegExp MakeComplement(RegExp exp)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_COMPLEMENT;
-            r.exp1 = exp;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_COMPLEMENT,
+                exp1 = exp
+            };
         }
 
         internal static RegExp MakeChar(int c)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_CHAR;
-            r.c = c;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_CHAR,
+                c = c
+            };
         }
 
         internal static RegExp MakeCharRange(int from, int to)
         {
             if (from > to)
             {
-                throw new ArgumentException("invalid range: from (" + from + ") cannot be > to (" + to + ")");
+                throw new ArgumentException($"invalid range: from ({from}) cannot be > to ({to})");
             }
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_CHAR_RANGE;
-            r.from = from;
-            r.to = to;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_CHAR_RANGE,
+                from = from,
+                to = to
+            };
         }
 
         internal static RegExp MakeAnyChar()
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_ANYCHAR;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_ANYCHAR
+            };
         }
 
         internal static RegExp MakeEmpty()
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_EMPTY;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_EMPTY
+            };
         }
 
         internal static RegExp MakeString(string s)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_STRING;
-            r.s = s;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_STRING,
+                s = s
+            };
         }
 
         internal static RegExp MakeAnyString()
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_ANYSTRING;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_ANYSTRING
+            };
         }
 
         internal static RegExp MakeAutomaton(string s)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_AUTOMATON;
-            r.s = s;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_AUTOMATON,
+                s = s
+            };
         }
 
         internal static RegExp MakeInterval(int min, int max, int digits)
         {
-            RegExp r = new RegExp();
-            r.kind = Kind.REGEXP_INTERVAL;
-            r.min = min;
-            r.max = max;
-            r.digits = digits;
-            return r;
+            return new RegExp
+            {
+                kind = Kind.REGEXP_INTERVAL,
+                min = min,
+                max = max,
+                digits = digits
+            };
         }
 
         private bool Peek(string s)
