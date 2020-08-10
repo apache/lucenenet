@@ -1,6 +1,7 @@
 using J2N.Numerics;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -125,7 +126,7 @@ namespace Lucene.Net.Util.Packed
         ///  <returns> The low value for the current decoding index. </returns>
         private long CurrentLowValue()
         {
-            Debug.Assert(((efIndex >= 0) && (efIndex < numEncoded)), $"efIndex {efIndex.ToString()}");
+            Debug.Assert(((efIndex >= 0) && (efIndex < numEncoded)), $"efIndex {efIndex.ToString(CultureInfo.InvariantCulture)}");
             return UnPackValue(efEncoder.lowerLongs, efEncoder.numLowBits, efIndex, efEncoder.lowerBitsMask);
         }
 

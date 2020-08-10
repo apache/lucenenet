@@ -205,7 +205,7 @@ namespace Lucene.Net.Util.Packed
             long blockValue = 0L;
             for (int i = 0; i < valuesPerBlock; ++i)
             {
-                blockValue = blockValue | (val << (i * m_bitsPerValue));
+                blockValue |= (val << (i * m_bitsPerValue));
             }
             Arrays.Fill(blocks, fromBlock, toBlock, blockValue);
 

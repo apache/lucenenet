@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.Packed
 
         // More than 1M doesn't really makes sense with these appending buffers
         // since their goal is to try to have small numbers of bits per value
-        internal static readonly int MAX_PAGE_SIZE = 1 << 20;
+        internal const int MAX_PAGE_SIZE = 1 << 20;
 
         internal readonly int pageShift, pageMask;
         internal PackedInt32s.Reader[] values;

@@ -40,7 +40,7 @@ namespace Lucene.Net.Util.Packed
             values = new long[valueCount];
         }
 
-        internal Direct64(int packedIntsVersion, DataInput @in, int valueCount)
+        internal Direct64(/*int packedIntsVersion,*/ DataInput @in, int valueCount) // LUCENENET specific - removed unused parameter
             : this(valueCount)
         {
             for (int i = 0; i < valueCount; ++i)

@@ -46,7 +46,7 @@ namespace Lucene.Net.Util.Packed
     {
         internal const int BLOCK_SIZE = 64; // 32 = int, 64 = long
         internal const int BLOCK_BITS = 6; // The #bits representing BLOCK_SIZE
-        internal static readonly int MOD_MASK = BLOCK_SIZE - 1; // x % BLOCK_SIZE
+        internal const int MOD_MASK = BLOCK_SIZE - 1; // x % BLOCK_SIZE
 
         /// <summary>
         /// Values are stores contiguously in the blocks array.

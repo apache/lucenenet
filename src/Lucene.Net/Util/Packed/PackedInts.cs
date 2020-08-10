@@ -190,15 +190,13 @@ namespace Lucene.Net.Util.Packed
 
             internal Format(int id)
             {
-                this.id = id;
+                this.Id = id;
             }
-
-            private int id; // LUCENENET specific - made private, since it is already exposed through public property
 
             /// <summary>
             /// Returns the ID of the format.
             /// </summary>
-            public int Id => id;
+            public int Id { get; private set; }
 
             /// <summary>
             /// Computes how many <see cref="byte"/> blocks are needed to store <paramref name="valueCount"/>
@@ -921,7 +919,7 @@ namespace Lucene.Net.Util.Packed
                         return new Direct32(version, @in, valueCount);
 
                     case 64:
-                        return new Direct64(version, @in, valueCount);
+                        return new Direct64(/*version,*/ @in, valueCount); // LUCENENET specific - removed unused parameter
 
                     case 24:
                         if (valueCount <= Packed8ThreeBlocks.MAX_SIZE)
@@ -1074,9 +1072,9 @@ namespace Lucene.Net.Util.Packed
 
         private class DirectPackedReaderAnonymousInnerClassHelper : DirectPackedReader
         {
-            private IndexInput @in;
-            private int valueCount;
-            private long endPointer;
+            private readonly IndexInput @in;
+            private readonly int valueCount;
+            private readonly long endPointer;
 
             public DirectPackedReaderAnonymousInnerClassHelper(int bitsPerValue, int valueCount, IndexInput @in, long endPointer)
                 : base(bitsPerValue, valueCount, @in)

@@ -27,8 +27,8 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public abstract class AbstractPagedMutable<T> : Int64Values where T : AbstractPagedMutable<T> // LUCENENET NOTE: made public rather than internal because has public subclasses
     {
-        internal static readonly int MIN_BLOCK_SIZE = 1 << 6;
-        internal static readonly int MAX_BLOCK_SIZE = 1 << 30;
+        internal const int MIN_BLOCK_SIZE = 1 << 6;
+        internal const int MAX_BLOCK_SIZE = 1 << 30;
 
         internal readonly long size;
         internal readonly int pageShift;
