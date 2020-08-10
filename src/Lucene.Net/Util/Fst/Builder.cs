@@ -99,7 +99,6 @@ namespace Lucene.Net.Util.Fst
         public Builder(FST.INPUT_TYPE inputType, Outputs<T> outputs)
             : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInt32s.COMPACT, true, 15)
         {
-            var x = new System.Text.StringBuilder();
         }
 
         /// <summary>
@@ -211,9 +210,7 @@ namespace Lucene.Net.Util.Fst
 
             nodeIn.Clear();
 
-            CompiledNode fn = new CompiledNode();
-            fn.Node = node;
-            return fn;
+            return new CompiledNode { Node = node };
         }
 
         private void DoFreezeTail(int prefixLenPlus1)
@@ -230,7 +227,7 @@ namespace Lucene.Net.Util.Fst
                 for (int idx = lastInput.Length; idx >= downTo; idx--)
                 {
                     bool doPrune = false;
-                    bool doCompile = false;
+                    bool doCompile /*= false*/; // LUCENENET: Removed unnecessary assignment
 
                     UnCompiledNode<T> node = frontier[idx];
                     UnCompiledNode<T> parent = frontier[idx - 1];
@@ -460,7 +457,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    commonOutputPrefix = wordSuffix = NO_OUTPUT;
+                    commonOutputPrefix = /*wordSuffix =*/ NO_OUTPUT; // LUCENENET: Removed unnecessary assignment
                 }
 
                 output = fst.Outputs.Subtract(output, commonOutputPrefix);

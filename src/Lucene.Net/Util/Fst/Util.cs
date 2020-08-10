@@ -32,12 +32,8 @@ namespace Lucene.Net.Util.Fst
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed class Util // LUCENENET TODO: Fix naming conflict with containing namespace
+    public static class Util // LUCENENET specific - made static // LUCENENET TODO: Fix naming conflict with containing namespace
     {
-        private Util()
-        {
-        }
-
         /// <summary>
         /// Looks up the output for this input, or <c>null</c> if the
         /// input is not accepted.
@@ -55,7 +51,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (fst.FindTargetArc(input.Int32s[input.Offset + i], arc, arc, fstReader) == null)
                 {
-                    return default(T);
+                    return default;
                 }
                 output = fst.Outputs.Add(output, arc.Output);
             }
@@ -66,7 +62,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                return default(T);
+                return default;
             }
         }
 
@@ -91,7 +87,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (fst.FindTargetArc(input.Bytes[i + input.Offset] & 0xFF, arc, arc, fstReader) == null)
                 {
-                    return default(T);
+                    return default;
                 }
                 output = fst.Outputs.Add(output, arc.Output);
             }
@@ -102,7 +98,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                return default(T);
+                return default;
             }
         }
 
@@ -365,7 +361,7 @@ namespace Lucene.Net.Util.Fst
 
             internal JCG.SortedSet<FSTPath<T>> queue = null;
 
-            private object syncLock = new object();
+            private readonly object syncLock = new object();
 
             /// <summary>
             /// Creates an unbounded TopNSearcher </summary>
@@ -756,8 +752,10 @@ namespace Lucene.Net.Util.Fst
             IList<FST.Arc<T>> thisLevelQueue = new JCG.List<FST.Arc<T>>();
 
             // A queue of transitions to consider when processing the next level.
-            IList<FST.Arc<T>> nextLevelQueue = new JCG.List<FST.Arc<T>>();
-            nextLevelQueue.Add(startArc);
+            IList<FST.Arc<T>> nextLevelQueue = new JCG.List<FST.Arc<T>>
+            {
+                startArc
+            };
             //System.out.println("toDot: startArc: " + startArc);
 
             // A list of states on the same level (for ranking).
@@ -803,12 +801,12 @@ namespace Lucene.Net.Util.Fst
                 if (startArc.IsFinal)
                 {
                     isFinal = true;
-                    finalOutput = startArc.NextFinalOutput.Equals(NO_OUTPUT) ? default(T) : startArc.NextFinalOutput;
+                    finalOutput = startArc.NextFinalOutput.Equals(NO_OUTPUT) ? default : startArc.NextFinalOutput;
                 }
                 else
                 {
                     isFinal = false;
-                    finalOutput = default(T);
+                    finalOutput = default;
                 }
 
                 EmitDotState(@out, Convert.ToString(startArc.Target), isFinal ? finalStateShape : stateShape, stateColor, finalOutput == null ? "" : fst.Outputs.OutputToString(finalOutput));
@@ -1136,7 +1134,7 @@ namespace Lucene.Net.Util.Fst
 
                 int low = arc.ArcIdx;
                 int high = arc.NumArcs - 1;
-                int mid = 0;
+                int mid /*= 0*/; // LUCENENET: Removed unnecessary assignment
                 // System.out.println("do arc array low=" + low + " high=" + high +
                 // " targetLabel=" + targetLabel);
                 while (low <= high)

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using JCG = J2N.Collections.Generic;
 
@@ -433,7 +432,7 @@ namespace Lucene.Net.Util.Fst
 
             public override void SkipBytes(int count)
             {
-                Position = Position + count;
+                Position += count;
             }
 
             public override void ReadBytes(byte[] b, int offset, int len)
@@ -519,7 +518,7 @@ namespace Lucene.Net.Util.Fst
 
             public override void SkipBytes(int count)
             {
-                Position = Position - count;
+                Position -= count;
             }
 
             public override void ReadBytes(byte[] b, int offset, int len)
