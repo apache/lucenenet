@@ -40,10 +40,11 @@ namespace Lucene.Net.Util.Mutable
 
         public override MutableValue Duplicate()
         {
-            MutableValueInt64 v = new MutableValueInt64();
-            v.Value = this.Value;
-            v.Exists = this.Exists;
-            return v;
+            return new MutableValueInt64
+            {
+                Value = this.Value,
+                Exists = this.Exists
+            };
         }
 
         public override bool EqualsSameType(object other)
