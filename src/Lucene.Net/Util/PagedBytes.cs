@@ -221,7 +221,7 @@ namespace Lucene.Net.Util
                 }
                 currentBlock = new byte[blockSize];
                 upto = 0;
-                left = blockSize;
+                //left = blockSize; // LUCENENET: Unnecessary assignment
                 Debug.Assert(bytes.Length <= blockSize);
                 // TODO: we could also support variable block sizes
             }
@@ -410,9 +410,9 @@ namespace Lucene.Net.Util
         {
             private readonly PagedBytes outerInstance;
 
-            public PagedBytesDataOutput(PagedBytes outerInstance)
+            public PagedBytesDataOutput(PagedBytes pagedBytes)
             {
-                this.outerInstance = outerInstance;
+                this.outerInstance = pagedBytes;
             }
 
             public override void WriteByte(byte b)

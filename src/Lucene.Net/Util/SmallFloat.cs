@@ -26,14 +26,8 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public class SmallSingle
+    public static class SmallSingle // LUCENENET specific - made static
     {
-        /// <summary>
-        /// No instance </summary>
-        private SmallSingle()
-        {
-        }
-
         /// <summary>
         /// Converts a 32 bit <see cref="float"/> to an 8 bit <see cref="float"/>.
         /// <para/>Values less than zero are all mapped to zero.

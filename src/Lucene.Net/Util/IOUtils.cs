@@ -33,7 +33,7 @@ namespace Lucene.Net.Util
     /// @lucene.internal
     /// </summary>
     [ExceptionToClassNameConvention]
-    public sealed class IOUtils
+    public static class IOUtils // LUCENENET specific - made static
     {
         /// <summary>
         /// UTF-8 <see cref="Encoding"/> instance to prevent repeated
@@ -47,10 +47,6 @@ namespace Lucene.Net.Util
         /// as using the <see cref="string"/> constant may slow things down. </summary>
         /// <seealso cref="Encoding.UTF8"/>
         public static readonly string UTF_8 = "UTF-8";
-
-        private IOUtils() // no instance
-        {
-        }
 
         /// <summary>
         /// <para>Disposes all given <c>IDisposable</c>s, suppressing all thrown exceptions. Some of the <c>IDisposable</c>s

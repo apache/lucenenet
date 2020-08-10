@@ -27,12 +27,8 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Class containing some useful methods used by command line tools
     /// </summary>
-    public sealed class CommandLineUtil
+    public static class CommandLineUtil // LUCENENET specific - made static
     {
-        private CommandLineUtil()
-        {
-        }
-
         /// <summary>
         /// Creates a specific <see cref="FSDirectory"/> instance starting from its class name. </summary>
         /// <param name="clazzName"> The name of the <see cref="FSDirectory"/> class to load. </param>

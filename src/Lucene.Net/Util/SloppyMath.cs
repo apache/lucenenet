@@ -169,7 +169,7 @@ namespace Lucene.Net.Util
         }
 
         // haversin
-        private static readonly double TO_RADIANS = Math.PI / 180D;
+        private const double TO_RADIANS = Math.PI / 180D;
 
         // cos/asin
         private const double ONE_DIV_F2 = 1 / 2.0;
@@ -181,7 +181,7 @@ namespace Lucene.Net.Util
         private static readonly double PIO2_LO = J2N.BitConversion.Int64BitsToDouble(0x3DD0B4611A626331L); // 6.07710050650619224932e-11 pi/2 - PIO2_HI
         private static readonly double TWOPI_HI = 4 * PIO2_HI;
         private static readonly double TWOPI_LO = 4 * PIO2_LO;
-        private static readonly int SIN_COS_TABS_SIZE = (1 << 11) + 1;
+        private const int SIN_COS_TABS_SIZE = (1 << 11) + 1;
         private static readonly double SIN_COS_DELTA_HI = TWOPI_HI / (SIN_COS_TABS_SIZE - 1);
         private static readonly double SIN_COS_DELTA_LO = TWOPI_LO / (SIN_COS_TABS_SIZE - 1);
         private static readonly double SIN_COS_INDEXER = 1 / (SIN_COS_DELTA_HI + SIN_COS_DELTA_LO);
@@ -198,7 +198,7 @@ namespace Lucene.Net.Util
         // but seems to work well enough as long as value >= sin(25deg).
         private static readonly double ASIN_MAX_VALUE_FOR_TABS = Math.Sin(73.0.ToRadians());
 
-        private static readonly int ASIN_TABS_SIZE = (1 << 13) + 1;
+        private const int ASIN_TABS_SIZE = (1 << 13) + 1;
         private static readonly double ASIN_DELTA = ASIN_MAX_VALUE_FOR_TABS / (ASIN_TABS_SIZE - 1);
         private static readonly double ASIN_INDEXER = 1 / ASIN_DELTA;
         private static readonly double[] asinTab = new double[ASIN_TABS_SIZE];
@@ -220,9 +220,9 @@ namespace Lucene.Net.Util
         private static readonly double ASIN_QS3 = J2N.BitConversion.Int64BitsToDouble(unchecked((long)0xbfe6066c1b8d0159L)); // -6.88283971605453293030e-01
         private static readonly double ASIN_QS4 = J2N.BitConversion.Int64BitsToDouble(0x3fb3b8c5b12e9282L); //  7.70381505559019352791e-02
 
-        private static readonly int RADIUS_TABS_SIZE = (1 << 10) + 1;
-        private static readonly double RADIUS_DELTA = (Math.PI / 2d) / (RADIUS_TABS_SIZE - 1);
-        private static readonly double RADIUS_INDEXER = 1d / RADIUS_DELTA;
+        private const int RADIUS_TABS_SIZE = (1 << 10) + 1;
+        private const double RADIUS_DELTA = (Math.PI / 2d) / (RADIUS_TABS_SIZE - 1);
+        private const double RADIUS_INDEXER = 1d / RADIUS_DELTA;
         private static readonly double[] earthDiameterPerLatitude = new double[RADIUS_TABS_SIZE];
 
         /// <summary>

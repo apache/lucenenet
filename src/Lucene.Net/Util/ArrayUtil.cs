@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class ArrayUtil
+    public static class ArrayUtil // LUCENENET specific - made static
     {
         /// <summary>
         /// Maximum length for an array; we set this to "a
@@ -38,10 +38,6 @@ namespace Lucene.Net.Util
         /// different JVM.
         /// </summary>
         public static readonly int MAX_ARRAY_LENGTH = int.MaxValue - 256;
-
-        private ArrayUtil() // no instance
-        {
-        }
 
         /*
            Begin Apache Harmony code

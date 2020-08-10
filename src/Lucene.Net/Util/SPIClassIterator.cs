@@ -92,6 +92,7 @@ namespace Lucene.Net.Util
                                 types.Add(type);
                             }
                         }
+#pragma warning disable CA1031 // Do not catch general exception types
                         catch
                         {
                             // swallow
@@ -102,6 +103,7 @@ namespace Lucene.Net.Util
                 {
                     // swallow
                 }
+#pragma warning restore CA1031 // Do not catch general exception types
             }
             return types;
         }

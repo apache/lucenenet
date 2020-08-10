@@ -43,16 +43,22 @@ namespace Lucene.Net.Util
         internal static readonly int[] ITERATIONS = new int[32];
         internal static readonly int[] BYTE_BLOCK_COUNTS = new int[32];
         internal static readonly int MAX_BYTE_BLOCK_COUNT;
-        internal static readonly MonotonicAppendingInt64Buffer SINGLE_ZERO_BUFFER = new MonotonicAppendingInt64Buffer(0, 64, PackedInt32s.COMPACT);
+        internal static readonly MonotonicAppendingInt64Buffer SINGLE_ZERO_BUFFER = LoadSingleZeroBuffer();
         internal static readonly PForDeltaDocIdSet EMPTY = new PForDeltaDocIdSet(null, 0, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
-        internal static readonly int LAST_BLOCK = 1 << 5; // flag to indicate the last block
-        internal static readonly int HAS_EXCEPTIONS = 1 << 6;
-        internal static readonly int UNARY = 1 << 7;
+        internal const int LAST_BLOCK = 1 << 5; // flag to indicate the last block
+        internal const int HAS_EXCEPTIONS = 1 << 6;
+        internal const int UNARY = 1 << 7;
+
+        private static MonotonicAppendingInt64Buffer LoadSingleZeroBuffer()
+        {
+            var buffer = new MonotonicAppendingInt64Buffer(0, 64, PackedInt32s.COMPACT);
+            buffer.Add(0);
+            buffer.Freeze();
+            return buffer;
+        }
 
         static PForDeltaDocIdSet()
         {
-            SINGLE_ZERO_BUFFER.Add(0);
-            SINGLE_ZERO_BUFFER.Freeze();
             int maxByteBLockCount = 0;
             for (int i = 1; i < ITERATIONS.Length; ++i)
             {

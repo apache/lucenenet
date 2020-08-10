@@ -38,7 +38,7 @@ namespace Lucene.Net.Util
 #endif
         where T : class // LUCENENET specific - added class constraint so we don't accept value types (which cannot be volatile)
     {
-        private volatile T obj = default(T);
+        private volatile T obj = default;
         private readonly AtomicBoolean set;
 
         /// <summary>

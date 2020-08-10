@@ -33,12 +33,9 @@ namespace Lucene.Net.Util
     /// </list>
     /// @lucene.internal
     /// </summary>
-    public sealed class BroadWord
+    public static class BroadWord // LUCENENET specific - made static
     {
         // TBD: test smaller8 and smaller16 separately.
-        private BroadWord() // no instance
-        {
-        }
 
         /// <summary>
         /// Bit count of a <see cref="long"/>.

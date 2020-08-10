@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
         // LUCENENET specific wrapper needed because ConditionalWeakTable requires a reference type.
         private class Int32Ref : IEquatable<Int32Ref>
         {
-            private int value;
+            private readonly int value;
 
             public Int32Ref(int value)
             {
@@ -106,15 +106,9 @@ namespace Lucene.Net.Util
                 return value.GetHashCode();
             }
 
-            public static implicit operator int(Int32Ref value)
-            {
-                return value.value;
-            }
+            public static implicit operator int(Int32Ref value) => value.value;
 
-            public static implicit operator Int32Ref(int value)
-            {
-                return new Int32Ref(value);
-            }
+            public static implicit operator Int32Ref(int value) => new Int32Ref(value);
         }
 
 

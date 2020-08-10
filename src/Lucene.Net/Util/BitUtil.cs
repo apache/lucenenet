@@ -24,7 +24,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class BitUtil
+    public static class BitUtil // LUCENENET specific - made static
     {
         private static readonly sbyte[] BYTE_COUNTS = new sbyte[] {
             0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
@@ -96,10 +96,6 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
             0x87653, 0x876531, 0x876532, 0x8765321, 0x87654, 0x876541, 0x876542,
             0x8765421, 0x876543, 0x8765431, 0x8765432, unchecked((int)0x87654321)
         };
-
-        private BitUtil() // no instance
-        {
-        }
 
         /// <summary>
         /// Return the number of bits sets in <paramref name="b"/>. </summary>

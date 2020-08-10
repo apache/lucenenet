@@ -36,33 +36,28 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class OfflineSorter
     {
-        private void InitializeInstanceFields()
-        {
-            buffer = new BytesRefArray(bufferBytesUsed);
-        }
-
         /// <summary>
         /// Convenience constant for megabytes </summary>
-        public static readonly long MB = 1024 * 1024;
+        public const long MB = 1024 * 1024;
         /// <summary>
         /// Convenience constant for gigabytes </summary>
-        public static readonly long GB = MB * 1024;
+        public const long GB = MB * 1024;
 
         /// <summary>
         /// Minimum recommended buffer size for sorting.
         /// </summary>
-        public static readonly long MIN_BUFFER_SIZE_MB = 32;
+        public const long MIN_BUFFER_SIZE_MB = 32;
 
         /// <summary>
         /// Absolute minimum required buffer size for sorting.
         /// </summary>
-        public static readonly long ABSOLUTE_MIN_SORT_BUFFER_SIZE = MB / 2;
+        public const long ABSOLUTE_MIN_SORT_BUFFER_SIZE = MB / 2;
         private const string MIN_BUFFER_SIZE_MSG = "At least 0.5MB RAM buffer is needed";
 
         /// <summary>
         /// Maximum number of temporary files before doing an intermediate merge.
         /// </summary>
-        public static readonly int MAX_TEMPFILES = 128;
+        public const int MAX_TEMPFILES = 128;
 
         /// <summary>
         /// A bit more descriptive unit for constructors.
@@ -187,7 +182,7 @@ namespace Lucene.Net.Util
         private readonly BufferSize ramBufferSize;
 
         private readonly Counter bufferBytesUsed = Counter.NewCounter();
-        private BytesRefArray buffer;
+        private readonly BytesRefArray buffer;
         private SortInfo sortInfo;
         private readonly int maxTempFiles;
         private readonly IComparer<BytesRef> comparer;
@@ -223,7 +218,7 @@ namespace Lucene.Net.Util
         public OfflineSorter(IComparer<BytesRef> comparer, BufferSize ramBufferSize, DirectoryInfo tempDirectory, int maxTempfiles)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            InitializeInstanceFields();
+            buffer = new BytesRefArray(bufferBytesUsed);
             if (ramBufferSize.bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
             {
                 throw new ArgumentException(MIN_BUFFER_SIZE_MSG + ": " + ramBufferSize.bytes);
@@ -260,7 +255,7 @@ namespace Lucene.Net.Util
                     int lines = 0;
                     while ((lines = ReadPartition(inputStream)) > 0)
                     {
-                        merges.Add(SortPartition(lines));
+                        merges.Add(SortPartition(/*lines*/)); // LUCENENET specific - removed unused parameter
                         sortInfo.TempMergeFiles++;
                         sortInfo.Lines += lines;
 
@@ -307,10 +302,12 @@ namespace Lucene.Net.Util
                     {
                         File.Delete(single.FullName);
                     }
+#pragma warning disable CA1031 // Do not catch general exception types
                     catch
                     {
                         // ignored
                     }
+#pragma warning restore CA1031 // Do not catch general exception types
                 }
                 else
                 {
@@ -349,20 +346,14 @@ namespace Lucene.Net.Util
         /// </summary>
         private static void Copy(FileInfo file, FileInfo output)
         {
-            using (Stream inputStream = file.OpenRead())
-            {
-                using (Stream outputStream = output.OpenWrite())
-                {
-                    inputStream.CopyTo(outputStream);
-                }
-            }
+            using Stream inputStream = file.OpenRead();
+            using Stream outputStream = output.OpenWrite();
+            inputStream.CopyTo(outputStream);
         }
 
         /// <summary>
         /// Sort a single partition in-memory. </summary>
-#pragma warning disable IDE0060 // Remove unused parameter
-        private FileInfo SortPartition(int len) // LUCENENET NOTE: made private, since protected is not valid in a sealed class
-#pragma warning restore IDE0060 // Remove unused parameter
+        private FileInfo SortPartition(/*int len*/) // LUCENENET NOTE: made private, since protected is not valid in a sealed class. Also eliminated unused parameter.
         {
             var data = this.buffer;
             FileInfo tempFile = FileSupport.CreateTempFile("sort", "partition", DefaultTempDir());

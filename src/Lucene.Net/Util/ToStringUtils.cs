@@ -23,12 +23,8 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Helper methods to ease implementing <see cref="object.ToString()"/>.
     /// </summary>
-    public sealed class ToStringUtils
+    public static class ToStringUtils // LUCENENET specific - made static
     {
-        private ToStringUtils() // no instance
-        {
-        }
-
         /// <summary>
         /// For printing boost only if not 1.0.
         /// </summary>

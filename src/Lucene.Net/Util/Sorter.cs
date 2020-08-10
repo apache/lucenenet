@@ -93,7 +93,7 @@ namespace Lucene.Net.Util
                 len22 = (int)((uint)(to - mid) >> 1);
                 second_cut = mid + len22;
                 first_cut = Upper(from, mid, second_cut);
-                len11 = first_cut - from;
+                //len11 = first_cut - from; // LUCENENET: Unnecessary assignment
             }
             Rotate(first_cut, mid, second_cut);
             int new_mid = first_cut + len22;
