@@ -34,7 +34,7 @@ namespace Lucene.Net.Util.Packed
     {
         readonly byte[] blocks;
 
-        public static readonly int MAX_SIZE = int.MaxValue / 3;
+        public const int MAX_SIZE = int.MaxValue / 3;
 
         internal Packed8ThreeBlocks(int valueCount)
             : base(valueCount, 24)

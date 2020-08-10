@@ -27,8 +27,8 @@ namespace Lucene.Net.Util.Packed
     public abstract class AbstractBlockPackedWriter // LUCENENET NOTE: made public rather than internal because has public subclasses
     {
         internal const int MIN_BLOCK_SIZE = 64;
-        internal static readonly int MAX_BLOCK_SIZE = 1 << (30 - 3);
-        internal static readonly int MIN_VALUE_EQUALS_0 = 1 << 0;
+        internal const int MAX_BLOCK_SIZE = 1 << (30 - 3);
+        internal const int MIN_VALUE_EQUALS_0 = 1 << 0;
         internal const int BPV_SHIFT = 1;
 
         internal static long ZigZagEncode(long n)
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Sole constructor. </summary>
         /// <param name="blockSize"> the number of values of a single block, must be a multiple of <c>64</c>. </param>
-        public AbstractBlockPackedWriter(DataOutput @out, int blockSize)
+        protected AbstractBlockPackedWriter(DataOutput @out, int blockSize) // LUCENENET specific - marked protected instead of public
         {
             PackedInt32s.CheckBlockSize(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
             Reset(@out);

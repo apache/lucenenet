@@ -82,11 +82,8 @@ namespace Lucene.Net.Util.Packed
 
         private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
         {
-            private readonly EliasFanoDocIdSet outerInstance;
-
             public DocIdSetIteratorAnonymousInnerClassHelper(EliasFanoDocIdSet outerInstance)
             {
-                this.outerInstance = outerInstance;
                 curDocId = -1;
                 efDecoder = outerInstance.efEncoder.GetDecoder();
             }
@@ -125,7 +122,7 @@ namespace Lucene.Net.Util.Packed
 
         public override bool Equals(object other)
         {
-            return ((other is EliasFanoDocIdSet)) && efEncoder.Equals(((EliasFanoDocIdSet)other).efEncoder);
+            return (other is EliasFanoDocIdSet otherEncoder) && efEncoder.Equals(otherEncoder.efEncoder);
         }
 
         public override int GetHashCode()
