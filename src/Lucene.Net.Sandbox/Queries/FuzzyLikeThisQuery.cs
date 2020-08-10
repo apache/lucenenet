@@ -50,13 +50,13 @@ namespace Lucene.Net.Sandbox.Queries
         // provided to TermQuery, so that the general idea is agnostic to any scoring system...
         internal static TFIDFSimilarity sim = new DefaultSimilarity();
         private Query rewrittenQuery = null;
-        private IList<FieldVals> fieldVals = new JCG.List<FieldVals>();
-        private Analyzer analyzer;
+        private readonly IList<FieldVals> fieldVals = new JCG.List<FieldVals>();
+        private readonly Analyzer analyzer;
 
-        private ScoreTermQueue q;
-        private int MAX_VARIANTS_PER_TERM = 50;
+        private readonly ScoreTermQueue q;
+        private const int MAX_VARIANTS_PER_TERM = 50;
         private bool ignoreTF = false;
-        private int maxNumTerms;
+        private readonly int maxNumTerms;
 
         public override int GetHashCode()
         {

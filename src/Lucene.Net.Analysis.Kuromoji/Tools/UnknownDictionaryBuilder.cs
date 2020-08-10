@@ -28,9 +28,9 @@ namespace Lucene.Net.Analysis.Ja.Util
 
     public class UnknownDictionaryBuilder
     {
-        private static readonly string NGRAM_DICTIONARY_ENTRY = "NGRAM,5,5,-32768,記号,一般,*,*,*,*,*,*,*";
+        private const string NGRAM_DICTIONARY_ENTRY = "NGRAM,5,5,-32768,記号,一般,*,*,*,*,*,*,*";
 
-        private string encoding = "euc-jp";
+        private readonly string encoding = "euc-jp";
 
         public UnknownDictionaryBuilder(string encoding)
         {

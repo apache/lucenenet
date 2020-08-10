@@ -125,13 +125,11 @@ namespace Lucene.Net.Codecs.Bloom
 
         internal class BloomFilteredFieldsProducer : FieldsProducer
         {
-            private readonly BloomFilteringPostingsFormat outerInstance;
             private readonly FieldsProducer _delegateFieldsProducer;
             private readonly JCG.Dictionary<string, FuzzySet> _bloomsByFieldName = new JCG.Dictionary<string, FuzzySet>();
 
             public BloomFilteredFieldsProducer(BloomFilteringPostingsFormat outerInstance, SegmentReadState state)
             {
-                this.outerInstance = outerInstance;
                 var bloomFileName = IndexFileNames.SegmentFileName(
                     state.SegmentInfo.Name, state.SegmentSuffix, BLOOM_EXTENSION);
                 ChecksumIndexInput bloomIn = null;

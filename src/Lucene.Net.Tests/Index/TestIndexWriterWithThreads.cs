@@ -571,8 +571,10 @@ namespace Lucene.Net.Index
         {
             Directory dir = NewDirectory();
             CountdownEvent oneIWConstructed = new CountdownEvent(1);
-            DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed, this);
-            DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(dir, oneIWConstructed, this);
+
+            DelayedIndexAndCloseRunnable thread1 = new DelayedIndexAndCloseRunnable(this, dir, oneIWConstructed);
+            DelayedIndexAndCloseRunnable thread2 = new DelayedIndexAndCloseRunnable(this, dir, oneIWConstructed);
+
 
             thread1.Start();
             thread2.Start();
@@ -612,18 +614,22 @@ namespace Lucene.Net.Index
             internal Exception failure = null;
             internal readonly CountdownEvent startIndexing = new CountdownEvent(1);
             internal CountdownEvent iwConstructed;
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             private readonly LuceneTestCase outerInstance;
+#endif
 
             /// <param name="outerInstance">
             /// LUCENENET specific
             /// Passed in because this class acceses non-static methods,
             /// NewTextField and NewIndexWriterConfig
             /// </param>
-            public DelayedIndexAndCloseRunnable(Directory dir, CountdownEvent iwConstructed, LuceneTestCase outerInstance)
+            public DelayedIndexAndCloseRunnable(LuceneTestCase outerInstance, Directory dir, CountdownEvent iwConstructed)
             {
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
+                this.outerInstance = outerInstance;
+#endif
                 this.dir = dir;
                 this.iwConstructed = iwConstructed;
-                this.outerInstance = outerInstance;
             }
 
             public virtual void StartIndexing()
@@ -710,19 +716,23 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             private readonly TestIndexWriterWithThreads outerInstance;
+#endif
 
-            private BaseDirectoryWrapper d;
-            private AtomicReference<IndexWriter> writerRef;
-            private LineFileDocs docs;
-            private int iters;
-            private AtomicBoolean failed;
-            private ReentrantLock rollbackLock;
-            private ReentrantLock commitLock;
+            private readonly BaseDirectoryWrapper d;
+            private readonly AtomicReference<IndexWriter> writerRef;
+            private readonly LineFileDocs docs;
+            private readonly int iters;
+            private readonly AtomicBoolean failed;
+            private readonly ReentrantLock rollbackLock;
+            private readonly ReentrantLock commitLock;
 
             public ThreadAnonymousInnerClassHelper(TestIndexWriterWithThreads outerInstance, BaseDirectoryWrapper d, AtomicReference<IndexWriter> writerRef, LineFileDocs docs, int iters, AtomicBoolean failed, ReentrantLock rollbackLock, ReentrantLock commitLock)
             {
+#if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this.outerInstance = outerInstance;
+#endif
                 this.d = d;
                 this.writerRef = writerRef;
                 this.docs = docs;

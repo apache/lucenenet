@@ -106,8 +106,8 @@ namespace Lucene.Net.Analysis.NGram
             }
             else
             {
-                posIncAtt = new PositionIncrementAttributeAnonymousInnerClassHelper(this);
-                posLenAtt = new PositionLengthAttributeAnonymousInnerClassHelper(this);
+                posIncAtt = new PositionIncrementAttributeAnonymousInnerClassHelper();
+                posLenAtt = new PositionLengthAttributeAnonymousInnerClassHelper();
             }
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
@@ -115,13 +115,6 @@ namespace Lucene.Net.Analysis.NGram
 
         private class PositionIncrementAttributeAnonymousInnerClassHelper : PositionIncrementAttribute
         {
-            private readonly NGramTokenFilter outerInstance;
-
-            public PositionIncrementAttributeAnonymousInnerClassHelper(NGramTokenFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override int PositionIncrement
             {
                 get => 0;
@@ -131,13 +124,6 @@ namespace Lucene.Net.Analysis.NGram
 
         private class PositionLengthAttributeAnonymousInnerClassHelper : PositionLengthAttribute
         {
-            private readonly NGramTokenFilter outerInstance;
-
-            public PositionLengthAttributeAnonymousInnerClassHelper(NGramTokenFilter outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public override int PositionLength
             {
                 get => 0;

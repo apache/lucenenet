@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Synonym
         private IPositionLengthAttribute posLenAtt;
         private IOffsetAttribute offsetAtt;
 
-        private static Regex space = new Regex(" +", RegexOptions.Compiled);
+        private static readonly Regex space = new Regex(" +", RegexOptions.Compiled);
 
         private void Add(string input, string output, bool keepOrig)
         {

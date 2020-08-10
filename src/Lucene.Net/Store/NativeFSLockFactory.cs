@@ -88,7 +88,7 @@ namespace Lucene.Net.Store
         // we are interested in.
         //
         // Reference: https://stackoverflow.com/q/46380483
-        private static bool IS_FILESTREAM_LOCKING_PLATFORM = LoadIsFileStreamLockingPlatform();
+        private static readonly bool IS_FILESTREAM_LOCKING_PLATFORM = LoadIsFileStreamLockingPlatform();
 
         private const int WIN_HRESULT_FILE_LOCK_VIOLATION = unchecked((int)0x80070021);
         private const int WIN_HRESULT_FILE_SHARE_VIOLATION = unchecked((int)0x80070020);

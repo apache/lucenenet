@@ -66,7 +66,9 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestEmpty()
         {
+#pragma warning disable CA1825 // Avoid zero-length array allocations.
             CheckSort(new OfflineSorter(), new byte[][] { });
+#pragma warning restore CA1825 // Avoid zero-length array allocations.
         }
 
         [Test]
@@ -163,12 +165,10 @@ namespace Lucene.Net.Util
                 while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
                 {
                     is2.Read(buf2, 0, len);
-                    // LUCENENET: Refactored test to let J2N test the byte array rather than iterate each byte
-                    //for (int i = 0; i < len; i++)
-                    //{
-                    //    Assert.AreEqual(buf1[i], buf2[i]);
-                    //}
-                    Assert.IsTrue(J2N.Collections.ArrayEqualityComparer<byte>.OneDimensional.Equals(buf1, buf2));
+                    for (int i = 0; i < len; i++)
+                    {
+                        Assert.AreEqual(buf1[i], buf2[i]);
+                    }
                 }
             }
         }
@@ -197,38 +197,9 @@ namespace Lucene.Net.Util
             OfflineSorter.BufferSize.Megabytes(2047);
             OfflineSorter.BufferSize.Megabytes(1);
 
-            try
-            {
-                OfflineSorter.BufferSize.Megabytes(2048);
-                Assert.Fail("max mb is 2047");
-            }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
-            {
-            }
-
-            try
-            {
-                OfflineSorter.BufferSize.Megabytes(0);
-                Assert.Fail("min mb is 0.5");
-            }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
-            {
-            }
-
-            try
-            {
-                OfflineSorter.BufferSize.Megabytes(-1);
-                Assert.Fail("min mb is 0.5");
-            }
-#pragma warning disable 168
-            catch (ArgumentException e)
-#pragma warning restore 168
-            {
-            }
+            Assert.Throws<ArgumentException>(() => OfflineSorter.BufferSize.Megabytes(2048), "max mb is 2047");
+            Assert.Throws<ArgumentException>(() => OfflineSorter.BufferSize.Megabytes(0), "min mb is 0.5");
+            Assert.Throws<ArgumentException>(() => OfflineSorter.BufferSize.Megabytes(-1), "min mb is 0.5");
         }
     }
 }

@@ -37,18 +37,15 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestEmpty()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper(this, set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper(set.GetEnumerator());
             AssertNoMore(it);
         }
 
         private class FilterIteratorAnonymousInnerClassHelper : FilterIterator<string>
         {
-            private readonly TestFilterIterator outerInstance;
-
-            public FilterIteratorAnonymousInnerClassHelper(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+            public FilterIteratorAnonymousInnerClassHelper(IEnumerator<string> iterator)
                 : base(iterator)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override bool PredicateFunction(string s)
@@ -60,7 +57,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestA1()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper2(this, set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper2(set.GetEnumerator());
             Assert.IsTrue(it.MoveNext());
             Assert.AreEqual("a", it.Current);
             AssertNoMore(it);
@@ -68,12 +65,9 @@ namespace Lucene.Net.Util
 
         private class FilterIteratorAnonymousInnerClassHelper2 : FilterIterator<string>
         {
-            private readonly TestFilterIterator outerInstance;
-
-            public FilterIteratorAnonymousInnerClassHelper2(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+            public FilterIteratorAnonymousInnerClassHelper2(IEnumerator<string> iterator)
                 : base(iterator)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override bool PredicateFunction(string s)
@@ -85,7 +79,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestA2()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper3(this, set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper3(set.GetEnumerator());
             // this time without check: Assert.IsTrue(it.hasNext());
             it.MoveNext();
             Assert.AreEqual("a", it.Current);
@@ -94,12 +88,9 @@ namespace Lucene.Net.Util
 
         private class FilterIteratorAnonymousInnerClassHelper3 : FilterIterator<string>
         {
-            private readonly TestFilterIterator outerInstance;
-
-            public FilterIteratorAnonymousInnerClassHelper3(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+            public FilterIteratorAnonymousInnerClassHelper3(IEnumerator<string> iterator)
                 : base(iterator)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override bool PredicateFunction(string s)
@@ -111,7 +102,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestB1()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper4(this, set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper4(set.GetEnumerator());
             Assert.IsTrue(it.MoveNext());
             Assert.AreEqual("b", it.Current);
             AssertNoMore(it);
@@ -119,12 +110,9 @@ namespace Lucene.Net.Util
 
         private class FilterIteratorAnonymousInnerClassHelper4 : FilterIterator<string>
         {
-            private readonly TestFilterIterator outerInstance;
-
-            public FilterIteratorAnonymousInnerClassHelper4(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+            public FilterIteratorAnonymousInnerClassHelper4(IEnumerator<string> iterator)
                 : base(iterator)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override bool PredicateFunction(string s)
@@ -136,7 +124,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestB2()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper5(this, set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper5(set.GetEnumerator());
             // this time without check: Assert.IsTrue(it.hasNext());
             it.MoveNext();
             Assert.AreEqual("b", it.Current);
@@ -145,12 +133,9 @@ namespace Lucene.Net.Util
 
         private class FilterIteratorAnonymousInnerClassHelper5 : FilterIterator<string>
         {
-            private readonly TestFilterIterator outerInstance;
-
-            public FilterIteratorAnonymousInnerClassHelper5(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+            public FilterIteratorAnonymousInnerClassHelper5(IEnumerator<string> iterator)
                 : base(iterator)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override bool PredicateFunction(string s)
@@ -162,7 +147,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestAll1()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper6(this, set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper6(set.GetEnumerator());
             Assert.IsTrue(it.MoveNext());
             Assert.AreEqual("a", it.Current);
             Assert.IsTrue(it.MoveNext());
@@ -174,12 +159,9 @@ namespace Lucene.Net.Util
 
         private class FilterIteratorAnonymousInnerClassHelper6 : FilterIterator<string>
         {
-            private readonly TestFilterIterator outerInstance;
-
-            public FilterIteratorAnonymousInnerClassHelper6(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+            public FilterIteratorAnonymousInnerClassHelper6(IEnumerator<string> iterator)
                 : base(iterator)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override bool PredicateFunction(string s)
@@ -191,7 +173,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestAll2()
         {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper7(this, set.GetEnumerator());
+            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper7(set.GetEnumerator());
             it.MoveNext();
             Assert.AreEqual("a", it.Current);
             it.MoveNext();
@@ -203,12 +185,9 @@ namespace Lucene.Net.Util
 
         private class FilterIteratorAnonymousInnerClassHelper7 : FilterIterator<string>
         {
-            private readonly TestFilterIterator outerInstance;
-
-            public FilterIteratorAnonymousInnerClassHelper7(TestFilterIterator outerInstance, IEnumerator<string> iterator)
+            public FilterIteratorAnonymousInnerClassHelper7(IEnumerator<string> iterator)
                 : base(iterator)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override bool PredicateFunction(string s)
@@ -221,7 +200,7 @@ namespace Lucene.Net.Util
         //[Test]
         //public virtual void TestUnmodifiable()
         //{
-        //    IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper8(this, Set.GetEnumerator());
+        //    IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper8(Set.GetEnumerator());
         //    it.MoveNext();
         //    Assert.AreEqual("a", it.Current);
         //    try
@@ -236,20 +215,17 @@ namespace Lucene.Net.Util
         //    }
         //}
 
-        private class FilterIteratorAnonymousInnerClassHelper8 : FilterIterator<string>
-        {
-            private readonly TestFilterIterator outerInstance;
+        //private class FilterIteratorAnonymousInnerClassHelper8 : FilterIterator<string>
+        //{
+        //    public FilterIteratorAnonymousInnerClassHelper8(IEnumerator<string> iterator)
+        //        : base(iterator)
+        //    {
+        //    }
 
-            public FilterIteratorAnonymousInnerClassHelper8(TestFilterIterator outerInstance, IEnumerator<string> iterator)
-                : base(iterator)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected override bool PredicateFunction(string s)
-            {
-                return true;
-            }
-        }
+        //    protected override bool PredicateFunction(string s)
+        //    {
+        //        return true;
+        //    }
+        //}
     }
 }

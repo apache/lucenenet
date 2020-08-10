@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis.Snowball
         [Test]
         public virtual void TestFilterTokens()
         {
-            SnowballFilter filter = new SnowballFilter(new TestTokenStream(this), "English");
+            SnowballFilter filter = new SnowballFilter(new TestTokenStream(), "English");
             ICharTermAttribute termAtt = filter.GetAttribute<ICharTermAttribute>();
             IOffsetAttribute offsetAtt = filter.GetAttribute<IOffsetAttribute>();
             ITypeAttribute typeAtt = filter.GetAttribute<ITypeAttribute>();
@@ -127,8 +127,6 @@ namespace Lucene.Net.Analysis.Snowball
 
         private sealed class TestTokenStream : TokenStream
         {
-            private readonly TestSnowball outerInstance;
-
             internal readonly ICharTermAttribute termAtt;
             internal readonly IOffsetAttribute offsetAtt;
             internal readonly ITypeAttribute typeAtt;
@@ -136,9 +134,8 @@ namespace Lucene.Net.Analysis.Snowball
             internal readonly IPositionIncrementAttribute posIncAtt;
             internal readonly IFlagsAttribute flagsAtt;
 
-            internal TestTokenStream(TestSnowball outerInstance) : base()
+            internal TestTokenStream() : base()
             {
-                this.outerInstance = outerInstance;
                 this.termAtt = AddAttribute<ICharTermAttribute>();
                 this.offsetAtt = AddAttribute<IOffsetAttribute>();
                 this.typeAtt = AddAttribute<ITypeAttribute>();

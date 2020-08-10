@@ -50,7 +50,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         protected IndexOutput m_output;
         private readonly PostingsWriterBase postingsWriter;
-        private readonly FieldInfos fieldInfos;
+        //private readonly FieldInfos fieldInfos; // LUCENENET: Not used
         private FieldInfo currentField;
         private readonly TermsIndexWriterBase termsIndexWriter;
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             bool success = false;
             try
             {
-                fieldInfos = state.FieldInfos;
+                //fieldInfos = state.FieldInfos; // LUCENENET: Not used
                 WriteHeader(m_output);
                 currentField = null;
                 this.postingsWriter = postingsWriter;
@@ -193,10 +193,10 @@ namespace Lucene.Net.Codecs.BlockTerms
             private readonly long termsStartPointer;
             private long numTerms;
             private readonly TermsIndexWriterBase.FieldWriter fieldIndexWriter;
-            long sumTotalTermFreq;
-            long sumDocFreq;
-            int docCount;
-            int longsSize;
+            //long sumTotalTermFreq; // LUCENENET: Not used
+            //long sumDocFreq; // LUCENENET: Not used
+            //int docCount; // LUCENENET: Not used
+            private readonly int longsSize;
 
             private TermEntry[] pendingTerms;
 
@@ -284,9 +284,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                 // EOF marker:
                 outerInstance.m_output.WriteVInt32(0);
 
-                this.sumTotalTermFreq = sumTotalTermFreq;
-                this.sumDocFreq = sumDocFreq;
-                this.docCount = docCount;
+                //this.sumTotalTermFreq = sumTotalTermFreq; // LUCENENET: Not used
+                //this.sumDocFreq = sumDocFreq; // LUCENENET: Not used
+                //this.docCount = docCount; // LUCENENET: Not used
                 fieldIndexWriter.Finish(outerInstance.m_output.GetFilePointer());
                 if (numTerms > 0)
                 {

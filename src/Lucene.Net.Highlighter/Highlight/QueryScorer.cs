@@ -36,16 +36,16 @@ namespace Lucene.Net.Search.Highlight
         private float totalScore;
         private ISet<string> foundTerms;
         private IDictionary<string, WeightedSpanTerm> fieldWeightedSpanTerms;
-        private float maxTermWeight;
+        private readonly float maxTermWeight;
         private int position = -1;
-        private string defaultField;
+        private readonly string defaultField;
         private ICharTermAttribute termAtt;
         private IPositionIncrementAttribute posIncAtt;
         private bool expandMultiTermQuery = true;
         private Query query;
         private string field;
         private IndexReader reader;
-        private bool skipInitExtractor;
+        private readonly bool skipInitExtractor;
         private bool wrapToCaching = true;
         private int maxCharsToAnalyze;
 

@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Cjk
     /// </summary>
     public class TestCJKAnalyzer : BaseTokenStreamTestCase
     {
-        private Analyzer analyzer = new CJKAnalyzer(TEST_VERSION_CURRENT);
+        private static readonly Analyzer analyzer = new CJKAnalyzer(TEST_VERSION_CURRENT);
 
         [Test]
         public virtual void TestJa1()

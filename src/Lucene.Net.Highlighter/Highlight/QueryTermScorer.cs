@@ -33,12 +33,12 @@ namespace Lucene.Net.Search.Highlight
     // based on fragment.getFragNum()
     public class QueryTermScorer : IScorer
     {
-        private TextFragment currentTextFragment = null;
+        //private TextFragment currentTextFragment = null; // LUCENENET: Not used
         private ISet<string> uniqueTermsInFragment;
 
         private float totalScore = 0;
-        private float maxTermWeight = 0;
-        private IDictionary<string, WeightedTerm> termsToFind;
+        private readonly float maxTermWeight = 0;
+        private readonly IDictionary<string, WeightedTerm> termsToFind;
 
         private ICharTermAttribute termAtt;
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Highlight
         public virtual void StartFragment(TextFragment newFragment)
         {
             uniqueTermsInFragment = new JCG.HashSet<string>();
-            currentTextFragment = newFragment;
+            //currentTextFragment = newFragment; // LUCENENET: Not used
             totalScore = 0;
         }
 
@@ -119,8 +119,7 @@ namespace Lucene.Net.Search.Highlight
         {
             string termText = termAtt.ToString();
 
-            WeightedTerm queryTerm;
-            if (!termsToFind.TryGetValue(termText, out queryTerm) || queryTerm == null)
+            if (!termsToFind.TryGetValue(termText, out WeightedTerm queryTerm) || queryTerm == null)
             {
                 // not a query term - return
                 return 0;

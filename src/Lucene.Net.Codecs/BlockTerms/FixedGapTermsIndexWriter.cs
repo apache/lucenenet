@@ -50,7 +50,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private readonly IList<SimpleFieldWriter> fields = new List<SimpleFieldWriter>();
 
-        private readonly FieldInfos fieldInfos; // unread
+        //private readonly FieldInfos fieldInfos; // unread  // LUCENENET: Not used
 
         public FixedGapTermsIndexWriter(SegmentWriteState state)
         {
@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             bool success = false;
             try
             {
-                fieldInfos = state.FieldInfos;
+                //fieldInfos = state.FieldInfos; // LUCENENET: Not used
                 WriteHeader(m_output);
                 m_output.WriteInt32(termIndexInterval);
                 success = true;

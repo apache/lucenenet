@@ -86,8 +86,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         // guessing rules, perhaps by marking it protected and allowing sub-classing. However, the vast majority of users
         // should be strongly encouraged to use the static factory <code>instance</code> method to get their Lang instances.
 
-        private static Regex WHITESPACE = new Regex("\\s+", RegexOptions.Compiled);
-        private static Regex TOKEN = new Regex("\\+", RegexOptions.Compiled);
+        private static readonly Regex WHITESPACE = new Regex("\\s+", RegexOptions.Compiled);
+        private static readonly Regex TOKEN = new Regex("\\+", RegexOptions.Compiled);
 
         private sealed class LangRule
         {

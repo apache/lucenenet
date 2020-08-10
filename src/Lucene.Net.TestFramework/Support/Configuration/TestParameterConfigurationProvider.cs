@@ -25,7 +25,7 @@ namespace Lucene.Net.Configuration
      */
     public class TestParameterConfigurationProvider : IConfigurationProvider
     {
-        private CommandLineConfigurationProvider _instance;
+        private readonly CommandLineConfigurationProvider _instance;
 
         /// <summary>
         /// Initializes a new instance.

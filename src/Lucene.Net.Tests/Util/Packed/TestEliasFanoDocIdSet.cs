@@ -27,20 +27,17 @@ namespace Lucene.Net.Util.Packed
         public override EliasFanoDocIdSet CopyOf(BitSet bs, int numBits)
         {
             EliasFanoDocIdSet set = new EliasFanoDocIdSet((int)bs.Cardinality, numBits - 1);
-            set.EncodeFromDisi(new DocIdSetIteratorAnonymousInnerClassHelper(this, bs, numBits));
+            set.EncodeFromDisi(new DocIdSetIteratorAnonymousInnerClassHelper(bs, numBits));
             return set;
         }
 
         private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
         {
-            private readonly TestEliasFanoDocIdSet outerInstance;
-
             private readonly BitSet bs;
             private readonly int numBits;
 
-            public DocIdSetIteratorAnonymousInnerClassHelper(TestEliasFanoDocIdSet outerInstance, BitSet bs, int numBits)
+            public DocIdSetIteratorAnonymousInnerClassHelper(BitSet bs, int numBits)
             {
-                this.outerInstance = outerInstance;
                 this.bs = bs;
                 this.numBits = numBits;
                 doc = -1;

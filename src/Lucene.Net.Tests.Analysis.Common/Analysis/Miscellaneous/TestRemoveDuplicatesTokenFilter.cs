@@ -45,20 +45,17 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public virtual void TestDups(string expected, params Token[] tokens)
         {
             IEnumerator<Token> toks = ((IEnumerable<Token>)tokens).GetEnumerator();
-            TokenStream ts = new RemoveDuplicatesTokenFilter((new TokenStreamAnonymousInnerClassHelper(this, toks)));
+            TokenStream ts = new RemoveDuplicatesTokenFilter((new TokenStreamAnonymousInnerClassHelper(toks)));
 
             AssertTokenStreamContents(ts, Regex.Split(expected, "\\s").TrimEnd());
         }
 
         private sealed class TokenStreamAnonymousInnerClassHelper : TokenStream
         {
-            private readonly TestRemoveDuplicatesTokenFilter outerInstance;
+            private readonly IEnumerator<Token> toks;
 
-            private IEnumerator<Token> toks;
-
-            public TokenStreamAnonymousInnerClassHelper(TestRemoveDuplicatesTokenFilter outerInstance, IEnumerator<Token> toks)
+            public TokenStreamAnonymousInnerClassHelper(IEnumerator<Token> toks)
             {
-                this.outerInstance = outerInstance;
                 this.toks = toks;
                 termAtt = AddAttribute<ICharTermAttribute>();
                 offsetAtt = AddAttribute<IOffsetAttribute>();

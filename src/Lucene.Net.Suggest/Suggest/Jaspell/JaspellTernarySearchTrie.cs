@@ -65,9 +65,6 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// </summary>
         public sealed class TSTNode
         {
-            private readonly JaspellTernarySearchTrie outerInstance;
-
-
             /// <summary>
             /// Index values for accessing relatives array. </summary>
             internal const int PARENT = 0, LOKID = 1, EQKID = 2, HIKID = 3;
@@ -87,14 +84,12 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             /// <summary>
             /// Constructor method.
             /// </summary>
-            /// <param name="outerInstance">The containing <see cref="JaspellTernarySearchTrie"/></param>
             /// <param name="splitchar">
             ///          The char used in the split. </param>
             /// <param name="parent">
             ///          The parent node. </param>
-            internal TSTNode(JaspellTernarySearchTrie outerInstance, char splitchar, TSTNode parent)
+            internal TSTNode(char splitchar, TSTNode parent)
             {
-                this.outerInstance = outerInstance;
                 this.splitchar = splitchar;
                 relatives[PARENT] = parent;
             }
@@ -299,7 +294,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                     string key = culture.TextInfo.ToLower(word);
                     if (rootNode == null)
                     {
-                        rootNode = new TSTNode(this, key[0], null);
+                        rootNode = new TSTNode(key[0], null);
                     }
                     TSTNode node = null;
                     if (key.Length > 0 && rootNode != null)
@@ -629,7 +624,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
             if (rootNode == null)
             {
-                rootNode = new TSTNode(this, key[0], null);
+                rootNode = new TSTNode(key[0], null);
             }
             TSTNode currentNode = rootNode;
             int charIndex = 0;
@@ -645,7 +640,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                     }
                     if (currentNode.relatives[TSTNode.EQKID] == null)
                     {
-                        currentNode.relatives[TSTNode.EQKID] = new TSTNode(this, key[charIndex], currentNode);
+                        currentNode.relatives[TSTNode.EQKID] = new TSTNode(key[charIndex], currentNode);
                     }
                     currentNode = currentNode.relatives[TSTNode.EQKID];
                 }
@@ -653,7 +648,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 {
                     if (currentNode.relatives[TSTNode.LOKID] == null)
                     {
-                        currentNode.relatives[TSTNode.LOKID] = new TSTNode(this, key[charIndex], currentNode);
+                        currentNode.relatives[TSTNode.LOKID] = new TSTNode(key[charIndex], currentNode);
                     }
                     currentNode = currentNode.relatives[TSTNode.LOKID];
                 }
@@ -661,7 +656,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
                 {
                     if (currentNode.relatives[TSTNode.HIKID] == null)
                     {
-                        currentNode.relatives[TSTNode.HIKID] = new TSTNode(this, key[charIndex], currentNode);
+                        currentNode.relatives[TSTNode.HIKID] = new TSTNode(key[charIndex], currentNode);
                     }
                     currentNode = currentNode.relatives[TSTNode.HIKID];
                 }

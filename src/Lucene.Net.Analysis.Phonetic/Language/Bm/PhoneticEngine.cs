@@ -204,7 +204,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             private readonly IDictionary<string, IList<Rule>> finalRules;
             private readonly string input;
 
-            private PhonemeBuilder phonemeBuilder;
+            private readonly PhonemeBuilder phonemeBuilder;
             private int i;
             private readonly int maxPhonemes;
             private bool found;

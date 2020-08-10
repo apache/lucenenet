@@ -432,9 +432,9 @@ namespace Lucene.Net.Index
         {
             private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
-            private long stopTimeMS;
-            private AtomicInt32 totHits;
-            private AtomicInt32 totTermCount;
+            private readonly long stopTimeMS;
+            private readonly AtomicInt32 totHits;
+            private readonly AtomicInt32 totTermCount;
 
             public ThreadAnonymousInnerClassHelper2(ThreadedIndexingAndSearchingTestCase outerInstance, long stopTimeMS, AtomicInt32 totHits, AtomicInt32 totTermCount)
             {
@@ -602,7 +602,7 @@ namespace Lucene.Net.Index
 
             if (Verbose)
             {
-                conf.SetInfoStream(new PrintStreamInfoStreamAnonymousInnerClassHelper(this, Console.Out));
+                conf.SetInfoStream(new PrintStreamInfoStreamAnonymousInnerClassHelper(Console.Out));
             }
             m_writer = new IndexWriter(m_dir, conf);
             TestUtil.ReduceOpenFiles(m_writer);
@@ -837,12 +837,9 @@ namespace Lucene.Net.Index
 
         private class PrintStreamInfoStreamAnonymousInnerClassHelper : TextWriterInfoStream
         {
-            private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
-
-            public PrintStreamInfoStreamAnonymousInnerClassHelper(ThreadedIndexingAndSearchingTestCase outerInstance, TextWriter @out)
+            public PrintStreamInfoStreamAnonymousInnerClassHelper(TextWriter @out)
                 : base(@out)
             {
-                this.outerInstance = outerInstance;
             }
 
             public override void Message(string component, string message)
@@ -859,7 +856,7 @@ namespace Lucene.Net.Index
         // Boolean reference type.
         private class BooleanRef : IEquatable<BooleanRef>
         {
-            private bool value;
+            private readonly bool value;
 
             public BooleanRef(bool value)
             {

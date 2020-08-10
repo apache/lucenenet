@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
     /// </summary>
     public class QueryNodeProcessorPipeline : IQueryNodeProcessor, IList<IQueryNodeProcessor>
     {
-        private List<IQueryNodeProcessor> processors = new List<IQueryNodeProcessor>();
+        private readonly List<IQueryNodeProcessor> processors = new List<IQueryNodeProcessor>();
 
         private QueryConfigHandler queryConfig;
 

@@ -29,9 +29,9 @@ namespace Lucene.Net.Search.Suggest.Jaspell
     /// <seealso cref="JaspellTernarySearchTrie"/>
     public class JaspellLookup : Lookup
     {
-        internal JaspellTernarySearchTrie trie = new JaspellTernarySearchTrie();
-        private bool usePrefix = true;
-        private int editDistance = 2;
+        private JaspellTernarySearchTrie trie = new JaspellTernarySearchTrie();
+        private readonly bool usePrefix = true;
+        private readonly int editDistance = 2;
 
         /// <summary>
         /// Number of entries the lookup was built with </summary>
@@ -170,19 +170,19 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
             if ((mask & LO_KID) != 0)
             {
-                var kid = new JaspellTernarySearchTrie.TSTNode(trie, '\0', node);
+                var kid = new JaspellTernarySearchTrie.TSTNode('\0', node);
                 node.relatives[JaspellTernarySearchTrie.TSTNode.LOKID] = kid;
                 ReadRecursively(@in, kid);
             }
             if ((mask & EQ_KID) != 0)
             {
-                var kid = new JaspellTernarySearchTrie.TSTNode(trie, '\0', node);
+                var kid = new JaspellTernarySearchTrie.TSTNode('\0', node);
                 node.relatives[JaspellTernarySearchTrie.TSTNode.EQKID] = kid;
                 ReadRecursively(@in, kid);
             }
             if ((mask & HI_KID) != 0)
             {
-                var kid = new JaspellTernarySearchTrie.TSTNode(trie, '\0', node);
+                var kid = new JaspellTernarySearchTrie.TSTNode('\0', node);
                 node.relatives[JaspellTernarySearchTrie.TSTNode.HIKID] = kid;
                 ReadRecursively(@in, kid);
             }
@@ -237,7 +237,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         public override bool Load(DataInput input)
         {
             count = input.ReadVInt64();
-            var root = new JaspellTernarySearchTrie.TSTNode(trie, '\0', null);
+            var root = new JaspellTernarySearchTrie.TSTNode('\0', null);
             ReadRecursively(input, root);
             trie.Root = root;
             return true;

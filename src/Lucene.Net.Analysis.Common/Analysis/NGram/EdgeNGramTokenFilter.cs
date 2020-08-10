@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.NGram
         private readonly CharacterUtils charUtils;
         private readonly int minGram;
         private readonly int maxGram;
-        private Side side;
+        private readonly Side side;
         private char[] curTermBuffer;
         private int curTermLength;
         private int curCodePointCount;

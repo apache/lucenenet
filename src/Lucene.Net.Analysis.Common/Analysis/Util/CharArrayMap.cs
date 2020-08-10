@@ -1173,12 +1173,10 @@ namespace Lucene.Net.Analysis.Util
             /// </summary>
             private class KeyEnumerator : IEnumerator<string>
             {
-                private readonly CharArrayMap<TValue> outerInstance;
                 private readonly EntryIterator entryIterator;
 
                 public KeyEnumerator(CharArrayMap<TValue> outerInstance)
                 {
-                    this.outerInstance = outerInstance;
                     this.entryIterator = new EntryIterator(outerInstance, !outerInstance.IsReadOnly);
                 }
 
@@ -1288,12 +1286,10 @@ namespace Lucene.Net.Analysis.Util
             /// </summary>
             private class ValueEnumerator : IEnumerator<TValue>
             {
-                private readonly CharArrayMap<TValue> outerInstance;
                 private readonly EntryIterator entryIterator;
 
                 public ValueEnumerator(CharArrayMap<TValue> outerInstance)
                 {
-                    this.outerInstance = outerInstance;
                     this.entryIterator = new EntryIterator(outerInstance, !outerInstance.IsReadOnly);
                 }
 
@@ -1545,7 +1541,13 @@ namespace Lucene.Net.Analysis.Util
             // LUCENENET: Next() and Remove() methods eliminated here
 
             #region Added for better .NET support LUCENENET
-            public virtual void Dispose()
+            public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
             {
                 // nothing to do
             }

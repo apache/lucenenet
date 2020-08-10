@@ -118,8 +118,10 @@ namespace Lucene.Net.Util
 
         private class Holder
         {
+#pragma warning disable IDE0052, IDE0044 // Remove unread private members
             private long field1 = 5000L;
             private string name = "name";
+#pragma warning restore IDE0052, IDE0044 // Remove unread private members
             internal Holder holder;
 
             public long Field2 { get; set; }

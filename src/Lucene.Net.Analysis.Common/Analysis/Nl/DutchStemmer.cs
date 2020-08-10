@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Nl
         /// <summary>
         /// Buffer for the terms while stemming them.
         /// </summary>
-        private StringBuilder sb = new StringBuilder();
+        private readonly StringBuilder sb = new StringBuilder();
         private bool _removedE;
         private IDictionary<string, string> _stemDict;
 

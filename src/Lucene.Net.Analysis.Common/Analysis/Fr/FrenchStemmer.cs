@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Fr
         /// <summary>
         /// A temporary buffer, used to reconstruct R2
         /// </summary>
-        private StringBuilder tb = new StringBuilder();
+        private readonly StringBuilder tb = new StringBuilder();
 
         /// <summary>
         /// Region R0 is equal to the whole buffer

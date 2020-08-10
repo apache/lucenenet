@@ -540,7 +540,7 @@ namespace Sax.Helpers
             /// <param name="parent">The parent Namespace context object.</param>
             public void SetParent(Context parent)
             {
-                this.parent = parent;
+                //this.parent = parent; // LUCENENET: Not used
                 declarations = null;
                 prefixTable = parent.prefixTable;
                 uriTable = parent.uriTable;
@@ -559,7 +559,7 @@ namespace Sax.Helpers
             /// </summary>
             public void Clear()
             {
-                parent = null;
+                //parent = null; // LUCENENET: Not used
                 prefixTable = null;
                 uriTable = null;
                 elementNameTable = null;
@@ -832,7 +832,7 @@ namespace Sax.Helpers
 
             private IList<string> declarations;
             private bool declSeen;
-            private Context parent;
+            //private Context parent; // LUCENENET: Not used
         }
     }
 }

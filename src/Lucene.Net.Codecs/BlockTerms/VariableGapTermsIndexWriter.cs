@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private readonly IList<FSTFieldWriter> fields = new List<FSTFieldWriter>();
 
-        private readonly FieldInfos fieldInfos; // unread
+        //private readonly FieldInfos fieldInfos; // unread  // LUCENENET: Not used
         private readonly IndexTermSelector policy;
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             bool success = false;
             try
             {
-                fieldInfos = state.FieldInfos;
+                //fieldInfos = state.FieldInfos; // LUCENENET: Not used
                 this.policy = policy;
                 WriteHeader(m_output);
                 success = true;

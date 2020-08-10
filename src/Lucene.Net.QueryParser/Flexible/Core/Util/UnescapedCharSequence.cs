@@ -26,9 +26,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
     /// </summary>
     public sealed class UnescapedCharSequence : ICharSequence
     {
-        private char[] chars;
+        private readonly char[] chars;
 
-        private bool[] wasEscaped;
+        private readonly bool[] wasEscaped;
 
         /// <summary>
         /// Create a escaped <see cref="ICharSequence"/>

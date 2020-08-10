@@ -588,10 +588,10 @@ namespace Lucene.Net.Analysis.Shingle
             private int previousValue;
             private int minValue;
 
-            public CircularSequence(ShingleFilter outerInstance)
+            public CircularSequence(ShingleFilter shingleFilter)
             {
-                this.outerInstance = outerInstance;
-                minValue = outerInstance.outputUnigrams ? 1 : outerInstance.minShingleSize;
+                this.outerInstance = shingleFilter;
+                minValue = shingleFilter.outputUnigrams ? 1 : shingleFilter.minShingleSize;
                 Reset();
             }
 

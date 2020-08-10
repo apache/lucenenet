@@ -30,9 +30,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
     /// <seealso cref="Tasks.AnalyzerFactoryTask"/>
     public sealed class AnalyzerFactory
     {
-        private IList<CharFilterFactory> charFilterFactories;
-        private TokenizerFactory tokenizerFactory;
-        private IList<TokenFilterFactory> tokenFilterFactories;
+        private readonly IList<CharFilterFactory> charFilterFactories;
+        private readonly TokenizerFactory tokenizerFactory;
+        private readonly IList<TokenFilterFactory> tokenFilterFactories;
         public string Name { get; set; } = null;
         public int? PositionIncrementGap { get; set; } = null;
         public int? OffsetGap { get; set; } = null;
@@ -54,7 +54,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             return new AnalyzerAnonymousHelper(this);
         }
 
-        private class AnalyzerAnonymousHelper : Analyzer
+        private sealed class AnalyzerAnonymousHelper : Analyzer
         {
             private readonly AnalyzerFactory outerInstance;
 
@@ -90,16 +90,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
             public override int GetPositionIncrementGap(string fieldName)
             {
-                return outerInstance.PositionIncrementGap.HasValue
-                    ? outerInstance.PositionIncrementGap.Value
-                    : base.GetPositionIncrementGap(fieldName);
+                return outerInstance.PositionIncrementGap ?? base.GetPositionIncrementGap(fieldName);
             }
 
             public override int GetOffsetGap(string fieldName)
             {
-                return outerInstance.OffsetGap.HasValue
-                    ? outerInstance.OffsetGap.Value
-                    : base.GetOffsetGap(fieldName);
+                return outerInstance.OffsetGap ?? base.GetOffsetGap(fieldName);
             }
         }
 

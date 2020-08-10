@@ -40,22 +40,22 @@ namespace Lucene.Net.Codecs.BlockTerms
         // will overflow int during those multiplies.  So to avoid
         // having to upgrade each multiple to long in multiple
         // places (error prone), we use long here:
-        private long totalIndexInterval;
+        private readonly long totalIndexInterval;
 
-        private int indexDivisor;
+        private readonly int indexDivisor;
         private readonly int indexInterval;
 
         // Closed if indexLoaded is true:
-        private IndexInput input;
-        private volatile bool indexLoaded;
+        private readonly IndexInput input;
+        private readonly /*volatile*/ bool indexLoaded;
 
         private readonly IComparer<BytesRef> termComp;
 
-        private readonly static int PAGED_BYTES_BITS = 15;
+        private const int PAGED_BYTES_BITS = 15;
 
         // all fields share this single logical byte[]
         private readonly PagedBytes termBytes = new PagedBytes(PAGED_BYTES_BITS);
-        private PagedBytes.Reader termBytesReader;
+        private readonly PagedBytes.Reader termBytesReader;
 
         readonly IDictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
 

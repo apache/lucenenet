@@ -94,9 +94,9 @@ namespace Lucene.Net.Search
 
         internal class FieldAndShardVersion
         {
-            private long version;
-            private int nodeID;
-            private string field;
+            private readonly long version;
+            private readonly int nodeID;
+            private readonly string field;
 
             public FieldAndShardVersion(int nodeID, long version, string field)
             {

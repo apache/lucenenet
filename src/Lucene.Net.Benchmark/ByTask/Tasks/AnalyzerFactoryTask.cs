@@ -82,9 +82,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         string factoryName = null;
         int? positionIncrementGap = null;
         int? offsetGap = null;
-        private IList<CharFilterFactory> charFilterFactories = new List<CharFilterFactory>();
+        private readonly IList<CharFilterFactory> charFilterFactories = new List<CharFilterFactory>();
         private TokenizerFactory tokenizerFactory = null;
-        private IList<TokenFilterFactory> tokenFilterFactories = new List<TokenFilterFactory>();
+        private readonly IList<TokenFilterFactory> tokenFilterFactories = new List<TokenFilterFactory>();
 
         public AnalyzerFactoryTask(PerfRunData runData)
             : base(runData)

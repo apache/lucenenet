@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.De
         /// <summary>
         /// Buffer for the terms while stemming them.
         /// </summary>
-        private StringBuilder sb = new StringBuilder();
+        private readonly StringBuilder sb = new StringBuilder();
 
         /// <summary>
         /// Amount of characters that are removed with <see cref="Substitute"/> while stemming.
