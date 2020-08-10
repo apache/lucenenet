@@ -3,13 +3,13 @@ using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
@@ -61,9 +61,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </remarks>
     public class WriteLineDocTask : PerfTask
     {
-        public static readonly string FIELDS_HEADER_INDICATOR = "FIELDS_HEADER_INDICATOR###";
+        public const string FIELDS_HEADER_INDICATOR = "FIELDS_HEADER_INDICATOR###";
 
-        public readonly static char SEP = '\t';
+        public const char SEP = '\t';
 
         /// <summary>
         /// Fields to be written by default
@@ -83,8 +83,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         protected readonly string m_fname;
         private readonly TextWriter lineFileOut;
         private readonly DocMaker docMaker;
-        private readonly ThreadLocal<StringBuilder> threadBuffer = new ThreadLocal<StringBuilder>();
-        private readonly ThreadLocal<Regex> threadNormalizer = new ThreadLocal<Regex>();
+        private readonly DisposableThreadLocal<StringBuilder> threadBuffer = new DisposableThreadLocal<StringBuilder>();
+        private readonly DisposableThreadLocal<Regex> threadNormalizer = new DisposableThreadLocal<Regex>();
         private readonly string[] fieldsToWrite;
         private readonly bool[] sufficientFields;
         private readonly bool checkSufficientFields;

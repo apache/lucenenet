@@ -58,33 +58,11 @@ namespace Lucene.Net.Index
         internal readonly SegmentCoreReaders core;
         internal readonly SegmentDocValues segDocValues;
 
-        internal readonly DisposableThreadLocal<IDictionary<string, object>> docValuesLocal = new DisposableThreadLocalAnonymousInnerClassHelper();
+        internal readonly DisposableThreadLocal<IDictionary<string, object>> docValuesLocal =
+            new DisposableThreadLocal<IDictionary<string, object>>(() => new Dictionary<string, object>());
 
-        private class DisposableThreadLocalAnonymousInnerClassHelper : DisposableThreadLocal<IDictionary<string, object>>
-        {
-            public DisposableThreadLocalAnonymousInnerClassHelper()
-            {
-            }
-
-            protected internal override IDictionary<string, object> InitialValue()
-            {
-                return new Dictionary<string, object>();
-            }
-        }
-
-        internal readonly DisposableThreadLocal<IDictionary<string, IBits>> docsWithFieldLocal = new DisposableThreadLocalAnonymousInnerClassHelper2();
-
-        private class DisposableThreadLocalAnonymousInnerClassHelper2 : DisposableThreadLocal<IDictionary<string, IBits>>
-        {
-            public DisposableThreadLocalAnonymousInnerClassHelper2()
-            {
-            }
-
-            protected internal override IDictionary<string, IBits> InitialValue()
-            {
-                return new Dictionary<string, IBits>();
-            }
-        }
+        internal readonly DisposableThreadLocal<IDictionary<string, IBits>> docsWithFieldLocal =
+            new DisposableThreadLocal<IDictionary<string, IBits>>(() => new Dictionary<string, IBits>());
 
         internal readonly IDictionary<string, DocValuesProducer> dvProducersByField = new Dictionary<string, DocValuesProducer>();
         internal readonly ISet<DocValuesProducer> dvProducers = new JCG.HashSet<DocValuesProducer>(IdentityEqualityComparer<DocValuesProducer>.Default);
@@ -339,7 +317,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return core.fieldsReaderLocal.Get();
+                return core.fieldsReaderLocal.Value;
             }
         }
 
@@ -377,7 +355,7 @@ namespace Lucene.Net.Index
             get
             {
                 EnsureOpen();
-                return core.termVectorsLocal.Get();
+                return core.termVectorsLocal.Value;
             }
         }
 
@@ -476,7 +454,7 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            IDictionary<string, object> dvFields = docValuesLocal.Get();
+            IDictionary<string, object> dvFields = docValuesLocal.Value;
 
             NumericDocValues dvs;
             object dvsDummy;
@@ -509,10 +487,9 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            IDictionary<string, IBits> dvFields = docsWithFieldLocal.Get();
+            IDictionary<string, IBits> dvFields = docsWithFieldLocal.Value;
 
-            IBits dvs;
-            dvFields.TryGetValue(field, out dvs);
+            dvFields.TryGetValue(field, out IBits dvs);
             if (dvs == null)
             {
                 DocValuesProducer dvProducer;
@@ -534,7 +511,7 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            IDictionary<string, object> dvFields = docValuesLocal.Get();
+            IDictionary<string, object> dvFields = docValuesLocal.Value;
 
             object ret;
             BinaryDocValues dvs;
@@ -542,8 +519,7 @@ namespace Lucene.Net.Index
             dvs = (BinaryDocValues)ret;
             if (dvs == null)
             {
-                DocValuesProducer dvProducer;
-                dvProducersByField.TryGetValue(field, out dvProducer);
+                dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetBinary(fi);
                 dvFields[field] = dvs;
@@ -561,7 +537,7 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            IDictionary<string, object> dvFields = docValuesLocal.Get();
+            IDictionary<string, object> dvFields = docValuesLocal.Value;
 
             SortedDocValues dvs;
             object ret;
@@ -569,8 +545,7 @@ namespace Lucene.Net.Index
             dvs = (SortedDocValues)ret;
             if (dvs == null)
             {
-                DocValuesProducer dvProducer;
-                dvProducersByField.TryGetValue(field, out dvProducer);
+                dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetSorted(fi);
                 dvFields[field] = dvs;
@@ -588,7 +563,7 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            IDictionary<string, object> dvFields = docValuesLocal.Get();
+            IDictionary<string, object> dvFields = docValuesLocal.Value;
 
             object ret;
             SortedSetDocValues dvs;
@@ -596,8 +571,7 @@ namespace Lucene.Net.Index
             dvs = (SortedSetDocValues)ret;
             if (dvs == null)
             {
-                DocValuesProducer dvProducer;
-                dvProducersByField.TryGetValue(field, out dvProducer);
+                dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
                 Debug.Assert(dvProducer != null);
                 dvs = dvProducer.GetSortedSet(fi);
                 dvFields[field] = dvs;

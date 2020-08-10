@@ -1,11 +1,11 @@
 ﻿using J2N.Threading.Atomic;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Threading;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -177,8 +177,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         // LUCENENET specific: DateUtil not used
 
         // leftovers are thread local, because it is unsafe to share residues between threads
-        private ThreadLocal<LeftOver> leftovr = new ThreadLocal<LeftOver>();
-        private ThreadLocal<DocState> docState = new ThreadLocal<DocState>();
+        private readonly DisposableThreadLocal<LeftOver> leftovr = new DisposableThreadLocal<LeftOver>();
+        private DisposableThreadLocal<DocState> docState = new DisposableThreadLocal<DocState>();
 
         public static readonly string BODY_FIELD = "body";
         public static readonly string TITLE_FIELD = "doctitle";
@@ -497,7 +497,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // In a multi-rounds run, it is important to reset DocState since settings
             // of fields may change between rounds, and this is the only way to reset
             // the cache of all threads.
-            docState = new ThreadLocal<DocState>();
+            docState = new DisposableThreadLocal<DocState>();
 
             m_indexProperties = config.Get("doc.index.props", false);
 

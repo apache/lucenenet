@@ -182,12 +182,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private ThreadResources GetThreadResources()
         {
-            ThreadResources resources = threadResources.Get();
+            ThreadResources resources = threadResources.Value;
             if (resources == null)
             {
                 resources = new ThreadResources();
                 resources.termEnum = Terms();
-                threadResources.Set(resources);
+                threadResources.Value = resources;
             }
             return resources;
         }

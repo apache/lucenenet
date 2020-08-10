@@ -275,7 +275,14 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal ThreadLocal<Thread> doFail = new ThreadLocal<Thread>();
+        internal DisposableThreadLocal<Thread> doFail = new DisposableThreadLocal<Thread>();
+
+        // LUCENENET specific - cleanup DisposableThreadLocal instances after running tests
+        public override void AfterClass()
+        {
+            doFail.Dispose();
+            base.AfterClass();
+        }
 
         private class TestPoint1 : ITestPoint
         {

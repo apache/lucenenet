@@ -515,10 +515,19 @@ namespace Lucene.Net.Index
         }
 
         // to test reuse
-        private readonly ThreadLocal<TermsEnum> termsEnum = new ThreadLocal<TermsEnum>();
+        private readonly DisposableThreadLocal<TermsEnum> termsEnum = new DisposableThreadLocal<TermsEnum>();
 
-        private readonly ThreadLocal<DocsEnum> docsEnum = new ThreadLocal<DocsEnum>();
-        private readonly ThreadLocal<DocsAndPositionsEnum> docsAndPositionsEnum = new ThreadLocal<DocsAndPositionsEnum>();
+        private readonly DisposableThreadLocal<DocsEnum> docsEnum = new DisposableThreadLocal<DocsEnum>();
+        private readonly DisposableThreadLocal<DocsAndPositionsEnum> docsAndPositionsEnum = new DisposableThreadLocal<DocsAndPositionsEnum>();
+
+        // LUCENENET specific - cleanup DisposableThreadLocal instances after running tests
+        public override void AfterClass()
+        {
+            termsEnum.Dispose();
+            docsEnum.Dispose();
+            docsAndPositionsEnum.Dispose();
+            base.AfterClass();
+        }
 
         protected virtual void AssertEquals(RandomTokenStream tk, FieldType ft, Terms terms)
         {

@@ -2,6 +2,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis
@@ -615,7 +616,7 @@ namespace Lucene.Net.Analysis
             {
                 throw new ObjectDisposedException(this.GetType().FullName, "this Analyzer is closed");
             }
-            return analyzer.storedValue.Get();
+            return analyzer.storedValue.Value;
         }
 
         /// <summary>
@@ -630,7 +631,7 @@ namespace Lucene.Net.Analysis
             {
                 throw new ObjectDisposedException("this Analyzer is closed");
             }
-            analyzer.storedValue.Set(storedValue);
+            analyzer.storedValue.Value = storedValue;
         }
     }
 }
