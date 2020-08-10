@@ -414,8 +414,10 @@ namespace Lucene.Net.Util.Automaton
         public virtual int[] GetStartPoints()
         {
             State[] states = GetNumberedStates();
-            JCG.HashSet<int> pointset = new JCG.HashSet<int>();
-            pointset.Add(Character.MinCodePoint);
+            JCG.HashSet<int> pointset = new JCG.HashSet<int>
+            {
+                Character.MinCodePoint
+            };
             foreach (State s in states)
             {
                 foreach (Transition t in s.GetTransitions())
@@ -563,7 +565,8 @@ namespace Lucene.Net.Util.Automaton
             {
                 State p = new State();
                 initial = p;
-                for (int i = 0, cp = 0; i < singleton.Length; i += Character.CharCount(cp))
+                int cp; // LUCENENET: Removed unnecessary assignment
+                for (int i = 0; i < singleton.Length; i += Character.CharCount(cp))
                 {
                     State q = new State();
                     p.AddTransition(new Transition(cp = Character.CodePointAt(singleton, i), q));
@@ -680,7 +683,8 @@ namespace Lucene.Net.Util.Automaton
                 b.Append("singleton: ");
                 int length = singleton.CodePointCount(0, singleton.Length);
                 int[] codepoints = new int[length];
-                for (int i = 0, j = 0, cp = 0; i < singleton.Length; i += Character.CharCount(cp))
+                int cp; // LUCENENET: Removed unnecessary assignment
+                for (int i = 0, j = 0; i < singleton.Length; i += Character.CharCount(cp))
                 {
                     codepoints[j++] = cp = singleton.CodePointAt(i);
                 }

@@ -284,29 +284,16 @@ namespace Lucene.Net.Util.Automaton
         // NORMAL:
         public virtual TermsEnum GetTermsEnum(Terms terms)
         {
-            switch (Type)
+            return Type switch
             {
-                case Lucene.Net.Util.Automaton.CompiledAutomaton.AUTOMATON_TYPE.NONE:
-                    return TermsEnum.EMPTY;
-
-                case Lucene.Net.Util.Automaton.CompiledAutomaton.AUTOMATON_TYPE.ALL:
-                    return terms.GetIterator(null);
-
-                case Lucene.Net.Util.Automaton.CompiledAutomaton.AUTOMATON_TYPE.SINGLE:
-                    return new SingleTermsEnum(terms.GetIterator(null), Term);
-
-                case Lucene.Net.Util.Automaton.CompiledAutomaton.AUTOMATON_TYPE.PREFIX:
-                    // TODO: this is very likely faster than .intersect,
-                    // but we should test and maybe cutover
-                    return new PrefixTermsEnum(terms.GetIterator(null), Term);
-
-                case Lucene.Net.Util.Automaton.CompiledAutomaton.AUTOMATON_TYPE.NORMAL:
-                    return terms.Intersect(this, null);
-
-                default:
-                    // unreachable
-                    throw new Exception("unhandled case");
-            }
+                AUTOMATON_TYPE.NONE => TermsEnum.EMPTY,
+                AUTOMATON_TYPE.ALL => terms.GetIterator(null),
+                AUTOMATON_TYPE.SINGLE => new SingleTermsEnum(terms.GetIterator(null), Term),
+                AUTOMATON_TYPE.PREFIX => new PrefixTermsEnum(terms.GetIterator(null), Term),// TODO: this is very likely faster than .intersect,
+                                                                                            // but we should test and maybe cutover
+                AUTOMATON_TYPE.NORMAL => terms.Intersect(this, null),
+                _ => throw new Exception("unhandled case"),// unreachable
+            };
         }
 
         /// <summary>

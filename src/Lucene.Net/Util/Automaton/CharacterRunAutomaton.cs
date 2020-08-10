@@ -36,7 +36,8 @@ namespace Lucene.Net.Util.Automaton
         {
             int p = m_initial;
             int l = s.Length;
-            for (int i = 0, cp = 0; i < l; i += Character.CharCount(cp))
+            int cp; // LUCENENET: Removed unnecessary assignment
+            for (int i = 0; i < l; i += Character.CharCount(cp))
             {
                 p = Step(p, cp = Character.CodePointAt(s, i));
                 if (p == -1) return false;
@@ -51,8 +52,8 @@ namespace Lucene.Net.Util.Automaton
         {
             int p = m_initial;
             int l = offset + length;
-            
-            for (int i = offset, cp = 0; i < l; i += Character.CharCount(cp))
+            int cp; // LUCENENET: Removed unnecessary assignment
+            for (int i = offset; i < l; i += Character.CharCount(cp))
             {
                 p = Step(p, cp = Character.CodePointAt(s, i, l));
                 if (p == -1) return false;

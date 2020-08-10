@@ -205,7 +205,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Root automaton state.
         /// </summary>
-        private State root = new State();
+        private readonly State root = new State();
 
         /// <summary>
         /// Previous sequence added to the automaton in <see cref="Add(CharsRef)"/>.
@@ -275,15 +275,17 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         /// <param name="s"></param>
         /// <param name="visited">Must use a dictionary with <see cref="IdentityEqualityComparer{State}.Default"/> passed into its constructor.</param>
-        private static Util.Automaton.State Convert(State s, IDictionary<State, Lucene.Net.Util.Automaton.State> visited)
+        private static Util.Automaton.State Convert(State s, IDictionary<State, Util.Automaton.State> visited)
         {
             if (visited.TryGetValue(s, out Util.Automaton.State converted) && converted != null)
             {
                 return converted;
             }
 
-            converted = new Util.Automaton.State();
-            converted.Accept = s.is_final;
+            converted = new Util.Automaton.State
+            {
+                Accept = s.is_final
+            };
 
             visited[s] = converted;
             int i = 0;
@@ -342,8 +344,7 @@ namespace Lucene.Net.Util.Automaton
                 ReplaceOrRegister(child);
             }
 
-            State registered;
-            if (stateRegistry.TryGetValue(child, out registered))
+            if (stateRegistry.TryGetValue(child, out State registered))
             {
                 state.ReplaceLastChild(registered);
             }

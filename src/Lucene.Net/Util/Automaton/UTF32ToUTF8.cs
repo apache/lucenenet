@@ -128,7 +128,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     bytes[numBytes - i].Value = 128 | (code & MASKS[5]);
                     bytes[numBytes - i].Bits = 6;
-                    code = code >> 6;
+                    code >>= 6;
                 }
             }
 
