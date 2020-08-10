@@ -4,7 +4,6 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -66,59 +65,17 @@ namespace Lucene.Net.Index
         // normsProducer
 
         internal readonly DisposableThreadLocal<StoredFieldsReader> fieldsReaderLocal;
-
-        private class AnonymousFieldsReaderLocal : DisposableThreadLocal<StoredFieldsReader>
-        {
-            private readonly SegmentCoreReaders outerInstance;
-
-            public AnonymousFieldsReaderLocal(SegmentCoreReaders outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override StoredFieldsReader InitialValue()
-            {
-                return (StoredFieldsReader)outerInstance.fieldsReaderOrig.Clone();
-            }
-        }
-
         internal readonly DisposableThreadLocal<TermVectorsReader> termVectorsLocal;
-
-        private class AnonymousTermVectorsLocal : DisposableThreadLocal<TermVectorsReader>
-        {
-            private readonly SegmentCoreReaders outerInstance;
-
-            public AnonymousTermVectorsLocal(SegmentCoreReaders outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override TermVectorsReader InitialValue()
-            {
-                return (outerInstance.termVectorsReaderOrig == null) ? null : (TermVectorsReader)outerInstance.termVectorsReaderOrig.Clone();
-            }
-        }
-
-        internal readonly DisposableThreadLocal<IDictionary<string, object>> normsLocal = new DisposableThreadLocalAnonymousInnerClassHelper3();
-
-        private class DisposableThreadLocalAnonymousInnerClassHelper3 : DisposableThreadLocal<IDictionary<string, object>>
-        {
-            public DisposableThreadLocalAnonymousInnerClassHelper3()
-            {
-            }
-
-            protected internal override IDictionary<string, object> InitialValue()
-            {
-                return new Dictionary<string, object>();
-            }
-        }
-
+        internal readonly DisposableThreadLocal<IDictionary<string, object>> normsLocal =
+            new DisposableThreadLocal<IDictionary<string, object>>(() => new Dictionary<string, object>());
         private readonly ISet<ICoreDisposedListener> coreClosedListeners = new JCG.LinkedHashSet<ICoreDisposedListener>().AsConcurrent();
 
         internal SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentCommitInfo si, IOContext context, int termsIndexDivisor)
         {
-            fieldsReaderLocal = new AnonymousFieldsReaderLocal(this);
-            termVectorsLocal = new AnonymousTermVectorsLocal(this);
+            fieldsReaderLocal = new DisposableThreadLocal<StoredFieldsReader>(()
+                => (StoredFieldsReader)fieldsReaderOrig.Clone());
+            termVectorsLocal = new DisposableThreadLocal<TermVectorsReader>(()
+                => (termVectorsReaderOrig == null) ? null : (TermVectorsReader)termVectorsReaderOrig.Clone());
 
             if (termsIndexDivisor == 0)
             {
@@ -205,7 +162,7 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(normsProducer != null);
 
-            IDictionary<string, object> normFields = normsLocal.Get();
+            IDictionary<string, object> normFields = normsLocal.Value;
 
             object ret;
             normFields.TryGetValue(fi.Name, out ret);

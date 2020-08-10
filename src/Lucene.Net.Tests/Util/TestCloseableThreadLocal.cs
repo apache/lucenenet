@@ -28,8 +28,8 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestInitValue()
         {
-            InitValueThreadLocal tl = new InitValueThreadLocal(this);
-            string str = (string)tl.Get();
+            DisposableThreadLocal<object> tl = new DisposableThreadLocal<object>(() => TEST_VALUE);
+            string str = (string)tl.Value;
             Assert.AreEqual(TEST_VALUE, str);
         }
 
@@ -39,8 +39,8 @@ namespace Lucene.Net.Util
             // Tests that null can be set as a valid value (LUCENE-1805). this
             // previously failed in get().
             DisposableThreadLocal<object> ctl = new DisposableThreadLocal<object>();
-            ctl.Set(null);
-            Assert.IsNull(ctl.Get());
+            ctl.Value = (null);
+            Assert.IsNull(ctl.Value);
         }
 
         [Test]
@@ -49,22 +49,7 @@ namespace Lucene.Net.Util
             // LUCENE-1805: make sure default get returns null,
             // twice in a row
             DisposableThreadLocal<object> ctl = new DisposableThreadLocal<object>();
-            Assert.IsNull(ctl.Get());
-        }
-
-        public class InitValueThreadLocal : DisposableThreadLocal<object>
-        {
-            private readonly TestIDisposableThreadLocal outerInstance;
-
-            public InitValueThreadLocal(TestIDisposableThreadLocal outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
-            protected internal override object InitialValue()
-            {
-                return TEST_VALUE;
-            }
+            Assert.IsNull(ctl.Value);
         }
     }
 }

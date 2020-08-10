@@ -1,6 +1,7 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Index.Extensions;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -72,8 +73,15 @@ namespace Lucene.Net.Search
         private ControlledRealTimeReopenThread<IndexSearcher> nrtDeletesThread;
         private ControlledRealTimeReopenThread<IndexSearcher> nrtNoDeletesThread;
 
-        private readonly ThreadLocal<long?> lastGens = new ThreadLocal<long?>();
+        private readonly DisposableThreadLocal<long?> lastGens = new DisposableThreadLocal<long?>();
         private bool warmCalled;
+
+        // LUCENENET specific - cleanup DisposableThreadLocal instances
+        public override void AfterClass()
+        {
+            lastGens.Dispose();
+            base.AfterClass();
+        }
 
         [Test]
         [Slow]

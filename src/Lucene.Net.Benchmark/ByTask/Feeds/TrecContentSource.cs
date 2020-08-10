@@ -1,11 +1,11 @@
 ﻿using J2N.Text;
 using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
@@ -84,9 +84,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             "hhmm K.K.K. MMMM dd, yyyy",     // 0901 u.t.c. April 28, 1994
         };
 
-        private ThreadLocal<StringBuilder> trecDocBuffer = new ThreadLocal<StringBuilder>();
+        private readonly DisposableThreadLocal<StringBuilder> trecDocBuffer = new DisposableThreadLocal<StringBuilder>();
         private DirectoryInfo dataDir = null;
-        private List<FileInfo> inputFiles = new List<FileInfo>();
+        private readonly List<FileInfo> inputFiles = new List<FileInfo>();
         private int nextFile = 0;
         // Use to synchronize threads on reading from the TREC documents.
         private object @lock = new object();
@@ -199,8 +199,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public virtual DateTime? ParseDate(string dateStr)
         {
             dateStr = dateStr.Trim();
-            DateTime d;
-            if (DateTime.TryParseExact(dateStr, DATE_FORMATS, CultureInfo.InvariantCulture, DateTimeStyles.None, out d))
+            if (DateTime.TryParseExact(dateStr, DATE_FORMATS, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
             {
                 return d;
             }
