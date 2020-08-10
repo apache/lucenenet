@@ -35,8 +35,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public static int REPEAT_EXHAUST = -2;
         private IList<PerfTask> tasks;
         private int repetitions = 1;
-        private bool parallel;
-        private TaskSequence parent;
+        private readonly bool parallel;
+        private readonly TaskSequence parent;
         private bool letChildReport = true;
         private int rate = 0;
         private bool perMin = false; // rate, if set, is, by default, be sec.
@@ -45,7 +45,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private bool resetExhausted = false;
         private PerfTask[] tasksArray;
         private bool anyExhaustibleTasks;
-        private bool collapsable = false; // to not collapse external sequence named in alg.  
+        private readonly bool collapsable = false; // to not collapse external sequence named in alg.  
 
         private bool fixedTime;                      // true if we run for fixed time
         private double runTimeSec;                      // how long to run for

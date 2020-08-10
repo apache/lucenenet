@@ -57,12 +57,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         private readonly WordDelimiterIterator iterator;
 
         // used for concatenating runs of similar typed subwords (word,number)
-        private WordDelimiterConcatenation concat;
+        private readonly WordDelimiterConcatenation concat;
         // number of subwords last output by concat.
         private int lastConcatCount = 0;
 
         // used for catenate all
-        private WordDelimiterConcatenation concatAll;
+        private readonly WordDelimiterConcatenation concatAll;
 
         // used for accumulating position increment gaps
         private int accumPosInc = 0;

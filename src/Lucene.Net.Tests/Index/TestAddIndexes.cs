@@ -635,8 +635,6 @@ namespace Lucene.Net.Index
 
         private abstract class RunAddIndexesThreads
         {
-            private readonly TestAddIndexes outerInstance;
-
             internal Directory dir, dir2;
             internal const int NUM_INIT_DOCS = 17;
             internal IndexWriter writer2;
@@ -649,7 +647,6 @@ namespace Lucene.Net.Index
 
             public RunAddIndexesThreads(TestAddIndexes outerInstance, int numCopy)
             {
-                this.outerInstance = outerInstance;
                 NUM_COPY = numCopy;
                 dir = new MockDirectoryWrapper(Random, new RAMDirectory());
                 IndexWriter writer = new IndexWriter(dir, (IndexWriterConfig)new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2));
@@ -753,12 +750,9 @@ namespace Lucene.Net.Index
 
         private class CommitAndAddIndexes : RunAddIndexesThreads
         {
-            private readonly TestAddIndexes outerInstance;
-
             public CommitAndAddIndexes(TestAddIndexes outerInstance, int numCopy)
                 : base(outerInstance, numCopy)
             {
-                this.outerInstance = outerInstance;
             }
 
             internal override void Handle(Exception t)
@@ -853,12 +847,9 @@ namespace Lucene.Net.Index
 
         private class CommitAndAddIndexes2 : CommitAndAddIndexes
         {
-            private readonly TestAddIndexes outerInstance;
-
             public CommitAndAddIndexes2(TestAddIndexes outerInstance, int numCopy)
                 : base(outerInstance, numCopy)
             {
-                this.outerInstance = outerInstance;
             }
 
             internal override void Handle(Exception t)
@@ -896,12 +887,9 @@ namespace Lucene.Net.Index
 
         private class CommitAndAddIndexes3 : RunAddIndexesThreads
         {
-            private readonly TestAddIndexes outerInstance;
-
             public CommitAndAddIndexes3(TestAddIndexes outerInstance, int numCopy)
                 : base(outerInstance, numCopy)
             {
-                this.outerInstance = outerInstance;
             }
 
             internal override void DoBody(int j, Directory[] dirs)

@@ -57,7 +57,7 @@ namespace Lucene.Net.Util
         /// Absolute minimum required buffer size for sorting.
         /// </summary>
         public static readonly long ABSOLUTE_MIN_SORT_BUFFER_SIZE = MB / 2;
-        private static readonly string MIN_BUFFER_SIZE_MSG = "At least 0.5MB RAM buffer is needed";
+        private const string MIN_BUFFER_SIZE_MSG = "At least 0.5MB RAM buffer is needed";
 
         /// <summary>
         /// Maximum number of temporary files before doing an intermediate merge.
@@ -139,8 +139,6 @@ namespace Lucene.Net.Util
         /// </summary>
         public class SortInfo
         {
-            private readonly OfflineSorter outerInstance;
-
             /// <summary>
             /// Number of temporary files created when merging partitions </summary>
             public int TempMergeFiles { get; set; }
@@ -168,11 +166,9 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Create a new <see cref="SortInfo"/> (with empty statistics) for debugging. </summary>
-            public SortInfo(OfflineSorter outerInstance)
+            public SortInfo(OfflineSorter offlineSorter)
             {
-                this.outerInstance = outerInstance;
-
-                BufferSize = outerInstance.ramBufferSize.bytes;
+                BufferSize = offlineSorter.ramBufferSize.bytes;
             }
 
             /// <summary>
@@ -223,7 +219,9 @@ namespace Lucene.Net.Util
         /// <summary>
         /// All-details constructor.
         /// </summary>
+#pragma warning disable IDE0060 // Remove unused parameter
         public OfflineSorter(IComparer<BytesRef> comparer, BufferSize ramBufferSize, DirectoryInfo tempDirectory, int maxTempfiles)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             InitializeInstanceFields();
             if (ramBufferSize.bytes < ABSOLUTE_MIN_SORT_BUFFER_SIZE)
@@ -309,7 +307,7 @@ namespace Lucene.Net.Util
                     {
                         File.Delete(single.FullName);
                     }
-                    catch (Exception)
+                    catch
                     {
                         // ignored
                     }
@@ -362,7 +360,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Sort a single partition in-memory. </summary>
+#pragma warning disable IDE0060 // Remove unused parameter
         private FileInfo SortPartition(int len) // LUCENENET NOTE: made private, since protected is not valid in a sealed class
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             var data = this.buffer;
             FileInfo tempFile = FileSupport.CreateTempFile("sort", "partition", DefaultTempDir());
@@ -574,11 +574,17 @@ namespace Lucene.Net.Util
             /// </summary>
             public void Dispose()
             {
-                var os = this.os as IDisposable;
-                if (os != null)
-                {
-                    os.Dispose();
-                }
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            /// <summary>
+            /// Disposes the provided <see cref="DataOutput"/> if it is <see cref="IDisposable"/>.
+            /// </summary>
+            protected virtual void Dispose(bool disposing) // LUCENENET specific - implemented proper dispose pattern
+            {
+                if (disposing && this.os is IDisposable disposable)
+                    disposable.Dispose();
             }
         }
 
@@ -618,10 +624,12 @@ namespace Lucene.Net.Util
                 {
                     length = (ushort)inputStream.ReadInt16();
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch (EndOfStreamException)
                 {
                     return false;
                 }
+#pragma warning restore CA1031 // Do not catch general exception types
 
                 @ref.Grow(length);
                 @ref.Offset = 0;
@@ -644,10 +652,12 @@ namespace Lucene.Net.Util
                 {
                     length = (ushort)inputStream.ReadInt16();
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch (EndOfStreamException)
                 {
                     return null;
                 }
+#pragma warning restore CA1031 // Do not catch general exception types
 
                 Debug.Assert(length >= 0, "Sanity: sequence length < 0: " + length);
                 byte[] result = new byte[length];
@@ -660,10 +670,18 @@ namespace Lucene.Net.Util
             /// </summary>
             public void Dispose()
             {
-                var @is = inputStream as IDisposable;
-                if (@is != null)
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing) // LUCENENET specific - implemented proper dispose pattern
+            {
+                if (disposing)
                 {
-                    @is.Dispose();
+                    if (inputStream is IDisposable disposable)
+                    {
+                        disposable.Dispose();
+                    }
                 }
             }
         }

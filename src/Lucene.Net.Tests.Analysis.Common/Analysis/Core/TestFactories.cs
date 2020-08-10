@@ -168,12 +168,13 @@ namespace Lucene.Net.Analysis.Core
                 }
             }
 
-            if (factory is IResourceLoaderAware)
+            if (factory is IResourceLoaderAware aware)
             {
                 try
                 {
-                    ((IResourceLoaderAware)factory).Inform(new StringMockResourceLoader(""));
+                    aware.Inform(new StringMockResourceLoader(""));
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch (IOException)
                 {
                     // its ok if the right files arent available or whatever to throw this
@@ -182,12 +183,13 @@ namespace Lucene.Net.Analysis.Core
                 {
                     // is this ok? I guess so
                 }
+#pragma warning restore CA1031 // Do not catch general exception types
             }
             return factory;
         }
 
         // some silly classes just so we can use checkRandomData
-        private TokenizerFactory assertingTokenizer = new AnonymousInnerClassHelperTokenizerFactory(new Dictionary<string, string>());
+        private readonly TokenizerFactory assertingTokenizer = new AnonymousInnerClassHelperTokenizerFactory(new Dictionary<string, string>());
 
         private sealed class AnonymousInnerClassHelperTokenizerFactory : TokenizerFactory
         {

@@ -69,7 +69,7 @@ namespace Lucene.Net.Expressions.JS
 
         private static readonly string COMPILED_EXPRESSION_CLASS = typeof(Expression).Namespace + ".CompiledExpression";
 
-        private static readonly string COMPILED_EXPRESSION_INTERNAL = COMPILED_EXPRESSION_CLASS.Replace('.', '/');
+        //private static readonly string COMPILED_EXPRESSION_INTERNAL = COMPILED_EXPRESSION_CLASS.Replace('.', '/'); // LUCENENET: Not used
 
         private static readonly Type EXPRESSION_TYPE = Type.GetType(typeof(Expression).FullName);
 

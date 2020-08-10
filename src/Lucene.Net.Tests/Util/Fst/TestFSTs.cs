@@ -253,8 +253,10 @@ namespace Lucene.Net.Util.Fst
                 for (int idx = 0; idx < terms.Length; idx++)
                 {
                     string s = Convert.ToString(idx);
-                    Int32sRef output = new Int32sRef(s.Length);
-                    output.Length = s.Length;
+                    Int32sRef output = new Int32sRef(s.Length)
+                    {
+                        Length = s.Length
+                    };
                     for (int idx2 = 0; idx2 < output.Length; idx2++)
                     {
                         output.Int32s[idx2] = s[idx2];
@@ -299,7 +301,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     int numWords = random.Next(maxNumWords + 1);
                     ISet<Int32sRef> termsSet = new JCG.HashSet<Int32sRef>();
-                    Int32sRef[] terms = new Int32sRef[numWords];
+                    //Int32sRef[] terms = new Int32sRef[numWords]; // LUCENENET: Not Used
                     while (termsSet.Count < numWords)
                     {
                         string term = FSTTester<object>.GetRandomString(random);
@@ -389,9 +391,9 @@ namespace Lucene.Net.Util.Fst
                         {
                             var _ = termsEnum.Ord;
                         }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                         catch (NotSupportedException uoe)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                         {
                             if (Verbose)
                             {
@@ -522,7 +524,7 @@ namespace Lucene.Net.Util.Fst
             private readonly int inputMode;
             private readonly Outputs<T> outputs;
             private readonly Builder<T> builder;
-            private readonly bool doPack;
+            //private readonly bool doPack; // LUCENENET: Not used
 
             public VisitTerms(string dirOut, string wordsFileIn, int inputMode, int prune, Outputs<T> outputs, bool doPack, bool noArcArrays)
             {
@@ -530,7 +532,7 @@ namespace Lucene.Net.Util.Fst
                 this.wordsFileIn = wordsFileIn;
                 this.inputMode = inputMode;
                 this.outputs = outputs;
-                this.doPack = doPack;
+                //this.doPack = doPack; // LUCENENET: Not used
 
                 builder = new Builder<T>(inputMode == 0 ? FST.INPUT_TYPE.BYTE1 : FST.INPUT_TYPE.BYTE4, 0, prune, prune == 0, true, int.MaxValue, outputs, null, doPack, PackedInt32s.DEFAULT, !noArcArrays, 15);
             }
@@ -813,7 +815,7 @@ namespace Lucene.Net.Util.Fst
 
         private class VisitTermsAnonymousInnerClassHelper : VisitTerms<Pair>
         {
-            private PairOutputs<long?, long?> outputs;
+            private readonly PairOutputs<long?, long?> outputs;
 
             public VisitTermsAnonymousInnerClassHelper(string dirOut, string wordsFileIn, int inputMode, int prune, PairOutputs<long?, long?> outputs, bool doPack, bool noArcArrays)
                 : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
@@ -865,7 +867,7 @@ namespace Lucene.Net.Util.Fst
 
         private class VisitTermsAnonymousInnerClassHelper4 : VisitTerms<object>
         {
-            private object NO_OUTPUT;
+            private readonly object NO_OUTPUT;
 
             public VisitTermsAnonymousInnerClassHelper4(string dirOut, string wordsFileIn, int inputMode, int prune, NoOutputs outputs, bool doPack, bool noArcArrays, object NO_OUTPUT)
                 : base(dirOut, wordsFileIn, inputMode, prune, outputs, doPack, noArcArrays)
@@ -1491,7 +1493,7 @@ namespace Lucene.Net.Util.Fst
             builder.Add(Util.ToInt32sRef(new BytesRef("ax"), scratch), 17L);
             FST<long?> fst = builder.Finish();
             AtomicInt32 rejectCount = new AtomicInt32();
-            Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, minLongComparer, rejectCount);
+            Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(fst, minLongComparer, rejectCount);
 
             searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new Int32sRef());
             Util.TopResults<long?> res = searcher.Search();
@@ -1502,7 +1504,7 @@ namespace Lucene.Net.Util.Fst
             Assert.AreEqual(Util.ToInt32sRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
             Assert.AreEqual(7L, res.TopN[0].Output);
             rejectCount.Value = (0);
-            searcher = new TopNSearcherAnonymousInnerClassHelper2(this, fst, minLongComparer, rejectCount);
+            searcher = new TopNSearcherAnonymousInnerClassHelper2(fst, minLongComparer, rejectCount);
 
             searcher.AddStartPaths(fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, true, new Int32sRef());
             res = searcher.Search();
@@ -1512,14 +1514,11 @@ namespace Lucene.Net.Util.Fst
 
         private class TopNSearcherAnonymousInnerClassHelper : Util.TopNSearcher<long?>
         {
-            private readonly TestFSTs outerInstance;
-
             private readonly AtomicInt32 rejectCount;
 
-            public TopNSearcherAnonymousInnerClassHelper(TestFSTs outerInstance, FST<long?> fst, IComparer<long?> minLongComparer, AtomicInt32 rejectCount)
+            public TopNSearcherAnonymousInnerClassHelper(FST<long?> fst, IComparer<long?> minLongComparer, AtomicInt32 rejectCount)
                 : base(fst, 2, 6, minLongComparer)
             {
-                this.outerInstance = outerInstance;
                 this.rejectCount = rejectCount;
             }
 
@@ -1536,14 +1535,11 @@ namespace Lucene.Net.Util.Fst
 
         private class TopNSearcherAnonymousInnerClassHelper2 : Util.TopNSearcher<long?>
         {
-            private readonly TestFSTs outerInstance;
-
             private readonly AtomicInt32 rejectCount;
 
-            public TopNSearcherAnonymousInnerClassHelper2(TestFSTs outerInstance, FST<long?> fst, IComparer<long?> minLongComparer, AtomicInt32 rejectCount)
+            public TopNSearcherAnonymousInnerClassHelper2(FST<long?> fst, IComparer<long?> minLongComparer, AtomicInt32 rejectCount)
                 : base(fst, 2, 5, minLongComparer)
             {
-                this.outerInstance = outerInstance;
                 this.rejectCount = rejectCount;
             }
 
@@ -1722,14 +1718,11 @@ namespace Lucene.Net.Util.Fst
         // used by slowcompletor
         internal class TwoLongs
         {
-            private readonly TestFSTs outerInstance;
-
             internal long a;
             internal long b;
 
-            internal TwoLongs(TestFSTs outerInstance, long a, long b)
+            internal TwoLongs(long a, long b)
             {
-                this.outerInstance = outerInstance;
                 this.a = a;
                 this.b = b;
             }
@@ -1768,7 +1761,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 int weight = TestUtil.NextInt32(random, 1, 100); // weights 1..100
                 int output = TestUtil.NextInt32(random, 0, 500); // outputs 0..500
-                slowCompletor[s] = new TwoLongs(this, weight, output);
+                slowCompletor[s] = new TwoLongs(weight, output);
             }
 
             foreach (KeyValuePair<string, TwoLongs> e in slowCompletor)

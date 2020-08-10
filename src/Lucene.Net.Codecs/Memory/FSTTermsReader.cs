@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.Memory
             internal readonly long sumTotalTermFreq;
             internal readonly long sumDocFreq;
             internal readonly int docCount;
-            private readonly int longsSize;
+            //private readonly int longsSize; // LUCENENET: Not used
             internal readonly FST<FSTTermOutputs.TermData> dict;
 
             internal TermsReader(FSTTermsReader outerInstance, FieldInfo fieldInfo, IndexInput @in, long numTerms, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize)
@@ -208,7 +208,7 @@ namespace Lucene.Net.Codecs.Memory
                 this.sumTotalTermFreq = sumTotalTermFreq;
                 this.sumDocFreq = sumDocFreq;
                 this.docCount = docCount;
-                this.longsSize = longsSize;
+                //this.longsSize = longsSize; // LUCENENET: Not used
                 this.dict = new FST<FSTTermOutputs.TermData>(@in, new FSTTermOutputs(fieldInfo, longsSize));
             }
 
@@ -440,17 +440,14 @@ namespace Lucene.Net.Codecs.Memory
 
                 internal sealed class Frame
                 {
-                    private readonly FSTTermsReader.TermsReader.IntersectTermsEnum outerInstance;
-
                     /// <summary>Fst stats.</summary>
                     internal FST.Arc<FSTTermOutputs.TermData> fstArc;
 
                     /// <summary>Automaton stats.</summary>
                     internal int fsaState;
 
-                    internal Frame(FSTTermsReader.TermsReader.IntersectTermsEnum outerInstance)
+                    internal Frame()
                     {
-                        this.outerInstance = outerInstance;
                         this.fstArc = new FST.Arc<FSTTermOutputs.TermData>();
                         this.fsaState = -1;
                     }
@@ -473,7 +470,7 @@ namespace Lucene.Net.Codecs.Memory
                     this.stack = new Frame[16];
                     for (int i = 0; i < stack.Length; i++)
                     {
-                        this.stack[i] = new Frame(this);
+                        this.stack[i] = new Frame();
                     }
 
                     Frame frame;
@@ -763,7 +760,7 @@ namespace Lucene.Net.Codecs.Memory
                         Array.Copy(stack, 0, temp, 0, stack.Length);
                         for (int i = stack.Length; i < temp.Length; i++)
                         {
-                            temp[i] = new Frame(this);
+                            temp[i] = new Frame();
                         }
                         stack = temp;
                     }

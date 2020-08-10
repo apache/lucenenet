@@ -268,7 +268,7 @@ namespace Lucene.Net.Util
             IEnumerator<long> neededBounds = (expectedBounds == null) ? null : expectedBounds.GetEnumerator();
             IEnumerator<int> neededShifts = (expectedShifts == null) ? null : expectedShifts.GetEnumerator();
 
-            NumericUtils.SplitInt64Range(new LongRangeBuilderAnonymousInnerClassHelper(this, lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
+            NumericUtils.SplitInt64Range(new LongRangeBuilderAnonymousInnerClassHelper(lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
 
             if (useBitSet)
             {
@@ -280,8 +280,6 @@ namespace Lucene.Net.Util
 
         private class LongRangeBuilderAnonymousInnerClassHelper : NumericUtils.Int64RangeBuilder
         {
-            private readonly TestNumericUtils outerInstance;
-
             private readonly long lower;
             private readonly long upper;
             private readonly bool useBitSet;
@@ -289,9 +287,8 @@ namespace Lucene.Net.Util
             private readonly IEnumerator<long> neededBounds;
             private readonly IEnumerator<int> neededShifts;
 
-            public LongRangeBuilderAnonymousInnerClassHelper(TestNumericUtils outerInstance, long lower, long upper, bool useBitSet, Int64BitSet bits, IEnumerator<long> neededBounds, IEnumerator<int> neededShifts)
+            public LongRangeBuilderAnonymousInnerClassHelper(long lower, long upper, bool useBitSet, Int64BitSet bits, IEnumerator<long> neededBounds, IEnumerator<int> neededShifts)
             {
-                this.outerInstance = outerInstance;
                 this.lower = lower;
                 this.upper = upper;
                 this.useBitSet = useBitSet;
@@ -464,7 +461,7 @@ namespace Lucene.Net.Util
             IEnumerator<int> neededBounds = (expectedBounds == null) ? null : expectedBounds.GetEnumerator();
             IEnumerator<int> neededShifts = (expectedShifts == null) ? null : expectedShifts.GetEnumerator();
 
-            NumericUtils.SplitInt32Range(new IntRangeBuilderAnonymousInnerClassHelper(this, lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
+            NumericUtils.SplitInt32Range(new IntRangeBuilderAnonymousInnerClassHelper(lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
 
             if (useBitSet)
             {
@@ -476,8 +473,6 @@ namespace Lucene.Net.Util
 
         private class IntRangeBuilderAnonymousInnerClassHelper : NumericUtils.Int32RangeBuilder
         {
-            private readonly TestNumericUtils outerInstance;
-
             private readonly int lower;
             private readonly int upper;
             private readonly bool useBitSet;
@@ -485,9 +480,8 @@ namespace Lucene.Net.Util
             private readonly IEnumerator<int> neededBounds;
             private readonly IEnumerator<int> neededShifts;
 
-            public IntRangeBuilderAnonymousInnerClassHelper(TestNumericUtils outerInstance, int lower, int upper, bool useBitSet, FixedBitSet bits, IEnumerator<int> neededBounds, IEnumerator<int> neededShifts)
+            public IntRangeBuilderAnonymousInnerClassHelper(int lower, int upper, bool useBitSet, FixedBitSet bits, IEnumerator<int> neededBounds, IEnumerator<int> neededShifts)
             {
-                this.outerInstance = outerInstance;
                 this.lower = lower;
                 this.upper = upper;
                 this.useBitSet = useBitSet;

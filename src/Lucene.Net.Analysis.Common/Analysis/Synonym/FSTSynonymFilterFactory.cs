@@ -81,7 +81,14 @@ namespace Lucene.Net.Analysis.Synonym
         {
             TokenizerFactory factory = tokenizerFactory == null ? null : LoadTokenizerFactory(loader, tokenizerFactory);
 
-            Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this, factory);
+            Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            {
+#pragma warning disable 612, 618
+                Tokenizer tokenizer = factory == null ? new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader) : factory.Create(reader);
+                TokenStream stream = ignoreCase ? (TokenStream)new LowerCaseFilter(LuceneVersion.LUCENE_CURRENT, tokenizer) : tokenizer;
+#pragma warning restore 612, 618
+                return new TokenStreamComponents(tokenizer, stream);
+            });
 
             try
             {
@@ -100,28 +107,6 @@ namespace Lucene.Net.Analysis.Synonym
             catch (Exception e)
             {
                 throw new IOException("Error parsing synonyms file:", e);
-            }
-        }
-
-        private class AnalyzerAnonymousInnerClassHelper : Analyzer
-        {
-            private readonly FSTSynonymFilterFactory outerInstance;
-
-            private readonly TokenizerFactory factory;
-
-            public AnalyzerAnonymousInnerClassHelper(FSTSynonymFilterFactory outerInstance, TokenizerFactory factory)
-            {
-                this.outerInstance = outerInstance;
-                this.factory = factory;
-            }
-
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
-            {
-#pragma warning disable 612, 618
-                Tokenizer tokenizer = factory == null ? new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader) : factory.Create(reader);
-                TokenStream stream = outerInstance.ignoreCase ? (TokenStream)new LowerCaseFilter(LuceneVersion.LUCENE_CURRENT, tokenizer) : tokenizer;
-#pragma warning restore 612, 618
-                return new TokenStreamComponents(tokenizer, stream);
             }
         }
 

@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </summary>
     public class NewAnalyzerTask : PerfTask
     {
-        private IList<string> analyzerNames;
+        private readonly IList<string> analyzerNames;
         private int current;
 
         public NewAnalyzerTask(PerfRunData runData)

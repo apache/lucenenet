@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Payloads
         {
             string test = "The quick red fox jumped over the lazy brown dogs";
 
-            TypeAsPayloadTokenFilter nptf = new TypeAsPayloadTokenFilter(new WordTokenFilter(this, new MockTokenizer(new StringReader(test), MockTokenizer.WHITESPACE, false)));
+            TypeAsPayloadTokenFilter nptf = new TypeAsPayloadTokenFilter(new WordTokenFilter(new MockTokenizer(new StringReader(test), MockTokenizer.WHITESPACE, false)));
             int count = 0;
             ICharTermAttribute termAtt = nptf.GetAttribute<ICharTermAttribute>();
             ITypeAttribute typeAtt = nptf.GetAttribute<ITypeAttribute>();
@@ -52,14 +52,11 @@ namespace Lucene.Net.Analysis.Payloads
 
         private sealed class WordTokenFilter : TokenFilter
         {
-            private readonly TypeAsPayloadTokenFilterTest outerInstance;
-
             internal readonly ICharTermAttribute termAtt;
             internal readonly ITypeAttribute typeAtt;
 
-            internal WordTokenFilter(TypeAsPayloadTokenFilterTest outerInstance, TokenStream input) : base(input)
+            internal WordTokenFilter(TokenStream input) : base(input)
             {
-                this.outerInstance = outerInstance;
                 termAtt = AddAttribute<ICharTermAttribute>();
                 typeAtt = AddAttribute<ITypeAttribute>();
             }

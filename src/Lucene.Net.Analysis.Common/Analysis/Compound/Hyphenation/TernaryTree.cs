@@ -580,18 +580,18 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// <summary>
             /// Node stack
             /// </summary>
-            private Stack<Item> ns;
+            private readonly Stack<Item> ns;
 
             /// <summary>
             /// key stack implemented with a <see cref="StringBuilder"/>
             /// </summary>
-            private StringBuilder ks;
+            private readonly StringBuilder ks;
 
             private bool isInitialized = false;
 
-            public Iterator(TernaryTree outerInstance)
+            public Iterator(TernaryTree ternaryTree)
             {
-                this.outerInstance = outerInstance;
+                this.outerInstance = ternaryTree;
                 cur = -1;
                 ns = new Stack<Item>();
                 ks = new StringBuilder();
@@ -743,6 +743,13 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             object IEnumerator.Current => Current;
 
             public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            // LUCENENET specific - implemented proper dispose pattern
+            protected virtual void Dispose(bool disposing)
             {
                 // nothing to do
             }

@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Highlight
     {
         private string fieldName;
         private TokenStream tokenStream;
-        private string defaultField;
+        private readonly string defaultField;
         private bool expandMultiTermQuery;
         private bool cachedTokenStream;
         private bool wrapToCaching = true;

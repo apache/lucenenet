@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : ThreadJob
         {
-            private DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            private readonly DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             private readonly TestIndexWriterExceptions outerInstance;
 
@@ -458,19 +458,16 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static string CRASH_FAIL_MESSAGE = "I'm experiencing problems";
+        private const string CRASH_FAIL_MESSAGE = "I'm experiencing problems";
 
         private class CrashingFilter : TokenFilter
         {
-            private readonly TestIndexWriterExceptions outerInstance;
-
             internal string fieldName;
             internal int count;
 
-            public CrashingFilter(TestIndexWriterExceptions outerInstance, string fieldName, TokenStream input)
+            public CrashingFilter(string fieldName, TokenStream input)
                 : base(input)
             {
-                this.outerInstance = outerInstance;
                 this.fieldName = fieldName;
             }
 
@@ -532,7 +529,7 @@ namespace Lucene.Net.Index
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                return new TokenStreamComponents(tokenizer, new CrashingFilter(this, fieldName, tokenizer));
+                return new TokenStreamComponents(tokenizer, new CrashingFilter(fieldName, tokenizer));
             }, reuseStrategy: Analyzer.PER_FIELD_REUSE_STRATEGY);
 
              Document crashDoc = new Document();
@@ -768,7 +765,7 @@ namespace Lucene.Net.Index
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                return new TokenStreamComponents(tokenizer, new CrashingFilter(this, fieldName, tokenizer));
+                return new TokenStreamComponents(tokenizer, new CrashingFilter(fieldName, tokenizer));
             }, reuseStrategy: Analyzer.PER_FIELD_REUSE_STRATEGY);
 
             for (int i = 0; i < 2; i++)
@@ -878,7 +875,7 @@ namespace Lucene.Net.Index
             {
                 MockTokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                return new TokenStreamComponents(tokenizer, new CrashingFilter(this, fieldName, tokenizer));
+                return new TokenStreamComponents(tokenizer, new CrashingFilter(fieldName, tokenizer));
             }, reuseStrategy: Analyzer.PER_FIELD_REUSE_STRATEGY);
 
             const int NUM_THREAD = 3;
@@ -896,7 +893,7 @@ namespace Lucene.Net.Index
                     ThreadJob[] threads = new ThreadJob[NUM_THREAD];
                     for (int t = 0; t < NUM_THREAD; t++)
                     {
-                        threads[t] = new ThreadAnonymousInnerClassHelper(this, NUM_ITER, writer, finalI, t);
+                        threads[t] = new ThreadAnonymousInnerClassHelper(NUM_ITER, writer, finalI);
                         threads[t].Start();
                     }
 
@@ -959,20 +956,15 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly TestIndexWriterExceptions outerInstance;
+            private readonly int NUM_ITER;
+            private readonly IndexWriter writer;
+            private readonly int finalI;
 
-            private int NUM_ITER;
-            private IndexWriter writer;
-            private int finalI;
-            private int t;
-
-            public ThreadAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, int NUM_ITER, IndexWriter writer, int finalI, int t)
+            public ThreadAnonymousInnerClassHelper(int NUM_ITER, IndexWriter writer, int finalI)
             {
-                this.outerInstance = outerInstance;
                 this.NUM_ITER = NUM_ITER;
                 this.writer = writer;
                 this.finalI = finalI;
-                this.t = t;
             }
 
             public override void Run()
@@ -1234,7 +1226,7 @@ namespace Lucene.Net.Index
         {
             AtomicBoolean thrown = new AtomicBoolean(false);
             Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetInfoStream(new TOOMInfoStreamAnonymousInnerClassHelper(this, thrown)));
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetInfoStream(new TOOMInfoStreamAnonymousInnerClassHelper(thrown)));
 
             try
             {
@@ -1254,13 +1246,10 @@ namespace Lucene.Net.Index
 
         private class TOOMInfoStreamAnonymousInnerClassHelper : InfoStream
         {
-            private readonly TestIndexWriterExceptions outerInstance;
+            private readonly AtomicBoolean thrown;
 
-            private AtomicBoolean thrown;
-
-            public TOOMInfoStreamAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, AtomicBoolean thrown)
+            public TOOMInfoStreamAnonymousInnerClassHelper(AtomicBoolean thrown)
             {
-                this.outerInstance = outerInstance;
                 this.thrown = thrown;
             }
 
@@ -1696,7 +1685,7 @@ namespace Lucene.Net.Index
                     doc.Add(f);
                     MockTokenizer tokenizer = new MockTokenizer(new StringReader("crash me on the 4th token"), MockTokenizer.WHITESPACE, false);
                     tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                    f.SetTokenStream(new CrashingFilter(this, "crash", tokenizer));
+                    f.SetTokenStream(new CrashingFilter("crash", tokenizer));
                 }
             }
             try
@@ -1789,7 +1778,7 @@ namespace Lucene.Net.Index
                     doc.Add(f);
                     MockTokenizer tokenizer = new MockTokenizer(new StringReader("crash me on the 4th token"), MockTokenizer.WHITESPACE, false);
                     tokenizer.EnableChecks = false; // disable workflow checking as we forcefully close() in exceptional cases.
-                    f.SetTokenStream(new CrashingFilter(this, "crash", tokenizer));
+                    f.SetTokenStream(new CrashingFilter("crash", tokenizer));
                 }
             }
 
@@ -1938,7 +1927,7 @@ namespace Lucene.Net.Index
                 doc = new Document();
                 // try to boost with norms omitted
                 IList<IIndexableField> list = new List<IIndexableField>();
-                list.Add(new IndexableFieldAnonymousInnerClassHelper(this));
+                list.Add(new IndexableFieldAnonymousInnerClassHelper());
                 iw.AddDocument(list);
                 Assert.Fail("didn't get any exception, boost silently discarded");
             }
@@ -1958,13 +1947,6 @@ namespace Lucene.Net.Index
 
         private class IndexableFieldAnonymousInnerClassHelper : IIndexableField
         {
-            private readonly TestIndexWriterExceptions outerInstance;
-
-            public IndexableFieldAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public string Name => "foo";
 
             public IIndexableFieldType IndexableFieldType => StringField.TYPE_NOT_STORED;
@@ -2061,7 +2043,7 @@ namespace Lucene.Net.Index
         public virtual void TestTooManyFileException()
         {
             // Create failure that throws Too many open files exception randomly
-            Failure failure = new FailureAnonymousInnerClassHelper(this);
+            Failure failure = new FailureAnonymousInnerClassHelper();
 
             MockDirectoryWrapper dir = NewMockDirectory();
             // The exception is only thrown on open input
@@ -2126,12 +2108,6 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper : Failure
         {
-            private readonly TestIndexWriterExceptions outerInstance;
-
-            public FailureAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
 
             public override Failure Reset()
             {
@@ -2181,7 +2157,7 @@ namespace Lucene.Net.Index
                     IMergeScheduler ms = iwc.MergeScheduler;
                     if (ms is IConcurrentMergeScheduler)
                     {
-                        IConcurrentMergeScheduler suppressFakeIOE = new ConcurrentMergeSchedulerAnonymousInnerClassHelper(this);
+                        IConcurrentMergeScheduler suppressFakeIOE = new ConcurrentMergeSchedulerAnonymousInnerClassHelper();
 
                         IConcurrentMergeScheduler cms = (IConcurrentMergeScheduler)ms;
                         suppressFakeIOE.SetMaxMergesAndThreads(cms.MaxMergeCount, cms.MaxThreadCount);
@@ -2394,7 +2370,7 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper2 : Failure
         {
-            private AtomicBoolean shouldFail;
+            private readonly AtomicBoolean shouldFail;
 
             public FailureAnonymousInnerClassHelper2(AtomicBoolean shouldFail)
             {
@@ -2439,13 +2415,6 @@ namespace Lucene.Net.Index
             ConcurrentMergeScheduler
 #endif
         {
-            private readonly TestIndexWriterExceptions outerInstance;
-
-            public ConcurrentMergeSchedulerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             protected override void HandleMergeException(Exception exc)
             {
                 // suppress only FakeIOException:
@@ -2463,7 +2432,7 @@ namespace Lucene.Net.Index
             string messageToFailOn = Random.NextBoolean() ? "rollback: done finish merges" : "rollback before checkpoint";
 
             // infostream that throws exception during rollback
-            InfoStream evilInfoStream = new TEDRInfoStreamAnonymousInnerClassHelper(this, messageToFailOn);
+            InfoStream evilInfoStream = new TEDRInfoStreamAnonymousInnerClassHelper(messageToFailOn);
 
             Directory dir = NewMockDirectory(); // we want to ensure we don't leak any locks or file handles
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);
@@ -2513,13 +2482,10 @@ namespace Lucene.Net.Index
 
         private class TEDRInfoStreamAnonymousInnerClassHelper : InfoStream
         {
-            private readonly TestIndexWriterExceptions outerInstance;
+            private readonly string messageToFailOn;
 
-            private string messageToFailOn;
-
-            public TEDRInfoStreamAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, string messageToFailOn)
+            public TEDRInfoStreamAnonymousInnerClassHelper(string messageToFailOn)
             {
-                this.outerInstance = outerInstance;
                 this.messageToFailOn = messageToFailOn;
             }
 
@@ -2552,7 +2518,7 @@ namespace Lucene.Net.Index
             for (int iter = 0; iter < numIters; iter++)
             {
                 MockDirectoryWrapper dir = NewMockDirectory();
-                dir.FailOn(new FailureAnonymousInnerClassHelper3(this, dir));
+                dir.FailOn(new FailureAnonymousInnerClassHelper3());
 
                 IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);
                 IndexWriter iw = new IndexWriter(dir, iwc);
@@ -2601,16 +2567,6 @@ namespace Lucene.Net.Index
 
         private class FailureAnonymousInnerClassHelper3 : Failure
         {
-            private readonly TestIndexWriterExceptions outerInstance;
-
-            private MockDirectoryWrapper dir;
-
-            public FailureAnonymousInnerClassHelper3(TestIndexWriterExceptions outerInstance, MockDirectoryWrapper dir)
-            {
-                this.outerInstance = outerInstance;
-                this.dir = dir;
-            }
-
             public override void Eval(MockDirectoryWrapper dir)
             {
                 // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]

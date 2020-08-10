@@ -50,7 +50,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             private bool stopped = false;
             private string[] tuple;
             private NoMoreDataException nmde;
-            private StringBuilder contents = new StringBuilder();
+            private readonly StringBuilder contents = new StringBuilder();
             private string title;
             private string body;
             private string time;
@@ -337,7 +337,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private FileInfo file;
         private bool keepImages = true;
         private Stream @is;
-        private Parser parser;
+        private readonly Parser parser;
 
         protected override void Dispose(bool disposing)
         {

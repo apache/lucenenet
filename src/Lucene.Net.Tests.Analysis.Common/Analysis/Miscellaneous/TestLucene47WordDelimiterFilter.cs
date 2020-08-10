@@ -206,14 +206,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
          */
         private sealed class LargePosIncTokenFilter : TokenFilter
         {
-            private readonly TestLucene47WordDelimiterFilter outerInstance;
-
             internal ICharTermAttribute termAtt;
             internal IPositionIncrementAttribute posIncAtt;
 
-            public LargePosIncTokenFilter(TestLucene47WordDelimiterFilter outerInstance, TokenStream input) : base(input)
+            public LargePosIncTokenFilter(TokenStream input) : base(input)
             {
-                this.outerInstance = outerInstance;
                 this.termAtt = AddAttribute<ICharTermAttribute>();
                 this.posIncAtt = AddAttribute<IPositionIncrementAttribute>();
             }
@@ -265,7 +262,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             Analyzer a2 = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(new LargePosIncTokenFilter(this, tokenizer), flags, protWords));
+                return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(new LargePosIncTokenFilter(tokenizer), flags, protWords));
             });
 
             /* increment of "largegap" is preserved */

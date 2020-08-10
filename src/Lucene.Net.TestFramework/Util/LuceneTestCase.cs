@@ -3350,7 +3350,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Retry to create temporary file name this many times.
         /// </summary>
-        private static int TEMP_NAME_RETRY_THRESHOLD = 9999;
+        private const int TEMP_NAME_RETRY_THRESHOLD = 9999;
 
         // LUCENENET: Not Implemented
         /////// <summary>

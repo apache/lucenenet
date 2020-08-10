@@ -42,10 +42,11 @@ namespace Lucene.Net.Replicator
     {
         private class IndexAndTaxonomyReadyCallback : IDisposable
         {
-            private Directory indexDir, taxoDir;
+            private readonly Directory indexDir;
+            private readonly Directory taxoDir;
             private DirectoryReader indexReader;
             private DirectoryTaxonomyReader taxoReader;
-            private FacetsConfig config;
+            private readonly FacetsConfig config;
             private long lastIndexGeneration = -1;
 
             public IndexAndTaxonomyReadyCallback(MockDirectoryWrapper indexDir, MockDirectoryWrapper taxoDir)

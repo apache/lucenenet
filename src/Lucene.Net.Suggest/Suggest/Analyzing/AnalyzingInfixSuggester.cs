@@ -728,18 +728,27 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return false;
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
-            if (m_searcherMgr != null)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing) // LUCENENET specific - implemented proper dispose pattern
+        {
+            if (disposing)
             {
-                m_searcherMgr.Dispose();
-                m_searcherMgr = null;
-            }
-            if (writer != null)
-            {
-                writer.Dispose();
-                dir.Dispose();
-                writer = null;
+                if (m_searcherMgr != null)
+                {
+                    m_searcherMgr.Dispose();
+                    m_searcherMgr = null;
+                }
+                if (writer != null)
+                {
+                    writer.Dispose();
+                    dir.Dispose();
+                    writer = null;
+                }
             }
         }
 

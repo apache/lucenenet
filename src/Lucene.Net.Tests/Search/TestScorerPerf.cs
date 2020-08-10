@@ -166,7 +166,7 @@ namespace Lucene.Net.Search
         internal virtual BitSet AddClause(BooleanQuery bq, BitSet result)
         {
             BitSet rnd = sets[Random.Next(sets.Length)];
-            Query q = new ConstantScoreQuery(new FilterAnonymousInnerClassHelper(this, rnd));
+            Query q = new ConstantScoreQuery(new FilterAnonymousInnerClassHelper(rnd));
             bq.Add(q, Occur.MUST);
             if (validate)
             {
@@ -184,13 +184,10 @@ namespace Lucene.Net.Search
 
         private class FilterAnonymousInnerClassHelper : Filter
         {
-            private readonly TestScorerPerf outerInstance;
-
             private readonly BitSet rnd;
 
-            public FilterAnonymousInnerClassHelper(TestScorerPerf outerInstance, BitSet rnd)
+            public FilterAnonymousInnerClassHelper(BitSet rnd)
             {
-                this.outerInstance = outerInstance;
                 this.rnd = rnd;
             }
 

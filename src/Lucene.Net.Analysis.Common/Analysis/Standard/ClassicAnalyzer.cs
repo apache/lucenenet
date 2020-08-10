@@ -104,21 +104,19 @@ namespace Lucene.Net.Analysis.Standard
             TokenStream tok = new ClassicFilter(src);
             tok = new LowerCaseFilter(m_matchVersion, tok);
             tok = new StopFilter(m_matchVersion, tok, m_stopwords);
-            return new TokenStreamComponentsAnonymousInnerClassHelper(this, src, tok, reader);
+            return new TokenStreamComponentsAnonymousInnerClassHelper(this, src, tok);
         }
 
         private class TokenStreamComponentsAnonymousInnerClassHelper : TokenStreamComponents
         {
             private readonly ClassicAnalyzer outerInstance;
 
-            private TextReader reader;
-            private ClassicTokenizer src;
+            private readonly ClassicTokenizer src;
 
-            public TokenStreamComponentsAnonymousInnerClassHelper(ClassicAnalyzer outerInstance, ClassicTokenizer src, TokenStream tok, TextReader reader)
+            public TokenStreamComponentsAnonymousInnerClassHelper(ClassicAnalyzer outerInstance, ClassicTokenizer src, TokenStream tok)
                 : base(src, tok)
             {
                 this.outerInstance = outerInstance;
-                this.reader = reader;
                 this.src = src;
             }
 

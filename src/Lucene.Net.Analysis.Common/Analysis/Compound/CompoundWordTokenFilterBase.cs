@@ -170,16 +170,16 @@ namespace Lucene.Net.Analysis.Compound
 
             /// <summary>
             /// Construct the compound token based on a slice of the current <see cref="CompoundWordTokenFilterBase.m_termAtt"/>. </summary>
-            public CompoundToken(CompoundWordTokenFilterBase outerInstance, int offset, int length)
+            public CompoundToken(CompoundWordTokenFilterBase compoundWordTokenFilterBase, int offset, int length)
             {
-                this.txt = outerInstance.m_termAtt.Subsequence(offset, length); // LUCENENET: Corrected 2nd Subsequence parameter
+                this.txt = compoundWordTokenFilterBase.m_termAtt.Subsequence(offset, length); // LUCENENET: Corrected 2nd Subsequence parameter
 
                 // offsets of the original word
-                int startOff = outerInstance.m_offsetAtt.StartOffset;
-                int endOff = outerInstance.m_offsetAtt.EndOffset;
+                int startOff = compoundWordTokenFilterBase.m_offsetAtt.StartOffset;
+                int endOff = compoundWordTokenFilterBase.m_offsetAtt.EndOffset;
 
 #pragma warning disable 612, 618
-                if (outerInstance.m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_44) || endOff - startOff != outerInstance.m_termAtt.Length)
+                if (compoundWordTokenFilterBase.m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_44) || endOff - startOff != compoundWordTokenFilterBase.m_termAtt.Length)
 #pragma warning restore 612, 618
                 {
                     // if length by start + end offsets doesn't match the term text then assume

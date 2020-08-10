@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
         private readonly long maxMergeSizeBytes;
         private readonly long maxCachedBytes;
 
-        private static bool VERBOSE = false;
+        private static readonly bool VERBOSE = false;
 
         /// <summary>
         /// We will cache a newly created output if 1) it's a

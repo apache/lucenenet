@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
             IndexThread[] threads = new IndexThread[numThreads];
             for (int x = 0; x < threads.Length; x++)
             {
-                threads[x] = new IndexThread(this, numDocs, numThreads, writer, lineDocFile, false);
+                threads[x] = new IndexThread(numDocs, writer, lineDocFile, false);
                 threads[x].Start();
             }
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
                 IndexThread[] threads = new IndexThread[numThreads[i]];
                 for (int x = 0; x < threads.Length; x++)
                 {
-                    threads[x] = new IndexThread(this, numDocs, numThreads[i], writer, lineDocFile, false);
+                    threads[x] = new IndexThread(numDocs, writer, lineDocFile, false);
                     threads[x].Start();
                 }
 
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
             IndexThread[] threads = new IndexThread[numThreads];
             for (int x = 0; x < threads.Length; x++)
             {
-                threads[x] = new IndexThread(this, numDocs, numThreads, writer, lineDocFile, true);
+                threads[x] = new IndexThread(numDocs, writer, lineDocFile, true);
                 threads[x].Start();
             }
 
@@ -270,7 +270,7 @@ namespace Lucene.Net.Index
                 IndexThread[] threads = new IndexThread[numThreads[i]];
                 for (int x = 0; x < threads.Length; x++)
                 {
-                    threads[x] = new IndexThread(this, numDocs, numThreads[i], writer, lineDocFile, false);
+                    threads[x] = new IndexThread(numDocs, writer, lineDocFile, false);
                     threads[x].Start();
                 }
 
@@ -315,17 +315,14 @@ namespace Lucene.Net.Index
 
         public class IndexThread : ThreadJob
         {
-            private readonly TestFlushByRamOrCountsPolicy outerInstance;
-
             internal IndexWriter writer;
             internal LiveIndexWriterConfig iwc;
             internal LineFileDocs docs;
             internal AtomicInt32 pendingDocs;
             internal readonly bool doRandomCommit;
 
-            public IndexThread(TestFlushByRamOrCountsPolicy outerInstance, AtomicInt32 pendingDocs, int numThreads, IndexWriter writer, LineFileDocs docs, bool doRandomCommit)
+            public IndexThread(AtomicInt32 pendingDocs, IndexWriter writer, LineFileDocs docs, bool doRandomCommit)
             {
-                this.outerInstance = outerInstance;
                 this.pendingDocs = pendingDocs;
                 this.writer = writer;
                 iwc = writer.Config;
