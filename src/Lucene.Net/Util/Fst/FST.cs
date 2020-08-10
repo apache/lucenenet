@@ -218,7 +218,7 @@ namespace Lucene.Net.Util.Fst
                 inCounts = null;
             }
 
-            emptyOutput = default(T);
+            emptyOutput = default;
             packed = false;
             nodeRefToAddress = null;
         }
@@ -278,26 +278,16 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                emptyOutput = default(T);
+                emptyOutput = default;
             }
             var t = @in.ReadByte();
-            switch (t)
+            inputType = t switch
             {
-                case 0:
-                    inputType = FST.INPUT_TYPE.BYTE1;
-                    break;
-
-                case 1:
-                    inputType = FST.INPUT_TYPE.BYTE2;
-                    break;
-
-                case 2:
-                    inputType = FST.INPUT_TYPE.BYTE4;
-                    break;
-
-                default:
-                    throw new InvalidOperationException("invalid input type " + t);
-            }
+                0 => FST.INPUT_TYPE.BYTE1,
+                1 => FST.INPUT_TYPE.BYTE2,
+                2 => FST.INPUT_TYPE.BYTE4,
+                _ => throw new InvalidOperationException("invalid input type " + t),
+            };
             if (packed)
             {
                 nodeRefToAddress = PackedInt32s.GetReader(@in);
@@ -358,7 +348,7 @@ namespace Lucene.Net.Util.Fst
             {
                 throw new InvalidOperationException("already finished");
             }
-            if (newStartNode == FST.FINAL_END_NODE && !EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
+            if (newStartNode == FST.FINAL_END_NODE && !EqualityComparer<T>.Default.Equals(emptyOutput, default))
             {
                 newStartNode = 0;
             }
@@ -507,7 +497,7 @@ namespace Lucene.Net.Util.Fst
             }
             // TODO: really we should encode this as an arc, arriving
             // to the root node, instead of special casing here:
-            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
+            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default))
             {
                 // Accepts empty string
                 @out.WriteByte(1);
@@ -868,7 +858,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public FST.Arc<T> GetFirstArc(FST.Arc<T> arc)
         {
-            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
+            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default))
             {
                 arc.Flags = FST.BIT_FINAL_ARC | FST.BIT_LAST_ARC;
                 arc.NextFinalOutput = emptyOutput;
@@ -1855,8 +1845,7 @@ namespace Lucene.Net.Util.Fst
                             bool doWriteTarget = TargetHasArcs(arc) && (flags & FST.BIT_TARGET_NEXT) == 0;
                             if (doWriteTarget)
                             {
-                                int ptr;
-                                if (topNodeMap.TryGetValue((int)arc.Target, out ptr))
+                                if (topNodeMap.TryGetValue((int)arc.Target, out int ptr))
                                 {
                                     absPtr = ptr;
                                 }
@@ -2029,7 +2018,7 @@ namespace Lucene.Net.Util.Fst
             fst.startNode = newNodeAddress.Get((int)startNode);
             //System.out.println("new startNode=" + fst.startNode + " old startNode=" + startNode);
 
-            if (!EqualityComparer<T>.Default.Equals(emptyOutput, default(T)))
+            if (!JCG.EqualityComparer<T>.Default.Equals(emptyOutput, default))
             {
                 fst.EmptyOutput = emptyOutput;
             }

@@ -49,19 +49,8 @@ namespace Lucene.Net.Util.Fst
 
             public override bool Equals(object other)
             {
-                if (other == this)
-                {
-                    return true;
-                }
-                else if (other is Pair)
-                {
-                    var pair = (Pair)other;
-                    return Output1.Equals(pair.Output1) && Output2.Equals(pair.Output2);
-                }
-                else
-                {
-                    return false;
-                }
+                // LUCENENET specific - simplified expression
+                return ReferenceEquals(other, this) || (other is Pair pair && Output1.Equals(pair.Output1) && Output2.Equals(pair.Output2));
             }
 
             public override int GetHashCode()

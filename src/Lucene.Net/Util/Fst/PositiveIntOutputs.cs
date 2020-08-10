@@ -33,7 +33,7 @@ namespace Lucene.Net.Util.Fst
     /// </summary>
     public sealed class PositiveInt32Outputs : Outputs<long?>
     {
-        private static readonly long NO_OUTPUT = new long();
+        private const long NO_OUTPUT = new long();
 
         private static readonly PositiveInt32Outputs singleton = new PositiveInt32Outputs();
 
