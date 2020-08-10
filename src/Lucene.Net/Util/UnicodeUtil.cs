@@ -627,7 +627,7 @@ namespace Lucene.Net.Util
             while (utf8Upto < utf8Limit)
             {
                 int numBytes = utf8CodeLength[bytes[utf8Upto] & 0xFF];
-                int v = 0;
+                int v /*= 0*/;
                 switch (numBytes)
                 {
                     case 1:
@@ -687,7 +687,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Value that all lead surrogate starts with. </summary>
-        private static readonly int LEAD_SURROGATE_OFFSET_ = LEAD_SURROGATE_MIN_VALUE - (SUPPLEMENTARY_MIN_VALUE >> LEAD_SURROGATE_SHIFT_);
+        private const int LEAD_SURROGATE_OFFSET_ = LEAD_SURROGATE_MIN_VALUE - (SUPPLEMENTARY_MIN_VALUE >> LEAD_SURROGATE_SHIFT_);
 
         /// <summary>
         /// Cover JDK 1.5 API. Create a String from an array of <paramref name="codePoints"/>.

@@ -40,7 +40,7 @@ namespace Lucene.Net.Util
     /// @lucene.experimental 
     /// </summary>
     [Obsolete("Implement Analysis.TokenAttributes.ITermToBytesRefAttribute and store bytes directly instead. this class will be removed in Lucene 5.0")]
-    public sealed class IndexableBinaryStringTools
+    public static class IndexableBinaryStringTools // LUCENENET specific - made static
     {
         private static readonly CodingCase[] CODING_CASES = new CodingCase[] {
             // CodingCase(int initialShift, int finalShift)
@@ -54,11 +54,6 @@ namespace Lucene.Net.Util
             new CodingCase(9, 1, 7),
             new CodingCase(8, 0)
         };
-
-        // Export only static methods
-        private IndexableBinaryStringTools()
-        {
-        }
 
         /// <summary>
         /// Returns the number of chars required to encode the given <see cref="byte"/>s.

@@ -53,10 +53,8 @@ namespace Lucene.Net.Util
     /// var iter = BytesRefIterator.Empty;
     /// </code>
     /// </summary>
-    public class BytesRefIterator
+    public static class BytesRefIterator
     {
-        private BytesRefIterator() { } // Disallow creation
-
         /// <summary>
         /// Singleton <see cref="BytesRefIterator"/> that iterates over 0 BytesRefs.
         /// </summary>

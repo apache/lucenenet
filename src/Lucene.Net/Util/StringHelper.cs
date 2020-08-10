@@ -1,6 +1,5 @@
 using J2N.Numerics;
 using J2N.Text;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -95,45 +94,43 @@ namespace Lucene.Net.Util
         /// <para/>
         /// @lucene.internal
         /// </summary>
-        public static IComparer<string> VersionComparer => versionComparer;
-
-        private static readonly IComparer<string> versionComparer = Comparer<string>.Create((a, b) =>
-        {
-            var aTokens = new StringTokenizer(a, ".");
-            var bTokens = new StringTokenizer(b, ".");
-
-            while (aTokens.MoveNext())
+        public static IComparer<string> VersionComparer { get; } = Comparer<string>.Create((a, b) =>
             {
-                int aToken = Convert.ToInt32(aTokens.Current, CultureInfo.InvariantCulture);
-                if (bTokens.MoveNext())
+                var aTokens = new StringTokenizer(a, ".");
+                var bTokens = new StringTokenizer(b, ".");
+
+                while (aTokens.MoveNext())
                 {
-                    int bToken = Convert.ToInt32(bTokens.Current, CultureInfo.InvariantCulture);
-                    if (aToken != bToken)
+                    int aToken = Convert.ToInt32(aTokens.Current, CultureInfo.InvariantCulture);
+                    if (bTokens.MoveNext())
                     {
-                        return aToken < bToken ? -1 : 1;
+                        int bToken = Convert.ToInt32(bTokens.Current, CultureInfo.InvariantCulture);
+                        if (aToken != bToken)
+                        {
+                            return aToken < bToken ? -1 : 1;
+                        }
+                    }
+                    else
+                    {
+                        // a has some extra trailing tokens. if these are all zeroes, thats ok.
+                        if (aToken != 0)
+                        {
+                            return 1;
+                        }
                     }
                 }
-                else
+
+                // b has some extra trailing tokens. if these are all zeroes, thats ok.
+                while (bTokens.MoveNext())
                 {
-                    // a has some extra trailing tokens. if these are all zeroes, thats ok.
-                    if (aToken != 0)
+                    if (Convert.ToInt32(bTokens.Current, CultureInfo.InvariantCulture) != 0)
                     {
-                        return 1;
+                        return -1;
                     }
                 }
-            }
 
-            // b has some extra trailing tokens. if these are all zeroes, thats ok.
-            while (bTokens.MoveNext())
-            {
-                if (Convert.ToInt32(bTokens.Current, CultureInfo.InvariantCulture) != 0)
-                {
-                    return -1;
-                }
-            }
-
-            return 0;
-        });
+                return 0;
+            });
 
         public static bool Equals(string s1, string s2)
         {

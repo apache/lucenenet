@@ -267,7 +267,7 @@ namespace Lucene.Net.Util
             State initState = GetCurrentState();
             if (initState != null)
             {
-                return new IteratorAnonymousInnerClassHelper(this, initState);
+                return new IteratorAnonymousInnerClassHelper(initState);
             }
             else
             {
@@ -277,24 +277,18 @@ namespace Lucene.Net.Util
 
         private class IteratorAnonymousInnerClassHelper : IEnumerator<Attribute>
         {
-            private readonly AttributeSource outerInstance;
-
-            private AttributeSource.State initState;
-            private Attribute current;
-
-            public IteratorAnonymousInnerClassHelper(AttributeSource outerInstance, AttributeSource.State initState)
+            public IteratorAnonymousInnerClassHelper(AttributeSource.State initState)
             {
-                this.outerInstance = outerInstance;
-                this.initState = initState;
                 state = initState;
             }
 
+            private Attribute current;
             private State state;
 
-            public virtual void Remove()
-            {
-                throw new NotSupportedException();
-            }
+            //public virtual void Remove() // LUCENENET specific - not used
+            //{
+            //    throw new NotSupportedException();
+            //}
 
             public void Dispose()
             {
@@ -318,13 +312,9 @@ namespace Lucene.Net.Util
                 throw new NotSupportedException();
             }
 
-            public Attribute Current
-            {
-                get => current;
-                set => current = value;
-            }
+            public Attribute Current => current;
 
-            object IEnumerator.Current => Current;
+            object IEnumerator.Current => current;
         }
 
         /// <summary>

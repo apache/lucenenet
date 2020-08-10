@@ -41,15 +41,15 @@ namespace Lucene.Net.Util
     public abstract class PriorityQueue<T>
     {
         private int size = 0;
-        private int maxSize;
-        private T[] heap;
+        private readonly int maxSize;
+        private readonly T[] heap;
 
-        public PriorityQueue(int maxSize)
+        protected PriorityQueue(int maxSize) // LUCENENET specific - made protected instead of public
             : this(maxSize, true)
         {
         }
 
-        public PriorityQueue(int maxSize, bool prepopulate)
+        protected PriorityQueue(int maxSize, bool prepopulate) // LUCENENET specific - made protected instead of public
         {
             int heapSize;
             if (0 == maxSize)
@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
             {
                 // If sentinel objects are supported, populate the queue with them
                 T sentinel = GetSentinelObject();
-                if (!EqualityComparer<T>.Default.Equals(sentinel, default(T)))
+                if (!EqualityComparer<T>.Default.Equals(sentinel, default))
                 {
                     heap[1] = sentinel;
                     for (int i = 2; i < heap.Length; i++)
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
         ///         sentinel objects are not supported. </returns>
         protected virtual T GetSentinelObject()
         {
-            return default(T);
+            return default;
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace Lucene.Net.Util
             if (size < maxSize)
             {
                 Add(element);
-                return default(T);
+                return default;
             }
             else if (size > 0 && !LessThan(element, heap[1]))
             {
@@ -213,14 +213,14 @@ namespace Lucene.Net.Util
             {
                 T result = heap[1]; // save first value
                 heap[1] = heap[size]; // move last to first
-                heap[size] = default(T); // permit GC of objects
+                heap[size] = default; // permit GC of objects
                 size--;
                 DownHeap(); // adjust heap
                 return result;
             }
             else
             {
-                return default(T);
+                return default;
             }
         }
 
@@ -260,7 +260,7 @@ namespace Lucene.Net.Util
         {
             for (int i = 0; i <= size; i++)
             {
-                heap[i] = default(T);
+                heap[i] = default;
             }
             size = 0;
         }

@@ -621,7 +621,7 @@ namespace Lucene.Net.Util
         {
             /* Using the index can be costly for close targets. */
 
-            internal static int IndexThreshold(int cardinality, int indexInterval)
+            internal static int IndexThreshold(/*int cardinality, */int indexInterval) // LUCENENET specific - removed unused parameter
             {
                 // Short sequences encode for 3 words (2 clean words and 1 dirty byte),
                 // don't advance if we are going to read less than 3 x indexInterval
@@ -657,7 +657,7 @@ namespace Lucene.Net.Util
                 bitList = 0;
                 sequenceNum = -1;
                 docID = -1;
-                indexThreshold = IndexThreshold(cardinality, indexInterval);
+                indexThreshold = IndexThreshold(/*cardinality,*/ indexInterval); // LUCENENET specific - removed unused parameter
             }
 
             internal virtual bool ReadSequence()

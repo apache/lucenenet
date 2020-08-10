@@ -29,12 +29,8 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class CollectionUtil
+    public static class CollectionUtil // LUCENENET specific - made static
     {
-        private CollectionUtil() // no instance
-        {
-        }
-
         private sealed class ListIntroSorter<T> : IntroSorter
         {
             internal T pivot;
@@ -56,7 +52,7 @@ namespace Lucene.Net.Util
 
             protected override void SetPivot(int i)
             {
-                pivot = (i < list.Count) ? list[i] : default(T);
+                pivot = (i < list.Count) ? list[i] : default;
             }
 
             protected override void Swap(int i, int j)
