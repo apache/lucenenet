@@ -376,6 +376,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
+                Debug.Assert(perThread.IsHeldByCurrentThread); // LUCENENET specific: Since .NET Core doesn't use unfair locking, we need to ensure the current thread has a lock before calling InternalTryCheckoutForFlush.
                 return perThread.flushPending ? InternalTryCheckOutForFlush(perThread) : null;
             }
         }
@@ -401,33 +402,27 @@ namespace Lucene.Net.Index
 
         private DocumentsWriterPerThread InternalTryCheckOutForFlush(ThreadState perThread)
         {
-            //Debug.Assert(Thread.HoldsLock(this));
+            // LUCENENET specific - Since we need to mimic the unfair behavior of ReentrantLock, we need to ensure that all threads that enter here hold the lock.
+            Debug.Assert(perThread.IsHeldByCurrentThread);
+            Debug.Assert(Monitor.IsEntered(this));
             Debug.Assert(perThread.flushPending);
             try
             {
+                // LUCENENET specific - We removed the call to perThread.TryLock() and the try-finally below as they are no longer needed.
+
                 // We are pending so all memory is already moved to flushBytes
-                if (perThread.TryLock())
+                if (perThread.IsInitialized)
                 {
-                    try
-                    {
-                        if (perThread.IsInitialized)
-                        {
-                            //Debug.Assert(perThread.HeldByCurrentThread);
-                            DocumentsWriterPerThread dwpt;
-                            long bytes = perThread.bytesUsed; // do that before
-                            // replace!
-                            dwpt = perThreadPool.Reset(perThread, closed);
-                            Debug.Assert(!flushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
-                            // Record the flushing DWPT to reduce flushBytes in doAfterFlush
-                            flushingWriters[dwpt] = bytes;
-                            numPending--; // write access synced
-                            return dwpt;
-                        }
-                    }
-                    finally
-                    {
-                        perThread.Unlock();
-                    }
+                    Debug.Assert(perThread.IsHeldByCurrentThread);
+                    DocumentsWriterPerThread dwpt;
+                    long bytes = perThread.bytesUsed; // do that before
+                    // replace!
+                    dwpt = perThreadPool.Reset(perThread, closed);
+                    Debug.Assert(!flushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
+                    // Record the flushing DWPT to reduce flushBytes in doAfterFlush
+                    flushingWriters[dwpt] = bytes;
+                    numPending--; // write access synced
+                    return dwpt;
                 }
                 return null;
             }
@@ -463,12 +458,19 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < limit && numPending > 0; i++)
                 {
                     ThreadState next = perThreadPool.GetThreadState(i);
-                    if (next.flushPending)
+                    if (next.flushPending && next.TryLock()) // LUCENENET specific: Since .NET Core 2+ uses fair locking, we need to ensure we have a lock before calling InternalTryCheckoutForFlush. See #
                     {
-                        DocumentsWriterPerThread dwpt = TryCheckoutForFlush(next);
-                        if (dwpt != null)
+                        try
                         {
-                            return dwpt;
+                            DocumentsWriterPerThread dwpt = TryCheckoutForFlush(next);
+                            if (dwpt != null)
+                            {
+                                return dwpt;
+                            }
+                        }
+                        finally
+                        {
+                            next.Unlock();
                         }
                     }
                 }
@@ -695,7 +697,7 @@ namespace Lucene.Net.Index
                 infoStream.Message("DWFC", "addFlushableState " + perThread.dwpt);
             }
             DocumentsWriterPerThread dwpt = perThread.dwpt;
-            //Debug.Assert(perThread.HeldByCurrentThread);
+            Debug.Assert(perThread.IsHeldByCurrentThread);
             Debug.Assert(perThread.IsInitialized);
             Debug.Assert(fullFlush);
             Debug.Assert(dwpt.deleteQueue != documentsWriter.deleteQueue);

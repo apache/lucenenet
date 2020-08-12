@@ -68,5 +68,7 @@ namespace Lucene.Net.Support.Threading
         }
 
         public bool HasQueuedThreads => _queueLength > 0;
+
+        public bool IsHeldByCurrentThread => Monitor.IsEntered(_lock);
     }
 }
