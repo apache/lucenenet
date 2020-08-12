@@ -224,7 +224,7 @@ namespace Lucene.Net.Analysis.CharFilters
             CheckRandomData(Random, analyzer, numRounds);
         }
 
-        [Ignore("wrong finalOffset: https://issues.apache.org/jira/browse/LUCENE-3971")]
+        //[Ignore("wrong finalOffset: https://issues.apache.org/jira/browse/LUCENE-3971")] // LUCENENET: This was commented in Lucene
         [Test]
         public virtual void TestFinalOffsetSpecialCase()
         {
@@ -245,7 +245,7 @@ namespace Lucene.Net.Analysis.CharFilters
             CheckAnalysisConsistency(Random, analyzer, false, text);
         }
 
-        [Ignore("wrong finalOffset: https://issues.apache.org/jira/browse/LUCENE-3971")]
+        //[Ignore("wrong finalOffset: https://issues.apache.org/jira/browse/LUCENE-3971")] // LUCENENET: This was commented in Lucene
         [Test]
         public virtual void TestRandomMaps()
         {
