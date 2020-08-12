@@ -1564,11 +1564,11 @@ namespace Lucene.Net.Util
 #if !FEATURE_CONCURRENTMERGESCHEDULER
                 mergeScheduler = new TaskMergeScheduler();
 #else
-                if (Rarely(random))
-                {
-                    mergeScheduler = new TaskMergeScheduler();
-                }
-                else
+                //if (Rarely(random))
+                //{
+                //    mergeScheduler = new TaskMergeScheduler();
+                //}
+                //else
                 {
                     mergeScheduler = new ConcurrentMergeScheduler();
                 }
@@ -3591,8 +3591,8 @@ namespace Lucene.Net.Util
                     var schedulerFactories = new List<Func<IConcurrentMergeScheduler>>();
 #if FEATURE_CONCURRENTMERGESCHEDULER
                     schedulerFactories.Add(() => new ConcurrentMergeScheduler());
-                    if (Rarely())
-                        schedulerFactories.Add(() => new TaskMergeScheduler());
+                    //if (Rarely())
+                    //    schedulerFactories.Add(() => new TaskMergeScheduler());
 #else
                     schedulerFactories.Add(() => new TaskMergeScheduler());
 #endif
