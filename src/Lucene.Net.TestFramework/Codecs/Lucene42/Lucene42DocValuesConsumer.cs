@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -9,7 +10,6 @@ using System.IO;
 using JCG = J2N.Collections.Generic;
 using static Lucene.Net.Util.Fst.FST;
 using static Lucene.Net.Util.Packed.PackedInt32s;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene42
 {
@@ -125,7 +125,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
                     ++count;
                 }
-                Debug.Assert(count == maxDoc);
+                Debugging.Assert(() => count == maxDoc);
             }
 
             if (uniqueValues != null)

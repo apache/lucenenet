@@ -1,9 +1,9 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
-            Debug.Assert(field.Number > lastFieldNumber, "writing norms fields out of order" + lastFieldNumber + " -> " + field.Number);
+            Debugging.Assert(() => field.Number > lastFieldNumber, () => "writing norms fields out of order" + lastFieldNumber + " -> " + field.Number);
             foreach (var n in values)
             {
                 if (((sbyte)(byte)(long)n) < sbyte.MinValue || ((sbyte)(byte)(long)n) > sbyte.MaxValue)

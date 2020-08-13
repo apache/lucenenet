@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -7,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -294,7 +294,7 @@ namespace Lucene.Net.Search
 
         private static IndexReader MakeEmptyIndex(Random random, int numDocs)
         {
-            Debug.Assert(numDocs > 0);
+            Debugging.Assert(() => numDocs > 0);
             Directory d = new MockDirectoryWrapper(random, new RAMDirectory());
             IndexWriter w = new IndexWriter(d, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(random)));
             for (int i = 0; i < numDocs; i++)
@@ -487,7 +487,7 @@ namespace Lucene.Net.Search
                     leafPtr++;
                 }
                 lastReader[0] = (AtomicReader)context.Reader;
-                Debug.Assert(readerContextArray[leafPtr].Reader == context.Reader);
+                Debugging.Assert(() => readerContextArray[leafPtr].Reader == context.Reader);
                 this.scorer = null;
                 lastDoc[0] = -1;
             }

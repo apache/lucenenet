@@ -1,7 +1,7 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (fi.IsIndexed)
                     {
                         bits |= IS_INDEXED;
-                        Debug.Assert(fi.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads);
+                        Debugging.Assert(() => fi.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads);
                         if (fi.IndexOptions == IndexOptions.DOCS_ONLY)
                         {
                             bits |= OMIT_TERM_FREQ_AND_POSITIONS;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         // only in RW case
                         output.WriteByte((byte)(sbyte)(fi.NormType == Index.DocValuesType.NONE ? 0 : 1));
                     }
-                    Debug.Assert(fi.Attributes == null); // not used or supported
+                    Debugging.Assert(() => fi.Attributes == null); // not used or supported
                 }
                 success = true;
             }

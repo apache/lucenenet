@@ -1,9 +1,9 @@
 using Lucene.Net.Codecs.Lucene40;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System.Collections.Generic;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Asserting
 {
@@ -103,8 +103,8 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void StartDocument(int numVectorFields)
             {
-                Debug.Assert(fieldCount == 0);
-                Debug.Assert(docStatus != Status.STARTED);
+                Debugging.Assert(() => fieldCount == 0);
+                Debugging.Assert(() => docStatus != Status.STARTED);
                 @in.StartDocument(numVectorFields);
                 docStatus = Status.STARTED;
                 fieldCount = numVectorFields;
@@ -113,17 +113,17 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void FinishDocument()
             {
-                Debug.Assert(fieldCount == 0);
-                Debug.Assert(docStatus == Status.STARTED);
+                Debugging.Assert(() => fieldCount == 0);
+                Debugging.Assert(() => docStatus == Status.STARTED);
                 @in.FinishDocument();
                 docStatus = Status.FINISHED;
             }
 
             public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
             {
-                Debug.Assert(termCount == 0);
-                Debug.Assert(docStatus == Status.STARTED);
-                Debug.Assert(fieldStatus != Status.STARTED);
+                Debugging.Assert(() => termCount == 0);
+                Debugging.Assert(() => docStatus == Status.STARTED);
+                Debugging.Assert(() => fieldStatus != Status.STARTED);
                 @in.StartField(info, numTerms, positions, offsets, payloads);
                 fieldStatus = Status.STARTED;
                 termCount = numTerms;
@@ -132,8 +132,8 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void FinishField()
             {
-                Debug.Assert(termCount == 0);
-                Debug.Assert(fieldStatus == Status.STARTED);
+                Debugging.Assert(() => termCount == 0);
+                Debugging.Assert(() => fieldStatus == Status.STARTED);
                 @in.FinishField();
                 fieldStatus = Status.FINISHED;
                 --fieldCount;
@@ -141,9 +141,9 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void StartTerm(BytesRef term, int freq)
             {
-                Debug.Assert(docStatus == Status.STARTED);
-                Debug.Assert(fieldStatus == Status.STARTED);
-                Debug.Assert(termStatus != Status.STARTED);
+                Debugging.Assert(() => docStatus == Status.STARTED);
+                Debugging.Assert(() => fieldStatus == Status.STARTED);
+                Debugging.Assert(() => termStatus != Status.STARTED);
                 @in.StartTerm(term, freq);
                 termStatus = Status.STARTED;
                 positionCount = hasPositions ? freq : 0;
@@ -151,10 +151,10 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void FinishTerm()
             {
-                Debug.Assert(positionCount == 0);
-                Debug.Assert(docStatus == Status.STARTED);
-                Debug.Assert(fieldStatus == Status.STARTED);
-                Debug.Assert(termStatus == Status.STARTED);
+                Debugging.Assert(() => positionCount == 0);
+                Debugging.Assert(() => docStatus == Status.STARTED);
+                Debugging.Assert(() => fieldStatus == Status.STARTED);
+                Debugging.Assert(() => termStatus == Status.STARTED);
                 @in.FinishTerm();
                 termStatus = Status.FINISHED;
                 --termCount;
@@ -162,9 +162,9 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
             {
-                Debug.Assert(docStatus == Status.STARTED);
-                Debug.Assert(fieldStatus == Status.STARTED);
-                Debug.Assert(termStatus == Status.STARTED);
+                Debugging.Assert(() => docStatus == Status.STARTED);
+                Debugging.Assert(() => fieldStatus == Status.STARTED);
+                Debugging.Assert(() => termStatus == Status.STARTED);
                 @in.AddPosition(position, startOffset, endOffset, payload);
                 --positionCount;
             }
@@ -176,10 +176,10 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void Finish(FieldInfos fis, int numDocs)
             {
-                Debug.Assert(docCount == numDocs);
-                Debug.Assert(docStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
-                Debug.Assert(fieldStatus != Status.STARTED);
-                Debug.Assert(termStatus != Status.STARTED);
+                Debugging.Assert(() => docCount == numDocs);
+                Debugging.Assert(() => docStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
+                Debugging.Assert(() => fieldStatus != Status.STARTED);
+                Debugging.Assert(() => termStatus != Status.STARTED);
                 @in.Finish(fis, numDocs);
             }
 

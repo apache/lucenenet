@@ -1,7 +1,7 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Search
 {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
                 try
                 {
                     bool remaining = @in.Score(collector, DocsEnum.NO_MORE_DOCS);
-                    Debug.Assert(!remaining);
+                    Debugging.Assert(() => !remaining);
                 }
 #pragma warning disable 168
                 catch (NotSupportedException e)

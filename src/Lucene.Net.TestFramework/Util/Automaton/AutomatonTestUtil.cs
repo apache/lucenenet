@@ -1,9 +1,9 @@
 using J2N;
 using J2N.Runtime.CompilerServices;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -191,7 +191,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            Debug.Assert(code >= t.Min && code <= t.Max && (code < UnicodeUtil.UNI_SUR_HIGH_START || code > UnicodeUtil.UNI_SUR_LOW_END), "code=" + code + " min=" + t.Min + " max=" + t.Max);
+            Debugging.Assert(() => code >= t.Min && code <= t.Max && (code < UnicodeUtil.UNI_SUR_HIGH_START || code > UnicodeUtil.UNI_SUR_LOW_END), () => "code=" + code + " min=" + t.Min + " max=" + t.Max);
             return code;
         }
 
@@ -399,7 +399,7 @@ namespace Lucene.Net.Util.Automaton
         {
             int numStates = a.GetNumberOfStates();
             a.ClearNumberedStates(); // force recomputation of cached numbered states
-            Debug.Assert(numStates == a.GetNumberOfStates(), "automaton has " + (numStates - a.GetNumberOfStates()) + " detached states");
+            Debugging.Assert(() => numStates == a.GetNumberOfStates(), () => "automaton has " + (numStates - a.GetNumberOfStates()) + " detached states");
         }
     }
 

@@ -13,6 +13,7 @@ using Lucene.Net.Codecs.MockSep;
 using Lucene.Net.Codecs.NestedPulsing;
 using Lucene.Net.Codecs.Pulsing;
 using Lucene.Net.Codecs.SimpleText;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -20,7 +21,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using J2N.Collections.Generic.Extensions;
 
 namespace Lucene.Net.Index
@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
                 }
                 previousMappings[name] = codec;
                 // Safety:
-                Debug.Assert(previousMappings.Count < 10000, "test went insane");
+                Debugging.Assert(() => previousMappings.Count < 10000, () => "test went insane");
             }
 
             //if (LuceneTestCase.VERBOSE)
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
                 }
                 previousDVMappings[name] = codec;
                 // Safety:
-                Debug.Assert(previousDVMappings.Count < 10000, "test went insane");
+                Debugging.Assert(() => previousDVMappings.Count < 10000, () => "test went insane");
             }
 
             //if (LuceneTestCase.VERBOSE)

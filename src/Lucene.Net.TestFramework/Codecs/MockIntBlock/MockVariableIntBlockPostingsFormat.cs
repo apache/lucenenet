@@ -1,10 +1,10 @@
 ﻿using Lucene.Net.Codecs.BlockTerms;
 using Lucene.Net.Codecs.IntBlock;
 using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.MockIntBlock
 {
@@ -107,7 +107,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                     {
                         buffer[0] = input.ReadVInt32();
                         int count = buffer[0] <= 3 ? baseBlockSize - 1 : 2 * baseBlockSize - 1;
-                        Debug.Assert(buffer.Length >= count, "buffer.length=" + buffer.Length + " count=" + count);
+                        Debugging.Assert(() => buffer.Length >= count, () => "buffer.length=" + buffer.Length + " count=" + count);
                         for (int i = 0; i < count; i++)
                         {
                             buffer[i + 1] = input.ReadVInt32();

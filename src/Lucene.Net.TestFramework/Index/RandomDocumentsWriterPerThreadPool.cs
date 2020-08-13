@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Threading;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Index
 {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
         public RandomDocumentsWriterPerThreadPool(int maxNumPerThreads, Random random)
             : base(maxNumPerThreads)
         {
-            Debug.Assert(MaxThreadStates >= 1);
+            Debugging.Assert(() => MaxThreadStates >= 1);
             states = new ThreadState[maxNumPerThreads];
             this.random = new Random(random.Next());
             this.maxRetry = 1 + random.Next(10);
@@ -56,14 +56,14 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            Debug.Assert(NumThreadStatesActive > 0);
+            Debugging.Assert(() => NumThreadStatesActive > 0);
             for (int i = 0; i < maxRetry; i++)
             {
                 int ord = random.Next(NumThreadStatesActive);
                 lock (this)
                 {
                     threadState = states[ord];
-                    Debug.Assert(threadState != null);
+                    Debugging.Assert(() => threadState != null);
                 }
 
                 if (threadState.TryLock())
@@ -89,12 +89,12 @@ namespace Lucene.Net.Index
                 if (newThreadState != null) // did we get a new state?
                 {
                     threadState = states[NumThreadStatesActive - 1] = newThreadState;
-                    //Debug.Assert(threadState.HeldByCurrentThread);
+                    //Debugging.Assert(threadState.HeldByCurrentThread);
                     return threadState;
                 }
                 // if no new state is available lock the random one
             }
-            Debug.Assert(threadState != null);
+            Debugging.Assert(() => threadState != null);
             threadState.@Lock();
             return threadState;
         }

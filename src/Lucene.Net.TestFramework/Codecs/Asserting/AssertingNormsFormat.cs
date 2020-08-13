@@ -1,7 +1,7 @@
 using Lucene.Net.Codecs.Lucene42;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using static Lucene.Net.Codecs.Asserting.AssertingDocValuesFormat;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Asserting
 {
@@ -32,15 +32,15 @@ namespace Lucene.Net.Codecs.Asserting
         public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
         {
             DocValuesConsumer consumer = @in.NormsConsumer(state);
-            Debug.Assert(consumer != null);
+            Debugging.Assert(() => consumer != null);
             return new AssertingNormsConsumer(consumer, state.SegmentInfo.DocCount);
         }
 
         public override DocValuesProducer NormsProducer(SegmentReadState state)
         {
-            Debug.Assert(state.FieldInfos.HasNorms);
+            Debugging.Assert(() => state.FieldInfos.HasNorms);
             DocValuesProducer producer = @in.NormsProducer(state);
-            Debug.Assert(producer != null);
+            Debugging.Assert(() => producer != null);
             return new AssertingDocValuesProducer(producer, state.SegmentInfo.DocCount);
         }
     }

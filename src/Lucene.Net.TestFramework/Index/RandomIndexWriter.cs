@@ -1,5 +1,6 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Codecs;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -7,7 +8,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Index
 {
@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("RIW: doRandomForceMerge(" + limit + ")");
                     }
                     IndexWriter.ForceMerge(limit);
-                    Debug.Assert(!doRandomForceMergeAssert || IndexWriter.SegmentCount <= limit, "limit=" + limit + " actual=" + IndexWriter.SegmentCount);
+                    Debugging.Assert(() => !doRandomForceMergeAssert || IndexWriter.SegmentCount <= limit, () => "limit=" + limit + " actual=" + IndexWriter.SegmentCount);
                 }
             }
         }

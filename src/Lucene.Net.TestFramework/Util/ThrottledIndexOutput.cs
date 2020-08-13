@@ -1,8 +1,8 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System;
 using System.Threading;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Util
 {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
 
         public ThrottledIndexOutput(int bytesPerSecond, long flushDelayMillis, long closeDelayMillis, long seekDelayMillis, long minBytesWritten, IndexOutput @delegate)
         {
-            Debug.Assert(bytesPerSecond > 0);
+            Debugging.Assert(() => bytesPerSecond > 0);
             this.@delegate = @delegate;
             this.bytesPerSecond = bytesPerSecond;
             this.flushDelayMillis = flushDelayMillis;

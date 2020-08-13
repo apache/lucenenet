@@ -1,9 +1,9 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public PreFlexRWStoredFieldsWriter(Directory directory, string segment, IOContext context)
         {
-            Debug.Assert(directory != null);
+            Debugging.Assert(() => directory != null);
             this.directory = directory;
             this.segment = segment;
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         fieldsStream.WriteInt64(J2N.BitConversion.DoubleToInt64Bits(field.GetDoubleValue().Value));
                         break;
                     default:
-                        Debug.Assert(false);
+                        Debugging.Assert(() => false);
                         break;
                 }
             }

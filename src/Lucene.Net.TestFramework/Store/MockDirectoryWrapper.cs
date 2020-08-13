@@ -1,4 +1,6 @@
+using J2N.Runtime.CompilerServices;
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
@@ -10,11 +12,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using JCG = J2N.Collections.Generic;
 using AssertionError = Lucene.Net.Diagnostics.AssertionException;
 using Console = Lucene.Net.Util.SystemConsole;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
-using J2N.Runtime.CompilerServices;
+using JCG = J2N.Collections.Generic;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
@@ -963,7 +963,7 @@ namespace Lucene.Net.Store
                                             {
                                                 if (endSet.Contains(s) && !startSet.Contains(s))
                                                 {
-                                                    Debug.Assert(pendingDeletions.Contains(s));
+                                                    Debugging.Assert(() => pendingDeletions.Contains(s));
                                                     if (LuceneTestCase.Verbose)
                                                     {
                                                         Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + 
@@ -1024,7 +1024,7 @@ namespace Lucene.Net.Store
                                         extras += "\n\nThese files we had previously tried to delete, but couldn't: " + pendingDeletions;
                                     }
 
-                                    Debug.Assert(false, "unreferenced files: before delete:\n    " + Arrays.ToString(startFiles) + "\n  after delete:\n    " + Arrays.ToString(endFiles) + extras);
+                                    Debugging.Assert(() => false, () => "unreferenced files: before delete:\n    " + Arrays.ToString(startFiles) + "\n  after delete:\n    " + Arrays.ToString(endFiles) + extras);
                                 }
 
                                 DirectoryReader ir1 = DirectoryReader.Open(this);
@@ -1034,7 +1034,7 @@ namespace Lucene.Net.Store
                                 DirectoryReader ir2 = DirectoryReader.Open(this);
                                 int numDocs2 = ir2.NumDocs;
                                 ir2.Dispose();
-                                Debug.Assert(numDocs1 == numDocs2, "numDocs changed after opening/closing IW: before=" + numDocs1 + " after=" + numDocs2);
+                                Debugging.Assert(() => numDocs1 == numDocs2, () => "numDocs changed after opening/closing IW: before=" + numDocs1 + " after=" + numDocs2);
                             }
                         }
                     }

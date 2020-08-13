@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Compressing.Dummy
 {
@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
         {
             public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
             {
-                Debug.Assert(offset + length <= originalLength);
+                Debugging.Assert(() => offset + length <= originalLength);
                 if (bytes.Bytes.Length < originalLength)
                 {
                     bytes.Bytes = new byte[ArrayUtil.Oversize(originalLength, 1)];

@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using System;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
 
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
         /// Create a random set which has <paramref name="numBitsSet"/> of its <paramref name="numBits"/> bits set. </summary>
         protected static BitSet RandomSet(int numBits, int numBitsSet)
         {
-            Debug.Assert(numBitsSet <= numBits);
+            Debugging.Assert(() => numBitsSet <= numBits);
             BitSet set = new BitSet(numBits);
             Random random = Random;
             if (numBitsSet == numBits)

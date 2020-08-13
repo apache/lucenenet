@@ -5,13 +5,13 @@ using Lucene.Net.Codecs.MockIntBlock;
 using Lucene.Net.Codecs.MockSep;
 using Lucene.Net.Codecs.Pulsing;
 using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.MockRandom
 {
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.MockRandom
             private static string GetExtension(string fileName)
             {
                 int idx = fileName.IndexOf('.');
-                Debug.Assert(idx != -1);
+                Debugging.Assert(() => idx != -1);
                 return fileName.Substring(idx);
             }
 

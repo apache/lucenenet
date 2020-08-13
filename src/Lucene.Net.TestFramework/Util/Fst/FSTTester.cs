@@ -1,6 +1,7 @@
 using J2N;
 using J2N.Collections;
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util.Packed;
 using System;
@@ -11,7 +12,6 @@ using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Directory = Lucene.Net.Store.Directory;
 using JCG = J2N.Collections.Generic;
 
@@ -103,7 +103,7 @@ namespace Lucene.Net.Util.Fst
             for (int i = 0; i < ir.Length; i++)
             {
                 int x = ir.Int32s[ir.Offset + i];
-                Debug.Assert(x >= 0 && x <= 255);
+                Debugging.Assert(() => x >= 0 && x <= 255);
                 br.Bytes[i] = (byte)x;
             }
             br.Length = ir.Length;
@@ -219,7 +219,7 @@ namespace Lucene.Net.Util.Fst
         // of the term prefix that matches
         private T Run(FST<T> fst, Int32sRef term, int[] prefixLength)
         {
-            Debug.Assert(prefixLength == null || prefixLength.Length == 1);
+            Debugging.Assert(() => prefixLength == null || prefixLength.Length == 1);
             FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
             T NO_OUTPUT = fst.Outputs.NoOutput;
             T output = NO_OUTPUT;
@@ -690,7 +690,7 @@ namespace Lucene.Net.Util.Fst
                             if (!termsMap.ContainsKey(term) && term.CompareTo(pairs[upto].Input) > 0)
                             {
                                 int pos = pairs.BinarySearch(new InputOutput<T>(term, default(T)));
-                                Debug.Assert(pos < 0);
+                                Debugging.Assert(() => pos < 0);
                                 upto = -(pos + 1);
 
                                 if (random.NextBoolean())
@@ -887,7 +887,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     else
                     {
-                        Debug.Assert(prune2 > 0);
+                        Debugging.Assert(() => prune2 > 0);
                         if (prune2 > 1 && cmo.Count >= prune2)
                         {
                             keep = true;

@@ -1,9 +1,9 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override TermsConsumer AddField(FieldInfo field)
         {
-            Debug.Assert(field.Number != -1);
+            Debugging.Assert(() => field.Number != -1);
             if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
                 throw new NotSupportedException("this codec cannot index offsets");
@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     lastDocID = docID;
 
-                    Debug.Assert(docID < outerInstance.outerInstance.totalNumDocs, "docID=" + docID + " totalNumDocs=" + outerInstance.outerInstance.totalNumDocs);
+                    Debugging.Assert(() => docID < outerInstance.outerInstance.totalNumDocs, () => "docID=" + docID + " totalNumDocs=" + outerInstance.outerInstance.totalNumDocs);
 
                     if (outerInstance.omitTF)
                     {
@@ -188,9 +188,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
                 {
-                    Debug.Assert(outerInstance.outerInstance.proxOut != null);
-                    Debug.Assert(startOffset == -1);
-                    Debug.Assert(endOffset == -1);
+                    Debugging.Assert(() => outerInstance.outerInstance.proxOut != null);
+                    Debugging.Assert(() => startOffset == -1);
+                    Debugging.Assert(() => endOffset == -1);
                     //System.out.println("      w pos=" + position + " payl=" + payload);
                     int delta = position - lastPosition;
                     lastPosition = position;

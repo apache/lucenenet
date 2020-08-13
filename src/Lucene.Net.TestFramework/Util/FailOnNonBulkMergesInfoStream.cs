@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Util
 {
@@ -35,7 +35,7 @@ namespace Lucene.Net.Util
 
         public override void Message(string component, string message)
         {
-            Debug.Assert(!message.Contains("non-bulk merges"));
+            Debugging.Assert(() => !message.Contains("non-bulk merges"));
         }
     }
 }

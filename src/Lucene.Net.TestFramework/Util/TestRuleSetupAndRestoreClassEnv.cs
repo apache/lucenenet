@@ -10,6 +10,7 @@ using Lucene.Net.Codecs.Lucene45;
 using Lucene.Net.Codecs.Lucene46;
 using Lucene.Net.Codecs.MockRandom;
 using Lucene.Net.Codecs.SimpleText;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
@@ -21,7 +22,6 @@ using System.Reflection;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
-using Debug = Lucene.Net.Diagnostics.Debug;
 
 // LUCENENET NOTE: These are primarily here because they are referred to
 // in the XML documentation. Be sure to add a new option if a new test framework
@@ -169,7 +169,7 @@ namespace Lucene.Net.Util
                                                                 !ShouldAvoidCodec("Lucene3x"))) // preflex-only setup
             {
                 codec = Codec.ForName("Lucene3x");
-                Debug.Assert((codec is PreFlexRWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
+                Debugging.Assert(() => (codec is PreFlexRWCodec), () => "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
             }
             else if ("Lucene40".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) &&
@@ -179,8 +179,8 @@ namespace Lucene.Net.Util
             {
                 codec = Codec.ForName("Lucene40");
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
-                Debug.Assert((codec is Lucene40RWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
-                Debug.Assert((PostingsFormat.ForName("Lucene40") is Lucene40RWPostingsFormat), "fix your IPostingsFormatFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
+                Debugging.Assert(() => (codec is Lucene40RWCodec), () => "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
+                Debugging.Assert(() => (PostingsFormat.ForName("Lucene40") is Lucene40RWPostingsFormat), () => "fix your IPostingsFormatFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
             }
             else if ("Lucene41".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) &&
                                                                     "random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) &&
@@ -190,7 +190,7 @@ namespace Lucene.Net.Util
             {
                 codec = Codec.ForName("Lucene41");
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
-                Debug.Assert((codec is Lucene41RWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
+                Debugging.Assert(() => (codec is Lucene41RWCodec), () => "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
             }
             else if ("Lucene42".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) &&
                                                                     "random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) &&
@@ -200,7 +200,7 @@ namespace Lucene.Net.Util
             {
                 codec = Codec.ForName("Lucene42");
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
-                Debug.Assert((codec is Lucene42RWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
+                Debugging.Assert(() => (codec is Lucene42RWCodec), () => "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
             }
             else if ("Lucene45".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) &&
                                                                     "random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) &&
@@ -210,7 +210,7 @@ namespace Lucene.Net.Util
             {
                 codec = Codec.ForName("Lucene45");
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
-                Debug.Assert((codec is Lucene45RWCodec), "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
+                Debugging.Assert(() => (codec is Lucene45RWCodec), () => "fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
             }
             else if (("random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) == false) 
                 || ("random".Equals(LuceneTestCase.TestDocValuesFormat, StringComparison.Ordinal) == false))
@@ -275,7 +275,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                Debug.Assert(false);
+                Debugging.Assert(() => false);
             }
             Codec.Default = codec;
 

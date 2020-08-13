@@ -1,5 +1,6 @@
 using J2N.Threading;
 using Lucene.Net.Codecs;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -8,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
 using J2N.Collections.Generic.Extensions;
@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
                     posUpto = freq;
                     return 0;
                 }
-                Debug.Assert(posUpto < freq);
+                Debugging.Assert(() => posUpto < freq);
 
                 if (posUpto == 0 && random.NextBoolean())
                 {
