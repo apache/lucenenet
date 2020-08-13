@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -52,43 +53,43 @@ namespace Lucene.Net.Codecs.SimpleText
             try
             {
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_VERSION));
+                Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_VERSION));
                 string version = ReadString(SimpleTextSegmentInfoWriter.SI_VERSION.Length, scratch);
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_DOCCOUNT));
+                Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_DOCCOUNT));
                 int docCount = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_DOCCOUNT.Length, scratch), CultureInfo.InvariantCulture);
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_USECOMPOUND));
+                Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_USECOMPOUND));
                 bool isCompoundFile = Convert.ToBoolean(ReadString(SimpleTextSegmentInfoWriter.SI_USECOMPOUND.Length, scratch), CultureInfo.InvariantCulture);
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_NUM_DIAG));
+                Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_NUM_DIAG));
                 int numDiag = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_NUM_DIAG.Length, scratch), CultureInfo.InvariantCulture);
                 IDictionary<string, string> diagnostics = new Dictionary<string, string>();
 
                 for (int i = 0; i < numDiag; i++)
                 {
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_DIAG_KEY));
+                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_DIAG_KEY));
                     string key = ReadString(SimpleTextSegmentInfoWriter.SI_DIAG_KEY.Length, scratch);
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_DIAG_VALUE));
+                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_DIAG_VALUE));
                     string value = ReadString(SimpleTextSegmentInfoWriter.SI_DIAG_VALUE.Length, scratch);
                     diagnostics[key] = value;
                 }
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_NUM_FILES));
+                Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_NUM_FILES));
                 int numFiles = Convert.ToInt32(ReadString(SimpleTextSegmentInfoWriter.SI_NUM_FILES.Length, scratch), CultureInfo.InvariantCulture);
                 var files = new JCG.HashSet<string>();
 
                 for (int i = 0; i < numFiles; i++)
                 {
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_FILE));
+                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextSegmentInfoWriter.SI_FILE));
                     string fileName = ReadString(SimpleTextSegmentInfoWriter.SI_FILE.Length, scratch);
                     files.Add(fileName);
                 }

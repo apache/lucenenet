@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -171,7 +172,7 @@ namespace Lucene.Net.Index
         public static DirectoryReader OpenIfChanged(DirectoryReader oldReader)
         {
             DirectoryReader newReader = oldReader.DoOpenIfChanged();
-            Debug.Assert(newReader != oldReader);
+            Debugging.Assert(() => newReader != oldReader);
             return newReader;
         }
 
@@ -184,7 +185,7 @@ namespace Lucene.Net.Index
         public static DirectoryReader OpenIfChanged(DirectoryReader oldReader, IndexCommit commit)
         {
             DirectoryReader newReader = oldReader.DoOpenIfChanged(commit);
-            Debug.Assert(newReader != oldReader);
+            Debugging.Assert(() => newReader != oldReader);
             return newReader;
         }
 
@@ -251,7 +252,7 @@ namespace Lucene.Net.Index
         public static DirectoryReader OpenIfChanged(DirectoryReader oldReader, IndexWriter writer, bool applyAllDeletes)
         {
             DirectoryReader newReader = oldReader.DoOpenIfChanged(writer, applyAllDeletes);
-            Debug.Assert(newReader != oldReader);
+            Debugging.Assert(() => newReader != oldReader);
             return newReader;
         }
 

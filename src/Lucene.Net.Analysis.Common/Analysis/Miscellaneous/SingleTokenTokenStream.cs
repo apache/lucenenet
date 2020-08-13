@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using System.Diagnostics;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -34,11 +35,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public SingleTokenTokenStream(Token token) 
             : base(Token.TOKEN_ATTRIBUTE_FACTORY)
         {
-            Debug.Assert(token != null);
+            Debugging.Assert(() => token != null);
             this.singleToken = (Token)token.Clone();
 
             tokenAtt = AddAttribute<ICharTermAttribute>();
-            Debug.Assert(tokenAtt is Token);
+            Debugging.Assert(() => tokenAtt is Token);
         }
 
         public override sealed bool IncrementToken()

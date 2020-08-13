@@ -1,4 +1,5 @@
 ﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Facet.SortedSet;
 using Lucene.Net.Facet.Taxonomy;
 using Lucene.Net.Search;
@@ -174,7 +175,7 @@ namespace Lucene.Net.Facet
             }
             else
             {
-                Debug.Assert(clauses.Length == 1 + drillDownDims.Count);
+                Debugging.Assert(() => clauses.Length == 1 + drillDownDims.Count);
                 baseQuery = clauses[0].Query;
                 startClause = 1;
             }

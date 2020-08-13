@@ -1,4 +1,5 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using System;
@@ -133,7 +134,7 @@ namespace Lucene.Net.Replicator
 
         public virtual Stream Open(string source, string fileName)
         {
-            Debug.Assert(source.Equals(SOURCE, StringComparison.Ordinal), string.Format("invalid source; expected={0} got={1}", SOURCE, source));
+            Debugging.Assert(() => source.Equals(SOURCE, StringComparison.Ordinal), () => string.Format("invalid source; expected={0} got={1}", SOURCE, source));
             return new IndexInputStream(commit.Directory.OpenInput(fileName, IOContext.READ_ONCE));
         }
 

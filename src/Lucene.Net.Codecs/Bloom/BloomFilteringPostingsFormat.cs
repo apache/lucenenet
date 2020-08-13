@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -379,7 +380,7 @@ namespace Lucene.Net.Codecs.Bloom
                 var bloomFilter = outerInstance._bloomFilterFactory.GetSetForField(_state, field);
                 if (bloomFilter != null)
                 {
-                    Debug.Assert((_bloomFilters.ContainsKey(field) == false));
+                    Debugging.Assert(() => (_bloomFilters.ContainsKey(field) == false));
 
                     _bloomFilters.Add(field, bloomFilter);
                     return new WrappedTermsConsumer(_delegateFieldsConsumer.AddField(field), bloomFilter);

@@ -1,8 +1,8 @@
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
             this.bytes = bytes;
             this.Offset = offset;
             this.Length = length;
-            Debug.Assert(IsValid());
+            Debugging.Assert(IsValid);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
         /// unpaired surrogates or invalid UTF16 code units. </param>
         public void CopyChars(ICharSequence text)
         {
-            Debug.Assert(Offset == 0); // TODO broken if offset != 0
+            Debugging.Assert(() => Offset == 0); // TODO broken if offset != 0
             UnicodeUtil.UTF16toUTF8(text, 0, text.Length, this);
         }
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Util
         /// unpaired surrogates or invalid UTF16 code units. </param>
         public void CopyChars(string text)
         {
-            Debug.Assert(Offset == 0); // TODO broken if offset != 0
+            Debugging.Assert(() => Offset == 0); // TODO broken if offset != 0
             UnicodeUtil.UTF16toUTF8(text, 0, text.Length, this);
         }
 
@@ -164,7 +164,7 @@ namespace Lucene.Net.Util
         /// <param name="other"> Another <see cref="BytesRef"/>, should not be <c>null</c>. </param>
         public bool BytesEquals(BytesRef other)
         {
-            Debug.Assert(other != null);
+            Debugging.Assert(() => other != null);
             if (Length == other.Length)
             {
                 var otherUpto = other.Offset;
@@ -298,7 +298,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Grow(int newLength)
         {
-            Debug.Assert(Offset == 0); // NOTE: senseless if offset != 0
+            Debugging.Assert(() => Offset == 0); // NOTE: senseless if offset != 0
             bytes = ArrayUtil.Grow(bytes, newLength);
         }
 
@@ -307,7 +307,7 @@ namespace Lucene.Net.Util
         public int CompareTo(object other) // LUCENENET specific: Implemented IComparable for FieldComparer
         {
             BytesRef br = other as BytesRef;
-            Debug.Assert(br != null);
+            Debugging.Assert(() => br != null);
             return utf8SortedAsUnicodeSortOrder.Compare(this, br);
         }
 

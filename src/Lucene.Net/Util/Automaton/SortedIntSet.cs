@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util.Automaton
                     return;
                 }
             }
-            Debug.Assert(false);
+            Debugging.Assert(() => false);
         }
 
         public void ComputeHash()

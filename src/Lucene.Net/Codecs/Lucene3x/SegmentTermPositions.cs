@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
 using System.Diagnostics;
@@ -168,7 +169,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private void SkipPositions(int n)
         {
-            Debug.Assert(m_indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Debugging.Assert(() => m_indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
             for (int f = n; f > 0; f--) // skip unread positions
             {
                 ReadDeltaPosition();

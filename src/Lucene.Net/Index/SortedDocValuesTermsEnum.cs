@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
@@ -21,8 +21,8 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// Implements a <see cref="TermsEnum"/> wrapping a provided
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
 
         public override void SeekExact(long ord)
         {
-            Debug.Assert(ord >= 0 && ord < values.ValueCount);
+            Debugging.Assert(() => ord >= 0 && ord < values.ValueCount);
             currentOrd = (int)ord;
             values.LookupOrd(currentOrd, term);
         }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
 
         public override void SeekExact(BytesRef term, TermState state)
         {
-            Debug.Assert(state != null && state is OrdTermState);
+            Debugging.Assert(() => state != null && state is OrdTermState);
             this.SeekExact(((OrdTermState)state).Ord);
         }
 

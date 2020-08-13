@@ -1,7 +1,7 @@
 using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public SegmentInfo(Directory dir, string version, string name, int docCount, bool isCompoundFile, Codec codec, IDictionary<string, string> diagnostics, IDictionary<string, string> attributes)
         {
-            Debug.Assert(!(dir is TrackingDirectoryWrapper));
+            Debugging.Assert(() => !(dir is TrackingDirectoryWrapper));
             this.Dir = dir;
             this.version = version;
             this.Name = name;
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
             get => codec;
             set
             {
-                Debug.Assert(this.codec == null);
+                Debugging.Assert(() => this.codec == null);
                 if (value == null)
                 {
                     throw new ArgumentException("codec must be non-null");

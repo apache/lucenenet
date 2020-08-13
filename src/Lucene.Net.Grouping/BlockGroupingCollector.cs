@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -152,8 +153,8 @@ namespace Lucene.Net.Search.Grouping
             {
 
                 //System.out.println("    ltcheck");
-                Debug.Assert(group1 != group2);
-                Debug.Assert(group1.comparerSlot != group2.comparerSlot);
+                Debugging.Assert(() => group1 != group2);
+                Debugging.Assert(() => group1.comparerSlot != group2.comparerSlot);
 
                 int numComparers = outerInstance.comparers.Length;
                 for (int compIDX = 0; compIDX < numComparers; compIDX++)
@@ -220,7 +221,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     // Replace bottom element in PQ and then updateTop
                     OneGroup og = groupQueue.Top;
-                    Debug.Assert(og != null);
+                    Debugging.Assert(() => og != null);
                     og.count = subDocUpto;
                     og.topGroupDoc = docBase + topGroupDoc;
                     // Swap pending docs
@@ -520,7 +521,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 if (subDocUpto == 1)
                 {
-                    Debug.Assert(!queueFull);
+                    Debugging.Assert(() => !queueFull);
 
                     //System.out.println("    init copy to bottomSlot=" + bottomSlot);
                     foreach (FieldComparer fc in comparers)

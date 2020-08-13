@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -150,7 +151,7 @@ namespace Lucene.Net.Codecs
             }
             else
             {
-                Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+                Debugging.Assert(() => indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
                 var postingsEnum = (DocsAndPositionsEnum)postings;
                 while (true)
                 {

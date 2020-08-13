@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -227,7 +228,7 @@ namespace Lucene.Net.Codecs.Bloom
 
         private ContainsResult MayContainValue(int positiveHash)
         {
-            Debug.Assert((positiveHash >= 0));
+            Debugging.Assert(() => (positiveHash >= 0));
 
             // Bloom sizes are always base 2 and so can be ANDed for a fast modulo
             var pos = positiveHash & _bloomSize;

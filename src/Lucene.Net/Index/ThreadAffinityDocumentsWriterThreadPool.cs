@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -44,7 +45,7 @@ namespace Lucene.Net.Index
         public ThreadAffinityDocumentsWriterThreadPool(int maxNumPerThreads)
             : base(maxNumPerThreads)
         {
-            Debug.Assert(MaxThreadStates >= 1);
+            Debugging.Assert(() => MaxThreadStates >= 1);
         }
 
         public override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
@@ -66,7 +67,7 @@ namespace Lucene.Net.Index
                 ThreadState newState = NewThreadState(); // state is already locked if non-null
                 if (newState != null)
                 {
-                    //Debug.Assert(newState.HeldByCurrentThread);
+                    //Debugging.Assert(newState.HeldByCurrentThread);
                     threadBindings[requestingThread] = newState;
                     return newState;
                 }
@@ -80,7 +81,7 @@ namespace Lucene.Net.Index
                     minThreadState = MinContendedThreadState();
                 }
             }
-            Debug.Assert(minThreadState != null, "ThreadState is null");
+            Debugging.Assert(() => minThreadState != null, () => "ThreadState is null");
 
             minThreadState.@Lock();
             return minThreadState;

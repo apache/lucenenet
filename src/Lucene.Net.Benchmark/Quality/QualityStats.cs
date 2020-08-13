@@ -1,4 +1,5 @@
 ﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -241,7 +242,7 @@ namespace Lucene.Net.Benchmarks.Quality
                     }
                 }
             }
-            Debug.Assert(m> 0, "Fishy: no \"good\" queries!");
+            Debugging.Assert(() => m > 0, () => "Fishy: no \"good\" queries!");
             // take average: times go by all queries, other measures go by "good" queries only.
             avg.searchTime /= stats.Length;
             avg.docNamesExtractTime /= stats.Length;

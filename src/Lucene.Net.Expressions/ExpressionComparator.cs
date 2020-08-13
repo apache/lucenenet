@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
@@ -48,11 +49,11 @@ namespace Lucene.Net.Expressions
             base.SetScorer(scorer);
             // TODO: might be cleaner to lazy-init 'source' and set scorer after?
 
-            Debug.Assert(readerContext != null);
+            Debugging.Assert(() => readerContext != null);
             try
             {
                 var context = new Dictionary<string, object>();
-                Debug.Assert(scorer != null);
+                Debugging.Assert(() => scorer != null);
                 context["scorer"] = scorer;
                 scores = source.GetValues(context, readerContext);
             }

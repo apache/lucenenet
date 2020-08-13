@@ -1,8 +1,8 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -93,12 +93,12 @@ namespace Lucene.Net.Index
                     int target = Map(i);
                     if (target < 0 || target >= maxDoc)
                     {
-                        Debug.Assert(false, "out of range: " + target + " not in [0-" + maxDoc + "[");
+                        Debugging.Assert(() => false, () => "out of range: " + target + " not in [0-" + maxDoc + "[");
                         return false;
                     }
                     else if (targets.Get(target))
                     {
-                        Debug.Assert(false, target + " is already taken (" + i + ")");
+                        Debugging.Assert(() => false, () => target + " is already taken (" + i + ")");
                         return false;
                     }
                 }
@@ -721,7 +721,7 @@ namespace Lucene.Net.Index
             long byteSize = info.GetSizeInBytes();
             int delCount = m_writer.Get().NumDeletedDocs(info);
             double delRatio = (info.Info.DocCount <= 0 ? 0.0f : ((float)delCount / (float)info.Info.DocCount));
-            Debug.Assert(delRatio <= 1.0);
+            Debugging.Assert(() => delRatio <= 1.0);
             return (info.Info.DocCount <= 0 ? byteSize : (long)(byteSize * (1.0 - delRatio)));
         }
 
@@ -733,7 +733,7 @@ namespace Lucene.Net.Index
         protected bool IsMerged(SegmentInfos infos, SegmentCommitInfo info)
         {
             IndexWriter w = m_writer.Get();
-            Debug.Assert(w != null);
+            Debugging.Assert(() => w != null);
             bool hasDeletions = w.NumDeletedDocs(info) > 0;
             return !hasDeletions
 #pragma warning disable 612, 618

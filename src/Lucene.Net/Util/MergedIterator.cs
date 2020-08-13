@@ -1,7 +1,7 @@
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Util
 
         private void PullTop()
         {
-            Debug.Assert(numTop == 0);
+            Debugging.Assert(() => numTop == 0);
             top[numTop++] = queue.Pop();
             if (removeDuplicates)
             {

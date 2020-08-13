@@ -1,4 +1,5 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -69,7 +70,7 @@ namespace Lucene.Net.Index
                 {
                     throw new NotSupportedException("this is not a top-level context.");
                 }
-                Debug.Assert(leaves != null);
+                Debugging.Assert(() => leaves != null);
                 return leaves;
             }
         }
@@ -125,7 +126,7 @@ namespace Lucene.Net.Index
                         children[i] = Build(newParent, r, i, newDocBase);
                         newDocBase += r.MaxDoc;
                     }
-                    Debug.Assert(newDocBase == cr.MaxDoc);
+                    Debugging.Assert(() => newDocBase == cr.MaxDoc);
                     return newParent;
                 }
             }

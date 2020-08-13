@@ -1,5 +1,6 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
@@ -269,7 +270,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 IList<Transition> newTransitions = new List<Transition>();
                 foreach (Transition t in state.GetTransitions())
                 {
-                    Debug.Assert(t.Min == t.Max);
+                    Debugging.Assert(() => t.Min == t.Max);
                     if (t.Min == TokenStreamToAutomaton.POS_SEP)
                     {
                         if (preserveSep)
@@ -358,8 +359,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Next by cost:
                 long aCost = readerA.ReadInt32();
                 long bCost = readerB.ReadInt32();
-                Debug.Assert(DecodeWeight(aCost) >= 0);
-                Debug.Assert(DecodeWeight(bCost) >= 0);
+                Debugging.Assert(() => DecodeWeight(aCost) >= 0);
+                Debugging.Assert(() => DecodeWeight(bCost) >= 0);
                 if (aCost < bCost)
                 {
                     return -1;
@@ -486,7 +487,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             output.WriteBytes(surfaceForm.Bytes, surfaceForm.Offset, surfaceForm.Length);
                         }
 
-                        Debug.Assert(output.Position == requiredLength, output.Position + " vs " + requiredLength);
+                        Debugging.Assert(() => output.Position == requiredLength, () => output.Position + " vs " + requiredLength);
 
                         writer.Write(buffer, 0, output.Position);
                     }
@@ -660,7 +661,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         break;
                     }
                 }
-                Debug.Assert(sepIndex != -1);
+                Debugging.Assert(() => sepIndex != -1);
                 spare.Grow(sepIndex);
 
                 int payloadLen = output2.Length - sepIndex - 1;
@@ -706,7 +707,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
-            Debug.Assert(num > 0);
+            Debugging.Assert(() => num > 0);
 
             if (onlyMorePopular)
             {
@@ -798,7 +799,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
 
                     var completions = searcher.Search();
-                    Debug.Assert(completions.IsComplete);
+                    Debugging.Assert(() => completions.IsComplete);
 
                     // NOTE: this is rather inefficient: we enumerate
                     // every matching "exactly the same analyzed form"
@@ -841,7 +842,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 var completions2 = searcher2.Search();
-                Debug.Assert(completions2.IsComplete);
+                Debugging.Assert(() => completions2.IsComplete);
 
                 foreach (Util.Fst.Util.Result<PairOutputs<long?, BytesRef>.Pair> completion in completions2)
                 {
@@ -919,7 +920,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         // We found exact match, which means we should
                         // have already found it in the first search:
-                        Debug.Assert(results.Count == 1);
+                        Debugging.Assert(() => results.Count == 1);
                         return false;
                     }
                     else
@@ -963,7 +964,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             ReplaceSep(automaton);
             automaton = ConvertAutomaton(automaton);
 
-            Debug.Assert(SpecialOperations.IsFinite(automaton));
+            Debugging.Assert(() => SpecialOperations.IsFinite(automaton));
 
             // Get all paths from the automaton (there can be
             // more than one path, eg if the analyzer created a

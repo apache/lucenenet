@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
@@ -245,7 +246,7 @@ namespace Lucene.Net.Join
                         }
                     }
 
-                    Debug.Assert(_childDoc < _parentDoc, "childDoc=" + _childDoc + " parentDoc=" + _parentDoc);
+                    Debugging.Assert(() => _childDoc < _parentDoc, () => "childDoc=" + _childDoc + " parentDoc=" + _parentDoc);
                     _childDoc++;
                     if (_acceptDocs != null && !_acceptDocs.Get(_childDoc))
                     {
@@ -279,7 +280,7 @@ namespace Lucene.Net.Join
 
             public override int Advance(int childTarget)
             {
-                Debug.Assert(childTarget >= _parentBits.Length || !_parentBits.Get(childTarget));
+                Debugging.Assert(() => childTarget >= _parentBits.Length || !_parentBits.Get(childTarget));
 
                 //System.out.println("Q.advance childTarget=" + childTarget);
                 if (childTarget == NO_MORE_DOCS)
@@ -288,14 +289,14 @@ namespace Lucene.Net.Join
                     return _childDoc = _parentDoc = NO_MORE_DOCS;
                 }
 
-                Debug.Assert(_childDoc == -1 || childTarget != _parentDoc, "childTarget=" + childTarget);
+                Debugging.Assert(() => _childDoc == -1 || childTarget != _parentDoc, () => "childTarget=" + childTarget);
                 if (_childDoc == -1 || childTarget > _parentDoc)
                 {
                     // Advance to new parent:
                     _parentDoc = _parentScorer.Advance(childTarget);
                     ValidateParentDoc();
                     //System.out.println("  advance to parentDoc=" + parentDoc);
-                    Debug.Assert(_parentDoc > childTarget);
+                    Debugging.Assert(() => _parentDoc > childTarget);
                     if (_parentDoc == NO_MORE_DOCS)
                     {
                         //System.out.println("  END");
@@ -311,7 +312,7 @@ namespace Lucene.Net.Join
                     childTarget = Math.Max(childTarget, firstChild);
                 }
 
-                Debug.Assert(childTarget < _parentDoc);
+                Debugging.Assert(() => childTarget < _parentDoc);
 
                 // Advance within children of current parent:
                 _childDoc = childTarget;

@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Util
                 nextPos++;
                 count++;
             }
-            Debug.Assert(InBounds(pos));
+            Debugging.Assert(() => InBounds(pos));
             int index = GetIndex(pos);
             return buffer[index];
         }
@@ -152,8 +152,8 @@ namespace Lucene.Net.Util
         public virtual void FreeBefore(int pos)
         {
             int toFree = count - (nextPos - pos);
-            Debug.Assert(toFree >= 0);
-            Debug.Assert(toFree <= count, "toFree=" + toFree + " count=" + count);
+            Debugging.Assert(() => toFree >= 0);
+            Debugging.Assert(() => toFree <= count, () => "toFree=" + toFree + " count=" + count);
             int index = nextWrite - count;
             if (index < 0)
             {

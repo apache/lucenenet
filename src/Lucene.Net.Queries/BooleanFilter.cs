@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System.Collections;
@@ -77,7 +78,7 @@ namespace Lucene.Net.Queries
                 {
                     if (res == null)
                     {
-                        Debug.Assert(!hasShouldClauses);
+                        Debugging.Assert(() => !hasShouldClauses);
                         res = new FixedBitSet(reader.MaxDoc);
                         res.Set(0, reader.MaxDoc); // NOTE: may set bits on deleted docs
                     }

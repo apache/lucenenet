@@ -1,6 +1,6 @@
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
@@ -162,7 +162,7 @@ namespace Lucene.Net.Store
 
         public override void WriteBytes(byte[] b, int offset, int len)
         {
-            Debug.Assert(b != null);
+            Debugging.Assert(() => b != null);
             crc.Update(b, offset, len);
             while (len > 0)
             {

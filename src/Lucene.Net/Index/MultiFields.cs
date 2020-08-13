@@ -1,8 +1,8 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -24,8 +24,8 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
     /// Exposes flex API, merged from flex API of sub-segments.
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             {
                 IList<AtomicReaderContext> leaves = reader.Leaves;
                 int size = leaves.Count;
-                Debug.Assert(size > 0, "A reader with deletions must have at least one leave");
+                Debugging.Assert(() => size > 0, () => "A reader with deletions must have at least one leave");
                 if (size == 1)
                 {
                     return leaves[0].AtomicReader.LiveDocs;
@@ -175,8 +175,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public static DocsEnum GetTermDocsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsFlags flags)
         {
-            Debug.Assert(field != null);
-            Debug.Assert(term != null);
+            Debugging.Assert(() => field != null);
+            Debugging.Assert(() => term != null);
             Terms terms = GetTerms(r, field);
             if (terms != null)
             {
@@ -210,8 +210,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsAndPositionsFlags flags)
         {
-            Debug.Assert(field != null);
-            Debug.Assert(term != null);
+            Debugging.Assert(() => field != null);
+            Debugging.Assert(() => term != null);
             Terms terms = GetTerms(r, field);
             if (terms != null)
             {

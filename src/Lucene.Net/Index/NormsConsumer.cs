@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
                 if (state.FieldInfos.HasNorms)
                 {
                     NormsFormat normsFormat = state.SegmentInfo.Codec.NormsFormat;
-                    Debug.Assert(normsFormat != null);
+                    Debugging.Assert(() => normsFormat != null);
                     normsConsumer = normsFormat.NormsConsumer(state);
 
                     foreach (FieldInfo fi in state.FieldInfos)
@@ -63,11 +63,11 @@ namespace Lucene.Net.Index
                             if (toWrite != null && !toWrite.IsEmpty)
                             {
                                 toWrite.Flush(state, normsConsumer);
-                                Debug.Assert(fi.NormType == DocValuesType.NUMERIC);
+                                Debugging.Assert(() => fi.NormType == DocValuesType.NUMERIC);
                             }
                             else if (fi.IsIndexed)
                             {
-                                Debug.Assert(fi.NormType == DocValuesType.NONE, "got " + fi.NormType + "; field=" + fi.Name);
+                                Debugging.Assert(() => fi.NormType == DocValuesType.NONE, () => "got " + fi.NormType + "; field=" + fi.Name);
                             }
                         }
                     }

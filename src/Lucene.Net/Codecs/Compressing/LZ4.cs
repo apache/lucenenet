@@ -1,4 +1,5 @@
 using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -75,7 +76,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private static int CommonBytes(byte[] b, int o1, int o2, int limit)
         {
-            Debug.Assert(o1 < o2);
+            Debugging.Assert(() => o1 < o2);
             int count = 0;
             while (o2 < limit && b[o1++] == b[o2++])
             {
@@ -134,7 +135,7 @@ namespace Lucene.Net.Codecs.Compressing
                 var byte1 = compressed.ReadByte();
                 var byte2 = compressed.ReadByte();
                 int matchDec = (byte1 & 0xFF) | ((byte2 & 0xFF) << 8);
-                Debug.Assert(matchDec > 0);
+                Debugging.Assert(() => matchDec > 0);
 
                 int matchLen = token & 0x0F;
                 if (matchLen == 0x0F)
@@ -202,14 +203,14 @@ namespace Lucene.Net.Codecs.Compressing
         private static void EncodeSequence(byte[] bytes, int anchor, int matchRef, int matchOff, int matchLen, DataOutput @out)
         {
             int literalLen = matchOff - anchor;
-            Debug.Assert(matchLen >= 4);
+            Debugging.Assert(() => matchLen >= 4);
             // encode token
             int token = (Math.Min(literalLen, 0x0F) << 4) | Math.Min(matchLen - 4, 0x0F);
             EncodeLiterals(bytes, token, anchor, literalLen, @out);
 
             // encode match dec
             int matchDec = matchOff - matchRef;
-            Debug.Assert(matchDec > 0 && matchDec < 1 << 16);
+            Debugging.Assert(() => matchDec > 0 && matchDec < 1 << 16);
             @out.WriteByte((byte)(sbyte)matchDec);
             @out.WriteByte((byte)(sbyte)((int)((uint)matchDec >> 8)));
 
@@ -274,7 +275,7 @@ namespace Lucene.Net.Codecs.Compressing
                         int v = ReadInt32(bytes, off);
                         int h = Hash(v, hashLog);
                         @ref = @base + (int)hashTable.Get(h);
-                        Debug.Assert(PackedInt32s.BitsRequired(off - @base) <= hashTable.BitsPerValue);
+                        Debugging.Assert(() => PackedInt32s.BitsRequired(off - @base) <= hashTable.BitsPerValue);
                         hashTable.Set(h, off - @base);
                         if (off - @ref < MAX_DISTANCE && ReadInt32(bytes, @ref) == v)
                         {
@@ -296,7 +297,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             // last literals
             int literalLen = end - anchor;
-            Debug.Assert(literalLen >= LAST_LITERALS || literalLen == len);
+            Debugging.Assert(() => literalLen >= LAST_LITERALS || literalLen == len);
             EncodeLastLiterals(bytes, anchor, end - anchor, @out);
         }
 
@@ -364,7 +365,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int v = ReadInt32(bytes, off);
                 int h = HashHC(v);
                 int delta = off - hashTable[h];
-                Debug.Assert(delta > 0, delta.ToString());
+                Debugging.Assert(() => delta > 0, delta.ToString);
                 if (delta >= MAX_DISTANCE)
                 {
                     delta = MAX_DISTANCE - 1;
@@ -512,7 +513,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 while (true)
                 {
-                    Debug.Assert(match1.start >= anchor);
+                    Debugging.Assert(() => match1.start >= anchor);
                     if (match1.End() >= mfLimit || !ht.InsertAndFindWiderMatch(src, match1.End() - 2, match1.start + 1, matchLimit, match1.len, match2))
                     {
                         // no better match
@@ -528,7 +529,7 @@ namespace Lucene.Net.Codecs.Compressing
                             CopyTo(match0, match1);
                         }
                     }
-                    Debug.Assert(match2.start > match1.start);
+                    Debugging.Assert(() => match2.start > match1.start);
 
                     if (match2.start - match1.start < 3) // First Match too small : removed
                     {

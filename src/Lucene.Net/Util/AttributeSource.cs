@@ -1,10 +1,9 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using FlagsAttribute = Lucene.Net.Analysis.TokenAttributes.FlagsAttribute;
@@ -371,7 +370,7 @@ namespace Lucene.Net.Util
             foreach (var curInterfaceRef in foundInterfaces)
             {
                 curInterfaceRef.TryGetTarget(out Type curInterface);
-                Debug.Assert(curInterface != null, "We have a strong reference on the class holding the interfaces, so they should never get evicted");
+                Debugging.Assert(() => curInterface != null, () => "We have a strong reference on the class holding the interfaces, so they should never get evicted");
                 // Attribute is a superclass of this interface
                 if (!attributes.ContainsKey(curInterface))
                 {

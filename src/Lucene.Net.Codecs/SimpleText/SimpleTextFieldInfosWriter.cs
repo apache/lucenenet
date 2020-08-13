@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Diagnostics;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 
@@ -91,7 +92,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                     if (fi.IsIndexed)
                     {
-                        Debug.Assert(fi.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads);
+                        Debugging.Assert(() => fi.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads);
                         SimpleTextUtil.Write(output, INDEXOPTIONS);
                         SimpleTextUtil.Write(output, 
                             fi.IndexOptions != IndexOptions.NONE ? fi.IndexOptions.ToString() : string.Empty, 

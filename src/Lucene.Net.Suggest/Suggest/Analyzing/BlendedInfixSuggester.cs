@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -144,7 +145,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
 
             BinaryDocValues textDV = MultiDocValues.GetBinaryValues(searcher.IndexReader, TEXT_FIELD_NAME);
-            Debug.Assert(textDV != null);
+            Debugging.Assert(() => textDV != null);
 
             // This will just be null if app didn't pass payloads to build():
             // TODO: maybe just stored fields?  they compress...

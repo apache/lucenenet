@@ -1,15 +1,15 @@
-﻿using J2N.Collections.Generic.Extensions;
+﻿using J2N;
+using J2N.Collections.Generic.Extensions;
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
-using J2N;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -375,7 +375,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 strip.CopyTo(0, stripData, currentOffset, strip.Length - 0);
                 currentOffset += strip.Length;
             }
-            Debug.Assert(currentIndex == seenStrips.Count);
+            Debugging.Assert(() => currentIndex == seenStrips.Count);
             stripOffsets[currentIndex] = currentOffset;
         }
 
@@ -424,7 +424,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
             for (int i = 0; i < numLines; i++)
             {
-                Debug.Assert(affixWriter.Position == currentAffix << 3);
+                Debugging.Assert(() => affixWriter.Position == currentAffix << 3);
                 string line = reader.ReadLine();
                 string[] ruleArgs = whitespacePattern.Split(line).TrimEnd();
 

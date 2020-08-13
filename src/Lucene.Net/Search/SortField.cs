@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
 #pragma warning restore 612, 618
 
                 case SortFieldType.CUSTOM:
-                    Debug.Assert(comparerSource != null);
+                    Debugging.Assert(() => comparerSource != null);
                     return comparerSource.NewComparer(field, numHits, sortPos, reverse);
 
                 case SortFieldType.STRING:

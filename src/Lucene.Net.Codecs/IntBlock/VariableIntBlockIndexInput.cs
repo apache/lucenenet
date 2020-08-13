@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System.Diagnostics;
@@ -117,7 +118,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 // TODO: should we do this in real-time, not lazy?
                 pendingFP = fp;
                 pendingUpto = upto;
-                Debug.Assert(pendingUpto >= 0, "pendingUpto=" + pendingUpto);
+                Debugging.Assert(() => pendingUpto >= 0, () => "pendingUpto=" + pendingUpto);
                 seekPending = true;
             }
 

@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Documents.Extensions;
 using System;
@@ -81,7 +82,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    Debug.Assert(false, "unrecognized DocValues.Type: " + dvType);
+                    Debugging.Assert(() => false, () => "unrecognized DocValues.Type: " + dvType);
                 }
             }
         }
@@ -218,7 +219,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                Debug.Assert(obj is SortedDocValuesWriter);
+                Debugging.Assert(() => obj is SortedDocValuesWriter);
                 return "sorted";
             }
         }

@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
         {
             int maxDoc = state.SegmentInfo.DocCount;
             int maxCountPerDoc = maxCount;
-            Debug.Assert(pendingCounts.Count == maxDoc);
+            Debugging.Assert(() => pendingCounts.Count == maxDoc);
             int valueCount = hash.Count;
 
             int[] sortedValues = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
@@ -203,7 +203,7 @@ namespace Lucene.Net.Index
         {
             AppendingDeltaPackedInt64Buffer.Iterator iter = pendingCounts.GetIterator();
 
-            Debug.Assert(maxDoc == pendingCounts.Count, "MaxDoc: " + maxDoc + ", pending.Count: " + pending.Count);
+            Debugging.Assert(() => maxDoc == pendingCounts.Count, () => "MaxDoc: " + maxDoc + ", pending.Count: " + pending.Count);
 
             for (int i = 0; i < maxDoc; ++i)
             {

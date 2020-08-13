@@ -3,6 +3,7 @@ using ICU4N;
 using ICU4N.Globalization;
 using ICU4N.Text;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -101,7 +102,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         public virtual void Inform(IResourceLoader loader)
         {
-            Debug.Assert(tailored != null, "init must be called first!");
+            Debugging.Assert(() => tailored != null, () => "init must be called first!");
             if (tailored.Count == 0)
             {
                 config = new DefaultICUTokenizerConfig(cjkAsWords, myanmarAsWords);
@@ -161,7 +162,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            Debug.Assert(config != null, "inform must be called first!");
+            Debugging.Assert(() => config != null, () => "inform must be called first!");
             return new ICUTokenizer(factory, input, config);
         }
     }

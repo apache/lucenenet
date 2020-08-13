@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Prefix.Tree;
@@ -112,7 +113,7 @@ namespace Lucene.Net.Spatial.Prefix
             protected virtual void CollectDocs(FixedBitSet bitSet)
             {
                 //WARN: keep this specialization in sync
-                Debug.Assert(m_termsEnum != null);
+                Debugging.Assert(() => m_termsEnum != null);
                 m_docsEnum = m_termsEnum.Docs(m_acceptDocs, m_docsEnum, DocsFlags.NONE);
                 int docid;
                 while ((docid = m_docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)

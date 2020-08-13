@@ -1,8 +1,8 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
         public FrozenBufferedUpdates(BufferedUpdates deletes, bool isSegmentPrivate)
         {
             this.isSegmentPrivate = isSegmentPrivate;
-            Debug.Assert(!isSegmentPrivate || deletes.terms.Count == 0, "segment private package should only have del queries");
+            Debugging.Assert(() => !isSegmentPrivate || deletes.terms.Count == 0, () => "segment private package should only have del queries");
             Term[] termsArray = deletes.terms.Keys.ToArray(/*new Term[deletes.terms.Count]*/);
 
             termCount = termsArray.Length;
@@ -140,12 +140,12 @@ namespace Lucene.Net.Index
         {
             set
             {
-                Debug.Assert(this.gen == -1);
+                Debugging.Assert(() => this.gen == -1);
                 this.gen = value;
             }
             get
             {
-                Debug.Assert(gen != -1);
+                Debugging.Assert(() => gen != -1);
                 return gen;
             }
         }

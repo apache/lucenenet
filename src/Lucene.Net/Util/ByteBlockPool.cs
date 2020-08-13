@@ -1,9 +1,9 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util
@@ -354,7 +354,7 @@ namespace Lucene.Net.Util
                 term.Length = (bytes[pos] & 0x7f) + ((bytes[pos + 1] & 0xff) << 7);
                 term.Offset = pos + 2;
             }
-            Debug.Assert(term.Length >= 0);
+            Debugging.Assert(() => term.Length >= 0);
         }
 
         /// <summary>

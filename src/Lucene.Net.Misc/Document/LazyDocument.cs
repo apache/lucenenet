@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
@@ -119,8 +120,8 @@ namespace Lucene.Net.Documents
             fields.TryGetValue(fieldNum, out lazyValues);
             IIndexableField[] realValues = d.GetFields(name);
 
-            Debug.Assert(realValues.Length <= lazyValues.Count, 
-                "More lazy values then real values for field: " + name);
+            Debugging.Assert(() => realValues.Length <= lazyValues.Count,
+                () => "More lazy values then real values for field: " + name);
 
             for (int i = 0; i < lazyValues.Count; i++)
             {
@@ -163,8 +164,8 @@ namespace Lucene.Net.Documents
                 {
                     outerInstance.FetchRealValues(name, fieldNum);
                 }
-                Debug.Assert(HasBeenLoaded, "field value was not lazy loaded");
-                Debug.Assert(realValue.Name.Equals(Name, StringComparison.Ordinal), "realvalue name != name: " + realValue.Name + " != " + Name);
+                Debugging.Assert(() => HasBeenLoaded, () => "field value was not lazy loaded");
+                Debugging.Assert(() => realValue.Name.Equals(Name, StringComparison.Ordinal), () => "realvalue name != name: " + realValue.Name + " != " + Name);
 
                 return realValue;
             }

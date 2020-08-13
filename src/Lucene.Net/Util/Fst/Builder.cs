@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util.Fst
@@ -206,7 +206,7 @@ namespace Lucene.Net.Util.Fst
             {
                 node = fst.AddNode(nodeIn);
             }
-            Debug.Assert(node != -2);
+            Debugging.Assert(() => node != -2);
 
             nodeIn.Clear();
 
@@ -370,8 +370,8 @@ namespace Lucene.Net.Util.Fst
                 output = NO_OUTPUT;
             }
 
-            Debug.Assert(lastInput.Length == 0 || input.CompareTo(lastInput) >= 0, "inputs are added out of order lastInput=" + lastInput + " vs input=" + input);
-            Debug.Assert(ValidOutput(output));
+            Debugging.Assert(() => lastInput.Length == 0 || input.CompareTo(lastInput) >= 0, () => "inputs are added out of order lastInput=" + lastInput + " vs input=" + input);
+            Debugging.Assert(() => ValidOutput(output));
 
             //System.out.println("\nadd: " + input);
             if (input.Length == 0)
@@ -441,7 +441,7 @@ namespace Lucene.Net.Util.Fst
                 UnCompiledNode<T> parentNode = frontier[idx - 1];
 
                 T lastOutput = parentNode.GetLastOutput(input.Int32s[input.Offset + idx - 1]);
-                Debug.Assert(ValidOutput(lastOutput));
+                Debugging.Assert(() => ValidOutput(lastOutput));
 
                 T commonOutputPrefix;
                 T wordSuffix;
@@ -449,9 +449,9 @@ namespace Lucene.Net.Util.Fst
                 if (!lastOutput.Equals(NO_OUTPUT))
                 {
                     commonOutputPrefix = fst.Outputs.Common(output, lastOutput);
-                    Debug.Assert(ValidOutput(commonOutputPrefix));
+                    Debugging.Assert(() => ValidOutput(commonOutputPrefix));
                     wordSuffix = fst.Outputs.Subtract(lastOutput, commonOutputPrefix);
-                    Debug.Assert(ValidOutput(wordSuffix));
+                    Debugging.Assert(() => ValidOutput(wordSuffix));
                     parentNode.SetLastOutput(input.Int32s[input.Offset + idx - 1], commonOutputPrefix);
                     node.PrependOutput(wordSuffix);
                 }
@@ -461,7 +461,7 @@ namespace Lucene.Net.Util.Fst
                 }
 
                 output = fst.Outputs.Subtract(output, commonOutputPrefix);
-                Debug.Assert(ValidOutput(output));
+                Debugging.Assert(() => ValidOutput(output));
             }
 
             if (lastInput.Length == input.Length && prefixLenPlus1 == 1 + input.Length)
@@ -657,17 +657,17 @@ namespace Lucene.Net.Util.Fst
 
             public S GetLastOutput(int labelToMatch)
             {
-                Debug.Assert(NumArcs > 0);
-                Debug.Assert(Arcs[NumArcs - 1].Label == labelToMatch);
+                Debugging.Assert(() => NumArcs > 0);
+                Debugging.Assert(() => Arcs[NumArcs - 1].Label == labelToMatch);
                 return Arcs[NumArcs - 1].Output;
             }
 
             public void AddArc(int label, INode target)
             {
-                Debug.Assert(label >= 0);
+                Debugging.Assert(() => label >= 0);
                 if (NumArcs != 0)
                 {
-                    Debug.Assert(label > Arcs[NumArcs - 1].Label, "arc[-1].Label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);
+                    Debugging.Assert(() => label > Arcs[NumArcs - 1].Label, () => "arc[-1].Label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);
                 }
                 if (NumArcs == Arcs.Length)
                 {
@@ -688,9 +688,9 @@ namespace Lucene.Net.Util.Fst
 
             public void ReplaceLast(int labelToMatch, INode target, S nextFinalOutput, bool isFinal)
             {
-                Debug.Assert(NumArcs > 0);
+                Debugging.Assert(() => NumArcs > 0);
                 Arc<S> arc = Arcs[NumArcs - 1];
-                Debug.Assert(arc.Label == labelToMatch, "arc.Label=" + arc.Label + " vs " + labelToMatch);
+                Debugging.Assert(() => arc.Label == labelToMatch, () => "arc.Label=" + arc.Label + " vs " + labelToMatch);
                 arc.Target = target;
                 //assert target.Node != -2;
                 arc.NextFinalOutput = nextFinalOutput;
@@ -699,36 +699,36 @@ namespace Lucene.Net.Util.Fst
 
             public void DeleteLast(int label, INode target)
             {
-                Debug.Assert(NumArcs > 0);
-                Debug.Assert(label == Arcs[NumArcs - 1].Label);
-                Debug.Assert(target == Arcs[NumArcs - 1].Target);
+                Debugging.Assert(() => NumArcs > 0);
+                Debugging.Assert(() => label == Arcs[NumArcs - 1].Label);
+                Debugging.Assert(() => target == Arcs[NumArcs - 1].Target);
                 NumArcs--;
             }
 
             public void SetLastOutput(int labelToMatch, S newOutput)
             {
-                Debug.Assert(Owner.ValidOutput(newOutput));
-                Debug.Assert(NumArcs > 0);
+                Debugging.Assert(() => Owner.ValidOutput(newOutput));
+                Debugging.Assert(() => NumArcs > 0);
                 Arc<S> arc = Arcs[NumArcs - 1];
-                Debug.Assert(arc.Label == labelToMatch);
+                Debugging.Assert(() => arc.Label == labelToMatch);
                 arc.Output = newOutput;
             }
 
             // pushes an output prefix forward onto all arcs
             public void PrependOutput(S outputPrefix)
             {
-                Debug.Assert(Owner.ValidOutput(outputPrefix));
+                Debugging.Assert(() => Owner.ValidOutput(outputPrefix));
 
                 for (int arcIdx = 0; arcIdx < NumArcs; arcIdx++)
                 {
                     Arcs[arcIdx].Output = Owner.Fst.Outputs.Add(outputPrefix, Arcs[arcIdx].Output);
-                    Debug.Assert(Owner.ValidOutput(Arcs[arcIdx].Output));
+                    Debugging.Assert(() => Owner.ValidOutput(Arcs[arcIdx].Output));
                 }
 
                 if (IsFinal)
                 {
                     Output = Owner.Fst.Outputs.Add(outputPrefix, Output);
-                    Debug.Assert(Owner.ValidOutput(Output));
+                    Debugging.Assert(() => Owner.ValidOutput(Output));
                 }
             }
         }

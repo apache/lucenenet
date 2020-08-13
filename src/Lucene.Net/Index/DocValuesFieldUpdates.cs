@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -113,14 +114,14 @@ namespace Lucene.Net.Index
                 {
                     case DocValuesFieldUpdatesType.NUMERIC:
                         NumericDocValuesFieldUpdates numericUpdates;
-                        Debug.Assert(!numericDVUpdates.TryGetValue(field, out numericUpdates));
+                        Debugging.Assert(() => !numericDVUpdates.TryGetValue(field, out numericUpdates));
                         numericUpdates = new NumericDocValuesFieldUpdates(field, maxDoc);
                         numericDVUpdates[field] = numericUpdates;
                         return numericUpdates;
 
                     case DocValuesFieldUpdatesType.BINARY:
                         BinaryDocValuesFieldUpdates binaryUpdates;
-                        Debug.Assert(!binaryDVUpdates.TryGetValue(field, out binaryUpdates));
+                        Debugging.Assert(() => !binaryDVUpdates.TryGetValue(field, out binaryUpdates));
                         binaryUpdates = new BinaryDocValuesFieldUpdates(field, maxDoc);
                         binaryDVUpdates[field] = binaryUpdates;
                         return binaryUpdates;

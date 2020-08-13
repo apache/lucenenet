@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -263,7 +263,7 @@ namespace Lucene.Net.Search
                             cs.LastPos = cs.Pos;
                             int posIndex = cs.Pos - chunkStart;
                             counts[posIndex] = 1;
-                            Debug.Assert(gens[posIndex] != gen);
+                            Debugging.Assert(() => gens[posIndex] != gen);
                             gens[posIndex] = gen;
                         }
 

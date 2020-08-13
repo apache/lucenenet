@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 
 // this file has been automatically generated, DO NOT EDIT
 
@@ -69,9 +69,9 @@ namespace Lucene.Net.Util.Packed
 
         public override int Get(int index, long[] arr, int off, int len)
         {
-            Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < m_valueCount);
-            Debug.Assert(off + len <= arr.Length);
+            Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+            Debugging.Assert(() => index >= 0 && index < m_valueCount);
+            Debugging.Assert(() => off + len <= arr.Length);
 
             int gets = Math.Min(m_valueCount - index, len);
             for (int i = index * 3, end = (index + gets) * 3; i < end; i += 3)
@@ -91,9 +91,9 @@ namespace Lucene.Net.Util.Packed
 
         public override int Set(int index, long[] arr, int off, int len)
         {
-            Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < m_valueCount);
-            Debug.Assert(off + len <= arr.Length);
+            Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+            Debugging.Assert(() => index >= 0 && index < m_valueCount);
+            Debugging.Assert(() => off + len <= arr.Length);
 
             int sets = Math.Min(m_valueCount - index, len);
             for (int i = off, o = index * 3, end = off + sets; i < end; ++i)

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -693,7 +694,7 @@ namespace Lucene.Net.Facet
                 }
             }
             parts.Add(new string(buffer, 0, upto));
-            Debug.Assert(!lastEscape);
+            Debugging.Assert(() => !lastEscape);
             return parts.ToArray();
         }
     }

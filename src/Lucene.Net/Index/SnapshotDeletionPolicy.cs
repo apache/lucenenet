@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
                 throw new ArgumentException("commit gen=" + gen + " is not currently snapshotted");
             }
             int refCountInt = (int)refCount;
-            Debug.Assert(refCountInt > 0);
+            Debugging.Assert(() => refCountInt > 0);
             refCountInt--;
             if (refCountInt == 0)
             {

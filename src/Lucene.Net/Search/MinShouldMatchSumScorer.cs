@@ -1,8 +1,8 @@
 using J2N;
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
                 this.subScorers[i] = this.sortedSubScorers[mm - 1 + i];
             }
             MinheapHeapify();
-            Debug.Assert(MinheapCheck());
+            Debugging.Assert(MinheapCheck);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 
         public override int NextDoc()
         {
-            Debug.Assert(doc != NO_MORE_DOCS);
+            Debugging.Assert(() => doc != NO_MORE_DOCS);
             while (true)
             {
                 // to remove current doc, call next() on all subScorers on current doc within heap

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Store;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Store;
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -69,8 +70,8 @@ namespace Lucene.Net.Util.Fst
             {
                 this.first = first;
                 this.second = second;
-                Debug.Assert(first >= 0);
-                Debug.Assert(second >= 0);
+                Debugging.Assert(() => first >= 0);
+                Debugging.Assert(() => second >= 0);
             }
 
             public override string ToString()
@@ -133,8 +134,8 @@ namespace Lucene.Net.Util.Fst
 
         public override object Common(object output1, object output2)
         {
-            Debug.Assert(Valid(output1, false));
-            Debug.Assert(Valid(output2, false));
+            Debugging.Assert(() => Valid(output1, false));
+            Debugging.Assert(() => Valid(output2, false));
             long? output1_ = (long?)output1;
             long? output2_ = (long?)output2;
             if (output1_ == NO_OUTPUT || output2_ == NO_OUTPUT)
@@ -143,8 +144,8 @@ namespace Lucene.Net.Util.Fst
             }
             else if (doShare)
             {
-                Debug.Assert(output1_ > 0);
-                Debug.Assert(output2_ > 0);
+                Debugging.Assert(() => output1_ > 0);
+                Debugging.Assert(() => output2_ > 0);
                 return Math.Min(output1_.GetValueOrDefault(), output2_.GetValueOrDefault());
             }
             else if (output1_.Equals(output2_))
@@ -159,11 +160,11 @@ namespace Lucene.Net.Util.Fst
 
         public override object Subtract(object output, object inc)
         {
-            Debug.Assert(Valid(output, false));
-            Debug.Assert(Valid(inc, false));
+            Debugging.Assert(() => Valid(output, false));
+            Debugging.Assert(() => Valid(inc, false));
             long? output2 = (long?)output;
             long? inc2 = (long?)inc;
-            Debug.Assert(output2 >= inc2);
+            Debugging.Assert(() => output2 >= inc2);
 
             if (inc2 == NO_OUTPUT)
             {
@@ -181,8 +182,8 @@ namespace Lucene.Net.Util.Fst
 
         public override object Add(object prefix, object output)
         {
-            Debug.Assert(Valid(prefix, false));
-            Debug.Assert(Valid(output, true));
+            Debugging.Assert(() => Valid(prefix, false));
+            Debugging.Assert(() => Valid(output, true));
             long? prefix2 = (long?)prefix;
             if (output is long?)
             {
@@ -210,7 +211,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(object output, DataOutput @out)
         {
-            Debug.Assert(Valid(output, true));
+            Debugging.Assert(() => Valid(output, true));
             if (output is long?)
             {
                 long? output2 = (long?)output;
@@ -251,9 +252,9 @@ namespace Lucene.Net.Util.Fst
 
         private bool Valid(long? o)
         {
-            Debug.Assert(o != null);
-            Debug.Assert(o is long?);
-            Debug.Assert(o == NO_OUTPUT || o > 0);
+            Debugging.Assert(() => o != null);
+            Debugging.Assert(() => o is long?);
+            Debugging.Assert(() => o == NO_OUTPUT || o > 0);
             return true;
         }
 
@@ -262,7 +263,7 @@ namespace Lucene.Net.Util.Fst
         {
             if (!allowDouble)
             {
-                Debug.Assert(o is long?);
+                Debugging.Assert(() => o is long?);
                 return Valid((long?)o);
             }
             else if (o is TwoInt64s)
@@ -285,8 +286,8 @@ namespace Lucene.Net.Util.Fst
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override object Merge(object first, object second)
         {
-            Debug.Assert(Valid(first, false));
-            Debug.Assert(Valid(second, false));
+            Debugging.Assert(() => Valid(first, false));
+            Debugging.Assert(() => Valid(second, false));
             return new TwoInt64s(((long?)first).GetValueOrDefault(), ((long?)second).GetValueOrDefault());
         }
     }

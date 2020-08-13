@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 using Directory = Lucene.Net.Store.Directory;
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Replicator
 {
@@ -369,7 +370,7 @@ namespace Lucene.Net.Replicator
                 // make sure to preserve revisionFiles order
                 List<RevisionFile> res = new List<RevisionFile>();
                 string source = e.Key;
-                Debug.Assert(newRevisionFiles.ContainsKey(source), string.Format("source not found in newRevisionFiles: {0}", newRevisionFiles));
+                Debugging.Assert(() => newRevisionFiles.ContainsKey(source), () => string.Format("source not found in newRevisionFiles: {0}", newRevisionFiles));
                 foreach (RevisionFile file in newRevisionFiles[source])
                 {
                     if (!handlerFiles.Contains(file.FileName))
@@ -415,7 +416,7 @@ namespace Lucene.Net.Replicator
             updateThread = new ReplicationThread(intervalMillis, threadName, DoUpdate, HandleUpdateException, updateLock);
             updateThread.Start();
             // we rely on isAlive to return true in isUpdateThreadAlive, assert to be on the safe side
-            Debug.Assert(updateThread.IsAlive, "updateThread started but not alive?");
+            Debugging.Assert(() => updateThread.IsAlive, () => "updateThread started but not alive?");
         }
 
         /// <summary>

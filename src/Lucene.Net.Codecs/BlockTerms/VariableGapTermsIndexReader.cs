@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -5,7 +6,6 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             input = dir.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, VariableGapTermsIndexWriter.TERMS_INDEX_EXTENSION), new IOContext(context, true));
             //this.segment = segment; // LUCENENET: Not used
             bool success = false;
-            Debug.Assert(indexDivisor == -1 || indexDivisor > 0);
+            Debugging.Assert(() => indexDivisor == -1 || indexDivisor > 0);
 
             try
             {

@@ -1,7 +1,7 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
@@ -320,7 +320,7 @@ namespace Lucene.Net.Search
                             }
                             else
                             {
-                                Debug.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
+                                Debugging.Assert(() => this.outerInstance.dataType == NumericType.DOUBLE);
                                 minBound = (this.outerInstance.min == null) ? INT64_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.min.Value, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.minInclusive && this.outerInstance.min != null)
@@ -340,7 +340,7 @@ namespace Lucene.Net.Search
                             }
                             else
                             {
-                                Debug.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
+                                Debugging.Assert(() => this.outerInstance.dataType == NumericType.DOUBLE);
                                 maxBound = (this.outerInstance.max == null) ? INT64_POSITIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.max, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.maxInclusive && this.outerInstance.max != null)
@@ -367,7 +367,7 @@ namespace Lucene.Net.Search
                             }
                             else
                             {
-                                Debug.Assert(this.outerInstance.dataType == NumericType.SINGLE);
+                                Debugging.Assert(() => this.outerInstance.dataType == NumericType.SINGLE);
                                 minBound = (this.outerInstance.min == null) ? INT32_NEGATIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.min, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.minInclusive && this.outerInstance.min != null)
@@ -387,7 +387,7 @@ namespace Lucene.Net.Search
                             }
                             else
                             {
-                                Debug.Assert(this.outerInstance.dataType == NumericType.SINGLE);
+                                Debugging.Assert(() => this.outerInstance.dataType == NumericType.SINGLE);
                                 maxBound = (this.outerInstance.max == null) ? INT32_POSITIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.max, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.maxInclusive && this.outerInstance.max != null)
@@ -445,10 +445,10 @@ namespace Lucene.Net.Search
 
             private void NextRange()
             {
-                Debug.Assert(rangeBounds.Count % 2 == 0);
+                Debugging.Assert(() => rangeBounds.Count % 2 == 0);
 
                 currentLowerBound = rangeBounds.Dequeue();
-                Debug.Assert(currentUpperBound == null || termComp.Compare(currentUpperBound, currentLowerBound) <= 0, "The current upper bound must be <= the new lower bound");
+                Debugging.Assert(() => currentUpperBound == null || termComp.Compare(currentUpperBound, currentLowerBound) <= 0, () => "The current upper bound must be <= the new lower bound");
 
                 currentUpperBound = rangeBounds.Dequeue();
             }
@@ -469,7 +469,7 @@ namespace Lucene.Net.Search
                 }
 
                 // no more sub-range enums available
-                Debug.Assert(rangeBounds.Count == 0);
+                Debugging.Assert(() => rangeBounds.Count == 0);
                 currentLowerBound = currentUpperBound = null;
                 return null;
             }

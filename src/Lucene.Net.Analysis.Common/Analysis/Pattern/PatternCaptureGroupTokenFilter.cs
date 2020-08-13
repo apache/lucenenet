@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -154,7 +155,7 @@ namespace Lucene.Net.Analysis.Pattern
         {
             if (currentMatcher != -1 && NextCapture())
             {
-                Debug.Assert(state != null);
+                Debugging.Assert(() => state != null);
                 ClearAttributes();
                 RestoreState(state);
                 int start = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index;

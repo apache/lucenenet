@@ -278,7 +278,7 @@ namespace Lucene.Net.Support
         // Clears all bits in this BitArray that correspond to a set bit in the parameter BitArray
         public static void AndNot(this BitArray bitsA, BitArray bitsB)
         {
-            //Debug.Assert(bitsA.Length == bitsB.Length, "BitArray lengths are not the same");
+            //Debugging.Assert(bitsA.Length == bitsB.Length, "BitArray lengths are not the same");
             for (int i = 0; i < bitsA.Length; i++)
             {
                 //bitsA was longer than bitsB

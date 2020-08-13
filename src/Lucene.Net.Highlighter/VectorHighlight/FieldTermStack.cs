@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -139,7 +140,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 TermInfo current = termList[i];
                 if (current.Position == currentPos)
                 {
-                    Debug.Assert(previous != null);
+                    Debugging.Assert(() => previous != null);
                     previous.SetNext(current);
                     previous = current;
                     //iterator.Remove();

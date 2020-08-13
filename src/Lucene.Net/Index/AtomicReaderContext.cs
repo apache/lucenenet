@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -62,7 +63,7 @@ namespace Lucene.Net.Index
                 {
                     throw new NotSupportedException("this is not a top-level context.");
                 }
-                Debug.Assert(leaves != null);
+                Debugging.Assert(() => leaves != null);
                 return leaves;
             }
         }

@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
@@ -97,7 +97,7 @@ namespace Lucene.Net.Util
             {
                 int offset = offsets[index];
                 int length = index == lastElement - 1 ? currentOffset - offset : offsets[index + 1] - offset;
-                Debug.Assert(spare.Offset == 0);
+                Debugging.Assert(() => spare.Offset == 0);
                 spare.Grow(length);
                 spare.Length = length;
                 pool.ReadBytes(offset, spare.Bytes, spare.Offset, spare.Length);

@@ -1,4 +1,5 @@
 ﻿using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -142,7 +143,7 @@ namespace Lucene.Net.Facet.Taxonomy
         public static T OpenIfChanged<T>(T oldTaxoReader) where T : TaxonomyReader
         {
             T newTaxoReader = (T)oldTaxoReader.DoOpenIfChanged();
-            Debug.Assert(newTaxoReader != oldTaxoReader);
+            Debugging.Assert(() => newTaxoReader != oldTaxoReader);
             return newTaxoReader;
         }
 

@@ -1,7 +1,7 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
                     // actual instance of SegmentInfoPerCommit in
                     // IndexWriter's segmentInfos:
                     SegmentCommitInfo info = infos.Info(i);
-                    Debug.Assert(info.Info.Dir == dir);
+                    Debugging.Assert(() => info.Info.Dir == dir);
                     ReadersAndUpdates rld = writer.readerPool.Get(info, true);
                     try
                     {
@@ -235,8 +235,8 @@ namespace Lucene.Net.Index
                             // there are changes to the reader, either liveDocs or DV updates
                             readerShared[i] = false;
                             // Steal the ref returned by SegmentReader ctor:
-                            Debug.Assert(infos.Info(i).Info.Dir == newReaders[i].SegmentInfo.Info.Dir);
-                            Debug.Assert(infos.Info(i).HasDeletions || infos.Info(i).HasFieldUpdates);
+                            Debugging.Assert(() => infos.Info(i).Info.Dir == newReaders[i].SegmentInfo.Info.Dir);
+                            Debugging.Assert(() => infos.Info(i).HasDeletions || infos.Info(i).HasFieldUpdates);
                             if (newReaders[i].SegmentInfo.DelGen == infos.Info(i).DelGen)
                             {
                                 // only DV updates

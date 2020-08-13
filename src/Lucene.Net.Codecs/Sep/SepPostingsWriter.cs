@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -261,10 +262,10 @@ namespace Lucene.Net.Codecs.Sep
         /// Add a new position &amp; payload. </summary>
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
-            Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Debugging.Assert(() => indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
             int delta = position - lastPosition;
-            Debug.Assert(delta >= 0, "position=" + position + " lastPosition=" + lastPosition);            // not quite right (if pos=0 is repeated twice we don't catch it)
+            Debugging.Assert(() => delta >= 0, () => "position=" + position + " lastPosition=" + lastPosition);            // not quite right (if pos=0 is repeated twice we don't catch it)
             lastPosition = position;
 
             if (storePayloads)
@@ -316,8 +317,8 @@ namespace Lucene.Net.Codecs.Sep
         {
             SepTermState state_ = (SepTermState)state;
             // TODO: -- wasteful we are counting this in two places?
-            Debug.Assert(state_.DocFreq > 0);
-            Debug.Assert(state_.DocFreq == df);
+            Debugging.Assert(() => state_.DocFreq > 0);
+            Debugging.Assert(() => state_.DocFreq == df);
 
             state_.DocIndex = docOut.GetIndex();
             state_.DocIndex.CopyFrom(docIndex, false);

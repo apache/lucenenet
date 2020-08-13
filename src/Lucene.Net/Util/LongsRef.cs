@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.Util
             this.longs = longs;
             this.Offset = offset;
             this.Length = length;
-            Debug.Assert(IsValid());
+            Debugging.Assert(IsValid);
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Grow(int newLength)
         {
-            Debug.Assert(Offset == 0);
+            Debugging.Assert(() => Offset == 0);
             if (longs.Length < newLength)
             {
                 longs = ArrayUtil.Grow(longs, newLength);

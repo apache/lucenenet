@@ -1,4 +1,5 @@
 ﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,7 +43,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         internal void AddMatch(int startOffset, int endOffset, BytesRef term)
         {
-            Debug.Assert(startOffset >= this.startOffset && startOffset <= this.endOffset);
+            Debugging.Assert(() => startOffset >= this.startOffset && startOffset <= this.endOffset);
             if (numMatches == matchStarts.Length)
             {
                 int newLength = ArrayUtil.Oversize(numMatches + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
@@ -56,7 +57,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 matchEnds = newMatchEnds;
                 matchTerms = newMatchTerms;
             }
-            Debug.Assert(matchStarts.Length == matchEnds.Length && matchEnds.Length == matchTerms.Length);
+            Debugging.Assert(() => matchStarts.Length == matchEnds.Length && matchEnds.Length == matchTerms.Length);
             matchStarts[numMatches] = startOffset;
             matchEnds[numMatches] = endOffset;
             matchTerms[numMatches] = term;

@@ -1,8 +1,8 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using JCG = J2N.Collections.Generic;
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         map.ReadFirstRealTargetArc(scratchArc.Target, scratchArc, fstReader);
                         while (true)
                         {
-                            Debug.Assert(scratchArc.Label != FST.END_LABEL);
+                            Debugging.Assert(() => scratchArc.Label != FST.END_LABEL);
                             cachedRootArcs[Convert.ToChar((char)scratchArc.Label)] = (new FST.Arc<CharsRef>()).CopyFrom(scratchArc);
                             if (scratchArc.IsLast)
                             {

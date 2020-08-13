@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -241,7 +242,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         private void ConsumeSubQuery(State state)
         {
-            Debug.Assert((m_flags & Operator.PRECEDENCE_OPERATORS) != 0);
+            Debugging.Assert(() => (m_flags & Operator.PRECEDENCE_OPERATORS) != 0);
             int start = ++state.Index;
             int precedence = 1;
             bool escaped = false;
@@ -314,7 +315,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         private void ConsumePhrase(State state)
         {
-            Debug.Assert((m_flags & Operator.PHRASE_OPERATOR) != 0);
+            Debugging.Assert(() => (m_flags & Operator.PHRASE_OPERATOR) != 0);
             int start = ++state.Index;
             int copied = 0;
             bool escaped = false;

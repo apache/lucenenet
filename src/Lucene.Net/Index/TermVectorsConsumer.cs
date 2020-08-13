@@ -1,8 +1,8 @@
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -61,12 +61,12 @@ namespace Lucene.Net.Index
             if (writer != null)
             {
                 int numDocs = state.SegmentInfo.DocCount;
-                Debug.Assert(numDocs > 0);
+                Debugging.Assert(() => numDocs > 0);
                 // At least one doc in this run had term vectors enabled
                 try
                 {
                     Fill(numDocs);
-                    Debug.Assert(state.SegmentInfo != null);
+                    Debugging.Assert(() => state.SegmentInfo != null);
                     writer.Finish(state.FieldInfos, numDocs);
                 }
                 finally
@@ -134,14 +134,13 @@ namespace Lucene.Net.Index
             }
             writer.FinishDocument();
 
-            Debug.Assert(lastDocID == docState.docID, "lastDocID=" + lastDocID + " docState.docID=" + docState.docID);
+            Debugging.Assert(() => lastDocID == docState.docID, () => "lastDocID=" + lastDocID + " docState.docID=" + docState.docID);
 
             lastDocID++;
 
             termsHash.Reset();
             Reset();
-            // LUCENENET: .NET doesn't support asserts in release mode
-            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docWriter.TestPoint("TermVectorsTermsWriter.finishDocument end");
+            Debugging.Assert(() => docWriter.TestPoint("TermVectorsTermsWriter.finishDocument end"));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -186,7 +185,7 @@ namespace Lucene.Net.Index
 
         internal override void StartDocument()
         {
-            Debug.Assert(ClearLastVectorFieldName());
+            Debugging.Assert(ClearLastVectorFieldName);
             Reset();
         }
 

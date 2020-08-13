@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using ExceptionToClassNameConventionAttribute = Lucene.Net.Support.ExceptionToClassNameConventionAttribute;
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Analysis.Icu
 {
@@ -127,7 +128,7 @@ namespace Lucene.Net.Analysis.Icu
                 bool hasRemainingChars = CharacterUtils.GetInstance(LuceneVersion.LUCENE_CURRENT).Fill(tmpBuffer, m_input);
 #pragma warning restore 612, 618
 
-                Debug.Assert(tmpBuffer.Offset == 0);
+                Debugging.Assert(() => tmpBuffer.Offset == 0);
                 inputBuffer.Append(tmpBuffer.Buffer, 0, tmpBuffer.Length);
 
                 if (hasRemainingChars == false)

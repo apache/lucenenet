@@ -1,7 +1,7 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
 
@@ -285,7 +285,7 @@ namespace Lucene.Net.Search.Spans
             }
             for (int i = 0; i < subSpansByDoc.Length; i++)
             {
-                Debug.Assert((subSpansByDoc[i].Doc == maxDoc), " NearSpansOrdered.toSameDoc() spans " + subSpansByDoc[0] + "\n at doc " + subSpansByDoc[i].Doc + ", but should be at " + maxDoc);
+                Debugging.Assert(() => subSpansByDoc[i].Doc == maxDoc, () => " NearSpansOrdered.toSameDoc() spans " + subSpansByDoc[0] + "\n at doc " + subSpansByDoc[i].Doc + ", but should be at " + maxDoc);
             }
             inSameDoc = true;
             return true;
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search.Spans
         ///              and <paramref name="spans1"/> ends before <paramref name="spans2"/>. </returns>
         internal static bool DocSpansOrdered(Spans spans1, Spans spans2)
         {
-            Debug.Assert(spans1.Doc == spans2.Doc, "doc1 " + spans1.Doc + " != doc2 " + spans2.Doc);
+            Debugging.Assert(() => spans1.Doc == spans2.Doc, () => "doc1 " + spans1.Doc + " != doc2 " + spans2.Doc);
             int start1 = spans1.Start;
             int start2 = spans2.Start;
             /* Do not call docSpansOrdered(int,int,int,int) to avoid invoking .end() : */
@@ -409,7 +409,7 @@ namespace Lucene.Net.Search.Spans
                     possibleMatchPayloads.UnionWith(possiblePayload);
                 }
 
-                Debug.Assert(prevStart <= matchStart);
+                Debugging.Assert(() => prevStart <= matchStart);
                 if (matchStart > prevEnd) // Only non overlapping spans add to slop.
                 {
                     matchSlop += (matchStart - prevEnd);

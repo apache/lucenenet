@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -115,7 +116,7 @@ namespace Lucene.Net.Codecs.PerField
                 string formatName = format.Name;
 
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName);
-                Debug.Assert(previousValue == null);
+                Debugging.Assert(() => previousValue == null);
 
                 int? suffix;
 
@@ -146,12 +147,12 @@ namespace Lucene.Net.Codecs.PerField
                 else
                 {
                     // we've already seen this format, so just grab its suffix
-                    Debug.Assert(suffixes.ContainsKey(formatName));
+                    Debugging.Assert(() => suffixes.ContainsKey(formatName));
                     suffix = consumer.Suffix;
                 }
 
                 previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix, CultureInfo.InvariantCulture));
-                Debug.Assert(previousValue == null);
+                Debugging.Assert(() => previousValue == null);
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this PF actually sees ... then stuff like
@@ -218,7 +219,7 @@ namespace Lucene.Net.Codecs.PerField
                             {
                                 // null formatName means the field is in fieldInfos, but has no postings!
                                 string suffix = fi.GetAttribute(PER_FIELD_SUFFIX_KEY);
-                                Debug.Assert(suffix != null);
+                                Debugging.Assert(() => suffix != null);
                                 PostingsFormat format = PostingsFormat.ForName(formatName);
                                 string segmentSuffix = GetSuffix(formatName, suffix);
                                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey

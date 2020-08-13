@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                Debug.Assert(reader is AtomicReader);
+                Debugging.Assert(() => reader is AtomicReader);
                 return (AtomicReader)reader;
             }
         }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
             {
                 return null;
             }
-            Debug.Assert(map != null);
+            Debugging.Assert(() => map != null);
             int size = @in.Leaves.Count;
             var values = new SortedSetDocValues[size];
             int[] starts = new int[size + 1];

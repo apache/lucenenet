@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Memory
@@ -127,7 +128,7 @@ namespace Lucene.Net.Codecs.Memory
             if (Equals(t1, NO_OUTPUT) || Equals(t2, NO_OUTPUT))
                 return NO_OUTPUT;
             
-            Debug.Assert(t1.longs.Length == t2.longs.Length);
+            Debugging.Assert(() => t1.longs.Length == t2.longs.Length);
 
             long[] min = t1.longs, max = t2.longs;
             int pos = 0;
@@ -182,7 +183,7 @@ namespace Lucene.Net.Codecs.Memory
             if (Equals(t2, NO_OUTPUT))
                 return t1;
             
-            Debug.Assert(t1.longs.Length == t2.longs.Length);
+            Debugging.Assert(() => t1.longs.Length == t2.longs.Length);
 
             int pos = 0;
             long diff = 0;
@@ -219,7 +220,7 @@ namespace Lucene.Net.Codecs.Memory
             if (Equals(t2, NO_OUTPUT))
                 return t1;
             
-            Debug.Assert(t1.longs.Length == t2.longs.Length);
+            Debugging.Assert(() => t1.longs.Length == t2.longs.Length);
 
             var pos = 0;
             var accum = new long[_longsSize];

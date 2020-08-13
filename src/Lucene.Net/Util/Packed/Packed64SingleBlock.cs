@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 
 // this file has been automatically generated, DO NOT EDIT
 
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
         internal Packed64SingleBlock(int valueCount, int bitsPerValue)
             : base(valueCount, bitsPerValue)
         {
-            Debug.Assert(IsSupported(bitsPerValue));
+            Debugging.Assert(() => IsSupported(bitsPerValue));
             int valuesPerBlock = 64 / bitsPerValue;
             blocks = new long[RequiredCapacity(valueCount, valuesPerBlock)];
         }
@@ -71,10 +71,10 @@ namespace Lucene.Net.Util.Packed
 
         public override int Get(int index, long[] arr, int off, int len)
         {
-            Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < m_valueCount);
+            Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+            Debugging.Assert(() => index >= 0 && index < m_valueCount);
             len = Math.Min(len, m_valueCount - index);
-            Debug.Assert(off + len <= arr.Length);
+            Debugging.Assert(() => off + len <= arr.Length);
 
             int originalIndex = index;
 
@@ -95,10 +95,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk get
-            Debug.Assert(index % valuesPerBlock == 0);
+            Debugging.Assert(() => index % valuesPerBlock == 0);
             PackedInt32s.IDecoder decoder = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
-            Debug.Assert(decoder.Int64BlockCount == 1);
-            Debug.Assert(decoder.Int64ValueCount == valuesPerBlock);
+            Debugging.Assert(() => decoder.Int64BlockCount == 1);
+            Debugging.Assert(() => decoder.Int64ValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             decoder.Decode(blocks, blockIndex, arr, off, nblocks);
@@ -115,17 +115,17 @@ namespace Lucene.Net.Util.Packed
             {
                 // no progress so far => already at a block boundary but no full block to
                 // get
-                Debug.Assert(index == originalIndex);
+                Debugging.Assert(() => index == originalIndex);
                 return base.Get(index, arr, off, len);
             }
         }
 
         public override int Set(int index, long[] arr, int off, int len)
         {
-            Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-            Debug.Assert(index >= 0 && index < m_valueCount);
+            Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+            Debugging.Assert(() => index >= 0 && index < m_valueCount);
             len = Math.Min(len, m_valueCount - index);
-            Debug.Assert(off + len <= arr.Length);
+            Debugging.Assert(() => off + len <= arr.Length);
 
             int originalIndex = index;
 
@@ -146,10 +146,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk set
-            Debug.Assert(index % valuesPerBlock == 0);
+            Debugging.Assert(() => index % valuesPerBlock == 0);
             BulkOperation op = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
-            Debug.Assert(op.Int64BlockCount == 1);
-            Debug.Assert(op.Int64ValueCount == valuesPerBlock);
+            Debugging.Assert(() => op.Int64BlockCount == 1);
+            Debugging.Assert(() => op.Int64ValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             op.Encode(arr, off, blocks, blockIndex, nblocks);
@@ -166,16 +166,16 @@ namespace Lucene.Net.Util.Packed
             {
                 // no progress so far => already at a block boundary but no full block to
                 // set
-                Debug.Assert(index == originalIndex);
+                Debugging.Assert(() => index == originalIndex);
                 return base.Set(index, arr, off, len);
             }
         }
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
-            Debug.Assert(fromIndex >= 0);
-            Debug.Assert(fromIndex <= toIndex);
-            Debug.Assert(PackedInt32s.BitsRequired(val) <= m_bitsPerValue);
+            Debugging.Assert(() => fromIndex >= 0);
+            Debugging.Assert(() => fromIndex <= toIndex);
+            Debugging.Assert(() => PackedInt32s.BitsRequired(val) <= m_bitsPerValue);
 
             int valuesPerBlock = 64 / m_bitsPerValue;
             if (toIndex - fromIndex <= valuesPerBlock << 1)
@@ -194,13 +194,13 @@ namespace Lucene.Net.Util.Packed
                 {
                     Set(fromIndex++, val);
                 }
-                Debug.Assert(fromIndex % valuesPerBlock == 0);
+                Debugging.Assert(() => fromIndex % valuesPerBlock == 0);
             }
 
             // bulk set of the inner blocks
             int fromBlock = fromIndex / valuesPerBlock;
             int toBlock = toIndex / valuesPerBlock;
-            Debug.Assert(fromBlock * valuesPerBlock == fromIndex);
+            Debugging.Assert(() => fromBlock * valuesPerBlock == fromIndex);
 
             long blockValue = 0L;
             for (int i = 0; i < valuesPerBlock; ++i)

@@ -1,8 +1,8 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -25,13 +25,15 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
+    using J2N.Collections.Generic.Extensions;
+    using System.Collections;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexReaderContext = Lucene.Net.Index.IndexReaderContext;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
@@ -42,8 +44,6 @@ namespace Lucene.Net.Search
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TermState = Lucene.Net.Index.TermState;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
-    using System.Collections;
-    using J2N.Collections.Generic.Extensions;
 
     /// <summary>
     /// <see cref="MultiPhraseQuery"/> is a generalized version of <see cref="PhraseQuery"/>, with an added
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
 
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                Debug.Assert(outerInstance.termArrays.Count > 0);
+                Debugging.Assert(() => outerInstance.termArrays.Count > 0);
                 AtomicReader reader = (context.AtomicReader);
                 IBits liveDocs = acceptDocs;
 
@@ -286,7 +286,7 @@ namespace Lucene.Net.Search
                         if (postingsEnum == null)
                         {
                             // term does exist, but has no positions
-                            Debug.Assert(termsEnum.Docs(liveDocs, null, DocsFlags.NONE) != null, "termstate found but no term exists in reader");
+                            Debugging.Assert(() => termsEnum.Docs(liveDocs, null, DocsFlags.NONE) != null, () => "termstate found but no term exists in reader");
                             throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
                         }
 

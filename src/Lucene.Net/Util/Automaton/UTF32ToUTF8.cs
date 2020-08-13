@@ -1,7 +1,7 @@
 using J2N;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 
 namespace Lucene.Net.Util.Automaton
@@ -177,8 +177,8 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else
                 {
-                    Debug.Assert(startUTF8.len > upto + 1);
-                    Debug.Assert(endUTF8.len > upto + 1);
+                    Debugging.Assert(() => startUTF8.len > upto + 1);
+                    Debugging.Assert(() => endUTF8.len > upto + 1);
                     State n = NewUTF8State();
 
                     // Single value leading edge

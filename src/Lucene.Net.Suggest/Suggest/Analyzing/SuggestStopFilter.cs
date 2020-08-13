@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Diagnostics;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
@@ -114,7 +115,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         m_input.End();
                         endState = CaptureState();
                         int finalEndOffset = offsetAtt.EndOffset;
-                        Debug.Assert(finalEndOffset >= endOffset);
+                        Debugging.Assert(() => finalEndOffset >= endOffset);
                         if (finalEndOffset > endOffset)
                         {
                             // OK there was a token separator after the

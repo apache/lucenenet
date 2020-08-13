@@ -1,4 +1,5 @@
 ﻿using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -64,7 +65,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // while the code which calls this method is safe, at some point a test
             // tripped on AIOOBE in toString, but we failed to reproduce. adding the
             // assert as a safety check.
-            Debug.Assert(prefixLen > 0 && prefixLen <= copyFrom.Components.Length, "prefixLen cannot be negative nor larger than the given components' length: prefixLen=" + prefixLen + " components.length=" + copyFrom.Components.Length);
+            Debugging.Assert(() => prefixLen > 0 && prefixLen <= copyFrom.Components.Length, () => "prefixLen cannot be negative nor larger than the given components' length: prefixLen=" + prefixLen + " components.length=" + copyFrom.Components.Length);
             this.Components = copyFrom.Components;
             Length = prefixLen;
         }
@@ -74,7 +75,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public CategoryPath(params string[] components)
         {
-            Debug.Assert(components.Length > 0, "use CategoryPath.EMPTY to create an empty path");
+            Debugging.Assert(() => components.Length > 0, () => "use CategoryPath.EMPTY to create an empty path");
             foreach (string comp in components)
             {
                 if (string.IsNullOrEmpty(comp))

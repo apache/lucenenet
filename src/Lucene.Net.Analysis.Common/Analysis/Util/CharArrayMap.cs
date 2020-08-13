@@ -1,12 +1,12 @@
 ﻿using J2N;
-using J2N.Text;
 using J2N.Globalization;
+using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
@@ -632,7 +632,7 @@ namespace Lucene.Net.Analysis.Util
 
         private void Rehash()
         {
-            Debug.Assert(keys.Length == values.Length);
+            Debugging.Assert(() => keys.Length == values.Length);
             int newSize = 2 * keys.Length;
             char[][] oldkeys = keys;
             MapValue[] oldvalues = values;

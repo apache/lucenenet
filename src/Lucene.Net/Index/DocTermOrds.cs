@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -752,7 +753,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
 
                 InitializeInstanceFields();
-                Debug.Assert(outerInstance.m_indexedTermsArray != null);
+                Debugging.Assert(() => outerInstance.m_indexedTermsArray != null);
                 termsEnum = reader.Fields.GetTerms(outerInstance.m_field).GetIterator(null);
             }
 
@@ -804,10 +805,10 @@ namespace Lucene.Net.Index
                 {
                     // we hit the term exactly... lucky us!
                     TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(target);
-                    Debug.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
+                    Debugging.Assert(() => seekStatus == TermsEnum.SeekStatus.FOUND);
                     ord = startIdx << outerInstance.indexIntervalBits;
                     SetTerm();
-                    Debug.Assert(term != null);
+                    Debugging.Assert(() => term != null);
                     return SeekStatus.FOUND;
                 }
 
@@ -818,10 +819,10 @@ namespace Lucene.Net.Index
                 {
                     // our target occurs *before* the first term
                     TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(target);
-                    Debug.Assert(seekStatus == TermsEnum.SeekStatus.NOT_FOUND);
+                    Debugging.Assert(() => seekStatus == TermsEnum.SeekStatus.NOT_FOUND);
                     ord = 0;
                     SetTerm();
-                    Debug.Assert(term != null);
+                    Debugging.Assert(() => term != null);
                     return SeekStatus.NOT_FOUND;
                 }
 
@@ -837,10 +838,10 @@ namespace Lucene.Net.Index
                 {
                     // seek to the right block
                     TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(outerInstance.m_indexedTermsArray[startIdx]);
-                    Debug.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
+                    Debugging.Assert(() => seekStatus == TermsEnum.SeekStatus.FOUND);
                     ord = startIdx << outerInstance.indexIntervalBits;
                     SetTerm();
-                    Debug.Assert(term != null); // should be non-null since it's in the index
+                    Debugging.Assert(() => term != null); // should be non-null since it's in the index
                 }
 
                 while (term != null && term.CompareTo(target) < 0)
@@ -874,7 +875,7 @@ namespace Lucene.Net.Index
                     ord = idx << outerInstance.indexIntervalBits;
                     delta = (int)(targetOrd - ord);
                     TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(@base);
-                    Debug.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
+                    Debugging.Assert(() => seekStatus == TermsEnum.SeekStatus.FOUND);
                 }
                 else
                 {
@@ -886,14 +887,14 @@ namespace Lucene.Net.Index
                     BytesRef br = termsEnum.Next();
                     if (br == null)
                     {
-                        Debug.Assert(false);
+                        Debugging.Assert(() => false);
                         return;
                     }
                     ord++;
                 }
 
                 SetTerm();
-                Debug.Assert(term != null);
+                Debugging.Assert(() => term != null);
             }
 
             private BytesRef SetTerm()

@@ -1,7 +1,7 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -506,7 +506,7 @@ namespace Lucene.Net.Search
                         {
                             int g = tg[t];
                             tmp[g].Add(pp);
-                            Debug.Assert(pp.rptGroup == -1 || pp.rptGroup == g);
+                            Debugging.Assert(() => pp.rptGroup == -1 || pp.rptGroup == g);
                             pp.rptGroup = g;
                         }
                     }
@@ -682,7 +682,7 @@ namespace Lucene.Net.Search
 
         public override int Advance(int target)
         {
-            Debug.Assert(target > DocID);
+            Debugging.Assert(() => target > DocID);
             do
             {
                 if (!AdvanceMin(target))

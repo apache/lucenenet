@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
@@ -145,7 +146,7 @@ namespace Lucene.Net.Codecs.Memory
                 public override void StartDoc(int docID, int termDocFreq)
                 {
                     int delta = docID - lastDocID;
-                    Debug.Assert(docID == 0 || delta > 0);
+                    Debugging.Assert(() => docID == 0 || delta > 0);
                     lastDocID = docID;
                     docCount++;
 
@@ -160,7 +161,7 @@ namespace Lucene.Net.Codecs.Memory
                     else
                     {
                         buffer.WriteVInt32(delta << 1);
-                        Debug.Assert(termDocFreq > 0);
+                        Debugging.Assert(() => termDocFreq > 0);
                         buffer.WriteVInt32(termDocFreq);
                     }
 
@@ -170,12 +171,12 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override void AddPosition(int pos, BytesRef payload, int startOffset, int endOffset)
                 {
-                    Debug.Assert(payload == null || outerInstance.field.HasPayloads);
+                    Debugging.Assert(() => payload == null || outerInstance.field.HasPayloads);
 
                     //System.out.println("      addPos pos=" + pos + " payload=" + payload);
 
                     int delta = pos - lastPos;
-                    Debug.Assert(delta >= 0);
+                    Debugging.Assert(() => delta >= 0);
                     lastPos = pos;
 
                     int payloadLen = 0;
@@ -230,7 +231,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 public virtual PostingsWriter Reset()
                 {
-                    Debug.Assert(buffer.GetFilePointer() == 0);
+                    Debugging.Assert(() => buffer.GetFilePointer() == 0);
                     lastDocID = 0;
                     docCount = 0;
                     lastPayloadLen = 0;
@@ -254,9 +255,9 @@ namespace Lucene.Net.Codecs.Memory
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-                Debug.Assert(postingsWriter.docCount == stats.DocFreq);
+                Debugging.Assert(() => postingsWriter.docCount == stats.DocFreq);
 
-                Debug.Assert(buffer2.GetFilePointer() == 0);
+                Debugging.Assert(() => buffer2.GetFilePointer() == 0);
 
                 buffer2.WriteVInt32(stats.DocFreq);
                 if (field.IndexOptions != IndexOptions.DOCS_ONLY)
@@ -401,7 +402,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public FSTDocsEnum Reset(BytesRef bufferIn, IBits liveDocs, int numDocs)
             {
-                Debug.Assert(numDocs > 0);
+                Debugging.Assert(() => numDocs > 0);
                 if (buffer.Length < bufferIn.Length)
                 {
                     buffer = ArrayUtil.Grow(buffer, bufferIn.Length);
@@ -445,7 +446,7 @@ namespace Lucene.Net.Codecs.Memory
                         else
                         {
                             freq = @in.ReadVInt32();
-                            Debug.Assert(freq > 0);
+                            Debugging.Assert(() => freq > 0);
                         }
 
                         if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
@@ -554,7 +555,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public FSTDocsAndPositionsEnum Reset(BytesRef bufferIn, IBits liveDocs, int numDocs)
             {
-                Debug.Assert(numDocs > 0);
+                Debugging.Assert(() => numDocs > 0);
 
                 // System.out.println("D&P reset bytes this=" + this);
                 // for(int i=bufferIn.offset;i<bufferIn.length;i++) {
@@ -605,7 +606,7 @@ namespace Lucene.Net.Codecs.Memory
                     else
                     {
                         freq = @in.ReadVInt32();
-                        Debug.Assert(freq > 0);
+                        Debugging.Assert(() => freq > 0);
                     }
 
                     if (liveDocs == null || liveDocs.Get(accum))
@@ -654,7 +655,7 @@ namespace Lucene.Net.Codecs.Memory
             public override int NextPosition()
             {
                 //System.out.println("    nextPos storePayloads=" + storePayloads + " this=" + this);
-                Debug.Assert(posPending > 0);
+                Debugging.Assert(() => posPending > 0);
                 posPending--;
                 if (!storePayloads)
                 {

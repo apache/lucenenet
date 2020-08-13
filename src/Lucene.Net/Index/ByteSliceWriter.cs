@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System.Diagnostics;
 
 namespace Lucene.Net.Index
@@ -46,26 +47,26 @@ namespace Lucene.Net.Index
         public void Init(int address)
         {
             slice = pool.Buffers[address >> ByteBlockPool.BYTE_BLOCK_SHIFT];
-            Debug.Assert(slice != null);
+            Debugging.Assert(() => slice != null);
             upto = address & ByteBlockPool.BYTE_BLOCK_MASK;
             offset0 = address;
-            Debug.Assert(upto < slice.Length);
+            Debugging.Assert(() => upto < slice.Length);
         }
 
         /// <summary>
         /// Write byte into byte slice stream </summary>
         public override void WriteByte(byte b)
         {
-            Debug.Assert(slice != null);
+            Debugging.Assert(() => slice != null);
             if (slice[upto] != 0)
             {
                 upto = pool.AllocSlice(slice, upto);
                 slice = pool.Buffer;
                 offset0 = pool.ByteOffset;
-                Debug.Assert(slice != null);
+                Debugging.Assert(() => slice != null);
             }
             slice[upto++] = (byte)b;
-            Debug.Assert(upto != slice.Length);
+            Debugging.Assert(() => upto != slice.Length);
         }
 
         public override void WriteBytes(byte[] b, int offset, int len)
@@ -82,7 +83,7 @@ namespace Lucene.Net.Index
                 }
 
                 slice[upto++] = (byte)b[offset++];
-                Debug.Assert(upto != slice.Length);
+                Debugging.Assert(() => upto != slice.Length);
             }
         }
 

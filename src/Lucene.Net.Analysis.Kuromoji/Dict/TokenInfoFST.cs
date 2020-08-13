@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util.Fst;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Util.Fst;
 using System.Diagnostics;
 
 namespace Lucene.Net.Analysis.Ja.Dict
@@ -74,7 +75,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         {
             if (useCache && ch >= 0x3040 && ch <= cacheCeiling)
             {
-                Debug.Assert(ch != FST.END_LABEL);
+                Debugging.Assert(() => ch != FST.END_LABEL);
                 FST.Arc<long?> result = rootCache[ch - 0x3040];
                 if (result == null)
                 {

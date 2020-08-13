@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -68,15 +69,15 @@ namespace Lucene.Net.Codecs.SimpleText
         /// </summary>
         private bool FieldSeen(string field)
         {
-            Debug.Assert(!_fieldsSeen.Contains(field), "field \"" + field + "\" was added more than once during flush");
+            Debugging.Assert(() => !_fieldsSeen.Contains(field), () => "field \"" + field + "\" was added more than once during flush");
             _fieldsSeen.Add(field);
             return true;
         }
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
-            Debug.Assert(FieldSeen(field.Name));
-            Debug.Assert(field.DocValuesType == DocValuesType.NUMERIC ||
+            Debugging.Assert(() => FieldSeen(field.Name));
+            Debugging.Assert(() => field.DocValuesType == DocValuesType.NUMERIC ||
                          field.NormType == DocValuesType.NUMERIC);
             WriteFieldEntry(field, DocValuesType.NUMERIC);
 
@@ -117,26 +118,26 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 long value = n.GetValueOrDefault();
 
-                Debug.Assert(value >= minValue);
+                Debugging.Assert(() => value >= minValue);
 
                 var delta = (decimal)value - (decimal)minValue; // LUCENENET specific - use decimal rather than BigInteger
                 string s = delta.ToString(patternString, CultureInfo.InvariantCulture);
-                Debug.Assert(s.Length == patternString.Length);
+                Debugging.Assert(() => s.Length == patternString.Length);
                 SimpleTextUtil.Write(data, s, scratch);
                 SimpleTextUtil.WriteNewline(data);
                 SimpleTextUtil.Write(data, n == null ? "F" : "T", scratch);
                 SimpleTextUtil.WriteNewline(data);
                 numDocsWritten++;
-                Debug.Assert(numDocsWritten <= numDocs);
+                Debugging.Assert(() => numDocsWritten <= numDocs);
             }
 
-            Debug.Assert(numDocs == numDocsWritten, "numDocs=" + numDocs + " numDocsWritten=" + numDocsWritten);
+            Debugging.Assert(() => numDocs == numDocsWritten, () => "numDocs=" + numDocs + " numDocsWritten=" + numDocsWritten);
         }
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            Debug.Assert(FieldSeen(field.Name));
-            Debug.Assert(field.DocValuesType == DocValuesType.BINARY);
+            Debugging.Assert(() => FieldSeen(field.Name));
+            Debugging.Assert(() => field.DocValuesType == DocValuesType.BINARY);
 
             var maxLength = 0;
             foreach (var value in values)
@@ -191,13 +192,13 @@ namespace Lucene.Net.Codecs.SimpleText
                 numDocsWritten++;
             }
 
-            Debug.Assert(numDocs == numDocsWritten);
+            Debugging.Assert(() => numDocs == numDocsWritten);
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
-            Debug.Assert(FieldSeen(field.Name));
-            Debug.Assert(field.DocValuesType == DocValuesType.SORTED);
+            Debugging.Assert(() => FieldSeen(field.Name));
+            Debugging.Assert(() => field.DocValuesType == DocValuesType.SORTED);
             WriteFieldEntry(field, DocValuesType.SORTED);
 
             int valueCount = 0;
@@ -267,10 +268,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 SimpleTextUtil.WriteNewline(data);
                 valuesSeen++;
-                Debug.Assert(valuesSeen <= valueCount);
+                Debugging.Assert(() => valuesSeen <= valueCount);
             }
 
-            Debug.Assert(valuesSeen == valueCount);
+            Debugging.Assert(() => valuesSeen == valueCount);
 
             foreach (var ord in docToOrd)
             {
@@ -282,8 +283,8 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values,
             IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            Debug.Assert(FieldSeen(field.Name));
-            Debug.Assert(field.DocValuesType == DocValuesType.SORTED_SET);
+            Debugging.Assert(() => FieldSeen(field.Name));
+            Debugging.Assert(() => field.DocValuesType == DocValuesType.SORTED_SET);
             WriteFieldEntry(field, DocValuesType.SORTED_SET);
 
             long valueCount = 0;
@@ -374,10 +375,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 SimpleTextUtil.WriteNewline(data);
                 valuesSeen++;
-                Debug.Assert(valuesSeen <= valueCount);
+                Debugging.Assert(() => valuesSeen <= valueCount);
             }
 
-            Debug.Assert(valuesSeen == valueCount);
+            Debugging.Assert(() => valuesSeen == valueCount);
 
             using (var ordStream = ords.GetEnumerator())
             {
@@ -425,7 +426,7 @@ namespace Lucene.Net.Codecs.SimpleText
             var success = false;
             try
             {
-                Debug.Assert(_fieldsSeen.Count > 0);
+                Debugging.Assert(() => _fieldsSeen.Count > 0);
                 // java : sheisty to do this here?
                 SimpleTextUtil.Write(data, END);
                 SimpleTextUtil.WriteNewline(data);

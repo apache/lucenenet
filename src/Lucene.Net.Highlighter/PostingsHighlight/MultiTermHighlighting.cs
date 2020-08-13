@@ -2,6 +2,7 @@
 using J2N;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search.Spans;
 using Lucene.Net.Util;
@@ -291,7 +292,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 get
                 {
-                    Debug.Assert(currentStartOffset >= 0);
+                    Debugging.Assert(() => currentStartOffset >= 0);
                     return currentStartOffset;
                 }
             }
@@ -300,7 +301,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 get
                 {
-                    Debug.Assert(currentEndOffset >= 0);
+                    Debugging.Assert(() => currentEndOffset >= 0);
                     return currentEndOffset;
                 }
             }

@@ -1,10 +1,10 @@
 ﻿using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace Lucene.Net.Analysis.Synonym
@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             public virtual CharsRef PullNext()
             {
-                Debug.Assert(upto < count);
+                Debugging.Assert(() => upto < count);
                 lastEndOffset = endOffsets[upto];
                 lastPosLength = posLengths[upto];
                 CharsRef result = outputs[upto++];
@@ -306,7 +306,7 @@ namespace Lucene.Net.Analysis.Synonym
             nextWrite = RollIncr(nextWrite);
 
             // Buffer head should never catch up to tail:
-            Debug.Assert(nextWrite != nextRead);
+            Debugging.Assert(() => nextWrite != nextRead);
         }
 
         /*
@@ -325,7 +325,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             //System.out.println("\nS: parse");
 
-            Debug.Assert(inputSkipCount == 0);
+            Debugging.Assert(() => inputSkipCount == 0);
 
             int curNextRead = nextRead;
 
@@ -337,7 +337,7 @@ namespace Lucene.Net.Analysis.Synonym
             BytesRef pendingOutput = fst.Outputs.NoOutput;
             fst.GetFirstArc(scratchArc);
 
-            Debug.Assert(scratchArc.Output == fst.Outputs.NoOutput);
+            Debugging.Assert(() => scratchArc.Output == fst.Outputs.NoOutput);
 
             int tokenCount = 0;
 
@@ -364,7 +364,7 @@ namespace Lucene.Net.Analysis.Synonym
                     else
                     {
                         //System.out.println("  input.incrToken");
-                        Debug.Assert(futureInputs[nextWrite].consumed);
+                        Debugging.Assert(() => futureInputs[nextWrite].consumed);
                         // Not correct: a syn match whose output is longer
                         // than its input can set future inputs keepOrig
                         // to true:
@@ -480,7 +480,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             else
             {
-                Debug.Assert(finished);
+                Debugging.Assert(() => finished);
             }
 
             //System.out.println("  parse done inputSkipCount=" + inputSkipCount + " nextRead=" + nextRead + " nextWrite=" + nextWrite);
@@ -510,7 +510,7 @@ namespace Lucene.Net.Analysis.Synonym
                         int outputLen = chIDX - lastStart;
                         // Caller is not allowed to have empty string in
                         // the output:
-                        Debug.Assert(outputLen > 0, "output contains empty string: " + scratchChars);
+                        Debugging.Assert(() => outputLen > 0, () => "output contains empty string: " + scratchChars);
                         int endOffset;
                         int posLen;
                         if (chIDX == chEnd && lastStart == scratchChars.Offset)
@@ -536,7 +536,7 @@ namespace Lucene.Net.Analysis.Synonym
                         lastStart = 1 + chIDX;
                         //System.out.println("  slot=" + outputUpto + " keepOrig=" + keepOrig);
                         outputUpto = RollIncr(outputUpto);
-                        Debug.Assert(futureOutputs[outputUpto].posIncr == 1, "outputUpto=" + outputUpto + " vs nextWrite=" + nextWrite);
+                        Debugging.Assert(() => futureOutputs[outputUpto].posIncr == 1, () => "outputUpto=" + outputUpto + " vs nextWrite=" + nextWrite);
                     }
                 }
             }
@@ -602,7 +602,7 @@ namespace Lucene.Net.Analysis.Synonym
                         {
                             // Pass-through case: return token we just pulled
                             // but didn't capture:
-                            Debug.Assert(inputSkipCount == 1, "inputSkipCount=" + inputSkipCount + " nextRead=" + nextRead);
+                            Debugging.Assert(() => inputSkipCount == 1, () => "inputSkipCount=" + inputSkipCount + " nextRead=" + nextRead);
                         }
                         input.Reset();
                         if (outputs.count > 0)

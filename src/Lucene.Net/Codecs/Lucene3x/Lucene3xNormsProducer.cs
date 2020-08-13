@@ -1,5 +1,6 @@
 using J2N.Threading.Atomic;
 using J2N.Runtime.CompilerServices;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -135,7 +136,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                 }
                 // TODO: change to a real check? see LUCENE-3619
-                Debug.Assert(singleNormStream == null || nextNormSeek == singleNormStream.Length, singleNormStream != null ? "len: " + singleNormStream.Length + " expected: " + nextNormSeek : "null");
+                Debugging.Assert(() => singleNormStream == null || nextNormSeek == singleNormStream.Length, () => singleNormStream != null ? "len: " + singleNormStream.Length + " expected: " + nextNormSeek : "null");
                 success = true;
             }
             finally
@@ -187,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                Debug.Assert(Convert.ToInt64(v, CultureInfo.InvariantCulture) != SegmentInfo.NO);
+                Debugging.Assert(() => Convert.ToInt64(v, CultureInfo.InvariantCulture) != SegmentInfo.NO);
                 return true;
             }
         }
@@ -257,7 +258,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
             var dv = norms[field.Name];
-            Debug.Assert(dv != null);
+            Debugging.Assert(() => dv != null);
             return dv.Instance;
         }
 

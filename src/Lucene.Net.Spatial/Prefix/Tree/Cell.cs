@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
@@ -103,7 +104,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public virtual void Reset(byte[] bytes, int off, int len)
         {
-            Debug.Assert(Level != 0);
+            Debugging.Assert(() => Level != 0);
             token = null;
             m_shapeRel = SpatialRelation.NOT_SET;
             this.bytes = bytes;
@@ -138,7 +139,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <summary>Note: not supported at level 0.</summary>
         public virtual void SetLeaf()
         {
-            Debug.Assert(Level != 0);
+            Debugging.Assert(() => Level != 0);
             m_leaf = true;
         }
 

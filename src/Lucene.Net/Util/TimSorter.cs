@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
         /// Minimum run length for an array of length <paramref name="length"/>. </summary>
         internal static int MinRun(int length)
         {
-            Debug.Assert(length >= MINRUN);
+            Debugging.Assert(() => length >= MINRUN);
             int n = length;
             int r = 0;
             while (n >= 64)
@@ -76,7 +76,7 @@ namespace Lucene.Net.Util
                 n = (int)((uint)n >> 1);
             }
             int minRun = n + r;
-            Debug.Assert(minRun >= MINRUN && minRun <= THRESHOLD);
+            Debugging.Assert(() => minRun >= MINRUN && minRun <= THRESHOLD);
             return minRun;
         }
 
@@ -91,7 +91,7 @@ namespace Lucene.Net.Util
             return runEnds[stackSize - i - 1];
         }
 
-        internal virtual int RunEnd(int i)
+        internal virtual int RunEnd(int i) // LUCENENET TODO: API - change to indexer
         {
             return runEnds[stackSize - i];
         }
@@ -114,7 +114,7 @@ namespace Lucene.Net.Util
         internal virtual int NextRun()
         {
             int runBase = RunEnd(0);
-            Debug.Assert(runBase < to);
+            Debugging.Assert(() => runBase < to);
             if (runBase == to - 1)
             {
                 return 1;
@@ -198,7 +198,7 @@ namespace Lucene.Net.Util
 
         internal virtual void MergeAt(int n)
         {
-            Debug.Assert(stackSize >= 2);
+            Debugging.Assert(() => stackSize >= 2);
             Merge(RunBase(n + 1), RunBase(n), RunEnd(n));
             for (int j = n + 1; j > 0; --j)
             {
@@ -249,7 +249,7 @@ namespace Lucene.Net.Util
                 PushRunLen(NextRun());
             } while (RunEnd(0) < to);
             ExhaustStack();
-            Debug.Assert(RunEnd(0) == to);
+            Debugging.Assert(() => RunEnd(0) == to);
         }
 
         internal override void DoRotate(int lo, int mid, int hi)
@@ -297,7 +297,7 @@ namespace Lucene.Net.Util
 
         internal virtual void MergeLo(int lo, int mid, int hi)
         {
-            Debug.Assert(Compare(lo, mid) > 0);
+            Debugging.Assert(() => Compare(lo, mid) > 0);
             int len1 = mid - lo;
             Save(lo, len1);
             Copy(mid, lo);
@@ -335,12 +335,12 @@ namespace Lucene.Net.Util
             {
                 Restore(i++, dest);
             }
-            Debug.Assert(j == dest);
+            Debugging.Assert(() => j == dest);
         }
 
         internal virtual void MergeHi(int lo, int mid, int hi)
         {
-            Debug.Assert(Compare(mid - 1, hi - 1) > 0);
+            Debugging.Assert(() => Compare(mid - 1, hi - 1) > 0);
             int len2 = hi - mid;
             Save(mid, len2);
             Copy(mid - 1, hi - 1);
@@ -378,7 +378,7 @@ namespace Lucene.Net.Util
             {
                 Restore(j--, dest);
             }
-            Debug.Assert(i == dest);
+            Debugging.Assert(() => i == dest);
         }
 
         internal virtual int LowerSaved(int from, int to, int val)

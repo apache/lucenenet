@@ -1,7 +1,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -25,8 +25,6 @@ namespace Lucene.Net.Index
 
     using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using OffsetAttribute = Lucene.Net.Analysis.TokenAttributes.OffsetAttribute;
-    using PayloadAttribute = Lucene.Net.Analysis.TokenAttributes.PayloadAttribute;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using TermVectorsWriter = Lucene.Net.Codecs.TermVectorsWriter;
 
@@ -166,14 +164,13 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal void FinishDocument()
         {
-            // LUCENENET: .NET doesn't support asserts in release mode
-            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docState.TestPoint("TermVectorsTermsWriterPerField.finish start");
+            Debugging.Assert(() => docState.TestPoint("TermVectorsTermsWriterPerField.finish start"));
 
             int numPostings = termsHashPerField.bytesHash.Count;
 
             BytesRef flushTerm = termsWriter.flushTerm;
 
-            Debug.Assert(numPostings >= 0);
+            Debugging.Assert(() => numPostings >= 0);
 
             if (numPostings > maxNumPostings)
             {
@@ -184,7 +181,7 @@ namespace Lucene.Net.Index
             // of a given field in the doc.  At this point we flush
             // our hash into the DocWriter.
 
-            Debug.Assert(termsWriter.VectorFieldsInOrder(fieldInfo));
+            Debugging.Assert(() => termsWriter.VectorFieldsInOrder(fieldInfo));
 
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
             TermVectorsWriter tv = termsWriter.writer;
@@ -349,7 +346,7 @@ namespace Lucene.Net.Index
 
             internal override void CopyTo(ParallelPostingsArray toArray, int numToCopy)
             {
-                Debug.Assert(toArray is TermVectorsPostingsArray);
+                Debugging.Assert(() => toArray is TermVectorsPostingsArray);
                 TermVectorsPostingsArray to = (TermVectorsPostingsArray)toArray;
 
                 base.CopyTo(toArray, numToCopy);

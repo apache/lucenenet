@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util
@@ -114,7 +114,7 @@ namespace Lucene.Net.Util
         /// (internal) Returns the slot for this key. </summary>
         public virtual int GetSlot(int key)
         {
-            Debug.Assert(key != EmptyVal);
+            Debugging.Assert(() => key != EmptyVal);
             int h = Hash(key);
             int s = h & (keys.Length - 1);
             if (keys[s] == key || keys[s] == EmptyVal)
@@ -134,7 +134,7 @@ namespace Lucene.Net.Util
         /// (internal) Returns the slot for this key, or -slot-1 if not found. </summary>
         public virtual int Find(int key)
         {
-            Debug.Assert(key != EmptyVal);
+            Debugging.Assert(() => key != EmptyVal);
             int h = Hash(key);
             int s = h & (keys.Length - 1);
             if (keys[s] == key)

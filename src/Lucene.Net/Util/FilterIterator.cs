@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
                 return false;
             }
 
-            Debug.Assert(nextIsSet);
+            Debugging.Assert(() => nextIsSet);
             try
             {
                 current = next;

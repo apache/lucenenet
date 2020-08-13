@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
 using FieldInfos = Lucene.Net.Index.FieldInfos;
@@ -104,8 +105,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                 indexInterval = input.ReadInt32();
                 skipInterval = input.ReadInt32();
                 maxSkipLevels = input.ReadInt32();
-                Debug.Assert(indexInterval > 0, "indexInterval=" + indexInterval + " is negative; must be > 0");
-                Debug.Assert(skipInterval > 0, "skipInterval=" + skipInterval + " is negative; must be > 0");
+                Debugging.Assert(() => indexInterval > 0, () => "indexInterval=" + indexInterval + " is negative; must be > 0");
+                Debugging.Assert(() => skipInterval > 0, () => "skipInterval=" + skipInterval + " is negative; must be > 0");
             }
         }
 

@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
@@ -177,7 +178,7 @@ namespace Lucene.Net.Analysis
 
             public void FillBytesRef()
             {
-                Debug.Assert(ValueSize == 64 || ValueSize == 32);
+                Debugging.Assert(() => ValueSize == 64 || ValueSize == 32);
                 if (ValueSize == 64)
                 {
                     NumericUtils.Int64ToPrefixCoded(_value, Shift, _bytes);

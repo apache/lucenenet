@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -45,25 +45,25 @@ namespace Lucene.Net.Util.Fst
 
         public override long? Common(long? output1, long? output2)
         {
-            Debug.Assert(Valid(output1));
-            Debug.Assert(Valid(output2));
+            Debugging.Assert(() => Valid(output1));
+            Debugging.Assert(() => Valid(output2));
             if (output1 == NO_OUTPUT || output2 == NO_OUTPUT)
             {
                 return NO_OUTPUT;
             }
             else
             {
-                Debug.Assert(output1 > 0);
-                Debug.Assert(output2 > 0);
+                Debugging.Assert(() => output1 > 0);
+                Debugging.Assert(() => output2 > 0);
                 return Math.Min(output1.Value, output2.Value);
             }
         }
 
         public override long? Subtract(long? output, long? inc)
         {
-            Debug.Assert(Valid(output));
-            Debug.Assert(Valid(inc));
-            Debug.Assert(output >= inc);
+            Debugging.Assert(() => Valid(output));
+            Debugging.Assert(() => Valid(inc));
+            Debugging.Assert(() => output >= inc);
 
             if (inc == NO_OUTPUT)
             {
@@ -81,8 +81,8 @@ namespace Lucene.Net.Util.Fst
 
         public override long? Add(long? prefix, long? output)
         {
-            Debug.Assert(Valid(prefix));
-            Debug.Assert(Valid(output));
+            Debugging.Assert(() => Valid(prefix));
+            Debugging.Assert(() => Valid(output));
             if (prefix == NO_OUTPUT)
             {
                 return output;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(long? output, DataOutput @out)
         {
-            Debug.Assert(Valid(output));
+            Debugging.Assert(() => Valid(output));
             @out.WriteVInt64(output.Value);
         }
 
@@ -118,8 +118,8 @@ namespace Lucene.Net.Util.Fst
 
         private bool Valid(long? o)
         {
-            Debug.Assert(o != null, "PositiveIntOutput precondition fail");
-            Debug.Assert(o == NO_OUTPUT || o > 0, "o=" + o);
+            Debugging.Assert(() => o != null, () => "PositiveIntOutput precondition fail");
+            Debugging.Assert(() => o == NO_OUTPUT || o > 0, () => "o=" + o);
             return true;
         }
 

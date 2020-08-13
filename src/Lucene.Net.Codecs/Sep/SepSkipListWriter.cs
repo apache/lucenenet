@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System.Diagnostics;
@@ -177,7 +178,7 @@ namespace Lucene.Net.Codecs.Sep
             //         current payload length equals the length at the previous
             //         skip point
 
-            Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !curStorePayloads);
+            Debugging.Assert(() => indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !curStorePayloads);
 
             if (curStorePayloads)
             {

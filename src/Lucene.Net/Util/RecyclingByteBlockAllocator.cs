@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
@@ -109,7 +109,7 @@ namespace Lucene.Net.Util
                 blocks[i] = null;
             }
             bytesUsed.AddAndGet(-(end - stop) * m_blockSize);
-            Debug.Assert(bytesUsed.Get() >= 0);
+            Debugging.Assert(() => bytesUsed.Get() >= 0);
         }
 
         /// <returns> The number of currently buffered blocks. </returns>
@@ -129,7 +129,7 @@ namespace Lucene.Net.Util
         /// <returns> The number of actually removed buffers. </returns>
         public int FreeBlocks(int num)
         {
-            Debug.Assert(num >= 0, "free blocks must be >= 0 but was: " + num);
+            Debugging.Assert(() => num >= 0, () => "free blocks must be >= 0 but was: " + num);
             int stop;
             int count;
             if (num > freeBlocks)
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
                 freeByteBlocks[--freeBlocks] = null;
             }
             bytesUsed.AddAndGet(-count * m_blockSize);
-            Debug.Assert(bytesUsed.Get() >= 0);
+            Debugging.Assert(() => bytesUsed.Get() >= 0);
             return count;
         }
     }

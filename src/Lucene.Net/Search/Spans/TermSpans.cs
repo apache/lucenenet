@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Spans
 
         public override bool SkipTo(int target)
         {
-            Debug.Assert(target > m_doc);
+            Debugging.Assert(() => target > m_doc);
             m_doc = m_postings.Advance(target);
             if (m_doc == DocIdSetIterator.NO_MORE_DOCS)
             {

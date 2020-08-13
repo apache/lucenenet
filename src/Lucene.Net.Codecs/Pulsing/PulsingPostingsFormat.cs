@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System.Diagnostics;
@@ -46,7 +47,7 @@ namespace Lucene.Net.Codecs.Pulsing
             int minBlockSize, int maxBlockSize) 
             : base()
         {
-            Debug.Assert(minBlockSize > 1);
+            Debugging.Assert(() => minBlockSize > 1);
 
             _freqCutoff = freqCutoff;
             _minBlockSize = minBlockSize;

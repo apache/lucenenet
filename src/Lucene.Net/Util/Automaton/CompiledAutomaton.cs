@@ -1,7 +1,7 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            Debug.Assert(maxTransition != null);
+            Debugging.Assert(() => maxTransition != null);
 
             // Append floorLabel
             int floorLabel;
@@ -256,7 +256,7 @@ namespace Lucene.Net.Util.Automaton
                 Transition[] transitions = sortedTransitions[state];
                 if (transitions.Length == 0)
                 {
-                    Debug.Assert(RunAutomaton.IsAccept(state));
+                    Debugging.Assert(() => RunAutomaton.IsAccept(state));
                     term.Length = idx;
                     //if (DEBUG) System.out.println("  return " + term.utf8ToString());
                     return term;
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     // We are pushing "top" -- so get last label of
                     // last transition:
-                    Debug.Assert(transitions.Length != 0);
+                    Debugging.Assert(() => transitions.Length != 0);
                     Transition lastTransition = transitions[transitions.Length - 1];
                     if (idx >= term.Bytes.Length)
                     {
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util.Automaton
                         Transition[] transitions = sortedTransitions[state];
                         if (transitions.Length == 0)
                         {
-                            Debug.Assert(RunAutomaton.IsAccept(state));
+                            Debugging.Assert(() => RunAutomaton.IsAccept(state));
                             output.Length = idx;
                             //if (DEBUG) System.out.println("  return " + output.utf8ToString());
                             return output;

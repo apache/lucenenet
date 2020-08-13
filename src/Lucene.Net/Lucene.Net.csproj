@@ -108,6 +108,7 @@
     <InternalsVisibleTo Include="Lucene.Net.Tests.Grouping" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Highlighter" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.ICU" /> <!-- For Analysis.Util.TestSegmentingTokenizerBase -->
+    <InternalsVisibleTo Include="Lucene.Net.Tests.Join" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Misc" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.Queries" />
     <InternalsVisibleTo Include="Lucene.Net.Tests.QueryParser" />

@@ -1,10 +1,10 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -210,7 +210,7 @@ namespace Lucene.Net.Analysis.Hunspell
                             // cross check incoming continuation class (flag of previous affix) against list.
                             dictionary.flagLookup.Get(append, scratch);
                             char[] appendFlags = Dictionary.DecodeFlags(scratch);
-                            Debug.Assert(prevFlag >= 0);
+                            Debugging.Assert(() => prevFlag >= 0);
                             compatible = HasCrossCheckedFlag((char)prevFlag, appendFlags, false);
                         }
                         else
@@ -279,7 +279,7 @@ namespace Lucene.Net.Analysis.Hunspell
                             // cross check incoming continuation class (flag of previous affix) against list.
                             dictionary.flagLookup.Get(append, scratch);
                             char[] appendFlags = Dictionary.DecodeFlags(scratch);
-                            Debug.Assert(prevFlag >= 0);
+                            Debugging.Assert(() => prevFlag >= 0);
                             compatible = HasCrossCheckedFlag((char)prevFlag, appendFlags, previousWasPrefix);
                         }
                         else

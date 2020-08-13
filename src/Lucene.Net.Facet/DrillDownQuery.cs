@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -85,7 +86,7 @@ namespace Lucene.Net.Facet
             {
                 throw new ArgumentException("cannot apply filter unless baseQuery isn't null; pass ConstantScoreQuery instead");
             }
-            Debug.Assert(clauses.Length == 1 + other.drillDownDims.Count, clauses.Length + " vs " + (1 + other.drillDownDims.Count));
+            Debugging.Assert(() => clauses.Length == 1 + other.drillDownDims.Count, () => clauses.Length + " vs " + (1 + other.drillDownDims.Count));
             drillDownDims.PutAll(other.drillDownDims);
             query.Add(new FilteredQuery(clauses[0].Query, filter), Occur.MUST);
             for (int i = 1; i < clauses.Length; i++)

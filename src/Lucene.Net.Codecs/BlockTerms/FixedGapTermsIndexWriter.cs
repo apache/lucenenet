@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -186,7 +187,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 lastTermsPointer = termsFilePointer;
 
                 // save term length (in bytes)
-                Debug.Assert(indexedTermLength <= short.MaxValue);
+                Debugging.Assert(() => indexedTermLength <= short.MaxValue);
                 termLengths[numIndexTerms] = (short)indexedTermLength;
                 totTermLength += indexedTermLength;
 

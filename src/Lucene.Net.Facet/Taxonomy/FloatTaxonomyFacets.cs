@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -57,7 +58,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 if (ft.IsHierarchical && ft.IsMultiValued == false)
                 {
                     int dimRootOrd = m_taxoReader.GetOrdinal(new FacetLabel(dim));
-                    Debug.Assert(dimRootOrd > 0);
+                    Debugging.Assert(() => dimRootOrd > 0);
                     m_values[dimRootOrd] += Rollup(m_children[dimRootOrd]);
                 }
             }

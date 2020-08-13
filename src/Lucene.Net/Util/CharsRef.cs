@@ -1,8 +1,8 @@
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Util
             this.chars = chars;
             this.Offset = offset;
             this.Length = length;
-            Debug.Assert(IsValid());
+            Debugging.Assert(IsValid);
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Grow(int newLength)
         {
-            Debug.Assert(Offset == 0);
+            Debugging.Assert(() => Offset == 0);
             if (chars.Length < newLength)
             {
                 chars = ArrayUtil.Grow(chars, newLength);

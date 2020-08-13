@@ -1,4 +1,5 @@
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -79,7 +80,7 @@ namespace Lucene.Net.Index
                 childFields[f.FieldInfo.Name] = f;
             }
 
-            Debug.Assert(fields.Count == totalFieldCount);
+            Debugging.Assert(() => fields.Count == totalFieldCount);
 
             storedConsumer.Flush(state);
             consumer.Flush(childFields, state);
@@ -166,14 +167,14 @@ namespace Lucene.Net.Index
                     field = field.next;
                 }
             }
-            Debug.Assert(fields.Count == totalFieldCount);
+            Debugging.Assert(() => fields.Count == totalFieldCount);
             return fields;
         }
 
         private void Rehash()
         {
             int newHashSize = (fieldHash.Length * 2);
-            Debug.Assert(newHashSize > fieldHash.Length);
+            Debugging.Assert(() => newHashSize > fieldHash.Length);
 
             DocFieldProcessorPerField[] newHashArray = new DocFieldProcessorPerField[newHashSize];
 
@@ -246,7 +247,7 @@ namespace Lucene.Net.Index
                     // need to addOrUpdate so that FieldInfos can update globalFieldNumbers
                     // with the correct DocValue type (LUCENE-5192)
                     FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.IndexableFieldType);
-                    Debug.Assert(fi == fp.fieldInfo, "should only have updated an existing FieldInfo instance");
+                    Debugging.Assert(() => fi == fp.fieldInfo, () => "should only have updated an existing FieldInfo instance");
                 }
 
                 if (thisFieldGen != fp.lastGen)

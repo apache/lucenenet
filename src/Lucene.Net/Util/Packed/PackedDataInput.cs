@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -52,7 +52,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public long ReadInt64(int bitsPerValue)
         {
-            Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, bitsPerValue.ToString());
+            Debugging.Assert(() => bitsPerValue > 0 && bitsPerValue <= 64, bitsPerValue.ToString);
             long r = 0;
             while (bitsPerValue > 0)
             {

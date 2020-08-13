@@ -1,4 +1,5 @@
 ﻿using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Facet.Taxonomy.Directory;
 using Lucene.Net.Facet.Taxonomy.WriterCache;
 using Lucene.Net.Index;
@@ -186,7 +187,7 @@ namespace Lucene.Net.Replicator
         /// <exception cref="IOException"></exception>
         public virtual Stream Open(string source, string fileName)
         {
-            Debug.Assert(source.Equals(INDEX_SOURCE, StringComparison.Ordinal) || source.Equals(TAXONOMY_SOURCE, StringComparison.Ordinal), string.Format("invalid source; expected=({0} or {1}) got={2}", INDEX_SOURCE, TAXONOMY_SOURCE, source));
+            Debugging.Assert(() => source.Equals(INDEX_SOURCE, StringComparison.Ordinal) || source.Equals(TAXONOMY_SOURCE, StringComparison.Ordinal), () => string.Format("invalid source; expected=({0} or {1}) got={2}", INDEX_SOURCE, TAXONOMY_SOURCE, source));
             IndexCommit commit = source.Equals(INDEX_SOURCE, StringComparison.Ordinal) ? indexCommit : taxonomyCommit;
             return new IndexInputStream(commit.Directory.OpenInput(fileName, IOContext.READ_ONCE));
         }

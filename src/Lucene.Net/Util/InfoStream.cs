@@ -1,5 +1,5 @@
 using System;
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Util
 {
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
         {
             public override void Message(string component, string message)
             {
-                Debug.Assert(false, "message() should not be called when isEnabled returns false");
+                Debugging.Assert(() => false, () => "message() should not be called when isEnabled returns false");
             }
 
             public override bool IsEnabled(string component)

@@ -1,10 +1,10 @@
 ﻿using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Analysis.Compound
 {
@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Compound
         {
             if (m_tokens.Count > 0)
             {
-                Debug.Assert(current != null);
+                Debugging.Assert(() => current != null);
                 CompoundToken token = m_tokens.Dequeue();
                 RestoreState(current); // keep all other attributes untouched
                 m_termAtt.SetEmpty().Append(token.Text);

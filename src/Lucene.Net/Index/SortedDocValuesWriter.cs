@@ -1,9 +1,9 @@
 using Lucene.Net.Codecs;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         {
             int maxDoc = state.SegmentInfo.DocCount;
 
-            Debug.Assert(pending.Count == maxDoc);
+            Debugging.Assert(() => pending.Count == maxDoc);
             int valueCount = hash.Count;
 
             int[] sortedValues = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);

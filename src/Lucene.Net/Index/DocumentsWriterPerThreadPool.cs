@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Diagnostics;
@@ -79,14 +80,14 @@ namespace Lucene.Net.Index
             /// <seealso cref="IsActive"/>
             internal void Deactivate() // LUCENENET NOTE: Made internal because it is called outside of this context
             {
-                //Debug.Assert(this.HeldByCurrentThread);
+                //Debugging.Assert(this.HeldByCurrentThread);
                 isActive = false;
                 Reset();
             }
 
             internal void Reset() // LUCENENET NOTE: Made internal because it is called outside of this context
             {
-                //Debug.Assert(this.HeldByCurrentThread);
+                //Debugging.Assert(this.HeldByCurrentThread);
                 this.dwpt = null;
                 this.bytesUsed = 0;
                 this.flushPending = false;
@@ -98,11 +99,11 @@ namespace Lucene.Net.Index
             /// <see cref="ThreadState"/> is already checked out for flush.
             /// </summary>
             internal bool IsActive =>
-                //Debug.Assert(this.HeldByCurrentThread);
+                //Debugging.Assert(this.HeldByCurrentThread);
                 isActive;
 
             internal bool IsInitialized =>
-                //Debug.Assert(this.HeldByCurrentThread);
+                //Debugging.Assert(this.HeldByCurrentThread);
                 IsActive && dwpt != null;
 
             /// <summary>
@@ -110,7 +111,7 @@ namespace Lucene.Net.Index
             /// <see cref="DocumentsWriterPerThread"/>
             /// </summary>
             public long BytesUsedPerThread =>
-                //Debug.Assert(this.HeldByCurrentThread);
+                //Debugging.Assert(this.HeldByCurrentThread);
                 // public for FlushPolicy
                 bytesUsed;
 
@@ -118,7 +119,7 @@ namespace Lucene.Net.Index
             /// Returns this <see cref="ThreadState"/>s <see cref="DocumentsWriterPerThread"/>
             /// </summary>
             public DocumentsWriterPerThread DocumentsWriterPerThread =>
-                //Debug.Assert(this.HeldByCurrentThread);
+                //Debugging.Assert(this.HeldByCurrentThread);
                 // public for FlushPolicy
                 dwpt;
 
@@ -203,12 +204,12 @@ namespace Lucene.Net.Index
                         {
                             // unreleased thread states are deactivated during DW#close()
                             numThreadStatesActive++; // increment will publish the ThreadState
-                            Debug.Assert(threadState.dwpt == null);
+                            Debugging.Assert(() => threadState.dwpt == null);
                             unlock = false;
                             return threadState;
                         }
                         // unlock since the threadstate is not active anymore - we are closed!
-                        Debug.Assert(AssertUnreleasedThreadStatesInactive());
+                        Debugging.Assert(AssertUnreleasedThreadStatesInactive);
                         return null;
                     }
                     finally
@@ -230,10 +231,10 @@ namespace Lucene.Net.Index
             {
                 for (int i = numThreadStatesActive; i < threadStates.Length; i++)
                 {
-                    Debug.Assert(threadStates[i].TryLock(), "unreleased threadstate should not be locked");
+                    Debugging.Assert(() => threadStates[i].TryLock(), () => "unreleased threadstate should not be locked");
                     try
                     {
-                        Debug.Assert(!threadStates[i].IsInitialized, "expected unreleased thread state to be inactive");
+                        Debugging.Assert(() => !threadStates[i].IsInitialized, () => "expected unreleased thread state to be inactive");
                     }
                     finally
                     {
@@ -269,7 +270,7 @@ namespace Lucene.Net.Index
 
         internal virtual DocumentsWriterPerThread Reset(ThreadState threadState, bool closed)
         {
-            //Debug.Assert(threadState.HeldByCurrentThread);
+            //Debugging.Assert(threadState.HeldByCurrentThread);
             DocumentsWriterPerThread dwpt = threadState.dwpt;
             if (!closed)
             {
@@ -359,7 +360,7 @@ namespace Lucene.Net.Index
         /// <param name="threadState"> the state to deactivate </param>
         internal virtual void DeactivateThreadState(ThreadState threadState)
         {
-            Debug.Assert(threadState.IsActive);
+            Debugging.Assert(() => threadState.IsActive);
             threadState.Deactivate();
         }
     }
