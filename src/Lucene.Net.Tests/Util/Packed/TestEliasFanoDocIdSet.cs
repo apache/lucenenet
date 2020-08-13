@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 using BitSet = J2N.Collections.BitSet;
 
 namespace Lucene.Net.Util.Packed
@@ -52,7 +52,7 @@ namespace Lucene.Net.Util.Packed
                 {
                     doc = NO_MORE_DOCS;
                 }
-                Debug.Assert(doc < numBits);
+                Debugging.Assert(() => doc < numBits);
                 return doc;
             }
 

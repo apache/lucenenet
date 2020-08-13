@@ -1,7 +1,7 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -184,16 +184,16 @@ namespace Lucene.Net.Analysis.Hunspell
             for (int i = 0; i < tests.Length; i += 3)
             {
                 FileInfo f = new FileInfo(System.IO.Path.Combine(DICTIONARY_HOME.FullName, tests[i]));
-                Debug.Assert(f.Exists);
+                Debugging.Assert(() => f.Exists);
 
                 using (Stream fileStream = f.OpenRead())
                 {
                     using (ZipArchive zip = new ZipArchive(fileStream, ZipArchiveMode.Read, false, Encoding.UTF8))
                     {
                         ZipArchiveEntry dicEntry = zip.GetEntry(tests[i + 1]);
-                        Debug.Assert(dicEntry != null);
+                        Debugging.Assert(() => dicEntry != null);
                         ZipArchiveEntry affEntry = zip.GetEntry(tests[i + 2]);
-                        Debug.Assert(affEntry != null);
+                        Debugging.Assert(() => affEntry != null);
 
                         using (Stream dictionary = dicEntry.Open())
                         {
@@ -226,16 +226,16 @@ namespace Lucene.Net.Analysis.Hunspell
                 if (tests[i].Equals(toTest, StringComparison.Ordinal))
                 {
                     FileInfo f = new FileInfo(System.IO.Path.Combine(DICTIONARY_HOME.FullName, tests[i]));
-                    Debug.Assert(f.Exists);
+                    Debugging.Assert(() => f.Exists);
 
                     using (Stream fileStream = f.OpenRead())
                     {
                         using (ZipArchive zip = new ZipArchive(fileStream, ZipArchiveMode.Read, false, Encoding.UTF8))
                         {
                             ZipArchiveEntry dicEntry = zip.GetEntry(tests[i + 1]);
-                            Debug.Assert(dicEntry != null);
+                            Debugging.Assert(() => dicEntry != null);
                             ZipArchiveEntry affEntry = zip.GetEntry(tests[i + 2]);
-                            Debug.Assert(affEntry != null);
+                            Debugging.Assert(() => affEntry != null);
 
                             using (Stream dictionary = dicEntry.Open())
                             {

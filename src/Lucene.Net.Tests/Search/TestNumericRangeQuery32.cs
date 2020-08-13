@@ -1,8 +1,8 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -32,7 +32,6 @@ namespace Lucene.Net.Search
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
-    using SingleField = SingleField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Int32Field = Int32Field;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -40,6 +39,7 @@ namespace Lucene.Net.Search
     using MultiFields = Lucene.Net.Index.MultiFields;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using SingleField = SingleField;
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
@@ -474,13 +474,13 @@ namespace Lucene.Net.Search
             int count = 3000;
             int lower = (distance * 3 / 2) + startOffset, upper = lower + count * distance + (distance / 3);
             // test empty enum
-            Debug.Assert(lower < upper);
+            Debugging.Assert(() => lower < upper);
             Assert.IsTrue(0 < CountTerms(NumericRangeQuery.NewInt32Range("field4", 4, lower, upper, true, true)));
             Assert.AreEqual(0, CountTerms(NumericRangeQuery.NewInt32Range("field4", 4, upper, lower, true, true)));
             // test empty enum outside of bounds
             lower = distance * noDocs + startOffset;
             upper = 2 * lower;
-            Debug.Assert(lower < upper);
+            Debugging.Assert(() => lower < upper);
             Assert.AreEqual(0, CountTerms(NumericRangeQuery.NewInt32Range("field4", 4, lower, upper, true, true)));
         }
 

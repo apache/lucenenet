@@ -1,11 +1,11 @@
 ﻿using J2N.Collections.Generic.Extensions;
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -866,7 +866,7 @@ namespace Lucene.Net.Facet
 
             public virtual void Collect(int doc)
             {
-                Debug.Assert(doc > lastDocID);
+                Debugging.Assert(() => doc > lastDocID);
                 lastDocID = doc;
             }
 
@@ -948,8 +948,8 @@ namespace Lucene.Net.Facet
 
             public virtual void Inc(int[] dims, int[] dims2, int onlyDim)
             {
-                Debug.Assert(dims.Length == counts.Length);
-                Debug.Assert(dims2.Length == counts.Length);
+                Debugging.Assert(() => dims.Length == counts.Length);
+                Debugging.Assert(() => dims2.Length == counts.Length);
                 for (int dim = 0; dim < dims.Length; dim++)
                 {
                     if (onlyDim == -1 || dim == onlyDim)

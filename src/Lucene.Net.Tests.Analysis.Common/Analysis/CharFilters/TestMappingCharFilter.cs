@@ -1,8 +1,8 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -422,7 +422,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 // Same length: no change to offset
                             }
 
-                            Debug.Assert(inputOffsets.Count == output.Length, "inputOffsets.size()=" + inputOffsets.Count + " vs output.length()=" + output.Length);
+                            Debugging.Assert(() => inputOffsets.Count == output.Length, () => "inputOffsets.size()=" + inputOffsets.Count + " vs output.length()=" + output.Length);
                         }
                         else
                         {

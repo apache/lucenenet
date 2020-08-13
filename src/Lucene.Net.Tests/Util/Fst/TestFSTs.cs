@@ -1,12 +1,12 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -571,7 +571,7 @@ namespace Lucene.Net.Util.Fst
                     long tMid = Environment.TickCount;
                     Console.WriteLine(((tMid - tStart) / 1000.0) + " sec to add all terms");
 
-                    Debug.Assert(builder.TermCount == ord);
+                    Debugging.Assert(() => builder.TermCount == ord);
                     FST<T> fst = builder.Finish();
                     long tEnd = Environment.TickCount;
                     Console.WriteLine(((tEnd - tMid) / 1000.0) + " sec to finish/pack");

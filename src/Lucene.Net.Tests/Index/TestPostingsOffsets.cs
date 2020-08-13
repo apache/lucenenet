@@ -1,11 +1,11 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -177,9 +177,9 @@ namespace Lucene.Net.Index
                     {
                         dp.NextPosition();
                         int start = dp.StartOffset;
-                        Debug.Assert(start >= 0);
+                        Debugging.Assert(() => start >= 0);
                         int end = dp.EndOffset;
-                        Debug.Assert(end >= 0 && end >= start);
+                        Debugging.Assert(() => end >= 0 && end >= start);
                         // check that the offsets correspond to the term in the src text
                         Assert.IsTrue(storedNumbers.Substring(start, end - start).Equals(term, StringComparison.Ordinal));
                         if (withPayloads)
@@ -208,9 +208,9 @@ namespace Lucene.Net.Index
                     string storedNumbers = reader.Document(doc).Get("numbers");
                     dp.NextPosition();
                     int start = dp.StartOffset;
-                    Debug.Assert(start >= 0);
+                    Debugging.Assert(() => start >= 0);
                     int end = dp.EndOffset;
-                    Debug.Assert(end >= 0 && end >= start);
+                    Debugging.Assert(() => end >= 0 && end >= start);
                     // check that the offsets correspond to the term in the src text
                     Assert.IsTrue(storedNumbers.Substring(start, end - start).Equals("hundred", StringComparison.Ordinal));
                     if (withPayloads)

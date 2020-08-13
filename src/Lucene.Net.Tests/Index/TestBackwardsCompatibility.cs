@@ -1,10 +1,10 @@
 using J2N;
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -434,7 +434,7 @@ namespace Lucene.Net.Index
             // true if this is a 4.2+ index
             bool is42Index = MultiFields.GetMergedFieldInfos(reader).FieldInfo("dvSortedSet") != null;
 
-            Debug.Assert(is40Index); // NOTE: currently we can only do this on trunk!
+            Debugging.Assert(() => is40Index); // NOTE: currently we can only do this on trunk!
 
             IBits liveDocs = MultiFields.GetLiveDocs(reader);
 

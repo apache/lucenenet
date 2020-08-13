@@ -1,6 +1,7 @@
 ﻿using J2N;
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search.Suggest.Analyzing;
 using Lucene.Net.Search.Suggest.Fst;
 using Lucene.Net.Search.Suggest.Jaspell;
@@ -11,7 +12,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -75,7 +75,7 @@ namespace Lucene.Net.Search.Suggest
 
         public override void SetUp()
         {
-            Debug.Assert(false, "disable assertions before running benchmarks!");
+            Debugging.Assert(() => false, () => "disable assertions before running benchmarks!");
             IList<Input> input = ReadTop50KWiki();
             input.Shuffle(Random);
             dictionaryInput = input.ToArray();
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search.Suggest
             List<Input> input = new List<Input>();
 
             var resource = typeof(LookupBenchmarkTest).FindAndGetManifestResourceStream("Top50KWiki.utf8");
-            Debug.Assert(resource != null, "Resource missing: Top50KWiki.utf8");
+            Debugging.Assert(() => resource != null, () => "Resource missing: Top50KWiki.utf8");
 
             string line = null;
             using (TextReader br = new StreamReader(resource, UTF_8))

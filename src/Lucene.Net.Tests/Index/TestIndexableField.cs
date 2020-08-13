@@ -1,8 +1,8 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -317,7 +317,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            Debug.Assert(stringValue != null);
+                            Debugging.Assert(() => stringValue != null);
                             Assert.AreEqual(stringValue, f.GetStringValue());
                         }
                     }
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
                         return false;
                     }
 
-                    Debug.Assert(fieldUpto < outerInstance.fieldCount);
+                    Debugging.Assert(() => fieldUpto < outerInstance.fieldCount);
                     if (fieldUpto == 0)
                     {
                         fieldUpto = 1;

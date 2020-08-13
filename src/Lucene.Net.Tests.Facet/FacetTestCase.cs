@@ -1,8 +1,8 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -154,7 +154,7 @@ namespace Lucene.Net.Facet
                     if (numInRow > 1)
                     {
                         Array.Sort(labelValues, i - numInRow, i - (i - numInRow), Comparer<LabelAndValue>.Create((a,b)=> {
-                            Debug.Assert((double)a.Value == (double)b.Value);
+                            Debugging.Assert(() => (double)a.Value == (double)b.Value);
                             return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
                         }));
                     }

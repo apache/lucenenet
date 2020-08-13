@@ -3,13 +3,13 @@ using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -603,7 +603,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
                 else
                 {
-                    Debug.Assert(false);
+                    Debugging.Assert(() => false);
                     return 0;
                 }
             }
@@ -1313,7 +1313,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 else
                 {
                     int c = CHARSEQUENCE_COMPARER.Compare(a.Key, b.Key);
-                    Debug.Assert(c != 0, "term=" + a.Key);
+                    Debugging.Assert(() => c != 0, () => "term=" + a.Key);
                     return c;
                 }
             }

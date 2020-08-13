@@ -1,9 +1,9 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -462,9 +462,9 @@ namespace Lucene.Net.Index
                 else
                 {
                     docs = postings = TestUtil.Docs(Random, r, "field", new BytesRef(term), null, null, DocsFlags.FREQS);
-                    Debug.Assert(postings != null);
+                    Debugging.Assert(() => postings != null);
                 }
-                Debug.Assert(docs != null);
+                Debugging.Assert(() => docs != null);
 
                 int docID = -1;
                 while (docID < DocIdSetIterator.NO_MORE_DOCS)

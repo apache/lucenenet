@@ -6,7 +6,6 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -62,7 +61,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             for (int i = 4; i < 8; i++)
             {
                 string part = entry[i];
-                Debugging.Assert(part.Length > 0);
+                Debugging.Assert(() => part.Length > 0);
                 if (!"*".Equals(part, StringComparison.Ordinal))
                 {
                     if (sb.Length > 0)
@@ -119,8 +118,8 @@ namespace Lucene.Net.Analysis.Ja.Util
                 flags |= BinaryDictionary.HAS_PRONUNCIATION;
             }
 
-            Debugging.Assert(leftId == rightId);
-            Debugging.Assert(leftId < 4096); // there are still unused bits
+            Debugging.Assert(() => leftId == rightId);
+            Debugging.Assert(() => leftId < 4096); // there are still unused bits
                                          // add pos mapping
             int toFill = 1 + leftId - posDict.Count;
             for (int i = 0; i < toFill; i++)
@@ -129,7 +128,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
 
             string existing = posDict[leftId];
-            Debugging.Assert(existing == null || existing.Equals(fullPOSData, StringComparison.Ordinal));
+            Debugging.Assert(() => existing == null || existing.Equals(fullPOSData, StringComparison.Ordinal));
             posDict[leftId] = fullPOSData;
 
             m_buffer.PutInt16((short)(leftId << 3 | flags));
@@ -137,7 +136,7 @@ namespace Lucene.Net.Analysis.Ja.Util
 
             if ((flags & BinaryDictionary.HAS_BASEFORM) != 0)
             {
-                Debugging.Assert(baseForm.Length < 16);
+                Debugging.Assert(() => baseForm.Length < 16);
                 int shared = SharedPrefix(entry[0], baseForm);
                 int suffix = baseForm.Length - shared;
                 m_buffer.Put((byte)(shared << 4 | suffix));

@@ -1,18 +1,18 @@
 ﻿using J2N.Text;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Synonym
 {
@@ -268,7 +268,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private string GetRandomString(char start, int alphabetSize, int length)
         {
-            Debug.Assert(alphabetSize <= 26);
+            Debugging.Assert(() => alphabetSize <= 26);
             char[] s = new char[2 * length];
             for (int charIDX = 0; charIDX < length; charIDX++)
             {

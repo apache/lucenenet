@@ -4,6 +4,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.SimpleText;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -12,11 +13,9 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
-using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
@@ -2141,14 +2140,14 @@ namespace Lucene.Net.Index
             r = w.GetReader();
             long version2 = r.Version;
             r.Dispose();
-            Debug.Assert(version2 > version);
+            Debugging.Assert(() => version2 > version);
 
             w.DeleteDocuments(new Term("id", "0"));
             r = w.GetReader();
             w.Dispose();
             long version3 = r.Version;
             r.Dispose();
-            Debug.Assert(version3 > version2);
+            Debugging.Assert(() => version3 > version2);
             d.Dispose();
         }
 

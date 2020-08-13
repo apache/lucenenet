@@ -1,5 +1,6 @@
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -7,7 +8,6 @@ using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
@@ -296,7 +296,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         public virtual void AssertTermsStatistics(Terms leftTerms, Terms rightTerms)
         {
-            Debug.Assert(leftTerms.Comparer == rightTerms.Comparer);
+            Debugging.Assert(() => leftTerms.Comparer == rightTerms.Comparer);
             if (leftTerms.DocCount != -1 && rightTerms.DocCount != -1)
             {
                 Assert.AreEqual(leftTerms.DocCount, rightTerms.DocCount);

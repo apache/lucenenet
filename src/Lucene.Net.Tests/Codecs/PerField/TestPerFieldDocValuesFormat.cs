@@ -1,10 +1,10 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Codecs.PerField
@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.PerField
             {
                 Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                 Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                Debug.Assert(ireader.Leaves.Count == 1);
+                Debugging.Assert(() => ireader.Leaves.Count == 1);
                 NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv1");
                 Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
                 BinaryDocValues dv2 = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv2");

@@ -1,6 +1,7 @@
 ﻿using J2N;
 using J2N.Text;
 using Lucene.Net.Analysis;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -10,7 +11,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using Collections = Lucene.Net.Support.Collections;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -559,7 +559,7 @@ namespace Lucene.Net.Search.Grouping
             Field[] facetFields;
             if (useDv)
             {
-                Debug.Assert(!multipleFacetValuesPerDocument);
+                Debugging.Assert(() => !multipleFacetValuesPerDocument);
                 facetFields = new Field[2];
                 facetFields[0] = NewStringField("facet", "", Field.Store.NO);
                 doc.Add(facetFields[0]);
@@ -816,7 +816,7 @@ namespace Lucene.Net.Search.Grouping
         {
             BytesRef facetPrefixBR = facetPrefix == null ? null : new BytesRef(facetPrefix);
             // DocValues cannot be multi-valued:
-            Debug.Assert(!multipleFacetsPerDocument || !groupField.EndsWith("_dv", StringComparison.Ordinal));
+            Debugging.Assert(() => !multipleFacetsPerDocument || !groupField.EndsWith("_dv", StringComparison.Ordinal));
             return TermGroupFacetCollector.CreateTermGroupFacetCollector(groupField, facetField, multipleFacetsPerDocument, facetPrefixBR, Random.nextInt(1024));
         }
 

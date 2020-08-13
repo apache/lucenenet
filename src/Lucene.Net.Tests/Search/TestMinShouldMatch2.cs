@@ -1,14 +1,14 @@
-using System.Linq;
+using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
-using J2N.Collections.Generic.Extensions;
 
 namespace Lucene.Net.Search
 {
@@ -365,14 +365,14 @@ namespace Lucene.Net.Search
                 this.sims = new SimScorer[(int)dv.ValueCount];
                 foreach (BooleanClause clause in bq.GetClauses())
                 {
-                    Debug.Assert(!clause.IsProhibited);
-                    Debug.Assert(!clause.IsRequired);
+                    Debugging.Assert(() => !clause.IsProhibited);
+                    Debugging.Assert(() => !clause.IsRequired);
                     Term term = ((TermQuery)clause.Query).Term;
                     long ord = dv.LookupTerm(term.Bytes);
                     if (ord >= 0)
                     {
                         bool success = ords.Add(ord);
-                        Debug.Assert(success); // no dups
+                        Debugging.Assert(() => success); // no dups
                         TermContext context = TermContext.Build(reader.Context, term);
                         SimWeight w = weight.Similarity.ComputeWeight(1f, searcher.CollectionStatistics("field"), searcher.TermStatistics(term, context));
                         var dummy = w.GetValueForNormalization(); // ignored
@@ -384,7 +384,7 @@ namespace Lucene.Net.Search
 
             public override float GetScore()
             {
-                Debug.Assert(score != 0, currentMatched.ToString());
+                Debugging.Assert(() => score != 0, currentMatched.ToString);
                 return (float)score * ((BooleanWeight)m_weight).Coord(currentMatched, ((BooleanWeight)m_weight).MaxCoord);
             }
 
@@ -394,7 +394,7 @@ namespace Lucene.Net.Search
 
             public override int NextDoc()
             {
-                Debug.Assert(currentDoc != NO_MORE_DOCS);
+                Debugging.Assert(() => currentDoc != NO_MORE_DOCS);
                 for (currentDoc = currentDoc + 1; currentDoc < maxDoc; currentDoc++)
                 {
                     currentMatched = 0;

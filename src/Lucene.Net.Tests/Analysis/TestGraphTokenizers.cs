@@ -1,9 +1,9 @@
 using J2N.Text;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis
                     pos += minPosLength;
                     offset = 2 * pos;
                 }
-                Debug.Assert(maxPos <= pos, "input string mal-formed: posLength>1 tokens hang over the end");
+                Debugging.Assert(() => maxPos <= pos, () => "input string mal-formed: posLength>1 tokens hang over the end");
             }
         }
 

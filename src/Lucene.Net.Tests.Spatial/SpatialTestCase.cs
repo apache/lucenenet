@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Codecs.Lucene45;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -9,7 +10,6 @@ using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.Spatial
 
         private double randomGaussianMinMeanMax(double min, double mean, double max)
         {
-            Debug.Assert(mean > min);
+            Debugging.Assert(() => mean > min);
             return randomGaussianMeanMax(mean - min, max - min) + min;
         }
 
@@ -166,7 +166,7 @@ namespace Lucene.Net.Spatial
         private double randomGaussianMeanMax(double mean, double max)
         {
             // DWS: I verified the results empirically
-            Debug.Assert(mean <= max && mean >= 0);
+            Debugging.Assert(() => mean <= max && mean >= 0);
             double g = randomGaussian();
             double mean2 = mean;
             double flip = 1;
@@ -180,7 +180,7 @@ namespace Lucene.Net.Spatial
             // 1 standard deviation alters the calculation
             double pivotMax = max - mean2;
             double pivot = Math.Min(mean2, pivotMax / 2);//from 0 to max-mean2
-            Debug.Assert(pivot >= 0 && pivotMax >= pivot && g >= 0);
+            Debugging.Assert(() => pivot >= 0 && pivotMax >= pivot && g >= 0);
             double pivotResult;
             if (g <= 1)
                 pivotResult = pivot * g;
