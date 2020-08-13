@@ -1,8 +1,8 @@
 using J2N;
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -76,7 +76,7 @@ namespace Lucene.Net.Util.Automaton
                 nonSurrogateCount = endCode - startCode + 1 - (UnicodeUtil.UNI_SUR_LOW_END - UnicodeUtil.UNI_SUR_HIGH_START + 1);
             }
 
-            Debug.Assert(nonSurrogateCount > 0);
+            Debugging.Assert(() => nonSurrogateCount > 0);
 
             for (int iter = 0; iter < iters; iter++)
             {
@@ -95,8 +95,8 @@ namespace Lucene.Net.Util.Automaton
                     }
                 }
 
-                Debug.Assert(code >= startCode && code <= endCode, "code=" + code + " start=" + startCode + " end=" + endCode);
-                Debug.Assert(!IsSurrogate(code));
+                Debugging.Assert(() => code >= startCode && code <= endCode, () => "code=" + code + " start=" + startCode + " end=" + endCode);
+                Debugging.Assert(() => !IsSurrogate(code));
 
                 Assert.IsTrue(Matches(a, code), "DFA for range " + startCode + "-" + endCode + " failed to match code=" + code);
             }

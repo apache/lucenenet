@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using NUnit.Framework;
-using System.Diagnostics;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -234,7 +234,7 @@ namespace Lucene.Net.Search
 
             Filter filter = new QueryWrapperFilter(AssertingQuery.Wrap(Random, new TermQuery(new Term("field", "a"))));
             IndexSearcher s = NewSearcher(r);
-            Debug.Assert(s is AssertingIndexSearcher);
+            Debugging.Assert(() => s is AssertingIndexSearcher);
             // this used to fail
             s.Search(new ConstantScoreQuery(filter), new TotalHitCountCollector());
 

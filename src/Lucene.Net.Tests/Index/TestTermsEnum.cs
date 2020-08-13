@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -5,10 +6,9 @@ using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using JCG = J2N.Collections.Generic;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
@@ -829,7 +829,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        Debug.Assert(loc >= -validTerms.Length);
+                        Debugging.Assert(() => loc >= -validTerms.Length);
                         Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, result);
                     }
                 }

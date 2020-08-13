@@ -1,8 +1,8 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Assert = Lucene.Net.TestFramework.Assert;
 using BitSet = J2N.Collections.BitSet;
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
         /// Create a random set which has <paramref name="numBitsSet"/> of its <paramref name="numBits"/> bits set. </summary>
         protected static OpenBitSet RandomOpenSet(int numBits, int numBitsSet)
         {
-            Debug.Assert(numBitsSet <= numBits);
+            Debugging.Assert(() => numBitsSet <= numBits);
             OpenBitSet set = new OpenBitSet(numBits);
             Random random = Random;
             if (numBitsSet == numBits)

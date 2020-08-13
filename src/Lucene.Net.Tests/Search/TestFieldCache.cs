@@ -1,11 +1,11 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -34,42 +34,40 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using BinaryDocValuesField = Lucene.Net.Documents.BinaryDocValuesField;
-    using Document = Lucene.Net.Documents.Document;
-    using Field = Lucene.Net.Documents.Field;
-    using Store = Lucene.Net.Documents.Field.Store;
-    using Int32Field = Lucene.Net.Documents.Int32Field;
-    using Int64Field = Lucene.Net.Documents.Int64Field;
-    using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
-    using SortedDocValuesField = Lucene.Net.Documents.SortedDocValuesField;
-    using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
-    using StoredField = Lucene.Net.Documents.StoredField;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
+    using BinaryDocValuesField = Lucene.Net.Documents.BinaryDocValuesField;
+    using Bytes = Lucene.Net.Search.FieldCache.Bytes;
+    using BytesRef = Lucene.Net.Util.BytesRef;
+    using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DocTermOrds = Lucene.Net.Index.DocTermOrds;
+    using Document = Lucene.Net.Documents.Document;
+    using Doubles = Lucene.Net.Search.FieldCache.Doubles;
+    using Field = Lucene.Net.Documents.Field;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using Int16s = Lucene.Net.Search.FieldCache.Int16s;
+    using Int32Field = Lucene.Net.Documents.Int32Field;
+    using Int32s = Lucene.Net.Search.FieldCache.Int32s;
+    using Int64Field = Lucene.Net.Documents.Int64Field;
+    using Int64s = Lucene.Net.Search.FieldCache.Int64s;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using Singles = Lucene.Net.Search.FieldCache.Singles;
     using SlowCompositeReaderWrapper = Lucene.Net.Index.SlowCompositeReaderWrapper;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
+    using SortedDocValuesField = Lucene.Net.Documents.SortedDocValuesField;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
+    using SortedSetDocValuesField = Lucene.Net.Documents.SortedSetDocValuesField;
+    using StoredField = Lucene.Net.Documents.StoredField;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
-    using Bytes = Lucene.Net.Search.FieldCache.Bytes;
-    using Doubles = Lucene.Net.Search.FieldCache.Doubles;
-    using Singles = Lucene.Net.Search.FieldCache.Singles;
-    using Int32s = Lucene.Net.Search.FieldCache.Int32s;
-    using Int64s = Lucene.Net.Search.FieldCache.Int64s;
-    using Int16s = Lucene.Net.Search.FieldCache.Int16s;
-    using Directory = Lucene.Net.Store.Directory;
-    using IBits = Lucene.Net.Util.IBits;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    
+
 
     [TestFixture]
     public class TestFieldCache : LuceneTestCase
@@ -374,7 +372,7 @@ namespace Lucene.Net.Search
                         break;
                     }
                     long ord = termOrds.NextOrd();
-                    Debug.Assert(ord != SortedSetDocValues.NO_MORE_ORDS);
+                    Debugging.Assert(() => ord != SortedSetDocValues.NO_MORE_ORDS);
                     BytesRef scratch = new BytesRef();
                     termOrds.LookupOrd(ord, scratch);
                     Assert.AreEqual(v, scratch);

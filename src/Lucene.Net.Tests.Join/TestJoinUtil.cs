@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -9,7 +10,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Console = Lucene.Net.Util.SystemConsole;
 using JCG = J2N.Collections.Generic;
 
@@ -1030,7 +1030,7 @@ namespace Lucene.Net.Tests.Join
                     {
                         DocsEnum docsEnum = MultiFields.GetTermDocsEnum(topLevelReader,
                             MultiFields.GetLiveDocs(topLevelReader), "id", new BytesRef(otherSideDoc.id), 0);
-                        Debug.Assert(docsEnum != null);
+                        Debugging.Assert(() => docsEnum != null);
                         int doc = docsEnum.NextDoc();
                         expectedResult.Set(doc);
                     }

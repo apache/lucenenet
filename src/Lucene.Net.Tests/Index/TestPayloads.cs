@@ -2,13 +2,13 @@ using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
             // this test needs the random data to be valid unicode
             string s = TestUtil.RandomFixedByteLengthUnicodeString(Random, data.Length);
             var b = s.GetBytes(utf8);
-            Debug.Assert(b.Length == data.Length);
+            Debugging.Assert(() => b.Length == data.Length);
             System.Buffer.BlockCopy(b, 0, data, 0, b.Length);
         }
 

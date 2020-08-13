@@ -1,6 +1,7 @@
 ﻿using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Analysis;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -8,7 +9,6 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search
 //#endif
                 }
 
-                Debug.Assert(docId >= 0, " base=" + docBase + " doc=" + doc);
+                Debugging.Assert(() => docId >= 0, () => " base=" + docBase + " doc=" + doc);
                 bits.Set(docId);
                 lastDocCollected = docId;
             }

@@ -2,6 +2,7 @@ using J2N.Collections.Generic.Extensions;
 using J2N.Text;
 using J2N.Threading;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Support;
@@ -9,7 +10,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
             }
             if (r1.NumDocs != r2.NumDocs)
             {
-                Debug.Assert(false, "r1.NumDocs=" + r1.NumDocs + " vs r2.NumDocs=" + r2.NumDocs);
+                Debugging.Assert(() => false, () => "r1.NumDocs=" + r1.NumDocs + " vs r2.NumDocs=" + r2.NumDocs);
             }
             bool hasDeletes = !(r1.MaxDoc == r2.MaxDoc && r1.NumDocs == r1.MaxDoc);
 
@@ -682,7 +682,7 @@ namespace Lucene.Net.Index
                 IIndexableField f2 = ff2[i];
                 if (f1.GetBinaryValue() != null)
                 {
-                    Debug.Assert(f2.GetBinaryValue() != null);
+                    Debugging.Assert(() => f2.GetBinaryValue() != null);
                 }
                 else
                 {

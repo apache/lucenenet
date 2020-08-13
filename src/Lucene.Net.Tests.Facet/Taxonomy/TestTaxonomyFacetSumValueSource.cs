@@ -1,8 +1,8 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Diagnostics;
+using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -385,7 +385,7 @@ namespace Lucene.Net.Facet.Taxonomy
             public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
             {
                 Scorer scorer = (Scorer)context["scorer"];
-                Debug.Assert(scorer != null);
+                Debugging.Assert(() => scorer != null);
                 return new DoubleDocValuesAnonymousInnerClassHelper(this, scorer);
             }
 

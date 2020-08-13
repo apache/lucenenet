@@ -1,9 +1,9 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Analysis.Core
 
             internal FactoryAnalyzer(TokenizerFactory tokenizer, TokenFilterFactory tokenfilter, CharFilterFactory charFilter)
             {
-                Debug.Assert(tokenizer != null);
+                Debugging.Assert(() => tokenizer != null);
                 this.tokenizer = tokenizer;
                 this.charFilter = charFilter;
                 this.tokenfilter = tokenfilter;

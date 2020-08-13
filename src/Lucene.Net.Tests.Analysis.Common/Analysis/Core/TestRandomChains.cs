@@ -17,6 +17,7 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Synonym;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Analysis.Wikipedia;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Tartarus.Snowball;
 using Lucene.Net.TestFramework.Analysis;
@@ -25,7 +26,6 @@ using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.Core
 
             public virtual bool Apply(object[] args)
             {
-                Debug.Assert(args.Length == 3);
+                Debugging.Assert(() => args.Length == 3);
                 return !((bool)args[2]); // args are broken if consumeAllTokens is false
             }
         }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Core
 
             public virtual bool Apply(object[] args)
             {
-                Debug.Assert(args.Length == 3);
+                Debugging.Assert(() => args.Length == 3);
                 return !((bool)args[2]); // args are broken if consumeAllTokens is false
             }
         }

@@ -1,12 +1,12 @@
 using J2N.Text;
 using J2N.Threading;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -446,7 +446,7 @@ namespace Lucene.Net.Index
                     for (int i = 0; i < NUM_TEST_THREADS - 1; i++)
                     {
                         threads[i].Join();
-                        Debug.Assert(!threads[i].failed);
+                        Debugging.Assert(() => !threads[i].failed);
                     }
 
                 }
@@ -759,14 +759,14 @@ namespace Lucene.Net.Index
                                         if (doc == DocIdSetIterator.NO_MORE_DOCS)
                                         {
                                             // skipped past last doc
-                                            Debug.Assert(upto2 == term2.docs.Length - 1);
+                                            Debugging.Assert(() => upto2 == term2.docs.Length - 1);
                                             ended = true;
                                             break;
                                         }
                                         else
                                         {
                                             // skipped to next doc
-                                            Debug.Assert(upto2 < term2.docs.Length - 1);
+                                            Debugging.Assert(() => upto2 < term2.docs.Length - 1);
                                             if (doc >= term2.docs[1 + upto2])
                                             {
                                                 upto2++;

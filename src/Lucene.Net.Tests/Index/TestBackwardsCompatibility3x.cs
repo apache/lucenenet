@@ -1,9 +1,9 @@
 using J2N;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -1039,7 +1039,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, td.TotalHits);
             AtomicReader wrapper = SlowCompositeReaderWrapper.Wrap(ir);
             DocsAndPositionsEnum de = wrapper.GetTermPositionsEnum(new Term("field3", "broken"));
-            Debug.Assert(de != null);
+            Debugging.Assert(() => de != null);
             Assert.AreEqual(0, de.NextDoc());
             Assert.AreEqual(0, de.NextPosition());
             ir.Dispose();

@@ -1,9 +1,9 @@
 using J2N.Threading;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
             foreach (string field in vectors)
             {
                 Terms terms = vectors.GetTerms(field);
-                Debug.Assert(terms != null);
+                Debugging.Assert(() => terms != null);
                 VerifyVector(terms.GetIterator(null), num);
             }
         }

@@ -1,9 +1,9 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
 
             DirectoryReader reader = writer.GetReader();
             Terms terms = reader.GetTermVector(1, "field");
-            Debug.Assert(terms != null);
+            Debugging.Assert(() => terms != null);
             TermsEnum termsEnum = terms.GetIterator(null);
             Assert.IsTrue(termsEnum.SeekExact(new BytesRef("withPayload")));
             DocsAndPositionsEnum de = termsEnum.DocsAndPositions(null, null);
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             DirectoryReader reader = writer.GetReader();
             Terms terms = reader.GetTermVector(0, "field");
-            Debug.Assert(terms != null);
+            Debugging.Assert(() => terms != null);
             TermsEnum termsEnum = terms.GetIterator(null);
             Assert.IsTrue(termsEnum.SeekExact(new BytesRef("withPayload")));
             DocsAndPositionsEnum de = termsEnum.DocsAndPositions(null, null);

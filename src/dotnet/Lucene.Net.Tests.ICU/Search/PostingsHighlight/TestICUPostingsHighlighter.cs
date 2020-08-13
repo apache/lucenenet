@@ -2,6 +2,7 @@
 using ICU4N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -10,7 +11,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -774,8 +774,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             protected override IList<string[]> LoadFieldValues(IndexSearcher searcher, string[] fields, int[] docids, int maxLength)
             {
-                Debug.Assert( fields.Length == 1);
-                Debug.Assert( docids.Length == 1);
+                Debugging.Assert(() => fields.Length == 1);
+                Debugging.Assert(() => docids.Length == 1);
                 String[][] contents = RectangularArrays.ReturnRectangularArray<string>(1, 1); //= new String[1][1];
                 contents[0][0] = text;
                 return contents;
@@ -1178,7 +1178,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             protected override char GetMultiValuedSeparator(string field)
             {
-                Debug.Assert( field.Equals("body", StringComparison.Ordinal));
+                Debugging.Assert(() => field.Equals("body", StringComparison.Ordinal));
                 return '\u2029';
             }
         }

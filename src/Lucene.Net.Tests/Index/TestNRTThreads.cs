@@ -1,7 +1,7 @@
+using Lucene.Net.Diagnostics;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
 
         protected override Directory GetDirectory(Directory @in)
         {
-            Debug.Assert(@in is MockDirectoryWrapper);
+            Debugging.Assert(() => @in is MockDirectoryWrapper);
             if (!useNonNrtReaders)
             {
                 ((MockDirectoryWrapper)@in).AssertNoDeleteOpenFile = true;

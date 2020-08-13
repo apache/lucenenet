@@ -1,7 +1,7 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System.Collections.Generic;
-using System.Diagnostics;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Spans
             }
 
             int subIndex = ReaderUtil.SubIndex(target, leaves);
-            Debug.Assert(subIndex >= leafOrd);
+            Debugging.Assert(() => subIndex >= leafOrd);
             if (subIndex != leafOrd)
             {
                 AtomicReaderContext ctx = leaves[subIndex];

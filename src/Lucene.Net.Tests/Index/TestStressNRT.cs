@@ -1,12 +1,12 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -263,8 +263,8 @@ namespace Lucene.Net.Index
                                 {
                                     // install the new reader if it's newest (and check the current version since another reader may have already been installed)
                                     //System.out.println(Thread.currentThread().getName() + ": newVersion=" + newReader.getVersion());
-                                    Debug.Assert(newReader.RefCount > 0);
-                                    Debug.Assert(outerInstance.reader.RefCount > 0);
+                                    Debugging.Assert(() => newReader.RefCount > 0);
+                                    Debugging.Assert(() => outerInstance.reader.RefCount > 0);
                                     if (newReader.Version > outerInstance.reader.Version)
                                     {
                                         if (Verbose)

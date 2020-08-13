@@ -1,10 +1,10 @@
 using J2N.Threading;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -315,7 +315,7 @@ namespace Lucene.Net.Index
                         }
                         for (int i = 0; i < merge.Segments.Count; i++)
                         {
-                            Debug.Assert(merge.Segments[i].Info.DocCount < 20);
+                            Debugging.Assert(() => merge.Segments[i].Info.DocCount < 20);
                         }
                         writer.Merge(merge);
                     }

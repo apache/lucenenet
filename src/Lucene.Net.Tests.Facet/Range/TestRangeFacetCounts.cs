@@ -1,9 +1,10 @@
 ﻿using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
+using Lucene.Net.Search;
+using NUnit.Framework;
 using System;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -27,43 +28,40 @@ namespace Lucene.Net.Facet.Range
      * limitations under the License.
      */
 
-
-    using Document = Lucene.Net.Documents.Document;
-    using DoubleDocValuesField = Lucene.Net.Documents.DoubleDocValuesField;
-    using DoubleField = Lucene.Net.Documents.DoubleField;
-    using Field = Lucene.Net.Documents.Field;
-    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
-    using SingleField = Lucene.Net.Documents.SingleField;
-    using Int64Field = Lucene.Net.Documents.Int64Field;
-    using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
-    using DrillSidewaysResult = Lucene.Net.Facet.DrillSidewaysResult;
-    using TaxonomyReader = Lucene.Net.Facet.Taxonomy.TaxonomyReader;
-    using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
-    using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using OpenMode = Lucene.Net.Index.OpenMode;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
-    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
-    using DoubleDocValues = Lucene.Net.Queries.Function.DocValues.DoubleDocValues;
-    using DoubleFieldSource = Lucene.Net.Queries.Function.ValueSources.DoubleFieldSource;
-    using SingleFieldSource = Lucene.Net.Queries.Function.ValueSources.SingleFieldSource;
-    using Int64FieldSource = Lucene.Net.Queries.Function.ValueSources.Int64FieldSource;
     using CachingWrapperFilter = Lucene.Net.Search.CachingWrapperFilter;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
+    using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using Document = Lucene.Net.Documents.Document;
+    using DoubleDocValues = Lucene.Net.Queries.Function.DocValues.DoubleDocValues;
+    using DoubleDocValuesField = Lucene.Net.Documents.DoubleDocValuesField;
+    using DoubleField = Lucene.Net.Documents.DoubleField;
+    using DoubleFieldSource = Lucene.Net.Queries.Function.ValueSources.DoubleFieldSource;
+    using DrillSidewaysResult = Lucene.Net.Facet.DrillSidewaysResult;
+    using Field = Lucene.Net.Documents.Field;
     using Filter = Lucene.Net.Search.Filter;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
-    using Lucene.Net.Search;
-    using QueryWrapperFilter = Lucene.Net.Search.QueryWrapperFilter;
-    using Directory = Lucene.Net.Store.Directory;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using Int64Field = Lucene.Net.Documents.Int64Field;
+    using Int64FieldSource = Lucene.Net.Queries.Function.ValueSources.Int64FieldSource;
     using IOUtils = Lucene.Net.Util.IOUtils;
+    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+    using NumericDocValuesField = Lucene.Net.Documents.NumericDocValuesField;
+    using OpenMode = Lucene.Net.Index.OpenMode;
+    using QueryWrapperFilter = Lucene.Net.Search.QueryWrapperFilter;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
+    using SingleDocValuesField = Lucene.Net.Documents.SingleDocValuesField;
+    using SingleField = Lucene.Net.Documents.SingleField;
+    using SingleFieldSource = Lucene.Net.Queries.Function.ValueSources.SingleFieldSource;
+    using TaxonomyReader = Lucene.Net.Facet.Taxonomy.TaxonomyReader;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     [TestFixture]
     public class TestRangeFacetCounts : FacetTestCase
@@ -1199,7 +1197,7 @@ namespace Lucene.Net.Facet.Range
 
             protected override Facets BuildFacetsResult(FacetsCollector drillDowns, FacetsCollector[] drillSideways, string[] drillSidewaysDims)
             {
-                Debug.Assert(drillSideways.Length == 1);
+                Debugging.Assert(() => drillSideways.Length == 1);
                 return new DoubleRangeFacetCounts("field", vs, drillSideways[0], fastMatchFilter, ranges);
             }
 

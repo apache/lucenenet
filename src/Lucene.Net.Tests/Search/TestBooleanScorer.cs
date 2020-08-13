@@ -1,9 +1,9 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
 
             public override bool Score(ICollector c, int maxDoc)
             {
-                Debug.Assert(doc == -1);
+                Debugging.Assert(() => doc == -1);
                 doc = 3000;
                 FakeScorer fs = new FakeScorer();
                 fs.doc = doc;
