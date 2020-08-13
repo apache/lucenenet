@@ -1,9 +1,9 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Index
 {
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                 {
                     foreach (SegmentCommitInfo info in merge.Segments)
                     {
-                        Debug.Assert(segmentsToMerge.ContainsKey(info));
+                        Debugging.Assert(() => segmentsToMerge.ContainsKey(info));
                     }
                 }
             }

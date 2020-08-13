@@ -1,5 +1,6 @@
 using J2N.Text;
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -7,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JCG = J2N.Collections.Generic;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.RAMOnly
 {
@@ -290,8 +290,8 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-                Debug.Assert(stats.DocFreq > 0);
-                Debug.Assert(stats.DocFreq == current.docs.Count);
+                Debugging.Assert(() => stats.DocFreq > 0);
+                Debugging.Assert(() => stats.DocFreq == current.docs.Count);
                 current.totalTermFreq = stats.TotalTermFreq;
                 field.termToDocs[current.term] = current;
             }
@@ -324,8 +324,8 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
             {
-                Debug.Assert(startOffset == -1);
-                Debug.Assert(endOffset == -1);
+                Debugging.Assert(() => startOffset == -1);
+                Debugging.Assert(() => endOffset == -1);
                 current.positions[posUpto] = position;
                 if (payload != null && payload.Length > 0)
                 {
@@ -341,7 +341,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override void FinishDoc()
             {
-                Debug.Assert(posUpto == current.positions.Length);
+                Debugging.Assert(() => posUpto == current.positions.Length);
             }
         }
 

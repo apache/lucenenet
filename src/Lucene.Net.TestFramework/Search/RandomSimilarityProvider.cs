@@ -1,9 +1,9 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search.Similarities;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Search
 {
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
-                Debug.Assert(field != null);
+                Debugging.Assert(() => field != null);
                 if (!previousMappings.TryGetValue(field, out Similarity sim) || sim == null)
                 {
                     sim = knownSims[Math.Max(0, Math.Abs(perFieldSeed ^ field.GetHashCode())) % knownSims.Count];

@@ -1,7 +1,7 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -208,7 +208,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 skipListWriter.BufferSkip(df);
             }
 
-            Debug.Assert(docID < totalNumDocs, "docID=" + docID + " totalNumDocs=" + totalNumDocs);
+            Debugging.Assert(() => docID < totalNumDocs, () => "docID=" + docID + " totalNumDocs=" + totalNumDocs);
 
             lastDocID = docID;
             if (indexOptions == IndexOptions.DOCS_ONLY)
@@ -234,12 +234,12 @@ namespace Lucene.Net.Codecs.Lucene40
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
             //if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.Length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
-            Debug.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0, "invalid indexOptions: " + indexOptions);
-            Debug.Assert(proxOut != null);
+            Debugging.Assert(() => indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0, () => "invalid indexOptions: " + indexOptions);
+            Debugging.Assert(() => proxOut != null);
 
             int delta = position - lastPosition;
 
-            Debug.Assert(delta >= 0, "position=" + position + " lastPosition=" + lastPosition); // not quite right (if pos=0 is repeated twice we don't catch it)
+            Debugging.Assert(() => delta >= 0, () => "position=" + position + " lastPosition=" + lastPosition); // not quite right (if pos=0 is repeated twice we don't catch it)
 
             lastPosition = position;
 
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // and the numbers aren't that much smaller anyways.
                 int offsetDelta = startOffset - lastOffset;
                 int offsetLength = endOffset - startOffset;
-                Debug.Assert(offsetDelta >= 0 && offsetLength >= 0, "startOffset=" + startOffset + ",lastOffset=" + lastOffset + ",endOffset=" + endOffset);
+                Debugging.Assert(() => offsetDelta >= 0 && offsetLength >= 0, () => "startOffset=" + startOffset + ",lastOffset=" + lastOffset + ",endOffset=" + endOffset);
                 if (offsetLength != lastOffsetLength)
                 {
                     proxOut.WriteVInt32(offsetDelta << 1 | 1);
@@ -308,11 +308,11 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             StandardTermState state_ = (StandardTermState)state;
             // if (DEBUG) System.out.println("SPW: finishTerm seg=" + segment + " freqStart=" + freqStart);
-            Debug.Assert(state_.DocFreq > 0);
+            Debugging.Assert(() => state_.DocFreq > 0);
 
             // TODO: wasteful we are counting this (counting # docs
             // for this term) in two places?
-            Debug.Assert(state_.DocFreq == df);
+            Debugging.Assert(() => state_.DocFreq == df);
             state_.FreqStart = freqStart;
             state_.ProxStart = proxStart;
             if (df >= skipMinimum)
@@ -337,7 +337,7 @@ namespace Lucene.Net.Codecs.Lucene40
             @out.WriteVInt64(state_.FreqStart - lastState.FreqStart);
             if (state_.SkipOffset != -1)
             {
-                Debug.Assert(state_.SkipOffset > 0);
+                Debugging.Assert(() => state_.SkipOffset > 0);
                 @out.WriteVInt64(state_.SkipOffset);
             }
             if (indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)

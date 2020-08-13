@@ -1,4 +1,4 @@
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Util
 {
@@ -29,13 +29,13 @@ namespace Lucene.Net.Util
     {
         public override void Message(string component, string message)
         {
-            Debug.Assert(component != null);
-            Debug.Assert(message != null);
+            Debugging.Assert(() => component != null);
+            Debugging.Assert(() => message != null);
         }
 
         public override bool IsEnabled(string component)
         {
-            Debug.Assert(component != null);
+            Debugging.Assert(() => component != null);
             return true; // to actually enable logging, we just ignore on message()
         }
 

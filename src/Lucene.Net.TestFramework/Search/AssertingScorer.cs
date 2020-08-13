@@ -1,8 +1,8 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search
@@ -105,10 +105,10 @@ namespace Lucene.Net.Search
 
         public override float GetScore()
         {
-            Debug.Assert(Iterating());
+            Debugging.Assert(Iterating);
             float score = @in.GetScore();
-            Debug.Assert(!float.IsNaN(score));
-            Debug.Assert(!float.IsNaN(score));
+            Debugging.Assert(() => !float.IsNaN(score));
+            Debugging.Assert(() => !float.IsNaN(score));
             return score;
         }
 
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                Debug.Assert(Iterating());
+                Debugging.Assert(Iterating);
                 return @in.Freq;
             }
         }

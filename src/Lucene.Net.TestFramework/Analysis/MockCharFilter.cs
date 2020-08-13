@@ -1,8 +1,8 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using JCG = J2N.Collections.Generic;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Analysis
 {
@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis
                 ret = currentOff;
             }
 
-            Debug.Assert(ret >= 0, "currentOff=" + currentOff + ",diff=" + (ret - currentOff));
+            Debugging.Assert(() => ret >= 0, () => "currentOff=" + currentOff + ",diff=" + (ret - currentOff));
             return ret;
         }
 

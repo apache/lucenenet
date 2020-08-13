@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Codecs;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
@@ -27,7 +28,6 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Assert = Lucene.Net.TestFramework.Assert;
 using Directory = Lucene.Net.Store.Directory;
 using FieldInfo = Lucene.Net.Index.FieldInfo;
@@ -2678,7 +2678,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void AssertTermsStatisticsEquals(string info, Terms leftTerms, Terms rightTerms)
         {
-            Debug.Assert(leftTerms.Comparer == rightTerms.Comparer);
+            Debugging.Assert(() => leftTerms.Comparer == rightTerms.Comparer);
             if (leftTerms.DocCount != -1 && rightTerms.DocCount != -1)
             {
                 Assert.AreEqual(leftTerms.DocCount, rightTerms.DocCount, info);
@@ -3053,7 +3053,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void AssertStoredFieldsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
-            Debug.Assert(leftReader.MaxDoc == rightReader.MaxDoc);
+            Debugging.Assert(() => leftReader.MaxDoc == rightReader.MaxDoc);
             for (int i = 0; i < leftReader.MaxDoc; i++)
             {
                 Document leftDoc = leftReader.Document(i);
@@ -3100,7 +3100,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void AssertTermVectorsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
-            Debug.Assert(leftReader.MaxDoc == rightReader.MaxDoc);
+            Debugging.Assert(() => leftReader.MaxDoc == rightReader.MaxDoc);
             for (int i = 0; i < leftReader.MaxDoc; i++)
             {
                 Fields leftFields = leftReader.GetTermVectors(i);
@@ -3270,7 +3270,7 @@ namespace Lucene.Net.Util
         // TODO: this is kinda stupid, we don't delete documents in the test.
         public virtual void AssertDeletedDocsEquals(string info, IndexReader leftReader, IndexReader rightReader)
         {
-            Debug.Assert(leftReader.NumDeletedDocs == rightReader.NumDeletedDocs);
+            Debugging.Assert(() => leftReader.NumDeletedDocs == rightReader.NumDeletedDocs);
             IBits leftBits = MultiFields.GetLiveDocs(leftReader);
             IBits rightBits = MultiFields.GetLiveDocs(rightReader);
 
@@ -3281,7 +3281,7 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            Debug.Assert(leftReader.MaxDoc == rightReader.MaxDoc);
+            Debugging.Assert(() => leftReader.MaxDoc == rightReader.MaxDoc);
             Assert.AreEqual(leftBits.Length, rightBits.Length, info);
             for (int i = 0; i < leftReader.MaxDoc; i++)
             {
@@ -3365,7 +3365,7 @@ namespace Lucene.Net.Util
         ////        if (TempDirBase == null)
         ////        {
         ////            DirectoryInfo directory = new DirectoryInfo(System.IO.Path.GetTempPath());
-        ////            //Debug.Assert(directory.Exists && directory.Directory != null && directory.CanWrite());
+        ////            //Debugging.Assert(() => directory.Exists && directory.Directory != null && directory.CanWrite());
 
         ////            RandomizedContext ctx = RandomizedContext.Current;
         ////            Type clazz = ctx.GetTargetType;
@@ -3504,7 +3504,7 @@ namespace Lucene.Net.Util
         /// </summary>
         private static void RegisterToRemoveAfterSuite(FileSystemInfo f)
         {
-            Debug.Assert(f != null);
+            Debugging.Assert(() => f != null);
 
             if (LuceneTestCase.LeaveTemporary)
             {

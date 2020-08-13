@@ -1,7 +1,7 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.IO;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Analysis
 {
@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis
         {
             excAtChar = charUpto;
             // You should only call this on init!:
-            Debug.Assert(0 == readSoFar);
+            Debugging.Assert(() => 0 == readSoFar);
         }
 
         public virtual void ThrowExcNext()
@@ -91,10 +91,10 @@ namespace Lucene.Net.Analysis
             if (excAtChar != -1)
             {
                 int left = excAtChar - readSoFar;
-                Debug.Assert(left != 0);
+                Debugging.Assert(() => left != 0);
                 read = input.Read(cbuf, off, Math.Min(realLen, left));
                 //Characters are left
-                Debug.Assert(read != 0);
+                Debugging.Assert(() => read != 0);
                 readSoFar += read;
             }
             else

@@ -1,6 +1,7 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Search;
@@ -16,7 +17,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Console = Lucene.Net.Util.SystemConsole;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
                                 if (toDeleteSubDocs.Count > 0 && Random.NextBoolean())
                                 {
                                     delSubDocs = toDeleteSubDocs[Random.Next(toDeleteSubDocs.Count)];
-                                    Debug.Assert(!delSubDocs.Deleted);
+                                    Debugging.Assert(() => !delSubDocs.Deleted);
                                     toDeleteSubDocs.Remove(delSubDocs);
                                     // Update doc block, replacing prior packID
                                     packID = delSubDocs.PackID;
@@ -364,7 +364,7 @@ namespace Lucene.Net.Index
 
                             foreach (SubDocs subDocs in toDeleteSubDocs)
                             {
-                                Debug.Assert(!subDocs.Deleted);
+                                Debugging.Assert(() => !subDocs.Deleted);
                                 delPackIDs.Add(subDocs.PackID);
                                 outerInstance.DeleteDocuments(new Term("packID", subDocs.PackID));
                                 subDocs.Deleted = true;

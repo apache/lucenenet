@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Index
 {
@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
             : base(@in)
         {
             liveDocs = new Bits.MatchNoBits(@in.MaxDoc);
-            Debug.Assert(MaxDoc == 0 || HasDeletions);
+            Debugging.Assert(() => MaxDoc == 0 || HasDeletions);
         }
 
         public override IBits LiveDocs => liveDocs;

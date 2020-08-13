@@ -1,7 +1,7 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using System;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -67,8 +67,8 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public virtual void SetSkipData(int doc, bool storePayloads, int payloadLength, bool storeOffsets, int offsetLength)
         {
-            Debug.Assert(storePayloads || payloadLength == -1);
-            Debug.Assert(storeOffsets || offsetLength == -1);
+            Debugging.Assert(() => storePayloads || payloadLength == -1);
+            Debugging.Assert(() => storeOffsets || offsetLength == -1);
             this.curDoc = doc;
             this.curStorePayloads = storePayloads;
             this.curPayloadLength = payloadLength;
@@ -120,8 +120,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
             if (curStorePayloads || curStoreOffsets)
             {
-                Debug.Assert(curStorePayloads || curPayloadLength == lastSkipPayloadLength[level]);
-                Debug.Assert(curStoreOffsets || curOffsetLength == lastSkipOffsetLength[level]);
+                Debugging.Assert(() => curStorePayloads || curPayloadLength == lastSkipPayloadLength[level]);
+                Debugging.Assert(() => curStoreOffsets || curOffsetLength == lastSkipOffsetLength[level]);
 
                 if (curPayloadLength == lastSkipPayloadLength[level] && curOffsetLength == lastSkipOffsetLength[level])
                 {

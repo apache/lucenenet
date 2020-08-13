@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Search
 {
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         {
             if (inOrder || !AcceptsDocsOutOfOrder)
             {
-                Debug.Assert(doc > lastCollected, "Out of order : " + lastCollected + " " + doc);
+                Debugging.Assert(() => doc > lastCollected, () => "Out of order : " + lastCollected + " " + doc);
             }
             @in.Collect(doc);
             lastCollected = doc;

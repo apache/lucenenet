@@ -1,10 +1,10 @@
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using Debug = Lucene.Net.Diagnostics.Debug; // LUCENENET NOTE: We cannot use System.Diagnostics.Debug because those calls will be optimized out of the release!
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            Debug.Assert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0, "fieldName=" + info.Name + " lastFieldName=" + lastFieldName);
+            Debugging.Assert(() => lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0, () => "fieldName=" + info.Name + " lastFieldName=" + lastFieldName);
             lastFieldName = info.Name;
             if (payloads)
             {
@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             tvf.WriteByte((byte)bits);
 
-            Debug.Assert(fieldCount <= numVectorFields);
+            Debugging.Assert(() => fieldCount <= numVectorFields);
             if (fieldCount == numVectorFields)
             {
                 // last field of the document
@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
-            Debug.Assert(payload == null);
+            Debugging.Assert(() => payload == null);
             if (positions && offsets)
             {
                 // write position delta
