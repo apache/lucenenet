@@ -53,7 +53,7 @@ namespace Lucene.Net.Store
         /// Returns the current position in this file, where the next write will
         /// occur. </summary>
         /// <seealso cref="Seek(long)"/>
-        public abstract long GetFilePointer();
+        public abstract long GetFilePointer(); // LUCENENET TODO: API - Make into property
 
         /// <summary>
         /// Sets current position in this file, where the next write will occur. </summary>

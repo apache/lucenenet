@@ -1,5 +1,6 @@
 using J2N.Runtime.CompilerServices;
 using J2N.Threading;
+using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -87,10 +88,10 @@ namespace Lucene.Net.Index
                         // make sure not to run IncWaiters / DecrWaiters in Debug.Assert as that gets 
                         // removed at compile time if built in Release mode
                         var result = IncWaiters();
-                            Debug.Assert(result);
+                            Debugging.Assert(() => result);
                             Monitor.Wait(this);
                             result = DecrWaiters();
-                            Debug.Assert(result);
+                            Debugging.Assert(() => result);
 //#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                        }
 //                        catch (ThreadInterruptedException e)
@@ -112,7 +113,7 @@ namespace Lucene.Net.Index
         {
             numWaiting++;
             bool existed = waiting.ContainsKey(ThreadJob.CurrentThread);
-            Debug.Assert(!existed);
+            Debugging.Assert(() => !existed);
             waiting[ThreadJob.CurrentThread] = true;
 
             return numWaiting > 0;
@@ -122,7 +123,7 @@ namespace Lucene.Net.Index
         {
             numWaiting--;
             bool removed = waiting.Remove(ThreadJob.CurrentThread);
-            Debug.Assert(removed);
+            Debugging.Assert(() => removed);
 
             return numWaiting >= 0;
         }

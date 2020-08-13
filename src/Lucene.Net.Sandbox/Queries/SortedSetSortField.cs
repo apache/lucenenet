@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
@@ -190,7 +191,7 @@ namespace Lucene.Net.Sandbox.Queries
                         case Selector.MIDDLE_MAX: return new MiddleMaxValue(randomOrds);
                         case Selector.MIN:
                         default:
-                            Debug.Assert(false);
+                            Debugging.Assert(() => false);
                             return null;
                     }
                 }

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System.Diagnostics;
 
@@ -108,7 +109,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
             internal virtual void Seek(long fp, int upto)
             {
-                Debug.Assert(upto < blockSize);
+                Debugging.Assert(() => upto < blockSize);
                 if (seekPending || fp != lastBlockFP)
                 {
                     pendingFP = fp;
@@ -172,7 +173,7 @@ namespace Lucene.Net.Codecs.IntBlock
                         fp += indexIn.ReadVInt64();
                     }
                 }
-                Debug.Assert(upto < outerInstance.m_blockSize);
+                Debugging.Assert(() => upto < outerInstance.m_blockSize);
             }
 
             public override void Seek(Int32IndexInput.Reader other)

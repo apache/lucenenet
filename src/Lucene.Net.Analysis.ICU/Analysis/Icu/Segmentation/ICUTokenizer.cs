@@ -3,6 +3,7 @@ using ICU4N;
 using ICU4N.Text;
 using Lucene.Net.Analysis.Icu.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -193,7 +194,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         /// <summary>commons-io's readFully, but without bugs if offset != 0</summary>
         private static int Read(TextReader input, char[] buffer, int offset, int length)
         {
-            Debug.Assert(length >= 0, "length must not be negative: " + length);
+            Debugging.Assert(() => length >= 0, () => "length must not be negative: " + length);
 
             int remaining = length;
             while (remaining > 0)

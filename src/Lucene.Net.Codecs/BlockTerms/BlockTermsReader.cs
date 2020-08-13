@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -126,7 +127,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     int field = input.ReadVInt32();
                     long numTerms = input.ReadVInt64();
-                    Debug.Assert(numTerms >= 0);
+                    Debugging.Assert(() => numTerms >= 0);
                     long termsStartPointer = input.ReadVInt64();
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
                     long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? -1 : input.ReadVInt64();
@@ -233,7 +234,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override Terms GetTerms(string field)
         {
-            Debug.Assert(field != null);
+            Debugging.Assert(() => field != null);
 
             FieldReader result;
             fields.TryGetValue(field, out result);
@@ -257,7 +258,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public FieldReader(BlockTermsReader outerInstance, FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
                 long sumDocFreq, int docCount, int longsSize)
             {
-                Debug.Assert(numTerms > 0);
+                Debugging.Assert(() => numTerms > 0);
 
                 this.outerInstance = outerInstance;
 
@@ -448,7 +449,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                         // Block must exist since, at least, the indexed term
                         // is in the block:
-                        Debug.Assert(result);
+                        Debugging.Assert(() => result);
 
                         indexIsCurrent = true;
                         didIndexNext = false;
@@ -536,7 +537,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 // Target's prefix is before the common prefix
                                 // of this block, so we position to start of
                                 // block and return NOT_FOUND:
-                                Debug.Assert(state.TermBlockOrd == 0);
+                                Debugging.Assert(() => state.TermBlockOrd == 0);
 
                                 int suffix = termSuffixesReader.ReadVInt32();
                                 term.Length = termBlockPrefix + suffix;
@@ -641,7 +642,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // cross another index term (besides the first
                         // one) while we are scanning:
 
-                        Debug.Assert(indexIsCurrent);
+                        Debugging.Assert(() => indexIsCurrent);
 
                         if (!NextBlock())
                         {
@@ -664,7 +665,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // works properly:
                     if (seekPending)
                     {
-                        Debug.Assert(!indexIsCurrent);
+                        Debugging.Assert(() => !indexIsCurrent);
                         input.Seek(state.BlockFilePointer);
                         int pendingSeekCount = state.TermBlockOrd;
                         bool result = NextBlock();
@@ -674,12 +675,12 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // Block must exist since seek(TermState) was called w/ a
                         // TermState previously returned by this enum when positioned
                         // on a real term:
-                        Debug.Assert(result);
+                        Debugging.Assert(() => result);
 
                         while (state.TermBlockOrd < pendingSeekCount)
                         {
                             BytesRef nextResult = _next();
-                            Debug.Assert(nextResult != null);
+                            Debugging.Assert(() => nextResult != null);
                         }
                         seekPending = false;
                         state.Ord = savOrd;
@@ -768,8 +769,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                 public override void SeekExact(BytesRef target, TermState otherState)
                 {
                     //System.out.println("BTR.seekExact termState target=" + target.utf8ToString() + " " + target + " this=" + this);
-                    Debug.Assert(otherState != null && otherState is BlockTermState);
-                    Debug.Assert(!doOrd || ((BlockTermState)otherState).Ord < outerInstance.numTerms);
+                    Debugging.Assert(() => otherState != null && otherState is BlockTermState);
+                    Debugging.Assert(() => !doOrd || ((BlockTermState)otherState).Ord < outerInstance.numTerms);
                     state.CopyFrom(otherState);
                     seekPending = true;
                     indexIsCurrent = false;
@@ -793,7 +794,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         throw new InvalidOperationException("terms index was not loaded");
                     }
 
-                    Debug.Assert(ord < outerInstance.numTerms);
+                    Debugging.Assert(() => ord < outerInstance.numTerms);
 
                     // TODO: if ord is in same terms block and
                     // after current ord, we should avoid this seek just
@@ -802,7 +803,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     bool result = NextBlock();
 
                     // Block must exist since ord < numTerms:
-                    Debug.Assert(result);
+                    Debugging.Assert(() => result);
 
                     indexIsCurrent = true;
                     didIndexNext = false;
@@ -810,7 +811,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     seekPending = false;
 
                     state.Ord = indexEnum.Ord - 1;
-                    Debug.Assert(state.Ord >= -1, "Ord=" + state.Ord);
+                    Debugging.Assert(() => state.Ord >= -1, () => "Ord=" + state.Ord);
                     term.CopyBytes(indexEnum.Term);
 
                     // Now, scan:
@@ -818,9 +819,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                     while (left > 0)
                     {
                         BytesRef term = _next();
-                        Debug.Assert(term != null);
+                        Debugging.Assert(() => term != null);
                         left--;
-                        Debug.Assert(indexIsCurrent);
+                        Debugging.Assert(() => indexIsCurrent);
                     }
                 }
 

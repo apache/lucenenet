@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Query did not match this doc:
-                    Debug.Assert(actualDoc > targetDoc);
+                    Debugging.Assert(() => actualDoc > targetDoc);
                     hit.Score = Combine(hit.Score, false, 0.0f);
                 }
 

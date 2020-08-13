@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 
         public override float GetScore()
         {
-            Debug.Assert(DocID != NO_MORE_DOCS);
+            Debugging.Assert(() => DocID != NO_MORE_DOCS);
             return docScorer.Score(docsEnum.DocID, docsEnum.Freq);
         }
 

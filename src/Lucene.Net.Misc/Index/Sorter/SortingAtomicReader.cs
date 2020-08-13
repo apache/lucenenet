@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -760,7 +761,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 throw new ArgumentException("reader.MaxDoc should be equal to docMap.Count, got" + reader.MaxDoc + " != " + docMap.Count);
             }
-            Debug.Assert(Sorter.IsConsistent(docMap));
+            Debugging.Assert(() => Sorter.IsConsistent(docMap));
             return new SortingAtomicReader(reader, docMap);
         }
 

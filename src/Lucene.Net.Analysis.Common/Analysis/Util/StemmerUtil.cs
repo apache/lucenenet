@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Diagnostics;
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Analysis.Util
@@ -116,7 +117,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> length of input buffer after deletion </returns>
         public static int Delete(char[] s, int pos, int len)
         {
-            Debug.Assert(pos < len);
+            Debugging.Assert(() => pos < len);
             if (pos < len - 1) // don't arraycopy if asked to delete last character
             {
                 Array.Copy(s, pos + 1, s, pos, len - pos - 1);
@@ -134,7 +135,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> length of input buffer after deletion </returns>
         public static int DeleteN(char[] s, int pos, int len, int nChars)
         {
-            Debug.Assert(pos + nChars <= len);
+            Debugging.Assert(() => pos + nChars <= len);
             if (pos + nChars < len) // don't arraycopy if asked to delete the last characters
             {
                 Array.Copy(s, pos + nChars, s, pos, len - pos - nChars);

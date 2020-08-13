@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Codecs
 {
@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs
 
         public override void CopyFrom(TermState other)
         {
-            Debug.Assert(other is BlockTermState, "can not copy from " + other.GetType().Name);
+            Debugging.Assert(() => other is BlockTermState, () => "can not copy from " + other.GetType().Name);
             BlockTermState other2 = (BlockTermState)other;
             base.CopyFrom(other);
             DocFreq = other2.DocFreq;

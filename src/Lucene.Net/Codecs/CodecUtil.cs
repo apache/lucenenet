@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -267,7 +268,7 @@ namespace Lucene.Net.Codecs
             IndexInput clone = (IndexInput)input.Clone();
             clone.Seek(0);
             ChecksumIndexInput @in = new BufferedChecksumIndexInput(clone);
-            Debug.Assert(@in.GetFilePointer() == 0);
+            Debugging.Assert(() => @in.GetFilePointer() == 0);
             @in.Seek(@in.Length - FooterLength());
             return CheckFooter(@in);
         }

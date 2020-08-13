@@ -1,11 +1,11 @@
 using J2N;
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using JCG = J2N.Collections.Generic;
 
@@ -33,13 +33,13 @@ namespace Lucene.Net.Search
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
     using BasicOperations = Lucene.Net.Util.Automaton.BasicOperations;
-    using IBits = Lucene.Net.Util.IBits;
     using ByteRunAutomaton = Lucene.Net.Util.Automaton.ByteRunAutomaton;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
+    using IBits = Lucene.Net.Util.IBits;
     using LevenshteinAutomata = Lucene.Net.Util.Automaton.LevenshteinAutomata;
     using Term = Lucene.Net.Index.Term;
     using Terms = Lucene.Net.Index.Terms;
@@ -251,7 +251,7 @@ namespace Lucene.Net.Search
             // assert newEnum != null;
             if (newEnum == null)
             {
-                Debug.Assert(maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
+                Debugging.Assert(() => maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
                 throw new ArgumentException("maxEdits cannot be > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE");
             }
             SetEnum(newEnum);

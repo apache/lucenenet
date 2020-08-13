@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -21,8 +21,8 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using Int64BitSet = Lucene.Net.Util.Int64BitSet;
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
                 Int64BitSet termSet = new Int64BitSet(docTermOrds.ValueCount);
                 TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, docTermOrds));
 
-                Debug.Assert(termsEnum != null);
+                Debugging.Assert(() => termsEnum != null);
                 if (termsEnum.Next() != null)
                 {
                     // fill into a bitset

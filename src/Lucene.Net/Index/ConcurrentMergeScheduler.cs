@@ -394,7 +394,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debug.Assert(!Thread.holdsLock(writer));
+                //Debugging.Assert(!Thread.holdsLock(writer));
 
                 this.m_writer = writer;
 

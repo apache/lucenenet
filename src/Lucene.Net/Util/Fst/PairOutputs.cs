@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Fst
             else
             {
                 var p = new Pair(a, b);
-                Debug.Assert(Valid(p));
+                Debugging.Assert(() => Valid(p));
                 return p;
             }
         }
@@ -126,28 +126,28 @@ namespace Lucene.Net.Util.Fst
 
         public override Pair Common(Pair pair1, Pair pair2)
         {
-            Debug.Assert(Valid(pair1));
-            Debug.Assert(Valid(pair2));
+            Debugging.Assert(() => Valid(pair1));
+            Debugging.Assert(() => Valid(pair2));
             return NewPair(outputs1.Common(pair1.Output1, pair2.Output1), outputs2.Common(pair1.Output2, pair2.Output2));
         }
 
         public override Pair Subtract(Pair output, Pair inc)
         {
-            Debug.Assert(Valid(output));
-            Debug.Assert(Valid(inc));
+            Debugging.Assert(() => Valid(output));
+            Debugging.Assert(() => Valid(inc));
             return NewPair(outputs1.Subtract(output.Output1, inc.Output1), outputs2.Subtract(output.Output2, inc.Output2));
         }
 
         public override Pair Add(Pair prefix, Pair output)
         {
-            Debug.Assert(Valid(prefix));
-            Debug.Assert(Valid(output));
+            Debugging.Assert(() => Valid(prefix));
+            Debugging.Assert(() => Valid(output));
             return NewPair(outputs1.Add(prefix.Output1, output.Output1), outputs2.Add(prefix.Output2, output.Output2));
         }
 
         public override void Write(Pair output, DataOutput writer)
         {
-            Debug.Assert(Valid(output));
+            Debugging.Assert(() => Valid(output));
             outputs1.Write(output.Output1, writer);
             outputs2.Write(output.Output2, writer);
         }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Util.Fst
 
         public override string OutputToString(Pair output)
         {
-            Debug.Assert(Valid(output));
+            Debugging.Assert(() => Valid(output));
             return "<pair:" + outputs1.OutputToString(output.Output1) + "," + outputs2.OutputToString(output.Output2) + ">";
         }
 

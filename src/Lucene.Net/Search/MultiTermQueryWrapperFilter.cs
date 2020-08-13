@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -22,10 +22,10 @@ namespace Lucene.Net.Search
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IBits = Lucene.Net.Util.IBits;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using Fields = Lucene.Net.Index.Fields;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
+    using IBits = Lucene.Net.Util.IBits;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
             }
 
             TermsEnum termsEnum = m_query.GetTermsEnum(terms);
-            Debug.Assert(termsEnum != null);
+            Debugging.Assert(() => termsEnum != null);
             if (termsEnum.Next() != null)
             {
                 // fill into a FixedBitSet

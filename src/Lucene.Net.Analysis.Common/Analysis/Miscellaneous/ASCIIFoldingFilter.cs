@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using Lucene.Net.Analysis.TokenAttributes;
+﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (state != null)
             {
-                Debug.Assert(preserveOriginal, "state should only be captured if preserveOriginal is true");
+                Debugging.Assert(() => preserveOriginal, () => "state should only be captured if preserveOriginal is true");
                 RestoreState(state);
                 posIncAttr.PositionIncrement = 0;
                 state = null;

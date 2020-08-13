@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -103,7 +104,7 @@ namespace Lucene.Net.Spatial.Vector
                 // make sure it has minX and area
                 if (validX.Get(doc))
                 {
-                    Debug.Assert(validY.Get(doc));
+                    Debugging.Assert(() => validY.Get(doc));
                     return calculator.Distance(outerInstance.from, ptX.Get(doc), ptY.Get(doc)) * outerInstance.multiplier;
                 }
                 return nullValue;

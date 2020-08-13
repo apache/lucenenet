@@ -1,4 +1,5 @@
 ﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
@@ -278,7 +279,7 @@ namespace Lucene.Net.Queries
                         continue;
                     }
                     termsEnum = terms.GetIterator(termsEnum);
-                    Debug.Assert(termsEnum != null);
+                    Debugging.Assert(() => termsEnum != null);
 
                     if (termsEnum == TermsEnum.EMPTY)
                     {

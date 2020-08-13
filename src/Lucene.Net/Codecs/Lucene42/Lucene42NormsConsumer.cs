@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -92,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 long count = 0;
                 foreach (long? nv in values)
                 {
-                    Debug.Assert(nv != null);
+                    Debugging.Assert(() => nv != null);
                     long v = nv.Value;
 
                     if (gcd != 1)
@@ -126,7 +127,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
                     ++count;
                 }
-                Debug.Assert(count == maxDoc);
+                Debugging.Assert(() => count == maxDoc);
             }
 
             if (uniqueValues != null)

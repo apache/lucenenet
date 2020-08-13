@@ -1,4 +1,5 @@
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -64,7 +65,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             public TermInfoAndOrd(TermInfo ti, long termOrd)
                 : base(ti)
             {
-                Debug.Assert(termOrd >= 0);
+                Debugging.Assert(() => termOrd >= 0);
                 this.termOrd = termOrd;
             }
         }
@@ -292,8 +293,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                             }
                             else
                             {
-                                Debug.Assert(SameTermInfo(ti, tiOrd, enumerator));
-                                Debug.Assert(enumerator.position == tiOrd.termOrd);
+                                Debugging.Assert(() => SameTermInfo(ti, tiOrd, enumerator));
+                                Debugging.Assert(() => enumerator.position == tiOrd.termOrd);
                             }
                         }
                     }
@@ -334,8 +335,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else
                 {
-                    Debug.Assert(SameTermInfo(ti_, tiOrd, enumerator));
-                    Debug.Assert(enumerator.position == tiOrd.termOrd);
+                    Debugging.Assert(() => SameTermInfo(ti_, tiOrd, enumerator));
+                    Debugging.Assert(() => enumerator.position == tiOrd.termOrd);
                 }
             }
             else

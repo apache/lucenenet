@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
 using System.Collections;
@@ -139,8 +140,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                 tvf = d.OpenInput(fn, context);
                 int tvfFormat = CheckValidFormat(tvf);
 
-                Debug.Assert(format == tvdFormat);
-                Debug.Assert(format == tvfFormat);
+                Debugging.Assert(() => format == tvdFormat);
+                Debugging.Assert(() => format == tvfFormat);
 
                 numTotalDocs = (int)(tvx.Length >> 4);
 
@@ -148,7 +149,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     this.docStoreOffset = 0;
                     this.size = numTotalDocs;
-                    Debug.Assert(size == 0 || numTotalDocs == size);
+                    Debugging.Assert(() => size == 0 || numTotalDocs == size);
                 }
                 else
                 {
@@ -156,7 +157,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     this.size = size;
                     // Verify the file is long enough to hold all of our
                     // docs
-                    Debug.Assert(numTotalDocs >= size + docStoreOffset, "numTotalDocs=" + numTotalDocs + " size=" + size + " docStoreOffset=" + docStoreOffset);
+                    Debugging.Assert(() => numTotalDocs >= size + docStoreOffset, () => "numTotalDocs=" + numTotalDocs + " size=" + size + " docStoreOffset=" + docStoreOffset);
                 }
 
                 this.fieldInfos = fieldInfos;
@@ -232,7 +233,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 outerInstance.tvd.Seek(outerInstance.tvx.ReadInt64());
 
                 int fieldCount = outerInstance.tvd.ReadVInt32();
-                Debug.Assert(fieldCount >= 0);
+                Debugging.Assert(() => fieldCount >= 0);
                 if (fieldCount != 0)
                 {
                     fieldNumbers = new int[fieldCount];
@@ -685,7 +686,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     else
                     {
-                        Debug.Assert(startOffsets != null);
+                        Debugging.Assert(() => startOffsets != null);
                         return startOffsets.Length;
                     }
                 }
@@ -736,7 +737,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int NextPosition()
             {
-                //Debug.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
+                //Debugging.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
 
                 // LUCENENET: The above assertion was for control flow when testing. In Java, it would throw an AssertionError, which is
                 // caught by the BaseTermVectorsFormatTestCase.assertEquals(RandomTokenStream tk, FieldType ft, Terms terms) method in the

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Store;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
@@ -139,7 +140,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
-            Debug.Assert(num > 0);
+            Debugging.Assert(() => num > 0);
 
             if (onlyMorePopular)
             {
@@ -189,7 +190,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             try
             {
                 completions = Lucene.Net.Util.Fst.Util.ShortestPaths(fst, arc, prefixOutput, weightComparer, num, !exactFirst);
-                Debug.Assert(completions.IsComplete);
+                Debugging.Assert(() => completions.IsComplete);
             }
             catch (IOException bogus)
             {
@@ -212,7 +213,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         private long? LookupPrefix(BytesRef scratch, FST.Arc<long?> arc) //Bogus
         {
-            Debug.Assert(0 == (long)fst.Outputs.NoOutput);
+            Debugging.Assert(() => 0 == (long)fst.Outputs.NoOutput);
             long output = 0;
             var bytesReader = fst.GetBytesReader();
 
@@ -293,7 +294,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 : base(source)
             {
                 this.outerInstance = outerInstance;
-                Debug.Assert(source.HasPayloads == false);
+                Debugging.Assert(() => source.HasPayloads == false);
             }
 
             protected internal override void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload, ICollection<BytesRef> contexts, long weight)

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
@@ -406,7 +407,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 output.Bytes = ArrayUtil.Grow(output.Bytes);
             }
-            Debug.Assert(output.Offset == 0);
+            Debugging.Assert(() => output.Offset == 0);
             output.Bytes[output.Length++] = (byte) arc.Label;
             FST.BytesReader fstReader = automaton.GetBytesReader();
             automaton.ReadFirstTargetArc(arc, arc, fstReader);

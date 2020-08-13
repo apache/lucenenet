@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
@@ -185,7 +185,7 @@ namespace Lucene.Net.Util
 
         internal void Rotate(int lo, int mid, int hi)
         {
-            Debug.Assert(lo <= mid && mid <= hi);
+            Debugging.Assert(() => lo <= mid && mid <= hi);
             if (lo == mid || mid == hi)
             {
                 return;

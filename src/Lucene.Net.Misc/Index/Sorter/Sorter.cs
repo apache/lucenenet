@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Search;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
@@ -82,8 +83,8 @@ namespace Lucene.Net.Index.Sorter
             {
                 int newID = docMap.OldToNew(i);
                 int oldID = docMap.NewToOld(newID);
-                Debug.Assert(newID >= 0 && newID < maxDoc, "doc IDs must be in [0-" + maxDoc + "[, got " + newID);
-                Debug.Assert(i == oldID, "mapping is inconsistent: " + i + " --oldToNew--> " + newID + " --newToOld--> " + oldID);
+                Debugging.Assert(() => newID >= 0 && newID < maxDoc, () => "doc IDs must be in [0-" + maxDoc + "[, got " + newID);
+                Debugging.Assert(() => i == oldID, () => "mapping is inconsistent: " + i + " --oldToNew--> " + newID + " --newToOld--> " + oldID);
                 if (i != oldID || newID < 0 || newID >= maxDoc)
                 {
                     return false;

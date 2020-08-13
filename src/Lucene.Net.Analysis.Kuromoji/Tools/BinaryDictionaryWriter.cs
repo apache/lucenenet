@@ -1,6 +1,7 @@
 ﻿using J2N.IO;
 using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Codecs;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -61,7 +62,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             for (int i = 4; i < 8; i++)
             {
                 string part = entry[i];
-                Debug.Assert(part.Length > 0);
+                Debugging.Assert(part.Length > 0);
                 if (!"*".Equals(part, StringComparison.Ordinal))
                 {
                     if (sb.Length > 0)
@@ -118,8 +119,8 @@ namespace Lucene.Net.Analysis.Ja.Util
                 flags |= BinaryDictionary.HAS_PRONUNCIATION;
             }
 
-            Debug.Assert(leftId == rightId);
-            Debug.Assert(leftId < 4096); // there are still unused bits
+            Debugging.Assert(leftId == rightId);
+            Debugging.Assert(leftId < 4096); // there are still unused bits
                                          // add pos mapping
             int toFill = 1 + leftId - posDict.Count;
             for (int i = 0; i < toFill; i++)
@@ -128,7 +129,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
 
             string existing = posDict[leftId];
-            Debug.Assert(existing == null || existing.Equals(fullPOSData, StringComparison.Ordinal));
+            Debugging.Assert(existing == null || existing.Equals(fullPOSData, StringComparison.Ordinal));
             posDict[leftId] = fullPOSData;
 
             m_buffer.PutInt16((short)(leftId << 3 | flags));
@@ -136,7 +137,7 @@ namespace Lucene.Net.Analysis.Ja.Util
 
             if ((flags & BinaryDictionary.HAS_BASEFORM) != 0)
             {
-                Debug.Assert(baseForm.Length < 16);
+                Debugging.Assert(baseForm.Length < 16);
                 int shared = SharedPrefix(entry[0], baseForm);
                 int suffix = baseForm.Length - shared;
                 m_buffer.Put((byte)(shared << 4 | suffix));
@@ -237,11 +238,11 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         public virtual void AddMapping(int sourceId, int wordId)
         {
-            Debug.Assert(wordId > lastWordId, "words out of order: " + wordId + " vs lastID: " + lastWordId);
+            Debugging.Assert(() => wordId > lastWordId, () => "words out of order: " + wordId + " vs lastID: " + lastWordId);
 
             if (sourceId > lastSourceId)
             {
-                Debug.Assert(sourceId > lastSourceId, "source ids out of order: lastSourceId=" + lastSourceId + " vs sourceId=" + sourceId);
+                Debugging.Assert(() => sourceId > lastSourceId, () => "source ids out of order: lastSourceId=" + lastSourceId + " vs sourceId=" + sourceId);
                 targetMapOffsets = ArrayUtil.Grow(targetMapOffsets, sourceId + 1);
                 for (int i = lastSourceId + 1; i <= sourceId; i++)
                 {
@@ -250,7 +251,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
             else
             {
-                Debug.Assert(sourceId == lastSourceId);
+                Debugging.Assert(() => sourceId == lastSourceId);
             }
 
             targetMap = ArrayUtil.Grow(targetMap, targetMapEndOffset + 1);
@@ -305,7 +306,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                 for (int ofs = 0; ofs < targetMapEndOffset; ofs++)
                 {
                     int val = targetMap[ofs], delta = val - prev;
-                    Debug.Assert(delta >= 0);
+                    Debugging.Assert(() => delta >= 0);
                     if (ofs == targetMapOffsets[sourceId])
                     {
                         @out.WriteVInt32((delta << 1) | 0x01);
@@ -317,7 +318,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     }
                     prev += delta;
                 }
-                Debug.Assert(sourceId == numSourceIds, "sourceId:" + sourceId + " != numSourceIds:" + numSourceIds);
+                Debugging.Assert(() => sourceId == numSourceIds, () => "sourceId:" + sourceId + " != numSourceIds:" + numSourceIds);
             }
         }
 
@@ -341,7 +342,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     else
                     {
                         string[] data = CSVUtil.Parse(s);
-                        Debug.Assert(data.Length == 3, "malformed pos/inflection: " + s);
+                        Debugging.Assert(() => data.Length == 3, () => "malformed pos/inflection: " + s);
                         @out.WriteString(data[0]);
                         @out.WriteString(data[1]);
                         @out.WriteString(data[2]);
@@ -370,7 +371,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     @out.WriteByte(m_buffer.Get());
                 }
 
-                Debug.Assert(m_buffer.Remaining == 0L);
+                Debugging.Assert(() => m_buffer.Remaining == 0L);
             }
         }
     }

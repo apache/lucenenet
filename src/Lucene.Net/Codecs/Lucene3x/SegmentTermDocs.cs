@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
 using IBits = Lucene.Net.Util.IBits;
@@ -170,7 +171,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     else
                     {
                         freq = m_freqStream.ReadVInt32(); // else read freq
-                        Debug.Assert(freq != 1);
+                        Debugging.Assert(() => freq != 1);
                     }
                 }
 

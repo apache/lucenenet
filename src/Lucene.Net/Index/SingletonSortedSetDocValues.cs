@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Index
 {
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
         public SingletonSortedSetDocValues(SortedDocValues @in)
         {
             this.@in = @in;
-            Debug.Assert(NO_MORE_ORDS == -1); // this allows our nextOrd() to work for missing values without a check
+            Debugging.Assert(() => NO_MORE_ORDS == -1); // this allows our nextOrd() to work for missing values without a check
         }
 
         /// <summary>

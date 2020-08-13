@@ -1,8 +1,8 @@
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace Lucene.Net.Index
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
                 if (!(genDVProducers.TryGetValue(gen, out dvp)))
                 {
                     dvp = NewDocValuesProducer(si, context, dir, dvFormat, gen, infos, termsIndexDivisor);
-                    Debug.Assert(dvp != null);
+                    Debugging.Assert(() => dvp != null);
                     genDVProducers[gen] = dvp;
                 }
                 else
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
                 foreach (long? gen in dvProducersGens)
                 {
                     RefCount<DocValuesProducer> dvp = genDVProducers[gen];
-                    Debug.Assert(dvp != null, "gen=" + gen);
+                    Debugging.Assert(() => dvp != null, () => "gen=" + gen);
                     try
                     {
                         dvp.DecRef();

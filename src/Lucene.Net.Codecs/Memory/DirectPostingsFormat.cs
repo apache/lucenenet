@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -588,7 +589,7 @@ namespace Lucene.Net.Codecs.Memory
 
                             upto++;
                         }
-                        Debug.Assert(upto == docFreq);
+                        Debugging.Assert(() => upto == docFreq);
                         ent = new HighFreqTerm(docs, freqs, positions, payloads, totalTermFreq);
                     }
 
@@ -624,7 +625,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
                 this.skipOffsets[numTerms] = skipOffset;
-                Debug.Assert(skipOffset == skipCount);
+                Debugging.Assert(() => skipOffset == skipCount);
             }
 
             /// <summary>Returns approximate RAM bytes used. </summary>
@@ -737,7 +738,7 @@ namespace Lucene.Net.Codecs.Memory
 
             private void FinishSkips()
             {
-                Debug.Assert(count == terms.Length);
+                Debugging.Assert(() => count == terms.Length);
                 int lastTermOffset = termOffsets[count - 1];
                 int lastTermLength = termOffsets[count] - lastTermOffset;
 
@@ -971,7 +972,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     termOrd = (int) ((OrdTermState) state).Ord;
                     SetTerm();
-                    Debug.Assert(term.Equals(scratch));
+                    Debugging.Assert(() => term.Equals(scratch));
                 }
 
                 public override BytesRef Term => scratch;
@@ -1206,13 +1207,13 @@ namespace Lucene.Net.Codecs.Memory
                                 while (label > states[i].transitionMax)
                                 {
                                     states[i].transitionUpto++;
-                                    Debug.Assert(states[i].transitionUpto < states[i].transitions.Length);
+                                    Debugging.Assert(() => states[i].transitionUpto < states[i].transitions.Length);
                                     states[i].transitionMin = states[i].transitions[states[i].transitionUpto].Min;
                                     states[i].transitionMax = states[i].transitions[states[i].transitionUpto].Max;
-                                    Debug.Assert(states[i].transitionMin >= 0);
-                                    Debug.Assert(states[i].transitionMin <= 255);
-                                    Debug.Assert(states[i].transitionMax >= 0);
-                                    Debug.Assert(states[i].transitionMax <= 255);
+                                    Debugging.Assert(() => states[i].transitionMin >= 0);
+                                    Debugging.Assert(() => states[i].transitionMin <= 255);
+                                    Debugging.Assert(() => states[i].transitionMax >= 0);
+                                    Debugging.Assert(() => states[i].transitionMax <= 255);
                                 }
 
                                 // Skip forwards until we find a term matching
@@ -1253,7 +1254,7 @@ namespace Lucene.Net.Codecs.Memory
                                         //   System.out.println("  no match; already beyond; return termOrd=" + termOrd);
                                         // }
                                         stateUpto -= skipUpto;
-                                        Debug.Assert(stateUpto >= 0);
+                                        Debugging.Assert(() => stateUpto >= 0);
                                         return;
                                     }
                                     else if (label == (outerInstance.termBytes[termOffset_i + i] & 0xFF))
@@ -1268,7 +1269,7 @@ namespace Lucene.Net.Codecs.Memory
                                             int nextState = runAutomaton.Step(states[stateUpto].state, label);
 
                                             // Automaton is required to accept startTerm:
-                                            Debug.Assert(nextState != -1);
+                                            Debugging.Assert(() => nextState != -1);
 
                                             stateUpto++;
                                             states[stateUpto].changeOrd = outerInstance.skips[skipOffset + skipUpto++];
@@ -1299,12 +1300,12 @@ namespace Lucene.Net.Codecs.Memory
                                             while (termOrd < outerInstance.terms.Length &&
                                                    outerInstance.Compare(termOrd, startTerm) <= 0)
                                             {
-                                                Debug.Assert(termOrd == startTermOrd ||
+                                                Debugging.Assert(() => termOrd == startTermOrd ||
                                                              outerInstance.skipOffsets[termOrd] ==
                                                              outerInstance.skipOffsets[termOrd + 1]);
                                                 termOrd++;
                                             }
-                                            Debug.Assert(termOrd - startTermOrd < outerInstance.minSkipCount);
+                                            Debugging.Assert(() => termOrd - startTermOrd < outerInstance.minSkipCount);
                                             termOrd--;
                                             stateUpto -= skipUpto;
                                             // if (DEBUG) {
@@ -1385,7 +1386,7 @@ namespace Lucene.Net.Codecs.Memory
                     if (termOrd == 0 && outerInstance.termOffsets[1] == 0)
                     {
                         // Special-case empty string:
-                        Debug.Assert(stateUpto == 0);
+                        Debugging.Assert(() => stateUpto == 0);
                         // if (DEBUG) {
                         //   System.out.println("  visit empty string");
                         // }
@@ -1434,9 +1435,9 @@ namespace Lucene.Net.Codecs.Memory
                         //   System.out.println("  term=" + new BytesRef(termBytes, termOffset, termLength).utf8ToString() + " skips=" + Arrays.toString(skips));
                         // }
 
-                        Debug.Assert(termOrd < state.changeOrd);
+                        Debugging.Assert(() => termOrd < state.changeOrd);
 
-                        Debug.Assert(stateUpto <= termLength, "term.length=" + termLength + "; stateUpto=" + stateUpto);
+                        Debugging.Assert(() => stateUpto <= termLength, () => "term.length=" + termLength + "; stateUpto=" + stateUpto);
                         int label = outerInstance.termBytes[termOffset + stateUpto] & 0xFF;
 
                         while (label > state.transitionMax)
@@ -1455,7 +1456,7 @@ namespace Lucene.Net.Codecs.Memory
                                 }
                                 else
                                 {
-                                    Debug.Assert(state.changeOrd > termOrd);
+                                    Debugging.Assert(() => state.changeOrd > termOrd);
                                     // if (DEBUG) {
                                     //   System.out.println("  jumpend " + (state.changeOrd - termOrd));
                                     // }
@@ -1466,14 +1467,14 @@ namespace Lucene.Net.Codecs.Memory
                                 }
                                 goto nextTermContinue;
                             }
-                            Debug.Assert(state.transitionUpto < state.transitions.Length,
-                                " state.transitionUpto=" + state.transitionUpto + " vs " + state.transitions.Length);
+                            Debugging.Assert(() => state.transitionUpto < state.transitions.Length,
+                                () => " state.transitionUpto=" + state.transitionUpto + " vs " + state.transitions.Length);
                             state.transitionMin = state.transitions[state.transitionUpto].Min;
                             state.transitionMax = state.transitions[state.transitionUpto].Max;
-                            Debug.Assert(state.transitionMin >= 0);
-                            Debug.Assert(state.transitionMin <= 255);
-                            Debug.Assert(state.transitionMax >= 0);
-                            Debug.Assert(state.transitionMax <= 255);
+                            Debugging.Assert(() => state.transitionMin >= 0);
+                            Debugging.Assert(() => state.transitionMin <= 255);
+                            Debugging.Assert(() => state.transitionMax >= 0);
+                            Debugging.Assert(() => state.transitionMax <= 255);
                         }
 
                         int targetLabel = state.transitionMin;
@@ -1602,7 +1603,7 @@ namespace Lucene.Net.Codecs.Memory
                             if (compiledAutomaton.CommonSuffixRef != null)
                             {
                                 //System.out.println("suffix " + compiledAutomaton.commonSuffixRef.utf8ToString());
-                                Debug.Assert(compiledAutomaton.CommonSuffixRef.Offset == 0);
+                                Debugging.Assert(() => compiledAutomaton.CommonSuffixRef.Offset == 0);
                                 if (termLength < compiledAutomaton.CommonSuffixRef.Length)
                                 {
                                     termOrd++;
@@ -2001,7 +2002,7 @@ namespace Lucene.Net.Codecs.Memory
                     if (upto < postings.Length)
                     {
                         freq = postings[upto + 1];
-                        Debug.Assert(freq > 0);
+                        Debugging.Assert(() => freq > 0);
                         return postings[upto];
                     }
                 }
@@ -2010,7 +2011,7 @@ namespace Lucene.Net.Codecs.Memory
                     while (upto < postings.Length)
                     {
                         freq = postings[upto + 1];
-                        Debug.Assert(freq > 0);
+                        Debugging.Assert(() => freq > 0);
                         if (liveDocs.Get(postings[upto]))
                         {
                             return postings[upto];
@@ -2185,7 +2186,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override int NextPosition()
             {
-                Debug.Assert(skipPositions > 0);
+                Debugging.Assert(() => skipPositions > 0);
                 skipPositions--;
 
                 int pos = postings[upto++];

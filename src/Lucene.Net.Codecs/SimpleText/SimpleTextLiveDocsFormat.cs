@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -66,7 +67,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
         {
-            Debug.Assert(info.HasDeletions);
+            Debugging.Assert(() => info.HasDeletions);
             var scratch = new BytesRef();
             var scratchUtf16 = new CharsRef();
 
@@ -79,7 +80,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 input = dir.OpenChecksumInput(fileName, context);
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debug.Assert(StringHelper.StartsWith(scratch, SIZE));
+                Debugging.Assert(() => StringHelper.StartsWith(scratch, SIZE));
                 var size = ParseInt32At(scratch, SIZE.Length, scratchUtf16);
 
                 var bits = new BitSet(size);
@@ -87,7 +88,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.ReadLine(input, scratch);
                 while (!scratch.Equals(END))
                 {
-                    Debug.Assert(StringHelper.StartsWith(scratch, DOC));
+                    Debugging.Assert(() => StringHelper.StartsWith(scratch, DOC));
                     var docid = ParseInt32At(scratch, DOC.Length, scratchUtf16);
                     bits.Set(docid);
                     SimpleTextUtil.ReadLine(input, scratch);

@@ -1,8 +1,8 @@
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -27,16 +27,16 @@ namespace Lucene.Net.Index
      */
 
     using BinaryDocValuesField = BinaryDocValuesField;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+    using IBits = Lucene.Net.Util.IBits;
+    using IMutableBits = Lucene.Net.Util.IMutableBits;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LiveDocsFormat = Lucene.Net.Codecs.LiveDocsFormat;
-    using IMutableBits = Lucene.Net.Util.IMutableBits;
     using NumericDocValuesField = NumericDocValuesField;
     using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
@@ -104,19 +104,19 @@ namespace Lucene.Net.Index
         public virtual void IncRef()
         {
             int rc = refCount.IncrementAndGet();
-            Debug.Assert(rc > 1);
+            Debugging.Assert(() => rc > 1);
         }
 
         public virtual void DecRef()
         {
             int rc = refCount.DecrementAndGet();
-            Debug.Assert(rc >= 0);
+            Debugging.Assert(() => rc >= 0);
         }
 
         public virtual int RefCount()
         {
             int rc = refCount;
-            Debug.Assert(rc >= 0);
+            Debugging.Assert(() => rc >= 0);
             return rc;
         }
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
                     count = Info.Info.DocCount;
                 }
 
-                Debug.Assert(Info.Info.DocCount - Info.DelCount - pendingDeleteCount == count, "info.docCount=" + Info.Info.DocCount + " info.DelCount=" + Info.DelCount + " pendingDeleteCount=" + pendingDeleteCount + " count=" + count);
+                Debugging.Assert(() => Info.Info.DocCount - Info.DelCount - pendingDeleteCount == count, () => "info.docCount=" + Info.Info.DocCount + " info.DelCount=" + Info.DelCount + " pendingDeleteCount=" + pendingDeleteCount + " count=" + count);
                 return true;
             }
         }
@@ -220,7 +220,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Debug.Assert(Info == sr.SegmentInfo);
+                Debugging.Assert(() => Info == sr.SegmentInfo);
                 sr.DecRef();
             }
         }
@@ -229,10 +229,10 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Debug.Assert(liveDocs != null);
-                //Debug.Assert(Thread.holdsLock(Writer));
-                Debug.Assert(docID >= 0 && docID < liveDocs.Length, "out of bounds: docid=" + docID + " liveDocsLength=" + liveDocs.Length + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
-                Debug.Assert(!liveDocsShared);
+                Debugging.Assert(() => liveDocs != null);
+                //Debugging.Assert(Thread.holdsLock(Writer));
+                Debugging.Assert(() => docID >= 0 && docID < liveDocs.Length, () => "out of bounds: docid=" + docID + " liveDocsLength=" + liveDocs.Length + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
+                Debugging.Assert(() => !liveDocsShared);
                 bool didDelete = liveDocs.Get(docID);
                 if (didDelete)
                 {
@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
                 if (reader == null)
                 {
                     GetReader(context).DecRef();
-                    Debug.Assert(reader != null);
+                    Debugging.Assert(() => reader != null);
                 }
                 liveDocsShared = true;
                 if (liveDocs != null)
@@ -307,7 +307,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    Debug.Assert(reader.LiveDocs == liveDocs);
+                    Debugging.Assert(() => reader.LiveDocs == liveDocs);
                     reader.IncRef();
                     return reader;
                 }
@@ -318,8 +318,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debug.Assert(Thread.holdsLock(Writer));
-                Debug.Assert(Info.Info.DocCount > 0);
+                //Debugging.Assert(Thread.holdsLock(Writer));
+                Debugging.Assert(() => Info.Info.DocCount > 0);
                 //System.out.println("initWritableLivedocs seg=" + info + " liveDocs=" + liveDocs + " shared=" + shared);
                 if (liveDocsShared)
                 {
@@ -348,7 +348,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    //Debug.Assert(Thread.holdsLock(Writer));
+                    //Debugging.Assert(Thread.holdsLock(Writer));
                     return liveDocs;
                 }
             }
@@ -359,7 +359,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 //System.out.println("getROLiveDocs seg=" + info);
-                //Debug.Assert(Thread.holdsLock(Writer));
+                //Debugging.Assert(Thread.holdsLock(Writer));
                 liveDocsShared = true;
                 //if (liveDocs != null) {
                 //System.out.println("  liveCount=" + liveDocs.count());
@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debug.Assert(Thread.holdsLock(Writer));
+                //Debugging.Assert(Thread.holdsLock(Writer));
                 //System.out.println("rld.writeLiveDocs seg=" + info + " pendingDelCount=" + pendingDeleteCount + " numericUpdates=" + numericUpdates);
                 if (pendingDeleteCount == 0)
                 {
@@ -401,7 +401,7 @@ namespace Lucene.Net.Index
                 }
 
                 // We have new deletes
-                Debug.Assert(liveDocs.Length == Info.Info.DocCount);
+                Debugging.Assert(() => liveDocs.Length == Info.Info.DocCount);
 
                 // Do this so we can delete any created files on
                 // exception; this saves all codecs from having to do
@@ -458,10 +458,10 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debug.Assert(Thread.holdsLock(Writer));
+                //Debugging.Assert(Thread.holdsLock(Writer));
                 //System.out.println("rld.writeFieldUpdates: seg=" + info + " numericFieldUpdates=" + numericFieldUpdates);
 
-                Debug.Assert(dvUpdates.Any());
+                Debugging.Assert(dvUpdates.Any);
 
                 // Do this so we can delete any created files on
                 // exception; this saves all codecs from having to do
@@ -523,7 +523,7 @@ namespace Lucene.Net.Index
                                 string field = e.Key;
                                 NumericDocValuesFieldUpdates fieldUpdates = e.Value;
                                 FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                                Debug.Assert(fieldInfo != null);
+                                Debugging.Assert(() => fieldInfo != null);
 
                                 fieldInfo.DocValuesGen = nextFieldInfosGen;
                                 // write the numeric updates to a new gen'd docvalues file
@@ -536,7 +536,7 @@ namespace Lucene.Net.Index
                                 string field = e.Key;
                                 BinaryDocValuesFieldUpdates dvFieldUpdates = e.Value;
                                 FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                                Debug.Assert(fieldInfo != null);
+                                Debugging.Assert(() => fieldInfo != null);
 
                                 //          System.out.println("[" + Thread.currentThread().getName() + "] RAU.writeFieldUpdates: applying binary updates; seg=" + info + " f=" + dvFieldUpdates + ", updates=" + dvFieldUpdates);
 
@@ -746,7 +746,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debug.Assert(Thread.holdsLock(Writer));
+                //Debugging.Assert(Thread.holdsLock(Writer));
                 // must execute these two statements as atomic operation, otherwise we
                 // could lose updates if e.g. another thread calls writeFieldUpdates in
                 // between, or the updates are applied to the obtained reader, but then

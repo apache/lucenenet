@@ -1,6 +1,5 @@
 using J2N.Collections;
-using System.Diagnostics;
-using System.Reflection;
+using Lucene.Net.Diagnostics;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Fst
@@ -164,7 +163,7 @@ namespace Lucene.Net.Util.Fst
                     long node = fst.AddNode(nodeIn);
                     //System.out.println("  now freeze node=" + node);
                     long hashNode = Hash(node);
-                    Debug.Assert(hashNode == h, "frozenHash=" + hashNode + " vs h=" + h);
+                    Debugging.Assert(() => hashNode == h, () => "frozenHash=" + hashNode + " vs h=" + h);
                     count++;
                     table.Set(pos, node);
                     // Rehash at 2/3 occupancy:

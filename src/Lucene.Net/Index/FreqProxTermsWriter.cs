@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                     fieldWriter.Flush(fieldInfo.Name, consumer, state);
 
                     TermsHashPerField perField = fieldWriter.termsHashPerField;
-                    Debug.Assert(termsHash == null || termsHash == perField.termsHash);
+                    Debugging.Assert(() => termsHash == null || termsHash == perField.termsHash);
                     termsHash = perField.termsHash;
                     int numPostings = perField.bytesHash.Count;
                     perField.Reset();

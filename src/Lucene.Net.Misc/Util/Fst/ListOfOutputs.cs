@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Store;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Store;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -87,7 +88,7 @@ namespace Lucene.Net.Util.Fst
 
         public override object Add(object prefix, object output)
         {
-            Debug.Assert(!(prefix is IList));
+            Debugging.Assert(() => !(prefix is IList));
             if (!(output is IList))
             {
                 return outputs.Add((T)prefix, (T)output);
@@ -106,7 +107,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(object output, DataOutput @out)
         {
-            Debug.Assert(!(output is IList));
+            Debugging.Assert(() => !(output is IList));
             outputs.Write((T)output, @out);
         }
 

@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Util
 {
@@ -137,7 +137,7 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         public static void Encode(sbyte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength)
         {
-            Debug.Assert(outputLength == GetEncodedLength(inputArray, inputOffset, inputLength));
+            Debugging.Assert(() => outputLength == GetEncodedLength(inputArray, inputOffset, inputLength));
             if (inputLength > 0)
             {
                 int inputByteNum = inputOffset;
@@ -217,7 +217,7 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         public static void Decode(char[] inputArray, int inputOffset, int inputLength, sbyte[] outputArray, int outputOffset, int outputLength)
         {
-            Debug.Assert(outputLength == GetDecodedLength(inputArray, inputOffset, inputLength));
+            Debugging.Assert(() => outputLength == GetDecodedLength(inputArray, inputOffset, inputLength));
             int numInputChars = inputLength - 1;
             int numOutputBytes = outputLength;
 

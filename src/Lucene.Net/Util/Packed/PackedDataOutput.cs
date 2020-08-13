@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public void WriteInt64(long value, int bitsPerValue)
         {
-            Debug.Assert(bitsPerValue == 64 || (value >= 0 && value <= PackedInt32s.MaxValue(bitsPerValue)));
+            Debugging.Assert(() => bitsPerValue == 64 || (value >= 0 && value <= PackedInt32s.MaxValue(bitsPerValue)));
             while (bitsPerValue > 0)
             {
                 if (remainingBits == 0)

@@ -1,4 +1,5 @@
 ﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
@@ -296,7 +297,7 @@ namespace Lucene.Net.Index
                 if (m_input.HasDeletions)
                 {
                     IBits oldLiveDocs = m_input.LiveDocs;
-                    Debug.Assert(oldLiveDocs != null);
+                    Debugging.Assert(() => oldLiveDocs != null);
                     // this loop is a little bit ineffective, as Bits has no nextSetBit():
                     for (int i = 0; i < maxDoc; i++)
                     {

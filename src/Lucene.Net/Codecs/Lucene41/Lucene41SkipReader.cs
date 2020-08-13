@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System.Diagnostics;
 
@@ -128,7 +129,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
             else
             {
-                Debug.Assert(posBasePointer == 0);
+                Debugging.Assert(() => posBasePointer == 0);
             }
         }
 

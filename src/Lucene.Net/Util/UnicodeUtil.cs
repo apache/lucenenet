@@ -1,7 +1,7 @@
 using J2N;
 using J2N.Text;
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -830,7 +830,7 @@ namespace Lucene.Net.Util
                 int b = utf8[offset++] & 0xff;
                 if (b < 0xc0)
                 {
-                    Debug.Assert(b < 0x80);
+                    Debugging.Assert(() => b < 0x80);
                     @out[out_offset++] = (char)b;
                 }
                 else if (b < 0xe0)
@@ -844,7 +844,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    Debug.Assert(b < 0xf8, "b = 0x" + b.ToString("x"));
+                    Debugging.Assert(() => b < 0xf8, () => "b = 0x" + b.ToString("x"));
                     int ch = ((b & 0x7) << 18) + ((utf8[offset] & 0x3f) << 12) + ((utf8[offset + 1] & 0x3f) << 6) + (utf8[offset + 2] & 0x3f);
                     offset += 3;
                     if (ch < UNI_MAX_BMP)

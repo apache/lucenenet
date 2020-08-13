@@ -1,7 +1,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
 
         public void InitReader(ByteSliceReader reader, int termID, int stream)
         {
-            Debug.Assert(stream < streamCount);
+            Debugging.Assert(() => stream < streamCount);
             int intStart = postingsArray.intStarts[termID];
             int[] ints = intPool.Buffers[intStart >> Int32BlockPool.INT32_BLOCK_SHIFT];
             int upto = intStart & Int32BlockPool.INT32_BLOCK_MASK;
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
         {
             int upto = intUptos[intUptoStart + stream];
             var bytes = bytePool.Buffers[upto >> ByteBlockPool.BYTE_BLOCK_SHIFT];
-            Debug.Assert(bytes != null);
+            Debugging.Assert(() => bytes != null);
             int offset = upto & ByteBlockPool.BYTE_BLOCK_MASK;
             if (bytes[offset] != 0)
             {
@@ -319,7 +319,7 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void WriteVInt32(int stream, int i)
         {
-            Debug.Assert(stream < streamCount);
+            Debugging.Assert(() => stream < streamCount);
             while ((i & ~0x7F) != 0)
             {
                 WriteByte(stream, (sbyte)((i & 0x7f) | 0x80));

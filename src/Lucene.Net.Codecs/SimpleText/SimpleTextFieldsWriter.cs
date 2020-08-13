@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -162,9 +163,9 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 if (_writeOffsets)
                 {
-                    Debug.Assert(endOffset >= startOffset);
-                    Debug.Assert(startOffset >= _lastStartOffset,
-                        "startOffset=" + startOffset + " lastStartOffset=" + _lastStartOffset);
+                    Debugging.Assert(() => endOffset >= startOffset);
+                    Debugging.Assert(() => startOffset >= _lastStartOffset,
+                        () => "startOffset=" + startOffset + " lastStartOffset=" + _lastStartOffset);
                     _lastStartOffset = startOffset;
                     _outerInstance.Write(START_OFFSET);
                     _outerInstance.Write(Convert.ToString(startOffset, CultureInfo.InvariantCulture));
@@ -176,7 +177,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 if (payload != null && payload.Length > 0)
                 {
-                    Debug.Assert(payload.Length != 0);
+                    Debugging.Assert(() => payload.Length != 0);
                     _outerInstance.Write(PAYLOAD);
                     _outerInstance.Write(payload);
                     _outerInstance.Newline();

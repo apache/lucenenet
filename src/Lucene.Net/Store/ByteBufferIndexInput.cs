@@ -1,9 +1,7 @@
 using J2N.IO;
-using Lucene.Net.Util;
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
@@ -87,8 +85,8 @@ namespace Lucene.Net.Store
             // uses RuntimeHelpers.GetHashCode() to find the item, so technically, it IS an identity collection.
             this.clones = trackClones ? new ConditionalWeakTable<ByteBufferIndexInput, BoolRefWrapper>() : null;
 
-            Debug.Assert(chunkSizePower >= 0 && chunkSizePower <= 30);
-            Debug.Assert(((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
+            Debugging.Assert(() => chunkSizePower >= 0 && chunkSizePower <= 30);
+            Debugging.Assert(() => ((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
 
             // LUCENENET specific: MMapIndexInput calls SetBuffers() to populate
             // the buffers, so we need to skip that call if it is null here, and
@@ -302,7 +300,7 @@ namespace Lucene.Net.Store
             ByteBufferIndexInput clone = (ByteBufferIndexInput)base.Clone();
             clone.isClone = true;
             // we keep clone.clones, so it shares the same map with original and we have no additional cost on clones
-            Debug.Assert(clone.clones == this.clones);
+            Debugging.Assert(() => clone.clones == this.clones);
             clone.buffers = BuildSlice(buffers, offset, length);
             clone.offset = (int)(offset & chunkSizeMask);
             clone.length = length;

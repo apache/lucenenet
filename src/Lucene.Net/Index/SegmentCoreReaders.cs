@@ -1,9 +1,9 @@
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                 SegmentReadState segmentReadState = new SegmentReadState(cfsDir, si.Info, fieldInfos, context, termsIndexDivisor);
                 // Ask codec for its Fields
                 fields = format.FieldsProducer(segmentReadState);
-                Debug.Assert(fields != null);
+                Debugging.Assert(() => fields != null);
                 // ask codec for its Norms:
                 // TODO: since we don't write any norms file if there are no norms,
                 // kinda jaky to assume the codec handles the case of no norms file at all gracefully?!
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
                 if (fieldInfos.HasNorms)
                 {
                     normsProducer = codec.NormsFormat.NormsProducer(segmentReadState);
-                    Debug.Assert(normsProducer != null);
+                    Debugging.Assert(() => normsProducer != null);
                 }
                 else
                 {
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
 
         internal NumericDocValues GetNormValues(FieldInfo fi)
         {
-            Debug.Assert(normsProducer != null);
+            Debugging.Assert(() => normsProducer != null);
 
             IDictionary<string, object> normFields = normsLocal.Value;
 

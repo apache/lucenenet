@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
-using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.IntBlock
 {
@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 else if (fp == lastFP)
                 {
                     // same block
-                    Debug.Assert(upto >= lastUpto);
+                    Debugging.Assert(() => upto >= lastUpto);
                     int uptoDelta = upto - lastUpto;
                     indexOut.WriteVInt32(uptoDelta << 1 | 1);
                 }

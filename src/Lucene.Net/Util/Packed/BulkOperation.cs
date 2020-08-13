@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 
 // this file has been automatically generated, DO NOT EDIT
 
@@ -164,12 +164,12 @@ namespace Lucene.Net.Util.Packed
         {
             if (format == PackedInt32s.Format.PACKED)
             {
-                Debug.Assert(packedBulkOps[bitsPerValue - 1] != null);
+                Debugging.Assert(() => packedBulkOps[bitsPerValue - 1] != null);
                 return packedBulkOps[bitsPerValue - 1];
             }
             else if (format == PackedInt32s.Format.PACKED_SINGLE_BLOCK)
             {
-                Debug.Assert(packedSingleBlockBulkOps[bitsPerValue - 1] != null);
+                Debugging.Assert(() => packedSingleBlockBulkOps[bitsPerValue - 1] != null);
                 return packedSingleBlockBulkOps[bitsPerValue - 1];
             }
             else

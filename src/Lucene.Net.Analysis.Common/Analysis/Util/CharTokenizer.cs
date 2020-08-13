@@ -1,8 +1,8 @@
 ﻿using J2N;
-using System.Diagnostics;
-using System.IO;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
+using System.IO;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -169,7 +169,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     if (length == 0) // start of token
                     {
-                        Debug.Assert(start == -1);
+                        Debugging.Assert(() => start == -1);
                         start = offset + bufferIndex - charCount;
                         end = start;
                     } // check if a supplementary could run out of bounds
@@ -191,7 +191,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             termAtt.Length = length;
-            Debug.Assert(start != -1);
+            Debugging.Assert(() => start != -1);
             offsetAtt.SetOffset(CorrectOffset(start), finalOffset = CorrectOffset(end));
             return true;
         }

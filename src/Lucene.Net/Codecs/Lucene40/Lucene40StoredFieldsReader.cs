@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -91,8 +92,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 CodecUtil.CheckHeader(indexStream, Lucene40StoredFieldsWriter.CODEC_NAME_IDX, Lucene40StoredFieldsWriter.VERSION_START, Lucene40StoredFieldsWriter.VERSION_CURRENT);
                 CodecUtil.CheckHeader(fieldsStream, Lucene40StoredFieldsWriter.CODEC_NAME_DAT, Lucene40StoredFieldsWriter.VERSION_START, Lucene40StoredFieldsWriter.VERSION_CURRENT);
-                Debug.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
-                Debug.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX == indexStream.GetFilePointer());
+                Debugging.Assert(() => Lucene40StoredFieldsWriter.HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
+                Debugging.Assert(() => Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX == indexStream.GetFilePointer());
                 long indexSize = indexStream.Length - Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX;
                 this.size = (int)(indexSize >> 3);
                 // Verify two sources of "maxDoc" agree:
@@ -173,7 +174,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = fieldsStream.ReadByte() & 0xFF;
-                Debug.Assert(bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY), "bits=" + bits.ToString("x"));
+                Debugging.Assert(() => bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY), () => "bits=" + bits.ToString("x"));
 
                 switch (visitor.NeedsField(fieldInfo))
                 {
@@ -280,7 +281,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 long offset;
                 int docID = startDocID + count + 1;
-                Debug.Assert(docID <= numTotalDocs);
+                Debugging.Assert(() => docID <= numTotalDocs);
                 if (docID < numTotalDocs)
                 {
                     offset = indexStream.ReadInt64();

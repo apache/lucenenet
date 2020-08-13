@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -55,8 +55,8 @@ namespace Lucene.Net.Util.Packed
 
         public override void Add(long v)
         {
-            Debug.Assert(m_bitsPerValue == 64 || (v >= 0 && v <= PackedInt32s.MaxValue(m_bitsPerValue)), m_bitsPerValue.ToString());
-            Debug.Assert(!finished);
+            Debugging.Assert(() => m_bitsPerValue == 64 || (v >= 0 && v <= PackedInt32s.MaxValue(m_bitsPerValue)), m_bitsPerValue.ToString);
+            Debugging.Assert(() => !finished);
             if (m_valueCount != -1 && written >= m_valueCount)
             {
                 throw new EndOfStreamException("Writing past end of stream");
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Finish()
         {
-            Debug.Assert(!finished);
+            Debugging.Assert(() => !finished);
             if (m_valueCount != -1)
             {
                 while (written < m_valueCount)

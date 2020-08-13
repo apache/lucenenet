@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -108,7 +109,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
             SimpleTextUtil.CheckFooter(input);
-            Debug.Assert(upto == _offsets.Length);
+            Debugging.Assert(() => upto == _offsets.Length);
         }
 
         public override Fields Get(int doc)
@@ -118,7 +119,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             _input.Seek(_offsets[doc]);
             ReadLine();
-            Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.NUMFIELDS));
+            Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.NUMFIELDS));
             var numFields = ParseInt32At(SimpleTextTermVectorsWriter.NUMFIELDS.Length);
             if (numFields == 0)
             {
@@ -127,28 +128,28 @@ namespace Lucene.Net.Codecs.SimpleText
             for (var i = 0; i < numFields; i++)
             {
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELD));
+                Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELD));
                 // skip fieldNumber:
                 ParseInt32At(SimpleTextTermVectorsWriter.FIELD.Length);
 
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDNAME));
+                Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDNAME));
                 var fieldName = ReadString(SimpleTextTermVectorsWriter.FIELDNAME.Length, _scratch);
 
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPOSITIONS));
+                Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPOSITIONS));
                 var positions = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDPOSITIONS.Length, _scratch), CultureInfo.InvariantCulture);
 
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDOFFSETS));
+                Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDOFFSETS));
                 var offsets = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDOFFSETS.Length, _scratch), CultureInfo.InvariantCulture);
 
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPAYLOADS));
+                Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPAYLOADS));
                 var payloads = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDPAYLOADS.Length, _scratch), CultureInfo.InvariantCulture);
 
                 ReadLine();
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDTERMCOUNT));
+                Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDTERMCOUNT));
                 var termCount = ParseInt32At(SimpleTextTermVectorsWriter.FIELDTERMCOUNT.Length);
 
                 var terms = new SimpleTVTerms(offsets, positions, payloads);
@@ -157,7 +158,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 for (var j = 0; j < termCount; j++)
                 {
                     ReadLine();
-                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMTEXT));
+                    Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMTEXT));
                     var term = new BytesRef();
                     var termLength = _scratch.Length - SimpleTextTermVectorsWriter.TERMTEXT.Length;
                     term.Grow(termLength);
@@ -168,7 +169,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     terms.terms.Add(term, postings);
 
                     ReadLine();
-                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMFREQ));
+                    Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMFREQ));
                     postings.freq = ParseInt32At(SimpleTextTermVectorsWriter.TERMFREQ.Length);
 
                     if (!positions && !offsets) continue;
@@ -193,12 +194,12 @@ namespace Lucene.Net.Codecs.SimpleText
                         if (positions)
                         {
                             ReadLine();
-                            Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.POSITION));
+                            Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.POSITION));
                             postings.positions[k] = ParseInt32At(SimpleTextTermVectorsWriter.POSITION.Length);
                             if (payloads)
                             {
                                 ReadLine();
-                                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.PAYLOAD));
+                                Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.PAYLOAD));
                                 if (_scratch.Length - SimpleTextTermVectorsWriter.PAYLOAD.Length == 0)
                                 {
                                     postings.payloads[k] = null;
@@ -216,11 +217,11 @@ namespace Lucene.Net.Codecs.SimpleText
                         if (!offsets) continue;
 
                         ReadLine();
-                        Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.STARTOFFSET));
+                        Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.STARTOFFSET));
                         postings.startOffsets[k] = ParseInt32At(SimpleTextTermVectorsWriter.STARTOFFSET.Length);
 
                         ReadLine();
-                        Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.ENDOFFSET));
+                        Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.ENDOFFSET));
                         postings.endOffsets[k] = ParseInt32At(SimpleTextTermVectorsWriter.ENDOFFSET.Length);
                     }
                 }
@@ -443,7 +444,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 get
                 {
-                    Debug.Assert(_freqRenamed != -1);
+                    Debugging.Assert(() => _freqRenamed != -1);
                     return _freqRenamed;
                 }
             }
@@ -494,7 +495,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     if (_positions != null)
                         return _positions.Length;
 
-                    Debug.Assert(_startOffsets != null);
+                    Debugging.Assert(() => _startOffsets != null);
                     return _startOffsets.Length;
                 }
             }
@@ -539,7 +540,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override int NextPosition()
             {
-                //Debug.Assert((_positions != null && _nextPos < _positions.Length) ||
+                //Debugging.Assert((_positions != null && _nextPos < _positions.Length) ||
                 //             _startOffsets != null && _nextPos < _startOffsets.Length);
 
                 // LUCENENET: The above assertion was for control flow when testing. In Java, it would throw an AssertionError, which is

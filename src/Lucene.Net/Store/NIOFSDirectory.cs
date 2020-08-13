@@ -1,7 +1,7 @@
 using J2N.IO;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.IO;
 using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Store
@@ -234,7 +234,7 @@ namespace Lucene.Net.Store
                 if (b == m_buffer && 0 == offset)
                 {
                     // Use our own pre-wrapped byteBuf:
-                    Debug.Assert(byteBuf != null);
+                    Debugging.Assert(() => byteBuf != null);
                     byteBuf.Clear();
                     byteBuf.Limit = len;
                     bb = byteBuf;
@@ -276,7 +276,7 @@ namespace Lucene.Net.Store
                         readOffset += i;
                         readLength -= i;
                     }
-                    Debug.Assert(readLength == 0);
+                    Debugging.Assert(() => readLength == 0);
                 }
                 catch (IOException ioe)
                 {

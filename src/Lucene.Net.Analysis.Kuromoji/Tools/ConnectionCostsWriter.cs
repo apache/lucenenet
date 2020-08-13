@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis.Ja.Dict;
 using Lucene.Net.Codecs;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System.Diagnostics;
 using System.IO;
@@ -62,10 +63,10 @@ namespace Lucene.Net.Analysis.Ja.Util
                 @out.WriteVInt32(forwardSize);
                 @out.WriteVInt32(backwardSize);
                 int last = 0;
-                Debug.Assert(costs.Length == backwardSize);
+                Debugging.Assert(() => costs.Length == backwardSize);
                 foreach (short[] a in costs)
                 {
-                    Debug.Assert(a.Length == forwardSize);
+                    Debugging.Assert(() => a.Length == forwardSize);
                     for (int i = 0; i < a.Length; i++)
                     {
                         int delta = (int)a[i] - last;

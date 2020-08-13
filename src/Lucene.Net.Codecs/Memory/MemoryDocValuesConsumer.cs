@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util.Fst;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Util.Fst;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -143,7 +144,7 @@ namespace Lucene.Net.Codecs.Memory
 
                     ++count;
                 }
-                Debug.Assert(count == maxDoc);
+                Debugging.Assert(() => count == maxDoc);
             }
 
             if (missing)

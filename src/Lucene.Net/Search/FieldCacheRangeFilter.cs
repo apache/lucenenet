@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -22,8 +22,8 @@ namespace Lucene.Net.Search
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using IBits = Lucene.Net.Util.IBits;
     using NumericUtils = Lucene.Net.Util.NumericUtils;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
 
-                Debug.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
+                Debugging.Assert(() => inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
                 return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }

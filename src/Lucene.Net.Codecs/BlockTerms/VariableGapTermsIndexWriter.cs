@@ -1,10 +1,10 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -292,7 +292,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 if (text.Length == 0)
                 {
                     // We already added empty string in ctor
-                    Debug.Assert(termsFilePointer == startTermsFilePointer);
+                    Debugging.Assert(() => termsFilePointer == startTermsFilePointer);
                     return;
                 }
                 int lengthSave = text.Length;

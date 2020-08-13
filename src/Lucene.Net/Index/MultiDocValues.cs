@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
@@ -24,8 +24,8 @@ namespace Lucene.Net.Index
      */
 
     using AppendingPackedInt64Buffer = Lucene.Net.Util.Packed.AppendingPackedInt64Buffer;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using IBits = Lucene.Net.Util.IBits;
     using MonotonicAppendingInt64Buffer = Lucene.Net.Util.Packed.MonotonicAppendingInt64Buffer;
     using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using TermsEnumIndex = Lucene.Net.Index.MultiTermsEnum.TermsEnumIndex;
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
             }
             starts[size] = r.MaxDoc;
 
-            Debug.Assert(anyReal);
+            Debugging.Assert(() => anyReal);
 
             return new NumericDocValuesAnonymousInnerClassHelper(values, starts);
         }
@@ -591,8 +591,8 @@ namespace Lucene.Net.Index
             /// Creates a new <see cref="MultiSortedDocValues"/> over <paramref name="values"/> </summary>
             internal MultiSortedDocValues(SortedDocValues[] values, int[] docStarts, OrdinalMap mapping)
             {
-                Debug.Assert(values.Length == mapping.ordDeltas.Length);
-                Debug.Assert(docStarts.Length == values.Length + 1);
+                Debugging.Assert(() => values.Length == mapping.ordDeltas.Length);
+                Debugging.Assert(() => docStarts.Length == values.Length + 1);
                 this.values = values;
                 this.docStarts = docStarts;
                 this.mapping = mapping;
@@ -650,8 +650,8 @@ namespace Lucene.Net.Index
             /// Creates a new <see cref="MultiSortedSetDocValues"/> over <paramref name="values"/> </summary>
             internal MultiSortedSetDocValues(SortedSetDocValues[] values, int[] docStarts, OrdinalMap mapping)
             {
-                Debug.Assert(values.Length == mapping.ordDeltas.Length);
-                Debug.Assert(docStarts.Length == values.Length + 1);
+                Debugging.Assert(() => values.Length == mapping.ordDeltas.Length);
+                Debugging.Assert(() => docStarts.Length == values.Length + 1);
                 this.values = values;
                 this.docStarts = docStarts;
                 this.mapping = mapping;

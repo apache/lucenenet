@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Fst
             m_targetLength = target.Length;
             if (base.DoSeekExact())
             {
-                Debug.Assert(m_upto == 1 + target.Length);
+                Debugging.Assert(() => m_upto == 1 + target.Length);
                 return SetResult();
             }
             else

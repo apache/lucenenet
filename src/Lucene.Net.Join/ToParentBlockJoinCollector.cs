@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Grouping;
 using Lucene.Net.Support;
@@ -283,7 +284,7 @@ namespace Lucene.Net.Join
                     og.counts[scorerIDX] = joinScorer.ChildCount;
                     //System.out.println("    count=" + og.counts[scorerIDX]);
                     og.docs[scorerIDX] = joinScorer.SwapChildDocs(og.docs[scorerIDX]);
-                    Debug.Assert(og.docs[scorerIDX].Length >= og.counts[scorerIDX], "length=" + og.docs[scorerIDX].Length + " vs count=" + og.counts[scorerIDX]);
+                    Debugging.Assert(() => og.docs[scorerIDX].Length >= og.counts[scorerIDX], () => "length=" + og.docs[scorerIDX].Length + " vs count=" + og.counts[scorerIDX]);
                     //System.out.println("    len=" + og.docs[scorerIDX].length);
                     /*
                       for(int idx=0;idx<og.counts[scorerIDX];idx++) {
@@ -294,7 +295,7 @@ namespace Lucene.Net.Join
                     {
                         //System.out.println("    copy scores");
                         og.scores[scorerIDX] = joinScorer.SwapChildScores(og.scores[scorerIDX]);
-                        Debug.Assert(og.scores[scorerIDX].Length >= og.counts[scorerIDX], "length=" + og.scores[scorerIDX].Length + " vs count=" + og.counts[scorerIDX]);
+                        Debugging.Assert(() => og.scores[scorerIDX].Length >= og.counts[scorerIDX], () => "length=" + og.scores[scorerIDX].Length + " vs count=" + og.counts[scorerIDX]);
                     }
                 }
                 else

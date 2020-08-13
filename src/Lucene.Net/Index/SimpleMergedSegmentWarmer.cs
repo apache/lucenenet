@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
                             break;
 
                         default:
-                            Debug.Assert(false); // unknown dv type
+                            Debugging.Assert(() => false); // unknown dv type
                             break;
                     }
                     docValuesCount++;

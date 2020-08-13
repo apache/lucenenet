@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,7 +62,7 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
-                Debug.Assert(currentOrd == ords[m_curPos]);
+                Debugging.Assert(() => currentOrd == ords[m_curPos]);
                 return m_freqs[currentOrd];
             }
         }
@@ -82,7 +83,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 if (HasPayloads && m_curPos < m_payloads.Length)
                 {
-                    Debug.Assert(currentOrd == ords[m_curPos]);
+                    Debugging.Assert(() => currentOrd == ords[m_curPos]);
                     return m_payloads.Get(payloadSpare, currentOrd);
                 }
                 return null;
@@ -95,7 +96,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 if (HasContexts && m_curPos < m_contextSets.Count)
                 {
-                    Debug.Assert(currentOrd == ords[m_curPos]);
+                    Debugging.Assert(() => currentOrd == ords[m_curPos]);
                     return m_contextSets[currentOrd];
                 }
                 return null;

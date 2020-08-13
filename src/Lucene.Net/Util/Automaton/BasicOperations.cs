@@ -1,7 +1,7 @@
 using J2N;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using JCG = J2N.Collections.Generic;
@@ -721,7 +721,7 @@ namespace Lucene.Net.Util.Automaton
                     if (count == HASHMAP_CUTOVER)
                     {
                         // switch to HashMap on the fly
-                        Debug.Assert(map.Count == 0);
+                        Debugging.Assert(() => map.Count == 0);
                         for (int i = 0; i < count; i++)
                         {
                             map[points[i].point] = points[i];
@@ -845,7 +845,7 @@ namespace Lucene.Net.Util.Automaton
 
                     if (statesSet.upto > 0)
                     {
-                        Debug.Assert(lastPoint != -1);
+                        Debugging.Assert(() => lastPoint != -1);
 
                         statesSet.ComputeHash();
 
@@ -868,7 +868,7 @@ namespace Lucene.Net.Util.Automaton
                         }
                         else
                         {
-                            Debug.Assert((accCount > 0) == q.accept, "accCount=" + accCount + " vs existing accept=" + q.accept + " states=" + statesSet);
+                            Debugging.Assert(() => (accCount > 0) == q.accept, () => "accCount=" + accCount + " vs existing accept=" + q.accept + " states=" + statesSet);
                         }
 
                         r.AddTransition(new Transition(lastPoint, point - 1, q));
@@ -902,7 +902,7 @@ namespace Lucene.Net.Util.Automaton
                     points.points[i].starts.count = 0;
                 }
                 points.Reset();
-                Debug.Assert(statesSet.upto == 0, "upto=" + statesSet.upto);
+                Debugging.Assert(() => statesSet.upto == 0, () => "upto=" + statesSet.upto);
             }
             a.deterministic = true;
             a.SetNumberedStates(newStatesArray, newStateUpto);

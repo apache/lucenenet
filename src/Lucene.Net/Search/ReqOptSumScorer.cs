@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -43,8 +43,8 @@ namespace Lucene.Net.Search
         public ReqOptSumScorer(Scorer reqScorer, Scorer optScorer)
             : base(reqScorer.m_weight)
         {
-            Debug.Assert(reqScorer != null);
-            Debug.Assert(optScorer != null);
+            Debugging.Assert(() => reqScorer != null);
+            Debugging.Assert(() => optScorer != null);
             this.reqScorer = reqScorer;
             this.optScorer = optScorer;
         }

@@ -1,8 +1,8 @@
 using J2N;
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -299,7 +299,7 @@ namespace Lucene.Net.Util.Automaton
 
         public virtual void SetNumberedStates(State[] states, int count)
         {
-            Debug.Assert(count <= states.Length);
+            Debugging.Assert(() => count <= states.Length);
             // TODO: maybe we can eventually allow for oversizing here...
             if (count < states.Length)
             {
@@ -550,7 +550,7 @@ namespace Lucene.Net.Util.Automaton
                 s.SortTransitions(Transition.COMPARE_BY_MIN_MAX_THEN_DEST);
                 s.TrimTransitionsArray();
                 transitions[s.number] = s.TransitionsArray;
-                Debug.Assert(s.TransitionsArray != null);
+                Debugging.Assert(() => s.TransitionsArray != null);
             }
             return transitions;
         }

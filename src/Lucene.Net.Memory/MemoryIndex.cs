@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
@@ -216,7 +217,7 @@ namespace Lucene.Net.Index.Memory
             this.bytesUsed = Counter.NewCounter();
             int maxBufferedByteBlocks = (int)((maxReusedBytes / 2) / ByteBlockPool.BYTE_BLOCK_SIZE);
             int maxBufferedIntBlocks = (int)((maxReusedBytes - (maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE)) / (Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32));
-            Debug.Assert((maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE) + (maxBufferedIntBlocks * Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32) <= maxReusedBytes);
+            Debugging.Assert(() => (maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE) + (maxBufferedIntBlocks * Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32) <= maxReusedBytes);
             byteBlockPool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, maxBufferedByteBlocks, bytesUsed));
             intBlockPool = new Int32BlockPool(new RecyclingInt32BlockAllocator(Int32BlockPool.INT32_BLOCK_SIZE, maxBufferedIntBlocks, bytesUsed));
             postingsWriter = new Int32BlockPool.SliceWriter(intBlockPool);
@@ -738,9 +739,9 @@ namespace Lucene.Net.Index.Memory
                 start = new int[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_INT32)];
                 end = new int[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_INT32)];
                 freq = new int[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_INT32)];
-                Debug.Assert(start.Length >= ord.Length);
-                Debug.Assert(end.Length >= ord.Length);
-                Debug.Assert(freq.Length >= ord.Length);
+                Debugging.Assert(() => start.Length >= ord.Length);
+                Debugging.Assert(() => end.Length >= ord.Length);
+                Debugging.Assert(() => freq.Length >= ord.Length);
                 return ord;
             }
 
@@ -753,9 +754,9 @@ namespace Lucene.Net.Index.Memory
                     end = ArrayUtil.Grow(end, ord.Length);
                     freq = ArrayUtil.Grow(freq, ord.Length);
                 }
-                Debug.Assert(start.Length >= ord.Length);
-                Debug.Assert(end.Length >= ord.Length);
-                Debug.Assert(freq.Length >= ord.Length);
+                Debugging.Assert(() => start.Length >= ord.Length);
+                Debugging.Assert(() => end.Length >= ord.Length);
+                Debugging.Assert(() => freq.Length >= ord.Length);
                 return ord;
             }
 

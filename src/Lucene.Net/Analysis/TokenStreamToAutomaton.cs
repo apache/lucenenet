@@ -1,5 +1,6 @@
 using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
@@ -154,7 +155,7 @@ namespace Lucene.Net.Analysis
                 {
                     posInc = 1;
                 }
-                Debug.Assert(pos > -1 || posInc > 0);
+                Debugging.Assert(() => pos > -1 || posInc > 0);
 
                 if (posInc > 0)
                 {
@@ -162,7 +163,7 @@ namespace Lucene.Net.Analysis
                     pos += posInc;
 
                     posData = positions.Get(pos);
-                    Debug.Assert(posData.leaving == null);
+                    Debugging.Assert(() => posData.leaving == null);
 
                     if (posData.arriving == null)
                     {

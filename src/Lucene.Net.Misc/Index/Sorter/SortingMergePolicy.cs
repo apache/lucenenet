@@ -1,11 +1,11 @@
 ﻿using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Index.Sorter
 {
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index.Sorter
                 {
                     return base.GetDocMap(mergeState);
                 }
-                Debug.Assert(mergeState.DocMaps.Length == 1); // we returned a singleton reader
+                Debugging.Assert(() => mergeState.DocMaps.Length == 1); // we returned a singleton reader
                 MonotonicAppendingInt64Buffer deletes = GetDeletes(unsortedReaders);
                 return new DocMapAnonymousInnerClassHelper(this, mergeState, deletes);
             }

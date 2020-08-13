@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
         public IndexFormatTooNewException(string resourceDesc, int version, int minVersion, int maxVersion)
             : base("Format version is not supported (resource: " + resourceDesc + "): " + version + " (needs to be between " + minVersion + " and " + maxVersion + ")")
         {
-            Debug.Assert(resourceDesc != null);
+            Debugging.Assert(() => resourceDesc != null);
         }
 
         /// <summary>

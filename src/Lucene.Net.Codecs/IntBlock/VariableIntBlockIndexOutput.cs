@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Codecs.Sep;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System.Diagnostics;
 
@@ -106,7 +107,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
             public override void Write(DataOutput indexOut, bool absolute)
             {
-                Debug.Assert(upto >= 0);
+                Debugging.Assert(() => upto >= 0);
                 if (absolute)
                 {
                     indexOut.WriteVInt32(upto);
@@ -115,7 +116,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 else if (fp == lastFP)
                 {
                     // same block
-                    Debug.Assert(upto >= lastUpto);
+                    Debugging.Assert(() => upto >= lastUpto);
                     int uptoDelta = upto - lastUpto;
                     indexOut.WriteVInt32(uptoDelta << 1 | 1);
                 }
@@ -135,7 +136,7 @@ namespace Lucene.Net.Codecs.IntBlock
             hitExcDuringWrite = true;
             upto -= Add(v) - 1;
             hitExcDuringWrite = false;
-            Debug.Assert(upto >= 0);
+            Debugging.Assert(() => upto >= 0);
         }
 
         protected override void Dispose(bool disposing)
@@ -151,7 +152,7 @@ namespace Lucene.Net.Codecs.IntBlock
                     while (upto > stuffed)
                     {
                         upto -= Add(0) - 1;
-                        Debug.Assert(upto >= 0);
+                        Debugging.Assert(() => upto >= 0);
                         stuffed += 1;
                     }
                 }

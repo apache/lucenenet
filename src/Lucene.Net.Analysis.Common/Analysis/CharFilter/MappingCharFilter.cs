@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -135,7 +136,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         if (!FST.TargetHasArcs(arc))
                         {
                             // Fast pass for single character match:
-                            Debug.Assert(arc.IsFinal);
+                            Debugging.Assert(() => arc.IsFinal);
                             lastMatchLen = 1;
                             lastMatch = arc.Output;
                         }

@@ -1,6 +1,7 @@
 ﻿using J2N;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
@@ -231,7 +232,7 @@ namespace Lucene.Net.Analysis.NGram
                 {
                     if (bufferStart + 1 + minGram > bufferEnd)
                     {
-                        Debug.Assert(exhausted);
+                        Debugging.Assert(() => exhausted);
                         return false;
                     }
                     Consume();
@@ -294,7 +295,7 @@ namespace Lucene.Net.Analysis.NGram
         public override sealed void End()
         {
             base.End();
-            Debug.Assert(bufferStart <= bufferEnd);
+            Debugging.Assert(() => bufferStart <= bufferEnd);
             int endOffset = offset;
             for (int i = bufferStart; i < bufferEnd; ++i)
             {

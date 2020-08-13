@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -90,7 +91,7 @@ namespace Lucene.Net.Index
         {
             this.finite = compiled.Finite;
             this.runAutomaton = compiled.RunAutomaton;
-            Debug.Assert(this.runAutomaton != null);
+            Debugging.Assert(() => this.runAutomaton != null);
             this.commonSuffixRef = compiled.CommonSuffixRef;
             this.allTransitions = compiled.SortedTransitions;
 
@@ -128,7 +129,7 @@ namespace Lucene.Net.Index
             //System.out.println("ATE.nextSeekTerm term=" + term);
             if (term == null)
             {
-                Debug.Assert(seekBytesRef.Length == 0);
+                Debugging.Assert(() => seekBytesRef.Length == 0);
                 // return the empty term, as its valid
                 if (runAutomaton.IsAccept(runAutomaton.InitialState))
                 {
@@ -158,14 +159,14 @@ namespace Lucene.Net.Index
         /// </summary>
         private void SetLinear(int position)
         {
-            Debug.Assert(linear == false);
+            Debugging.Assert(() => linear == false);
 
             int state = runAutomaton.InitialState;
             int maxInterval = 0xff;
             for (int i = 0; i < position; i++)
             {
                 state = runAutomaton.Step(state, seekBytesRef.Bytes[i] & 0xff);
-                Debug.Assert(state >= 0, "state=" + state);
+                Debugging.Assert(() => state >= 0, () => "state=" + state);
             }
             for (int i = 0; i < allTransitions[state].Length; i++)
             {

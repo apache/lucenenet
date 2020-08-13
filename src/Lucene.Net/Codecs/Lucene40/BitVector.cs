@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -125,7 +126,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (count != -1)
                 {
                     count++;
-                    Debug.Assert(count <= size);
+                    Debugging.Assert(() => count <= size);
                 }
                 return false;
             }
@@ -162,7 +163,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (count != -1)
                 {
                     count--;
-                    Debug.Assert(count >= 0);
+                    Debugging.Assert(() => count >= 0);
                 }
                 return true;
             }
@@ -174,7 +175,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public bool Get(int bit)
         {
-            Debug.Assert(bit >= 0 && bit < size, "bit " + bit + " is out of bounds 0.." + (size - 1));
+            Debugging.Assert(() => bit >= 0 && bit < size, () => "bit " + bit + " is out of bounds 0.." + (size - 1));
             return (bits[bit >> 3] & (1 << (bit & 7))) != 0;
         }
 
@@ -201,7 +202,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// computed and cached, so that, if the vector is not changed, no
         /// recomputation is done for repeated calls.
         /// </summary>
-        public int Count()
+        public int Count() // LUCENENET TODO: API - make into a property
         {
             // if the vector has been modified
             if (count == -1)
@@ -214,7 +215,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 count = c;
             }
-            Debug.Assert(count <= size, "count=" + count + " size=" + size);
+            Debugging.Assert(() => count <= size, () => "count=" + count + " size=" + size);
             return count;
         }
 
@@ -258,7 +259,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public void Write(Directory d, string name, IOContext context)
         {
-            Debug.Assert(!(d is CompoundFileDirectory));
+            Debugging.Assert(() => !(d is CompoundFileDirectory));
             IndexOutput output = d.CreateOutput(name, context);
             try
             {
@@ -275,7 +276,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 CodecUtil.WriteFooter(output);
                 bool verified = VerifyCount();
-                Debug.Assert(verified);
+                Debugging.Assert(() => verified);
             }
             finally
             {
@@ -351,7 +352,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     output.WriteByte(bits[i]);
                     last = i;
                     numCleared -= (8 - BitUtil.BitCount(bits[i]));
-                    Debug.Assert(numCleared >= 0 || (i == (bits.Length - 1) && numCleared == -(8 - (size & 7))));
+                    Debugging.Assert(() => numCleared >= 0 || (i == (bits.Length - 1) && numCleared == -(8 - (size & 7))));
                 }
             }
         }
@@ -460,8 +461,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     CodecUtil.CheckEOF(input);
 #pragma warning restore 612, 618
                 }
-                bool verified = VerifyCount();
-                Debug.Assert(verified);
+                Debugging.Assert(VerifyCount);
             }
             finally
             {
@@ -472,11 +472,11 @@ namespace Lucene.Net.Codecs.Lucene40
         // asserts only
         private bool VerifyCount()
         {
-            Debug.Assert(count != -1);
+            Debugging.Assert(() => count != -1);
             int countSav = count;
             count = -1;
             bool checkCount = countSav == Count();
-            Debug.Assert(checkCount, "saved count was " + countSav + " but recomputed count is " + count);
+            Debugging.Assert(() => checkCount, () => "saved count was " + countSav + " but recomputed count is " + count);
             return true;
         }
 
@@ -503,7 +503,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 last += input.ReadVInt32();
                 bits[last] = input.ReadByte();
                 n -= BitUtil.BitCount(bits[last]);
-                Debug.Assert(n >= 0);
+                Debugging.Assert(() => n >= 0);
             }
         }
 
@@ -526,7 +526,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 last += input.ReadVInt32();
                 bits[last] = input.ReadByte();
                 numCleared -= 8 - BitUtil.BitCount(bits[last]);
-                Debug.Assert(numCleared >= 0 || (last == (bits.Length - 1) && numCleared == -(8 - (size & 7))));
+                Debugging.Assert(() => numCleared >= 0 || (last == (bits.Length - 1) && numCleared == -(8 - (size & 7))));
             }
         }
     }

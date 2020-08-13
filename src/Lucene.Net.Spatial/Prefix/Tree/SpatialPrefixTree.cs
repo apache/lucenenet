@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
@@ -47,7 +48,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public SpatialPrefixTree(SpatialContext ctx, int maxLevels)
         {
-            Debug.Assert(maxLevels > 0);
+            Debugging.Assert(() => maxLevels > 0);
             this.m_ctx = ctx;
             this.m_maxLevels = maxLevels;
         }
@@ -268,7 +269,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return new ReadOnlyCollection<Cell>(new[] { cell });
             }
             string endToken = cell.TokenString;
-            Debug.Assert(endToken.Length == detailLevel);
+            Debugging.Assert(() => endToken.Length == detailLevel);
             IList<Cell> cells = new List<Cell>(detailLevel);
             for (int i = 1; i < detailLevel; i++)
             {

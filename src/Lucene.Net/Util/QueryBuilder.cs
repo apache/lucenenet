@@ -1,8 +1,8 @@
 using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Util
@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
         /// <param name="phraseSlop"> Slop factor for phrase/multiphrase queries. </param>
         protected Query CreateFieldQuery(Analyzer analyzer, Occur @operator, string field, string queryText, bool quoted, int phraseSlop)
         {
-            Debug.Assert(@operator == Occur.SHOULD || @operator == Occur.MUST);
+            Debugging.Assert(() => @operator == Occur.SHOULD || @operator == Occur.MUST);
             // Use the analyzer to get all the tokens, and then build a TermQuery,
             // PhraseQuery, or nothing based on the term count
             CachingTokenFilter buffer = null;
@@ -263,7 +263,7 @@ namespace Lucene.Net.Util
                 try
                 {
                     bool hasNext = buffer.IncrementToken();
-                    Debug.Assert(hasNext == true);
+                    Debugging.Assert(() => hasNext == true);
                     termAtt.FillBytesRef();
                 }
                 catch (IOException)
@@ -289,7 +289,7 @@ namespace Lucene.Net.Util
                                 try
                                 {
                                     bool hasNext = buffer.IncrementToken();
-                                    Debug.Assert(hasNext == true);
+                                    Debugging.Assert(() => hasNext == true);
                                     termAtt.FillBytesRef();
                                 }
                                 catch (IOException)
@@ -311,7 +311,7 @@ namespace Lucene.Net.Util
                                 try
                                 {
                                     bool hasNext = buffer.IncrementToken();
-                                    Debug.Assert(hasNext == true);
+                                    Debugging.Assert(() => hasNext == true);
                                     termAtt.FillBytesRef();
                                 }
                                 catch (IOException)
@@ -354,7 +354,7 @@ namespace Lucene.Net.Util
                             try
                             {
                                 bool hasNext = buffer.IncrementToken();
-                                Debug.Assert(hasNext == true);
+                                Debugging.Assert(() => hasNext == true);
                                 termAtt.FillBytesRef();
                                 if (posIncrAtt != null)
                                 {
@@ -405,7 +405,7 @@ namespace Lucene.Net.Util
                         try
                         {
                             bool hasNext = buffer.IncrementToken();
-                            Debug.Assert(hasNext == true);
+                            Debugging.Assert(() => hasNext == true);
                             termAtt.FillBytesRef();
                             if (posIncrAtt != null)
                             {

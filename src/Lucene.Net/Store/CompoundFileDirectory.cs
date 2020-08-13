@@ -1,9 +1,9 @@
 using J2N.Collections.Generic.Extensions;
 using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Store
@@ -120,7 +120,7 @@ namespace Lucene.Net.Store
             }
             else
             {
-                Debug.Assert(!(directory is CompoundFileDirectory), "compound file inside of compound file: " + fileName);
+                Debugging.Assert(() => !(directory is CompoundFileDirectory), () => "compound file inside of compound file: " + fileName);
                 this.entries = SENTINEL;
                 this.IsOpen = true;
                 writer = new CompoundFileWriter(directory, fileName);
@@ -295,7 +295,7 @@ namespace Lucene.Net.Store
                     IsOpen = false;
                     if (writer != null)
                     {
-                        Debug.Assert(openForWrite);
+                        Debugging.Assert(() => openForWrite);
                         writer.Dispose();
                     }
                     else
@@ -311,7 +311,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 EnsureOpen();
-                Debug.Assert(!openForWrite);
+                Debugging.Assert(() => !openForWrite);
                 string id = IndexFileNames.StripSegmentName(name);
                 if (!entries.TryGetValue(id, out FileEntry entry) || entry == null)
                 {
@@ -415,7 +415,7 @@ namespace Lucene.Net.Store
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
-            Debug.Assert(!openForWrite);
+            Debugging.Assert(() => !openForWrite);
             string id = IndexFileNames.StripSegmentName(name);
             if (!entries.TryGetValue(id, out FileEntry entry) || entry == null)
             {

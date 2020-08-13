@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System.Diagnostics;
@@ -262,7 +263,7 @@ namespace Lucene.Net.Codecs.Sep
         public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState,
             IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
-            Debug.Assert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            Debugging.Assert(() => fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
             SepTermState termState_ = (SepTermState)termState;
             SepDocsAndPositionsEnum postingsEnum;
             if (reuse == null || !(reuse is SepDocsAndPositionsEnum))
@@ -691,7 +692,7 @@ namespace Lucene.Net.Codecs.Sep
                     {
                         // Payload length has changed
                         payloadLength = posReader.Next();
-                        Debug.Assert(payloadLength >= 0);
+                        Debugging.Assert(() => payloadLength >= 0);
                     }
                     pendingPosCount--;
                     position = 0;
@@ -706,7 +707,7 @@ namespace Lucene.Net.Codecs.Sep
                     {
                         // Payload length has changed
                         payloadLength = posReader.Next();
-                        Debug.Assert(payloadLength >= 0);
+                        Debugging.Assert(() => payloadLength >= 0);
                     }
                     position += (int)(((uint)code) >> 1);
                     pendingPayloadBytes += payloadLength;
@@ -718,7 +719,7 @@ namespace Lucene.Net.Codecs.Sep
                 }
 
                 pendingPosCount--;
-                Debug.Assert(pendingPosCount >= 0);
+                Debugging.Assert(() => pendingPosCount >= 0);
                 return position;
             }
 
@@ -740,7 +741,7 @@ namespace Lucene.Net.Codecs.Sep
                     return payload;
                 }
 
-                Debug.Assert(pendingPayloadBytes >= payloadLength);
+                Debugging.Assert(() => pendingPayloadBytes >= payloadLength);
 
                 if (pendingPayloadBytes > payloadLength)
                 {

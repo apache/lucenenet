@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -149,7 +150,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override void StartTerm()
         {
-            Debug.Assert(_pendingCount == 0);
+            Debugging.Assert(() => _pendingCount == 0);
         }
 
         // TODO: -- should we NOT reuse across fields?  would
@@ -174,7 +175,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override void StartDoc(int docId, int termDocFreq)
         {
-            Debug.Assert(docId >= 0, "Got DocID=" + docId);
+            Debugging.Assert(() => docId >= 0, () => "Got DocID=" + docId);
 
             if (_pendingCount == _pending.Length)
             {
@@ -184,7 +185,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             if (_pendingCount != -1)
             {
-                Debug.Assert(_pendingCount < _pending.Length);
+                Debugging.Assert(() => _pendingCount < _pending.Length);
                 _currentDoc = _pending[_pendingCount];
                 _currentDoc.docID = docId;
                 if (_indexOptions == IndexOptions.DOCS_ONLY)
@@ -266,7 +267,7 @@ namespace Lucene.Net.Codecs.Pulsing
         {
             var state2 = (PulsingTermState)state;
 
-            Debug.Assert(_pendingCount > 0 || _pendingCount == -1);
+            Debugging.Assert(() => _pendingCount > 0 || _pendingCount == -1);
 
             if (_pendingCount == -1)
             {
@@ -317,7 +318,7 @@ namespace Lucene.Net.Codecs.Pulsing
                         for (var posIDX = 0; posIDX < doc.termFreq; posIDX++)
                         {
                             var pos = _pending[pendingIDX++];
-                            Debug.Assert(pos.docID == doc.docID);
+                            Debugging.Assert(() => pos.docID == doc.docID);
                             var posDelta = pos.pos - lastPos;
                             lastPos = pos.pos;
 
@@ -360,7 +361,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
                             if (payloadLength > 0)
                             {
-                                Debug.Assert(_storePayloads);
+                                Debugging.Assert(() => _storePayloads);
                                 _buffer.WriteBytes(pos.payload.Bytes, 0, pos.payload.Length);
                             }
                         }
@@ -374,7 +375,7 @@ namespace Lucene.Net.Codecs.Pulsing
                         Position doc = _pending[posIdx];
                         int delta = doc.docID - lastDocId;
 
-                        Debug.Assert(doc.termFreq != 0);
+                        Debugging.Assert(() => doc.termFreq != 0);
 
                         if (doc.termFreq == 1)
                         {
@@ -410,7 +411,7 @@ namespace Lucene.Net.Codecs.Pulsing
             bool abs)
         {
             var _state = (PulsingTermState)state;
-            Debug.Assert(empty.Length == 0);
+            Debugging.Assert(() => empty.Length == 0);
             _absolute = _absolute || abs;
             if (_state.bytes == null)
             {
@@ -468,7 +469,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// </summary>
         private void Push()
         {
-            Debug.Assert(_pendingCount == _pending.Length);
+            Debugging.Assert(() => _pendingCount == _pending.Length);
 
             _wrappedPostingsWriter.StartTerm();
 
@@ -486,7 +487,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     }
                     else if (doc.docID != pos.docID)
                     {
-                        Debug.Assert(pos.docID > doc.docID);
+                        Debugging.Assert(() => pos.docID > doc.docID);
                         _wrappedPostingsWriter.FinishDoc();
                         doc = pos;
                         _wrappedPostingsWriter.StartDoc(doc.docID, doc.termFreq);

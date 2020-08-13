@@ -1,4 +1,5 @@
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -62,13 +63,13 @@ namespace Lucene.Net.Index
         private void IncTickets()
         {
             int numTickets = ticketCount.IncrementAndGet();
-            Debug.Assert(numTickets > 0);
+            Debugging.Assert(() => numTickets > 0);
         }
 
         private void DecTickets()
         {
             int numTickets = ticketCount.DecrementAndGet();
-            Debug.Assert(numTickets >= 0);
+            Debugging.Assert(() => numTickets >= 0);
         }
 
         internal virtual SegmentFlushTicket AddFlushTicket(DocumentsWriterPerThread dwpt)
@@ -120,14 +121,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                Debug.Assert(ticketCount >= 0, "ticketCount should be >= 0 but was: " + ticketCount);
+                Debugging.Assert(() => ticketCount >= 0, () => "ticketCount should be >= 0 but was: " + ticketCount);
                 return ticketCount != 0;
             }
         }
 
         private int InnerPurge(IndexWriter writer)
         {
-            //Debug.Assert(PurgeLock.HeldByCurrentThread);
+            //Debugging.Assert(PurgeLock.HeldByCurrentThread);
             int numPurged = 0;
             while (true)
             {
@@ -158,7 +159,7 @@ namespace Lucene.Net.Index
                             // finally remove the published ticket from the queue
                             FlushTicket poll = queue.Dequeue();
                             ticketCount.DecrementAndGet();
-                            Debug.Assert(poll == head);
+                            Debugging.Assert(() => poll == head);
                         }
                     }
                 }
@@ -172,8 +173,8 @@ namespace Lucene.Net.Index
 
         internal virtual int ForcePurge(IndexWriter writer)
         {
-            //Debug.Assert(!Thread.HoldsLock(this));
-            //Debug.Assert(!Thread.holdsLock(writer));
+            //Debugging.Assert(!Thread.HoldsLock(this));
+            //Debugging.Assert(!Thread.holdsLock(writer));
             purgeLock.@Lock();
             try
             {
@@ -187,8 +188,8 @@ namespace Lucene.Net.Index
 
         internal virtual int TryPurge(IndexWriter writer)
         {
-            //Debug.Assert(!Thread.holdsLock(this));
-            //Debug.Assert(!Thread.holdsLock(writer));
+            //Debugging.Assert(!Thread.holdsLock(this));
+            //Debugging.Assert(!Thread.holdsLock(writer));
             if (purgeLock.TryLock())
             {
                 try
@@ -221,7 +222,7 @@ namespace Lucene.Net.Index
 
             protected FlushTicket(FrozenBufferedUpdates frozenUpdates)
             {
-                Debug.Assert(frozenUpdates != null);
+                Debugging.Assert(() => frozenUpdates != null);
                 this.m_frozenUpdates = frozenUpdates;
             }
 
@@ -237,8 +238,8 @@ namespace Lucene.Net.Index
             /// </summary>
             protected void PublishFlushedSegment(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates globalPacket)
             {
-                Debug.Assert(newSegment != null);
-                Debug.Assert(newSegment.segmentInfo != null);
+                Debugging.Assert(() => newSegment != null);
+                Debugging.Assert(() => newSegment.segmentInfo != null);
                 FrozenBufferedUpdates segmentUpdates = newSegment.segmentUpdates;
                 //System.out.println("FLUSH: " + newSegment.segmentInfo.info.name);
                 if (indexWriter.infoStream.IsEnabled("DW"))
@@ -259,7 +260,7 @@ namespace Lucene.Net.Index
                 // Finish the flushed segment and publish it to IndexWriter
                 if (newSegment == null)
                 {
-                    Debug.Assert(bufferedUpdates != null);
+                    Debugging.Assert(() => bufferedUpdates != null);
                     if (bufferedUpdates != null && bufferedUpdates.Any())
                     {
                         indexWriter.PublishFrozenUpdates(bufferedUpdates);
@@ -285,7 +286,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                Debug.Assert(!m_published, "ticket was already publised - can not publish twice");
+                Debugging.Assert(() => !m_published, () => "ticket was already publised - can not publish twice");
                 m_published = true;
                 // its a global ticket - no segment to publish
                 FinishFlush(writer, null, m_frozenUpdates);
@@ -306,20 +307,20 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                Debug.Assert(!m_published, "ticket was already publised - can not publish twice");
+                Debugging.Assert(() => !m_published, () => "ticket was already publised - can not publish twice");
                 m_published = true;
                 FinishFlush(writer, segment, m_frozenUpdates);
             }
 
             internal void SetSegment(FlushedSegment segment) // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
-                Debug.Assert(!failed);
+                Debugging.Assert(() => !failed);
                 this.segment = segment;
             }
 
             internal void SetFailed() // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
-                Debug.Assert(segment == null);
+                Debugging.Assert(() => segment == null);
                 failed = true;
             }
 

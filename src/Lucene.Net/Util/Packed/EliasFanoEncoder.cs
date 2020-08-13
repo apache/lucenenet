@@ -1,7 +1,7 @@
 using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util.Packed
             this.lowerLongs = new long[(int)numLongsForLowBits];
 
             long numHighBitsClear = (long)((ulong)((this.upperBound > 0) ? this.upperBound : 0) >> this.numLowBits);
-            Debug.Assert(numHighBitsClear <= (2 * this.numValues));
+            Debugging.Assert(() => numHighBitsClear <= (2 * this.numValues));
             long numHighBitsSet = this.numValues;
 
             long numLongsForHighBits = NumInt64sForBits(numHighBitsClear + numHighBitsSet);
@@ -219,7 +219,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         private static long NumInt64sForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
         {
-            Debug.Assert(numBits >= 0, numBits.ToString());
+            Debugging.Assert(() => numBits >= 0, numBits.ToString);
             return (long)((ulong)(numBits + (sizeof(long) * 8 - 1)) >> LOG2_INT64_SIZE);
         }
 

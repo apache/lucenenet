@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Index
 {
@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public TermContext(IndexReaderContext context)
         {
-            Debug.Assert(context != null && context.IsTopLevel);
+            Debugging.Assert(() => context != null && context.IsTopLevel);
             TopReaderContext = context;
             docFreq = 0;
             int len;
@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static TermContext Build(IndexReaderContext context, Term term)
         {
-            Debug.Assert(context != null && context.IsTopLevel);
+            Debugging.Assert(() => context != null && context.IsTopLevel);
             string field = term.Field;
             BytesRef bytes = term.Bytes;
             TermContext perReaderTermState = new TermContext(context);
@@ -135,9 +135,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Register(TermState state, int ord, int docFreq, long totalTermFreq)
         {
-            Debug.Assert(state != null, "state must not be null");
-            Debug.Assert(ord >= 0 && ord < states.Length);
-            Debug.Assert(states[ord] == null, "state for ord: " + ord + " already registered");
+            Debugging.Assert(() => state != null, () => "state must not be null");
+            Debugging.Assert(() => ord >= 0 && ord < states.Length);
+            Debugging.Assert(() => states[ord] == null, () => "state for ord: " + ord + " already registered");
             this.docFreq += docFreq;
             if (this.totalTermFreq >= 0 && totalTermFreq >= 0)
             {
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
         ///         <see cref="TermState"/> for the reader was registered </returns>
         public TermState Get(int ord)
         {
-            Debug.Assert(ord >= 0 && ord < states.Length);
+            Debugging.Assert(() => ord >= 0 && ord < states.Length);
             return states[ord];
         }
 

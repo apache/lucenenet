@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Diagnostics;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -42,7 +42,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                IList<TokenFilterFactory> tokenFilterFactories)
         {
             this.charFilterFactories = charFilterFactories;
-            Debug.Assert(null != tokenizerFactory);
+            Debugging.Assert(() => null != tokenizerFactory);
             this.tokenizerFactory = tokenizerFactory;
             this.tokenFilterFactories = tokenFilterFactories;
         }

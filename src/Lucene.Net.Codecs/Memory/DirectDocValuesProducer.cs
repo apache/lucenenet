@@ -1,4 +1,5 @@
 ﻿using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
@@ -551,7 +552,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         var data = (IndexInput)this.data.Clone();
                         data.Seek(offset);
-                        Debug.Assert(length % 8 == 0);
+                        Debugging.Assert(() => length % 8 == 0);
                         var bits = new long[(int)length >> 3];
                         for (var i = 0; i < bits.Length; i++)
                         {

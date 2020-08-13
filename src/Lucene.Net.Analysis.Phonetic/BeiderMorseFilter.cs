@@ -1,7 +1,7 @@
 ﻿// lucene version compatibility level: 4.8.1
 using Lucene.Net.Analysis.Phonetic.Language.Bm;
 using Lucene.Net.Analysis.TokenAttributes;
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Phonetic
@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Phonetic
 
             if (matcher.Success)
             {
-                Debug.Assert(state != null && encoded != null);
+                Debugging.Assert(() => state != null && encoded != null);
                 RestoreState(state);
 
                 int start = matcher.Index;

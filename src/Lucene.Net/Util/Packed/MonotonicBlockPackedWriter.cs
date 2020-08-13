@@ -1,5 +1,5 @@
 using System;
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
@@ -66,14 +66,14 @@ namespace Lucene.Net.Util.Packed
 
         public override void Add(long l)
         {
-            Debug.Assert(l >= 0);
+            Debugging.Assert(() => l >= 0);
             base.Add(l);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected override void Flush()
         {
-            Debug.Assert(m_off > 0);
+            Debugging.Assert(() => m_off > 0);
 
             // TODO: perform a true linear regression?
             long min = m_values[0];

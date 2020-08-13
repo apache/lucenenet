@@ -1,6 +1,6 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
                 }
 
                 TermsEnum termsEnum = GetTermsEnum(query, terms, collector.Attributes);
-                Debug.Assert(termsEnum != null);
+                Debugging.Assert(() => termsEnum != null);
 
                 if (termsEnum == TermsEnum.EMPTY)
                 {

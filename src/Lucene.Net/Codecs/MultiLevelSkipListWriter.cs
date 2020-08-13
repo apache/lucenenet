@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System.Diagnostics;
 using System.IO;
 
@@ -147,7 +148,7 @@ namespace Lucene.Net.Codecs
         /// <exception cref="IOException"> If an I/O error occurs. </exception>
         public virtual void BufferSkip(int df)
         {
-            Debug.Assert(df % skipInterval == 0);
+            Debugging.Assert(() => df % skipInterval == 0);
             int numLevels = 1;
             df /= skipInterval;
 

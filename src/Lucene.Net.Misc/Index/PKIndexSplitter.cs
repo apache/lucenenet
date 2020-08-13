@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Search;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System.Collections.Generic;
@@ -155,7 +156,7 @@ namespace Lucene.Net.Index
                 if (m_input.HasDeletions)
                 {
                     IBits oldLiveDocs = m_input.LiveDocs;
-                    Debug.Assert(oldLiveDocs != null);
+                    Debugging.Assert(() => oldLiveDocs != null);
                     DocIdSetIterator it = bits.GetIterator();
                     for (int i = it.NextDoc(); i < maxDoc; i = it.NextDoc())
                     {

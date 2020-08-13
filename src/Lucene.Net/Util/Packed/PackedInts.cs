@@ -1,8 +1,8 @@
 using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Util.Packed
@@ -242,7 +242,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual float OverheadPerValue(int bitsPerValue)
             {
-                Debug.Assert(IsSupported(bitsPerValue));
+                Debugging.Assert(() => IsSupported(bitsPerValue));
                 return 0f;
             }
 
@@ -251,7 +251,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual float OverheadRatio(int bitsPerValue)
             {
-                Debug.Assert(IsSupported(bitsPerValue));
+                Debugging.Assert(() => IsSupported(bitsPerValue));
                 return OverheadPerValue(bitsPerValue) / bitsPerValue;
             }
         }
@@ -532,9 +532,9 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual int Get(int index, long[] arr, int off, int len)
             {
-                Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-                Debug.Assert(index >= 0 && index < Count);
-                Debug.Assert(off + len <= arr.Length);
+                Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(() => index >= 0 && index < Count);
+                Debugging.Assert(() => off + len <= arr.Length);
 
                 int gets = Math.Min(Count - index, len);
                 for (int i = index, o = off, end = index + gets; i < end; ++i, ++o)
@@ -573,7 +573,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual object GetArray()
             {
-                Debug.Assert(!HasArray);
+                Debugging.Assert(() => !HasArray);
                 return null;
             }
 
@@ -633,7 +633,7 @@ namespace Lucene.Net.Util.Packed
             public virtual long Next()
             {
                 Int64sRef nextValues = Next(1);
-                Debug.Assert(nextValues.Length > 0);
+                Debugging.Assert(() => nextValues.Length > 0);
                 long result = nextValues.Int64s[nextValues.Offset];
                 ++nextValues.Offset;
                 --nextValues.Length;
@@ -670,10 +670,10 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual int Set(int index, long[] arr, int off, int len)
             {
-                Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-                Debug.Assert(index >= 0 && index < Count);
+                Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(() => index >= 0 && index < Count);
                 len = Math.Min(len, Count - index);
-                Debug.Assert(off + len <= arr.Length);
+                Debugging.Assert(() => off + len <= arr.Length);
 
                 for (int i = index, o = off, end = index + len; i < end; ++i, ++o)
                 {
@@ -688,8 +688,8 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual void Fill(int fromIndex, int toIndex, long val)
             {
-                Debug.Assert(val <= MaxValue(BitsPerValue));
-                Debug.Assert(fromIndex <= toIndex);
+                Debugging.Assert(() => val <= MaxValue(BitsPerValue));
+                Debugging.Assert(() => fromIndex <= toIndex);
                 for (int i = fromIndex; i < toIndex; ++i)
                 {
                     Set(i, val);
@@ -738,7 +738,7 @@ namespace Lucene.Net.Util.Packed
             protected ReaderImpl(int valueCount, int bitsPerValue)
             {
                 this.m_bitsPerValue = bitsPerValue;
-                Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
+                Debugging.Assert(() => bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
                 this.m_valueCount = valueCount;
             }
 
@@ -757,7 +757,7 @@ namespace Lucene.Net.Util.Packed
             protected MutableImpl(int valueCount, int bitsPerValue)
             {
                 this.m_valueCount = valueCount;
-                Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
+                Debugging.Assert(() => bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
                 this.m_bitsPerValue = bitsPerValue;
             }
 
@@ -786,8 +786,8 @@ namespace Lucene.Net.Util.Packed
 
             public override int Get(int index, long[] arr, int off, int len)
             {
-                Debug.Assert(len > 0, "len must be > 0 (got " + len + ")");
-                Debug.Assert(index >= 0 && index < valueCount);
+                Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(() => index >= 0 && index < valueCount);
                 len = Math.Min(len, valueCount - index);
                 Arrays.Fill(arr, off, off + len, 0);
                 return len;
@@ -816,8 +816,8 @@ namespace Lucene.Net.Util.Packed
 
             protected Writer(DataOutput @out, int valueCount, int bitsPerValue)
             {
-                Debug.Assert(bitsPerValue <= 64);
-                Debug.Assert(valueCount >= 0 || valueCount == -1);
+                Debugging.Assert(() => bitsPerValue <= 64);
+                Debugging.Assert(() => valueCount >= 0 || valueCount == -1);
                 this.m_out = @out;
                 this.m_valueCount = valueCount;
                 this.m_bitsPerValue = bitsPerValue;
@@ -825,7 +825,7 @@ namespace Lucene.Net.Util.Packed
 
             internal virtual void WriteHeader()
             {
-                Debug.Assert(m_valueCount != -1);
+                Debugging.Assert(() => m_valueCount != -1);
                 CodecUtil.WriteHeader(m_out, CODEC_NAME, VERSION_CURRENT);
                 m_out.WriteVInt32(m_bitsPerValue);
                 m_out.WriteVInt32(m_valueCount);
@@ -972,7 +972,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
+            Debugging.Assert(() => bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
 
@@ -1014,7 +1014,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
+            Debugging.Assert(() => bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
             return GetReaderIteratorNoHeader(@in, format, version, valueCount, bitsPerValue, mem);
@@ -1050,7 +1050,7 @@ namespace Lucene.Net.Util.Packed
                 long byteCount = format.ByteCount(version, valueCount, bitsPerValue);
                 if (byteCount != format.ByteCount(VERSION_CURRENT, valueCount, bitsPerValue))
                 {
-                    Debug.Assert(version == VERSION_START);
+                    Debugging.Assert(() => version == VERSION_START);
                     long endPointer = @in.GetFilePointer() + byteCount;
                     // Some consumers of direct readers assume that reading the last value
                     // will make the underlying IndexInput go to the end of the packed
@@ -1137,7 +1137,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
+            Debugging.Assert(() => bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
             return GetDirectReaderNoHeader(@in, format, version, valueCount, bitsPerValue);
@@ -1176,7 +1176,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public static Mutable GetMutable(int valueCount, int bitsPerValue, PackedInt32s.Format format)
         {
-            Debug.Assert(valueCount >= 0);
+            Debugging.Assert(() => valueCount >= 0);
 
             if (format == PackedInt32s.Format.PACKED_SINGLE_BLOCK)
             {
@@ -1303,7 +1303,7 @@ namespace Lucene.Net.Util.Packed
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static Writer GetWriter(DataOutput @out, int valueCount, int bitsPerValue, float acceptableOverheadRatio)
         {
-            Debug.Assert(valueCount >= 0);
+            Debugging.Assert(() => valueCount >= 0);
 
             FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
             Writer writer = GetWriterNoHeader(@out, formatAndBits.Format, valueCount, formatAndBits.BitsPerValue, DEFAULT_BUFFER_SIZE);
@@ -1348,8 +1348,8 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, int mem)
         {
-            Debug.Assert(srcPos + len <= src.Count);
-            Debug.Assert(destPos + len <= dest.Count);
+            Debugging.Assert(() => srcPos + len <= src.Count);
+            Debugging.Assert(() => destPos + len <= dest.Count);
             int capacity = (int)((uint)mem >> 3);
             if (capacity == 0)
             {
@@ -1370,17 +1370,17 @@ namespace Lucene.Net.Util.Packed
         /// Same as <see cref="Copy(Reader, int, Mutable, int, int, int)"/> but using a pre-allocated buffer. </summary>
         internal static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, long[] buf)
         {
-            Debug.Assert(buf.Length > 0);
+            Debugging.Assert(() => buf.Length > 0);
             int remaining = 0;
             while (len > 0)
             {
                 int read = src.Get(srcPos, buf, remaining, Math.Min(len, buf.Length - remaining));
-                Debug.Assert(read > 0);
+                Debugging.Assert(() => read > 0);
                 srcPos += read;
                 len -= read;
                 remaining += read;
                 int written = dest.Set(destPos, buf, 0, remaining);
-                Debug.Assert(written > 0);
+                Debugging.Assert(() => written > 0);
                 destPos += written;
                 if (written < remaining)
                 {
@@ -1411,7 +1411,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
+            Debugging.Assert(() => bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
             return new Header(format, valueCount, bitsPerValue, version);

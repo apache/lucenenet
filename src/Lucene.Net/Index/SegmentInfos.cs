@@ -1,11 +1,11 @@
+using J2N;
 using J2N.Collections.Generic.Extensions;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
 using System.Collections;
-using J2N;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
                         segnOutput.WriteInt64(e.Key);
                         segnOutput.WriteStringSet(e.Value);
                     }
-                    Debug.Assert(si.Dir == directory);
+                    Debugging.Assert(() => si.Dir == directory);
 
                     // If this segment is pre-4.x, perform a one-time
                     // "ugprade" to write the .si file for it:
@@ -710,7 +710,7 @@ namespace Lucene.Net.Index
             sis.segments = new List<SegmentCommitInfo>(Count);
             foreach (SegmentCommitInfo info in segments)
             {
-                Debug.Assert(info.Info.Codec != null);
+                Debugging.Assert(() => info.Info.Codec != null);
                 // dont directly access segments, use add method!!!
                 sis.Add((SegmentCommitInfo)(info.Clone()));
             }
@@ -1153,7 +1153,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < size; i++)
             {
                 var info = Info(i);
-                Debug.Assert(info.Info.Dir == dir);
+                Debugging.Assert(() => info.Info.Dir == dir);
                 if (info.Info.Dir == dir)
                 {
                     files.UnionWith(info.GetFiles());
@@ -1341,7 +1341,7 @@ namespace Lucene.Net.Index
             int newSegIdx = 0;
             for (int segIdx = 0, cnt = segments.Count; segIdx < cnt; segIdx++)
             {
-                Debug.Assert(segIdx >= newSegIdx);
+                Debugging.Assert(() => segIdx >= newSegIdx);
                 SegmentCommitInfo info = segments[segIdx];
                 if (mergedAway.Contains(info))
                 {
@@ -1378,7 +1378,7 @@ namespace Lucene.Net.Index
             var list = new List<SegmentCommitInfo>(Count);
             foreach (var info in segments)
             {
-                Debug.Assert(info.Info.Codec != null);
+                Debugging.Assert(() => info.Info.Codec != null);
                 list.Add((SegmentCommitInfo)(info.Clone()));
             }
             return list;

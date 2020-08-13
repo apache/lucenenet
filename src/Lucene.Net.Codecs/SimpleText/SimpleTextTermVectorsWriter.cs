@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Diagnostics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -142,7 +143,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
-            Debug.Assert(_positions || _offsets);
+            Debugging.Assert(() => _positions || _offsets);
 
             if (_positions)
             {
@@ -155,7 +156,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     Write(PAYLOAD);
                     if (payload != null)
                     {
-                        Debug.Assert(payload.Length > 0);
+                        Debugging.Assert(() => payload.Length > 0);
                         Write(payload);
                     }
                     NewLine();

@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using System;
@@ -144,7 +145,7 @@ namespace Lucene.Net.Index
              * competing updates wins!
              */
             slice.sliceTail = termNode;
-            Debug.Assert(slice.sliceHead != slice.sliceTail, "slice head and tail must differ after add");
+            Debugging.Assert(() => slice.sliceHead != slice.sliceTail, () => "slice head and tail must differ after add");
             TryApplyGlobalSlice(); // TODO doing this each time is not necessary maybe
             // we can do it just every n times or so?
         }
@@ -293,7 +294,7 @@ namespace Lucene.Net.Index
 
             internal DeleteSlice(Node currentTail)
             {
-                Debug.Assert(currentTail != null);
+                Debugging.Assert(() => currentTail != null);
                 /*
                  * Initially this is a 0 length slice pointing to the 'current' tail of
                  * the queue. Once we update the slice we only need to assign the tail and
@@ -319,7 +320,7 @@ namespace Lucene.Net.Index
                 do
                 {
                     current = current.next;
-                    Debug.Assert(current != null, "slice property violated between the head on the tail must not be a null node");
+                    Debugging.Assert(() => current != null, () => "slice property violated between the head on the tail must not be a null node");
                     current.Apply(del, docIDUpto);
                     //        System.out.println(Thread.currentThread().getName() + ": pull " + current + " docIDUpto=" + docIDUpto);
                 } while (current != sliceTail);

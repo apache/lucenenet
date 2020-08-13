@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -494,13 +495,13 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 else
                 {
-                    Debug.Assert(current == 1);
+                    Debugging.Assert(() => current == 1);
                     ordsIter.MoveNext();
                     yield return ordsIter.Current;
                 }
             }
 
-            Debug.Assert(!ordsIter.MoveNext());
+            Debugging.Assert(() => !ordsIter.MoveNext());
         }
 
         protected override void Dispose(bool disposing)

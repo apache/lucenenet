@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Lucene.Net.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
@@ -64,30 +64,30 @@ namespace Lucene.Net.Util.Fst
 
         public override object Common(object output1, object output2)
         {
-            Debug.Assert(output1 == NO_OUTPUT);
-            Debug.Assert(output2 == NO_OUTPUT);
+            Debugging.Assert(() => output1 == NO_OUTPUT);
+            Debugging.Assert(() => output2 == NO_OUTPUT);
             return NO_OUTPUT;
         }
 
         public override object Subtract(object output, object inc)
         {
-            Debug.Assert(output == NO_OUTPUT);
-            Debug.Assert(inc == NO_OUTPUT);
+            Debugging.Assert(() => output == NO_OUTPUT);
+            Debugging.Assert(() => inc == NO_OUTPUT);
             return NO_OUTPUT;
         }
 
         public override object Add(object prefix, object output)
         {
-            Debug.Assert(prefix == NO_OUTPUT, "got " + prefix);
-            Debug.Assert(output == NO_OUTPUT);
+            Debugging.Assert(() => prefix == NO_OUTPUT, () => "got " + prefix);
+            Debugging.Assert(() => output == NO_OUTPUT);
             return NO_OUTPUT;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override object Merge(object first, object second)
         {
-            Debug.Assert(first == NO_OUTPUT);
-            Debug.Assert(second == NO_OUTPUT);
+            Debugging.Assert(() => first == NO_OUTPUT);
+            Debugging.Assert(() => second == NO_OUTPUT);
             return NO_OUTPUT;
         }
 

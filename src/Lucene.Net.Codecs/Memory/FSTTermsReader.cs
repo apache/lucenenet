@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
@@ -165,7 +166,7 @@ namespace Lucene.Net.Codecs.Memory
 
         public override Terms GetTerms(string field)
         {
-            Debug.Assert(field != null);
+            Debugging.Assert(() => field != null);
             TermsReader result;
             fields.TryGetValue(field, out result);
             return result;
@@ -368,7 +369,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         seekPending = false;
                         SeekStatus status = SeekCeil(term);
-                        Debug.Assert(status == SeekStatus.FOUND); // must positioned on valid term
+                        Debugging.Assert(() => status == SeekStatus.FOUND); // must positioned on valid term
                     }
                     UpdateEnum(fstEnum.Next());
                     return term;
@@ -499,7 +500,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 internal override void DecodeMetaData()
                 {
-                    Debug.Assert(term != null);
+                    Debugging.Assert(() => term != null);
                     if (!decoded)
                     {
                         if (meta.bytes != null)
@@ -610,7 +611,7 @@ namespace Lucene.Net.Codecs.Memory
                         {
                             break;
                         }
-                        Debug.Assert(IsValid(frame)); // target must be fetched from automaton
+                        Debugging.Assert(() => IsValid(frame)); // target must be fetched from automaton
                         PushFrame(frame);
                         upto++;
                     }

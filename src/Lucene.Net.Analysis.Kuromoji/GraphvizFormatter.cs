@@ -89,8 +89,8 @@ namespace Lucene.Net.Analysis.Ja
                 string toNodeID = GetNodeID(pos, bestIDX);
                 string fromNodeID = GetNodeID(backPos, backIDX);
 
-                Debug.Assert(!bestPathMap.ContainsKey(fromNodeID));
-                Debug.Assert(!bestPathMap.Values.Contains(toNodeID));
+                Debugging.Assert(!bestPathMap.ContainsKey(fromNodeID));
+                Debugging.Assert(!bestPathMap.Values.Contains(toNodeID));
                 bestPathMap[fromNodeID] = toNodeID;
                 pos = backPos;
                 bestIDX = backIDX;

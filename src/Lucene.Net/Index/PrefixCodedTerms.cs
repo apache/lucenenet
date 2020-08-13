@@ -1,8 +1,8 @@
 using J2N.Numerics;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Index
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
             /// add a term </summary>
             public virtual void Add(Term term)
             {
-                Debug.Assert(lastTerm.Equals(new Term("")) || term.CompareTo(lastTerm) > 0);
+                Debugging.Assert(() => lastTerm.Equals(new Term("")) || term.CompareTo(lastTerm) > 0);
 
                 try
                 {

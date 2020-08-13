@@ -1,3 +1,4 @@
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.DocValues;
 using Lucene.Net.Search;
@@ -42,7 +43,7 @@ namespace Lucene.Net.Expressions
         {
             try
             {
-                Debug.Assert(document == scorer.DocID);
+                Debugging.Assert(() => document == scorer.DocID);
                 return scorer.GetScore();
             }
             catch (IOException exception)
