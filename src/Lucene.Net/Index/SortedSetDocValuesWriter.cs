@@ -191,9 +191,10 @@ namespace Lucene.Net.Index
 
         private IEnumerable<BytesRef> GetBytesRefEnumberable(int valueCount, int[] sortedValues)
         {
+            var scratch = new BytesRef();
+
             for (int i = 0; i < valueCount; ++i)
             {
-                var scratch = new BytesRef();
                 yield return hash.Get(sortedValues[i], scratch);
             }
         }
@@ -206,7 +207,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < maxDoc; ++i)
             {
-                yield return (int)iter.Next();
+                yield return iter.Next();
             }
         }
 

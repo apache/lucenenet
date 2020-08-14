@@ -712,6 +712,7 @@ namespace Lucene.Net.Index
             int maxDoc = reader.MaxDoc;
             var iter = (BinaryDocValuesFieldUpdates.Iterator)fieldUpdates.GetIterator();
             int updateDoc = iter.NextDoc();
+            var scratch = new BytesRef();
 
             for (int curDoc = 0; curDoc < maxDoc; ++curDoc)
             {
@@ -725,7 +726,6 @@ namespace Lucene.Net.Index
                 {   // no update for this document
                     if (currentValues != null && DocsWithField.Get(curDoc))
                     {
-                        var scratch = new BytesRef();
                         // only read the current value if the document had a value before
                         currentValues.Get(curDoc, scratch);
                         yield return scratch;
