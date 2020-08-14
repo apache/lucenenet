@@ -376,8 +376,7 @@ namespace Lucene.Net.Util.Fst
             cachedRootArcs = (FST.Arc<T>[])new FST.Arc<T>[0x80];
             ReadRootArcs(cachedRootArcs);
 
-            bool set = SetAssertingRootArcs(cachedRootArcs);
-            Debugging.Assert(() => set);
+            Debugging.Assert(() => SetAssertingRootArcs(cachedRootArcs));
             Debugging.Assert(AssertRootArcs);
         }
 
@@ -409,7 +408,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private bool SetAssertingRootArcs(FST.Arc<T>[] arcs)
+        private bool SetAssertingRootArcs(FST.Arc<T>[] arcs) // Only called from assert
         {
             assertingCachedRootArcs = (FST.Arc<T>[])new FST.Arc<T>[arcs.Length];
             ReadRootArcs(assertingCachedRootArcs);

@@ -159,6 +159,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override BytesRef Next()
             {
+                //Debugging.Assert(() => !ended); // LUCENENET: Ended field is never set, so this can never fail
                 var result = _fstEnum.Next();
 
                 if (result == null) return null;
@@ -317,7 +318,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         Debugging.Assert(
                             () => StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
                             // LUCENENET TODO: This assert fails sometimes, which in turns causes _scratch.Utf8ToString() to throw an index out of range exception
-                            StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END) /*, "scratch=" + _scratch.Utf8ToString()*/);
+                            StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END), () => "scratch=" + _scratch.Utf8ToString());
 
                         if (!first && (_liveDocs == null || _liveDocs.Get(_docId)))
                         {

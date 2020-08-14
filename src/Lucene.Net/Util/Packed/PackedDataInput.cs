@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -52,7 +53,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public long ReadInt64(int bitsPerValue)
         {
-            Debugging.Assert(() => bitsPerValue > 0 && bitsPerValue <= 64, bitsPerValue.ToString);
+            Debugging.Assert(() => bitsPerValue > 0 && bitsPerValue <= 64, () => bitsPerValue.ToString(CultureInfo.InvariantCulture));
             long r = 0;
             while (bitsPerValue > 0)
             {

@@ -4,7 +4,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using JCG = J2N.Collections.Generic;
@@ -29,7 +28,6 @@ namespace Lucene.Net.Codecs
      */
 
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
-    using IBits = Lucene.Net.Util.IBits;
     using ByteArrayDataInput = Lucene.Net.Store.ByteArrayDataInput;
     using ByteSequenceOutputs = Lucene.Net.Util.Fst.ByteSequenceOutputs;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -40,6 +38,7 @@ namespace Lucene.Net.Codecs
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOptions = Lucene.Net.Index.IndexOptions;
@@ -2467,7 +2466,7 @@ namespace Lucene.Net.Codecs
                             if (currentFrame.ord == 0)
                             {
                                 //if (DEBUG) System.out.println("  return null");
-                                Debugging.Assert(() => SetEOF());
+                                Debugging.Assert(SetEOF);
                                 term.Length = 0;
                                 validIndexPrefix = 0;
                                 currentFrame.Rewind();
@@ -2579,7 +2578,7 @@ namespace Lucene.Net.Codecs
                     // if (DEBUG) {
                     //   System.out.println("BTTR.seekExact termState seg=" + segment + " target=" + target.utf8ToString() + " " + target + " state=" + otherState);
                     // }
-                    Debugging.Assert(() => ClearEOF());
+                    Debugging.Assert(ClearEOF);
                     if (target.CompareTo(term) != 0 || !termExists)
                     {
                         Debugging.Assert(() => otherState != null && otherState is BlockTermState);

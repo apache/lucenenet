@@ -1,5 +1,5 @@
+using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Store
@@ -235,7 +235,7 @@ namespace Lucene.Net.Store
                         // all we need to do is Read().
                         total = m_file.Read(b, offset, len);
 
-                        //Debugging.Assert(total == len);
+                        Debugging.Assert(() => total == len);
                     }
                     catch (IOException ioe)
                     {

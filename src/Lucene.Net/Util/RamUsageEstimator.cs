@@ -507,7 +507,7 @@ namespace Lucene.Net.Util
                 seen.Add(ob);
 
                 Type obClazz = ob.GetType();
-
+                // LUCENENET specific - .NET cannot return a null type for an object, so no need to assert it
                 if (obClazz.Equals(typeof(string)))
                 {
                     // LUCENENET specific - we can get a closer estimate of a string

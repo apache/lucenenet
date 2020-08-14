@@ -3,7 +3,6 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using JCG = J2N.Collections.Generic;
 
@@ -153,7 +152,11 @@ namespace Lucene.Net.Index
                      * fail. To prevent this we only assert if the the largest document seen
                      * is smaller than the 1/2 of the maxRamBufferMB
                      */
-                    Debugging.Assert(() => ram <= expected, () => "actual mem: " + ram + " byte, expected mem: " + expected + " byte, flush mem: " + flushBytes + ", active mem: " + activeBytes + ", pending DWPT: " + numPending + ", flushing DWPT: " + NumFlushingDWPT + ", blocked DWPT: " + NumBlockedFlushes + ", peakDelta mem: " + peakDelta + " byte");
+                    Debugging.Assert(() => ram <= expected, () => "actual mem: " + ram + " byte, expected mem: " + expected
+                        + " byte, flush mem: " + flushBytes + ", active mem: " + activeBytes
+                        + ", pending DWPT: " + numPending + ", flushing DWPT: "
+                        + NumFlushingDWPT + ", blocked DWPT: " + NumBlockedFlushes
+                        + ", peakDelta mem: " + peakDelta + " byte");
                 }
             }
             return true;
@@ -290,7 +293,7 @@ namespace Lucene.Net.Index
 
         private bool UpdateStallState()
         {
-            //Debugging.Assert(Thread.holdsLock(this));
+            Debugging.Assert(() => Monitor.IsEntered(this));
             long limit = StallLimitBytes;
             /*
              * we block indexing threads if net byte grows due to slow flushes

@@ -92,6 +92,9 @@ namespace Lucene.Net.Index
 
             public virtual bool MoveNext()
             {
+                // LUCENENET specific - Since there is no way to check for a next element
+                // without calling this method in .NET, the assert is redundant and ineffective.
+                //Debugging.Assert(() => input.GetFilePointer() < input.Length); // Has next
                 if (input.GetFilePointer() < input.Length)
                 {
                     try

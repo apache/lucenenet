@@ -532,7 +532,7 @@ namespace Lucene.Net.Index
         {
             Debugging.Assert(() => IsLocked);
 
-            //Debugging.Assert(Thread.holdsLock(Writer));
+            Debugging.Assert(() => Monitor.IsEntered(writer));
             long t0 = 0;
             if (infoStream.IsEnabled("IFD"))
             {
@@ -650,7 +650,7 @@ namespace Lucene.Net.Index
         {
             Debugging.Assert(() => IsLocked);
             // LUCENENET: Using TryGetValue to eliminate extra lookup
-            return refCounts.TryGetValue(fileName, out RefCount value) ? value.count > 0 : false;
+            return refCounts.TryGetValue(fileName, out RefCount value) && value.count > 0;
         }
 
         private RefCount GetRefCount(string fileName)
@@ -724,7 +724,7 @@ namespace Lucene.Net.Index
                 // the file is open in another process, and queue
                 // the file for subsequent deletion.
 
-                //Debugging.Assert(e.Message.Contains("cannot delete"));
+                //Debugging.Assert(() => e.Message.Contains("cannot delete"));
 
                 if (infoStream.IsEnabled("IFD"))
                 {

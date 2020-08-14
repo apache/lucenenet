@@ -305,9 +305,9 @@ namespace Lucene.Net.Index
             while (allActiveThreads.MoveNext())
             {
                 ThreadState next = allActiveThreads.Current;
-                if (next.DocumentsWriterPerThread != null)
+                if (next.dwpt != null)
                 {
-                    bytesUsed += next.DocumentsWriterPerThread.BytesUsed;
+                    bytesUsed += next.dwpt.BytesUsed;
                 }
             }
             Assert.AreEqual(bytesUsed, flushControl.ActiveBytes);

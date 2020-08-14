@@ -479,8 +479,7 @@ namespace Lucene.Net.Codecs
             public void CompileIndex(IList<PendingBlock> floorBlocks, RAMOutputStream scratchBytes)
             {
                 // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
-                // it might contain garbage that cannot be converted into text. This is compiled out
-                // of the relese, though.
+                // it might contain garbage that cannot be converted into text.
                 Debugging.Assert(
                     () => (IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null),
                     () => "isFloor=" + IsFloor + " floorBlocks=" + ToString(floorBlocks));

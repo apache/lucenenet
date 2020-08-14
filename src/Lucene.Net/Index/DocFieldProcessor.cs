@@ -2,7 +2,6 @@ using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 

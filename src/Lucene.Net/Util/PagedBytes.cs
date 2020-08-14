@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lucene.Net.Util
 {
@@ -162,7 +163,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public PagedBytes(int blockBits)
         {
-            Debugging.Assert(() => blockBits > 0 && blockBits <= 31, blockBits.ToString);
+            Debugging.Assert(() => blockBits > 0 && blockBits <= 31, () => blockBits.ToString(CultureInfo.InvariantCulture));
             this.blockSize = 1 << blockBits;
             this.blockBits = blockBits;
             blockMask = blockSize - 1;

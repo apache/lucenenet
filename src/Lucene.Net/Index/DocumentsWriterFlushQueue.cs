@@ -2,7 +2,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
 
         private int InnerPurge(IndexWriter writer)
         {
-            //Debugging.Assert(PurgeLock.HeldByCurrentThread);
+            Debugging.Assert(() => purgeLock.IsHeldByCurrentThread);
             int numPurged = 0;
             while (true)
             {
@@ -173,8 +173,8 @@ namespace Lucene.Net.Index
 
         internal virtual int ForcePurge(IndexWriter writer)
         {
-            //Debugging.Assert(!Thread.HoldsLock(this));
-            //Debugging.Assert(!Thread.holdsLock(writer));
+            Debugging.Assert(() => !Monitor.IsEntered(this));
+            Debugging.Assert(() => !Monitor.IsEntered(writer));
             purgeLock.@Lock();
             try
             {
@@ -188,8 +188,8 @@ namespace Lucene.Net.Index
 
         internal virtual int TryPurge(IndexWriter writer)
         {
-            //Debugging.Assert(!Thread.holdsLock(this));
-            //Debugging.Assert(!Thread.holdsLock(writer));
+            Debugging.Assert(() => !Monitor.IsEntered(this));
+            Debugging.Assert(() => !Monitor.IsEntered(writer));
             if (purgeLock.TryLock())
             {
                 try

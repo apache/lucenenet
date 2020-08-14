@@ -162,8 +162,7 @@ namespace Lucene.Net.Util.Fst
                     // freeze & add
                     long node = fst.AddNode(nodeIn);
                     //System.out.println("  now freeze node=" + node);
-                    long hashNode = Hash(node);
-                    Debugging.Assert(() => hashNode == h, () => "frozenHash=" + hashNode + " vs h=" + h);
+                    Debugging.Assert(() => Hash(node) == h, () => "frozenHash=" + Hash(node) + " vs h=" + h);
                     count++;
                     table.Set(pos, node);
                     // Rehash at 2/3 occupancy:

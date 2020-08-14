@@ -1,7 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Index
