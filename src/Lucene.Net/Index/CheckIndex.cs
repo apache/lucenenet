@@ -1235,13 +1235,14 @@ namespace Lucene.Net.Index
                                 }
                                 lastPos = pos;
                                 BytesRef payload = postings.GetPayload();
-                                if (payload != null)
+                                // LUCENENET specific - restructured to reduce number of checks in production
+                                if (!(payload is null))
                                 {
                                     Debugging.Assert(payload.IsValid);
-                                }
-                                if (payload != null && payload.Length < 1)
-                                {
-                                    throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + " payload length is out of bounds " + payload.Length);
+                                    if (payload.Length < 1)
+                                    {
+                                        throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + " payload length is out of bounds " + payload.Length);
+                                    }
                                 }
                                 if (hasOffsets)
                                 {
@@ -2356,19 +2357,20 @@ namespace Lucene.Net.Index
             result.NewSegments.Commit(result.Dir);
         }
 
-        private static bool assertsOn;
+        // LUCENENET: Not used
+        //private static bool assertsOn;
 
-        private static bool TestAsserts()
-        {
-            assertsOn = true;
-            return true;
-        }
+        //private static bool TestAsserts()
+        //{
+        //    assertsOn = true;
+        //    return true;
+        //}
 
-        private static bool AssertsOn()
-        {
-            Debugging.Assert(TestAsserts);
-            return assertsOn;
-        }
+        //private static bool AssertsOn()
+        //{
+        //    Debugging.Assert(TestAsserts);
+        //    return assertsOn;
+        //}
 
         ///// Command-line interface to check and fix an index.
         /////
@@ -2473,11 +2475,13 @@ namespace Lucene.Net.Index
                 //Environment.Exit(1);
             }
 
-            // LUCENENET specific - doesn't apply
+            // LUCENENET specific - rather than having the user specify whether to enable asserts, we always run with them enabled.
+            Debugging.AssertsEnabled = true;
             //if (!AssertsOn())
             //{
             //    Console.WriteLine("\nNOTE: testing will be more thorough if you run java with '-ea:org.apache.lucene...', so assertions are enabled");
             //}
+
 
             if (onlySegments.Count == 0)
             {

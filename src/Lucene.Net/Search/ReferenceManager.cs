@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
                     G newReference = RefreshIfNeeded(reference);
                     if (newReference != null)
                     {
-                        Debugging.Assert(() => (object)newReference != (object)reference, () => "refreshIfNeeded should return null if refresh wasn't needed");
+                        Debugging.Assert(() => !ReferenceEquals(newReference, reference), () => "refreshIfNeeded should return null if refresh wasn't needed");
                         try
                         {
                             SwapReference(newReference);
@@ -311,7 +311,7 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> If the release operation on the given resource throws an <see cref="IOException"/> </exception>
         public void Release(G reference)
         {
-            Debugging.Assert(() => reference != null);
+            Debugging.Assert(() => !(reference is null));
             DecRef(reference);
         }
 

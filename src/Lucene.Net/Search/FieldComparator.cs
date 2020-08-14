@@ -981,7 +981,7 @@ namespace Lucene.Net.Search
 
                 // LUCENENET specific special case:
                 // In case of zero, we may have a "positive 0" or "negative 0"
-                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                // to tie-break. So, we use JCG.Comparer<float> to do the comparison.
                 return JCG.Comparer<float>.Default.Compare(second, first);
             }
 
@@ -992,7 +992,7 @@ namespace Lucene.Net.Search
 
                 // LUCENENET specific special case:
                 // In case of zero, we may have a "positive 0" or "negative 0"
-                // to tie-break. So, we use JCG.Comparer<double> to do the comparison.
+                // to tie-break. So, we use JCG.Comparer<float> to do the comparison.
                 return JCG.Comparer<float>.Default.Compare(docValue, topValue);
             }
         }

@@ -1,7 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Index
@@ -23,9 +22,9 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
+    using IBits = Lucene.Net.Util.IBits;
     using PagedBytes = Lucene.Net.Util.PagedBytes;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat; // javadocs
     using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;

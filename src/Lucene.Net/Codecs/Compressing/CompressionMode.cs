@@ -261,6 +261,8 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override void Compress(byte[] bytes, int off, int len, DataOutput output)
             {
+                // LUCENENET specific - since DeflateStream works a bit differently than Java's Deflate class,
+                // we are unable to assert the total count
                 byte[] resultArray = null;
                 using (MemoryStream compressionMemoryStream = new MemoryStream())
                 {

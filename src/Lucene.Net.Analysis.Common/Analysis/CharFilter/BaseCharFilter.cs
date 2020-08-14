@@ -114,7 +114,8 @@ namespace Lucene.Net.Analysis.CharFilters
             }
 
             int offset = offsets[(size == 0) ? 0 : size - 1];
-            Debugging.Assert(() => size == 0 || off >= offset, () => "Offset #" + size + "(" + off + ") is less than the last recorded offset " + offset + "\n" + Arrays.ToString(offsets) + "\n" + Arrays.ToString(diffs));
+            Debugging.Assert(() => size == 0 || off >= offset,
+                () => "Offset #" + size + "(" + off + ") is less than the last recorded offset " + offset + "\n" + Arrays.ToString(offsets) + "\n" + Arrays.ToString(diffs));
 
             if (size == 0 || off != offsets[size - 1])
             {

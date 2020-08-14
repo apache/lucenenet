@@ -80,14 +80,14 @@ namespace Lucene.Net.Index
             /// <seealso cref="IsActive"/>
             internal void Deactivate() // LUCENENET NOTE: Made internal because it is called outside of this context
             {
-                //Debugging.Assert(this.HeldByCurrentThread);
+                Debugging.Assert(() => this.IsHeldByCurrentThread);
                 isActive = false;
                 Reset();
             }
 
             internal void Reset() // LUCENENET NOTE: Made internal because it is called outside of this context
             {
-                //Debugging.Assert(this.HeldByCurrentThread);
+                Debugging.Assert(() => this.IsHeldByCurrentThread);
                 this.dwpt = null;
                 this.bytesUsed = 0;
                 this.flushPending = false;
@@ -98,30 +98,52 @@ namespace Lucene.Net.Index
             /// only return <c>false</c> iff the DW has been disposed and this
             /// <see cref="ThreadState"/> is already checked out for flush.
             /// </summary>
-            internal bool IsActive =>
-                //Debugging.Assert(this.HeldByCurrentThread);
-                isActive;
+            internal bool IsActive
+            {
+                get
+                {
+                    Debugging.Assert(() => this.IsHeldByCurrentThread);
+                    return isActive;
+                }
 
-            internal bool IsInitialized =>
-                //Debugging.Assert(this.HeldByCurrentThread);
-                IsActive && dwpt != null;
+            }
+
+            internal bool IsInitialized
+            {
+                get
+                {
+                    Debugging.Assert(() => this.IsHeldByCurrentThread);
+                    return IsActive && dwpt != null;
+                }
+            }
+                
 
             /// <summary>
             /// Returns the number of currently active bytes in this ThreadState's
             /// <see cref="DocumentsWriterPerThread"/>
             /// </summary>
-            public long BytesUsedPerThread =>
-                //Debugging.Assert(this.HeldByCurrentThread);
-                // public for FlushPolicy
-                bytesUsed;
+            public long BytesUsedPerThread
+            {
+                get
+                {
+                    Debugging.Assert(() => this.IsHeldByCurrentThread);
+                    // public for FlushPolicy
+                    return bytesUsed;
+                }
+            }
 
             /// <summary>
             /// Returns this <see cref="ThreadState"/>s <see cref="DocumentsWriterPerThread"/>
             /// </summary>
-            public DocumentsWriterPerThread DocumentsWriterPerThread =>
-                //Debugging.Assert(this.HeldByCurrentThread);
-                // public for FlushPolicy
-                dwpt;
+            public DocumentsWriterPerThread DocumentsWriterPerThread
+            {
+                get
+                {
+                    Debugging.Assert(() => this.IsHeldByCurrentThread);
+                    // public for FlushPolicy
+                    return dwpt;
+                }
+            }
 
             /// <summary>
             /// Returns <c>true</c> iff this <see cref="ThreadState"/> is marked as flush
@@ -270,7 +292,7 @@ namespace Lucene.Net.Index
 
         internal virtual DocumentsWriterPerThread Reset(ThreadState threadState, bool closed)
         {
-            //Debugging.Assert(threadState.HeldByCurrentThread);
+            Debugging.Assert(() => threadState.IsHeldByCurrentThread);
             DocumentsWriterPerThread dwpt = threadState.dwpt;
             if (!closed)
             {

@@ -3,6 +3,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Lucene.Net.Util.Packed
@@ -141,8 +142,8 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public override float OverheadPerValue(int bitsPerValue)
             {
+                Debugging.Assert(() => IsSupported(bitsPerValue));
                 int valuesPerBlock = 64 / bitsPerValue;
-
                 int overhead = 64 % bitsPerValue;
                 return (float)overhead / valuesPerBlock;
             }
@@ -204,6 +205,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual long ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
+                Debugging.Assert(() => bitsPerValue >= 0 && bitsPerValue <= 64, () => bitsPerValue.ToString(CultureInfo.InvariantCulture));
                 // assume long-aligned
                 return 8L * Int64Count(packedIntsVersion, valueCount, bitsPerValue);
             }
@@ -216,16 +218,13 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual int Int64Count(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
+                Debugging.Assert(() => bitsPerValue >= 0 && bitsPerValue <= 64, () => bitsPerValue.ToString(CultureInfo.InvariantCulture));
                 long byteCount = ByteCount(packedIntsVersion, valueCount, bitsPerValue);
-
+                Debugging.Assert(() => byteCount < 8L * int.MaxValue);
                 if ((byteCount % 8) == 0)
-                {
                     return (int)(byteCount / 8);
-                }
                 else
-                {
                     return (int)(byteCount / 8 + 1);
-                }
             }
 
             /// <summary>

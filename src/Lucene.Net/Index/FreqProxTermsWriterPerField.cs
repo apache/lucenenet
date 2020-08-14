@@ -197,8 +197,7 @@ namespace Lucene.Net.Index
         {
             // First time we're seeing this term since the last
             // flush
-            // LUCENENET: .NET doesn't support asserts in release mode
-            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) docState.TestPoint("FreqProxTermsWriterPerField.newTerm start");
+            Debugging.Assert(() => docState.TestPoint("FreqProxTermsWriterPerField.newTerm start"));
 
             FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
             postings.lastDocIDs[termID] = docState.docID;

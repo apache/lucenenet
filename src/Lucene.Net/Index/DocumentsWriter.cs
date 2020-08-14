@@ -3,10 +3,8 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -32,8 +30,8 @@ namespace Lucene.Net.Index
     using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
-    using IEvent = Lucene.Net.Index.IndexWriter.IEvent;
     using FlushedSegment = Lucene.Net.Index.DocumentsWriterPerThread.FlushedSegment;
+    using IEvent = Lucene.Net.Index.IndexWriter.IEvent;
     using InfoStream = Lucene.Net.Util.InfoStream;
     using NumericDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.NumericDocValuesUpdate;
     using Query = Lucene.Net.Search.Query;
@@ -246,7 +244,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debugging.Assert(!Thread.HoldsLock(writer), "IndexWriter lock should never be hold when aborting");
+                Debugging.Assert(() => !Monitor.IsEntered(writer), () => "IndexWriter lock should never be hold when aborting");
                 bool success = false;
                 JCG.HashSet<string> newFilesSet = new JCG.HashSet<string>();
                 try
@@ -289,7 +287,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debugging.Assert(indexWriter.HoldsFullFlushLock());
+                Debugging.Assert(() => indexWriter.HoldsFullFlushLock);
                 if (infoStream.IsEnabled("DW"))
                 {
                     infoStream.Message("DW", "lockAndAbortAll");
@@ -329,7 +327,7 @@ namespace Lucene.Net.Index
 
         private void AbortThreadState(ThreadState perThread, ISet<string> newFiles)
         {
-            //Debugging.Assert(perThread.HeldByCurrentThread);
+            Debugging.Assert(() => perThread.IsHeldByCurrentThread);
             if (perThread.IsActive) // we might be closed
             {
                 if (perThread.IsInitialized)
@@ -360,7 +358,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debugging.Assert(indexWriter.HoldsFullFlushLock());
+                Debugging.Assert(() => indexWriter.HoldsFullFlushLock);
                 if (infoStream.IsEnabled("DW"))
                 {
                     infoStream.Message("DW", "unlockAll");
@@ -371,10 +369,10 @@ namespace Lucene.Net.Index
                     try
                     {
                         ThreadState perThread = perThreadPool.GetThreadState(i);
-                        //if (perThread.HeldByCurrentThread)
-                        //{
-                        perThread.Unlock();
-                        //}
+                        if (perThread.IsHeldByCurrentThread)
+                        {
+                            perThread.Unlock();
+                        }
                     }
                     catch (Exception e)
                     {

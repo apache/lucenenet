@@ -1,5 +1,6 @@
 #if FEATURE_CONCURRENTMERGESCHEDULER
 using J2N.Threading;
+using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -394,7 +395,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debugging.Assert(!Thread.holdsLock(writer));
+                Debugging.Assert(() => !Monitor.IsEntered(writer));
 
                 this.m_writer = writer;
 

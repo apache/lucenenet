@@ -50,9 +50,7 @@ namespace Lucene.Net.Index
 
         public override ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
         {
-            ThreadState threadState;
-            threadBindings.TryGetValue(requestingThread, out threadState);
-            if (threadState != null && threadState.TryLock())
+            if (threadBindings.TryGetValue(requestingThread, out ThreadState threadState) && threadState.TryLock())
             {
                 return threadState;
             }
@@ -67,7 +65,7 @@ namespace Lucene.Net.Index
                 ThreadState newState = NewThreadState(); // state is already locked if non-null
                 if (newState != null)
                 {
-                    //Debugging.Assert(newState.HeldByCurrentThread);
+                    Debugging.Assert(() => newState.IsHeldByCurrentThread);
                     threadBindings[requestingThread] = newState;
                     return newState;
                 }

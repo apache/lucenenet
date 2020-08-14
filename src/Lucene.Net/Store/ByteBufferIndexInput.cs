@@ -1,5 +1,6 @@
 using J2N.IO;
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Util.Fst;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -390,6 +391,7 @@ namespace Lucene.Net.Store
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                         foreach (var pair in clones)
                         {
+                            Debugging.Assert(() => pair.Key.isClone);
                             pair.Key.UnsetBuffers();
                         }
                         this.clones.Clear();

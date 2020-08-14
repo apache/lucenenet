@@ -3,6 +3,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.Util.Packed
@@ -219,7 +220,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         private static long NumInt64sForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
         {
-            Debugging.Assert(() => numBits >= 0, numBits.ToString);
+            Debugging.Assert(() => numBits >= 0, () => numBits.ToString(CultureInfo.InvariantCulture));
             return (long)((ulong)(numBits + (sizeof(long) * 8 - 1)) >> LOG2_INT64_SIZE);
         }
 

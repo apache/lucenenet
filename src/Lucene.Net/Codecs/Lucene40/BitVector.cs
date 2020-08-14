@@ -275,8 +275,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     WriteBits(output);
                 }
                 CodecUtil.WriteFooter(output);
-                bool verified = VerifyCount();
-                Debugging.Assert(() => verified);
+                Debugging.Assert(VerifyCount);
             }
             finally
             {
@@ -475,8 +474,7 @@ namespace Lucene.Net.Codecs.Lucene40
             Debugging.Assert(() => count != -1);
             int countSav = count;
             count = -1;
-            bool checkCount = countSav == Count();
-            Debugging.Assert(() => checkCount, () => "saved count was " + countSav + " but recomputed count is " + count);
+            Debugging.Assert(() => countSav == Count(), () => "saved count was " + countSav + " but recomputed count is " + count);
             return true;
         }
 

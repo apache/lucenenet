@@ -85,10 +85,8 @@ namespace Lucene.Net.Codecs.SimpleText
                 ReadLine();
                 Debugging.Assert(() => StartsWith(SimpleTextDocValuesWriter.TYPE), () => scratch.Utf8ToString());
 
-                var dvType =
-                    (DocValuesType)
-                        Enum.Parse(typeof (DocValuesType), StripPrefix(SimpleTextDocValuesWriter.TYPE));
-
+                var dvType = (DocValuesType)Enum.Parse(typeof(DocValuesType), StripPrefix(SimpleTextDocValuesWriter.TYPE));
+                // Debugging.Assert(() => dvType != null); // LUCENENET: Not possible for an enum to be null in .NET
                 if (dvType == DocValuesType.NUMERIC)
                 {
                     ReadLine();

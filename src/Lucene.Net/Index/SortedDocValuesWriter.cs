@@ -148,6 +148,7 @@ namespace Lucene.Net.Index
         private IEnumerable<long?> GetOrdsEnumberable(int maxDoc, int[] ordMap)
         {
             AppendingDeltaPackedInt64Buffer.Iterator iter = pending.GetIterator();
+            Debugging.Assert(() => pending.Count == maxDoc);
 
             for (int i = 0; i < maxDoc; ++i)
             {

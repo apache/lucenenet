@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -230,7 +231,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 Debugging.Assert(() => liveDocs != null);
-                //Debugging.Assert(Thread.holdsLock(Writer));
+                Debugging.Assert(() => Monitor.IsEntered(writer));
                 Debugging.Assert(() => docID >= 0 && docID < liveDocs.Length, () => "out of bounds: docid=" + docID + " liveDocsLength=" + liveDocs.Length + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
                 Debugging.Assert(() => !liveDocsShared);
                 bool didDelete = liveDocs.Get(docID);
@@ -318,7 +319,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debugging.Assert(Thread.holdsLock(Writer));
+                Debugging.Assert(() => Monitor.IsEntered(writer));
                 Debugging.Assert(() => Info.Info.DocCount > 0);
                 //System.out.println("initWritableLivedocs seg=" + info + " liveDocs=" + liveDocs + " shared=" + shared);
                 if (liveDocsShared)
@@ -348,7 +349,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    //Debugging.Assert(Thread.holdsLock(Writer));
+                    Debugging.Assert(() => Monitor.IsEntered(writer));
                     return liveDocs;
                 }
             }
@@ -359,7 +360,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 //System.out.println("getROLiveDocs seg=" + info);
-                //Debugging.Assert(Thread.holdsLock(Writer));
+                Debugging.Assert(() => Monitor.IsEntered(writer));
                 liveDocsShared = true;
                 //if (liveDocs != null) {
                 //System.out.println("  liveCount=" + liveDocs.count());
@@ -393,7 +394,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debugging.Assert(Thread.holdsLock(Writer));
+                Debugging.Assert(() => Monitor.IsEntered(writer));
                 //System.out.println("rld.writeLiveDocs seg=" + info + " pendingDelCount=" + pendingDeleteCount + " numericUpdates=" + numericUpdates);
                 if (pendingDeleteCount == 0)
                 {
@@ -458,7 +459,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debugging.Assert(Thread.holdsLock(Writer));
+                Debugging.Assert(() => Monitor.IsEntered(writer));
                 //System.out.println("rld.writeFieldUpdates: seg=" + info + " numericFieldUpdates=" + numericFieldUpdates);
 
                 Debugging.Assert(dvUpdates.Any);
@@ -692,6 +693,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {   // no update for this document
+                    Debugging.Assert(() => curDoc < updateDoc);
                     if (currentValues != null && DocsWithField.Get(curDoc))
                     {
                         // only read the current value if the document had a value before
@@ -724,6 +726,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {   // no update for this document
+                    Debugging.Assert(() => curDoc < updateDoc);
                     if (currentValues != null && DocsWithField.Get(curDoc))
                     {
                         // only read the current value if the document had a value before
@@ -746,7 +749,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                //Debugging.Assert(Thread.holdsLock(Writer));
+                Debugging.Assert(() => Monitor.IsEntered(writer));
                 // must execute these two statements as atomic operation, otherwise we
                 // could lose updates if e.g. another thread calls writeFieldUpdates in
                 // between, or the updates are applied to the obtained reader, but then

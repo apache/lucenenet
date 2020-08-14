@@ -6,7 +6,6 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -708,7 +707,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        Debugging.Assert(() => rld.Info == info, () => "Infos are not equal");//, "rld.info=" + rld.Info + " info=" + info + " isLive?=" + InfoIsLive(rld.Info) + " vs " + InfoIsLive(info));
+                        Debugging.Assert(() => rld.Info == info, () => "rld.info=" + rld.Info + " info=" + info + " isLive?=" + InfoIsLive(rld.Info) + " vs " + InfoIsLive(info));
                     }
 
                     if (create)
@@ -2570,8 +2569,7 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "rollback: infos=" + SegString(segmentInfos.Segments));
                     }
 
-                    // LUCENENET: .NET doesn't support asserts in release mode
-                    if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("rollback before checkpoint");
+                    Debugging.Assert(() => TestPoint("rollback before checkpoint"));
 
                     // Ask deleter to locate unreferenced files & remove
                     // them:
@@ -3816,12 +3814,8 @@ namespace Lucene.Net.Index
         /// </summary>
         private readonly object fullFlushLock = new object();
 
-        // LUCENENET NOTE: Not possible in .NET
-        //// for assert
-        //internal virtual bool HoldsFullFlushLock()
-        //{
-        //  return Thread.holdsLock(FullFlushLock);
-        //}
+        // for assert
+        internal virtual bool HoldsFullFlushLock => Monitor.IsEntered(fullFlushLock);
 
         /// <summary>
         /// Flush all in-memory buffered updates (adds and deletes)
@@ -3978,16 +3972,7 @@ namespace Lucene.Net.Index
 
         // for testing only
         internal virtual DocumentsWriter DocsWriter
-        {
-            get
-            {
-                bool test = false;
-                // LUCENENET NOTE: Must set test outside of Debug.Assert!!
-                bool isTest = test = true;
-                Debugging.Assert(() => isTest);
-                return test ? docWriter : null;
-            }
-        }
+            => Debugging.AssertsEnabled ? docWriter : null; // LUCENENET specific - just read the status, simpler than using Assert() to set a local variable
 
         /// <summary>
         /// Expert:  Return the number of documents currently
@@ -4098,8 +4083,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                // LUCENENET: .NET doesn't support asserts in release mode
-                if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("startCommitMergeDeletes");
+                Debugging.Assert(() => TestPoint("startCommitMergeDeletes"));
 
                 IList<SegmentCommitInfo> sourceSegments = merge.Segments;
 
@@ -4335,8 +4319,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                // LUCENENET: .NET doesn't support asserts in release mode
-                if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("startCommitMerge");
+                Debugging.Assert(() => TestPoint("startCommitMerge"));
 
                 if (hitOOM)
                 {
@@ -5511,8 +5494,7 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "done all syncs: " + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", filesToSync));
                     }
 
-                    // LUCENENET: .NET doesn't support asserts in release mode
-                    if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("midStartCommitSuccess");
+                    Debugging.Assert(() => TestPoint("midStartCommitSuccess"));
                 }
                 finally
                 {
@@ -5542,8 +5524,7 @@ namespace Lucene.Net.Index
             {
                 HandleOOM(oom, "startCommit");
             }
-            // LUCENENET: .NET doesn't support asserts in release mode
-            if (Lucene.Net.Diagnostics.Debugging.AssertsEnabled) TestPoint("finishStartCommit");
+            Debugging.Assert(() => TestPoint("finishStartCommit"));
         }
 
         /// <summary>

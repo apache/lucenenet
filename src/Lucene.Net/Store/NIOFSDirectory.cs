@@ -257,16 +257,9 @@ namespace Lucene.Net.Store
                 {
                     while (readLength > 0)
                     {
-                        int limit;
-                        if (readLength > CHUNK_SIZE)
-                        {
-                            limit = readOffset + CHUNK_SIZE;
-                        }
-                        else
-                        {
-                            limit = readOffset + readLength;
-                        }
-                        bb.Limit = limit;
+                        int toRead = Math.Min(CHUNK_SIZE, readLength);
+                        bb.Limit = readOffset + toRead;
+                        Debugging.Assert(() => bb.Remaining == toRead);
                         int i = m_channel.Read(bb, pos);
                         if (i <= 0) // be defensive here, even though we checked before hand, something could have changed
                         {

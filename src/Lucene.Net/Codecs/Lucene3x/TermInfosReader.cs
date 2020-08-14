@@ -294,7 +294,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             else
                             {
                                 Debugging.Assert(() => SameTermInfo(ti, tiOrd, enumerator));
-                                Debugging.Assert(() => enumerator.position == tiOrd.termOrd);
+                                Debugging.Assert(() => (int)enumerator.position == tiOrd.termOrd);
                             }
                         }
                     }
