@@ -66,6 +66,7 @@ namespace Lucene.Net.Facet.SortedSet
             // each term/ord it's assigning as it goes...
             string lastDim = null;
             int startOrd = -1;
+            BytesRef spare = new BytesRef();
 
             // TODO: this approach can work for full hierarchy?;
             // TaxoReader can't do this since ords are not in
@@ -73,12 +74,11 @@ namespace Lucene.Net.Facet.SortedSet
             // support arbitrary hierarchy:
             for (int ord = 0; ord < valueCount; ord++)
             {
-                BytesRef term = new BytesRef();
-                dv.LookupOrd(ord, term);
-                string[] components = FacetsConfig.StringToPath(term.Utf8ToString());
+                dv.LookupOrd(ord, spare);
+                string[] components = FacetsConfig.StringToPath(spare.Utf8ToString());
                 if (components.Length != 2)
                 {
-                    throw new ArgumentException("this class can only handle 2 level hierarchy (dim/value); got: " + Arrays.ToString(components) + " " + term.Utf8ToString());
+                    throw new ArgumentException("this class can only handle 2 level hierarchy (dim/value); got: " + Arrays.ToString(components) + " " + spare.Utf8ToString());
                 }
                 if (!components[0].Equals(lastDim, StringComparison.Ordinal))
                 {

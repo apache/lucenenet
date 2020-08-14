@@ -136,13 +136,14 @@ namespace Lucene.Net.Facet.SortedSet
                 return null;
             }
 
+            var scratch = new BytesRef();
+
             LabelAndValue[] labelValues = new LabelAndValue[q.Count];
             for (int i = labelValues.Length - 1; i >= 0; i--)
             {
                 TopOrdAndInt32Queue.OrdAndValue ordAndValue = q.Pop();
-                var term = new BytesRef();
-                dv.LookupOrd(ordAndValue.Ord, term);
-                string[] parts = FacetsConfig.StringToPath(term.Utf8ToString());
+                dv.LookupOrd(ordAndValue.Ord, scratch);
+                string[] parts = FacetsConfig.StringToPath(scratch.Utf8ToString());
                 labelValues[i] = new LabelAndValue(parts[1], ordAndValue.Value);
             }
 

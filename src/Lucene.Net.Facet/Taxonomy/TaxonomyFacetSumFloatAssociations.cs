@@ -65,6 +65,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     continue;
                 }
 
+                BytesRef scratch = new BytesRef();
                 DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 int doc;
@@ -73,11 +74,10 @@ namespace Lucene.Net.Facet.Taxonomy
                     //System.out.println("  doc=" + doc);
                     // TODO: use OrdinalsReader?  we'd need to add a
                     // BytesRef getAssociation()?
-                    BytesRef bytesRef = new BytesRef();
-                    dv.Get(doc, bytesRef);
-                    byte[] bytes = bytesRef.Bytes;
-                    int end = bytesRef.Offset + bytesRef.Length;
-                    int offset = bytesRef.Offset;
+                    dv.Get(doc, scratch);
+                    byte[] bytes = scratch.Bytes;
+                    int end = scratch.Offset + scratch.Length;
+                    int offset = scratch.Offset;
                     while (offset < end)
                     {
                         int ord = ((bytes[offset] & 0xFF) << 24) | ((bytes[offset + 1] & 0xFF) << 16) | 
