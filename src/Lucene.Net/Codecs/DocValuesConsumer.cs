@@ -182,6 +182,8 @@ namespace Lucene.Net.Codecs
         {
             int readerUpto = -1;
             int docIDUpto = 0;
+            var nextValue = new BytesRef();
+            BytesRef nextPointer; // points to null if missing, or nextValue
             AtomicReader currentReader = null;
             BinaryDocValues currentValues = null;
             IBits currentLiveDocs = null;
@@ -210,19 +212,18 @@ namespace Lucene.Net.Codecs
 
                 if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
                 {
-                    var nextValue = new BytesRef();
-
                     if (currentDocsWithField.Get(docIDUpto))
                     {
                         currentValues.Get(docIDUpto, nextValue);
+                        nextPointer = nextValue;
                     }
                     else
                     {
-                        nextValue = null;
+                        nextPointer = null;
                     }
 
                     docIDUpto++;
-                    yield return nextValue;
+                    yield return nextPointer;
                     continue;
                 }
 
@@ -282,11 +283,11 @@ namespace Lucene.Net.Codecs
 
         private IEnumerable<BytesRef> GetMergeSortValuesEnumerable(OrdinalMap map, SortedDocValues[] dvs)
         {
+            var scratch = new BytesRef();
             int currentOrd = 0;
 
             while (currentOrd < map.ValueCount)
             {
-                var scratch = new BytesRef();
                 int segmentNumber = map.GetFirstSegmentNumber(currentOrd);
                 var segmentOrd = (int)map.GetFirstSegmentOrd(currentOrd);
                 dvs[segmentNumber].LookupOrd(segmentOrd, scratch);
@@ -388,13 +389,13 @@ namespace Lucene.Net.Codecs
 
         private IEnumerable<BytesRef> GetMergeSortedSetValuesEnumerable(OrdinalMap map, SortedSetDocValues[] dvs)
         {
+            var scratch = new BytesRef();
             long currentOrd = 0;
 
             while (currentOrd < map.ValueCount)
             {
                 int segmentNumber = map.GetFirstSegmentNumber(currentOrd);
                 long segmentOrd = map.GetFirstSegmentOrd(currentOrd);
-                var scratch = new BytesRef();
                 dvs[segmentNumber].LookupOrd(segmentOrd, scratch);
                 currentOrd++;
                 yield return scratch;
