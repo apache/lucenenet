@@ -242,6 +242,7 @@ namespace Lucene.Net.Index
                     Query query = new TermQuery(new Term("fieldname", "text"));
                     TopDocs hits = isearcher.Search(query, null, 1);
                     Assert.AreEqual(1, hits.TotalHits);
+                    BytesRef scratch = new BytesRef(); // LUCENENET: Moved this outside of the loop for performance
                     // Iterate through the results:
                     for (int i = 0; i < hits.ScoreDocs.Length; i++)
                     {
@@ -249,7 +250,6 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
                         Debug.Assert(ireader.Leaves.Count == 1);
                         BinaryDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv1");
-                        BytesRef scratch = new BytesRef();
                         dv.Get(hits.ScoreDocs[i].Doc, scratch);
                         Assert.AreEqual(new BytesRef(longTerm), scratch);
                         dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv2");
@@ -1772,6 +1772,7 @@ namespace Lucene.Net.Index
                 // compare
                 using (DirectoryReader ir = DirectoryReader.Open(dir))
                 {
+                    BytesRef scratch = new BytesRef(); // LUCENENET: Moved outside of the loop for performance
                     foreach (AtomicReaderContext context in ir.Leaves)
                     {
                         AtomicReader r = context.AtomicReader;
@@ -1779,7 +1780,7 @@ namespace Lucene.Net.Index
                         for (int i = 0; i < r.MaxDoc; i++)
                         {
                             BytesRef binaryValue = r.Document(i).GetBinaryValue("stored");
-                            BytesRef scratch = new BytesRef();
+                            
                             docValues.Get(i, scratch);
                             Assert.AreEqual(binaryValue, scratch);
                         }
@@ -1861,6 +1862,7 @@ namespace Lucene.Net.Index
                 // compare
                 using (DirectoryReader ir = DirectoryReader.Open(dir))
                 {
+                    BytesRef scratch = new BytesRef(); // LUCENENET: Moved outside of the loop for performance
                     foreach (AtomicReaderContext context in ir.Leaves)
                     {
                         AtomicReader r = context.AtomicReader;
@@ -1868,7 +1870,7 @@ namespace Lucene.Net.Index
                         for (int i = 0; i < r.MaxDoc; i++)
                         {
                             BytesRef binaryValue = r.Document(i).GetBinaryValue("stored");
-                            BytesRef scratch = new BytesRef();
+                            
                             docValues.Get(i, scratch);
                             Assert.AreEqual(binaryValue, scratch);
                         }
@@ -3354,12 +3356,12 @@ namespace Lucene.Net.Index
 
                     using (AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r))
                     {
-
+                        BytesRef bytes = new BytesRef(); // LUCENENET: Moved outside of the loop for performance
                         BinaryDocValues s = FieldCache.DEFAULT.GetTerms(ar, "field", false);
                         for (int docID = 0; docID < docBytes.Count; docID++)
                         {
                             Document doc = ar.Document(docID);
-                            BytesRef bytes = new BytesRef();
+                            
                             s.Get(docID, bytes);
                             var expected = docBytes[Convert.ToInt32(doc.Get("id"), CultureInfo.InvariantCulture)];
                             Assert.AreEqual(expected.Length, bytes.Length);
@@ -3461,12 +3463,12 @@ namespace Lucene.Net.Index
 
                     using (AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r))
                     {
-
+                        BytesRef bytes = new BytesRef(); // LUCENENET: Moved outside of the loop for performance
                         BinaryDocValues s = FieldCache.DEFAULT.GetTerms(ar, "field", false);
                         for (int docID = 0; docID < docBytes.Count; docID++)
                         {
                             Document doc = ar.Document(docID);
-                            BytesRef bytes = new BytesRef();
+
                             s.Get(docID, bytes);
                             var expected = docBytes[Convert.ToInt32(doc.Get("id"), CultureInfo.InvariantCulture)];
                             Assert.AreEqual(expected.Length, bytes.Length);
@@ -3580,6 +3582,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     startingGun.Wait();
+                    BytesRef scratch = new BytesRef(); // LUCENENET: Moved outside of the loop for performance
                     foreach (AtomicReaderContext context in ir.Leaves)
                     {
                         AtomicReader r = context.AtomicReader;
@@ -3589,7 +3592,7 @@ namespace Lucene.Net.Index
                         for (int j = 0; j < r.MaxDoc; j++)
                         {
                             BytesRef binaryValue = r.Document(j).GetBinaryValue("storedBin");
-                            BytesRef scratch = new BytesRef();
+
                             binaries.Get(j, scratch);
                             Assert.AreEqual(binaryValue, scratch);
                             sorted.Get(j, scratch);
