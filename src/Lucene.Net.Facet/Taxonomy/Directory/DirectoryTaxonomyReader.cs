@@ -74,6 +74,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         // TODO: test DoubleBarrelLRUCache and consider using it instead
         private LRUHashMap<FacetLabel, Int32Class> ordinalCache;
         private LRUHashMap<int, FacetLabel> categoryCache;
+        private readonly ReaderWriterLockSlim ordinalCacheLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        private readonly ReaderWriterLockSlim categoryCacheLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
         private /*volatile*/ TaxonomyIndexArrays taxoArrays; // LUCENENET specific: LazyInitalizer negates the need for volatile
 
@@ -137,6 +139,16 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         // LUCENENET specific - eliminated the InitTaxoArrays() method in favor of LazyInitializer
+
+        protected override void Dispose(bool disposing) // LUCENENET specific - cleanup ReaderWriterLockSlim instances
+        {
+            if (disposing)
+            {
+                ordinalCacheLock.Dispose();
+                categoryCacheLock.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
         protected internal override void DoClose()
         {
@@ -290,25 +302,33 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // First try to find the answer in the LRU cache:
 
-            // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
-            // and removing the lock seems to make the performance better.
-            if (ordinalCache.TryGetValue(cp, out Int32Class res) && res != null)
+            // LUCENENET: Despite LRUHashMap being thread-safe, we get much better performance
+            // if reads are separated from writes.
+            ordinalCacheLock.EnterReadLock();
+            try
             {
-                if (res < indexReader.MaxDoc)
+                if (ordinalCache.TryGetValue(cp, out Int32Class res))
                 {
-                    // Since the cache is shared with DTR instances allocated from
-                    // doOpenIfChanged, we need to ensure that the ordinal is one that
-                    // this DTR instance recognizes.
-                    return res;
+                    if (res < indexReader.MaxDoc)
+                    {
+                        // Since the cache is shared with DTR instances allocated from
+                        // doOpenIfChanged, we need to ensure that the ordinal is one that
+                        // this DTR instance recognizes.
+                        return res;
+                    }
+                    else
+                    {
+                        // if we get here, it means that the category was found in the cache,
+                        // but is not recognized by this TR instance. Therefore there's no
+                        // need to continue search for the path on disk, because we won't find
+                        // it there too.
+                        return TaxonomyReader.INVALID_ORDINAL;
+                    }
                 }
-                else
-                {
-                    // if we get here, it means that the category was found in the cache,
-                    // but is not recognized by this TR instance. Therefore there's no
-                    // need to continue search for the path on disk, because we won't find
-                    // it there too.
-                    return TaxonomyReader.INVALID_ORDINAL;
-                }
+            }
+            finally
+            {
+                ordinalCacheLock.ExitReadLock();
             }
 
             // If we're still here, we have a cache miss. We need to fetch the
@@ -325,9 +345,15 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // information about found categories, we cannot accidently tell a new
                 // generation of DTR that a category does not exist.
 
-                // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
-                // and removing the lock seems to make the performance better.
-                ordinalCache.Put(cp, ret);
+                ordinalCacheLock.EnterWriteLock();
+                try
+                {
+                    ordinalCache[cp] = ret;
+                }
+                finally
+                {
+                    ordinalCacheLock.ExitWriteLock();
+                }
             }
 
             return ret;
@@ -350,20 +376,32 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // wrapped as LRU?
 
             // LUCENENET NOTE: We don't need to convert ordinal from int to int here as was done in Java.
-            // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
-            // and removing the lock seems to make the performance better.
-            if (categoryCache.TryGetValue(ordinal, out FacetLabel res))
+            // LUCENENET: Despite LRUHashMap being thread-safe, we get much better performance
+            // if reads are separated from writes.
+            categoryCacheLock.EnterReadLock();
+            try
             {
-                return res;
+                if (categoryCache.TryGetValue(ordinal, out FacetLabel res))
+                    return res;
+            }
+            finally
+            {
+                categoryCacheLock.ExitReadLock();
             }
 
             Document doc = indexReader.Document(ordinal);
-            res = new FacetLabel(FacetsConfig.StringToPath(doc.Get(Consts.FULL)));
-            // LUCENENET: Lock was removed here because the underlying cache is thread-safe,
-            // and removing the lock seems to make the performance better.
-            categoryCache.Put(ordinal, res);
+            var result = new FacetLabel(FacetsConfig.StringToPath(doc.Get(Consts.FULL)));
+            categoryCacheLock.EnterWriteLock();
+            try
+            {
+                categoryCache[ordinal] = result;
+            }
+            finally
+            {
+                categoryCacheLock.ExitWriteLock();
+            }
 
-            return res;
+            return result;
         }
 
         public override int Count
