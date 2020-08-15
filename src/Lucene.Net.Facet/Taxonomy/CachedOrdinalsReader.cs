@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -65,8 +66,10 @@ namespace Lucene.Net.Facet.Taxonomy
 
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
         private readonly ConditionalWeakTable<object, CachedOrds> ordsCache = new ConditionalWeakTable<object, CachedOrds>();
+        private readonly object ordsCacheLock = new object();
 #else
         private readonly WeakDictionary<object, CachedOrds> ordsCache = new WeakDictionary<object, CachedOrds>();
+        private readonly ReaderWriterLockSlim syncLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 #endif
 
         /// <summary>
@@ -82,15 +85,28 @@ namespace Lucene.Net.Facet.Taxonomy
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             return ordsCache.GetValue(cacheKey, (cacheKey) => new CachedOrds(source.GetReader(context), context.Reader.MaxDoc));
 #else
-            lock (this)
+            syncLock.EnterUpgradeableReadLock();
+            try
             {
-                if (!ordsCache.TryGetValue(cacheKey, out CachedOrds ords) || ords == null)
+                if (!ordsCache.TryGetValue(cacheKey, out CachedOrds ords))
                 {
                     ords = new CachedOrds(source.GetReader(context), context.Reader.MaxDoc);
-                    ordsCache[cacheKey] =  ords;
+                    syncLock.EnterWriteLock();
+                    try
+                    {
+                        ordsCache[cacheKey] = ords;
+                    }
+                    finally
+                    {
+                        syncLock.ExitWriteLock();
+                    }
                 }
 
                 return ords;
+            }
+            finally
+            {
+                syncLock.ExitUpgradeableReadLock();
             }
 #endif
         }
@@ -100,18 +116,15 @@ namespace Lucene.Net.Facet.Taxonomy
         public override OrdinalsSegmentReader GetReader(AtomicReaderContext context)
         {
             CachedOrds cachedOrds = GetCachedOrds(context);
-            return new OrdinalsSegmentReaderAnonymousInnerClassHelper(this, cachedOrds);
+            return new OrdinalsSegmentReaderAnonymousInnerClassHelper(cachedOrds);
         }
 
         private class OrdinalsSegmentReaderAnonymousInnerClassHelper : OrdinalsSegmentReader
         {
-            private readonly CachedOrdinalsReader outerInstance;
+            private readonly CachedOrds cachedOrds;
 
-            private Lucene.Net.Facet.Taxonomy.CachedOrdinalsReader.CachedOrds cachedOrds;
-
-            public OrdinalsSegmentReaderAnonymousInnerClassHelper(CachedOrdinalsReader outerInstance, Lucene.Net.Facet.Taxonomy.CachedOrdinalsReader.CachedOrds cachedOrds)
+            public OrdinalsSegmentReaderAnonymousInnerClassHelper(CachedOrds cachedOrds)
             {
-                this.outerInstance = outerInstance;
                 this.cachedOrds = cachedOrds;
             }
 
@@ -198,7 +211,10 @@ namespace Lucene.Net.Facet.Taxonomy
         public virtual long RamBytesUsed()
         {
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-            lock (this)
+            lock (ordsCacheLock)
+#else
+            syncLock.EnterReadLock();
+            try
 #endif
             {
                 long bytes = 0;
@@ -209,6 +225,12 @@ namespace Lucene.Net.Facet.Taxonomy
 
                 return bytes;
             }
+#if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
+            finally
+            {
+                syncLock.ExitReadLock();
+            }
+#endif
         }
     }
 }
