@@ -67,11 +67,20 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
-            lock (this)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing) // LUCENENET specific - use proper dispose pattern
+        {
+            if (disposing)
             {
-                cache = null;
+                lock (this)
+                {
+                    cache = null;
+                }
             }
         }
 
