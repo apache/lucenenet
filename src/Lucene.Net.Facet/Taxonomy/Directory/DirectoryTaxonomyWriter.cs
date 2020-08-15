@@ -3,13 +3,12 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
+using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
@@ -96,16 +95,17 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         // Records the taxonomy index epoch, updated on replaceTaxonomy as well.
         private long indexEpoch;
 
-        private SinglePositionTokenStream parentStream = new SinglePositionTokenStream(Consts.PAYLOAD_PARENT);
-        private Field parentStreamField;
-        private Field fullPathField;
+        private readonly SinglePositionTokenStream parentStream = new SinglePositionTokenStream(Consts.PAYLOAD_PARENT);
+        private readonly Field parentStreamField;
+        private readonly Field fullPathField;
         private int cacheMissesUntilFill = 11;
         private bool shouldFillCache = true;
 
         // even though lazily initialized, not volatile so that access to it is
         // faster. we keep a volatile boolean init instead.
         private ReaderManager readerManager;
-        private volatile bool initializedReaderManager = false;
+        private object readerManagerLock = new object();
+        private /*volatile*/ bool initializedReaderManager = false; // LUCENENET: Used in conjunction with LazyInitializer, so not volatile
         private volatile bool shouldRefreshReaderManager;
 
         /// <summary>
@@ -120,8 +120,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         private volatile bool cacheIsComplete;
         private volatile bool isClosed = false;
-        private volatile TaxonomyIndexArrays taxoArrays;
+        private /*volatile*/ TaxonomyIndexArrays taxoArrays; // LUCENENET: Used in conjunction with LazyInitializer, so not volatile
         private volatile int nextID;
+
+        private readonly ReaderWriterLockSlim syncLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         /// <summary>
         /// Reads the commit data from a <see cref="Store.Directory"/>. </summary>
@@ -302,20 +304,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         private void InitReaderManager()
         {
-            if (!initializedReaderManager)
+            LazyInitializer.EnsureInitialized(ref readerManager, ref initializedReaderManager, ref readerManagerLock, () =>
             {
-                lock (this)
-                {
-                    // verify that the taxo-writer hasn't been closed on us.
-                    EnsureOpen();
-                    if (!initializedReaderManager)
-                    {
-                        readerManager = new ReaderManager(indexWriter, false);
-                        shouldRefreshReaderManager = false;
-                        initializedReaderManager = true;
-                    }
-                }
-            }
+                // verify that the taxo-writer hasn't been closed on us.
+                EnsureOpen();
+                shouldRefreshReaderManager = false;
+                return new ReaderManager(indexWriter, false);
+            });
         }
 
         /// <summary>
@@ -348,12 +343,36 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public void Dispose()
         {
-            lock (this)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// A hook for extending classes to close additional resources that were used.
+        /// The default implementation closes the <see cref="Index.IndexReader"/> as well as the
+        /// <see cref="ITaxonomyWriterCache"/> instances that were used.
+        /// <para>
+        /// <b>NOTE:</b> if you override this method, you should include a
+        /// <c>base.Dispose(disposing)</c> call in your implementation.
+        /// </para>
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                if (!isClosed)
+                // Exit early if dispose has already been called so this
+                // method can be called multiple times with no issues
+                if (isClosed) return;
+                syncLock.EnterWriteLock();
+                try
                 {
                     Commit();
                     DoClose();
+                }
+                finally
+                {
+                    syncLock.ExitWriteLock();
+                    syncLock.Dispose();
                 }
             }
         }
@@ -366,28 +385,20 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         }
 
         /// <summary>
-        /// A hook for extending classes to close additional resources that were used.
-        /// The default implementation closes the <see cref="Index.IndexReader"/> as well as the
+        /// Closes the <see cref="Index.IndexReader"/> as well as the
         /// <see cref="ITaxonomyWriterCache"/> instances that were used.
-        /// <para>
-        /// <b>NOTE:</b> if you override this method, you should include a
-        /// <c>base.CloseResources()</c> call in your implementation.
-        /// </para>
         /// </summary>
-        protected virtual void CloseResources()
+        private void CloseResources() // LUCENENET: Made private, since this has the same purpose as Dispose(true). Removed redundant lock.
         {
-            lock (this)
+            if (initializedReaderManager)
             {
-                if (initializedReaderManager)
-                {
-                    readerManager.Dispose();
-                    readerManager = null;
-                    initializedReaderManager = false;
-                }
-                if (cache != null)
-                {
-                    cache.Dispose();
-                }
+                readerManager.Dispose();
+                readerManager = null;
+                initializedReaderManager = false;
+            }
+            if (cache != null)
+            {
+                cache.Dispose();
             }
         }
 
@@ -398,7 +409,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         protected virtual int FindCategory(FacetLabel categoryPath)
         {
-            lock (this)
+            syncLock.EnterUpgradeableReadLock();
+            try
             {
                 // If we can find the category in the cache, or we know the cache is
                 // complete, we can return the response directly from it
@@ -416,7 +428,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // add one category. The idea only spending a long time on reading
                 // after enough time was spent on cache misses is known as an "online
                 // algorithm".
-                PerhapsFillCache();
+                PerhapsFillCache(); // LUCENENET: This does a write
                 res = cache.Get(categoryPath);
                 if (res >= 0 || cacheIsComplete)
                 {
@@ -461,9 +473,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
                 if (doc > 0)
                 {
-                    AddToCache(categoryPath, doc);
+                    AddToCache(categoryPath, doc); // LUCENENET: This does a write
                 }
                 return doc;
+            }
+            finally
+            {
+                syncLock.ExitUpgradeableReadLock();
             }
         }
 
@@ -476,7 +492,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             if (res < 0)
             {
                 // the category is not in the cache - following code cannot be executed in parallel.
-                lock (this)
+                syncLock.EnterWriteLock();
+                try
                 {
                     res = FindCategory(categoryPath);
                     if (res < 0)
@@ -489,6 +506,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         // this recursively
                         res = InternalAddCategory(categoryPath);
                     }
+                }
+                finally
+                {
+                    syncLock.ExitWriteLock();
                 }
             }
             return res;
@@ -638,50 +659,63 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private void AddToCache(FacetLabel categoryPath, int id)
         {
-            if (cache.Put(categoryPath, id))
+            syncLock.EnterWriteLock();
+            try
             {
-                // If cache.put() returned true, it means the cache was limited in
-                // size, became full, and parts of it had to be evicted. It is
-                // possible that a relatively-new category that isn't yet visible
-                // to our 'reader' was evicted, and therefore we must now refresh 
-                // the reader.
-                RefreshReaderManager();
-                cacheIsComplete = false;
+                if (cache.Put(categoryPath, id))
+                {
+                    // If cache.put() returned true, it means the cache was limited in
+                    // size, became full, and parts of it had to be evicted. It is
+                    // possible that a relatively-new category that isn't yet visible
+                    // to our 'reader' was evicted, and therefore we must now refresh 
+                    // the reader.
+                    RefreshReaderManager();
+                    cacheIsComplete = false;
+                }
+            }
+            finally
+            {
+                syncLock.ExitWriteLock();
             }
         }
 
         private void RefreshReaderManager()
         {
-            lock (this)
+            // LUCENENET: Removed the lock here because all callers already have a write
+            // lock before getting in here and all callers to AddCategoryDocument also
+            // have a write lock before calling it.
+
+            // this method is synchronized since it cannot happen concurrently with
+            // addCategoryDocument -- when this method returns, we must know that the
+            // reader manager's state is current. also, it sets shouldRefresh to false, 
+            // and this cannot overlap with addCatDoc too.
+            // NOTE: since this method is sync'ed, it can call maybeRefresh, instead of
+            // maybeRefreshBlocking. If ever this is changed, make sure to change the
+            // call too.
+            if (shouldRefreshReaderManager && initializedReaderManager)
             {
-                // this method is synchronized since it cannot happen concurrently with
-                // addCategoryDocument -- when this method returns, we must know that the
-                // reader manager's state is current. also, it sets shouldRefresh to false, 
-                // and this cannot overlap with addCatDoc too.
-                // NOTE: since this method is sync'ed, it can call maybeRefresh, instead of
-                // maybeRefreshBlocking. If ever this is changed, make sure to change the
-                // call too.
-                if (shouldRefreshReaderManager && initializedReaderManager)
-                {
-                    readerManager.MaybeRefresh();
-                    shouldRefreshReaderManager = false;
-                }
+                readerManager.MaybeRefresh();
+                shouldRefreshReaderManager = false;
             }
         }
 
         public virtual void Commit()
         {
-            lock (this)
+            syncLock.EnterWriteLock();
+            try
             {
                 EnsureOpen();
                 // LUCENE-4972: if we always call setCommitData, we create empty commits
-                string epochStr = null;
-                indexWriter.CommitData.TryGetValue(INDEX_EPOCH, out epochStr);
+                indexWriter.CommitData.TryGetValue(INDEX_EPOCH, out string epochStr);
                 if (epochStr == null || Convert.ToInt64(epochStr, 16) != indexEpoch)
                 {
                     indexWriter.SetCommitData(CombinedCommitData(indexWriter.CommitData));
                 }
                 indexWriter.Commit();
+            }
+            finally
+            {
+                syncLock.ExitWriteLock();
             }
         }
 
@@ -690,11 +724,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         private IDictionary<string, string> CombinedCommitData(IDictionary<string, string> commitData)
         {
-            IDictionary<string, string> m = new Dictionary<string, string>();
-            if (commitData != null)
-            {
-                m.PutAll(commitData);
-            }
+            IDictionary<string, string> m = commitData != null
+                ? new Dictionary<string, string>(commitData)
+                : new Dictionary<string, string>();
             m[INDEX_EPOCH] = Convert.ToString(indexEpoch, 16);
             return m;
         }
@@ -713,18 +745,22 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public virtual void PrepareCommit()
         {
-            lock (this)
+            syncLock.EnterWriteLock();
+            try
             {
                 EnsureOpen();
                 // LUCENE-4972: if we always call setCommitData, we create empty commits
-                string epochStr;
-                if (!indexWriter.CommitData.TryGetValue(INDEX_EPOCH, out epochStr) 
-                    || epochStr == null 
+                if (!indexWriter.CommitData.TryGetValue(INDEX_EPOCH, out string epochStr)
+                    || epochStr == null
                     || Convert.ToInt64(epochStr, 16) != indexEpoch)
                 {
                     indexWriter.SetCommitData(CombinedCommitData(indexWriter.CommitData));
                 }
                 indexWriter.PrepareCommit();
+            }
+            finally
+            {
+                syncLock.ExitWriteLock();
             }
         }
 
@@ -768,7 +804,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         // complete or not.
         private void PerhapsFillCache()
         {
-            lock (this)
+            syncLock.EnterWriteLock();
+            try
             {
                 if (cacheMisses < cacheMissesUntilFill)
                 {
@@ -833,7 +870,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 cacheIsComplete = !aborted;
                 if (cacheIsComplete)
                 {
-                    lock (this)
+                    lock (readerManagerLock)
                     {
                         // everything is in the cache, so no need to keep readerManager open.
                         // this block is executed in a sync block so that it works well with
@@ -844,32 +881,30 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     }
                 }
             }
+            finally
+            {
+                syncLock.ExitWriteLock();
+            }
         }
 
         private TaxonomyIndexArrays GetTaxoArrays()
         {
             if (taxoArrays == null)
             {
-                lock (this)
+                bool _ = false;
+                taxoArrays = LazyInitializer.EnsureInitialized(ref taxoArrays, ref _, ref readerManagerLock, () =>
                 {
-                    if (taxoArrays == null)
+                    InitReaderManager();
+                    DirectoryReader reader = readerManager.Acquire();
+                    try
                     {
-                        InitReaderManager();
-                        DirectoryReader reader = readerManager.Acquire();
-                        try
-                        {
-                            // according to Java Concurrency, this might perform better on some
-                            // JVMs, since the object initialization doesn't happen on the
-                            // volatile member.
-                            TaxonomyIndexArrays tmpArrays = new TaxonomyIndexArrays(reader);
-                            taxoArrays = tmpArrays;
-                        }
-                        finally
-                        {
-                            readerManager.Release(reader);
-                        }
+                        return new TaxonomyIndexArrays(reader);
                     }
-                }
+                    finally
+                    {
+                        readerManager.Release(reader);
+                    }
+                });
             }
             return taxoArrays;
         }
@@ -1070,18 +1105,19 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 AddDone(); // in case this wasn't previously called
 
                 var ifs = new FileStream(tmpfile, FileMode.OpenOrCreate, FileAccess.Read);
-                var @in = new InputStreamDataInput(ifs);
-                map = new int[@in.ReadInt32()];
-                // NOTE: The current code assumes here that the map is complete,
-                // i.e., every ordinal gets one and exactly one value. Otherwise,
-                // we may run into an EOF here, or vice versa, not read everything.
-                for (int i = 0; i < map.Length; i++)
+                using (var @in = new InputStreamDataInput(ifs))
                 {
-                    int origordinal = @in.ReadInt32();
-                    int newordinal = @in.ReadInt32();
-                    map[origordinal] = newordinal;
+                    map = new int[@in.ReadInt32()];
+                    // NOTE: The current code assumes here that the map is complete,
+                    // i.e., every ordinal gets one and exactly one value. Otherwise,
+                    // we may run into an EOF here, or vice versa, not read everything.
+                    for (int i = 0; i < map.Length; i++)
+                    {
+                        int origordinal = @in.ReadInt32();
+                        int newordinal = @in.ReadInt32();
+                        map[origordinal] = newordinal;
+                    }
                 }
-                @in.Dispose();
 
                 // Delete the temporary file, which is no longer needed.
                 if (File.Exists(tmpfile))
@@ -1099,11 +1135,27 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public virtual void Rollback()
         {
-            lock (this)
+            // LUCENENET specific - ensure we don't dispose our lock unless this method succeeds
+            bool succeeded = false;
+            syncLock.EnterWriteLock();
+            try
             {
                 EnsureOpen();
                 indexWriter.Rollback();
                 DoClose();
+
+                // LUCENENET: Ensure subclasses are also disposed.
+                // The call above to DoClose() ensures that the below call is
+                // a no-op in this class, but will still make the call to
+                // subclasses to provide their own dipsosable implementation.
+                Dispose();
+                succeeded = true;
+            }
+            finally
+            {
+                syncLock.ExitWriteLock();
+                if (succeeded)
+                    syncLock.Dispose();
             }
         }
 
@@ -1115,7 +1167,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// </summary>
         public virtual void ReplaceTaxonomy(Directory taxoDir)
         {
-            lock (this)
+            syncLock.EnterWriteLock();
+            try
             {
                 // replace the taxonomy by doing IW optimized operations
                 indexWriter.DeleteAll();
@@ -1135,6 +1188,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
                 // update indexEpoch as a taxonomy replace is just like it has be recreated
                 ++indexEpoch;
+            }
+            finally
+            {
+                syncLock.ExitWriteLock();
             }
         }
 
