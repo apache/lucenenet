@@ -36,6 +36,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         private readonly float loadFactor;
 
         private volatile CompactLabelToOrdinal cache;
+        private bool isDisposed = false;
 
         /// <summary>
         /// Sole constructor.
@@ -77,10 +78,24 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             if (disposing)
             {
-                lock (this)
+                if (isDisposed) return;
+                if (@lock.TryEnterWriteLock(LOCK_TIMEOUT))
                 {
-                    cache = null;
+                    if (isDisposed) return;
+                    try
+                    {
+                        cache = null;
+                    }
+                    finally
+                    {
+                        isDisposed = true;
+                        @lock.ExitWriteLock();
+                        @lock.Dispose();
+                    }
                 }
+                else
+                    //Throwing ArguementException to maintain behavoir with ReaderWriterLock.AquireWriteLock.
+                    throw new ArgumentException();
             }
         }
 
