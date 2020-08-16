@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -317,7 +318,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// Creates a new instance with a default cache as defined by
         /// <see cref="DefaultTaxonomyWriterCache()"/>.
         /// </summary>
-        public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode = OpenMode.CREATE_OR_APPEND)
+        public DirectoryTaxonomyWriter(Directory directory, OpenMode openMode)
             : this(directory, openMode, DefaultTaxonomyWriterCache())
         {
         }
@@ -335,6 +336,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             return new Cl2oTaxonomyWriterCache(1024, 0.15f, 3);
         }
+
+        /// <summary>
+        /// Create this with <see cref="OpenMode.CREATE_OR_APPEND"/>.
+        /// </summary>
+        public DirectoryTaxonomyWriter(Directory directory) : this(directory, OpenMode.CREATE_OR_APPEND) { }
 
         /// <summary>
         /// Frees used resources as well as closes the underlying <see cref="IndexWriter"/>,
@@ -388,7 +394,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// Closes the <see cref="Index.IndexReader"/> as well as the
         /// <see cref="ITaxonomyWriterCache"/> instances that were used.
         /// </summary>
-        private void CloseResources() // LUCENENET: Made private, since this has the same purpose as Dispose(true). Removed redundant lock.
+        private void CloseResources() // LUCENENET: Made private, since this has the same purpose as Dispose(bool). Removed redundant lock.
         {
             if (initializedReaderManager)
             {
@@ -558,7 +564,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// Verifies that this instance wasn't closed, or throws
         /// <see cref="ObjectDisposedException"/> if it is.
         /// </summary>
-        protected internal void EnsureOpen()
+        protected void EnsureOpen()
         {
             if (isClosed)
             {
@@ -1025,7 +1031,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             /// </summary>
             public MemoryOrdinalMap()
             {
-                map = new int[] { };
+                map = Arrays.Empty<int>();
             }
 
             public void SetSize(int taxonomySize)

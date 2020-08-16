@@ -228,5 +228,42 @@ namespace Lucene.Net.Facet.Taxonomy
             Array.Copy(Components, 0, parts, 0, Length);
             return "FacetLabel: " + Arrays.ToString(parts);
         }
+
+        #region Operators for better .NET support
+        public static bool operator ==(FacetLabel left, FacetLabel right)
+        {
+            if (left is null)
+            {
+                return right is null;
+            }
+
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(FacetLabel left, FacetLabel right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator <(FacetLabel left, FacetLabel right)
+        {
+            return left is null ? !(right is null) : left.CompareTo(right) < 0;
+        }
+
+        public static bool operator <=(FacetLabel left, FacetLabel right)
+        {
+            return left is null || left.CompareTo(right) <= 0;
+        }
+
+        public static bool operator >(FacetLabel left, FacetLabel right)
+        {
+            return !(left is null) && left.CompareTo(right) > 0;
+        }
+
+        public static bool operator >=(FacetLabel left, FacetLabel right)
+        {
+            return left is null ? right is null : left.CompareTo(right) >= 0;
+        }
+        #endregion
     }
 }

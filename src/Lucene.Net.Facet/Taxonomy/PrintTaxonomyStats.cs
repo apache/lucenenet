@@ -30,15 +30,8 @@ namespace Lucene.Net.Facet.Taxonomy
     /// </summary>
 
     // java -cp ../build/core/classes/java:../build/facet/classes/java org.apache.lucene.facet.util.PrintTaxonomyStats -printTree /s2/scratch/indices/wikibig.trunk.noparents.facets.Lucene41.nd1M/facets
-    public class PrintTaxonomyStats
+    public static class PrintTaxonomyStats // LUCENENET specific - marked static
     {
-        /// <summary>
-        /// Sole constructor.
-        /// </summary>
-        public PrintTaxonomyStats()
-        {
-        }
-
         /// <summary>
         /// Command-line tool.
         /// </summary>

@@ -152,7 +152,6 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public class ScoreValueSource : ValueSource
         {
-
             /// <summary>
             /// Sole constructor.
             /// </summary>
@@ -172,14 +171,11 @@ namespace Lucene.Net.Facet.Taxonomy
 
             private class DoubleDocValuesAnonymousInnerClassHelper : DoubleDocValues
             {
-                private readonly ScoreValueSource outerInstance;
-
-                private Scorer scorer;
+                private readonly Scorer scorer;
 
                 public DoubleDocValuesAnonymousInnerClassHelper(ScoreValueSource outerInstance, Scorer scorer)
                     : base(outerInstance)
                 {
-                    this.outerInstance = outerInstance;
                     this.scorer = scorer;
                 }
 

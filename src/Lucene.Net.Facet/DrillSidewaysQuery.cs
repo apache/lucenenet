@@ -58,7 +58,7 @@ namespace Lucene.Net.Facet
 
         public override string ToString(string field)
         {
-            return "DrillSidewaysQuery";
+            return nameof(DrillSidewaysQuery);
         }
 
         public override Query Rewrite(IndexReader reader)
@@ -110,8 +110,8 @@ namespace Lucene.Net.Facet
         {
             private readonly DrillSidewaysQuery outerInstance;
 
-            private Weight baseWeight;
-            private object[] drillDowns;
+            private readonly Weight baseWeight;
+            private readonly object[] drillDowns;
 
             public WeightAnonymousInnerClassHelper(DrillSidewaysQuery outerInstance, Weight baseWeight, object[] drillDowns)
             {

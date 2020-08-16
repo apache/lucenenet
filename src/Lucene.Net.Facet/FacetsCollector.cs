@@ -47,7 +47,7 @@ namespace Lucene.Net.Facet
         /// Used during collection to record matching docs and then return a
         /// <see cref="DocIdSet"/> that contains them.
         /// </summary>
-        protected internal abstract class Docs
+        protected abstract class Docs
         {
 
             /// <summary>
@@ -74,7 +74,6 @@ namespace Lucene.Net.Facet
         /// </summary>
         public sealed class MatchingDocs
         {
-
             /// <summary>
             /// Context for this segment. </summary>
             public AtomicReaderContext Context { get; private set; }
@@ -129,19 +128,13 @@ namespace Lucene.Net.Facet
         /// </summary>
         protected virtual Docs CreateDocs(int maxDoc)
         {
-            return new DocsAnonymousInnerClassHelper(this, maxDoc);
+            return new DocsAnonymousInnerClassHelper(maxDoc);
         }
 
         private class DocsAnonymousInnerClassHelper : Docs
         {
-            private readonly FacetsCollector outerInstance;
-
-            private int maxDoc;
-
-            public DocsAnonymousInnerClassHelper(FacetsCollector outerInstance, int maxDoc)
+            public DocsAnonymousInnerClassHelper(int maxDoc)
             {
-                this.outerInstance = outerInstance;
-                this.maxDoc = maxDoc;
                 bits = new FixedBitSet(maxDoc);
             }
 

@@ -30,7 +30,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     public class CollisionMap
     {
         private int capacity;
-        private float loadFactor;
+        private readonly float loadFactor;
         private int size;
         private int threshold;
 
@@ -50,7 +50,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        private CharBlockArray labelRepository;
+        private readonly CharBlockArray labelRepository;
 
         private Entry[] entries;
 
@@ -178,7 +178,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal virtual IEnumerator<CollisionMap.Entry> GetEnumerator()
         {
-            return new EntryIterator(this, entries, size);
+            return new EntryEnumerator(entries, size);
         }
 
         /// <summary>
@@ -212,17 +212,14 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             return memoryUsage;
         }
 
-        private class EntryIterator : IEnumerator<Entry>
+        private class EntryEnumerator : IEnumerator<Entry>
         {
-            private readonly CollisionMap outerInstance;
-
             internal Entry next; // next entry to return
             internal int index; // current slot
             internal Entry[] ents;
 
-            internal EntryIterator(CollisionMap outerInstance, Entry[] entries, int size)
+            internal EntryEnumerator(Entry[] entries, int size)
             {
-                this.outerInstance = outerInstance;
                 this.ents = entries;
                 Entry[] t = entries;
                 int i = t.Length;
@@ -238,10 +235,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 this.index = i;
             }
 
-            public bool HasNext()
-            {
-                return this.next != null;
-            }
+            private bool HasNext => this.next != null;
 
             public Entry Next()
             {
@@ -275,7 +269,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             public bool MoveNext()
             {
-                if (!HasNext())
+                if (!HasNext)
                     return false;
                 Current = Next();
                 return true;

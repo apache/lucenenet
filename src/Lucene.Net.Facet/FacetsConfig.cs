@@ -1,5 +1,4 @@
-﻿using J2N.Collections.Generic.Extensions;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -661,7 +660,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         public static string[] StringToPath(string s)
         {
-            IList<string> parts = new List<string>();
+            List<string> parts = new List<string>();
             int length = s.Length;
             if (length == 0)
             {

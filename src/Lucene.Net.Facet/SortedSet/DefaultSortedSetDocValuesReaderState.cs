@@ -115,8 +115,7 @@ namespace Lucene.Net.Facet.SortedSet
         /// </summary>
         public override OrdRange GetOrdRange(string dim)
         {
-            OrdRange result;
-            prefixToOrdRange.TryGetValue(dim, out result);
+            prefixToOrdRange.TryGetValue(dim, out OrdRange result);
             return result;
         }
 

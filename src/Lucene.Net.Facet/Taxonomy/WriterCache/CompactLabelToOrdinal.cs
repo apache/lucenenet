@@ -138,7 +138,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public override int GetOrdinal(FacetLabel label)
         {
-            if (label == null)
+            if (label is null)
             {
                 return LabelToOrdinal.INVALID_ORDINAL;
             }
@@ -252,7 +252,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private bool AddLabelOffsetToHashArray(HashArray a, int hash, int ordinal, int knownOffset)
         {
-
             int index = CompactLabelToOrdinal.IndexFor(hash, a.offsets.Length);
             int offset = a.offsets[index];
 
@@ -268,7 +267,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private int GetOrdinal(HashArray a, FacetLabel label, int hash)
         {
-            if (label == null)
+            if (label is null)
             {
                 return LabelToOrdinal.INVALID_ORDINAL;
             }
@@ -314,8 +313,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             int hash = label.GetHashCode();
 
+#pragma warning disable IDE0054 // Use compound assignment
             hash = hash ^ (((int)((uint)hash >> 20)) ^ ((int)((uint)hash >> 12)));
             hash = hash ^ ((int)((uint)hash >> 7)) ^ ((int)((uint)hash >> 4));
+#pragma warning restore IDE0054 // Use compound assignment
 
             return hash;
 
@@ -324,8 +325,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         internal static int StringHashCode(CharBlockArray labelRepository, int offset)
         {
             int hash = CategoryPathUtils.HashCodeOfSerialized(labelRepository, offset);
+#pragma warning disable IDE0054 // Use compound assignment
             hash = hash ^ (((int)((uint)hash >> 20)) ^ ((int)((uint)hash >> 12)));
             hash = hash ^ ((int)((uint)hash >> 7)) ^ ((int)((uint)hash >> 4));
+#pragma warning restore IDE0054 // Use compound assignment
             return hash;
         }
 
@@ -394,9 +397,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             // and label offsets re-added to the object. I am unsure as to why we
             // can't just store these off in the file as well, but in keeping with
             // the spirit of the original code, I did it this way. (ssuppe)
-            CompactLabelToOrdinal l2o = new CompactLabelToOrdinal();
-            l2o.loadFactor = loadFactor;
-            l2o.hashArrays = new HashArray[numHashArrays];
+            CompactLabelToOrdinal l2o = new CompactLabelToOrdinal
+            {
+                loadFactor = loadFactor,
+                hashArrays = new HashArray[numHashArrays]
+            };
 
             BinaryReader dis = null;
             try

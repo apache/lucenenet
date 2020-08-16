@@ -141,7 +141,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         // LUCENENET specific - eliminated the InitTaxoArrays() method in favor of LazyInitializer
 
-        protected override void Dispose(bool disposing) // LUCENENET specific - cleanup ReaderWriterLockSlim instances
+        protected override void Dispose(bool disposing) // LUCENENET specific - changed from DoClose()
         {
             if (disposing && !isDisposed)
             {
@@ -150,7 +150,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // do not clear() the caches, as they may be used by other DTR instances.
                 ordinalCache = null;
                 categoryCache = null;
-                ordinalCacheLock.Dispose();
+                ordinalCacheLock.Dispose(); // LUCENENET specific - cleanup ReaderWriterLockSlim instances
                 categoryCacheLock.Dispose();
                 isDisposed = true;
             }
@@ -417,7 +417,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// Currently, if the given size is smaller than the current size of
         /// a cache, it will not shrink, and rather we be limited to its current
         /// size. </summary>
-        /// <param name="size"> the new maximum cache size, in number of entries. </param>
+        /// <param name="size"> The new maximum cache size, in number of entries. </param>
         public virtual void SetCacheSize(int size)
         {
             EnsureOpen();
@@ -442,7 +442,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 try
                 {
                     FacetLabel category = this.GetPath(i);
-                    if (category == null)
+                    if (category is null)
                     {
                         sb.Append(i + ": NULL!! \n");
                         continue;

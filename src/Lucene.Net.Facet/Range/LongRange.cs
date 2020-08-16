@@ -1,7 +1,5 @@
 ﻿using Lucene.Net.Support;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Lucene.Net.Facet.Range
 {
@@ -23,11 +21,11 @@ namespace Lucene.Net.Facet.Range
      */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
-    using IBits = Lucene.Net.Util.IBits;
     using DocIdSet = Lucene.Net.Search.DocIdSet;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
     using Filter = Lucene.Net.Search.Filter;
     using FunctionValues = Lucene.Net.Queries.Function.FunctionValues;
+    using IBits = Lucene.Net.Util.IBits;
     using ValueSource = Lucene.Net.Queries.Function.ValueSource;
 
     /// <summary>
