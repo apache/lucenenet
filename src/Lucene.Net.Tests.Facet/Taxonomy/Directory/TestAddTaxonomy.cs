@@ -2,6 +2,7 @@
 using J2N.Threading.Atomic;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
@@ -91,7 +92,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 Random random = Random;
                 while (numCats.DecrementAndGet() > 0)
                 {
-                    string cat = Convert.ToString(random.Next(range));
+                    string cat = Convert.ToString(random.Next(range), CultureInfo.InvariantCulture);
                     try
                     {
                         tw.AddCategory(new FacetLabel("a", cat));
@@ -243,7 +244,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             var tw = new DirectoryTaxonomyWriter(src);
             for (int i = 0; i < numCategories; i++)
             {
-                tw.AddCategory(new FacetLabel("a", Convert.ToString(i)));
+                tw.AddCategory(new FacetLabel("a", Convert.ToString(i, CultureInfo.InvariantCulture)));
             }
             tw.Dispose();
 
@@ -295,7 +296,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 {
                     try
                     {
-                        destTW.AddCategory(new FacetLabel("a", Convert.ToString(i)));
+                        destTW.AddCategory(new FacetLabel("a", Convert.ToString(i, CultureInfo.InvariantCulture)));
                     }
                     catch (IOException e)
                     {

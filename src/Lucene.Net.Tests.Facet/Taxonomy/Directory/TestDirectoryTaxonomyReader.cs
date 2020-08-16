@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
 using JCG = J2N.Collections.Generic;
 
@@ -150,7 +151,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             FacetLabel[] cp = new FacetLabel[n];
             for (int i = 0; i < n; i++)
             {
-                cp[i] = new FacetLabel("a", Convert.ToString(i));
+                cp[i] = new FacetLabel("a", Convert.ToString(i, CultureInfo.InvariantCulture));
             }
 
             try
@@ -238,7 +239,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 int numCats = Random.Next(4) + 1;
                 for (int j = 0; j < numCats; j++)
                 {
-                    writer.AddCategory(new FacetLabel(Convert.ToString(i), Convert.ToString(j)));
+                    writer.AddCategory(new FacetLabel(Convert.ToString(i, CultureInfo.InvariantCulture), Convert.ToString(j, CultureInfo.InvariantCulture)));
                 }
                 numCategories += numCats + 1; // one for round-parent
                 var newtr = TaxonomyReader.OpenIfChanged(reader);
@@ -248,12 +249,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
                 // assert categories
                 Assert.AreEqual(numCategories, reader.Count);
-                int roundOrdinal = reader.GetOrdinal(new FacetLabel(Convert.ToString(i)));
+                int roundOrdinal = reader.GetOrdinal(new FacetLabel(Convert.ToString(i, CultureInfo.InvariantCulture)));
                 int[] parents = reader.ParallelTaxonomyArrays.Parents;
                 Assert.AreEqual(0, parents[roundOrdinal]); // round's parent is root
                 for (int j = 0; j < numCats; j++)
                 {
-                    int ord = reader.GetOrdinal(new FacetLabel(Convert.ToString(i), Convert.ToString(j)));
+                    int ord = reader.GetOrdinal(new FacetLabel(Convert.ToString(i, CultureInfo.InvariantCulture), Convert.ToString(j, CultureInfo.InvariantCulture)));
                     Assert.AreEqual(roundOrdinal, parents[ord]); // round's parent is root
                 }
             }
@@ -557,12 +558,12 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 if (random.NextBoolean())
                 {
-                    taxoWriter.AddCategory(new FacetLabel("a", Convert.ToString(i)));
+                    taxoWriter.AddCategory(new FacetLabel("a", Convert.ToString(i, CultureInfo.InvariantCulture)));
                     ++numA;
                 }
                 else
                 {
-                    taxoWriter.AddCategory(new FacetLabel("b", Convert.ToString(i)));
+                    taxoWriter.AddCategory(new FacetLabel("b", Convert.ToString(i, CultureInfo.InvariantCulture)));
                     ++numB;
                 }
             }

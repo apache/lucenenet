@@ -21,7 +21,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
     /// <summary>
     /// Abstract class for storing Label->Ordinal mappings in a taxonomy. 
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class LabelToOrdinal

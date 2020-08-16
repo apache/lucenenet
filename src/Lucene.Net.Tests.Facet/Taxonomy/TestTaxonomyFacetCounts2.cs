@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -56,26 +57,26 @@ namespace Lucene.Net.Facet.Taxonomy
             CATEGORIES_A = new FacetField[NUM_CHILDREN_CP_A];
             for (int i = 0; i < NUM_CHILDREN_CP_A; i++)
             {
-                CATEGORIES_A[i] = new FacetField(CP_A, Convert.ToString(i));
+                CATEGORIES_A[i] = new FacetField(CP_A, Convert.ToString(i, CultureInfo.InvariantCulture));
             }
             CATEGORIES_B = new FacetField[NUM_CHILDREN_CP_B];
             for (int i = 0; i < NUM_CHILDREN_CP_B; i++)
             {
-                CATEGORIES_B[i] = new FacetField(CP_B, Convert.ToString(i));
+                CATEGORIES_B[i] = new FacetField(CP_B, Convert.ToString(i, CultureInfo.InvariantCulture));
             }
 
             // NO_PARENTS categories
             CATEGORIES_C = new FacetField[NUM_CHILDREN_CP_C];
             for (int i = 0; i < NUM_CHILDREN_CP_C; i++)
             {
-                CATEGORIES_C[i] = new FacetField(CP_C, Convert.ToString(i));
+                CATEGORIES_C[i] = new FacetField(CP_C, Convert.ToString(i, CultureInfo.InvariantCulture));
             }
 
             // Multi-level categories
             CATEGORIES_D = new FacetField[NUM_CHILDREN_CP_D];
             for (int i = 0; i < NUM_CHILDREN_CP_D; i++)
             {
-                string val = Convert.ToString(i);
+                string val = Convert.ToString(i, CultureInfo.InvariantCulture);
                 CATEGORIES_D[i] = new FacetField(CP_D, val, val + val); // e.g. D/1/11, D/2/22...
             }
         }

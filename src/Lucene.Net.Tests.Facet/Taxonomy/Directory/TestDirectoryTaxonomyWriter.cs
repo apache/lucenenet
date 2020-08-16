@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -329,7 +330,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 Assert.True(dtr.GetOrdinal(cp) > 0, "category not found " + cp);
                 int level = cp.Length;
                 int parentOrd = 0; // for root, parent is always virtual ROOT (ord=0)
-                FacetLabel path = new FacetLabel();
+                FacetLabel path /*= new FacetLabel()*/;
                 for (int i = 0; i < level; i++)
                 {
                     path = cp.Subpath(i + 1);
@@ -365,7 +366,11 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     try
                     {
                         int value = random.Next(range);
-                        FacetLabel cp = new FacetLabel(Convert.ToString(value / 1000), Convert.ToString(value / 10000), Convert.ToString(value / 100000), Convert.ToString(value));
+                        FacetLabel cp = new FacetLabel(
+                            Convert.ToString(value / 1000, CultureInfo.InvariantCulture),
+                            Convert.ToString(value / 10000, CultureInfo.InvariantCulture),
+                            Convert.ToString(value / 100000, CultureInfo.InvariantCulture),
+                            Convert.ToString(value, CultureInfo.InvariantCulture));
                         int ord = tw.AddCategory(cp);
                         Assert.True(tw.GetParent(ord) != -1, "invalid parent for ordinal " + ord + ", category " + cp);
                         string l1 = FacetsConfig.PathToString(cp.Components, 1);
