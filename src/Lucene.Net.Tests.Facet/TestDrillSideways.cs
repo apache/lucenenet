@@ -1142,7 +1142,7 @@ namespace Lucene.Net.Facet
                         drillSidewaysCounts[failDim].Inc(doc.dims, doc.dims2, failDim);
                     }
                 }
-            nextDocContinue: ;
+            nextDocContinue:;
             }
             //nextDocBreak:// Not referenced
 
@@ -1335,7 +1335,49 @@ namespace Lucene.Net.Facet
 
             IOUtils.Dispose(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
         }
+
+        // LUCENENET: From Lucene 4.10.4
+        [Test]
+        public void TestScorer()
+        {
+            // LUCENE-6001 some scorers, eg ReqExlScorer, can hit NPE if cost is called after nextDoc
+            Directory dir = NewDirectory();
+            Directory taxoDir = NewDirectory();
+
+            // Writes facet ords to a separate directory from the
+            // main index:
+            DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir, OpenMode.CREATE);
+
+            FacetsConfig config = new FacetsConfig();
+
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir);
+
+            Document doc = new Document();
+            doc.Add(NewTextField("field", "foo bar", Field.Store.NO));
+            doc.Add(new FacetField("Author", "Bob"));
+            doc.Add(new FacetField("dim", "a"));
+            writer.AddDocument(config.Build(taxoWriter, doc));
+
+            // NRT open
+            IndexSearcher searcher = NewSearcher(writer.GetReader());
+
+            // NRT open
+            TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoWriter);
+
+            DrillSideways ds = new DrillSideways(searcher, config, taxoReader);
+
+            BooleanQuery bq = new BooleanQuery(true);
+            bq.Add(new TermQuery(new Term("field", "foo")), Occur.MUST);
+            bq.Add(new TermQuery(new Term("field", "bar")), Occur.MUST_NOT);
+            DrillDownQuery ddq = new DrillDownQuery(config, bq);
+            ddq.Add("field", "foo");
+            ddq.Add("author", bq);
+            ddq.Add("dim", bq);
+            DrillSidewaysResult r = ds.Search(null, ddq, 10);
+            assertEquals(0, r.Hits.TotalHits);
+
+            writer.Dispose();
+            IOUtils.Dispose(searcher.IndexReader, taxoReader, taxoWriter, dir, taxoDir);
+        }
     }
-
-
 }
