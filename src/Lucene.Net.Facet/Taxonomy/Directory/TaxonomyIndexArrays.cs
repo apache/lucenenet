@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
@@ -44,8 +45,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         // single boolean member as volatile, instead of declaring the arrays
         // volatile. the code guarantees that only after the boolean is set to true,
         // the arrays are returned.
-        private volatile bool initializedChildren = false;
+        private /*volatile*/ bool initializedChildren = false;
         private int[] children, siblings;
+        private object syncLock = new object();
 
         /// <summary>
         /// Used by <see cref="Add(int, int)"/> after the array grew.
@@ -93,9 +95,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private void InitChildrenSiblings(TaxonomyIndexArrays copyFrom)
         {
-            lock (this)
+            if (!initializedChildren) // must do this check !
             {
-                if (!initializedChildren) // must do this check !
+                LazyInitializer.EnsureInitialized(ref children, ref initializedChildren, ref syncLock, () =>
                 {
                     children = new int[parents.Length];
                     siblings = new int[parents.Length];
@@ -110,8 +112,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     {
                         ComputeChildrenSiblings(0);
                     }
-                    initializedChildren = true;
-                }
+                    return children;
+                });
             }
         }
 
