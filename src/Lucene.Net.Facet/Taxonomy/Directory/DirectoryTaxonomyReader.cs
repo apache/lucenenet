@@ -78,6 +78,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private readonly ReaderWriterLockSlim categoryCacheLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
         private /*volatile*/ TaxonomyIndexArrays taxoArrays; // LUCENENET specific: LazyInitalizer negates the need for volatile
+        private bool isDisposed = false;
 
         /// <summary>
         /// Called only from <see cref="DoOpenIfChanged()"/>. If the taxonomy has been
@@ -142,21 +143,17 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         protected override void Dispose(bool disposing) // LUCENENET specific - cleanup ReaderWriterLockSlim instances
         {
-            if (disposing)
+            if (disposing && !isDisposed)
             {
+                indexReader.Dispose();
+                taxoArrays = null;
+                // do not clear() the caches, as they may be used by other DTR instances.
+                ordinalCache = null;
+                categoryCache = null;
                 ordinalCacheLock.Dispose();
                 categoryCacheLock.Dispose();
+                isDisposed = true;
             }
-            base.Dispose(disposing);
-        }
-
-        protected internal override void DoClose()
-        {
-            indexReader.Dispose();
-            taxoArrays = null;
-            // do not clear() the caches, as they may be used by other DTR instances.
-            ordinalCache = null;
-            categoryCache = null;
         }
 
         /// <summary>
