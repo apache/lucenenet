@@ -135,7 +135,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private string Showcat(FacetLabel path)
         {
-            if (path == null)
+            if (path is null)
             {
                 return "<null>";
             }
@@ -427,7 +427,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 FacetLabel me = tr.GetPath(ordinal);
                 int parentOrdinal = parents[ordinal];
                 FacetLabel parent = tr.GetPath(parentOrdinal);
-                if (parent == null)
+                if (parent is null)
                 {
                     fail("Parent of " + ordinal + " is " + parentOrdinal + ", but this is not a valid category.");
                 }
@@ -499,7 +499,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 FacetLabel me = tr.GetPath(ordinal);
                 int parentOrdinal = tw.GetParent(ordinal);
                 FacetLabel parent = tr.GetPath(parentOrdinal);
-                if (parent == null)
+                if (parent is null)
                 {
                     fail("Parent of " + ordinal + " is " + parentOrdinal + ", but this is not a valid category.");
                 }

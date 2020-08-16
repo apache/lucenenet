@@ -41,8 +41,7 @@ namespace Lucene.Net.Facet
 
         public override FacetResult GetTopChildren(int topN, string dim, params string[] path)
         {
-            Facets facets;
-            if (!dimToFacets.TryGetValue(dim,out facets))
+            if (!dimToFacets.TryGetValue(dim, out Facets facets))
             {
                 if (defaultFacets == null)
                 {
@@ -56,8 +55,7 @@ namespace Lucene.Net.Facet
         
         public override float GetSpecificValue(string dim, params string[] path)
         {
-            Facets facets;
-            if (!dimToFacets.TryGetValue(dim,out facets))
+            if (!dimToFacets.TryGetValue(dim, out Facets facets))
             {
                 if (defaultFacets == null)
                 {
@@ -70,7 +68,6 @@ namespace Lucene.Net.Facet
 
         public override IList<FacetResult> GetAllDims(int topN)
         {
-
             List<FacetResult> results = new List<FacetResult>();
 
             // First add the specific dim's facets:

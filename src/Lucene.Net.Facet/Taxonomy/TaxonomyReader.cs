@@ -312,7 +312,5 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             return false;
         }
-
-        
     }
 }

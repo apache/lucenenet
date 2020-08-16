@@ -316,8 +316,45 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
                 sb.Append(Components[i]).Append(delimiter);
             }
-            sb.Length = sb.Length - 1; // remove last delimiter
+            sb.Length -= 1; // remove last delimiter
             return sb.ToString();
         }
+
+        #region Operators for better .NET support
+        public static bool operator ==(CategoryPath left, CategoryPath right)
+        {
+            if (left is null)
+            {
+                return right is null;
+            }
+
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(CategoryPath left, CategoryPath right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator <(CategoryPath left, CategoryPath right)
+        {
+            return left is null ? !(right is null) : left.CompareTo(right) < 0;
+        }
+
+        public static bool operator <=(CategoryPath left, CategoryPath right)
+        {
+            return left is null || left.CompareTo(right) <= 0;
+        }
+
+        public static bool operator >(CategoryPath left, CategoryPath right)
+        {
+            return !(left is null) && left.CompareTo(right) > 0;
+        }
+
+        public static bool operator >=(CategoryPath left, CategoryPath right)
+        {
+            return left is null ? right is null : left.CompareTo(right) >= 0;
+        }
+        #endregion
     }
 }

@@ -67,7 +67,7 @@ namespace Lucene.Net.Facet.SortedSet
 
         /// <summary>
         /// Sole constructor. </summary>
-        protected internal SortedSetDocValuesReaderState()
+        protected SortedSetDocValuesReaderState()
         {
         }
 

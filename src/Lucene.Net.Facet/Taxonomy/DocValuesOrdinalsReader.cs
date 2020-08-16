@@ -64,7 +64,7 @@
         {
             private readonly DocValuesOrdinalsReader outerInstance;
 
-            private BinaryDocValues values;
+            private readonly BinaryDocValues values;
 
             public OrdinalsSegmentReaderAnonymousInnerClassHelper(DocValuesOrdinalsReader outerInstance, BinaryDocValues values)
             {
@@ -87,7 +87,6 @@
         /// </summary>
         protected virtual void Decode(BytesRef buf, Int32sRef ordinals)
         {
-
             // grow the buffer up front, even if by a large number of values (buf.length)
             // that saves the need to check inside the loop for every decoded value if
             // the buffer needs to grow.

@@ -29,20 +29,15 @@ namespace Lucene.Net.Facet.Range
     /// </summary>
     public abstract class Range
     {
-
         /// <summary>
         /// Label that identifies this range. </summary>
         public string Label { get; private set; }
 
         /// <summary>
         /// Sole constructor. </summary>
-        protected internal Range(string label)
+        protected Range(string label)
         {
-            if (label == null)
-            {
-                throw new NullReferenceException("label cannot be null");
-            }
-            this.Label = label;
+            this.Label = label ?? throw new ArgumentNullException(nameof(label));
         }
 
         /// <summary>
@@ -79,7 +74,7 @@ namespace Lucene.Net.Facet.Range
         /// <summary>
         /// Invoke this for a useless range.
         /// </summary>
-        protected internal virtual void FailNoMatch()
+        protected virtual void FailNoMatch()
         {
             throw new ArgumentException("range \"" + Label + "\" matches nothing");
         }
