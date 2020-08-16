@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <StartupObject>Lucene.Net.Tests.BenchmarkDotNet.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="J2N" Version="1.0.0-beta-0001" />
     <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00005" />
+    <PackageReference Include="Lucene.Net.Expressions" Version="4.8.0-beta00005" />
+    <PackageReference Include="Lucene.Net.Facet" Version="4.8.0-beta00005" />
     <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00005" />
   </ItemGroup>
   
@@ -19,6 +23,13 @@
     <Compile Include="..\Lucene.Net.TestFramework\Support\Randomized\Generators\RandomPicks.cs" LinkBase="Util" />
     <Compile Include="..\Lucene.Net.TestFramework\Support\Randomized\Generators\RandomInts.cs" LinkBase="Util" />
     <Compile Include="..\Lucene.Net\Support\ExceptionToNetNumericConventionAttribute.cs" LinkBase="Util" />
+    <Compile Include="..\Lucene.Net.Demo\Facet\AssociationsFacetsExample.cs" LinkBase="Util" />
+    <Compile Include="..\Lucene.Net.Demo\Facet\DistanceFacetsExample.cs" LinkBase="Util" />
+    <Compile Include="..\Lucene.Net.Demo\Facet\ExpressionAggregationFacetsExample.cs" LinkBase="Util" />
+    <Compile Include="..\Lucene.Net.Demo\Facet\MultiCategoryListsFacetsExample.cs" LinkBase="Util" />
+    <Compile Include="..\Lucene.Net.Demo\Facet\RangeFacetsExample.cs" LinkBase="Util" />
+    <Compile Include="..\Lucene.Net.Demo\Facet\SimpleFacetsExample.cs" LinkBase="Util" />
+    <Compile Include="..\Lucene.Net.Demo\Facet\SimpleSortedSetFacetsExample.cs" LinkBase="Util" />
   </ItemGroup>
 
 </Project>
