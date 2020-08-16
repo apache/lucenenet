@@ -74,6 +74,8 @@ namespace Lucene.Net.Facet
         // int/float/bytes in a single indexed field:
         private readonly IDictionary<string, string> assocDimTypes = new ConcurrentDictionary<string, string>();
 
+        private readonly object syncLock = new object(); // LUCENENET specific - avoid lock(this)
+
         /// <summary>
         /// Holds the configuration for one dimension
         /// 
@@ -137,10 +139,9 @@ namespace Lucene.Net.Facet
         /// </summary>
         public virtual DimConfig GetDimConfig(string dimName)
         {
-            lock (this)
+            lock (syncLock)
             {
-                DimConfig ft;
-                if (!fieldTypes.TryGetValue(dimName, out ft))
+                if (!fieldTypes.TryGetValue(dimName, out DimConfig ft))
                 {
                     ft = DefaultDimConfig;
                 }
@@ -154,7 +155,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         public virtual void SetHierarchical(string dimName, bool v)
         {
-            lock (this)
+            lock (syncLock)
             {
                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
                 if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
@@ -174,7 +175,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         public virtual void SetMultiValued(string dimName, bool v)
         {
-            lock (this)
+            lock (syncLock)
             {
                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
                 if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
@@ -195,7 +196,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         public virtual void SetRequireDimCount(string dimName, bool v)
         {
-            lock (this)
+            lock (syncLock)
             {
                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
                 if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
@@ -216,7 +217,7 @@ namespace Lucene.Net.Facet
         /// </summary>
         public virtual void SetIndexFieldName(string dimName, string indexFieldName)
         {
-            lock (this)
+            lock (syncLock)
             {
                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
                 if (!fieldTypes.TryGetValue(dimName, out DimConfig fieldType))
@@ -291,8 +292,7 @@ namespace Lucene.Net.Facet
                         CheckSeen(seenDims, facetField.Dim);
                     }
                     string indexFieldName = dimConfig.IndexFieldName;
-                    IList<FacetField> fields;
-                    if (!byField.TryGetValue(indexFieldName, out fields))
+                    if (!byField.TryGetValue(indexFieldName, out IList<FacetField> fields))
                     {
                         fields = new List<FacetField>();
                         byField[indexFieldName] = fields;
@@ -309,8 +309,7 @@ namespace Lucene.Net.Facet
                         CheckSeen(seenDims, facetField.Dim);
                     }
                     string indexFieldName = dimConfig.IndexFieldName;
-                    IList<SortedSetDocValuesFacetField> fields;
-                    if (!dvByField.TryGetValue(indexFieldName, out fields))
+                    if (!dvByField.TryGetValue(indexFieldName, out IList<SortedSetDocValuesFacetField> fields))
                     {
                         fields = new List<SortedSetDocValuesFacetField>();
                         dvByField[indexFieldName] = fields;
@@ -336,8 +335,7 @@ namespace Lucene.Net.Facet
                     }
 
                     string indexFieldName = dimConfig.IndexFieldName;
-                    IList<AssociationFacetField> fields;
-                    if (!assocByField.TryGetValue(indexFieldName, out fields))
+                    if (!assocByField.TryGetValue(indexFieldName, out IList<AssociationFacetField> fields))
                     {
                         fields = new List<AssociationFacetField>();
                         assocByField[indexFieldName] = fields;
@@ -360,8 +358,7 @@ namespace Lucene.Net.Facet
                         type = "bytes";
                     }
                     // NOTE: not thread safe, but this is just best effort:
-                    string curType;
-                    if (!assocDimTypes.TryGetValue(indexFieldName, out curType))
+                    if (!assocDimTypes.TryGetValue(indexFieldName, out string curType))
                     {
                         assocDimTypes[indexFieldName] = type;
                     }
@@ -458,7 +455,7 @@ namespace Lucene.Net.Facet
             }
         }
 
-        public void ProcessSSDVFacetFields(IDictionary<string, IList<SortedSetDocValuesFacetField>> byField, Document doc)
+        private void ProcessSSDVFacetFields(IDictionary<string, IList<SortedSetDocValuesFacetField>> byField, Document doc)
         {
             //System.out.println("process SSDV: " + byField);
             foreach (KeyValuePair<string, IList<SortedSetDocValuesFacetField>> ent in byField)
@@ -654,7 +651,7 @@ namespace Lucene.Net.Facet
             }
 
             // Trim off last DELIM_CHAR:
-            sb.Length = sb.Length - 1;
+            sb.Length -= 1;
             return sb.ToString();
         }
 
