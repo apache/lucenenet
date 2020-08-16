@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -103,7 +102,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Sole constructor.
         /// </summary>
-        public TaxonomyReader()
+        protected TaxonomyReader() // LUCENENET specific - marked protected instead of public
         {
         }
 
@@ -145,11 +144,9 @@ namespace Lucene.Net.Facet.Taxonomy
         // set refCount to 1 at start
         private readonly AtomicInt32 refCount = new AtomicInt32(1);
 
-        /// <summary>
-        /// performs the actual task of closing the resources that are used by the
-        /// taxonomy reader.
-        /// </summary>
-        protected internal abstract void DoClose();
+        private readonly object syncLock = new object(); // LUCENENET specific - avoid lock (this)
+
+        // LUCENENET specific - Removed DoClose() and replaced with Dispose(true)
 
         /// <summary>
         /// Implements the actual opening of a new <see cref="TaxonomyReader"/> instance if
@@ -170,27 +167,26 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         // LUCENENET specific - implementing proper dispose pattern
+#pragma warning disable CA1063 // Implement IDisposable Correctly
         public void Dispose()
+#pragma warning restore CA1063 // Implement IDisposable Correctly
         {
+            if (closed) return;
+            lock (syncLock)
+            {
+                if (closed) return;
+                DecRef();
+                closed = true;
+            }
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                lock (this)
-                {
-                    if (!closed)
-                    {
-                        DecRef();
-                        closed = true;
-                    }
-                }
-            }
-        }
-
+        /// <summary>
+        /// Performs the actual task of closing the resources that are used by the
+        /// taxonomy reader.
+        /// </summary>
+        protected abstract void Dispose(bool disposing); // LUCENENET: Refactored from DoClose()
 
         /// <summary>
         /// Expert: decreases the refCount of this TaxonomyReader instance. If the
@@ -205,7 +201,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 bool success = false;
                 try
                 {
-                    DoClose();
+                    Dispose(true); // LUCENENET specific - changed from DoClose() to Dispose(bool)
                     closed = true;
                     success = true;
                 }
