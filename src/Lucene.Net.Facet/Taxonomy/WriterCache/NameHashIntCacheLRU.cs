@@ -25,24 +25,42 @@
     /// assuming no collisions.
     /// <para/>
     /// NOTE: this was NameHashIntCacheLRU in Lucene
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class NameHashInt32CacheLRU : NameInt32CacheLRU
+    public class NameHashInt32CacheLru : IInternalNameInt32CacheLru // LUCENENET specific - added interface
     {
-        internal NameHashInt32CacheLRU(int maxCacheSize)
-            : base(maxCacheSize)
+        private readonly IInternalNameInt32CacheLru cache;
+        internal NameHashInt32CacheLru(int limit)
         {
+            this.cache = new NameCacheLru<long>(
+               limit,
+               (name) => name.Int64HashCode(),
+               (name, prefixLength) => name.Subpath(prefixLength).Int64HashCode());
         }
 
-        internal override object Key(FacetLabel name)
-        {
-            return new long?(name.Int64HashCode());
-        }
+        /// <inheritdoc/>
+        public int Count => cache.Count;
 
-        internal override object Key(FacetLabel name, int prefixLen)
-        {
-            return new long?(name.Subpath(prefixLen).Int64HashCode());
-        }
+        /// <inheritdoc/>
+        public int Limit => cache.Limit;
+
+        /// <inheritdoc/>
+        string IInternalNameInt32CacheLru.Stats => cache.Stats;
+
+        /// <inheritdoc/>
+        void IInternalNameInt32CacheLru.Clear() => cache.Clear();
+
+        /// <inheritdoc/>
+        bool IInternalNameInt32CacheLru.MakeRoomLRU() => cache.MakeRoomLRU();
+
+        /// <inheritdoc/>
+        bool IInternalNameInt32CacheLru.Put(FacetLabel name, int val) => cache.Put(name, val);
+
+        /// <inheritdoc/>
+        bool IInternalNameInt32CacheLru.Put(FacetLabel name, int prefixLen, int val) => cache.Put(name, prefixLen, val);
+
+        /// <inheritdoc/>
+        bool IInternalNameInt32CacheLru.TryGetValue(FacetLabel name, out int value) => cache.TryGetValue(name, out value);
     }
 }

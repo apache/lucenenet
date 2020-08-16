@@ -24,7 +24,7 @@ namespace Lucene.Net.Facet.Taxonomy
      */
 
     using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
-    using NameHashInt32CacheLRU = Lucene.Net.Facet.Taxonomy.WriterCache.NameHashInt32CacheLRU;
+    using NameHashInt32CacheLru = Lucene.Net.Facet.Taxonomy.WriterCache.NameHashInt32CacheLru;
 
     /// <summary>
     /// Holds a sequence of string components, specifying the hierarchical name of a
@@ -179,7 +179,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Calculate a 64-bit hash function for this path.  This
-        /// is necessary for <see cref="NameHashInt32CacheLRU"/> (the
+        /// is necessary for <see cref="NameHashInt32CacheLru"/> (the
         /// default cache impl for <see cref="LruTaxonomyWriterCache"/>) 
         /// to reduce the chance of "silent but deadly" collisions.
         /// <para/>
