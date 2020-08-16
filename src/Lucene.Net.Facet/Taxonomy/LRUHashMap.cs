@@ -23,12 +23,12 @@ namespace Lucene.Net.Facet.Taxonomy
      */
 
     /// <summary>
-    /// <see cref="LRUHashMap{TKey, TValue}"/> is similar to of Java's HashMap, which has a bounded <see cref="Limit"/>;
+    /// <see cref="LruDictionary{TKey, TValue}"/> is similar to of Java's HashMap, which has a bounded <see cref="Limit"/>;
     /// When it reaches that <see cref="Limit"/>, each time a new element is added, the least
     /// recently used (LRU) entry is removed.
     /// <para>
     /// Unlike the Java Lucene implementation, this one is thread safe because it is backed by the <see cref="LurchTable{TKey, TValue}"/>.
-    /// Do note that every time an element is read from <see cref="LRUHashMap{TKey, TValue}"/>,
+    /// Do note that every time an element is read from <see cref="LruDictionary{TKey, TValue}"/>,
     /// a write operation also takes place to update the element's last access time.
     /// This is because the LRU order needs to be remembered to determine which element
     /// to evict when the <see cref="Limit"/> is exceeded. 
@@ -38,7 +38,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// @lucene.experimental
     /// </para>
     /// </summary>
-    public class LRUHashMap<TKey, TValue> : IDictionary<TKey, TValue>
+    public class LruDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {
         private readonly LurchTable<TKey, TValue> cache;
 
@@ -58,7 +58,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// list) which is not used when the map's size is always below the
         /// maximum size.
         /// </param>
-        public LRUHashMap(int limit)
+        public LruDictionary(int limit)
             : this(limit, null)
         {
         }
@@ -86,16 +86,16 @@ namespace Lucene.Net.Facet.Taxonomy
         /// The <see cref="IEqualityComparer{TKey}"/> implementation to use when comparing keys, 
         /// or <c>null</c> to use the default <see cref="IEqualityComparer{TKey}"/> for the type of the key.
         /// </param>
-        public LRUHashMap(int limit, IEqualityComparer<TKey> comparer)
+        public LruDictionary(int limit, IEqualityComparer<TKey> comparer)
         {
             cache = new LurchTable<TKey, TValue>(LurchTableOrder.Access, limit, comparer);
         }
 
         /// <summary>
-        /// allows changing the map's maximal number of elements
+        /// Allows changing the dictionary's maximal number of elements
         /// which was defined at construction time.
         /// <para>
-        /// Note that if the map is already larger than <see cref="Limit"/>, the current 
+        /// Note that if the dictionary is already larger than <see cref="Limit"/>, the current 
         /// implementation does not shrink it (by removing the oldest elements);
         /// Rather, the map remains in its current size as new elements are
         /// added, and will only start shrinking (until settling again on the
@@ -115,7 +115,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
 
-        public TValue Put(TKey key, TValue value)
+        public virtual TValue Put(TKey key, TValue value)
         {
             TValue oldValue = default;
             cache.AddOrUpdate(key, value, (k, v) =>
@@ -126,7 +126,7 @@ namespace Lucene.Net.Facet.Taxonomy
             return oldValue;
         }
 
-        public TValue Get(TKey key)
+        public virtual TValue Get(TKey key)
         {
             if (!cache.TryGetValue(key, out TValue result))
             {
@@ -137,73 +137,73 @@ namespace Lucene.Net.Facet.Taxonomy
 
         #region IDictionary<TKey, TValue> members
 
-        public TValue this[TKey key]
+        public virtual TValue this[TKey key]
         {
             get => cache[key];
             set => cache[key] = value;
         }
 
-        public int Count => cache.Count;
+        public virtual int Count => cache.Count;
 
-        public bool IsReadOnly => false;
+        public virtual bool IsReadOnly => false;
 
-        public ICollection<TKey> Keys => cache.Keys;
+        public virtual ICollection<TKey> Keys => cache.Keys;
 
-        public ICollection<TValue> Values => cache.Values;
+        public virtual ICollection<TValue> Values => cache.Values;
 
-        public void Add(KeyValuePair<TKey, TValue> item)
+        public virtual void Add(KeyValuePair<TKey, TValue> item)
         {
             cache.Add(item.Key, item.Value);
         }
 
-        public void Add(TKey key, TValue value)
+        public virtual void Add(TKey key, TValue value)
         {
             cache.Add(key, value);
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             cache.Clear();
         }
 
-        public bool Contains(KeyValuePair<TKey, TValue> item)
+        public virtual bool Contains(KeyValuePair<TKey, TValue> item)
         {
             return ((ICollection<KeyValuePair<TKey, TValue>>)cache).Contains(item);
         }
 
-        public bool ContainsKey(TKey key)
+        public virtual bool ContainsKey(TKey key)
         {
             return cache.ContainsKey(key);
         }
 
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int index)
+        public virtual void CopyTo(KeyValuePair<TKey, TValue>[] array, int index)
         {
             cache.CopyTo(array, index);
         }
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        public virtual IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             return cache.GetEnumerator();
         }
 
-        public bool Remove(KeyValuePair<TKey, TValue> item)
+        public virtual bool Remove(KeyValuePair<TKey, TValue> item)
         {
             return cache.TryRemove(item);
         }
 
-        public bool Remove(TKey key)
+        public virtual bool Remove(TKey key)
         {
             return cache.Remove(key);
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public virtual bool TryGetValue(TKey key, out TValue value)
         {
             return cache.TryGetValue(key, out value);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return cache.GetEnumerator();
+            return GetEnumerator();
         }
 
         #endregion

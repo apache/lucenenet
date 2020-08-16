@@ -31,7 +31,7 @@ namespace Lucene.Net.Facet.Taxonomy
         [Test]
         public virtual void TestLru()
         {
-            LRUHashMap<string, string> lru = new LRUHashMap<string, string>(3);
+            LruDictionary<string, string> lru = new LruDictionary<string, string>(3);
             Assert.AreEqual(0, lru.Count);
             lru.Put("one", "Hello world");
             Assert.AreEqual(1, lru.Count);

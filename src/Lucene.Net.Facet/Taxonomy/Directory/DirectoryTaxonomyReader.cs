@@ -72,8 +72,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private readonly DirectoryReader indexReader;
 
         // TODO: test DoubleBarrelLRUCache and consider using it instead
-        private LRUHashMap<FacetLabel, Int32Class> ordinalCache;
-        private LRUHashMap<int, FacetLabel> categoryCache;
+        private LruDictionary<FacetLabel, Int32Class> ordinalCache;
+        private LruDictionary<int, FacetLabel> categoryCache;
         private readonly ReaderWriterLockSlim ordinalCacheLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private readonly ReaderWriterLockSlim categoryCacheLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
@@ -85,7 +85,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// arrays.
         /// </summary>
         private DirectoryTaxonomyReader(DirectoryReader indexReader, DirectoryTaxonomyWriter taxoWriter, 
-            LRUHashMap<FacetLabel, Int32Class> ordinalCache, LRUHashMap<int, FacetLabel> categoryCache, 
+            LruDictionary<FacetLabel, Int32Class> ordinalCache, LruDictionary<int, FacetLabel> categoryCache, 
             TaxonomyIndexArrays taxoArrays)
         {
             this.indexReader = indexReader;
@@ -93,8 +93,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             this.taxoEpoch = taxoWriter == null ? -1 : taxoWriter.TaxonomyEpoch;
 
             // use the same instance of the cache, note the protective code in getOrdinal and getPath
-            this.ordinalCache = ordinalCache ?? new LRUHashMap<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
-            this.categoryCache = categoryCache ?? new LRUHashMap<int, FacetLabel>(DEFAULT_CACHE_VALUE);
+            this.ordinalCache = ordinalCache ?? new LruDictionary<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
+            this.categoryCache = categoryCache ?? new LruDictionary<int, FacetLabel>(DEFAULT_CACHE_VALUE);
 
             this.taxoArrays = taxoArrays != null ? new TaxonomyIndexArrays(indexReader, taxoArrays) : null;
         }
@@ -114,8 +114,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // These are the default cache sizes; they can be configured after
             // construction with the cache's setMaxSize() method
 
-            ordinalCache = new LRUHashMap<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
-            categoryCache = new LRUHashMap<int, FacetLabel>(DEFAULT_CACHE_VALUE);
+            ordinalCache = new LruDictionary<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
+            categoryCache = new LruDictionary<int, FacetLabel>(DEFAULT_CACHE_VALUE);
         }
 
         /// <summary>
@@ -134,8 +134,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // These are the default cache sizes; they can be configured after
             // construction with the cache's setMaxSize() method
 
-            ordinalCache = new LRUHashMap<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
-            categoryCache = new LRUHashMap<int, FacetLabel>(DEFAULT_CACHE_VALUE);
+            ordinalCache = new LruDictionary<FacetLabel, Int32Class>(DEFAULT_CACHE_VALUE);
+            categoryCache = new LruDictionary<int, FacetLabel>(DEFAULT_CACHE_VALUE);
         }
 
         // LUCENENET specific - eliminated the InitTaxoArrays() method in favor of LazyInitializer
