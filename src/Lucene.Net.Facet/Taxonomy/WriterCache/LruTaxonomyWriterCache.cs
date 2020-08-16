@@ -21,7 +21,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
     /// <summary>
     /// LRU <see cref="ITaxonomyWriterCache"/> - good choice for huge taxonomies.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class LruTaxonomyWriterCache : ITaxonomyWriterCache
@@ -46,7 +46,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             LRU_STRING
         }
 
-        private NameInt32CacheLRU cache;
+        private IInternalNameInt32CacheLru cache;
         private readonly object syncLock = new object();
         private bool isDisposed = false;
 
@@ -77,11 +77,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             // mapped to the same ordinal...
             if (lruType == LRUType.LRU_HASHED)
             {
-                this.cache = new NameHashInt32CacheLRU(cacheSize);
+                this.cache = new NameHashInt32CacheLru(cacheSize);
             }
             else
             {
-                this.cache = new NameInt32CacheLRU(cacheSize);
+                this.cache = new NameInt32CacheLru(cacheSize);
             }
         }
 

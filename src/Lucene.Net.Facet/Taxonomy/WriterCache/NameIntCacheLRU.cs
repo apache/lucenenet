@@ -1,4 +1,5 @@
 ﻿using J2N.Collections.Concurrent;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -26,23 +27,117 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// Used to cache Ordinals of category paths.
     /// <para/>
     /// NOTE: This was NameIntCacheLRU in Lucene
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     /// <remarks>
     /// Note: Nothing in this class is synchronized. The caller is assumed to be
     /// synchronized so that no two methods of this class are called concurrently.
     /// </remarks>
-    public class NameInt32CacheLRU
+    public class NameInt32CacheLru : IInternalNameInt32CacheLru // LUCENENET specific - added interface
     {
-        private IDictionary<object, int> cache;
+        private readonly IInternalNameInt32CacheLru cache;
+        internal NameInt32CacheLru(int limit)
+        {
+            this.cache = new NameCacheLru<FacetLabel>(
+                limit,
+                (name) => name,
+                (name, prefixLength) => name.Subpath(prefixLength));
+        }
+
+        /// <inheritdoc/>
+        public int Count => cache.Count;
+
+        /// <inheritdoc/>
+        public int Limit => cache.Limit;
+
+        /// <inheritdoc/>
+        string IInternalNameInt32CacheLru.Stats => cache.Stats;
+
+        /// <inheritdoc/>
+        void IInternalNameInt32CacheLru.Clear() => cache.Clear();
+
+        /// <inheritdoc/>
+        bool IInternalNameInt32CacheLru.MakeRoomLRU() => cache.MakeRoomLRU();
+
+        /// <inheritdoc/>
+        bool IInternalNameInt32CacheLru.Put(FacetLabel name, int val) => cache.Put(name, val);
+
+        /// <inheritdoc/>
+        bool IInternalNameInt32CacheLru.Put(FacetLabel name, int prefixLen, int val) => cache.Put(name, prefixLen, val);
+
+        /// <inheritdoc/>
+        bool IInternalNameInt32CacheLru.TryGetValue(FacetLabel name, out int value) => cache.TryGetValue(name, out value);
+    }
+
+    /// <summary>
+    /// Public members of the <see cref="NameInt32CacheLru"/> that are shared between instances.
+    /// </summary>
+    public interface INameInt32CacheLru
+    {
+        /// <summary>
+        /// Number of entries currently in the cache.
+        /// </summary>
+        int Count { get; }
+
+        /// <summary>
+        /// Maximum number of cache entries before eviction.
+        /// </summary>
+        int Limit { get; }
+
+    }
+
+    // LUCENENET specific - defined interface so we can share public and internal members betwen cache
+    // instances.
+    internal interface IInternalNameInt32CacheLru : INameInt32CacheLru
+    {
+        string Stats { get; }
+
+        void Clear();
+
+        /// <summary>
+        /// If cache is full remove least recently used entries from cache. Return <c>true</c>
+        /// if anything was removed, <c>false</c> otherwise.
+        /// <para/>
+        /// See comment in <see cref="Directory.DirectoryTaxonomyWriter.AddToCache(FacetLabel, int)"/> for an
+        /// explanation why we clean 2/3rds of the cache, and not just one entry.
+        /// </summary>
+        bool MakeRoomLRU();
+
+        /// <summary>
+        /// Add a new value to cache.
+        /// Return true if cache became full and some room need to be made. 
+        /// </summary>
+        bool Put(FacetLabel name, int val);
+
+        bool Put(FacetLabel name, int prefixLen, int val);
+
+        bool TryGetValue(FacetLabel name, out int value);
+    }
+
+    /// <summary>
+    /// Class for name LRU caches. Users can specify
+    /// a type that can be used as the key of the cache. The
+    /// key may be either a value type or a reference type.
+    /// </summary>
+    /// <typeparam name="TName">The type of key for the cache.</typeparam>
+    // LUCENENET specific - extracted the logic out of NameInt32CacheLru to make
+    // it generic so boxing/unboxing can be avoided during lookups, while also
+    // keeping the generic closing type from being exposed on the public API.
+    internal sealed class NameCacheLru<TName> : IInternalNameInt32CacheLru
+    {
+        private IDictionary<TName, int> cache;
         internal long nMisses = 0; // for debug
         internal long nHits = 0; // for debug
         private readonly int maxCacheSize;
         private readonly object syncLock = new object(); // LUCENENET specific so we don't lock this
+        private readonly Func<FacetLabel, TName> getKey;
+        private readonly Func<FacetLabel, int, TName> getKeyWithPrefixLength;
 
-        internal NameInt32CacheLRU(int limit)
+        internal NameCacheLru(int limit, Func<FacetLabel, TName> getKey, Func<FacetLabel, int, TName> getKeyWithPrefixLength)
         {
+            this.getKey = getKey ?? throw new ArgumentNullException(nameof(getKey));
+            this.getKeyWithPrefixLength = getKeyWithPrefixLength ?? throw new ArgumentNullException(nameof(getKeyWithPrefixLength));
             this.maxCacheSize = limit;
             CreateCache(limit);
         }
@@ -50,37 +145,30 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// <summary>
         /// Maximum number of cache entries before eviction.
         /// </summary>
-        public virtual int Limit => maxCacheSize;
+        public int Limit => maxCacheSize;
 
         /// <summary>
         /// Number of entries currently in the cache.
         /// </summary>
-        public virtual int Count => cache.Count;
+        public int Count => cache.Count;
 
         private void CreateCache(int maxSize)
         {
             if (maxSize < int.MaxValue)
             {
-                cache = new LurchTable<object, int>(capacity: 1000, ordering: LurchTableOrder.Access); //for LRU
+                cache = new LurchTable<TName, int>(capacity: 1000, ordering: LurchTableOrder.Access); //for LRU
             }
             else
             {
                 // LUCENENET specific - we use ConcurrentDictionary here because it supports deleting while
                 // iterating through the collection, but Dictionary does not.
-                cache = new ConcurrentDictionary<object, int>(concurrencyLevel: 3, capacity: 1000); //no need for LRU
+                cache = new ConcurrentDictionary<TName, int>(concurrencyLevel: 3, capacity: 1000); //no need for LRU
             }
         }
 
-        internal virtual int Get(FacetLabel name)
+        bool IInternalNameInt32CacheLru.TryGetValue(FacetLabel name, out int value) // LUCENENET specific - use TryGetValue() instead of Get()
         {
-            TryGetValue(name, out int result);
-            return result;
-        }
-
-        internal virtual bool TryGetValue(FacetLabel name, out int value)
-        {
-            object key = Key(name);
-            if (!cache.TryGetValue(key, out value))
+            if (!cache.TryGetValue(getKey(name), out value))
             {
                 nMisses++;
                 return false;
@@ -92,55 +180,38 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        /// <summary>
-        /// Subclasses can override this to provide caching by e.g. hash of the string.
-        /// </summary>
-        internal virtual object Key(FacetLabel name)
-        {
-            return name;
-        }
-
-        internal virtual object Key(FacetLabel name, int prefixLen)
-        {
-            return name.Subpath(prefixLen);
-        }
+        // LUCENENET: No need for Key() functions, they are passed in as delegates through the constructor.
 
         /// <summary>
         /// Add a new value to cache.
         /// Return true if cache became full and some room need to be made. 
         /// </summary>
-        internal virtual bool Put(FacetLabel name, int val)
+        bool IInternalNameInt32CacheLru.Put(FacetLabel name, int val)
         {
-            cache[Key(name)] = val;
+            cache[getKey(name)] = val;
             return IsCacheFull;
         }
 
-        internal virtual bool Put(FacetLabel name, int prefixLen, int val)
+        bool IInternalNameInt32CacheLru.Put(FacetLabel name, int prefixLen, int val)
         {
-            cache[Key(name, prefixLen)] = val;
+            cache[getKeyWithPrefixLength(name, prefixLen)] = val;
             return IsCacheFull;
         }
 
         private bool IsCacheFull => cache.Count > maxCacheSize;
 
-        internal virtual void Clear()
-        {
-            cache.Clear();
-        }
+        void IInternalNameInt32CacheLru.Clear() => cache.Clear();
 
-        internal virtual string Stats()
-        {
-            return "#miss=" + nMisses + " #hit=" + nHits;
-        }
+        string IInternalNameInt32CacheLru.Stats => "#miss=" + nMisses + " #hit=" + nHits;
 
         /// <summary>
-        /// If cache is full remove least recently used entries from cache. Return true
-        /// if anything was removed, false otherwise.
-        /// 
+        /// If cache is full remove least recently used entries from cache. Return <c>true</c>
+        /// if anything was removed, <c>false</c> otherwise.
+        /// <para/>
         /// See comment in <see cref="Directory.DirectoryTaxonomyWriter.AddToCache(FacetLabel, int)"/> for an
         /// explanation why we clean 2/3rds of the cache, and not just one entry.
         /// </summary>
-        internal virtual bool MakeRoomLRU()
+        bool IInternalNameInt32CacheLru.MakeRoomLRU()
         {
             if (!IsCacheFull)
             {
