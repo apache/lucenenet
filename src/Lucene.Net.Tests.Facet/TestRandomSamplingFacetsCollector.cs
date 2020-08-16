@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Globalization;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Facet
@@ -60,7 +61,7 @@ namespace Lucene.Net.Facet
             {
                 Document doc = new Document();
                 doc.Add(new StringField("EvenOdd", (i % 2 == 0) ? "even" : "odd", Store.NO));
-                doc.Add(new FacetField("iMod10", Convert.ToString(i % 10)));
+                doc.Add(new FacetField("iMod10", Convert.ToString(i % 10, CultureInfo.InvariantCulture)));
                 writer.AddDocument(config.Build(taxoWriter, doc));
             }
             Random random = Random;

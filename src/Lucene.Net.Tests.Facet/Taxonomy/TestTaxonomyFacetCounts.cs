@@ -3,6 +3,7 @@ using Lucene.Net.Support.IO;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -701,7 +702,7 @@ namespace Lucene.Net.Facet.Taxonomy
             for (int i = 0; i < 10; i++)
             {
                 Document doc = new Document();
-                doc.Add(new FacetField("a", Convert.ToString(i)));
+                doc.Add(new FacetField("a", Convert.ToString(i, CultureInfo.InvariantCulture)));
                 iw.AddDocument(config.Build(taxoWriter, doc));
             }
 
@@ -728,7 +729,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
                 if (config != null)
                 {
-                    doc.Add(new FacetField("A", Convert.ToString(i)));
+                    doc.Add(new FacetField("A", Convert.ToString(i, CultureInfo.InvariantCulture)));
                     indexWriter.AddDocument(config.Build(taxoWriter, doc));
                 }
                 else

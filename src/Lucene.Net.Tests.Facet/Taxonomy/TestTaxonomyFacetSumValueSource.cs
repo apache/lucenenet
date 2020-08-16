@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
@@ -323,7 +324,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 Document doc = new Document();
                 doc.Add(new NumericDocValuesField("price", (i + 1)));
-                doc.Add(new FacetField("a", Convert.ToString(i % 2)));
+                doc.Add(new FacetField("a", Convert.ToString(i % 2, CultureInfo.InvariantCulture)));
                 iw.AddDocument(config.Build(taxoWriter, doc));
             }
 
@@ -352,7 +353,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 Document doc = new Document();
                 doc.Add(new NumericDocValuesField("price", (i + 1)));
-                doc.Add(new FacetField("a", Convert.ToString(i % 2)));
+                doc.Add(new FacetField("a", Convert.ToString(i % 2, CultureInfo.InvariantCulture)));
                 iw.AddDocument(config.Build(taxoWriter, doc));
             }
 
@@ -447,7 +448,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 Document doc = new Document();
                 doc.Add(new NumericDocValuesField("price", (i + 1)));
-                doc.Add(new FacetField("a", Convert.ToString(i % 2), "1"));
+                doc.Add(new FacetField("a", Convert.ToString(i % 2, CultureInfo.InvariantCulture), "1"));
                 iw.AddDocument(config.Build(taxoWriter, doc));
             }
 
