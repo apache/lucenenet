@@ -116,20 +116,23 @@ namespace Lucene.Net.Facet.Taxonomy
         /// delimiter characters, for using with
         /// <see cref="CopyFullPath(char[], int, char)"/>.
         /// </summary>
-        public virtual int FullPathLength()
+        public virtual int FullPathLength
         {
-            if (Length == 0)
+            get
             {
-                return 0;
-            }
+                if (Length == 0)
+                {
+                    return 0;
+                }
 
-            int charsNeeded = 0;
-            for (int i = 0; i < Length; i++)
-            {
-                charsNeeded += Components[i].Length;
+                int charsNeeded = 0;
+                for (int i = 0; i < Length; i++)
+                {
+                    charsNeeded += Components[i].Length;
+                }
+                charsNeeded += Length - 1; // num delimter chars
+                return charsNeeded;
             }
-            charsNeeded += Length - 1; // num delimter chars
-            return charsNeeded;
         }
 
         /// <summary>
