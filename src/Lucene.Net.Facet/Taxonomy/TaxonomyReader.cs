@@ -73,29 +73,36 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// An iterator over a category's children.
         /// </summary>
-        public class ChildrenIterator
+        public class ChildrenEnumerator
         {
             private readonly int[] siblings;
             private int child;
+            private int currentChild = TaxonomyReader.INVALID_ORDINAL;
 
-            internal ChildrenIterator(int child, int[] siblings)
+            internal ChildrenEnumerator(int child, int[] siblings)
             {
-                this.siblings = siblings;
+                this.siblings = siblings ?? throw new ArgumentNullException(nameof(siblings)); // LUCENENT specific - added guard clause
                 this.child = child;
             }
 
             /// <summary>
-            /// Return the next child ordinal, or <see cref="TaxonomyReader.INVALID_ORDINAL"/>
-            /// if no more children.
+            /// Gets the current child. Returns <see cref="TaxonomyReader.INVALID_ORDINAL"/> if
+            /// positioned before the first child or after the last child.
             /// </summary>
-            public virtual int Next()
+            public virtual int Current => currentChild;
+
+            /// <summary>
+            /// Move to the next child ordinal. Returns <c>false</c> if there are no more children.
+            /// </summary>
+            /// <returns></returns>
+            public virtual bool MoveNext()
             {
-                int res = child;
-                if (child != TaxonomyReader.INVALID_ORDINAL)
-                {
-                    child = siblings[child];
-                }
-                return res;
+                if (child == TaxonomyReader.INVALID_ORDINAL)
+                    return false;
+
+                currentChild = child;
+                child = siblings[child];
+                return true;
             }
         }
 
@@ -229,11 +236,11 @@ namespace Lucene.Net.Facet.Taxonomy
         /// <summary>
         /// Returns an iterator over the children of the given ordinal.
         /// </summary>
-        public virtual ChildrenIterator GetChildren(int ordinal)
+        public virtual ChildrenEnumerator GetChildren(int ordinal)
         {
             ParallelTaxonomyArrays arrays = ParallelTaxonomyArrays;
             int child = ordinal >= 0 ? arrays.Children[ordinal] : INVALID_ORDINAL;
-            return new ChildrenIterator(child, arrays.Siblings);
+            return new ChildrenEnumerator(child, arrays.Siblings);
         }
 
         /// <summary>
