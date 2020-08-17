@@ -99,7 +99,6 @@ namespace Lucene.Net.Facet.SortedSet
             int dimCount = 0;
             int childCount = 0;
 
-            TopOrdAndInt32Queue.OrdAndValue reuse = null;
             //System.out.println("getDim : " + ordRange.start + " - " + ordRange.end);
             for (int ord = ordRange.Start; ord <= ordRange.End; ord++)
             {
@@ -110,19 +109,14 @@ namespace Lucene.Net.Facet.SortedSet
                     childCount++;
                     if (counts[ord] > bottomCount)
                     {
-                        if (reuse == null)
-                        {
-                            reuse = new TopOrdAndInt32Queue.OrdAndValue();
-                        }
-                        reuse.Ord = ord;
-                        reuse.Value = counts[ord];
                         if (q == null)
                         {
                             // Lazy init, so we don't create this for the
                             // sparse case unnecessarily
                             q = new TopOrdAndInt32Queue(topN);
                         }
-                        reuse = q.InsertWithOverflow(reuse);
+                        // LUCENENET specific - use struct instead of reusing class instance for better performance
+                        q.Insert(new OrdAndValue<int>(ord, counts[ord]));
                         if (q.Count == topN)
                         {
                             bottomCount = q.Top.Value;
@@ -141,7 +135,7 @@ namespace Lucene.Net.Facet.SortedSet
             LabelAndValue[] labelValues = new LabelAndValue[q.Count];
             for (int i = labelValues.Length - 1; i >= 0; i--)
             {
-                TopOrdAndInt32Queue.OrdAndValue ordAndValue = q.Pop();
+                var ordAndValue = q.Pop();
                 dv.LookupOrd(ordAndValue.Ord, scratch);
                 string[] parts = FacetsConfig.StringToPath(scratch.Utf8ToString());
                 labelValues[i] = new LabelAndValue(parts[1], ordAndValue.Value);
