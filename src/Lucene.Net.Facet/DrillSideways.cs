@@ -190,7 +190,7 @@ namespace Lucene.Net.Facet
             {
                 drillDownQueries[i - startClause] = clauses[i].Query;
             }
-            DrillSidewaysQuery dsq = new DrillSidewaysQuery(baseQuery, drillDownCollector, drillSidewaysCollectors, drillDownQueries, ScoreSubDocsAtOnce());
+            DrillSidewaysQuery dsq = new DrillSidewaysQuery(baseQuery, drillDownCollector, drillSidewaysCollectors, drillDownQueries, ScoreSubDocsAtOnce);
             m_searcher.Search(dsq, hitCollector);
 
             return new DrillSidewaysResult(BuildFacetsResult(drillDownCollector, drillSidewaysCollectors, drillDownDims.Keys.ToArray()), null);
@@ -261,10 +261,7 @@ namespace Lucene.Net.Facet
         /// this will trick <see cref="BooleanQuery"/> into also scoring all subDocs at
         /// once. 
         /// </summary>
-        protected virtual bool ScoreSubDocsAtOnce()
-        {
-            return false;
-        }
+        protected virtual bool ScoreSubDocsAtOnce => false;
     }
 
     /// <summary>

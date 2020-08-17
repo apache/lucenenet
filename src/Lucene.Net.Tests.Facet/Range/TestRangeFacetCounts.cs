@@ -335,10 +335,7 @@ namespace Lucene.Net.Facet.Range
                 return new MultiFacets(byDim, null);
             }
 
-            protected override bool ScoreSubDocsAtOnce()
-            {
-                return Random.NextBoolean();
-            }
+            protected override bool ScoreSubDocsAtOnce => Random.NextBoolean();
         }
 
         [Test]
@@ -1206,10 +1203,7 @@ namespace Lucene.Net.Facet.Range
                 return new DoubleRangeFacetCounts("field", vs, drillSideways[0], fastMatchFilter, ranges);
             }
 
-            protected override bool ScoreSubDocsAtOnce()
-            {
-                return Random.NextBoolean();
-            }
+            protected override bool ScoreSubDocsAtOnce => Random.NextBoolean();
         }
     }
 
