@@ -127,7 +127,6 @@ namespace Lucene.Net.Facet.Taxonomy
             int totValue = 0;
             int childCount = 0;
 
-            TopOrdAndInt32Queue.OrdAndValue reuse = null;
             while (ord != TaxonomyReader.INVALID_ORDINAL)
             {
                 if (m_values[ord] > 0)
@@ -136,13 +135,8 @@ namespace Lucene.Net.Facet.Taxonomy
                     childCount++;
                     if (m_values[ord] > bottomValue)
                     {
-                        if (reuse == null)
-                        {
-                            reuse = new TopOrdAndInt32Queue.OrdAndValue();
-                        }
-                        reuse.Ord = ord;
-                        reuse.Value = m_values[ord];
-                        reuse = q.InsertWithOverflow(reuse);
+                        // LUCENENET specific - use struct instead of reusing class instance for better performance
+                        q.Insert(new OrdAndValue<int>(ord, m_values[ord]));
                         if (q.Count == topN)
                         {
                             bottomValue = q.Top.Value;
@@ -178,7 +172,7 @@ namespace Lucene.Net.Facet.Taxonomy
             LabelAndValue[] labelValues = new LabelAndValue[q.Count];
             for (int i = labelValues.Length - 1; i >= 0; i--)
             {
-                TopOrdAndInt32Queue.OrdAndValue ordAndValue = q.Pop();
+                var ordAndValue = q.Pop();
                 FacetLabel child = m_taxoReader.GetPath(ordAndValue.Ord);
                 labelValues[i] = new LabelAndValue(child.Components[cp.Length], ordAndValue.Value);
             }

@@ -1,4 +1,6 @@
 ﻿using Lucene.Net.Util;
+using System;
+using System.Runtime.InteropServices;
 
 namespace Lucene.Net.Facet
 {
@@ -25,28 +27,10 @@ namespace Lucene.Net.Facet
     /// <para/>
     /// NOTE: This was TopOrdAndFloatQueue in Lucene
     /// </summary>
-    public class TopOrdAndSingleQueue : PriorityQueue<TopOrdAndSingleQueue.OrdAndValue>
+    public class TopOrdAndSingleQueue : PriorityQueue<OrdAndValue<float>>
     {
-        /// <summary>
-        /// Holds a single entry.
-        /// </summary>
-        public sealed class OrdAndValue
-        {
-            /// <summary>
-            /// Ordinal of the entry. </summary>
-            public int Ord { get; set; }
-
-            /// <summary>
-            /// Value associated with the ordinal. </summary>
-            public float Value { get; set; }
-
-            /// <summary>
-            /// Default constructor.
-            /// </summary>
-            public OrdAndValue()
-            {
-            }
-        }
+        // LUCENENET specific - de-nested OrdAndValue and made it into a generic struct
+        // so it can be used with this class and TopOrdAndInt32Queue
 
         /// <summary>
         /// Sole constructor.
@@ -55,7 +39,7 @@ namespace Lucene.Net.Facet
         {
         }
 
-        protected internal override bool LessThan(OrdAndValue a, OrdAndValue b)
+        protected internal override bool LessThan(OrdAndValue<float> a, OrdAndValue<float> b)
         {
             if (a.Value < b.Value)
             {
@@ -70,5 +54,57 @@ namespace Lucene.Net.Facet
                 return a.Ord > b.Ord;
             }
         }
+    }
+
+    /// <summary>
+    /// Holds a single entry.
+    /// </summary>
+    // LUCENENET specific - de-nested this and made it into a struct so it can be shared
+    [StructLayout(LayoutKind.Sequential)]
+    public sealed class OrdAndValue<T> : IEquatable<OrdAndValue<T>>
+    {
+        /// <summary>
+        /// Ordinal of the entry. </summary>
+        public int Ord;
+
+        /// <summary>
+        /// Value associated with the ordinal. </summary>
+        public T Value;
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public OrdAndValue(int ord, T value)
+        {
+            Ord = ord;
+            Value = value;
+        }
+
+        #region Added for better .NET support
+        public override bool Equals(object obj)
+        {
+            return obj is OrdAndValue<T> other && Equals(other);
+        }
+
+        public bool Equals(OrdAndValue<T> other)
+        {
+            return this.Ord == other.Ord && this.Value.Equals(other.Value);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Ord.GetHashCode() ^ this.Value.GetHashCode();
+        }
+
+        public static bool operator ==(OrdAndValue<T> left, OrdAndValue<T> right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(OrdAndValue<T> left, OrdAndValue<T> right)
+        {
+            return !(left == right);
+        }
+        #endregion
     }
 }

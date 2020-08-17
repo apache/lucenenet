@@ -25,28 +25,10 @@ namespace Lucene.Net.Facet
     /// <para/>
     /// NOTE: This was TopOrdAndIntQueue in Lucene
     /// </summary>
-    public class TopOrdAndInt32Queue : PriorityQueue<TopOrdAndInt32Queue.OrdAndValue>
+    public class TopOrdAndInt32Queue : PriorityQueue<OrdAndValue<int>>
     {
-        /// <summary>
-        /// Holds a single entry.
-        /// </summary>
-        public sealed class OrdAndValue
-        {
-            /// <summary>
-            /// Ordinal of the entry. </summary>
-            public int Ord { get; set; }
-
-            /// <summary>
-            /// Value associated with the ordinal. </summary>
-            public int Value { get; set; }
-
-            /// <summary>
-            /// Default constructor.
-            /// </summary>
-            public OrdAndValue()
-            {
-            }
-        }
+        // LUCENENET specific - de-nested OrdAndValue and made it into a generic struct
+        // so it can be used with this class and TopOrdAndSingleQueue
 
         /// <summary>
         /// Sole constructor.
@@ -56,7 +38,7 @@ namespace Lucene.Net.Facet
         {
         }
 
-        protected internal override bool LessThan(OrdAndValue a, OrdAndValue b)
+        protected internal override bool LessThan(OrdAndValue<int> a, OrdAndValue<int> b)
         {
             if (a.Value < b.Value)
             {

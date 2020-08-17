@@ -38,14 +38,14 @@ namespace Lucene.Net.Tests.Facet
         [TestCase(typeof(Lucene.Net.Facet.Facets))]
         public override void TestPrivateFieldNames(Type typeFromTargetAssembly)
         {
-            base.TestPrivateFieldNames(typeFromTargetAssembly, @"Snowball\.Ext\..+Stemmer");
+            base.TestPrivateFieldNames(typeFromTargetAssembly);
         }
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Facet.Facets))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly);
+            base.TestPublicFields(typeFromTargetAssembly, @"OrdAndValue");
         }
 
         [Test, LuceneNetSpecific]
