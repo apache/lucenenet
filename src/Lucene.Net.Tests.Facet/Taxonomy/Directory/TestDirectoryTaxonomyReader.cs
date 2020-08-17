@@ -574,27 +574,29 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             var taxoReader = new DirectoryTaxonomyReader(dir);
 
             // non existing category
-            TaxonomyReader.ChildrenIterator it = taxoReader.GetChildren(taxoReader.GetOrdinal(new FacetLabel("invalid")));
-            Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, it.Next());
+            TaxonomyReader.ChildrenEnumerator it = taxoReader.GetChildren(taxoReader.GetOrdinal(new FacetLabel("invalid")));
+
+            Assert.AreEqual(false, it.MoveNext());
 
             // a category with no children
             it = taxoReader.GetChildren(taxoReader.GetOrdinal(new FacetLabel("c")));
-            Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, it.Next());
+            Assert.AreEqual(false, it.MoveNext());
 
             // arbitrary negative ordinal
             it = taxoReader.GetChildren(-2);
-            Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, it.Next());
+            Assert.AreEqual(false, it.MoveNext());
 
             // root's children
             var roots = new JCG.HashSet<string> { "a", "b", "c" };
             it = taxoReader.GetChildren(TaxonomyReader.ROOT_ORDINAL);
             while (roots.Count > 0)
             {
-                FacetLabel root = taxoReader.GetPath(it.Next());
+                it.MoveNext();
+                FacetLabel root = taxoReader.GetPath(it.Current);
                 Assert.AreEqual(1, root.Length);
                 Assert.True(roots.Remove(root.Components[0]));
             }
-            Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, it.Next());
+            Assert.AreEqual(false, it.MoveNext());
 
             for (int i = 0; i < 2; i++)
             {
@@ -603,8 +605,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 it = taxoReader.GetChildren(ordinal);
                 int numChildren = 0;
                 int child;
-                while ((child = it.Next()) != TaxonomyReader.INVALID_ORDINAL)
+                while (it.MoveNext())
                 {
+                    child = it.Current;
                     FacetLabel path = taxoReader.GetPath(child);
                     Assert.AreEqual(2, path.Length);
                     Assert.AreEqual(path.Components[0], i == 0 ? "a" : "b");

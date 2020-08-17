@@ -20,7 +20,7 @@ namespace Lucene.Net.Facet.Taxonomy
      * limitations under the License.
      */
 
-    using ChildrenIterator = Lucene.Net.Facet.Taxonomy.TaxonomyReader.ChildrenIterator;
+    using ChildrenEnumerator = Lucene.Net.Facet.Taxonomy.TaxonomyReader.ChildrenEnumerator;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using FSDirectory = Lucene.Net.Store.FSDirectory;
@@ -74,13 +74,14 @@ namespace Lucene.Net.Facet.Taxonomy
         {
             @out.WriteLine(r.Count + " total categories.");
 
-            ChildrenIterator it = r.GetChildren(TaxonomyReader.ROOT_ORDINAL);
+            ChildrenEnumerator it = r.GetChildren(TaxonomyReader.ROOT_ORDINAL);
             int child;
-            while ((child = it.Next()) != TaxonomyReader.INVALID_ORDINAL)
+            while (it.MoveNext())
             {
-                ChildrenIterator chilrenIt = r.GetChildren(child);
+                child = it.Current;
+                ChildrenEnumerator chilrenIt = r.GetChildren(child);
                 int numImmediateChildren = 0;
-                while (chilrenIt.Next() != TaxonomyReader.INVALID_ORDINAL)
+                while (chilrenIt.MoveNext())
                 {
                     numImmediateChildren++;
                 }
@@ -96,21 +97,21 @@ namespace Lucene.Net.Facet.Taxonomy
         private static int CountAllChildren(TaxonomyReader r, int ord)
         {
             int count = 0;
-            ChildrenIterator it = r.GetChildren(ord);
-            int child;
-            while ((child = it.Next()) != TaxonomyReader.INVALID_ORDINAL)
+            ChildrenEnumerator it = r.GetChildren(ord);
+            while (it.MoveNext())
             {
-                count += 1 + CountAllChildren(r, child);
+                count += 1 + CountAllChildren(r, it.Current);
             }
             return count;
         }
 
         private static void PrintAllChildren(TextWriter @out, TaxonomyReader r, int ord, string indent, int depth)
         {
-            ChildrenIterator it = r.GetChildren(ord);
+            ChildrenEnumerator it = r.GetChildren(ord);
             int child;
-            while ((child = it.Next()) != TaxonomyReader.INVALID_ORDINAL)
+            while (it.MoveNext())
             {
+                child = it.Current;
                 @out.WriteLine(indent + "/" + r.GetPath(child).Components[depth]);
                 PrintAllChildren(@out, r, child, indent + "  ", depth + 1);
             }
