@@ -888,10 +888,7 @@ namespace Lucene.Net.Facet
                 this.outerInstance = outerInstance;
             }
 
-            protected override bool ScoreSubDocsAtOnce()
-            {
-                return true;
-            }
+            protected override bool ScoreSubDocsAtOnce => true;
         }
 
         private class DrillSidewaysAnonymousInnerClassHelper2 : DrillSideways
