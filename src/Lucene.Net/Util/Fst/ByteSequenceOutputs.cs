@@ -44,8 +44,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => output1 != null);
-                Debugging.Assert(() => output2 != null);
+                Debugging.Assert(output1 != null);
+                Debugging.Assert(output2 != null);
             }
 
             int pos1 = output1.Offset;
@@ -86,8 +86,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => output != null);
-                Debugging.Assert(() => inc != null);
+                Debugging.Assert(output != null);
+                Debugging.Assert(inc != null);
             }
             if (inc == NO_OUTPUT)
             {
@@ -103,8 +103,8 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => inc.Length < output.Length, () => "inc.length=" + inc.Length + " vs output.length=" + output.Length);
-                    Debugging.Assert(() => inc.Length > 0);
+                    Debugging.Assert(inc.Length < output.Length, () => "inc.length=" + inc.Length + " vs output.length=" + output.Length);
+                    Debugging.Assert(inc.Length > 0);
                 }
                 return new BytesRef(output.Bytes, output.Offset + inc.Length, output.Length - inc.Length);
             }
@@ -114,8 +114,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => prefix != null);
-                Debugging.Assert(() => output != null);
+                Debugging.Assert(prefix != null);
+                Debugging.Assert(output != null);
             }
             if (prefix == NO_OUTPUT)
             {
@@ -127,8 +127,8 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => prefix.Length > 0);
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => output.Length > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(prefix.Length > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(output.Length > 0);
                 BytesRef result = new BytesRef(prefix.Length + output.Length);
                 Array.Copy(prefix.Bytes, prefix.Offset, result.Bytes, 0, prefix.Length);
                 Array.Copy(output.Bytes, output.Offset, result.Bytes, prefix.Length, output.Length);
@@ -139,7 +139,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(BytesRef prefix, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => prefix != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(prefix != null);
             @out.WriteVInt32(prefix.Length);
             @out.WriteBytes(prefix.Bytes, prefix.Offset, prefix.Length);
         }

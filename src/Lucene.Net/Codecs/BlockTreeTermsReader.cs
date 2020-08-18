@@ -167,13 +167,13 @@ namespace Lucene.Net.Codecs
                 {
                     int field = @in.ReadVInt32();
                     long numTerms = @in.ReadVInt64();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => numTerms >= 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(numTerms >= 0);
                     int numBytes = @in.ReadVInt32();
                     BytesRef rootCode = new BytesRef(new byte[numBytes]);
                     @in.ReadBytes(rootCode.Bytes, 0, numBytes);
                     rootCode.Length = numBytes;
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => fieldInfo != null, () => "field=" + field);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfo != null, () => "field=" + field);
                     long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? -1 : @in.ReadVInt64();
                     long sumDocFreq = @in.ReadVInt64();
                     int docCount = @in.ReadVInt32();
@@ -291,7 +291,7 @@ namespace Lucene.Net.Codecs
 
         public override Terms GetTerms(string field)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => field != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
             FieldReader ret;
             fields.TryGetValue(field, out ret);
             return ret;
@@ -478,7 +478,7 @@ namespace Lucene.Net.Codecs
                 }
                 endBlockCount++;
                 long otherBytes = frame.fpEnd - frame.fp - frame.suffixesReader.Length - frame.statsReader.Length;
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => otherBytes > 0, () => "otherBytes=" + otherBytes + " frame.fp=" + frame.fp + " frame.fpEnd=" + frame.fpEnd);
+                if (Debugging.AssertsEnabled) Debugging.Assert(otherBytes > 0, () => "otherBytes=" + otherBytes + " frame.fp=" + frame.fp + " frame.fpEnd=" + frame.fpEnd);
                 TotalBlockOtherBytes += otherBytes;
             }
 
@@ -491,9 +491,9 @@ namespace Lucene.Net.Codecs
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => startBlockCount == endBlockCount, () => "startBlockCount=" + startBlockCount + " endBlockCount=" + endBlockCount);
-                    Debugging.Assert(() => TotalBlockCount == FloorSubBlockCount + NonFloorBlockCount, () => "floorSubBlockCount=" + FloorSubBlockCount + " nonFloorBlockCount=" + NonFloorBlockCount + " totalBlockCount=" + TotalBlockCount);
-                    Debugging.Assert(() => TotalBlockCount == MixedBlockCount + TermsOnlyBlockCount + SubBlocksOnlyBlockCount, () => "totalBlockCount=" + TotalBlockCount + " mixedBlockCount=" + MixedBlockCount + " subBlocksOnlyBlockCount=" + SubBlocksOnlyBlockCount + " termsOnlyBlockCount=" + TermsOnlyBlockCount);
+                    Debugging.Assert(startBlockCount == endBlockCount, () => "startBlockCount=" + startBlockCount + " endBlockCount=" + endBlockCount);
+                    Debugging.Assert(TotalBlockCount == FloorSubBlockCount + NonFloorBlockCount, () => "floorSubBlockCount=" + FloorSubBlockCount + " nonFloorBlockCount=" + NonFloorBlockCount + " totalBlockCount=" + TotalBlockCount);
+                    Debugging.Assert(TotalBlockCount == MixedBlockCount + TermsOnlyBlockCount + SubBlocksOnlyBlockCount, () => "totalBlockCount=" + TotalBlockCount + " mixedBlockCount=" + MixedBlockCount + " subBlocksOnlyBlockCount=" + SubBlocksOnlyBlockCount + " termsOnlyBlockCount=" + TermsOnlyBlockCount);
                 }
             }
 
@@ -532,7 +532,7 @@ namespace Lucene.Net.Codecs
                             @out.AppendLine("      " + prefix.ToString().PadLeft(2, ' ') + ": " + blockCount);
                         }
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => TotalBlockCount == total);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(TotalBlockCount == total);
                 }
                 return @out.ToString();
             }
@@ -563,7 +563,7 @@ namespace Lucene.Net.Codecs
             internal FieldReader(BlockTreeTermsReader outerInstance, FieldInfo fieldInfo, long numTerms, BytesRef rootCode, long sumTotalTermFreq, long sumDocFreq, int docCount, long indexStartFP, int longsSize, IndexInput indexIn)
             {
                 this.outerInstance = outerInstance;
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => numTerms > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(numTerms > 0);
                 this.fieldInfo = fieldInfo;
                 //DEBUG = BlockTreeTermsReader.DEBUG && fieldInfo.name.Equals("id", StringComparison.Ordinal);
                 this.numTerms = numTerms;
@@ -763,7 +763,7 @@ namespace Lucene.Net.Codecs
 
                     internal void LoadNextFloorBlock()
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => numFollowFloorBlocks > 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(numFollowFloorBlocks > 0);
                         //if (DEBUG) System.out.println("    loadNextFoorBlock trans=" + transitions[transitionIndex]);
 
                         do
@@ -848,7 +848,7 @@ namespace Lucene.Net.Codecs
                         outerInstance.@in.Seek(fp);
                         int code_ = outerInstance.@in.ReadVInt32();
                         entCount = (int)((uint)code_ >> 1);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => entCount > 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(entCount > 0);
                         isLastInFloor = (code_ & 1) != 0;
 
                         // term suffixes:
@@ -909,7 +909,7 @@ namespace Lucene.Net.Codecs
                     public bool NextLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => nextEnt != -1 && nextEnt < entCount, () => "nextEnt=" + nextEnt + " entCount=" + entCount + " fp=" + fp);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount, () => "nextEnt=" + nextEnt + " entCount=" + entCount + " fp=" + fp);
                         nextEnt++;
                         suffix = suffixesReader.ReadVInt32();
                         startBytePos = suffixesReader.Position;
@@ -920,7 +920,7 @@ namespace Lucene.Net.Codecs
                     public bool NextNonLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => nextEnt != -1 && nextEnt < entCount, () => "nextEnt=" + nextEnt + " entCount=" + entCount + " fp=" + fp);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount, () => "nextEnt=" + nextEnt + " entCount=" + entCount + " fp=" + fp);
                         nextEnt++;
                         int code = suffixesReader.ReadVInt32();
                         suffix = (int)((uint)code >> 1);
@@ -947,7 +947,7 @@ namespace Lucene.Net.Codecs
                         // lazily catch up on metadata decode:
                         int limit = TermBlockOrd;
                         bool absolute = metaDataUpto == 0;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => limit > 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(limit > 0);
 
                         // TODO: better API would be "jump straight to term=N"???
                         while (metaDataUpto < limit)
@@ -1024,7 +1024,7 @@ namespace Lucene.Net.Codecs
 
                     FST.Arc<BytesRef> arc = outerInstance.index.GetFirstArc(arcs[0]);
                     // Empty string prefix must have an output in the index!
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.IsFinal);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
 
                     // Special pushFrame since it's the first one:
                     Frame f = stack[0];
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Codecs
                     f.Load(outerInstance.rootCode);
 
                     // for assert:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => SetSavedStartTerm(startTerm));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(SetSavedStartTerm(startTerm));
 
                     currentFrame = f;
                     if (startTerm != null)
@@ -1070,7 +1070,7 @@ namespace Lucene.Net.Codecs
                         }
                         stack = next;
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => stack[ord].ord == ord);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(stack[ord].ord == ord);
                     return stack[ord];
                 }
 
@@ -1104,7 +1104,7 @@ namespace Lucene.Net.Codecs
                     // possible:
                     FST.Arc<BytesRef> arc = currentFrame.arc;
                     int idx = currentFrame.prefix;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => currentFrame.suffix > 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(currentFrame.suffix > 0);
                     BytesRef output = currentFrame.outputPrefix;
                     while (idx < f.prefix)
                     {
@@ -1113,14 +1113,14 @@ namespace Lucene.Net.Codecs
                         // case by using current arc as starting point,
                         // passed to findTargetArc
                         arc = outerInstance.index.FindTargetArc(target, arc, GetArc(1 + idx), fstReader);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => arc != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc != null);
                         output = outerInstance.outerInstance.fstOutputs.Add(output, arc.Output);
                         idx++;
                     }
 
                     f.arc = arc;
                     f.outputPrefix = output;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.IsFinal);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
                     f.Load(outerInstance.outerInstance.fstOutputs.Add(output, arc.NextFinalOutput));
                     return f;
                 }
@@ -1171,7 +1171,7 @@ namespace Lucene.Net.Codecs
                     for (int idx = 0; idx < currentFrame.suffix; idx++)
                     {
                         state = runAutomaton.Step(state, currentFrame.suffixBytes[currentFrame.startBytePos + idx] & 0xff);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => state != -1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(state != -1);
                     }
                     return state;
                 }
@@ -1183,13 +1183,13 @@ namespace Lucene.Net.Codecs
                 private void SeekToStartTerm(BytesRef target)
                 {
                     //if (DEBUG) System.out.println("seek to startTerm=" + target.utf8ToString());
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => currentFrame.ord == 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(currentFrame.ord == 0);
                     if (term.Length < target.Length)
                     {
                         term.Bytes = ArrayUtil.Grow(term.Bytes, target.Length);
                     }
                     FST.Arc<BytesRef> arc = arcs[0];
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => arc == currentFrame.arc);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(arc == currentFrame.arc);
 
                     for (int idx = 0; idx <= target.Length; idx++)
                     {
@@ -1267,7 +1267,7 @@ namespace Lucene.Net.Codecs
                         }
                     }
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => false);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(false);
                 }
 
                 public override BytesRef Next()
@@ -1297,7 +1297,7 @@ namespace Lucene.Net.Codecs
                                 }
                                 long lastFP = currentFrame.fpOrig;
                                 currentFrame = stack[currentFrame.ord - 1];
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => currentFrame.lastSubFP == lastFP);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(currentFrame.lastSubFP == lastFP);
                                 //if (DEBUG) System.out.println("\n  frame ord=" + currentFrame.ord + " prefix=" + brToString(new BytesRef(term.bytes, term.offset, currentFrame.prefix)) + " state=" + currentFrame.state + " lastInFloor?=" + currentFrame.isLastInFloor + " fp=" + currentFrame.fp + " trans=" + (currentFrame.transitions.length == 0 ? "n/a" : currentFrame.transitions[currentFrame.transitionIndex]) + " outputPrefix=" + currentFrame.outputPrefix);
                             }
                         }
@@ -1351,7 +1351,7 @@ namespace Lucene.Net.Codecs
                             byte[] commonSuffixBytes = compiledAutomaton.CommonSuffixRef.Bytes;
 
                             int lenInPrefix = compiledAutomaton.CommonSuffixRef.Length - currentFrame.suffix;
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => compiledAutomaton.CommonSuffixRef.Offset == 0);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(compiledAutomaton.CommonSuffixRef.Offset == 0);
                             int suffixBytesPos;
                             int commonSuffixBytesPos = 0;
 
@@ -1362,7 +1362,7 @@ namespace Lucene.Net.Codecs
                                 // test whether the prefix part matches:
                                 byte[] termBytes = term.Bytes;
                                 int termBytesPos = currentFrame.prefix - lenInPrefix;
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => termBytesPos >= 0);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(termBytesPos >= 0);
                                 int termBytesPosEnd = currentFrame.prefix;
                                 while (termBytesPos < termBytesPosEnd)
                                 {
@@ -1430,7 +1430,7 @@ namespace Lucene.Net.Codecs
                         {
                             CopyTerm();
                             //if (DEBUG) System.out.println("      term match to state=" + state + "; return term=" + brToString(term));
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => savedStartTerm == null || term.CompareTo(savedStartTerm) > 0, () => "saveStartTerm=" + savedStartTerm.Utf8ToString() + " term=" + term.Utf8ToString());
+                            if (Debugging.AssertsEnabled) Debugging.Assert(savedStartTerm == null || term.CompareTo(savedStartTerm) > 0, () => "saveStartTerm=" + savedStartTerm.Utf8ToString() + " term=" + term.Utf8ToString());
                             return term;
                         }
                         else
@@ -1534,7 +1534,7 @@ namespace Lucene.Net.Codecs
                     {
                         arc = outerInstance.index.GetFirstArc(arcs[0]);
                         // Empty string prefix must have an output in the index!
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.IsFinal);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
                     }
                     else
                     {
@@ -1582,7 +1582,7 @@ namespace Lucene.Net.Codecs
                     {
                         arc = outerInstance.index.GetFirstArc(arcs[0]);
                         // Empty string prefix must have an output in the index!
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.IsFinal);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
                     }
                     else
                     {
@@ -1617,7 +1617,7 @@ namespace Lucene.Net.Codecs
                                 }
                                 long lastFP = currentFrame.fpOrig;
                                 currentFrame = stack[currentFrame.ord - 1];
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => lastFP == currentFrame.lastSubFP);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(lastFP == currentFrame.lastSubFP);
                                 // if (DEBUG) {
                                 //   System.out.println("  reset validIndexPrefix=" + validIndexPrefix);
                                 // }
@@ -1657,7 +1657,7 @@ namespace Lucene.Net.Codecs
                     {
                         arc = outerInstance.index.GetFirstArc(arcs[0]);
                         // Empty string prefix must have an output in the index!
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.IsFinal);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
                     }
                     else
                     {
@@ -1684,7 +1684,7 @@ namespace Lucene.Net.Codecs
                         }
                         stack = next;
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => stack[ord].ord == ord);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(stack[ord].ord == ord);
                     return stack[ord];
                 }
 
@@ -1743,7 +1743,7 @@ namespace Lucene.Net.Codecs
                             //   System.out.println("        skip rewind!");
                             // }
                         }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => length == f.prefix);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(length == f.prefix);
                     }
                     else
                     {
@@ -1789,7 +1789,7 @@ namespace Lucene.Net.Codecs
                         term.Bytes = ArrayUtil.Grow(term.Bytes, 1 + target.Length);
                     }
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ClearEOF());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ClearEOF());
 
                     FST.Arc<BytesRef> arc;
                     int targetUpto;
@@ -1811,12 +1811,12 @@ namespace Lucene.Net.Codecs
                         // }
 
                         arc = arcs[0];
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.IsFinal);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
                         output = arc.Output;
                         targetUpto = 0;
 
                         Frame lastFrame = stack[0];
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => validIndexPrefix <= term.Length);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(validIndexPrefix <= term.Length);
 
                         int targetLimit = Math.Min(target.Length, validIndexPrefix);
 
@@ -1840,7 +1840,7 @@ namespace Lucene.Net.Codecs
                             //if (arc.label != (target.bytes[target.offset + targetUpto] & 0xFF)) {
                             //System.out.println("FAIL: arc.label=" + (char) arc.label + " targetLabel=" + (char) (target.bytes[target.offset + targetUpto] & 0xFF));
                             //}
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF), () => "arc.label=" + (char)arc.Label + " targetLabel=" + (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
+                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF), () => "arc.label=" + (char)arc.Label + " targetLabel=" + (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
                             if (arc.Output != outerInstance.outerInstance.NO_OUTPUT)
                             {
                                 output = outerInstance.outerInstance.fstOutputs.Add(output, arc.Output);
@@ -1907,7 +1907,7 @@ namespace Lucene.Net.Codecs
                         else
                         {
                             // Target is exactly the same as current term
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => term.Length == target.Length);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(term.Length == target.Length);
                             if (termExists)
                             {
                                 // if (DEBUG) {
@@ -1934,8 +1934,8 @@ namespace Lucene.Net.Codecs
                         // Empty string prefix must have an output (block) in the index!
                         if (Debugging.AssertsEnabled)
                         {
-                            Debugging.Assert(() => arc.IsFinal);
-                            Debugging.Assert(() => arc.Output != null);
+                            Debugging.Assert(arc.IsFinal);
+                            Debugging.Assert(arc.Output != null);
                         }
 
                         // if (DEBUG) {
@@ -2008,7 +2008,7 @@ namespace Lucene.Net.Codecs
                             arc = nextArc;
                             term.Bytes[targetUpto] = (byte)targetLabel;
                             // Aggregate output as we go:
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.Output != null);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Output != null);
                             if (arc.Output != outerInstance.outerInstance.NO_OUTPUT)
                             {
                                 output = outerInstance.outerInstance.fstOutputs.Add(output, arc.Output);
@@ -2076,7 +2076,7 @@ namespace Lucene.Net.Codecs
                         term.Bytes = ArrayUtil.Grow(term.Bytes, 1 + target.Length);
                     }
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ClearEOF);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ClearEOF());
 
                     //if (DEBUG) {
                     //System.out.println("\nBTTR.seekCeil seg=" + segment + " target=" + fieldInfo.name + ":" + target.utf8ToString() + " " + target + " current=" + brToString(term) + " (exists?=" + termExists + ") validIndexPrefix=  " + validIndexPrefix);
@@ -2103,12 +2103,12 @@ namespace Lucene.Net.Codecs
                         //}
 
                         arc = arcs[0];
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.IsFinal);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
                         output = arc.Output;
                         targetUpto = 0;
 
                         Frame lastFrame = stack[0];
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => validIndexPrefix <= term.Length);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(validIndexPrefix <= term.Length);
 
                         int targetLimit = Math.Min(target.Length, validIndexPrefix);
 
@@ -2129,7 +2129,7 @@ namespace Lucene.Net.Codecs
                                 break;
                             }
                             arc = arcs[1 + targetUpto];
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF), () => "arc.label=" + (char)arc.Label + " targetLabel=" + (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
+                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF), () => "arc.label=" + (char)arc.Label + " targetLabel=" + (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
                             // TOOD: we could save the outputs in local
                             // byte[][] instead of making new objs ever
                             // seek; but, often the FST doesn't have any
@@ -2198,7 +2198,7 @@ namespace Lucene.Net.Codecs
                         else
                         {
                             // Target is exactly the same as current term
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => term.Length == target.Length);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(term.Length == target.Length);
                             if (termExists)
                             {
                                 //if (DEBUG) {
@@ -2222,8 +2222,8 @@ namespace Lucene.Net.Codecs
                         // Empty string prefix must have an output (block) in the index!
                         if (Debugging.AssertsEnabled)
                         {
-                            Debugging.Assert(() => arc.IsFinal);
-                            Debugging.Assert(() => arc.Output != null);
+                            Debugging.Assert(arc.IsFinal);
+                            Debugging.Assert(arc.Output != null);
                         }
 
                         //if (DEBUG) {
@@ -2298,7 +2298,7 @@ namespace Lucene.Net.Codecs
                             term.Bytes[targetUpto] = (byte)targetLabel;
                             arc = nextArc;
                             // Aggregate output as we go:
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.Output != null);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Output != null);
                             if (arc.Output != outerInstance.outerInstance.NO_OUTPUT)
                             {
                                 output = outerInstance.outerInstance.fstOutputs.Add(output, arc.Output);
@@ -2431,7 +2431,7 @@ namespace Lucene.Net.Codecs
                         {
                             arc = outerInstance.index.GetFirstArc(arcs[0]);
                             // Empty string prefix must have an output in the index!
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.IsFinal);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
                         }
                         else
                         {
@@ -2443,7 +2443,7 @@ namespace Lucene.Net.Codecs
 
                     targetBeforeCurrentLength = currentFrame.ord;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => !eof);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(!eof);
                     //if (DEBUG) {
                     //System.out.println("\nBTTR.next seg=" + segment + " term=" + brToString(term) + " termExists?=" + termExists + " field=" + fieldInfo.name + " termBlockOrd=" + currentFrame.state.termBlockOrd + " validIndexPrefix=" + validIndexPrefix);
                     //printSeekState();
@@ -2459,7 +2459,7 @@ namespace Lucene.Net.Codecs
                         // works properly:
                         //if (DEBUG) System.out.println("  re-seek to pending term=" + term.utf8ToString() + " " + term);
                         bool result = SeekExact(term);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => result);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(result);
                     }
 
                     // Pop finished blocks
@@ -2475,7 +2475,7 @@ namespace Lucene.Net.Codecs
                             if (currentFrame.ord == 0)
                             {
                                 //if (DEBUG) System.out.println("  return null");
-                                if (Debugging.AssertsEnabled) Debugging.Assert(SetEOF);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(SetEOF());
                                 term.Length = 0;
                                 validIndexPrefix = 0;
                                 currentFrame.Rewind();
@@ -2529,7 +2529,7 @@ namespace Lucene.Net.Codecs
                 {
                     get
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => !eof);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!eof);
                         return term;
                     }
                 }
@@ -2538,7 +2538,7 @@ namespace Lucene.Net.Codecs
                 {
                     get
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => !eof);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!eof);
                         //if (DEBUG) System.out.println("BTR.docFreq");
                         currentFrame.DecodeMetaData();
                         //if (DEBUG) System.out.println("  return " + currentFrame.state.docFreq);
@@ -2550,7 +2550,7 @@ namespace Lucene.Net.Codecs
                 {
                     get
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => !eof);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!eof);
                         currentFrame.DecodeMetaData();
                         return currentFrame.state.TotalTermFreq;
                     }
@@ -2558,7 +2558,7 @@ namespace Lucene.Net.Codecs
 
                 public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, DocsFlags flags)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => !eof);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(!eof);
                     //if (DEBUG) {
                     //System.out.println("BTTR.docs seg=" + segment);
                     //}
@@ -2577,7 +2577,7 @@ namespace Lucene.Net.Codecs
                         return null;
                     }
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => !eof);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(!eof);
                     currentFrame.DecodeMetaData();
                     return outerInstance.outerInstance.postingsReader.DocsAndPositions(outerInstance.fieldInfo, currentFrame.state, skipDocs, reuse, flags);
                 }
@@ -2587,15 +2587,15 @@ namespace Lucene.Net.Codecs
                     // if (DEBUG) {
                     //   System.out.println("BTTR.seekExact termState seg=" + segment + " target=" + target.utf8ToString() + " " + target + " state=" + otherState);
                     // }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ClearEOF);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ClearEOF());
                     if (target.CompareTo(term) != 0 || !termExists)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => otherState != null && otherState is BlockTermState);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(otherState != null && otherState is BlockTermState);
                         currentFrame = staticFrame;
                         currentFrame.state.CopyFrom(otherState);
                         term.CopyBytes(target);
                         currentFrame.metaDataUpto = currentFrame.TermBlockOrd;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => currentFrame.metaDataUpto > 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(currentFrame.metaDataUpto > 0);
                         validIndexPrefix = 0;
                     }
                     else
@@ -2608,7 +2608,7 @@ namespace Lucene.Net.Codecs
 
                 public override TermState GetTermState()
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => !eof);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(!eof);
                     currentFrame.DecodeMetaData();
                     TermState ts = (TermState)currentFrame.state.Clone();
                     //if (DEBUG) System.out.println("BTTR.termState seg=" + segment + " state=" + ts);
@@ -2740,7 +2740,7 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) {
                         //System.out.println("    loadNextFloorBlock fp=" + fp + " fpEnd=" + fpEnd);
                         //}
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => arc == null || isFloor, () => "arc=" + arc + " isFloor=" + isFloor);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc == null || isFloor, () => "arc=" + arc + " isFloor=" + isFloor);
                         fp = fpEnd;
                         nextEnt = -1;
                         LoadBlock();
@@ -2774,9 +2774,9 @@ namespace Lucene.Net.Codecs
                         outerInstance.@in.Seek(fp);
                         int code = outerInstance.@in.ReadVInt32();
                         entCount = (int)((uint)code >> 1);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => entCount > 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(entCount > 0);
                         isLastInFloor = (code & 1) != 0;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => arc == null || (isLastInFloor || isFloor));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc == null || (isLastInFloor || isFloor));
 
                         // TODO: if suffixes were stored in random-access
                         // array structure, then we could do binary search
@@ -2897,7 +2897,7 @@ namespace Lucene.Net.Codecs
                     public bool NextLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => nextEnt != -1 && nextEnt < entCount, () => "nextEnt=" + nextEnt + " entCount=" + entCount + " fp=" + fp);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount, () => "nextEnt=" + nextEnt + " entCount=" + entCount + " fp=" + fp);
                         nextEnt++;
                         suffix = suffixesReader.ReadVInt32();
                         startBytePos = suffixesReader.Position;
@@ -2915,7 +2915,7 @@ namespace Lucene.Net.Codecs
                     public bool NextNonLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => nextEnt != -1 && nextEnt < entCount, () => "nextEnt=" + nextEnt + " entCount=" + entCount + " fp=" + fp);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount, () => "nextEnt=" + nextEnt + " entCount=" + entCount + " fp=" + fp);
                         nextEnt++;
                         int code = suffixesReader.ReadVInt32();
                         suffix = (int)((uint)code >> 1);
@@ -2974,7 +2974,7 @@ namespace Lucene.Net.Codecs
                             return;
                         }
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => numFollowFloorBlocks != 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(numFollowFloorBlocks != 0);
 
                         long newFP = fpOrig;
                         while (true)
@@ -3034,7 +3034,7 @@ namespace Lucene.Net.Codecs
                         // lazily catch up on metadata decode:
                         int limit = TermBlockOrd;
                         bool absolute = metaDataUpto == 0;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => limit > 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(limit > 0);
 
                         // TODO: better API would be "jump straight to term=N"???
                         while (metaDataUpto < limit)
@@ -3090,7 +3090,7 @@ namespace Lucene.Net.Codecs
                     /// </summary>
                     public void ScanToSubBlock(long subFP)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => !isLeafBlock);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!isLeafBlock);
                         //if (DEBUG) System.out.println("  scanToSubBlock fp=" + fp + " subFP=" + subFP + " entCount=" + entCount + " lastSubFP=" + lastSubFP);
                         //assert nextEnt == 0;
                         if (lastSubFP == subFP)
@@ -3098,12 +3098,12 @@ namespace Lucene.Net.Codecs
                             //if (DEBUG) System.out.println("    already positioned");
                             return;
                         }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => subFP < fp, () => "fp=" + fp + " subFP=" + subFP);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(subFP < fp, () => "fp=" + fp + " subFP=" + subFP);
                         long targetSubCode = fp - subFP;
                         //if (DEBUG) System.out.println("    targetSubCode=" + targetSubCode);
                         while (true)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => nextEnt < entCount);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt < entCount);
                             nextEnt++;
                             int code = suffixesReader.ReadVInt32();
                             suffixesReader.SkipBytes(isLeafBlock ? code : (int)((uint)code >> 1));
@@ -3142,7 +3142,7 @@ namespace Lucene.Net.Codecs
                     {
                         // if (DEBUG) System.out.println("    scanToTermLeaf: block fp=" + fp + " prefix=" + prefix + " nextEnt=" + nextEnt + " (of " + entCount + ") target=" + brToString(target) + " term=" + brToString(term));
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => nextEnt != -1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1);
 
                         outerInstance.termExists = true;
                         subCode = 0;
@@ -3156,7 +3156,7 @@ namespace Lucene.Net.Codecs
                             return SeekStatus.END;
                         }
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => PrefixMatches(target));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(PrefixMatches(target));
 
                         // Loop over each entry (term or sub-block) in this block:
                         //nextTerm: while(nextEnt < entCount) {
@@ -3195,7 +3195,7 @@ namespace Lucene.Net.Codecs
                                 }
                                 else
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => targetPos == targetLimit);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(targetPos == targetLimit);
                                     cmp = termLen - target.Length;
                                     stop = true;
                                 }
@@ -3251,7 +3251,7 @@ namespace Lucene.Net.Codecs
                                     // would have followed the index to this
                                     // sub-block from the start:
 
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => outerInstance.termExists);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.termExists);
                                     FillTerm();
                                     //if (DEBUG) System.out.println("        found!");
                                     return SeekStatus.FOUND;
@@ -3288,7 +3288,7 @@ namespace Lucene.Net.Codecs
                     {
                         //if (DEBUG) System.out.println("    scanToTermNonLeaf: block fp=" + fp + " prefix=" + prefix + " nextEnt=" + nextEnt + " (of " + entCount + ") target=" + brToString(target) + " term=" + brToString(term));
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => nextEnt != -1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1);
 
                         if (nextEnt == entCount)
                         {
@@ -3300,7 +3300,7 @@ namespace Lucene.Net.Codecs
                             return SeekStatus.END;
                         }
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => PrefixMatches(target));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(PrefixMatches(target));
 
                         // Loop over each entry (term or sub-block) in this block:
                         //nextTerm: while(nextEnt < entCount) {
@@ -3350,7 +3350,7 @@ namespace Lucene.Net.Codecs
                                 }
                                 else
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => targetPos == targetLimit);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(targetPos == targetLimit);
                                     cmp = termLen - target.Length;
                                     stop = true;
                                 }
@@ -3407,7 +3407,7 @@ namespace Lucene.Net.Codecs
                                     // would have followed the index to this
                                     // sub-block from the start:
 
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => outerInstance.termExists);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.termExists);
                                     FillTerm();
                                     //if (DEBUG) System.out.println("        found!");
                                     return SeekStatus.FOUND;

@@ -71,7 +71,7 @@ namespace Lucene.Net.Util.Packed
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected override void Flush()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => m_off > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(m_off > 0);
             long min = long.MaxValue, max = long.MinValue;
             for (int i = 0; i < m_off; ++i)
             {

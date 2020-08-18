@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => field.Number > lastFieldNumber, () => "writing norms fields out of order" + lastFieldNumber + " -> " + field.Number);
+            if (Debugging.AssertsEnabled) Debugging.Assert(field.Number > lastFieldNumber, () => "writing norms fields out of order" + lastFieldNumber + " -> " + field.Number);
             foreach (var n in values)
             {
                 if (((sbyte)(byte)(long)n) < sbyte.MinValue || ((sbyte)(byte)(long)n) > sbyte.MaxValue)

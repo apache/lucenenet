@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (fi.IsIndexed)
                     {
                         bits |= IS_INDEXED;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => fi.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(fi.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads);
                         if (fi.IndexOptions == IndexOptions.DOCS_ONLY)
                         {
                             bits |= OMIT_TERM_FREQ_AND_POSITIONS;
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         // only in RW case
                         output.WriteByte((byte)(sbyte)(fi.NormType == Index.DocValuesType.NONE ? 0 : 1));
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => fi.Attributes == null); // not used or supported
+                    if (Debugging.AssertsEnabled) Debugging.Assert(fi.Attributes == null); // not used or supported
                 }
                 success = true;
             }

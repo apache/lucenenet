@@ -174,10 +174,10 @@ namespace Lucene.Net.Util.Packed
 
         public override int Get(int index, long[] arr, int off, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => index >= 0 && index < m_valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < m_valueCount);
             len = Math.Min(len, m_valueCount - index);
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => off + len <= arr.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
 
             int originalIndex = index;
             PackedInt32s.IDecoder decoder = BulkOperation.Of(PackedInt32s.Format.PACKED, m_bitsPerValue);
@@ -198,15 +198,15 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk get
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => index % decoder.Int64ValueCount == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index % decoder.Int64ValueCount == 0);
             int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => (((long)index * m_bitsPerValue) & MOD_MASK) == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert((((long)index * m_bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / decoder.Int64ValueCount;
             decoder.Decode(blocks, blockIndex, arr, off, iterations);
             int gotValues = iterations * decoder.Int64ValueCount;
             index += gotValues;
             len -= gotValues;
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => len >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(len >= 0);
 
             if (index > originalIndex)
             {
@@ -216,7 +216,7 @@ namespace Lucene.Net.Util.Packed
             else
             {
                 // no progress so far => already at a block boundary but no full block to get
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => index == originalIndex);
+                if (Debugging.AssertsEnabled) Debugging.Assert(index == originalIndex);
                 return base.Get(index, arr, off, len);
             }
         }
@@ -242,10 +242,10 @@ namespace Lucene.Net.Util.Packed
 
         public override int Set(int index, long[] arr, int off, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => index >= 0 && index < m_valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < m_valueCount);
             len = Math.Min(len, m_valueCount - index);
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => off + len <= arr.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
 
             int originalIndex = index;
             PackedInt32s.IEncoder encoder = BulkOperation.Of(PackedInt32s.Format.PACKED, m_bitsPerValue);
@@ -266,15 +266,15 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk set
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => index % encoder.Int64ValueCount == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index % encoder.Int64ValueCount == 0);
             int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => (((long)index * m_bitsPerValue) & MOD_MASK) == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert((((long)index * m_bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / encoder.Int64ValueCount;
             encoder.Encode(arr, off, blocks, blockIndex, iterations);
             int setValues = iterations * encoder.Int64ValueCount;
             index += setValues;
             len -= setValues;
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => len >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(len >= 0);
 
             if (index > originalIndex)
             {
@@ -284,7 +284,7 @@ namespace Lucene.Net.Util.Packed
             else
             {
                 // no progress so far => already at a block boundary but no full block to get
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => index == originalIndex);
+                if (Debugging.AssertsEnabled) Debugging.Assert(index == originalIndex);
                 return base.Set(index, arr, off, len);
             }
         }
@@ -308,8 +308,8 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => PackedInt32s.BitsRequired(val) <= BitsPerValue);
-                Debugging.Assert(() => fromIndex <= toIndex);
+                Debugging.Assert(PackedInt32s.BitsRequired(val) <= BitsPerValue);
+                Debugging.Assert(fromIndex <= toIndex);
             }
 
             // minimum number of values that use an exact number of full blocks
@@ -332,7 +332,7 @@ namespace Lucene.Net.Util.Packed
                     Set(fromIndex++, val);
                 }
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => fromIndex % nAlignedValues == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(fromIndex % nAlignedValues == 0);
 
             // compute the long[] blocks for nAlignedValues consecutive values and
             // use them to set as many values as possible without applying any mask
@@ -346,7 +346,7 @@ namespace Lucene.Net.Util.Packed
                     values.Set(i, val);
                 }
                 nAlignedValuesBlocks = values.blocks;
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => nAlignedBlocks <= nAlignedValuesBlocks.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(nAlignedBlocks <= nAlignedValuesBlocks.Length);
             }
             int startBlock = (int)((ulong)((long)fromIndex * m_bitsPerValue) >> 6);
             int endBlock = (int)((ulong)((long)toIndex * m_bitsPerValue) >> 6);

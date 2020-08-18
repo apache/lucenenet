@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Compound
         {
             if (m_tokens.Count > 0)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => current != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(current != null);
                 CompoundToken token = m_tokens.Dequeue();
                 RestoreState(current); // keep all other attributes untouched
                 m_termAtt.SetEmpty().Append(token.Text);

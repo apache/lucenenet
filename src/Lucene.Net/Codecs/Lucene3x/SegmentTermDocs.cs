@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     else
                     {
                         freq = m_freqStream.ReadVInt32(); // else read freq
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => freq != 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(freq != 1);
                     }
                 }
 

@@ -122,7 +122,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => WrappedTermState != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(WrappedTermState != null);
                     clone.WrappedTermState = (BlockTermState)WrappedTermState.Clone();
                     clone.Absolute = Absolute;
 
@@ -172,7 +172,7 @@ namespace Lucene.Net.Codecs.Pulsing
         {
             var termState2 = (PulsingTermState) termState;
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => empty.Length == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(empty.Length == 0);
 
             termState2.Absolute = termState2.Absolute || absolute;
             // if we have positions, its total TF, otherwise its computed based on docFreq.
@@ -340,7 +340,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             public virtual PulsingDocsEnum Reset(IBits liveDocs, PulsingTermState termState)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => termState.PostingsSize != -1);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termState.PostingsSize != -1);
 
                 // Must make a copy of termState's byte[] so that if
                 // app does TermsEnum.next(), this DocsEnum is not affected
@@ -482,7 +482,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             public virtual PulsingDocsAndPositionsEnum Reset(IBits liveDocs, PulsingTermState termState)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => termState.PostingsSize != -1);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termState.PostingsSize != -1);
 
                 if (_postingsBytes == null)
                 {
@@ -542,7 +542,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             public override int NextPosition()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => _posPending > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(_posPending > 0);
 
                 _posPending--;
 

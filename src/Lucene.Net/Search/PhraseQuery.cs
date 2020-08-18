@@ -337,7 +337,7 @@ namespace Lucene.Net.Search
 
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => outerInstance.terms.Count > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.terms.Count > 0);
                 AtomicReader reader = context.AtomicReader;
                 IBits liveDocs = acceptDocs;
                 PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[outerInstance.terms.Count];
@@ -357,7 +357,7 @@ namespace Lucene.Net.Search
                     TermState state = states[i].Get(context.Ord);
                     if (state == null) // term doesnt exist in this segment
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => TermNotInReader(reader, t), () => "no termstate found but term exists in reader");
+                        if (Debugging.AssertsEnabled) Debugging.Assert(TermNotInReader(reader, t), () => "no termstate found but term exists in reader");
                         return null;
                     }
                     te.SeekExact(t.Bytes, state);
@@ -367,7 +367,7 @@ namespace Lucene.Net.Search
                     // positions.
                     if (postingsEnum == null)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => te.SeekExact(t.Bytes), () => "termstate found but no term exists in reader");
+                        if (Debugging.AssertsEnabled) Debugging.Assert(te.SeekExact(t.Bytes), () => "termstate found but no term exists in reader");
                         // term does exist, but has no positions
                         throw new InvalidOperationException("field \"" + t.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + t.Text() + ")");
                     }

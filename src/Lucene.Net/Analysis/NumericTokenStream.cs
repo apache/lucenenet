@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis
 
             public void FillBytesRef()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => ValueSize == 64 || ValueSize == 32);
+                if (Debugging.AssertsEnabled) Debugging.Assert(ValueSize == 64 || ValueSize == 32);
                 if (ValueSize == 64)
                 {
                     NumericUtils.Int64ToPrefixCoded(_value, Shift, _bytes);

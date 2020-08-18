@@ -276,7 +276,7 @@ namespace Lucene.Net.Util.Automaton
                 // decode absState -> state, offset
                 int state = absState / (m_w + 1);
                 int offset = absState % (m_w + 1);
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => offset >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(offset >= 0);
                 return m_w - offset + minErrors[state] <= m_n;
             }
 

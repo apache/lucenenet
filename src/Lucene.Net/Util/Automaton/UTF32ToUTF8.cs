@@ -179,8 +179,8 @@ namespace Lucene.Net.Util.Automaton
                 {
                     if (Debugging.AssertsEnabled)
                     {
-                        Debugging.Assert(() => startUTF8.len > upto + 1);
-                        Debugging.Assert(() => endUTF8.len > upto + 1);
+                        Debugging.Assert(startUTF8.len > upto + 1);
+                        Debugging.Assert(endUTF8.len > upto + 1);
                     }
                     State n = NewUTF8State();
 

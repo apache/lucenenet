@@ -776,8 +776,8 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => fields.Length == 1);
-                    Debugging.Assert(() => docids.Length == 1);
+                    Debugging.Assert(fields.Length == 1);
+                    Debugging.Assert(docids.Length == 1);
                 }
                 String[][] contents = RectangularArrays.ReturnRectangularArray<string>(1, 1); //= new String[1][1];
                 contents[0][0] = text;
@@ -1181,7 +1181,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             protected override char GetMultiValuedSeparator(string field)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => field.Equals("body", StringComparison.Ordinal));
+                if (Debugging.AssertsEnabled) Debugging.Assert(field.Equals("body", StringComparison.Ordinal));
                 return '\u2029';
             }
         }

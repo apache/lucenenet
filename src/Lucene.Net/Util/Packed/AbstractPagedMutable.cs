@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Packed
 
         public override sealed long Get(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => index >= 0 && index < size);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < size);
             int pageIndex = PageIndex(index);
             int indexInPage = IndexInPage(index);
             return subMutables[pageIndex].Get(indexInPage);
@@ -96,7 +96,7 @@ namespace Lucene.Net.Util.Packed
         /// Set value at <paramref name="index"/>. </summary>
         public void Set(long index, long value)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => index >= 0 && index < size);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < size);
             int pageIndex = PageIndex(index);
             int indexInPage = IndexInPage(index);
             subMutables[pageIndex].Set(indexInPage, value);
@@ -150,7 +150,7 @@ namespace Lucene.Net.Util.Packed
         /// Similar to <see cref="ArrayUtil.Grow(long[], int)"/>. </summary>
         public T Grow(long minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0);
             if (minSize <= Count)
             {
                 T result = (T)this;

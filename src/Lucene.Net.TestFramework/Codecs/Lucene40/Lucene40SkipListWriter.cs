@@ -67,8 +67,8 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public virtual void SetSkipData(int doc, bool storePayloads, int payloadLength, bool storeOffsets, int offsetLength)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => storePayloads || payloadLength == -1);
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => storeOffsets || offsetLength == -1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(storePayloads || payloadLength == -1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(storeOffsets || offsetLength == -1);
             this.curDoc = doc;
             this.curStorePayloads = storePayloads;
             this.curPayloadLength = payloadLength;
@@ -120,8 +120,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
             if (curStorePayloads || curStoreOffsets)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => curStorePayloads || curPayloadLength == lastSkipPayloadLength[level]);
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => curStoreOffsets || curOffsetLength == lastSkipOffsetLength[level]);
+                if (Debugging.AssertsEnabled) Debugging.Assert(curStorePayloads || curPayloadLength == lastSkipPayloadLength[level]);
+                if (Debugging.AssertsEnabled) Debugging.Assert(curStoreOffsets || curOffsetLength == lastSkipOffsetLength[level]);
 
                 if (curPayloadLength == lastSkipPayloadLength[level] && curOffsetLength == lastSkipOffsetLength[level])
                 {

@@ -104,7 +104,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public virtual void Reset(byte[] bytes, int off, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => Level != 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(Level != 0);
             token = null;
             m_shapeRel = SpatialRelation.NOT_SET;
             this.bytes = bytes;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         /// <summary>Note: not supported at level 0.</summary>
         public virtual void SetLeaf()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => Level != 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(Level != 0);
             m_leaf = true;
         }
 

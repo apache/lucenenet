@@ -166,7 +166,7 @@ namespace Lucene.Net.Codecs.Memory
 
         public override Terms GetTerms(string field)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => field != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
             TermsReader result;
             fields.TryGetValue(field, out result);
             return result;
@@ -218,7 +218,7 @@ namespace Lucene.Net.Codecs.Memory
                 this.longsSize = longsSize;
                 this.index = index;
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => (numTerms & (~0xffffffffL)) == 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert((numTerms & (~0xffffffffL)) == 0);
                 int numBlocks = (int)(numTerms + INTERVAL - 1) / INTERVAL;
                 this.numSkipInfo = longsSize + 3;
                 this.skipInfo = new long[numBlocks * numSkipInfo];
@@ -500,7 +500,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         seekPending = false;
                         var status = SeekCeil(term);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => status == SeekStatus.FOUND); // must positioned on valid term
+                        if (Debugging.AssertsEnabled) Debugging.Assert(status == SeekStatus.FOUND); // must positioned on valid term
                     }
                     UpdateEnum(fstEnum.Next());
                     return term;
@@ -631,7 +631,7 @@ namespace Lucene.Net.Codecs.Memory
                 internal override void DecodeStats()
                 {
                     var arc = TopFrame().arc;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.NextFinalOutput == fstOutputs.NoOutput);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(arc.NextFinalOutput == fstOutputs.NoOutput);
                     ord = arc.Output.Value;
                     base.DecodeStats();
                 }
@@ -699,7 +699,7 @@ namespace Lucene.Net.Codecs.Memory
                         {
                             break;
                         }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => IsValid(frame)); // target must be fetched from automaton
+                        if (Debugging.AssertsEnabled) Debugging.Assert(IsValid(frame)); // target must be fetched from automaton
                         PushFrame(frame);
                         upto++;
                     }
@@ -837,7 +837,7 @@ namespace Lucene.Net.Codecs.Memory
                     arc.Output = fstOutputs.Add(TopFrame().arc.Output, arc.Output);
                     term = Grow(arc.Label);
                     level++;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => frame == stack[level]);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(frame == stack[level]);
                 }
 
                 private Frame PopFrame()

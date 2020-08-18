@@ -74,8 +74,8 @@ namespace Lucene.Net.Search
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => hitA != hitB);
-                    Debugging.Assert(() => hitA.Slot != hitB.Slot);
+                    Debugging.Assert(hitA != hitB);
+                    Debugging.Assert(hitA.Slot != hitB.Slot);
                 }
 
                 int c = oneReverseMul * m_firstComparer.Compare(hitA.Slot, hitB.Slot);
@@ -112,8 +112,8 @@ namespace Lucene.Net.Search
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => hitA != hitB);
-                    Debugging.Assert(() => hitA.Slot != hitB.Slot);
+                    Debugging.Assert(hitA != hitB);
+                    Debugging.Assert(hitA.Slot != hitB.Slot);
                 }
 
                 int numComparers = m_comparers.Length;

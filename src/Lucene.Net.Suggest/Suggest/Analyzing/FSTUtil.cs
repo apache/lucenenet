@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public static IList<Path<T>> IntersectPrefixPaths<T>(Automaton a, FST<T> fst)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => a.IsDeterministic);
+            if (Debugging.AssertsEnabled) Debugging.Assert(a.IsDeterministic);
             IList<Path<T>> queue = new List<Path<T>>();
             List<Path<T>> endNodes = new List<Path<T>>();
             queue.Add(new Path<T>(a.GetInitialState(), fst.GetFirstArc(new FST.Arc<T>()), fst.Outputs.NoOutput, new Int32sRef()));
@@ -120,8 +120,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         FST.Arc<T> nextArc = Lucene.Net.Util.Fst.Util.ReadCeilArc(min, fst, path.FstNode, scratchArc, fstReader);
                         while (nextArc != null && nextArc.Label <= max)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => nextArc.Label <= max);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => nextArc.Label >= min, () => nextArc.Label + " " + min);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(nextArc.Label <= max);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(nextArc.Label >= min, () => nextArc.Label + " " + min);
                             Int32sRef newInput = new Int32sRef(currentInput.Length + 1);
                             newInput.CopyInt32s(currentInput);
                             newInput.Int32s[currentInput.Length] = nextArc.Label;
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                               .CopyFrom(nextArc), fst.Outputs.Add(path.Output, nextArc.Output), newInput));
                             int label = nextArc.Label; // used in assert
                             nextArc = nextArc.IsLast ? null : fst.ReadNextRealArc(nextArc, fstReader);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => nextArc == null || label < nextArc.Label, () => "last: " + label + " next: " + (nextArc == null ? "" : nextArc.Label.ToString()));
+                            if (Debugging.AssertsEnabled) Debugging.Assert(nextArc == null || label < nextArc.Label, () => "last: " + label + " next: " + (nextArc == null ? "" : nextArc.Label.ToString()));
                         }
                     }
                 }

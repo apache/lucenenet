@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
             }
             starts[size] = r.MaxDoc;
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => anyReal);
+            if (Debugging.AssertsEnabled) Debugging.Assert(anyReal);
 
             return new NumericDocValuesAnonymousInnerClassHelper(values, starts);
         }
@@ -593,8 +593,8 @@ namespace Lucene.Net.Index
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => values.Length == mapping.ordDeltas.Length);
-                    Debugging.Assert(() => docStarts.Length == values.Length + 1);
+                    Debugging.Assert(values.Length == mapping.ordDeltas.Length);
+                    Debugging.Assert(docStarts.Length == values.Length + 1);
                 }
                 this.values = values;
                 this.docStarts = docStarts;
@@ -655,8 +655,8 @@ namespace Lucene.Net.Index
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => values.Length == mapping.ordDeltas.Length);
-                    Debugging.Assert(() => docStarts.Length == values.Length + 1);
+                    Debugging.Assert(values.Length == mapping.ordDeltas.Length);
+                    Debugging.Assert(docStarts.Length == values.Length + 1);
                 }
                 this.values = values;
                 this.docStarts = docStarts;

@@ -963,7 +963,7 @@ namespace Lucene.Net.Store
                                             {
                                                 if (endSet.Contains(s) && !startSet.Contains(s))
                                                 {
-                                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => pendingDeletions.Contains(s));
+                                                    if (Debugging.AssertsEnabled) Debugging.Assert(pendingDeletions.Contains(s));
                                                     if (LuceneTestCase.Verbose)
                                                     {
                                                         Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + 
@@ -1024,7 +1024,7 @@ namespace Lucene.Net.Store
                                         extras += "\n\nThese files we had previously tried to delete, but couldn't: " + pendingDeletions;
                                     }
 
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "unreferenced files: before delete:\n    " + Arrays.ToString(startFiles) + "\n  after delete:\n    " + Arrays.ToString(endFiles) + extras);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "unreferenced files: before delete:\n    " + Arrays.ToString(startFiles) + "\n  after delete:\n    " + Arrays.ToString(endFiles) + extras);
                                 }
 
                                 DirectoryReader ir1 = DirectoryReader.Open(this);
@@ -1034,7 +1034,7 @@ namespace Lucene.Net.Store
                                 DirectoryReader ir2 = DirectoryReader.Open(this);
                                 int numDocs2 = ir2.NumDocs;
                                 ir2.Dispose();
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => numDocs1 == numDocs2, () => "numDocs changed after opening/closing IW: before=" + numDocs1 + " after=" + numDocs2);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(numDocs1 == numDocs2, () => "numDocs changed after opening/closing IW: before=" + numDocs1 + " after=" + numDocs2);
                             }
                         }
                     }

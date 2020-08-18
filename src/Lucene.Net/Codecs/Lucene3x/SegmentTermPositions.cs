@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private void SkipPositions(int n)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => m_indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+            if (Debugging.AssertsEnabled) Debugging.Assert(m_indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
             for (int f = n; f > 0; f--) // skip unread positions
             {
                 ReadDeltaPosition();

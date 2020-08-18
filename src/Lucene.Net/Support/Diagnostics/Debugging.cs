@@ -36,53 +36,54 @@ namespace Lucene.Net.Diagnostics
         /// </summary>
         public static bool AssertsEnabled = SystemProperties.GetPropertyAsBoolean("assert", false);
 
-        ///// <summary>
-        ///// Checks for a condition; if the condition is <c>false</c>, throws an <see cref="AssertionException"/>.
-        ///// </summary>
-        ///// <param name="condition">The conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public static void Assert(bool condition)
-        //{
-        //    if (AssertsEnabled && !condition)
-        //        throw new AssertionException();
-        //}
-
-        ///// <summary>
-        ///// Checks for a condition; if the <paramref name="condition"/> is <c>false</c>, throws an <see cref="AssertionException"/> with the specified <paramref name="message"/>.
-        ///// </summary>
-        ///// <param name="condition">The conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
-        ///// <param name="messageFactory">A delegate to build the message to use.</param>
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public static void Assert(bool condition, Func<string> messageFactory)
-        //{
-        //    if (AssertsEnabled && !condition)
-        //        throw new AssertionException(messageFactory());
-        //}
-
         /// <summary>
         /// Checks for a condition; if the condition is <c>false</c>, throws an <see cref="AssertionException"/>.
         /// </summary>
-        /// <param name="conditionFactory">A delegate that returns the conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
-
+        /// <param name="condition">The conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert(Func<bool> conditionFactory)
+        public static void Assert(bool condition)
         {
-            if (AssertsEnabled && !conditionFactory())
+            if (AssertsEnabled && !condition)
                 throw new AssertionException();
         }
 
         /// <summary>
-        /// Checks for a condition if asserts are enabled; if the <paramref name="conditionFactory"/>
-        /// returns <c>false</c>, throws an <see cref="AssertionException"/> with the message returned
+        /// Checks for a condition; if the <paramref name="condition"/> is <c>false</c>, throws an <see cref="AssertionException"/> with the message returned
         /// from the specified <paramref name="messageFactory"/>.
         /// </summary>
-        /// <param name="conditionFactory">A delegate that returns the conditional expression to evaluate. If the condition returned from the factory is <c>true</c>, no exception is thrown.</param>
+        /// <param name="condition">The conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
         /// <param name="messageFactory">A delegate to build the message to use.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Assert(Func<bool> conditionFactory, Func<string> messageFactory)
+        public static void Assert(bool condition, Func<string> messageFactory)
         {
-            if (AssertsEnabled && !conditionFactory())
+            if (AssertsEnabled && !condition)
                 throw new AssertionException(messageFactory());
         }
+
+        ///// <summary>
+        ///// Checks for a condition; if the condition is <c>false</c>, throws an <see cref="AssertionException"/>.
+        ///// </summary>
+        ///// <param name="conditionFactory">A delegate that returns the conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
+
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public static void Assert(Func<bool> conditionFactory)
+        //{
+        //    if (AssertsEnabled && !conditionFactory())
+        //        throw new AssertionException();
+        //}
+
+        ///// <summary>
+        ///// Checks for a condition if asserts are enabled; if the <paramref name="conditionFactory"/>
+        ///// returns <c>false</c>, throws an <see cref="AssertionException"/> with the message returned
+        ///// from the specified <paramref name="messageFactory"/>.
+        ///// </summary>
+        ///// <param name="conditionFactory">A delegate that returns the conditional expression to evaluate. If the condition returned from the factory is <c>true</c>, no exception is thrown.</param>
+        ///// <param name="messageFactory">A delegate to build the message to use.</param>
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //public static void Assert(Func<bool> conditionFactory, Func<string> messageFactory)
+        //{
+        //    if (AssertsEnabled && !conditionFactory())
+        //        throw new AssertionException(messageFactory());
+        //}
     }
 }

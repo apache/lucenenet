@@ -39,8 +39,8 @@ namespace Lucene.Net.Search
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => docFreq >= 0);
-                Debugging.Assert(() => totalTermFreq == -1 || totalTermFreq >= docFreq); // #positions must be >= #postings
+                Debugging.Assert(docFreq >= 0);
+                Debugging.Assert(totalTermFreq == -1 || totalTermFreq >= docFreq); // #positions must be >= #postings
             }
             this.term = term;
             this.docFreq = docFreq;

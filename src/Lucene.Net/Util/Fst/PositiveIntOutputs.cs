@@ -47,8 +47,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => Valid(output1));
-                Debugging.Assert(() => Valid(output2));
+                Debugging.Assert(Valid(output1));
+                Debugging.Assert(Valid(output2));
             }
             if (output1 == NO_OUTPUT || output2 == NO_OUTPUT)
             {
@@ -58,8 +58,8 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => output1 > 0);
-                    Debugging.Assert(() => output2 > 0);
+                    Debugging.Assert(output1 > 0);
+                    Debugging.Assert(output2 > 0);
                 }
                 return Math.Min(output1.Value, output2.Value);
             }
@@ -69,9 +69,9 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => Valid(output));
-                Debugging.Assert(() => Valid(inc));
-                Debugging.Assert(() => output >= inc);
+                Debugging.Assert(Valid(output));
+                Debugging.Assert(Valid(inc));
+                Debugging.Assert(output >= inc);
             }
 
             if (inc == NO_OUTPUT)
@@ -92,8 +92,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => Valid(prefix));
-                Debugging.Assert(() => Valid(output));
+                Debugging.Assert(Valid(prefix));
+                Debugging.Assert(Valid(output));
             }
             if (prefix == NO_OUTPUT)
             {
@@ -111,7 +111,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(long? output, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => Valid(output));
+            if (Debugging.AssertsEnabled) Debugging.Assert(Valid(output));
             @out.WriteVInt64(output.Value);
         }
 
@@ -130,8 +130,8 @@ namespace Lucene.Net.Util.Fst
 
         private bool Valid(long? o)
         {
-            Debugging.Assert(() => o != null, () => "PositiveIntOutput precondition fail");
-            Debugging.Assert(() => o == NO_OUTPUT || o > 0, () => "o=" + o);
+            Debugging.Assert(o != null, () => "PositiveIntOutput precondition fail");
+            Debugging.Assert(o == NO_OUTPUT || o > 0, () => "o=" + o);
             return true;
         }
 

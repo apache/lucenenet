@@ -30953,7 +30953,7 @@ namespace Lucene.Net.Analysis.CharFilters
             /// </summary>
             internal int NextChar()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => !IsRead, () => "Attempting to read past the end of a segment.");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!IsRead, () => "Attempting to read past the end of a segment.");
                 return m_buf[pos++];
             }
 
@@ -31378,7 +31378,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 }
                                 catch (Exception /*e*/)
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "Exception parsing code point '" + decimalCharRef + "'");
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "Exception parsing code point '" + decimalCharRef + "'");
                                 }
                                 if (codePoint <= 0x10FFFF)
                                 {
@@ -31638,7 +31638,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 }
                                 catch (Exception /*e*/)
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "Exception parsing hex code point '" + hexCharRef + "'");
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "Exception parsing hex code point '" + hexCharRef + "'");
                                 }
                                 if (codePoint <= 0x10FFFF)
                                 {
@@ -31901,7 +31901,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             }
                             catch (Exception /*e*/)
                             { // should never happen
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "Exception parsing high surrogate '"
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "Exception parsing high surrogate '"
                                             + surrogatePair.Substring(2, 6 - 2) + "'");
                             }
                             try
@@ -31910,7 +31910,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             }
                             catch (Exception /*e*/)
                             { // should never happen
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "Exception parsing low surrogate '" + surrogatePair.Substring(10, 14 - 10) + "'");
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "Exception parsing low surrogate '" + surrogatePair.Substring(10, 14 - 10) + "'");
                             }
                             // add (previously matched input length) + (this match length) - (substitution length)
                             cumulativeDiff += inputSegment.Length + YyLength - 2;
@@ -31932,7 +31932,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             }
                             catch (Exception /*e*/)
                             { // should never happen
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "Exception parsing high surrogate '"
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "Exception parsing high surrogate '"
                                             + surrogatePair.Substring(2, 6 - 2) + "'");
                             }
                             try
@@ -31941,7 +31941,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             }
                             catch (Exception /*e*/)
                             { // should never happen
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "Exception parsing low surrogate '"
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "Exception parsing low surrogate '"
                                             + surrogatePair.Substring(9, 14 - 9) + "'");
                             }
                             if (char.IsLowSurrogate(lowSurrogate))
@@ -31973,7 +31973,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             }
                             catch (Exception /*e*/)
                             { // should never happen
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "Exception parsing high surrogate '"
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "Exception parsing high surrogate '"
                                             + surrogatePair.Substring(1, 6 - 1) + "'");
                             }
                             if (char.IsHighSurrogate(highSurrogate))
@@ -31986,7 +31986,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 }
                                 catch (Exception /*e*/)
                                 { // should never happen
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "Exception parsing low surrogate '"
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "Exception parsing low surrogate '"
                                                 + surrogatePair.Substring(10, 14 - 10) + "'");
                                 }
                                 // add (previously matched input length) + (this match length) - (substitution length)
@@ -32013,7 +32013,7 @@ namespace Lucene.Net.Analysis.CharFilters
                             }
                             catch (Exception /*e*/)
                             { // should never happen
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "Exception parsing high surrogate '"
+                                if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "Exception parsing high surrogate '"
                                             + surrogatePair.Substring(1, 6 - 1) + "'");
                             }
                             if (char.IsHighSurrogate(highSurrogate))
@@ -32025,7 +32025,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 }
                                 catch (Exception /*e*/)
                                 { // should never happen
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "Exception parsing low surrogate '"
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "Exception parsing low surrogate '"
                                                 + surrogatePair.Substring(9, 14 - 9) + "'");
                                 }
                                 if (char.IsLowSurrogate(lowSurrogate))

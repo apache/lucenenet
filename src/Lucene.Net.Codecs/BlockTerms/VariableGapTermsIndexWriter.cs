@@ -292,7 +292,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 if (text.Length == 0)
                 {
                     // We already added empty string in ctor
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => termsFilePointer == startTermsFilePointer);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(termsFilePointer == startTermsFilePointer);
                     return;
                 }
                 int lengthSave = text.Length;

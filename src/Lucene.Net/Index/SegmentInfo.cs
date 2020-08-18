@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public SegmentInfo(Directory dir, string version, string name, int docCount, bool isCompoundFile, Codec codec, IDictionary<string, string> diagnostics, IDictionary<string, string> attributes)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => !(dir is TrackingDirectoryWrapper));
+            if (Debugging.AssertsEnabled) Debugging.Assert(!(dir is TrackingDirectoryWrapper));
             this.Dir = dir;
             this.version = version;
             this.Name = name;
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
             get => codec;
             set
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => this.codec == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(this.codec == null);
                 if (value == null)
                 {
                     throw new ArgumentException("codec must be non-null");
