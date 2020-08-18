@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs.Compressing.Dummy
         {
             public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => offset + length <= originalLength);
+                if (Debugging.AssertsEnabled) Debugging.Assert(offset + length <= originalLength);
                 if (bytes.Bytes.Length < originalLength)
                 {
                     bytes.Bytes = new byte[ArrayUtil.Oversize(originalLength, 1)];

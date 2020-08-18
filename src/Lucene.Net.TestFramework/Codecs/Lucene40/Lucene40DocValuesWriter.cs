@@ -333,7 +333,7 @@ namespace Lucene.Net.Codecs.Lucene40
             index.WriteVInt64(maxAddress);
 
             int maxDoc = state.SegmentInfo.DocCount;
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => maxDoc != int.MaxValue); // unsupported by the 4.0 impl
+            if (Debugging.AssertsEnabled) Debugging.Assert(maxDoc != int.MaxValue); // unsupported by the 4.0 impl
 
             PackedInt32s.Writer w = PackedInt32s.GetWriter(index, maxDoc + 1, PackedInt32s.BitsRequired(maxAddress), PackedInt32s.DEFAULT);
             long currentPosition = 0;
@@ -346,7 +346,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
             // write sentinel
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => currentPosition == maxAddress);
+            if (Debugging.AssertsEnabled) Debugging.Assert(currentPosition == maxAddress);
             w.Add(currentPosition);
             w.Finish();
         }
@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* ordinals */
             int valueCount = dictionary.Count;
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => valueCount > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(valueCount > 0);
             index.WriteInt32(valueCount);
             int maxDoc = state.SegmentInfo.DocCount;
             PackedInt32s.Writer w = PackedInt32s.GetWriter(index, maxDoc, PackedInt32s.BitsRequired(valueCount - 1), PackedInt32s.DEFAULT);
@@ -439,7 +439,7 @@ namespace Lucene.Net.Codecs.Lucene40
         // the little vint encoding used for var-deref
         private static void WriteVInt16(IndexOutput o, int i)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => i >= 0 && i <= short.MaxValue);
+            if (Debugging.AssertsEnabled) Debugging.Assert(i >= 0 && i <= short.MaxValue);
             if (i < 128)
             {
                 o.WriteByte((byte)(sbyte)i);
@@ -545,7 +545,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             index.WriteInt32(valueCount);
             int maxDoc = state.SegmentInfo.DocCount;
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => valueCount > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(valueCount > 0);
             PackedInt32s.Writer w = PackedInt32s.GetWriter(index, maxDoc, PackedInt32s.BitsRequired(valueCount - 1), PackedInt32s.DEFAULT);
             foreach (long n in docToOrd)
             {
@@ -578,7 +578,7 @@ namespace Lucene.Net.Codecs.Lucene40
             long maxAddress = data.GetFilePointer() - startPos;
             index.WriteInt64(maxAddress);
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => valueCount != int.MaxValue); // unsupported by the 4.0 impl
+            if (Debugging.AssertsEnabled) Debugging.Assert(valueCount != int.MaxValue); // unsupported by the 4.0 impl
 
             PackedInt32s.Writer w = PackedInt32s.GetWriter(index, valueCount + 1, PackedInt32s.BitsRequired(maxAddress), PackedInt32s.DEFAULT);
             long currentPosition = 0;
@@ -588,14 +588,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 currentPosition += v.Length;
             }
             // write sentinel
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => currentPosition == maxAddress);
+            if (Debugging.AssertsEnabled) Debugging.Assert(currentPosition == maxAddress);
             w.Add(currentPosition);
             w.Finish();
 
             /* ordinals */
 
             int maxDoc = state.SegmentInfo.DocCount;
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => valueCount > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(valueCount > 0);
             PackedInt32s.Writer ords = PackedInt32s.GetWriter(index, maxDoc, PackedInt32s.BitsRequired(valueCount - 1), PackedInt32s.DEFAULT);
             foreach (long n in docToOrd)
             {

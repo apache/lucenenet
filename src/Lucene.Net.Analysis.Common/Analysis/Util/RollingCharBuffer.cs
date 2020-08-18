@@ -108,10 +108,10 @@ namespace Lucene.Net.Analysis.Util
             else
             {
                 // Cannot read from future (except by 1):
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => pos < nextPos);
+                if (Debugging.AssertsEnabled) Debugging.Assert(pos < nextPos);
 
                 // Cannot read from already freed past:
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => nextPos - pos <= count, () => "nextPos=" + nextPos + " pos=" + pos + " count=" + count);
+                if (Debugging.AssertsEnabled) Debugging.Assert(nextPos - pos <= count, () => "nextPos=" + nextPos + " pos=" + pos + " count=" + count);
 
                 return buffer[GetIndex(pos)];
             }
@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // Wrap:
                 index += buffer.Length;
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => index >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0);
             }
             return index;
         }
@@ -139,8 +139,8 @@ namespace Lucene.Net.Analysis.Util
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => length > 0);
-                Debugging.Assert(() => InBounds(posStart), () => "posStart=" + posStart + " length=" + length);
+                Debugging.Assert(length > 0);
+                Debugging.Assert(InBounds(posStart), () => "posStart=" + posStart + " length=" + length);
             }
             //System.out.println("    buffer.Get posStart=" + posStart + " len=" + length);
 
@@ -171,14 +171,14 @@ namespace Lucene.Net.Analysis.Util
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => pos >= 0);
-                Debugging.Assert(() => pos <= nextPos);
+                Debugging.Assert(pos >= 0);
+                Debugging.Assert(pos <= nextPos);
             }
             int newCount = nextPos - pos;
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => newCount <= count, () => "newCount=" + newCount + " count=" + count);
-                Debugging.Assert(() => newCount <= buffer.Length, () => "newCount=" + newCount + " buf.length=" + buffer.Length);
+                Debugging.Assert(newCount <= count, () => "newCount=" + newCount + " count=" + count);
+                Debugging.Assert(newCount <= buffer.Length, () => "newCount=" + newCount + " buf.length=" + buffer.Length);
             }
             count = newCount;
         }

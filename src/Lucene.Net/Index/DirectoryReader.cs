@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
         public static DirectoryReader OpenIfChanged(DirectoryReader oldReader)
         {
             DirectoryReader newReader = oldReader.DoOpenIfChanged();
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => newReader != oldReader);
+            if (Debugging.AssertsEnabled) Debugging.Assert(newReader != oldReader);
             return newReader;
         }
 
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
         public static DirectoryReader OpenIfChanged(DirectoryReader oldReader, IndexCommit commit)
         {
             DirectoryReader newReader = oldReader.DoOpenIfChanged(commit);
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => newReader != oldReader);
+            if (Debugging.AssertsEnabled) Debugging.Assert(newReader != oldReader);
             return newReader;
         }
 
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
         public static DirectoryReader OpenIfChanged(DirectoryReader oldReader, IndexWriter writer, bool applyAllDeletes)
         {
             DirectoryReader newReader = oldReader.DoOpenIfChanged(writer, applyAllDeletes);
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => newReader != oldReader);
+            if (Debugging.AssertsEnabled) Debugging.Assert(newReader != oldReader);
             return newReader;
         }
 

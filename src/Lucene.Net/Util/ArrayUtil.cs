@@ -270,7 +270,7 @@ namespace Lucene.Net.Util
 
         public static short[] Grow(short[] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 short[] newArray = new short[Oversize(minSize, RamUsageEstimator.NUM_BYTES_INT16)];
@@ -290,7 +290,7 @@ namespace Lucene.Net.Util
 
         public static float[] Grow(float[] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 float[] newArray = new float[Oversize(minSize, RamUsageEstimator.NUM_BYTES_SINGLE)];
@@ -310,7 +310,7 @@ namespace Lucene.Net.Util
 
         public static double[] Grow(double[] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 double[] newArray = new double[Oversize(minSize, RamUsageEstimator.NUM_BYTES_DOUBLE)];
@@ -330,7 +330,7 @@ namespace Lucene.Net.Util
 
         public static short[] Shrink(short[] array, int targetSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_INT16);
             if (newSize != array.Length)
             {
@@ -346,7 +346,7 @@ namespace Lucene.Net.Util
 
         public static int[] Grow(int[] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 int[] newArray = new int[Oversize(minSize, RamUsageEstimator.NUM_BYTES_INT32)];
@@ -366,7 +366,7 @@ namespace Lucene.Net.Util
 
         public static int[] Shrink(int[] array, int targetSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_INT32);
             if (newSize != array.Length)
             {
@@ -382,7 +382,7 @@ namespace Lucene.Net.Util
 
         public static long[] Grow(long[] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 long[] newArray = new long[Oversize(minSize, RamUsageEstimator.NUM_BYTES_INT64)];
@@ -402,7 +402,7 @@ namespace Lucene.Net.Util
 
         public static long[] Shrink(long[] array, int targetSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_INT64);
             if (newSize != array.Length)
             {
@@ -419,7 +419,7 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         public static sbyte[] Grow(sbyte[] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 var newArray = new sbyte[Oversize(minSize, 1)];
@@ -434,7 +434,7 @@ namespace Lucene.Net.Util
 
         public static byte[] Grow(byte[] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 byte[] newArray = new byte[Oversize(minSize, 1)];
@@ -454,7 +454,7 @@ namespace Lucene.Net.Util
 
         public static byte[] Shrink(byte[] array, int targetSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, 1);
             if (newSize != array.Length)
             {
@@ -470,7 +470,7 @@ namespace Lucene.Net.Util
 
         public static bool[] Grow(bool[] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 bool[] newArray = new bool[Oversize(minSize, 1)];
@@ -490,7 +490,7 @@ namespace Lucene.Net.Util
 
         public static bool[] Shrink(bool[] array, int targetSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, 1);
             if (newSize != array.Length)
             {
@@ -506,7 +506,7 @@ namespace Lucene.Net.Util
 
         public static char[] Grow(char[] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 char[] newArray = new char[Oversize(minSize, RamUsageEstimator.NUM_BYTES_CHAR)];
@@ -526,7 +526,7 @@ namespace Lucene.Net.Util
 
         public static char[] Shrink(char[] array, int targetSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_CHAR);
             if (newSize != array.Length)
             {
@@ -543,7 +543,7 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         public static int[][] Grow(int[][] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 var newArray = new int[Oversize(minSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
@@ -565,7 +565,7 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         public static int[][] Shrink(int[][] array, int targetSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
             if (newSize != array.Length)
             {
@@ -582,7 +582,7 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         public static float[][] Grow(float[][] array, int minSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(minSize >= 0, () => "size must be positive (got " + minSize + "): likely integer overflow?");
             if (array.Length < minSize)
             {
                 float[][] newArray = new float[Oversize(minSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF)][];
@@ -604,7 +604,7 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         public static float[][] Shrink(float[][] array, int targetSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
+            if (Debugging.AssertsEnabled) Debugging.Assert(targetSize >= 0, () => "size must be positive (got " + targetSize + "): likely integer overflow?");
             int newSize = GetShrinkSize(array.Length, targetSize, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
             if (newSize != array.Length)
             {
@@ -779,7 +779,7 @@ namespace Lucene.Net.Util
             }
 
             // paranoia:
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => upto == result.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(upto == result.Length);
 
             return result;
         }

@@ -80,7 +80,7 @@ namespace Lucene.Net.Store
         /// Change the buffer size used by this <see cref="IndexInput"/> </summary>
         public void SetBufferSize(int newSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => m_buffer == null || bufferSize == m_buffer.Length, () => "buffer=" + m_buffer + " bufferSize=" + bufferSize + " buffer.length=" + (m_buffer != null ? m_buffer.Length : 0));
+            if (Debugging.AssertsEnabled) Debugging.Assert(m_buffer == null || bufferSize == m_buffer.Length, () => "buffer=" + m_buffer + " bufferSize=" + bufferSize + " buffer.length=" + (m_buffer != null ? m_buffer.Length : 0));
             if (newSize != bufferSize)
             {
                 CheckBufferSize(newSize);

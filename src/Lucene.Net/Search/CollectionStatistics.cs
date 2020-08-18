@@ -39,10 +39,10 @@ namespace Lucene.Net.Search
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => maxDoc >= 0);
-                Debugging.Assert(() => docCount >= -1 && docCount <= maxDoc); // #docs with field must be <= #docs
-                Debugging.Assert(() => sumDocFreq == -1 || sumDocFreq >= docCount); // #postings must be >= #docs with field
-                Debugging.Assert(() => sumTotalTermFreq == -1 || sumTotalTermFreq >= sumDocFreq); // #positions must be >= #postings
+                Debugging.Assert(maxDoc >= 0);
+                Debugging.Assert(docCount >= -1 && docCount <= maxDoc); // #docs with field must be <= #docs
+                Debugging.Assert(sumDocFreq == -1 || sumDocFreq >= docCount); // #postings must be >= #docs with field
+                Debugging.Assert(sumTotalTermFreq == -1 || sumTotalTermFreq >= sumDocFreq); // #positions must be >= #postings
             }
             this.field = field;
             this.maxDoc = maxDoc;

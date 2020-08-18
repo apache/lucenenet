@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             public virtual CharsRef PullNext()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => upto < count);
+                if (Debugging.AssertsEnabled) Debugging.Assert(upto < count);
                 lastEndOffset = endOffsets[upto];
                 lastPosLength = posLengths[upto];
                 CharsRef result = outputs[upto++];
@@ -306,7 +306,7 @@ namespace Lucene.Net.Analysis.Synonym
             nextWrite = RollIncr(nextWrite);
 
             // Buffer head should never catch up to tail:
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => nextWrite != nextRead);
+            if (Debugging.AssertsEnabled) Debugging.Assert(nextWrite != nextRead);
         }
 
         /*
@@ -325,7 +325,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             //System.out.println("\nS: parse");
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => inputSkipCount == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(inputSkipCount == 0);
 
             int curNextRead = nextRead;
 
@@ -337,7 +337,7 @@ namespace Lucene.Net.Analysis.Synonym
             BytesRef pendingOutput = fst.Outputs.NoOutput;
             fst.GetFirstArc(scratchArc);
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => scratchArc.Output == fst.Outputs.NoOutput);
+            if (Debugging.AssertsEnabled) Debugging.Assert(scratchArc.Output == fst.Outputs.NoOutput);
 
             int tokenCount = 0;
 
@@ -364,7 +364,7 @@ namespace Lucene.Net.Analysis.Synonym
                     else
                     {
                         //System.out.println("  input.incrToken");
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => futureInputs[nextWrite].consumed);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(futureInputs[nextWrite].consumed);
                         // Not correct: a syn match whose output is longer
                         // than its input can set future inputs keepOrig
                         // to true:
@@ -480,7 +480,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => finished);
+                if (Debugging.AssertsEnabled) Debugging.Assert(finished);
             }
 
             //System.out.println("  parse done inputSkipCount=" + inputSkipCount + " nextRead=" + nextRead + " nextWrite=" + nextWrite);
@@ -510,7 +510,7 @@ namespace Lucene.Net.Analysis.Synonym
                         int outputLen = chIDX - lastStart;
                         // Caller is not allowed to have empty string in
                         // the output:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => outputLen > 0, () => "output contains empty string: " + scratchChars);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(outputLen > 0, () => "output contains empty string: " + scratchChars);
                         int endOffset;
                         int posLen;
                         if (chIDX == chEnd && lastStart == scratchChars.Offset)
@@ -536,7 +536,7 @@ namespace Lucene.Net.Analysis.Synonym
                         lastStart = 1 + chIDX;
                         //System.out.println("  slot=" + outputUpto + " keepOrig=" + keepOrig);
                         outputUpto = RollIncr(outputUpto);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => futureOutputs[outputUpto].posIncr == 1, () => "outputUpto=" + outputUpto + " vs nextWrite=" + nextWrite);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(futureOutputs[outputUpto].posIncr == 1, () => "outputUpto=" + outputUpto + " vs nextWrite=" + nextWrite);
                     }
                 }
             }
@@ -602,7 +602,7 @@ namespace Lucene.Net.Analysis.Synonym
                         {
                             // Pass-through case: return token we just pulled
                             // but didn't capture:
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => inputSkipCount == 1, () => "inputSkipCount=" + inputSkipCount + " nextRead=" + nextRead);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(inputSkipCount == 1, () => "inputSkipCount=" + inputSkipCount + " nextRead=" + nextRead);
                         }
                         input.Reset();
                         if (outputs.count > 0)

@@ -88,10 +88,10 @@ namespace Lucene.Net.Index
                         // LUCENENET: make sure not to run IncWaiters / DecrWaiters in Debugging.Assert as that gets 
                         // disabled in production
                         var result = IncWaiters();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => result);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(result);
                         Monitor.Wait(this);
                         result = DecrWaiters();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => result);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(result);
 //#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                        }
 //                        catch (ThreadInterruptedException e)
@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
         private bool IncWaiters()
         {
             numWaiting++;
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => !waiting.ContainsKey(ThreadJob.CurrentThread));
+            if (Debugging.AssertsEnabled) Debugging.Assert(!waiting.ContainsKey(ThreadJob.CurrentThread));
             waiting[ThreadJob.CurrentThread] = true;
 
             return numWaiting > 0;
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
         {
             numWaiting--;
             bool removed = waiting.Remove(ThreadJob.CurrentThread);
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => removed);
+            if (Debugging.AssertsEnabled) Debugging.Assert(removed);
 
             return numWaiting >= 0;
         }

@@ -370,7 +370,7 @@ namespace Lucene.Net.Util
             foreach (var curInterfaceRef in foundInterfaces)
             {
                 curInterfaceRef.TryGetTarget(out Type curInterface);
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => curInterface != null, () => "We have a strong reference on the class holding the interfaces, so they should never get evicted");
+                if (Debugging.AssertsEnabled) Debugging.Assert(curInterface != null, () => "We have a strong reference on the class holding the interfaces, so they should never get evicted");
                 // Attribute is a superclass of this interface
                 if (!attributes.ContainsKey(curInterface))
                 {

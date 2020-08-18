@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                 {
                     foreach (SegmentCommitInfo info in merge.Segments)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => segmentsToMerge.ContainsKey(info));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(segmentsToMerge.ContainsKey(info));
                     }
                 }
             }

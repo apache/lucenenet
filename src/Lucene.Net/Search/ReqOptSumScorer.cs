@@ -45,8 +45,8 @@ namespace Lucene.Net.Search
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => reqScorer != null);
-                Debugging.Assert(() => optScorer != null);
+                Debugging.Assert(reqScorer != null);
+                Debugging.Assert(optScorer != null);
             }
             this.reqScorer = reqScorer;
             this.optScorer = optScorer;

@@ -369,7 +369,7 @@ namespace Lucene.Net.Util
                 IBytesRefIterator iter = buffer.GetIterator(comparer);
                 while ((spare = iter.Next()) != null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => spare.Length <= ushort.MaxValue);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(spare.Length <= ushort.MaxValue);
                     @out.Write(spare);
                 }
             }
@@ -534,7 +534,7 @@ namespace Lucene.Net.Util
             /// <seealso cref="Write(byte[], int, int)"/>
             public virtual void Write(BytesRef @ref)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => @ref != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(@ref != null);
                 Write(@ref.Bytes, @ref.Offset, @ref.Length);
             }
 
@@ -556,9 +556,9 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => bytes != null);
-                    Debugging.Assert(() => off >= 0 && off + len <= bytes.Length);
-                    Debugging.Assert(() => len >= 0);
+                    Debugging.Assert(bytes != null);
+                    Debugging.Assert(off >= 0 && off + len <= bytes.Length);
+                    Debugging.Assert(len >= 0);
                 }
                 os.WriteInt16((short)len);
                 os.WriteBytes(bytes, off, len); // LUCENENET NOTE: We call WriteBytes, since there is no Write() on Lucene's version of DataOutput
@@ -654,7 +654,7 @@ namespace Lucene.Net.Util
                 }
 #pragma warning restore CA1031 // Do not catch general exception types
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => length >= 0, () => "Sanity: sequence length < 0: " + length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0, () => "Sanity: sequence length < 0: " + length);
                 byte[] result = new byte[length];
                 inputStream.ReadBytes(result, 0, length);
                 return result;

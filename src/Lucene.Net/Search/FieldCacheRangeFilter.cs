@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
                 return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
                     return null; ;
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
                 return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.AtomicReader.MaxDoc, acceptDocs);
             }

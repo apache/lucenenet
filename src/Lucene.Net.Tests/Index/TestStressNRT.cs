@@ -263,8 +263,8 @@ namespace Lucene.Net.Index
                                 {
                                     // install the new reader if it's newest (and check the current version since another reader may have already been installed)
                                     //System.out.println(Thread.currentThread().getName() + ": newVersion=" + newReader.getVersion());
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => newReader.RefCount > 0);
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(() => outerInstance.reader.RefCount > 0);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(newReader.RefCount > 0);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.reader.RefCount > 0);
                                     if (newReader.Version > outerInstance.reader.Version)
                                     {
                                         if (Verbose)

@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                 SegmentReadState segmentReadState = new SegmentReadState(cfsDir, si.Info, fieldInfos, context, termsIndexDivisor);
                 // Ask codec for its Fields
                 fields = format.FieldsProducer(segmentReadState);
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => fields != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fields != null);
                 // ask codec for its Norms:
                 // TODO: since we don't write any norms file if there are no norms,
                 // kinda jaky to assume the codec handles the case of no norms file at all gracefully?!
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
                 if (fieldInfos.HasNorms)
                 {
                     normsProducer = codec.NormsFormat.NormsProducer(segmentReadState);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => normsProducer != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(normsProducer != null);
                 }
                 else
                 {
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
 
         internal NumericDocValues GetNormValues(FieldInfo fi)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => normsProducer != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(normsProducer != null);
 
             IDictionary<string, object> normFields = normsLocal.Value;
 

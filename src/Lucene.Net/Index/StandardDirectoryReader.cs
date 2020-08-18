@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
                     // actual instance of SegmentInfoPerCommit in
                     // IndexWriter's segmentInfos:
                     SegmentCommitInfo info = infos.Info(i);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => info.Info.Dir == dir);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == dir);
                     ReadersAndUpdates rld = writer.readerPool.Get(info, true);
                     try
                     {
@@ -237,8 +237,8 @@ namespace Lucene.Net.Index
                             // Steal the ref returned by SegmentReader ctor:
                             if (Debugging.AssertsEnabled)
                             {
-                                Debugging.Assert(() => infos.Info(i).Info.Dir == newReaders[i].SegmentInfo.Info.Dir);
-                                Debugging.Assert(() => infos.Info(i).HasDeletions || infos.Info(i).HasFieldUpdates);
+                                Debugging.Assert(infos.Info(i).Info.Dir == newReaders[i].SegmentInfo.Info.Dir);
+                                Debugging.Assert(infos.Info(i).HasDeletions || infos.Info(i).HasFieldUpdates);
                             }
                             if (newReaders[i].SegmentInfo.DelGen == infos.Info(i).DelGen)
                             {

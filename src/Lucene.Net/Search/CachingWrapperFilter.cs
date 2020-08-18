@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
             {
                 missCount++;
                 docIdSet = DocIdSetToCache(_filter.GetDocIdSet(context, null), reader);
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => docIdSet.IsCacheable);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docIdSet.IsCacheable);
 #if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
                 _cache.AddOrUpdate(key, docIdSet);
 #else

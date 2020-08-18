@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
 
         public override int NextDoc()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => m_doc != NO_MORE_DOCS);
+            if (Debugging.AssertsEnabled) Debugging.Assert(m_doc != NO_MORE_DOCS);
             while (true)
             {
                 if (m_subScorers[0].NextDoc() != NO_MORE_DOCS)
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
 
         public override int Advance(int target)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => m_doc != NO_MORE_DOCS);
+            if (Debugging.AssertsEnabled) Debugging.Assert(m_doc != NO_MORE_DOCS);
             while (true)
             {
                 if (m_subScorers[0].Advance(target) != NO_MORE_DOCS)

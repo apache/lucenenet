@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (state != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => preserveOriginal, () => "state should only be captured if preserveOriginal is true");
+                if (Debugging.AssertsEnabled) Debugging.Assert(preserveOriginal, () => "state should only be captured if preserveOriginal is true");
                 RestoreState(state);
                 posIncAttr.PositionIncrement = 0;
                 state = null;

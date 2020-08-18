@@ -299,7 +299,7 @@ namespace Lucene.Net.Util.Automaton
 
         public virtual void SetNumberedStates(State[] states, int count)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => count <= states.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(count <= states.Length);
             // TODO: maybe we can eventually allow for oversizing here...
             if (count < states.Length)
             {
@@ -550,7 +550,7 @@ namespace Lucene.Net.Util.Automaton
                 s.SortTransitions(Transition.COMPARE_BY_MIN_MAX_THEN_DEST);
                 s.TrimTransitionsArray();
                 transitions[s.number] = s.TransitionsArray;
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => s.TransitionsArray != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(s.TransitionsArray != null);
             }
             return transitions;
         }

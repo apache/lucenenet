@@ -243,7 +243,7 @@ namespace Lucene.Net.Util
             if (Int32Upto > INT32_BLOCK_SIZE - size)
             {
                 NextBuffer();
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => AssertSliceBuffer(buffer));
+                if (Debugging.AssertsEnabled) Debugging.Assert(AssertSliceBuffer(buffer));
             }
 
             int upto = Int32Upto;
@@ -292,7 +292,7 @@ namespace Lucene.Net.Util
             if (Int32Upto > INT32_BLOCK_SIZE - newSize)
             {
                 NextBuffer();
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => AssertSliceBuffer(buffer));
+                if (Debugging.AssertsEnabled) Debugging.Assert(AssertSliceBuffer(buffer));
             }
 
             int newUpto = Int32Upto;
@@ -337,7 +337,7 @@ namespace Lucene.Net.Util
             public virtual void WriteInt32(int value)
             {
                 int[] ints = pool.buffers[offset >> INT32_BLOCK_SHIFT];
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => ints != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(ints != null);
                 int relativeOffset = offset & INT32_BLOCK_MASK;
                 if (ints[relativeOffset] != 0)
                 {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Util
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => upto + bufferOffset <= end);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(upto + bufferOffset <= end);
                     return upto + bufferOffset == end;
                 }
             }
@@ -442,8 +442,8 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => !IsEndOfSlice);
-                    Debugging.Assert(() => upto <= limit);
+                    Debugging.Assert(!IsEndOfSlice);
+                    Debugging.Assert(upto <= limit);
                 }
                 if (upto == limit)
                 {
@@ -468,7 +468,7 @@ namespace Lucene.Net.Util
                 if (nextIndex + newSize >= end)
                 {
                     // We are advancing to the final slice
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => end - nextIndex > 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(end - nextIndex > 0);
                     limit = end - bufferOffset;
                 }
                 else

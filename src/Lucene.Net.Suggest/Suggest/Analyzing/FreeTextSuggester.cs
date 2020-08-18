@@ -556,7 +556,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // a separate dedicated att for this?
                     int gramCount = posLenAtt.PositionLength;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => gramCount <= grams);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(gramCount <= grams);
 
                     // Safety: make sure the recalculated count "agrees":
                     if (CountGrams(tokenBytes) != gramCount)
@@ -682,7 +682,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             BytesRef context = new BytesRef(token.Bytes, token.Offset, i);
                             long? output = Lucene.Net.Util.Fst.Util.Get(fst, Lucene.Net.Util.Fst.Util.ToInt32sRef(context, new Int32sRef()));
-                            if (Debugging.AssertsEnabled) Debugging.Assert(() => output != null);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(output != null);
                             contextCount = DecodeWeight(output);
                             lastTokenFragment = new BytesRef(token.Bytes, token.Offset + i + 1, token.Length - i - 1);
                             break;
@@ -699,7 +699,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         finalLastToken = BytesRef.DeepCopyOf(lastTokenFragment);
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => finalLastToken.Offset == 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(finalLastToken.Offset == 0);
 
                     CharsRef spare = new CharsRef();
 
@@ -726,7 +726,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         searcher.AddStartPaths(arc, prefixOutput, true, new Int32sRef());
 
                         completions = searcher.Search();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => completions.IsComplete);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(completions.IsComplete);
                     }
                     catch (IOException bogus)
                     {
@@ -754,7 +754,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         {
                             if (token.Bytes[token.Offset + i] == separator)
                             {
-                                if (Debugging.AssertsEnabled) Debugging.Assert(() => token.Length - i - 1 > 0);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(token.Length - i - 1 > 0);
                                 lastToken = new BytesRef(token.Bytes, token.Offset + i + 1, token.Length - i - 1);
                                 break;
                             }
@@ -772,7 +772,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             // return numbers that are greater than long.MaxValue, which results in a negative long number.
                             (long)(long.MaxValue * (decimal)backoff * ((decimal)DecodeWeight(completion.Output)) / contextCount));
                         results.Add(result);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => results.Count == seen.Count);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(results.Count == seen.Count);
                     //System.out.println("  add result=" + result);
                     nextCompletionContinue:;
                     }
@@ -874,7 +874,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         //private long decodeWeight(Pair<Long,BytesRef> output) {
         private static long DecodeWeight(long? output)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => output != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(output != null);
             return (int)(long.MaxValue - output); // LUCENENET TODO: Perhaps a Java Lucene bug? Why cast to int when returning long?
         }
 

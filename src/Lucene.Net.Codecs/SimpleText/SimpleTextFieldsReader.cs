@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override BytesRef Next()
             {
-                //if (Debugging.AssertsEnabled) Debugging.Assert(() => !ended); // LUCENENET: Ended field is never set, so this can never fail
+                //if (Debugging.AssertsEnabled) Debugging.Assert(!ended); // LUCENENET: Ended field is never set, so this can never fail
                 var result = _fstEnum.Next();
 
                 if (result == null) return null;
@@ -316,8 +316,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     else
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(
-                            () => StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
-                            // LUCENENET TODO: This assert fails sometimes, which in turns causes _scratch.Utf8ToString() to throw an index out of range exception
+                            StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
                             StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END), () => "scratch=" + _scratch.Utf8ToString());
 
                         if (!first && (_liveDocs == null || _liveDocs.Get(_docId)))
@@ -446,7 +445,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
+                        if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
                                      StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END));
 
                         if (!first && (_liveDocs == null || _liveDocs.Get(_docId)))
@@ -472,7 +471,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (_readPositions)
                 {
                     SimpleTextUtil.ReadLine(_in, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.POS), () => "got line=" + _scratch.Utf8ToString());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.POS), () => "got line=" + _scratch.Utf8ToString());
                     UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.POS.Length, _scratch.Length - SimpleTextFieldsWriter.POS.Length,
                         _scratchUtf162);
                     pos = ArrayUtil.ParseInt32(_scratchUtf162.Chars, 0, _scratchUtf162.Length);
@@ -485,12 +484,12 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (_readOffsets)
                 {
                     SimpleTextUtil.ReadLine(_in, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.START_OFFSET), () => "got line=" + _scratch.Utf8ToString());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.START_OFFSET), () => "got line=" + _scratch.Utf8ToString());
                     UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.START_OFFSET.Length,
                         _scratch.Length - SimpleTextFieldsWriter.START_OFFSET.Length, _scratchUtf162);
                     _startOffset = ArrayUtil.ParseInt32(_scratchUtf162.Chars, 0, _scratchUtf162.Length);
                     SimpleTextUtil.ReadLine(_in, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END_OFFSET), () => "got line=" + _scratch.Utf8ToString());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END_OFFSET), () => "got line=" + _scratch.Utf8ToString());
                     UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.END_OFFSET.Length,
                         _scratch.Length - SimpleTextFieldsWriter.END_OFFSET.Length, _scratchUtf162);
                     _endOffset = ArrayUtil.ParseInt32(_scratchUtf162.Chars, 0, _scratchUtf162.Length);

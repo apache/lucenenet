@@ -193,7 +193,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             //System.out.println("version=" + version + " name=" + name + " docCount=" + docCount + " delGen=" + delGen + " dso=" + docStoreOffset + " dss=" + docStoreSegment + " dssCFs=" + docStoreIsCompoundFile + " b=" + b + " format=" + format);
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => 1 == b, () => "expected 1 but was: " + b + " format: " + format);
+            if (Debugging.AssertsEnabled) Debugging.Assert(1 == b, () => "expected 1 but was: " + b + " format: " + format);
             int numNormGen = input.ReadInt32();
             IDictionary<int, long> normGen;
             if (numNormGen == SegmentInfo.NO)
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             bool isCompoundFile = input.ReadByte() == SegmentInfo.YES;
 
             int delCount = input.ReadInt32();
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => delCount <= docCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(delCount <= docCount);
 
             bool hasProx = input.ReadByte() == 1;
 
@@ -283,7 +283,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     else
                     {
                         // We should have already hit indexformat too old exception
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => false);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(false);
                     }
                 }
             }

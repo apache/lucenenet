@@ -178,7 +178,7 @@ namespace Lucene.Net.Util.Packed
             this.lowerLongs = new long[(int)numLongsForLowBits];
 
             long numHighBitsClear = (long)((ulong)((this.upperBound > 0) ? this.upperBound : 0) >> this.numLowBits);
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => numHighBitsClear <= (2 * this.numValues));
+            if (Debugging.AssertsEnabled) Debugging.Assert(numHighBitsClear <= (2 * this.numValues));
             long numHighBitsSet = this.numValues;
 
             long numLongsForHighBits = NumInt64sForBits(numHighBitsClear + numHighBitsSet);
@@ -220,7 +220,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         private static long NumInt64sForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => numBits >= 0, () => numBits.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.AssertsEnabled) Debugging.Assert(numBits >= 0, () => numBits.ToString(CultureInfo.InvariantCulture));
             return (long)((ulong)(numBits + (sizeof(long) * 8 - 1)) >> LOG2_INT64_SIZE);
         }
 

@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
                 {
                     int pos = sort[i];
                     Term term = new Term(query.Field, col.terms.Get(pos, new BytesRef()));
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => reader.DocFreq(term) == termStates[pos].DocFreq);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(reader.DocFreq(term) == termStates[pos].DocFreq);
                     AddClause(result, term, termStates[pos].DocFreq, query.Boost * boost[pos], termStates[pos]);
                 }
             }
@@ -173,13 +173,13 @@ namespace Lucene.Net.Search
             {
                 int e = terms.Add(bytes);
                 TermState state = termsEnum.GetTermState();
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => state != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != null);
                 if (e < 0)
                 {
                     // duplicate term: update docFreq
                     int pos = (-e) - 1;
                     array.termState[pos].Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => array.boost[pos] == boostAtt.Boost, () => "boost should be equal in all segment TermsEnums");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(array.boost[pos] == boostAtt.Boost, () => "boost should be equal in all segment TermsEnums");
                 }
                 else
                 {
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
                 int[] ord = base.Init();
                 boost = new float[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_SINGLE)];
                 termState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => termState.Length >= ord.Length && boost.Length >= ord.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termState.Length >= ord.Length && boost.Length >= ord.Length);
                 return ord;
             }
 
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
                     Array.Copy(termState, 0, tmpTermState, 0, termState.Length);
                     termState = tmpTermState;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => termState.Length >= ord.Length && boost.Length >= ord.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termState.Length >= ord.Length && boost.Length >= ord.Length);
                 return ord;
             }
 

@@ -29,13 +29,13 @@ namespace Lucene.Net.Util
     {
         public override void Message(string component, string message)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => component != null);
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => message != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(component != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(message != null);
         }
 
         public override bool IsEnabled(string component)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => component != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(component != null);
             return true; // to actually enable logging, we just ignore on message()
         }
 

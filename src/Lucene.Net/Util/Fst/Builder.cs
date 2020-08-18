@@ -206,7 +206,7 @@ namespace Lucene.Net.Util.Fst
             {
                 node = fst.AddNode(nodeIn);
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => node != -2);
+            if (Debugging.AssertsEnabled) Debugging.Assert(node != -2);
 
             nodeIn.Clear();
 
@@ -372,8 +372,8 @@ namespace Lucene.Net.Util.Fst
 
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => lastInput.Length == 0 || input.CompareTo(lastInput) >= 0, () => "inputs are added out of order lastInput=" + lastInput + " vs input=" + input);
-                Debugging.Assert(() => ValidOutput(output));
+                Debugging.Assert(lastInput.Length == 0 || input.CompareTo(lastInput) >= 0, () => "inputs are added out of order lastInput=" + lastInput + " vs input=" + input);
+                Debugging.Assert(ValidOutput(output));
             }
 
             //System.out.println("\nadd: " + input);
@@ -444,7 +444,7 @@ namespace Lucene.Net.Util.Fst
                 UnCompiledNode<T> parentNode = frontier[idx - 1];
 
                 T lastOutput = parentNode.GetLastOutput(input.Int32s[input.Offset + idx - 1]);
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => ValidOutput(lastOutput));
+                if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(lastOutput));
 
                 T commonOutputPrefix;
                 T wordSuffix;
@@ -452,9 +452,9 @@ namespace Lucene.Net.Util.Fst
                 if (!lastOutput.Equals(NO_OUTPUT))
                 {
                     commonOutputPrefix = fst.Outputs.Common(output, lastOutput);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ValidOutput(commonOutputPrefix));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(commonOutputPrefix));
                     wordSuffix = fst.Outputs.Subtract(lastOutput, commonOutputPrefix);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ValidOutput(wordSuffix));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(wordSuffix));
                     parentNode.SetLastOutput(input.Int32s[input.Offset + idx - 1], commonOutputPrefix);
                     node.PrependOutput(wordSuffix);
                 }
@@ -464,7 +464,7 @@ namespace Lucene.Net.Util.Fst
                 }
 
                 output = fst.Outputs.Subtract(output, commonOutputPrefix);
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => ValidOutput(output));
+                if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(output));
             }
 
             if (lastInput.Length == input.Length && prefixLenPlus1 == 1 + input.Length)
@@ -662,18 +662,18 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => NumArcs > 0);
-                    Debugging.Assert(() => Arcs[NumArcs - 1].Label == labelToMatch);
+                    Debugging.Assert(NumArcs > 0);
+                    Debugging.Assert(Arcs[NumArcs - 1].Label == labelToMatch);
                 }
                 return Arcs[NumArcs - 1].Output;
             }
 
             public void AddArc(int label, INode target)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => label >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(label >= 0);
                 if (NumArcs != 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => label > Arcs[NumArcs - 1].Label, () => "arc[-1].Label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(label > Arcs[NumArcs - 1].Label, () => "arc[-1].Label=" + Arcs[NumArcs - 1].Label + " new label=" + label + " numArcs=" + NumArcs);
                 }
                 if (NumArcs == Arcs.Length)
                 {
@@ -694,9 +694,9 @@ namespace Lucene.Net.Util.Fst
 
             public void ReplaceLast(int labelToMatch, INode target, S nextFinalOutput, bool isFinal)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => NumArcs > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(NumArcs > 0);
                 Arc<S> arc = Arcs[NumArcs - 1];
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.Label == labelToMatch, () => "arc.Label=" + arc.Label + " vs " + labelToMatch);
+                if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == labelToMatch, () => "arc.Label=" + arc.Label + " vs " + labelToMatch);
                 arc.Target = target;
                 //assert target.Node != -2;
                 arc.NextFinalOutput = nextFinalOutput;
@@ -707,9 +707,9 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => NumArcs > 0);
-                    Debugging.Assert(() => label == Arcs[NumArcs - 1].Label);
-                    Debugging.Assert(() => target == Arcs[NumArcs - 1].Target);
+                    Debugging.Assert(NumArcs > 0);
+                    Debugging.Assert(label == Arcs[NumArcs - 1].Label);
+                    Debugging.Assert(target == Arcs[NumArcs - 1].Target);
                 }
                 NumArcs--;
             }
@@ -718,29 +718,29 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(() => Owner.ValidOutput(newOutput));
-                    Debugging.Assert(() => NumArcs > 0);
+                    Debugging.Assert(Owner.ValidOutput(newOutput));
+                    Debugging.Assert(NumArcs > 0);
                 }
                 Arc<S> arc = Arcs[NumArcs - 1];
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.Label == labelToMatch);
+                if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == labelToMatch);
                 arc.Output = newOutput;
             }
 
             // pushes an output prefix forward onto all arcs
             public void PrependOutput(S outputPrefix)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => Owner.ValidOutput(outputPrefix));
+                if (Debugging.AssertsEnabled) Debugging.Assert(Owner.ValidOutput(outputPrefix));
 
                 for (int arcIdx = 0; arcIdx < NumArcs; arcIdx++)
                 {
                     Arcs[arcIdx].Output = Owner.Fst.Outputs.Add(outputPrefix, Arcs[arcIdx].Output);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => Owner.ValidOutput(Arcs[arcIdx].Output));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(Owner.ValidOutput(Arcs[arcIdx].Output));
                 }
 
                 if (IsFinal)
                 {
                     Output = Owner.Fst.Outputs.Add(outputPrefix, Output);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => Owner.ValidOutput(Output));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(Owner.ValidOutput(Output));
                 }
             }
         }

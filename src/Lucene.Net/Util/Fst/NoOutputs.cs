@@ -66,8 +66,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => output1 == NO_OUTPUT);
-                Debugging.Assert(() => output2 == NO_OUTPUT);
+                Debugging.Assert(output1 == NO_OUTPUT);
+                Debugging.Assert(output2 == NO_OUTPUT);
             }
             return NO_OUTPUT;
         }
@@ -76,8 +76,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => output == NO_OUTPUT);
-                Debugging.Assert(() => inc == NO_OUTPUT);
+                Debugging.Assert(output == NO_OUTPUT);
+                Debugging.Assert(inc == NO_OUTPUT);
             }
             return NO_OUTPUT;
         }
@@ -86,8 +86,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => prefix == NO_OUTPUT, () => "got " + prefix);
-                Debugging.Assert(() => output == NO_OUTPUT);
+                Debugging.Assert(prefix == NO_OUTPUT, () => "got " + prefix);
+                Debugging.Assert(output == NO_OUTPUT);
             }
             return NO_OUTPUT;
         }
@@ -97,8 +97,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(() => first == NO_OUTPUT);
-                Debugging.Assert(() => second == NO_OUTPUT);
+                Debugging.Assert(first == NO_OUTPUT);
+                Debugging.Assert(second == NO_OUTPUT);
             }
             return NO_OUTPUT;
         }

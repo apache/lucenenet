@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => byNumber.Count == byName.Count);
+                if (Debugging.AssertsEnabled) Debugging.Assert(byNumber.Count == byName.Count);
                 return byNumber.Count;
             }
         }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ContainsConsistent(number, name, dvType));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ContainsConsistent(number, name, dvType));
                     docValuesType[name] = dvType;
                 }
             }
@@ -335,7 +335,7 @@ namespace Lucene.Net.Index
             /// </summary>
             internal Builder(FieldNumbers globalFieldNumbers)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => globalFieldNumbers != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(globalFieldNumbers != null);
                 this.globalFieldNumbers = globalFieldNumbers;
             }
 
@@ -378,8 +378,8 @@ namespace Lucene.Net.Index
                     fi = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValues, normType, null);
                     if (Debugging.AssertsEnabled)
                     {
-                        Debugging.Assert(() => !byName.ContainsKey(fi.Name));
-                        Debugging.Assert(() => globalFieldNumbers.ContainsConsistent(fi.Number, fi.Name, fi.DocValuesType));
+                        Debugging.Assert(!byName.ContainsKey(fi.Name));
+                        Debugging.Assert(globalFieldNumbers.ContainsConsistent(fi.Number, fi.Name, fi.DocValuesType));
                     }
                     byName[fi.Name] = fi;
                 }

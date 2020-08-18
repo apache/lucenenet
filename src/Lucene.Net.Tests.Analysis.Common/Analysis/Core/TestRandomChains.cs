@@ -172,7 +172,7 @@ namespace Lucene.Net.Analysis.Core
 
             public virtual bool Apply(object[] args)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => args.Length == 3);
+                if (Debugging.AssertsEnabled) Debugging.Assert(args.Length == 3);
                 return !((bool)args[2]); // args are broken if consumeAllTokens is false
             }
         }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Analysis.Core
 
             public virtual bool Apply(object[] args)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(() => args.Length == 3);
+                if (Debugging.AssertsEnabled) Debugging.Assert(args.Length == 3);
                 return !((bool)args[2]); // args are broken if consumeAllTokens is false
             }
         }

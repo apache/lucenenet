@@ -461,7 +461,7 @@ namespace Lucene.Net.Replicator
                     {
                         // count-down number of failures
                         failures.DecrementAndGet();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(() => failures >= 0, () => "handler failed too many times: " + failures);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(failures >= 0, () => "handler failed too many times: " + failures);
                         if (Verbose)
                         {
                             if (failures == 0)

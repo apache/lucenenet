@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
                 if (!(genDVProducers.TryGetValue(gen, out dvp)))
                 {
                     dvp = NewDocValuesProducer(si, context, dir, dvFormat, gen, infos, termsIndexDivisor);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => dvp != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(dvp != null);
                     genDVProducers[gen] = dvp;
                 }
                 else
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
                 foreach (long? gen in dvProducersGens)
                 {
                     RefCount<DocValuesProducer> dvp = genDVProducers[gen];
-                    if (Debugging.AssertsEnabled) Debugging.Assert(() => dvp != null, () => "gen=" + gen);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(dvp != null, () => "gen=" + gen);
                     try
                     {
                         dvp.DecRef();

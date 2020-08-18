@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Sep
         protected override int ReadSkipData(int level, IndexInput skipStream)
         {
             int delta;
-            if (Debugging.AssertsEnabled) Debugging.Assert(() => indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !currentFieldStoresPayloads);
+            if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !currentFieldStoresPayloads);
             if (currentFieldStoresPayloads)
             {
                 // the current field stores payloads.
