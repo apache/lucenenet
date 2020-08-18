@@ -829,7 +829,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        Debugging.Assert(() => loc >= -validTerms.Length);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => loc >= -validTerms.Length);
                         Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, result);
                     }
                 }

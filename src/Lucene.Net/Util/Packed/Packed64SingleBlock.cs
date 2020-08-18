@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
         internal Packed64SingleBlock(int valueCount, int bitsPerValue)
             : base(valueCount, bitsPerValue)
         {
-            Debugging.Assert(() => IsSupported(bitsPerValue));
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => IsSupported(bitsPerValue));
             int valuesPerBlock = 64 / bitsPerValue;
             blocks = new long[RequiredCapacity(valueCount, valuesPerBlock)];
         }
@@ -71,10 +71,13 @@ namespace Lucene.Net.Util.Packed
 
         public override int Get(int index, long[] arr, int off, int len)
         {
-            Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
-            Debugging.Assert(() => index >= 0 && index < m_valueCount);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(() => index >= 0 && index < m_valueCount);
+            }
             len = Math.Min(len, m_valueCount - index);
-            Debugging.Assert(() => off + len <= arr.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => off + len <= arr.Length);
 
             int originalIndex = index;
 
@@ -95,10 +98,13 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk get
-            Debugging.Assert(() => index % valuesPerBlock == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => index % valuesPerBlock == 0);
             PackedInt32s.IDecoder decoder = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
-            Debugging.Assert(() => decoder.Int64BlockCount == 1);
-            Debugging.Assert(() => decoder.Int64ValueCount == valuesPerBlock);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => decoder.Int64BlockCount == 1);
+                Debugging.Assert(() => decoder.Int64ValueCount == valuesPerBlock);
+            }
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             decoder.Decode(blocks, blockIndex, arr, off, nblocks);
@@ -115,17 +121,20 @@ namespace Lucene.Net.Util.Packed
             {
                 // no progress so far => already at a block boundary but no full block to
                 // get
-                Debugging.Assert(() => index == originalIndex);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => index == originalIndex);
                 return base.Get(index, arr, off, len);
             }
         }
 
         public override int Set(int index, long[] arr, int off, int len)
         {
-            Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
-            Debugging.Assert(() => index >= 0 && index < m_valueCount);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(() => index >= 0 && index < m_valueCount);
+            }
             len = Math.Min(len, m_valueCount - index);
-            Debugging.Assert(() => off + len <= arr.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => off + len <= arr.Length);
 
             int originalIndex = index;
 
@@ -146,10 +155,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk set
-            Debugging.Assert(() => index % valuesPerBlock == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => index % valuesPerBlock == 0);
             BulkOperation op = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
-            Debugging.Assert(() => op.Int64BlockCount == 1);
-            Debugging.Assert(() => op.Int64ValueCount == valuesPerBlock);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => op.Int64BlockCount == 1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => op.Int64ValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             op.Encode(arr, off, blocks, blockIndex, nblocks);
@@ -166,16 +175,19 @@ namespace Lucene.Net.Util.Packed
             {
                 // no progress so far => already at a block boundary but no full block to
                 // set
-                Debugging.Assert(() => index == originalIndex);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => index == originalIndex);
                 return base.Set(index, arr, off, len);
             }
         }
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
-            Debugging.Assert(() => fromIndex >= 0);
-            Debugging.Assert(() => fromIndex <= toIndex);
-            Debugging.Assert(() => PackedInt32s.BitsRequired(val) <= m_bitsPerValue);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => fromIndex >= 0);
+                Debugging.Assert(() => fromIndex <= toIndex);
+                Debugging.Assert(() => PackedInt32s.BitsRequired(val) <= m_bitsPerValue);
+            }
 
             int valuesPerBlock = 64 / m_bitsPerValue;
             if (toIndex - fromIndex <= valuesPerBlock << 1)
@@ -194,13 +206,13 @@ namespace Lucene.Net.Util.Packed
                 {
                     Set(fromIndex++, val);
                 }
-                Debugging.Assert(() => fromIndex % valuesPerBlock == 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => fromIndex % valuesPerBlock == 0);
             }
 
             // bulk set of the inner blocks
             int fromBlock = fromIndex / valuesPerBlock;
             int toBlock = toIndex / valuesPerBlock;
-            Debugging.Assert(() => fromBlock * valuesPerBlock == fromIndex);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => fromBlock * valuesPerBlock == fromIndex);
 
             long blockValue = 0L;
             for (int i = 0; i < valuesPerBlock; ++i)

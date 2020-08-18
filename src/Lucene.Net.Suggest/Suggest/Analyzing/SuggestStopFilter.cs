@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         m_input.End();
                         endState = CaptureState();
                         int finalEndOffset = offsetAtt.EndOffset;
-                        Debugging.Assert(() => finalEndOffset >= endOffset);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => finalEndOffset >= endOffset);
                         if (finalEndOffset > endOffset)
                         {
                             // OK there was a token separator after the

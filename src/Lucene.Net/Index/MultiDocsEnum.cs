@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
 
         public override int Advance(int target)
         {
-            Debugging.Assert(() => target > doc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => target > doc);
             while (true)
             {
                 if (current != null)

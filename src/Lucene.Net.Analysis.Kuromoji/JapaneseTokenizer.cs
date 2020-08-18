@@ -314,7 +314,7 @@ namespace Lucene.Net.Analysis.Ja
             int leftID = dict.GetLeftId(wordID);
             int leastCost = int.MaxValue;
             int leastIDX = -1;
-            Debugging.Assert(() => fromPosData.count > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => fromPosData.count > 0);
             for (int idx = 0; idx < fromPosData.count; idx++)
             {
                 // Cost is path cost so far, plus word cost (added at
@@ -356,7 +356,7 @@ namespace Lucene.Net.Analysis.Ja
             }
 
             //positions.get(endPos).add(leastCost, dict.getRightId(wordID), fromPosData.pos, leastIDX, wordID, type);
-            Debugging.Assert(() => leftID == dict.GetRightId(wordID));
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => leftID == dict.GetRightId(wordID));
             positions.Get(endPos).Add(leastCost, leftID, fromPosData.pos, leastIDX, wordID, type);
         }
 
@@ -387,7 +387,7 @@ namespace Lucene.Net.Analysis.Ja
             int position = token.Position;
             int length = token.Length;
             ClearAttributes();
-            Debugging.Assert(() => length > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => length > 0);
             //System.out.println("off=" + token.getOffset() + " len=" + length + " vs " + token.getSurfaceForm().length);
             termAtt.CopyBuffer(token.SurfaceForm, token.Offset, length);
             offsetAtt.SetOffset(CorrectOffset(position), CorrectOffset(position + length));
@@ -402,7 +402,7 @@ namespace Lucene.Net.Analysis.Ja
             }
             else
             {
-                Debugging.Assert(() => token.Position > lastTokenPos);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => token.Position > lastTokenPos);
                 posIncAtt.PositionIncrement = 1;
                 posLengthAtt.PositionLength = 1;
             }
@@ -511,7 +511,7 @@ namespace Lucene.Net.Analysis.Ja
                     }
 
                     // We will always have at least one live path:
-                    Debugging.Assert(() => leastIDX != -1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => leastIDX != -1);
 
                     // Second pass: prune all but the best path:
                     for (int pos2 = pos; pos2 < positions.GetNextPos(); pos2++)
@@ -544,7 +544,7 @@ namespace Lucene.Net.Analysis.Ja
                     if (pos != leastPosData.pos)
                     {
                         // We jumped into a future position:
-                        Debugging.Assert(() => pos < leastPosData.pos);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => pos < leastPosData.pos);
                         pos = leastPosData.pos;
                     }
 
@@ -913,10 +913,10 @@ namespace Lucene.Net.Analysis.Ja
             {
                 //System.out.println("BT: back pos=" + pos + " bestIDX=" + bestIDX);
                 Position posData = positions.Get(pos);
-                Debugging.Assert(() => bestIDX < posData.count);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => bestIDX < posData.count);
 
                 int backPos = posData.backPos[bestIDX];
-                Debugging.Assert(() => backPos >= lastBackTracePos, () => "backPos=" + backPos + " vs lastBackTracePos=" + lastBackTracePos);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => backPos >= lastBackTracePos, () => "backPos=" + backPos + " vs lastBackTracePos=" + lastBackTracePos);
                 int length = pos - backPos;
                 JapaneseTokenizerType backType = posData.backType[bestIDX];
                 int backID = posData.backID[bestIDX];
@@ -989,7 +989,7 @@ namespace Lucene.Net.Analysis.Ja
                         if (leastIDX != -1 && leastCost <= maxCost && posData.backPos[leastIDX] != backPos)
                         {
                             // We should have pruned the altToken from the graph:
-                            Debugging.Assert(() => posData.backPos[leastIDX] != backPos);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(() => posData.backPos[leastIDX] != backPos);
 
                             // Save the current compound token, to output when
                             // this alternate path joins back:
@@ -1024,7 +1024,7 @@ namespace Lucene.Net.Analysis.Ja
                 }
 
                 int offset = backPos - lastBackTracePos;
-                Debugging.Assert(() => offset >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => offset >= 0);
 
                 if (altToken != null && altToken.Position >= backPos)
                 {
@@ -1035,7 +1035,7 @@ namespace Lucene.Net.Analysis.Ja
                     // The pruning we did when we created the altToken
                     // ensures that the back trace will align back with
                     // the start of the altToken:
-                    Debugging.Assert(() => altToken.Position == backPos, () => altToken.Position + " vs " + backPos);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => altToken.Position == backPos, () => altToken.Position + " vs " + backPos);
 
                     // NOTE: not quite right: the compound token may
                     // have had all punctuation back traced so far, but
@@ -1060,7 +1060,7 @@ namespace Lucene.Net.Analysis.Ja
                         {
                             Console.WriteLine("    discard all-punctuation altToken=" + altToken);
                         }
-                        Debugging.Assert(() => discardPunctuation);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => discardPunctuation);
                     }
                     altToken = null;
                 }
@@ -1355,7 +1355,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             count = 0;
             // forwardCount naturally resets after it runs:
-            Debugging.Assert(() => forwardCount == 0, () => "pos=" + pos + " forwardCount=" + forwardCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => forwardCount == 0, () => "pos=" + pos + " forwardCount=" + forwardCount);
         }
     }
 
@@ -1432,13 +1432,13 @@ namespace Lucene.Net.Analysis.Ja
                     nextWrite = 0;
                 }
                 // Should have already been reset:
-                Debugging.Assert(() => positions[nextWrite].count == 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => positions[nextWrite].count == 0);
                 positions[nextWrite++].pos = nextPos++;
                 count++;
             }
-            Debugging.Assert(() => InBounds(pos));
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => InBounds(pos));
             int index = GetIndex(pos);
-            Debugging.Assert(() => positions[index].pos == pos);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => positions[index].pos == pos);
             return positions[index];
         }
 
@@ -1466,8 +1466,11 @@ namespace Lucene.Net.Analysis.Ja
         public void FreeBefore(int pos)
         {
             int toFree = count - (nextPos - pos);
-            Debugging.Assert(() => toFree >= 0);
-            Debugging.Assert(() => toFree <= count);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => toFree >= 0);
+                Debugging.Assert(() => toFree <= count);
+            }
             int index = nextWrite - count;
             if (index < 0)
             {

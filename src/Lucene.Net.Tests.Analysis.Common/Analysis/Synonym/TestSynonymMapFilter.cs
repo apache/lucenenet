@@ -268,7 +268,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private string GetRandomString(char start, int alphabetSize, int length)
         {
-            Debugging.Assert(() => alphabetSize <= 26);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => alphabetSize <= 26);
             char[] s = new char[2 * length];
             for (int charIDX = 0; charIDX < length; charIDX++)
             {

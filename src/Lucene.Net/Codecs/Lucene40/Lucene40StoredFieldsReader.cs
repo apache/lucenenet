@@ -92,8 +92,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 CodecUtil.CheckHeader(indexStream, Lucene40StoredFieldsWriter.CODEC_NAME_IDX, Lucene40StoredFieldsWriter.VERSION_START, Lucene40StoredFieldsWriter.VERSION_CURRENT);
                 CodecUtil.CheckHeader(fieldsStream, Lucene40StoredFieldsWriter.CODEC_NAME_DAT, Lucene40StoredFieldsWriter.VERSION_START, Lucene40StoredFieldsWriter.VERSION_CURRENT);
-                Debugging.Assert(() => Lucene40StoredFieldsWriter.HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
-                Debugging.Assert(() => Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX == indexStream.GetFilePointer());
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => Lucene40StoredFieldsWriter.HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
+                    Debugging.Assert(() => Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX == indexStream.GetFilePointer());
+                }
                 long indexSize = indexStream.Length - Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX;
                 this.size = (int)(indexSize >> 3);
                 // Verify two sources of "maxDoc" agree:
@@ -174,7 +177,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = fieldsStream.ReadByte() & 0xFF;
-                Debugging.Assert(() => bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY), () => "bits=" + bits.ToString("x"));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY), () => "bits=" + bits.ToString("x"));
 
                 switch (visitor.NeedsField(fieldInfo))
                 {
@@ -281,7 +284,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 long offset;
                 int docID = startDocID + count + 1;
-                Debugging.Assert(() => docID <= numTotalDocs);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => docID <= numTotalDocs);
                 if (docID < numTotalDocs)
                 {
                     offset = indexStream.ReadInt64();

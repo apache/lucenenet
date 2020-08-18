@@ -603,7 +603,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
                 else
                 {
-                    Debugging.Assert(() => false);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => false);
                     return 0;
                 }
             }
@@ -1313,7 +1313,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 else
                 {
                     int c = CHARSEQUENCE_COMPARER.Compare(a.Key, b.Key);
-                    Debugging.Assert(() => c != 0, () => "term=" + a.Key);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => c != 0, () => "term=" + a.Key);
                     return c;
                 }
             }

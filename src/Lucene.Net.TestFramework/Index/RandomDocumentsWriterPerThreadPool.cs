@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
         public RandomDocumentsWriterPerThreadPool(int maxNumPerThreads, Random random)
             : base(maxNumPerThreads)
         {
-            Debugging.Assert(() => MaxThreadStates >= 1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => MaxThreadStates >= 1);
             states = new ThreadState[maxNumPerThreads];
             this.random = new Random(random.Next());
             this.maxRetry = 1 + random.Next(10);
@@ -56,14 +56,14 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            Debugging.Assert(() => NumThreadStatesActive > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => NumThreadStatesActive > 0);
             for (int i = 0; i < maxRetry; i++)
             {
                 int ord = random.Next(NumThreadStatesActive);
                 lock (this)
                 {
                     threadState = states[ord];
-                    Debugging.Assert(() => threadState != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => threadState != null);
                 }
 
                 if (threadState.TryLock())
@@ -89,12 +89,12 @@ namespace Lucene.Net.Index
                 if (newThreadState != null) // did we get a new state?
                 {
                     threadState = states[NumThreadStatesActive - 1] = newThreadState;
-                    //Debugging.Assert(threadState.HeldByCurrentThread);
+                    //if (Debugging.AssertsEnabled) Debugging.Assert(threadState.HeldByCurrentThread);
                     return threadState;
                 }
                 // if no new state is available lock the random one
             }
-            Debugging.Assert(() => threadState != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => threadState != null);
             threadState.@Lock();
             return threadState;
         }

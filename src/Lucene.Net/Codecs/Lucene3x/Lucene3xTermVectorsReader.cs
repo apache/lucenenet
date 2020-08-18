@@ -140,8 +140,11 @@ namespace Lucene.Net.Codecs.Lucene3x
                 tvf = d.OpenInput(fn, context);
                 int tvfFormat = CheckValidFormat(tvf);
 
-                Debugging.Assert(() => format == tvdFormat);
-                Debugging.Assert(() => format == tvfFormat);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => format == tvdFormat);
+                    Debugging.Assert(() => format == tvfFormat);
+                }
 
                 numTotalDocs = (int)(tvx.Length >> 4);
 
@@ -149,7 +152,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     this.docStoreOffset = 0;
                     this.size = numTotalDocs;
-                    Debugging.Assert(() => size == 0 || numTotalDocs == size);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => size == 0 || numTotalDocs == size);
                 }
                 else
                 {
@@ -157,7 +160,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     this.size = size;
                     // Verify the file is long enough to hold all of our
                     // docs
-                    Debugging.Assert(() => numTotalDocs >= size + docStoreOffset, () => "numTotalDocs=" + numTotalDocs + " size=" + size + " docStoreOffset=" + docStoreOffset);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => numTotalDocs >= size + docStoreOffset, () => "numTotalDocs=" + numTotalDocs + " size=" + size + " docStoreOffset=" + docStoreOffset);
                 }
 
                 this.fieldInfos = fieldInfos;
@@ -233,7 +236,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 outerInstance.tvd.Seek(outerInstance.tvx.ReadInt64());
 
                 int fieldCount = outerInstance.tvd.ReadVInt32();
-                Debugging.Assert(() => fieldCount >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => fieldCount >= 0);
                 if (fieldCount != 0)
                 {
                     fieldNumbers = new int[fieldCount];
@@ -686,7 +689,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     else
                     {
-                        Debugging.Assert(() => startOffsets != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => startOffsets != null);
                         return startOffsets.Length;
                     }
                 }
@@ -737,7 +740,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int NextPosition()
             {
-                Debugging.Assert(() => (positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => (positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
 
                 if (positions != null)
                 {

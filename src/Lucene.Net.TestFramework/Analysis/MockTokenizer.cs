@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis
 
         public sealed override bool IncrementToken()
         {
-            Debugging.Assert(() => !enableChecks || (streamState == State.RESET || streamState == State.INCREMENT), () => "IncrementToken() called while in wrong state: " + streamState);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => !enableChecks || (streamState == State.RESET || streamState == State.INCREMENT), () => "IncrementToken() called while in wrong state: " + streamState);
             ClearAttributes();
             for (; ; )
             {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                Debugging.Assert(() => !char.IsLowSurrogate((char)ch), () => "unpaired low surrogate: " + ch.ToString("x"));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => !char.IsLowSurrogate((char)ch), () => "unpaired low surrogate: " + ch.ToString("x"));
                 off++;
                 if (char.IsHighSurrogate((char)ch))
                 {
@@ -227,12 +227,12 @@ namespace Lucene.Net.Analysis
                     if (ch2 >= 0)
                     {
                         off++;
-                        Debugging.Assert(() => char.IsLowSurrogate((char)ch2), () => "unpaired high surrogate: " + ch.ToString("x") + ", followed by: " + ch2.ToString("x"));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => char.IsLowSurrogate((char)ch2), () => "unpaired high surrogate: " + ch.ToString("x") + ", followed by: " + ch2.ToString("x"));
                         return Character.ToCodePoint((char)ch, (char)ch2);
                     }
                     else
                     {
-                        Debugging.Assert(() => false, () => "stream ends with unpaired high surrogate: " + ch.ToString("x"));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => false, () => "stream ends with unpaired high surrogate: " + ch.ToString("x"));
                     }
                 }
                 return ch;
@@ -300,7 +300,7 @@ namespace Lucene.Net.Analysis
             state = runAutomaton.InitialState;
             lastOffset = off = 0;
             bufferedCodePoint = -1;
-            Debugging.Assert(() => !enableChecks || streamState != State.RESET, () => "Double Reset()");
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => !enableChecks || streamState != State.RESET, () => "Double Reset()");
             streamState = State.RESET;
         }
 
@@ -312,14 +312,14 @@ namespace Lucene.Net.Analysis
                 // in some exceptional cases (e.g. TestIndexWriterExceptions) a test can prematurely close()
                 // these tests should disable this check, by default we check the normal workflow.
                 // TODO: investigate the CachingTokenFilter "double-close"... for now we ignore this
-                Debugging.Assert(() => !enableChecks || streamState == State.END || streamState == State.CLOSE, () => "Dispose() called in wrong state: " + streamState);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => !enableChecks || streamState == State.END || streamState == State.CLOSE, () => "Dispose() called in wrong state: " + streamState);
                 streamState = State.CLOSE;
             }
         }
 
         internal override bool SetReaderTestPoint()
         {
-            Debugging.Assert(() => !enableChecks || streamState == State.CLOSE, () => "SetReader() called in wrong state: " + streamState);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => !enableChecks || streamState == State.CLOSE, () => "SetReader() called in wrong state: " + streamState);
             streamState = State.SETREADER;
             return true;
         }
@@ -333,7 +333,7 @@ namespace Lucene.Net.Analysis
             // these tests should disable this check (in general you should consume the entire stream)
             try
             {
-                Debugging.Assert(() => !enableChecks || streamState == State.INCREMENT_FALSE, () => "End() called before IncrementToken() returned false!");
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => !enableChecks || streamState == State.INCREMENT_FALSE, () => "End() called before IncrementToken() returned false!");
             }
             finally
             {

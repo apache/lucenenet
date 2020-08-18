@@ -63,13 +63,13 @@ namespace Lucene.Net.Index
         private void IncTickets()
         {
             int numTickets = ticketCount.IncrementAndGet();
-            Debugging.Assert(() => numTickets > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => numTickets > 0);
         }
 
         private void DecTickets()
         {
             int numTickets = ticketCount.DecrementAndGet();
-            Debugging.Assert(() => numTickets >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => numTickets >= 0);
         }
 
         internal virtual SegmentFlushTicket AddFlushTicket(DocumentsWriterPerThread dwpt)
@@ -121,14 +121,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                Debugging.Assert(() => ticketCount >= 0, () => "ticketCount should be >= 0 but was: " + ticketCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => ticketCount >= 0, () => "ticketCount should be >= 0 but was: " + ticketCount);
                 return ticketCount != 0;
             }
         }
 
         private int InnerPurge(IndexWriter writer)
         {
-            Debugging.Assert(() => purgeLock.IsHeldByCurrentThread);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => purgeLock.IsHeldByCurrentThread);
             int numPurged = 0;
             while (true)
             {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
                             // finally remove the published ticket from the queue
                             FlushTicket poll = queue.Dequeue();
                             ticketCount.DecrementAndGet();
-                            Debugging.Assert(() => poll == head);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(() => poll == head);
                         }
                     }
                 }
@@ -173,8 +173,11 @@ namespace Lucene.Net.Index
 
         internal virtual int ForcePurge(IndexWriter writer)
         {
-            Debugging.Assert(() => !Monitor.IsEntered(this));
-            Debugging.Assert(() => !Monitor.IsEntered(writer));
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => !Monitor.IsEntered(this));
+                Debugging.Assert(() => !Monitor.IsEntered(writer));
+            }
             purgeLock.@Lock();
             try
             {
@@ -188,8 +191,11 @@ namespace Lucene.Net.Index
 
         internal virtual int TryPurge(IndexWriter writer)
         {
-            Debugging.Assert(() => !Monitor.IsEntered(this));
-            Debugging.Assert(() => !Monitor.IsEntered(writer));
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => !Monitor.IsEntered(this));
+                Debugging.Assert(() => !Monitor.IsEntered(writer));
+            }
             if (purgeLock.TryLock())
             {
                 try
@@ -222,7 +228,7 @@ namespace Lucene.Net.Index
 
             protected FlushTicket(FrozenBufferedUpdates frozenUpdates)
             {
-                Debugging.Assert(() => frozenUpdates != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => frozenUpdates != null);
                 this.m_frozenUpdates = frozenUpdates;
             }
 
@@ -238,8 +244,11 @@ namespace Lucene.Net.Index
             /// </summary>
             protected void PublishFlushedSegment(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates globalPacket)
             {
-                Debugging.Assert(() => newSegment != null);
-                Debugging.Assert(() => newSegment.segmentInfo != null);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => newSegment != null);
+                    Debugging.Assert(() => newSegment.segmentInfo != null);
+                }
                 FrozenBufferedUpdates segmentUpdates = newSegment.segmentUpdates;
                 //System.out.println("FLUSH: " + newSegment.segmentInfo.info.name);
                 if (indexWriter.infoStream.IsEnabled("DW"))
@@ -260,7 +269,7 @@ namespace Lucene.Net.Index
                 // Finish the flushed segment and publish it to IndexWriter
                 if (newSegment == null)
                 {
-                    Debugging.Assert(() => bufferedUpdates != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => bufferedUpdates != null);
                     if (bufferedUpdates != null && bufferedUpdates.Any())
                     {
                         indexWriter.PublishFrozenUpdates(bufferedUpdates);
@@ -286,7 +295,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                Debugging.Assert(() => !m_published, () => "ticket was already publised - can not publish twice");
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => !m_published, () => "ticket was already publised - can not publish twice");
                 m_published = true;
                 // its a global ticket - no segment to publish
                 FinishFlush(writer, null, m_frozenUpdates);
@@ -307,20 +316,20 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                Debugging.Assert(() => !m_published, () => "ticket was already publised - can not publish twice");
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => !m_published, () => "ticket was already publised - can not publish twice");
                 m_published = true;
                 FinishFlush(writer, segment, m_frozenUpdates);
             }
 
             internal void SetSegment(FlushedSegment segment) // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
-                Debugging.Assert(() => !failed);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => !failed);
                 this.segment = segment;
             }
 
             internal void SetFailed() // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
-                Debugging.Assert(() => segment == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => segment == null);
                 failed = true;
             }
 

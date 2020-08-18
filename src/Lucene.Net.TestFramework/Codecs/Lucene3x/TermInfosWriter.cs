@@ -135,7 +135,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 output.WriteInt32(indexInterval); // write indexInterval
                 output.WriteInt32(skipInterval); // write skipInterval
                 output.WriteInt32(maxSkipLevels); // write maxSkipLevels
-                Debugging.Assert(InitUTF16Results);
+                if (Debugging.AssertsEnabled) Debugging.Assert(InitUTF16Results);
                 success = true;
             }
             finally
@@ -202,10 +202,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             scratchBytes.CopyBytes(term);
-            Debugging.Assert(() => lastTerm.Offset == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => lastTerm.Offset == 0);
             UnicodeUtil.UTF8toUTF16(lastTerm.Bytes, 0, lastTerm.Length, utf16Result1);
 
-            Debugging.Assert(() => scratchBytes.Offset == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => scratchBytes.Offset == 0);
             UnicodeUtil.UTF8toUTF16(scratchBytes.Bytes, 0, scratchBytes.Length, utf16Result2);
 
             int len;
@@ -243,10 +243,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// </summary>
         public void Add(int fieldNumber, BytesRef term, TermInfo ti)
         {
-            Debugging.Assert(() => CompareToLastTerm(fieldNumber, term) < 0 || (isIndex && term.Length == 0 && lastTerm.Length == 0), () => "Terms are out of order: field=" + FieldName(fieldInfos, fieldNumber) + " (number " + fieldNumber + ")" + " lastField=" + FieldName(fieldInfos, lastFieldNumber) + " (number " + lastFieldNumber + ")" + " text=" + term.Utf8ToString() + " lastText=" + lastTerm.Utf8ToString());
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => CompareToLastTerm(fieldNumber, term) < 0 || (isIndex && term.Length == 0 && lastTerm.Length == 0), () => "Terms are out of order: field=" + FieldName(fieldInfos, fieldNumber) + " (number " + fieldNumber + ")" + " lastField=" + FieldName(fieldInfos, lastFieldNumber) + " (number " + lastFieldNumber + ")" + " text=" + term.Utf8ToString() + " lastText=" + lastTerm.Utf8ToString());
 
-            Debugging.Assert(() => ti.FreqPointer >= lastTi.FreqPointer, () => "freqPointer out of order (" + ti.FreqPointer + " < " + lastTi.FreqPointer + ")");
-            Debugging.Assert(() => ti.ProxPointer >= lastTi.ProxPointer, () => "proxPointer out of order (" + ti.ProxPointer + " < " + lastTi.ProxPointer + ")");
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => ti.FreqPointer >= lastTi.FreqPointer, () => "freqPointer out of order (" + ti.FreqPointer + " < " + lastTi.FreqPointer + ")");
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => ti.ProxPointer >= lastTi.ProxPointer, () => "proxPointer out of order (" + ti.ProxPointer + " < " + lastTi.ProxPointer + ")");
 
             if (!isIndex && size % indexInterval == 0)
             {

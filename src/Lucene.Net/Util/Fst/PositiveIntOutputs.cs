@@ -45,25 +45,34 @@ namespace Lucene.Net.Util.Fst
 
         public override long? Common(long? output1, long? output2)
         {
-            Debugging.Assert(() => Valid(output1));
-            Debugging.Assert(() => Valid(output2));
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => Valid(output1));
+                Debugging.Assert(() => Valid(output2));
+            }
             if (output1 == NO_OUTPUT || output2 == NO_OUTPUT)
             {
                 return NO_OUTPUT;
             }
             else
             {
-                Debugging.Assert(() => output1 > 0);
-                Debugging.Assert(() => output2 > 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => output1 > 0);
+                    Debugging.Assert(() => output2 > 0);
+                }
                 return Math.Min(output1.Value, output2.Value);
             }
         }
 
         public override long? Subtract(long? output, long? inc)
         {
-            Debugging.Assert(() => Valid(output));
-            Debugging.Assert(() => Valid(inc));
-            Debugging.Assert(() => output >= inc);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => Valid(output));
+                Debugging.Assert(() => Valid(inc));
+                Debugging.Assert(() => output >= inc);
+            }
 
             if (inc == NO_OUTPUT)
             {
@@ -81,8 +90,11 @@ namespace Lucene.Net.Util.Fst
 
         public override long? Add(long? prefix, long? output)
         {
-            Debugging.Assert(() => Valid(prefix));
-            Debugging.Assert(() => Valid(output));
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => Valid(prefix));
+                Debugging.Assert(() => Valid(output));
+            }
             if (prefix == NO_OUTPUT)
             {
                 return output;
@@ -99,7 +111,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(long? output, DataOutput @out)
         {
-            Debugging.Assert(() => Valid(output));
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => Valid(output));
             @out.WriteVInt64(output.Value);
         }
 

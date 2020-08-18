@@ -92,8 +92,11 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             string filename = IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.DelGen);
             BitVector liveDocs = new BitVector(dir, filename, context);
-            Debugging.Assert(() => liveDocs.Count() == info.Info.DocCount - info.DelCount, () => "liveDocs.count()=" + liveDocs.Count() + " info.docCount=" + info.Info.DocCount + " info.getDelCount()=" + info.DelCount);
-            Debugging.Assert(() => liveDocs.Length == info.Info.DocCount);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => liveDocs.Count() == info.Info.DocCount - info.DelCount, () => "liveDocs.count()=" + liveDocs.Count() + " info.docCount=" + info.Info.DocCount + " info.getDelCount()=" + info.DelCount);
+                Debugging.Assert(() => liveDocs.Length == info.Info.DocCount);
+            }
             return liveDocs;
         }
 
@@ -102,8 +105,11 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             string filename = IndexFileNames.FileNameFromGeneration(info.Info.Name, DELETES_EXTENSION, info.NextDelGen);
             BitVector liveDocs = (BitVector)bits;
-            Debugging.Assert(() => liveDocs.Count() == info.Info.DocCount - info.DelCount - newDelCount);
-            Debugging.Assert(() => liveDocs.Length == info.Info.DocCount);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => liveDocs.Count() == info.Info.DocCount - info.DelCount - newDelCount);
+                Debugging.Assert(() => liveDocs.Length == info.Info.DocCount);
+            }
             liveDocs.Write(dir, filename, context);
         }
 

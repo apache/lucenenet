@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
         {
             TopDocs oneHit = new TopDocs(1, new ScoreDoc[] { new ScoreDoc(docID, firstPassExplanation.Value) });
             TopDocs hits = Rescore(searcher, oneHit, 1);
-            Debugging.Assert(() => hits.TotalHits == 1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => hits.TotalHits == 1);
 
             // TODO: if we could ask the Sort to explain itself then
             // we wouldn't need the separate ExpressionRescorer...

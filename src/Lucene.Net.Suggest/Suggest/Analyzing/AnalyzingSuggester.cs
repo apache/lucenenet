@@ -270,7 +270,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 IList<Transition> newTransitions = new List<Transition>();
                 foreach (Transition t in state.GetTransitions())
                 {
-                    Debugging.Assert(() => t.Min == t.Max);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => t.Min == t.Max);
                     if (t.Min == TokenStreamToAutomaton.POS_SEP)
                     {
                         if (preserveSep)
@@ -359,8 +359,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Next by cost:
                 long aCost = readerA.ReadInt32();
                 long bCost = readerB.ReadInt32();
-                Debugging.Assert(() => DecodeWeight(aCost) >= 0);
-                Debugging.Assert(() => DecodeWeight(bCost) >= 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => DecodeWeight(aCost) >= 0);
+                    Debugging.Assert(() => DecodeWeight(bCost) >= 0);
+                }
                 if (aCost < bCost)
                 {
                     return -1;
@@ -487,7 +490,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             output.WriteBytes(surfaceForm.Bytes, surfaceForm.Offset, surfaceForm.Length);
                         }
 
-                        Debugging.Assert(() => output.Position == requiredLength, () => output.Position + " vs " + requiredLength);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => output.Position == requiredLength, () => output.Position + " vs " + requiredLength);
 
                         writer.Write(buffer, 0, output.Position);
                     }
@@ -661,7 +664,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         break;
                     }
                 }
-                Debugging.Assert(() => sepIndex != -1);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => sepIndex != -1);
                 spare.Grow(sepIndex);
 
                 int payloadLen = output2.Length - sepIndex - 1;
@@ -707,7 +710,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
-            Debugging.Assert(() => num > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => num > 0);
 
             if (onlyMorePopular)
             {
@@ -799,7 +802,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
 
                     var completions = searcher.Search();
-                    Debugging.Assert(() => completions.IsComplete);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => completions.IsComplete);
 
                     // NOTE: this is rather inefficient: we enumerate
                     // every matching "exactly the same analyzed form"
@@ -842,7 +845,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 var completions2 = searcher2.Search();
-                Debugging.Assert(() => completions2.IsComplete);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => completions2.IsComplete);
 
                 foreach (Util.Fst.Util.Result<PairOutputs<long?, BytesRef>.Pair> completion in completions2)
                 {
@@ -920,7 +923,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         // We found exact match, which means we should
                         // have already found it in the first search:
-                        Debugging.Assert(() => results.Count == 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => results.Count == 1);
                         return false;
                     }
                     else
@@ -964,7 +967,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             ReplaceSep(automaton);
             automaton = ConvertAutomaton(automaton);
 
-            Debugging.Assert(() => SpecialOperations.IsFinite(automaton));
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => SpecialOperations.IsFinite(automaton));
 
             // Get all paths from the automaton (there can be
             // more than one path, eg if the analyzer created a

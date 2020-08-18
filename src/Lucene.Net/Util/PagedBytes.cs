@@ -96,8 +96,11 @@ namespace Lucene.Net.Util
             /// </summary>
             public void FillSlice(BytesRef b, long start, int length)
             {
-                Debugging.Assert(() => length >= 0, () => "length=" + length);
-                Debugging.Assert(() => length <= blockSize + 1, () => "length=" + length);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => length >= 0, () => "length=" + length);
+                    Debugging.Assert(() => length <= blockSize + 1, () => "length=" + length);
+                }
                 b.Length = length;
                 if (length == 0)
                 {
@@ -145,7 +148,7 @@ namespace Lucene.Net.Util
                 {
                     b.Length = ((block[offset] & 0x7f) << 8) | (block[1 + offset] & 0xff);
                     b.Offset = offset + 2;
-                    Debugging.Assert(() => b.Length > 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => b.Length > 0);
                 }
             }
 
@@ -163,7 +166,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public PagedBytes(int blockBits)
         {
-            Debugging.Assert(() => blockBits > 0 && blockBits <= 31, () => blockBits.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => blockBits > 0 && blockBits <= 31, () => blockBits.ToString(CultureInfo.InvariantCulture));
             this.blockSize = 1 << blockBits;
             this.blockBits = blockBits;
             blockMask = blockSize - 1;
@@ -223,7 +226,7 @@ namespace Lucene.Net.Util
                 currentBlock = new byte[blockSize];
                 upto = 0;
                 //left = blockSize; // LUCENENET: Unnecessary assignment
-                Debugging.Assert(() => bytes.Length <= blockSize);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => bytes.Length <= blockSize);
                 // TODO: we could also support variable block sizes
             }
 
@@ -377,7 +380,7 @@ namespace Lucene.Net.Util
 
             public override void ReadBytes(byte[] b, int offset, int len)
             {
-                Debugging.Assert(() => b.Length >= offset + len);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => b.Length >= offset + len);
                 int offsetEnd = offset + len;
                 while (true)
                 {
@@ -433,7 +436,7 @@ namespace Lucene.Net.Util
 
             public override void WriteBytes(byte[] b, int offset, int length)
             {
-                Debugging.Assert(() => b.Length >= offset + length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => b.Length >= offset + length);
                 if (length == 0)
                 {
                     return;

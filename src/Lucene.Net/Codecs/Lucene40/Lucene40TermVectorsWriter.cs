@@ -78,9 +78,12 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.WriteHeader(tvd, Lucene40TermVectorsReader.CODEC_NAME_DOCS, Lucene40TermVectorsReader.VERSION_CURRENT);
                 tvf = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION), context);
                 CodecUtil.WriteHeader(tvf, Lucene40TermVectorsReader.CODEC_NAME_FIELDS, Lucene40TermVectorsReader.VERSION_CURRENT);
-                Debugging.Assert(() => Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.GetFilePointer());
-                Debugging.Assert(() => Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.GetFilePointer());
-                Debugging.Assert(() => Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.GetFilePointer());
+                    Debugging.Assert(() => Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.GetFilePointer());
+                    Debugging.Assert(() => Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
+                }
                 success = true;
             }
             finally
@@ -110,7 +113,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            Debugging.Assert(() => lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0, () => "fieldName=" + info.Name + " lastFieldName=" + lastFieldName);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0, () => "fieldName=" + info.Name + " lastFieldName=" + lastFieldName);
             lastFieldName = info.Name;
             this.positions = positions;
             this.offsets = offsets;
@@ -139,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene40
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void FinishDocument()
         {
-            Debugging.Assert(() => fieldCount == numVectorFields);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => fieldCount == numVectorFields);
             for (int i = 1; i < fieldCount; i++)
             {
                 tvd.WriteVInt64(fps[i] - fps[i - 1]);
@@ -268,8 +271,11 @@ namespace Lucene.Net.Codecs.Lucene40
             if (bufferedIndex > 0)
             {
                 // dump buffer
-                Debugging.Assert(() => positions && (offsets || payloads));
-                Debugging.Assert(() => bufferedIndex == bufferedFreq);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => positions && (offsets || payloads));
+                    Debugging.Assert(() => bufferedIndex == bufferedFreq);
+                }
                 if (payloads)
                 {
                     tvf.WriteBytes(payloadData.Bytes, payloadData.Offset, payloadData.Length);
@@ -357,8 +363,11 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             tvd.CopyBytes(reader.TvdStream, tvdPosition - tvdStart);
             tvf.CopyBytes(reader.TvfStream, tvfPosition - tvfStart);
-            Debugging.Assert(() => tvd.GetFilePointer() == tvdPosition);
-            Debugging.Assert(() => tvf.GetFilePointer() == tvfPosition);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => tvd.GetFilePointer() == tvdPosition);
+                Debugging.Assert(() => tvf.GetFilePointer() == tvfPosition);
+            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

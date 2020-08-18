@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Packed
             this.packedIntsVersion = packedIntsVersion;
             bulkOperation = BulkOperation.Of(format, bitsPerValue);
             iterations = Iterations(mem);
-            Debugging.Assert(() => valueCount == 0 || iterations > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => valueCount == 0 || iterations > 0);
             nextBlocks = new byte[iterations * bulkOperation.ByteBlockCount];
             nextValues = new Int64sRef(new long[iterations * bulkOperation.ByteValueCount], 0, 0);
             nextValues.Offset = nextValues.Int64s.Length;
@@ -61,9 +61,12 @@ namespace Lucene.Net.Util.Packed
 
         public override Int64sRef Next(int count)
         {
-            Debugging.Assert(() => nextValues.Length >= 0);
-            Debugging.Assert(() => count > 0);
-            Debugging.Assert(() => nextValues.Offset + nextValues.Length <= nextValues.Int64s.Length);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => nextValues.Length >= 0);
+                Debugging.Assert(() => count > 0);
+                Debugging.Assert(() => nextValues.Offset + nextValues.Length <= nextValues.Int64s.Length);
+            }
 
             nextValues.Offset += nextValues.Length;
 

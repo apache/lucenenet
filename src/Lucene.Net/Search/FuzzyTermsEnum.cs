@@ -251,7 +251,7 @@ namespace Lucene.Net.Search
             // assert newEnum != null;
             if (newEnum == null)
             {
-                Debugging.Assert(() => maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
                 throw new ArgumentException("maxEdits cannot be > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE");
             }
             SetEnum(newEnum);

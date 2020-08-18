@@ -59,8 +59,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public override Query GetQuery(String query, ICommonQueryParserConfiguration cqpC)
         {
-            Debugging.Assert(() => cqpC != null, () => "Parameter must not be null");
-            Debugging.Assert(() => (cqpC is StandardQueryParser), () => "Parameter must be instance of StandardQueryParser");
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => cqpC != null, () => "Parameter must not be null");
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => (cqpC is StandardQueryParser), () => "Parameter must be instance of StandardQueryParser");
             StandardQueryParser qp = (StandardQueryParser)cqpC;
             return Parse(query, qp);
         }
@@ -80,7 +80,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public override void SetDefaultOperatorOR(ICommonQueryParserConfiguration cqpC)
         {
-            Debugging.Assert(() => cqpC is StandardQueryParser);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;
             qp.DefaultOperator = (Operator.OR);
         }
@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public override void SetDefaultOperatorAND(ICommonQueryParserConfiguration cqpC)
         {
-            Debugging.Assert(() => cqpC is StandardQueryParser);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;
             qp.DefaultOperator = (Operator.AND);
         }
@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public override void SetDateResolution(ICommonQueryParserConfiguration cqpC,
             string field, DateTools.Resolution value)
         {
-            Debugging.Assert(() => cqpC is StandardQueryParser);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => cqpC is StandardQueryParser);
             StandardQueryParser qp = (StandardQueryParser)cqpC;
             qp.DateResolutionMap.Put(field, value);
         }

@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 
         public MultiBits(IBits[] subs, int[] starts, bool defaultValue)
         {
-            Debugging.Assert(() => starts.Length == 1 + subs.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => starts.Length == 1 + subs.Length);
             this.subs = subs;
             this.starts = starts;
             this.sefaultValue = defaultValue;
@@ -50,14 +50,14 @@ namespace Lucene.Net.Index
         private bool CheckLength(int reader, int doc)
         {
             int length = starts[1 + reader] - starts[reader];
-            Debugging.Assert(() => doc - starts[reader] < length, () => "doc=" + doc + " reader=" + reader + " starts[reader]=" + starts[reader] + " length=" + length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => doc - starts[reader] < length, () => "doc=" + doc + " reader=" + reader + " starts[reader]=" + starts[reader] + " length=" + length);
             return true;
         }
 
         public bool Get(int doc)
         {
             int reader = ReaderUtil.SubIndex(doc, starts);
-            Debugging.Assert(() => reader != -1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => reader != -1);
             IBits bits = subs[reader];
             if (bits == null)
             {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                Debugging.Assert(() => CheckLength(reader, doc));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => CheckLength(reader, doc));
                 return bits.Get(doc - starts[reader]);
             }
         }
@@ -114,8 +114,11 @@ namespace Lucene.Net.Index
         public SubResult GetMatchingSub(ReaderSlice slice)
         {
             int reader = ReaderUtil.SubIndex(slice.Start, starts);
-            Debugging.Assert(() => reader != -1);
-            Debugging.Assert(() => reader < subs.Length, () => "slice=" + slice + " starts[-1]=" + starts[starts.Length - 1]);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => reader != -1);
+                Debugging.Assert(() => reader < subs.Length, () => "slice=" + slice + " starts[-1]=" + starts[starts.Length - 1]);
+            }
             SubResult subResult = new SubResult();
             if (starts[reader] == slice.Start && starts[1 + reader] == slice.Start + slice.Length)
             {

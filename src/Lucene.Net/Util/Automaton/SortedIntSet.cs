@@ -157,7 +157,7 @@ namespace Lucene.Net.Util.Automaton
                     return;
                 }
             }
-            Debugging.Assert(() => false);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => false);
         }
 
         public void ComputeHash()

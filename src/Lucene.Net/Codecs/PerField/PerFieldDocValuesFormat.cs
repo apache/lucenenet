@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.PerField
                 string formatName_ = format.Name;
 
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName_);
-                Debugging.Assert(() => field.DocValuesGen != -1 || previousValue == null, () => "formatName=" + formatName_ + " prevValue=" + previousValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => field.DocValuesGen != -1 || previousValue == null, () => "formatName=" + formatName_ + " prevValue=" + previousValue);
 
                 int? suffix = null;
 
@@ -199,12 +199,12 @@ namespace Lucene.Net.Codecs.PerField
                 else
                 {
                     // we've already seen this format, so just grab its suffix
-                    Debugging.Assert(() => suffixes.ContainsKey(formatName_));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => suffixes.ContainsKey(formatName_));
                     suffix = consumer.Suffix;
                 }
 
                 previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix, CultureInfo.InvariantCulture));
-                Debugging.Assert(() => field.DocValuesGen != -1 || previousValue == null, () => "suffix=" + Convert.ToString(suffix, CultureInfo.InvariantCulture) + " prevValue=" + previousValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => field.DocValuesGen != -1 || previousValue == null, () => "suffix=" + Convert.ToString(suffix, CultureInfo.InvariantCulture) + " prevValue=" + previousValue);
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this DVF actually sees ...
@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.PerField
                             {
                                 // null formatName means the field is in fieldInfos, but has no docvalues!
                                 string suffix = fi.GetAttribute(PER_FIELD_SUFFIX_KEY);
-                                Debugging.Assert(() => suffix != null);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(() => suffix != null);
                                 DocValuesFormat format = DocValuesFormat.ForName(formatName);
                                 string segmentSuffix = GetFullSegmentSuffix(readState.SegmentSuffix, GetSuffix(formatName, suffix));
                                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
@@ -306,7 +306,7 @@ namespace Lucene.Net.Codecs.PerField
                 {
                     DocValuesProducer producer;
                     oldToNew.TryGetValue(ent.Value, out producer);
-                    Debugging.Assert(() => producer != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => producer != null);
                     fields[ent.Key] = producer;
                 }
             }

@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
             foreach (ScoreTerm st in scoreTerms)
             {
                 Term term = new Term(query.m_field, st.Bytes);
-                Debugging.Assert(() => reader.DocFreq(term) == st.TermState.DocFreq, () => "reader DF is " + reader.DocFreq(term) + " vs " + st.TermState.DocFreq + " term=" + term);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => reader.DocFreq(term) == st.TermState.DocFreq, () => "reader DF is " + reader.DocFreq(term) + " vs " + st.TermState.DocFreq + " term=" + term);
                 AddClause(q, term, st.TermState.DocFreq, query.Boost * st.Boost, st.TermState); // add to query
             }
             return q;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
                 this.termsEnum = termsEnum;
                 this.termComp = termsEnum.Comparer;
 
-                Debugging.Assert(() => CompareToLastTerm(null));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => CompareToLastTerm(null));
 
                 // lazy init the initial ScoreTerm because comparer is not known on ctor:
                 if (st == null)
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    Debugging.Assert(() => termsEnum.Comparer.Compare(lastTerm, t) < 0, () => "lastTerm=" + lastTerm + " t=" + t);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => termsEnum.Comparer.Compare(lastTerm, t) < 0, () => "lastTerm=" + lastTerm + " t=" + t);
                     lastTerm.CopyBytes(t);
                 }
                 return true;
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
 
                 // make sure within a single seg we always collect
                 // terms in order
-                Debugging.Assert(() => CompareToLastTerm(bytes));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => CompareToLastTerm(bytes));
 
                 //System.out.println("TTR.collect term=" + bytes.utf8ToString() + " boost=" + boost + " ord=" + readerContext.ord);
                 // ignore uncompetitive hits
@@ -174,11 +174,11 @@ namespace Lucene.Net.Search
                     }
                 }
                 TermState state = termsEnum.GetTermState();
-                Debugging.Assert(() => state != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => state != null);
                 if (visitedTerms.TryGetValue(bytes, out ScoreTerm t2))
                 {
                     // if the term is already in the PQ, only update docFreq of term in PQ
-                    Debugging.Assert(() => t2.Boost == boost, () => "boost should be equal in all segment TermsEnums");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => t2.Boost == boost, () => "boost should be equal in all segment TermsEnums");
                     t2.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                 }
                 else
@@ -187,7 +187,7 @@ namespace Lucene.Net.Search
                     st.Bytes.CopyBytes(bytes);
                     st.Boost = boost;
                     visitedTerms[st.Bytes] = st;
-                    Debugging.Assert(() => st.TermState.DocFreq == 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => st.TermState.DocFreq == 0);
                     st.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                     stQueue.Add(st);
                     // possibly drop entries from queue
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
                     {
                         st = new ScoreTerm(termComp, new TermContext(m_topReaderContext));
                     }
-                    Debugging.Assert(() => stQueue.Count <= maxSize, () => "the PQ size must be limited to maxSize");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => stQueue.Count <= maxSize, () => "the PQ size must be limited to maxSize");
                     // set maxBoostAtt with values to help FuzzyTermsEnum to optimize
                     if (stQueue.Count == maxSize)
                     {
@@ -247,7 +247,7 @@ namespace Lucene.Net.Search
 
         private static readonly IComparer<ScoreTerm> scoreTermSortByTermComp = Comparer<ScoreTerm>.Create((st1, st2) =>
         {
-            Debugging.Assert(() => st1.TermComp == st2.TermComp, () => "term comparer should not change between segments");
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => st1.TermComp == st2.TermComp, () => "term comparer should not change between segments");
             return st1.TermComp.Compare(st1.Bytes, st2.Bytes);
         });
         

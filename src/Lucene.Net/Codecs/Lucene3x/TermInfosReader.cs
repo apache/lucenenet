@@ -65,7 +65,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             public TermInfoAndOrd(TermInfo ti, long termOrd)
                 : base(ti)
             {
-                Debugging.Assert(() => termOrd >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => termOrd >= 0);
                 this.termOrd = termOrd;
             }
         }
@@ -291,7 +291,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                                     termsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti, enumerator.position));
                                 }
                             }
-                            else
+                            else if (Debugging.AssertsEnabled)
                             {
                                 Debugging.Assert(() => SameTermInfo(ti, tiOrd, enumerator));
                                 Debugging.Assert(() => (int)enumerator.position == tiOrd.termOrd);
@@ -333,7 +333,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         termsCache.Put(new CloneableTerm(DeepCopyOf(term)), new TermInfoAndOrd(ti_, enumerator.position));
                     }
                 }
-                else
+                else if (Debugging.AssertsEnabled)
                 {
                     Debugging.Assert(() => SameTermInfo(ti_, tiOrd, enumerator));
                     Debugging.Assert(() => enumerator.position == tiOrd.termOrd);

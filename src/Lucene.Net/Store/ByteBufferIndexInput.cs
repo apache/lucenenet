@@ -86,8 +86,11 @@ namespace Lucene.Net.Store
             // uses RuntimeHelpers.GetHashCode() to find the item, so technically, it IS an identity collection.
             this.clones = trackClones ? new ConditionalWeakTable<ByteBufferIndexInput, BoolRefWrapper>() : null;
 
-            Debugging.Assert(() => chunkSizePower >= 0 && chunkSizePower <= 30);
-            Debugging.Assert(() => ((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => chunkSizePower >= 0 && chunkSizePower <= 30);
+                Debugging.Assert(() => ((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
+            }
 
             // LUCENENET specific: MMapIndexInput calls SetBuffers() to populate
             // the buffers, so we need to skip that call if it is null here, and
@@ -301,7 +304,7 @@ namespace Lucene.Net.Store
             ByteBufferIndexInput clone = (ByteBufferIndexInput)base.Clone();
             clone.isClone = true;
             // we keep clone.clones, so it shares the same map with original and we have no additional cost on clones
-            Debugging.Assert(() => clone.clones == this.clones);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => clone.clones == this.clones);
             clone.buffers = BuildSlice(buffers, offset, length);
             clone.offset = (int)(offset & chunkSizeMask);
             clone.length = length;
@@ -391,7 +394,7 @@ namespace Lucene.Net.Store
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                         foreach (var pair in clones)
                         {
-                            Debugging.Assert(() => pair.Key.isClone);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(() => pair.Key.isClone);
                             pair.Key.UnsetBuffers();
                         }
                         this.clones.Clear();

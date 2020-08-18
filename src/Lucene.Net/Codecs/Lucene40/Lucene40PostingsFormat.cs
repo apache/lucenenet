@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.Lucene40
             : base()
         {
             this.m_minBlockSize = minBlockSize;
-            Debugging.Assert(() => minBlockSize > 1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => minBlockSize > 1);
             this.m_maxBlockSize = maxBlockSize;
         }
 

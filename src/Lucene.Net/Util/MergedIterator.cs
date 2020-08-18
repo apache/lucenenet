@@ -113,7 +113,7 @@ namespace Lucene.Net.Util
 
         private void PullTop()
         {
-            Debugging.Assert(() => numTop == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => numTop == 0);
             top[numTop++] = queue.Pop();
             if (removeDuplicates)
             {

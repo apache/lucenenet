@@ -69,16 +69,19 @@ namespace Lucene.Net.Codecs.SimpleText
         /// </summary>
         private bool FieldSeen(string field)
         {
-            Debugging.Assert(() => !_fieldsSeen.Contains(field), () => "field \"" + field + "\" was added more than once during flush");
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => !_fieldsSeen.Contains(field), () => "field \"" + field + "\" was added more than once during flush");
             _fieldsSeen.Add(field);
             return true;
         }
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
-            Debugging.Assert(() => FieldSeen(field.Name));
-            Debugging.Assert(() => field.DocValuesType == DocValuesType.NUMERIC ||
-                         field.NormType == DocValuesType.NUMERIC);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => FieldSeen(field.Name));
+                Debugging.Assert(() => field.DocValuesType == DocValuesType.NUMERIC ||
+                             field.NormType == DocValuesType.NUMERIC);
+            }
             WriteFieldEntry(field, DocValuesType.NUMERIC);
 
             // first pass to find min/max
@@ -118,26 +121,29 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 long value = n.GetValueOrDefault();
 
-                Debugging.Assert(() => value >= minValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => value >= minValue);
 
                 var delta = (decimal)value - (decimal)minValue; // LUCENENET specific - use decimal rather than BigInteger
                 string s = delta.ToString(patternString, CultureInfo.InvariantCulture);
-                Debugging.Assert(() => s.Length == patternString.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => s.Length == patternString.Length);
                 SimpleTextUtil.Write(data, s, scratch);
                 SimpleTextUtil.WriteNewline(data);
                 SimpleTextUtil.Write(data, n == null ? "F" : "T", scratch);
                 SimpleTextUtil.WriteNewline(data);
                 numDocsWritten++;
-                Debugging.Assert(() => numDocsWritten <= numDocs);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => numDocsWritten <= numDocs);
             }
 
-            Debugging.Assert(() => numDocs == numDocsWritten, () => "numDocs=" + numDocs + " numDocsWritten=" + numDocsWritten);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => numDocs == numDocsWritten, () => "numDocs=" + numDocs + " numDocsWritten=" + numDocsWritten);
         }
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            Debugging.Assert(() => FieldSeen(field.Name));
-            Debugging.Assert(() => field.DocValuesType == DocValuesType.BINARY);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => FieldSeen(field.Name));
+                Debugging.Assert(() => field.DocValuesType == DocValuesType.BINARY);
+            }
 
             var maxLength = 0;
             foreach (var value in values)
@@ -192,13 +198,16 @@ namespace Lucene.Net.Codecs.SimpleText
                 numDocsWritten++;
             }
 
-            Debugging.Assert(() => numDocs == numDocsWritten);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => numDocs == numDocsWritten);
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
-            Debugging.Assert(() => FieldSeen(field.Name));
-            Debugging.Assert(() => field.DocValuesType == DocValuesType.SORTED);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => FieldSeen(field.Name));
+                Debugging.Assert(() => field.DocValuesType == DocValuesType.SORTED);
+            }
             WriteFieldEntry(field, DocValuesType.SORTED);
 
             int valueCount = 0;
@@ -268,10 +277,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 SimpleTextUtil.WriteNewline(data);
                 valuesSeen++;
-                Debugging.Assert(() => valuesSeen <= valueCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => valuesSeen <= valueCount);
             }
 
-            Debugging.Assert(() => valuesSeen == valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => valuesSeen == valueCount);
 
             foreach (var ord in docToOrd)
             {
@@ -283,8 +292,11 @@ namespace Lucene.Net.Codecs.SimpleText
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values,
             IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            Debugging.Assert(() => FieldSeen(field.Name));
-            Debugging.Assert(() => field.DocValuesType == DocValuesType.SORTED_SET);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => FieldSeen(field.Name));
+                Debugging.Assert(() => field.DocValuesType == DocValuesType.SORTED_SET);
+            }
             WriteFieldEntry(field, DocValuesType.SORTED_SET);
 
             long valueCount = 0;
@@ -375,10 +387,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 SimpleTextUtil.WriteNewline(data);
                 valuesSeen++;
-                Debugging.Assert(() => valuesSeen <= valueCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => valuesSeen <= valueCount);
             }
 
-            Debugging.Assert(() => valuesSeen == valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => valuesSeen == valueCount);
 
             using (var ordStream = ords.GetEnumerator())
             {
@@ -426,7 +438,7 @@ namespace Lucene.Net.Codecs.SimpleText
             var success = false;
             try
             {
-                Debugging.Assert(() => _fieldsSeen.Count > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => _fieldsSeen.Count > 0);
                 // java : sheisty to do this here?
                 SimpleTextUtil.Write(data, END);
                 SimpleTextUtil.WriteNewline(data);

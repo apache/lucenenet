@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             {
                 IList<AtomicReaderContext> leaves = reader.Leaves;
                 int size = leaves.Count;
-                Debugging.Assert(() => size > 0, () => "A reader with deletions must have at least one leave");
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => size > 0, () => "A reader with deletions must have at least one leave");
                 if (size == 1)
                 {
                     return leaves[0].AtomicReader.LiveDocs;
@@ -175,8 +175,11 @@ namespace Lucene.Net.Index
         /// </summary>
         public static DocsEnum GetTermDocsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsFlags flags)
         {
-            Debugging.Assert(() => field != null);
-            Debugging.Assert(() => term != null);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => field != null);
+                Debugging.Assert(() => term != null);
+            }
             Terms terms = GetTerms(r, field);
             if (terms != null)
             {
@@ -210,8 +213,11 @@ namespace Lucene.Net.Index
         /// </summary>
         public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsAndPositionsFlags flags)
         {
-            Debugging.Assert(() => field != null);
-            Debugging.Assert(() => term != null);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => field != null);
+                Debugging.Assert(() => term != null);
+            }
             Terms terms = GetTerms(r, field);
             if (terms != null)
             {

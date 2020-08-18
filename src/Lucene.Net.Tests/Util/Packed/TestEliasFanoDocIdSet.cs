@@ -52,7 +52,7 @@ namespace Lucene.Net.Util.Packed
                 {
                     doc = NO_MORE_DOCS;
                 }
-                Debugging.Assert(() => doc < numBits);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => doc < numBits);
                 return doc;
             }
 

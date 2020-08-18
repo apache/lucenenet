@@ -250,7 +250,7 @@ namespace Lucene.Net.Index.Memory
                             return mid;
                         }
                     }
-                    Debugging.Assert(() => comparer.Compare(bytesRef, b) != 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => comparer.Compare(bytesRef, b) != 0);
                     return -(low + 1);
                 }
 
@@ -285,7 +285,7 @@ namespace Lucene.Net.Index.Memory
 
                 public override void SeekExact(long ord)
                 {
-                    Debugging.Assert(() => ord < info.terms.Count);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ord < info.terms.Count);
                     termUpto = (int)ord;
                 }
 
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index.Memory
 
                 public override void SeekExact(BytesRef term, TermState state)
                 {
-                    Debugging.Assert(() => state != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => state != null);
                     this.SeekExact(((OrdTermState)state).Ord);
                 }
 
@@ -450,8 +450,11 @@ namespace Lucene.Net.Index.Memory
 
                 public override int NextPosition()
                 {
-                    Debugging.Assert(() => posUpto++ < freq);
-                    Debugging.Assert(() => !sliceReader.IsEndOfSlice, () => " stores offsets : " + startOffset);
+                    if (Debugging.AssertsEnabled)
+                    {
+                        Debugging.Assert(() => posUpto++ < freq);
+                        Debugging.Assert(() => !sliceReader.IsEndOfSlice, () => " stores offsets : " + startOffset);
+                    }
                     if (outerInstance.outerInstance.storeOffsets)
                     {
                         int pos = sliceReader.ReadInt32();
