@@ -77,7 +77,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         public TaxonomyIndexArrays(IndexReader reader, TaxonomyIndexArrays copyFrom)
         {
-            Debugging.Assert(() => copyFrom != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => copyFrom != null);
 
             // note that copyParents.length may be equal to reader.maxDoc(). this is not a bug
             // it may be caused if e.g. the taxonomy segments were merged, and so an updated

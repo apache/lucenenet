@@ -113,26 +113,26 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
             SimpleTextUtil.CheckFooter(input);
-            Debugging.Assert(() => upto == _offsets.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => upto == _offsets.Length);
         }
 
         public override void VisitDocument(int n, StoredFieldVisitor visitor)
         {
             _input.Seek(_offsets[n]);
             ReadLine();
-            Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.NUM));
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.NUM));
             var numFields = ParseInt32At(SimpleTextStoredFieldsWriter.NUM.Length);
 
             for (var i = 0; i < numFields; i++)
             {
                 ReadLine();
-                Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.FIELD));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.FIELD));
                 int fieldNumber = ParseInt32At(SimpleTextStoredFieldsWriter.FIELD.Length);
                 FieldInfo fieldInfo = _fieldInfos.FieldInfo(fieldNumber);
                 ReadLine();
-                Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.NAME));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.NAME));
                 ReadLine();
-                Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.TYPE));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.TYPE));
 
                 BytesRef type;
                 if (EqualsAt(SimpleTextStoredFieldsWriter.TYPE_STRING, _scratch, SimpleTextStoredFieldsWriter.TYPE.Length))
@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs.SimpleText
                         break;
                     case StoredFieldVisitor.Status.NO:
                         ReadLine();
-                        Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.VALUE));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.VALUE));
                         break;
                     case StoredFieldVisitor.Status.STOP:
                         return;
@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.SimpleText
         private void ReadField(BytesRef type, FieldInfo fieldInfo, StoredFieldVisitor visitor)
         {
             ReadLine();
-            Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.VALUE));
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(_scratch, SimpleTextStoredFieldsWriter.VALUE));
             if (Equals(type, SimpleTextStoredFieldsWriter.TYPE_STRING))
             {
                 visitor.StringField(fieldInfo,

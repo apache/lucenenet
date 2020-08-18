@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
 
             public void OnClose(IndexReader owner)
             {
-                Debugging.Assert(() => owner is AtomicReader);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => owner is AtomicReader);
                 outerInstance.PurgeByCacheKey(((AtomicReader)owner).CoreCacheKey);
             }
         }
@@ -409,7 +409,7 @@ namespace Lucene.Net.Search
                     if (setDocsWithField)
                     {
                         int termsDocCount = terms.DocCount;
-                        Debugging.Assert(() => termsDocCount <= maxDoc);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => termsDocCount <= maxDoc);
                         if (termsDocCount == maxDoc)
                         {
                             // Fast case: all docs have this field:
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search
                 if (numSet >= maxDoc)
                 {
                     // The cardinality of the BitSet is maxDoc if all documents have a value.
-                    Debugging.Assert(() => numSet == maxDoc);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => numSet == maxDoc);
                     bits = new Lucene.Net.Util.Bits.MatchAllBits(maxDoc);
                 }
                 else
@@ -907,7 +907,7 @@ namespace Lucene.Net.Search
 
             public Int32sFromArray(PackedInt32s.Reader values, int minValue)
             {
-                Debugging.Assert(() => values.BitsPerValue <= 32);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => values.BitsPerValue <= 32);
                 this.values = values;
                 this.minValue = minValue;
             }
@@ -1095,7 +1095,7 @@ namespace Lucene.Net.Search
                 if (terms != null)
                 {
                     int termsDocCount = terms.DocCount;
-                    Debugging.Assert(() => termsDocCount <= maxDoc);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => termsDocCount <= maxDoc);
                     if (termsDocCount == maxDoc)
                     {
                         // Fast case: all docs have this field:
@@ -1137,7 +1137,7 @@ namespace Lucene.Net.Search
                 if (numSet >= maxDoc)
                 {
                     // The cardinality of the BitSet is maxDoc if all documents have a value.
-                    Debugging.Assert(() => numSet == maxDoc);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => numSet == maxDoc);
                     return new Lucene.Net.Util.Bits.MatchAllBits(maxDoc);
                 }
                 return res;

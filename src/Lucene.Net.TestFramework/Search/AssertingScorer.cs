@@ -105,10 +105,10 @@ namespace Lucene.Net.Search
 
         public override float GetScore()
         {
-            Debugging.Assert(Iterating);
+            if (Debugging.AssertsEnabled) Debugging.Assert(Iterating);
             float score = @in.GetScore();
-            Debugging.Assert(() => !float.IsNaN(score));
-            Debugging.Assert(() => !float.IsNaN(score));
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => !float.IsNaN(score));
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => !float.IsNaN(score));
             return score;
         }
 
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
         {
             get
             {
-                Debugging.Assert(Iterating);
+                if (Debugging.AssertsEnabled) Debugging.Assert(Iterating);
                 return @in.Freq;
             }
         }

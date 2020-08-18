@@ -78,7 +78,7 @@ namespace Lucene.Net.Queries
                 {
                     if (res == null)
                     {
-                        Debugging.Assert(() => !hasShouldClauses);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => !hasShouldClauses);
                         res = new FixedBitSet(reader.MaxDoc);
                         res.Set(0, reader.MaxDoc); // NOTE: may set bits on deleted docs
                     }

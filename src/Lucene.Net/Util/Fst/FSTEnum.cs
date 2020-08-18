@@ -199,8 +199,11 @@ namespace Lucene.Net.Util.Fst
                         // Match
                         arc.ArcIdx = mid - 1;
                         m_fst.ReadNextRealArc(arc, @in);
-                        Debugging.Assert(() => arc.ArcIdx == mid);
-                        Debugging.Assert(() => arc.Label == targetLabel, () => "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel + " mid=" + mid);
+                        if (Debugging.AssertsEnabled)
+                        {
+                            Debugging.Assert(() => arc.ArcIdx == mid);
+                            Debugging.Assert(() => arc.Label == targetLabel, () => "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel + " mid=" + mid);
+                        }
                         m_output[m_upto] = m_fst.Outputs.Add(m_output[m_upto - 1], arc.Output);
                         if (targetLabel == FST.END_LABEL)
                         {
@@ -217,7 +220,7 @@ namespace Lucene.Net.Util.Fst
                         // Dead end
                         arc.ArcIdx = arc.NumArcs - 2;
                         m_fst.ReadNextRealArc(arc, @in);
-                        Debugging.Assert(() => arc.IsLast);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.IsLast);
                         // Dead end (target is after the last arc);
                         // rollback to last fork then push
                         m_upto--;
@@ -242,7 +245,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         arc.ArcIdx = (low > high ? low : high) - 1;
                         m_fst.ReadNextRealArc(arc, @in);
-                        Debugging.Assert(() => arc.Label > targetLabel);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => arc.Label > targetLabel);
                         PushFirst();
                         return;
                     }
@@ -370,8 +373,11 @@ namespace Lucene.Net.Util.Fst
                         //System.out.println("  match!  arcIdx=" + mid);
                         arc.ArcIdx = mid - 1;
                         m_fst.ReadNextRealArc(arc, @in);
-                        Debugging.Assert(() => arc.ArcIdx == mid);
-                        Debugging.Assert(() => arc.Label == targetLabel, () => "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel + " mid=" + mid);
+                        if (Debugging.AssertsEnabled)
+                        {
+                            Debugging.Assert(() => arc.ArcIdx == mid);
+                            Debugging.Assert(() => arc.Label == targetLabel, () => "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel + " mid=" + mid);
+                        }
                         m_output[m_upto] = m_fst.Outputs.Add(m_output[m_upto - 1], arc.Output);
                         if (targetLabel == FST.END_LABEL)
                         {
@@ -426,8 +432,11 @@ namespace Lucene.Net.Util.Fst
                         // LUCNENET specific: We don't want the ReadNextArcLabel call to be
                         // excluded when Debug.Assert is stripped out by the compiler.
                         bool check = arc.IsLast || m_fst.ReadNextArcLabel(arc, @in) > targetLabel;
-                        Debugging.Assert(() => check);
-                        Debugging.Assert(() => arc.Label < targetLabel, () => "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel);
+                        if (Debugging.AssertsEnabled)
+                        {
+                            Debugging.Assert(() => check);
+                            Debugging.Assert(() => arc.Label < targetLabel, () => "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel);
+                        }
                         PushLast();
                         return;
                     }
@@ -574,7 +583,7 @@ namespace Lucene.Net.Util.Fst
         private void PushFirst()
         {
             FST.Arc<T> arc = m_arcs[m_upto];
-            Debugging.Assert(() => arc != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => arc != null);
 
             while (true)
             {
@@ -601,7 +610,7 @@ namespace Lucene.Net.Util.Fst
         private void PushLast()
         {
             FST.Arc<T> arc = m_arcs[m_upto];
-            Debugging.Assert(() => arc != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => arc != null);
 
             while (true)
             {

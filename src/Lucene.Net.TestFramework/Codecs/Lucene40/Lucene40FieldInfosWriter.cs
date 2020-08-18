@@ -66,7 +66,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     if (fi.IsIndexed)
                     {
                         bits |= Lucene40FieldInfosFormat.IS_INDEXED;
-                        Debugging.Assert(() => indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads);
                         if (indexOptions == IndexOptions.DOCS_ONLY)
                         {
                             bits |= Lucene40FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // pack the DV types in one byte
                     byte dv = DocValuesByte(fi.DocValuesType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_DV_TYPE_KEY));
                     byte nrm = DocValuesByte(fi.NormType, fi.GetAttribute(Lucene40FieldInfosReader.LEGACY_NORM_TYPE_KEY));
-                    Debugging.Assert(() => (dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => (dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
                     var val = (byte)(0xff & ((nrm << 4) | (byte)dv));
                     output.WriteByte(val);
                     output.WriteStringStringMap(fi.Attributes);
@@ -113,12 +113,12 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (type == DocValuesType.NONE)
             {
-                Debugging.Assert(() => legacyTypeAtt == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => legacyTypeAtt == null);
                 return 0;
             }
             else
             {
-                Debugging.Assert(() => legacyTypeAtt != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => legacyTypeAtt != null);
                 //return (sbyte)LegacyDocValuesType.ordinalLookup[legacyTypeAtt];
                 return (byte)legacyTypeAtt.ToLegacyDocValuesType();
             }

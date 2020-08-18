@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
             {
                 // LUCENENET specific - Since there is no way to check for a next element
                 // without calling this method in .NET, the assert is redundant and ineffective.
-                //Debugging.Assert(() => input.GetFilePointer() < input.Length); // Has next
+                //if (Debugging.AssertsEnabled) Debugging.Assert(() => input.GetFilePointer() < input.Length); // Has next
                 if (input.GetFilePointer() < input.Length)
                 {
                     try
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
             /// add a term </summary>
             public virtual void Add(Term term)
             {
-                Debugging.Assert(() => lastTerm.Equals(new Term("")) || term.CompareTo(lastTerm) > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => lastTerm.Equals(new Term("")) || term.CompareTo(lastTerm) > 0);
 
                 try
                 {

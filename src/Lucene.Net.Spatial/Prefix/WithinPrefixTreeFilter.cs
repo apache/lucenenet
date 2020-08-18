@@ -203,8 +203,11 @@ namespace Lucene.Net.Spatial.Prefix
             protected internal override void VisitLeaf(Cell cell)
             {
                 //visitRelation is declared as a field, populated by visit() so we don't recompute it
-                Debugging.Assert(() => m_outerInstance.m_detailLevel != cell.Level);
-                Debugging.Assert(() => visitRelation == cell.Shape.Relate(m_outerInstance.m_queryShape));
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => m_outerInstance.m_detailLevel != cell.Level);
+                    Debugging.Assert(() => visitRelation == cell.Shape.Relate(m_outerInstance.m_queryShape));
+                }
                 if (AllCellsIntersectQuery(cell, visitRelation))
                 {
                     CollectDocs(inside);

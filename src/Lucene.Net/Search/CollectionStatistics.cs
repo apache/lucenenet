@@ -37,10 +37,13 @@ namespace Lucene.Net.Search
         /// </summary>
         public CollectionStatistics(string field, long maxDoc, long docCount, long sumTotalTermFreq, long sumDocFreq)
         {
-            Debugging.Assert(() => maxDoc >= 0);
-            Debugging.Assert(() => docCount >= -1 && docCount <= maxDoc); // #docs with field must be <= #docs
-            Debugging.Assert(() => sumDocFreq == -1 || sumDocFreq >= docCount); // #postings must be >= #docs with field
-            Debugging.Assert(() => sumTotalTermFreq == -1 || sumTotalTermFreq >= sumDocFreq); // #positions must be >= #postings
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => maxDoc >= 0);
+                Debugging.Assert(() => docCount >= -1 && docCount <= maxDoc); // #docs with field must be <= #docs
+                Debugging.Assert(() => sumDocFreq == -1 || sumDocFreq >= docCount); // #postings must be >= #docs with field
+                Debugging.Assert(() => sumTotalTermFreq == -1 || sumTotalTermFreq >= sumDocFreq); // #positions must be >= #postings
+            }
             this.field = field;
             this.maxDoc = maxDoc;
             this.docCount = docCount;

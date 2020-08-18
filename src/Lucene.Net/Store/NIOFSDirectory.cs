@@ -234,7 +234,7 @@ namespace Lucene.Net.Store
                 if (b == m_buffer && 0 == offset)
                 {
                     // Use our own pre-wrapped byteBuf:
-                    Debugging.Assert(() => byteBuf != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => byteBuf != null);
                     byteBuf.Clear();
                     byteBuf.Limit = len;
                     bb = byteBuf;
@@ -259,7 +259,7 @@ namespace Lucene.Net.Store
                     {
                         int toRead = Math.Min(CHUNK_SIZE, readLength);
                         bb.Limit = readOffset + toRead;
-                        Debugging.Assert(() => bb.Remaining == toRead);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => bb.Remaining == toRead);
                         int i = m_channel.Read(bb, pos);
                         if (i <= 0) // be defensive here, even though we checked before hand, something could have changed
                         {
@@ -269,7 +269,7 @@ namespace Lucene.Net.Store
                         readOffset += i;
                         readLength -= i;
                     }
-                    Debugging.Assert(() => readLength == 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => readLength == 0);
                 }
                 catch (IOException ioe)
                 {

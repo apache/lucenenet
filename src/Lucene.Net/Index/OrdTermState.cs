@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
 
         public override void CopyFrom(TermState other)
         {
-            Debugging.Assert(() => other is OrdTermState, () => "can not copy from " + other.GetType().Name);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => other is OrdTermState, () => "can not copy from " + other.GetType().Name);
             this.Ord = ((OrdTermState)other).Ord;
         }
 

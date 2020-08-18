@@ -107,7 +107,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                     {
                         buffer[0] = input.ReadVInt32();
                         int count = buffer[0] <= 3 ? baseBlockSize - 1 : 2 * baseBlockSize - 1;
-                        Debugging.Assert(() => buffer.Length >= count, () => "buffer.length=" + buffer.Length + " count=" + count);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => buffer.Length >= count, () => "buffer.length=" + buffer.Length + " count=" + count);
                         for (int i = 0; i < count; i++)
                         {
                             buffer[i + 1] = input.ReadVInt32();

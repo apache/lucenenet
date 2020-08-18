@@ -103,7 +103,7 @@ namespace Lucene.Net.Util.Fst
             for (int i = 0; i < ir.Length; i++)
             {
                 int x = ir.Int32s[ir.Offset + i];
-                Debugging.Assert(() => x >= 0 && x <= 255);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => x >= 0 && x <= 255);
                 br.Bytes[i] = (byte)x;
             }
             br.Length = ir.Length;
@@ -219,7 +219,7 @@ namespace Lucene.Net.Util.Fst
         // of the term prefix that matches
         private T Run(FST<T> fst, Int32sRef term, int[] prefixLength)
         {
-            Debugging.Assert(() => prefixLength == null || prefixLength.Length == 1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => prefixLength == null || prefixLength.Length == 1);
             FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());
             T NO_OUTPUT = fst.Outputs.NoOutput;
             T output = NO_OUTPUT;
@@ -690,7 +690,7 @@ namespace Lucene.Net.Util.Fst
                             if (!termsMap.ContainsKey(term) && term.CompareTo(pairs[upto].Input) > 0)
                             {
                                 int pos = pairs.BinarySearch(new InputOutput<T>(term, default(T)));
-                                Debugging.Assert(() => pos < 0);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(() => pos < 0);
                                 upto = -(pos + 1);
 
                                 if (random.NextBoolean())
@@ -887,7 +887,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     else
                     {
-                        Debugging.Assert(() => prune2 > 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => prune2 > 0);
                         if (prune2 > 1 && cmo.Count >= prune2)
                         {
                             keep = true;

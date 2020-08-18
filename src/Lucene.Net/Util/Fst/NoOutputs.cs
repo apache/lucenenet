@@ -64,30 +64,42 @@ namespace Lucene.Net.Util.Fst
 
         public override object Common(object output1, object output2)
         {
-            Debugging.Assert(() => output1 == NO_OUTPUT);
-            Debugging.Assert(() => output2 == NO_OUTPUT);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => output1 == NO_OUTPUT);
+                Debugging.Assert(() => output2 == NO_OUTPUT);
+            }
             return NO_OUTPUT;
         }
 
         public override object Subtract(object output, object inc)
         {
-            Debugging.Assert(() => output == NO_OUTPUT);
-            Debugging.Assert(() => inc == NO_OUTPUT);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => output == NO_OUTPUT);
+                Debugging.Assert(() => inc == NO_OUTPUT);
+            }
             return NO_OUTPUT;
         }
 
         public override object Add(object prefix, object output)
         {
-            Debugging.Assert(() => prefix == NO_OUTPUT, () => "got " + prefix);
-            Debugging.Assert(() => output == NO_OUTPUT);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => prefix == NO_OUTPUT, () => "got " + prefix);
+                Debugging.Assert(() => output == NO_OUTPUT);
+            }
             return NO_OUTPUT;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override object Merge(object first, object second)
         {
-            Debugging.Assert(() => first == NO_OUTPUT);
-            Debugging.Assert(() => second == NO_OUTPUT);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => first == NO_OUTPUT);
+                Debugging.Assert(() => second == NO_OUTPUT);
+            }
             return NO_OUTPUT;
         }
 

@@ -37,8 +37,11 @@ namespace Lucene.Net.Search
         /// </summary>
         public TermStatistics(BytesRef term, long docFreq, long totalTermFreq)
         {
-            Debugging.Assert(() => docFreq >= 0);
-            Debugging.Assert(() => totalTermFreq == -1 || totalTermFreq >= docFreq); // #positions must be >= #postings
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => docFreq >= 0);
+                Debugging.Assert(() => totalTermFreq == -1 || totalTermFreq >= docFreq); // #positions must be >= #postings
+            }
             this.term = term;
             this.docFreq = docFreq;
             this.totalTermFreq = totalTermFreq;

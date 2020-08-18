@@ -100,7 +100,7 @@ namespace Lucene.Net.Search
                 Int64BitSet termSet = new Int64BitSet(fcsi.ValueCount);
                 TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, fcsi));
 
-                Debugging.Assert(() => termsEnum != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => termsEnum != null);
                 if (termsEnum.Next() != null)
                 {
                     // fill into a bitset

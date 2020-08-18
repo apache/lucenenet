@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         {
             if (inOrder || !AcceptsDocsOutOfOrder)
             {
-                Debugging.Assert(() => doc > lastCollected, () => "Out of order : " + lastCollected + " " + doc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => doc > lastCollected, () => "Out of order : " + lastCollected + " " + doc);
             }
             @in.Collect(doc);
             lastCollected = doc;

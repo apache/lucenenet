@@ -680,7 +680,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     return tokens[k];
                 }
             }
-            Debugging.Assert(() => false);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => false);
             return null;
         }
 

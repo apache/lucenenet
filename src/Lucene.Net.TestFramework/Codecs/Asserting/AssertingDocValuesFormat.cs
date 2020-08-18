@@ -40,15 +40,15 @@ namespace Lucene.Net.Codecs.Asserting
         public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)
         {
             DocValuesConsumer consumer = @in.FieldsConsumer(state);
-            Debugging.Assert(() => consumer != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => consumer != null);
             return new AssertingDocValuesConsumer(consumer, state.SegmentInfo.DocCount);
         }
 
         public override DocValuesProducer FieldsProducer(SegmentReadState state)
         {
-            Debugging.Assert(() => state.FieldInfos.HasDocValues);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => state.FieldInfos.HasDocValues);
             DocValuesProducer producer = @in.FieldsProducer(state);
-            Debugging.Assert(() => producer != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => producer != null);
             return new AssertingDocValuesProducer(producer, state.SegmentInfo.DocCount);
         }
 
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Asserting
                 {
                     count++;
                 }
-                Debugging.Assert(() => count == maxDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => count == maxDoc);
                 CheckIterator(values.GetEnumerator(), maxDoc, true);
                 @in.AddNumericField(field, values);
             }
@@ -80,10 +80,10 @@ namespace Lucene.Net.Codecs.Asserting
                 int count = 0;
                 foreach (BytesRef b in values)
                 {
-                    Debugging.Assert(() => b == null || b.IsValid());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => b == null || b.IsValid());
                     count++;
                 }
-                Debugging.Assert(() => count == maxDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => count == maxDoc);
                 CheckIterator(values.GetEnumerator(), maxDoc, true);
                 @in.AddBinaryField(field, values);
             }
@@ -94,25 +94,25 @@ namespace Lucene.Net.Codecs.Asserting
                 BytesRef lastValue = null;
                 foreach (BytesRef b in values)
                 {
-                    Debugging.Assert(() => b != null);
-                    Debugging.Assert(() => b.IsValid());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => b != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => b.IsValid());
                     if (valueCount > 0)
                     {
-                        Debugging.Assert(() => b.CompareTo(lastValue) > 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => b.CompareTo(lastValue) > 0);
                     }
                     lastValue = BytesRef.DeepCopyOf(b);
                     valueCount++;
                 }
-                Debugging.Assert(() => valueCount <= maxDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => valueCount <= maxDoc);
 
                 FixedBitSet seenOrds = new FixedBitSet(valueCount);
 
                 int count = 0;
                 foreach (long? v in docToOrd)
                 {
-                    Debugging.Assert(() => v != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => v != null);
                     int ord = (int)v.Value;
-                    Debugging.Assert(() => ord >= -1 && ord < valueCount);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ord >= -1 && ord < valueCount);
                     if (ord >= 0)
                     {
                         seenOrds.Set(ord);
@@ -120,8 +120,8 @@ namespace Lucene.Net.Codecs.Asserting
                     count++;
                 }
 
-                Debugging.Assert(() => count == maxDoc);
-                Debugging.Assert(() => seenOrds.Cardinality() == valueCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => count == maxDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => seenOrds.Cardinality() == valueCount);
                 CheckIterator(values.GetEnumerator(), valueCount, false);
                 CheckIterator(docToOrd.GetEnumerator(), maxDoc, false);
                 @in.AddSortedField(field, values, docToOrd);
@@ -133,11 +133,11 @@ namespace Lucene.Net.Codecs.Asserting
                 BytesRef lastValue = null;
                 foreach (BytesRef b in values)
                 {
-                    Debugging.Assert(() => b != null);
-                    Debugging.Assert(() => b.IsValid());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => b != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => b.IsValid());
                     if (valueCount > 0)
                     {
-                        Debugging.Assert(() => b.CompareTo(lastValue) > 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => b.CompareTo(lastValue) > 0);
                     }
                     lastValue = BytesRef.DeepCopyOf(b);
                     valueCount++;
@@ -150,9 +150,9 @@ namespace Lucene.Net.Codecs.Asserting
                 {
                     foreach (long? v in docToOrdCount)
                     {
-                        Debugging.Assert(() => v != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => v != null);
                         int count = (int)v.Value;
-                        Debugging.Assert(() => count >= 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => count >= 0);
                         docCount++;
                         ordCount += count;
 
@@ -161,18 +161,18 @@ namespace Lucene.Net.Codecs.Asserting
                         {
                             ordIterator.MoveNext();
                             long? o = ordIterator.Current;
-                            Debugging.Assert(() => o != null);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(() => o != null);
                             long ord = o.Value;
-                            Debugging.Assert(() => ord >= 0 && ord < valueCount);
-                            Debugging.Assert(() => ord > lastOrd, () => "ord=" + ord + ",lastOrd=" + lastOrd);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(() => ord >= 0 && ord < valueCount);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(() => ord > lastOrd, () => "ord=" + ord + ",lastOrd=" + lastOrd);
                             seenOrds.Set(ord);
                             lastOrd = ord;
                         }
                     }
-                    Debugging.Assert(() => ordIterator.MoveNext() == false);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ordIterator.MoveNext() == false);
 
-                    Debugging.Assert(() => docCount == maxDoc);
-                    Debugging.Assert(() => seenOrds.Cardinality() == valueCount);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => docCount == maxDoc);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => seenOrds.Cardinality() == valueCount);
                     CheckIterator(values.GetEnumerator(), valueCount, false);
                     CheckIterator(docToOrdCount.GetEnumerator(), maxDoc, false);
                     CheckIterator(ords.GetEnumerator(), ordCount, false);
@@ -203,10 +203,10 @@ namespace Lucene.Net.Codecs.Asserting
                 int count = 0;
                 foreach (long? v in values)
                 {
-                    Debugging.Assert(() => v != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => v != null);
                     count++;
                 }
-                Debugging.Assert(() => count == maxDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => count == maxDoc);
                 CheckIterator(values.GetEnumerator(), maxDoc, false);
                 @in.AddNumericField(field, values);
             }
@@ -240,9 +240,9 @@ namespace Lucene.Net.Codecs.Asserting
                 for (long i = 0; i < expectedSize; i++)
                 {
                     bool hasNext = iterator.MoveNext();
-                    Debugging.Assert(() => hasNext);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => hasNext);
                     T v = iterator.Current;
-                    Debugging.Assert(() => allowNull || v != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => allowNull || v != null);
 
                     // LUCENE.NET specific. removed call to Reset().
                     //try
@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs.Asserting
                     //    // ok
                     //}
                 }
-                Debugging.Assert(() => !iterator.MoveNext());
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => !iterator.MoveNext());
                 /*try
                 {
                   //iterator.next();
@@ -285,42 +285,42 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override NumericDocValues GetNumeric(FieldInfo field)
             {
-                Debugging.Assert(() => field.DocValuesType == DocValuesType.NUMERIC || field.NormType == DocValuesType.NUMERIC);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => field.DocValuesType == DocValuesType.NUMERIC || field.NormType == DocValuesType.NUMERIC);
                 NumericDocValues values = @in.GetNumeric(field);
-                Debugging.Assert(() => values != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => values != null);
                 return new AssertingNumericDocValues(values, maxDoc);
             }
 
             public override BinaryDocValues GetBinary(FieldInfo field)
             {
-                Debugging.Assert(() => field.DocValuesType == DocValuesType.BINARY);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => field.DocValuesType == DocValuesType.BINARY);
                 BinaryDocValues values = @in.GetBinary(field);
-                Debugging.Assert(() => values != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => values != null);
                 return new AssertingBinaryDocValues(values, maxDoc);
             }
 
             public override SortedDocValues GetSorted(FieldInfo field)
             {
-                Debugging.Assert(() => field.DocValuesType == DocValuesType.SORTED);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => field.DocValuesType == DocValuesType.SORTED);
                 SortedDocValues values = @in.GetSorted(field);
-                Debugging.Assert(() => values != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => values != null);
                 return new AssertingSortedDocValues(values, maxDoc);
             }
 
             public override SortedSetDocValues GetSortedSet(FieldInfo field)
             {
-                Debugging.Assert(() => field.DocValuesType == DocValuesType.SORTED_SET);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => field.DocValuesType == DocValuesType.SORTED_SET);
                 SortedSetDocValues values = @in.GetSortedSet(field);
-                Debugging.Assert(() => values != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => values != null);
                 return new AssertingSortedSetDocValues(values, maxDoc);
             }
 
             public override IBits GetDocsWithField(FieldInfo field)
             {
-                Debugging.Assert(() => field.DocValuesType != DocValuesType.NONE);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => field.DocValuesType != DocValuesType.NONE);
                 IBits bits = @in.GetDocsWithField(field);
-                Debugging.Assert(() => bits != null);
-                Debugging.Assert(() => bits.Length == maxDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => bits != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => bits.Length == maxDoc);
                 return new AssertingBits(bits);
             }
 

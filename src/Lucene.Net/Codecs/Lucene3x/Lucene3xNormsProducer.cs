@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                 }
                 // TODO: change to a real check? see LUCENE-3619
-                Debugging.Assert(() => singleNormStream == null || nextNormSeek == singleNormStream.Length, () => singleNormStream != null ? "len: " + singleNormStream.Length + " expected: " + nextNormSeek : "null");
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => singleNormStream == null || nextNormSeek == singleNormStream.Length, () => singleNormStream != null ? "len: " + singleNormStream.Length + " expected: " + nextNormSeek : "null");
                 success = true;
             }
             finally
@@ -188,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                Debugging.Assert(() => Convert.ToInt64(v, CultureInfo.InvariantCulture) != SegmentInfo.NO);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => Convert.ToInt64(v, CultureInfo.InvariantCulture) != SegmentInfo.NO);
                 return true;
             }
         }
@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
             var dv = norms[field.Name];
-            Debugging.Assert(() => dv != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => dv != null);
             return dv.Instance;
         }
 

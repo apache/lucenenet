@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
         protected override IndexSearcher RefreshIfNeeded(IndexSearcher referenceToRefresh)
         {
             IndexReader r = referenceToRefresh.IndexReader;
-            Debugging.Assert(() => r is DirectoryReader, () => "searcher's IndexReader should be a DirectoryReader, but got " + r);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => r is DirectoryReader, () => "searcher's IndexReader should be a DirectoryReader, but got " + r);
             IndexReader newReader = DirectoryReader.OpenIfChanged((DirectoryReader)r);
             if (newReader == null)
             {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Search
             try
             {
                 IndexReader r = searcher.IndexReader;
-                Debugging.Assert(() => r is DirectoryReader, () => "searcher's IndexReader should be a DirectoryReader, but got " + r);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => r is DirectoryReader, () => "searcher's IndexReader should be a DirectoryReader, but got " + r);
                 return ((DirectoryReader)r).IsCurrent();
             }
             finally

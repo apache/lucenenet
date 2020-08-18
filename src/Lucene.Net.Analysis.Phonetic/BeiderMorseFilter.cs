@@ -85,7 +85,7 @@ namespace Lucene.Net.Analysis.Phonetic
 
             if (matcher.Success)
             {
-                Debugging.Assert(() => state != null && encoded != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => state != null && encoded != null);
                 RestoreState(state);
 
                 int start = matcher.Index;

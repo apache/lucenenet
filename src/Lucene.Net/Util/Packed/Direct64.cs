@@ -82,9 +82,12 @@ namespace Lucene.Net.Util.Packed
 
         public override int Get(int index, long[] arr, int off, int len)
         {
-            Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
-            Debugging.Assert(() => index >= 0 && index < m_valueCount);
-            Debugging.Assert(() => off + len <= arr.Length);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(() => index >= 0 && index < m_valueCount);
+                Debugging.Assert(() => off + len <= arr.Length);
+            }
 
             int gets = Math.Min(m_valueCount - index, len);
             System.Array.Copy(values, index, arr, off, gets);
@@ -93,9 +96,12 @@ namespace Lucene.Net.Util.Packed
 
         public override int Set(int index, long[] arr, int off, int len)
         {
-            Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
-            Debugging.Assert(() => index >= 0 && index < m_valueCount);
-            Debugging.Assert(() => off + len <= arr.Length);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(() => index >= 0 && index < m_valueCount);
+                Debugging.Assert(() => off + len <= arr.Length);
+            }
 
             int sets = Math.Min(m_valueCount - index, len);
             System.Array.Copy(arr, off, values, index, sets);

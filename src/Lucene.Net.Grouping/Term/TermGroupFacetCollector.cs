@@ -175,7 +175,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                     BytesRef facetEndPrefix = BytesRef.DeepCopyOf(m_facetPrefix);
                     facetEndPrefix.Append(UnicodeUtil.BIG_TERM);
                     m_endFacetOrd = facetFieldTermsIndex.LookupTerm(facetEndPrefix);
-                    Debugging.Assert(() => m_endFacetOrd < 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => m_endFacetOrd < 0);
                     m_endFacetOrd = -m_endFacetOrd - 1; // Points to the ord one higher than facetEndPrefix
                 }
                 else
@@ -203,7 +203,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                     this.m_mergePos = startFacetOrd == -1 ? 1 : startFacetOrd + 1;
                     if (m_mergePos < m_maxTermPos)
                     {
-                        Debugging.Assert(() => tenum != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => tenum != null);
                         tenum.SeekExact(startFacetOrd == -1 ? 0 : startFacetOrd);
                         m_mergeTerm = tenum.Term;
                     }

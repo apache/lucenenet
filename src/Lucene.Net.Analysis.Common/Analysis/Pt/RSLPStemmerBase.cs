@@ -305,7 +305,7 @@ namespace Lucene.Net.Analysis.Pt
             {
                 throw new Exception("Illegal Step header specified at line " /*+ r.LineNumber*/); // TODO Line number
             }
-            //Debugging.Assert(() => headerPattern.GetGroupNumbers().Length == 4); // Not possible to read the number of groups that matched in .NET
+            //if (Debugging.AssertsEnabled) Debugging.Assert(() => headerPattern.GetGroupNumbers().Length == 4); // Not possible to read the number of groups that matched in .NET
             string name = matcher.Groups[1].Value;
             int min = int.Parse(matcher.Groups[2].Value, CultureInfo.InvariantCulture);
             int type = int.Parse(matcher.Groups[3].Value, CultureInfo.InvariantCulture);

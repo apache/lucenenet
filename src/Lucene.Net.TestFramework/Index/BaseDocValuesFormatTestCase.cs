@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
                     {
                         Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                        Debugging.Assert(() => ireader.Leaves.Count == 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                         NumericDocValues dv = ((AtomicReader)((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader))).GetNumericDocValues("dv");
                         Assert.AreEqual(5L, dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - 5L required because types don't match (xUnit checks this)
                     }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
                     {
                         Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                        Debugging.Assert(() => ireader.Leaves.Count == 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                         NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv");
                         Assert.AreEqual((long)J2N.BitConversion.SingleToInt32Bits(5.7f), dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - cast required because types don't match (xUnit checks this)
                     }
@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
                     {
                         Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                        Debugging.Assert(() => ireader.Leaves.Count == 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                         NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv1");
                         Assert.AreEqual(5L, dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - 5L required because types don't match (xUnit checks this)
                         dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv2");
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
                     {
                         Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                        Debugging.Assert(() => ireader.Leaves.Count == 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                         BinaryDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv1");
                         dv.Get(hits.ScoreDocs[i].Doc, scratch);
                         Assert.AreEqual(new BytesRef(longTerm), scratch);
@@ -297,7 +297,7 @@ namespace Lucene.Net.Index
                     {
                         Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                        Debugging.Assert(() => ireader.Leaves.Count == 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                         NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv1");
                         Assert.AreEqual(5L, dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - 5L required because types don't match (xUnit checks this)
                         BinaryDocValues dv2 = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetBinaryDocValues("dv2");
@@ -346,7 +346,7 @@ namespace Lucene.Net.Index
                     {
                         Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                        Debugging.Assert(() => ireader.Leaves.Count == 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                         SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv1");
                         int ord = dv.GetOrd(0);
                         dv.LookupOrd(ord, scratch);
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
                     {
                         Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                        Debugging.Assert(() => ireader.Leaves.Count == 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                         SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv2");
                         int ord = dv.GetOrd(0);
                         dv.LookupOrd(ord, scratch);
@@ -438,7 +438,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
                     Assert.AreEqual(1L, dv.Get(0)); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
                     Assert.AreEqual(2L, dv.Get(1)); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
@@ -473,7 +473,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
                     for (int i = 0; i < 2; i++)
                     {
@@ -517,7 +517,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
                     Assert.AreEqual(long.MinValue, dv.Get(0));
                     Assert.AreEqual(long.MaxValue, dv.Get(1));
@@ -549,7 +549,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv");
                     Assert.AreEqual(-8841491950446638677L, dv.Get(0));
                     Assert.AreEqual(9062230939892376225L, dv.Get(1));
@@ -591,7 +591,7 @@ namespace Lucene.Net.Index
                     {
                         Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                        Debugging.Assert(() => ireader.Leaves.Count == 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                         BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
                         dv.Get(hits.ScoreDocs[i].Doc, scratch);
                         Assert.AreEqual(new BytesRef("hello world"), scratch);
@@ -627,7 +627,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
                     BytesRef scratch = new BytesRef();
                     for (int i = 0; i < 2; i++)
@@ -684,7 +684,7 @@ namespace Lucene.Net.Index
                     {
                         Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                        Debugging.Assert(() => ireader.Leaves.Count == 1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                         SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
                         dv.LookupOrd(dv.GetOrd(hits.ScoreDocs[i].Doc), scratch);
                         Assert.AreEqual(new BytesRef("hello world"), scratch);
@@ -717,7 +717,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
                     BytesRef scratch = new BytesRef();
                     dv.LookupOrd(dv.GetOrd(0), scratch);
@@ -755,7 +755,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
                     Assert.AreEqual(2, dv.ValueCount);
                     BytesRef scratch = new BytesRef();
@@ -797,7 +797,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
                     Assert.AreEqual(2, dv.ValueCount); // 2 ords
                     BytesRef scratch = new BytesRef();
@@ -894,7 +894,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
                     BytesRef scratch = new BytesRef();
                     dv.Get(0, scratch);
@@ -925,7 +925,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
                     BytesRef scratch = new BytesRef();
                     dv.LookupOrd(dv.GetOrd(0), scratch);
@@ -1045,7 +1045,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     SortedDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
                     BytesRef scratch = new BytesRef();
                     Assert.AreEqual(0, dv.GetOrd(0));
@@ -1080,7 +1080,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
                     BytesRef scratch = new BytesRef();
                     dv.Get(0, scratch);
@@ -1114,7 +1114,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
                     BytesRef scratch = new BytesRef();
                     dv.Get(0, scratch);
@@ -1146,7 +1146,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
                     BytesRef scratch = new BytesRef();
                     dv.Get(0, scratch);
@@ -1174,7 +1174,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
                     var mybytes = new byte[20];
                     BytesRef scratch = new BytesRef(mybytes);
@@ -1205,7 +1205,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
                     var mybytes = new byte[20];
                     BytesRef scratch = new BytesRef(mybytes);
@@ -1239,7 +1239,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv");
                     BytesRef scratch = new BytesRef();
                     dv.Get(0, scratch);
@@ -1277,7 +1277,7 @@ namespace Lucene.Net.Index
                 // Now search the index:
                 using (IndexReader ireader = DirectoryReader.Open(directory)) // read-only=true
                 {
-                    Debugging.Assert(() => ireader.Leaves.Count == 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => ireader.Leaves.Count == 1);
                     BinaryDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetSortedDocValues("dv");
                     BytesRef scratch = new BytesRef();
                     dv.Get(0, scratch);
@@ -1494,7 +1494,7 @@ namespace Lucene.Net.Index
                     int numDocs = AtLeast(300);
                     // numDocs should be always > 256 so that in case of a codec that optimizes
                     // for numbers of values <= 256, all storage layouts are tested
-                    Debugging.Assert(() => numDocs > 256);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => numDocs > 256);
                     for (int i = 0; i < numDocs; i++)
                     {
                         idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
@@ -1580,7 +1580,7 @@ namespace Lucene.Net.Index
                     int numDocs = AtLeast(300);
                     // numDocs should be always > 256 so that in case of a codec that optimizes
                     // for numbers of values <= 256, all storage layouts are tested
-                    Debugging.Assert(() => numDocs > 256);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => numDocs > 256);
                     for (int i = 0; i < numDocs; i++)
                     {
                         idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
@@ -2649,13 +2649,13 @@ namespace Lucene.Net.Index
                             }
                             for (int j = 0; j < stringValues.Length; j++)
                             {
-                                Debugging.Assert(() => docValues != null);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(() => docValues != null);
                                 long ord = docValues.NextOrd();
-                                Debugging.Assert(() => ord != SortedSetDocValues.NO_MORE_ORDS);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(() => ord != SortedSetDocValues.NO_MORE_ORDS);
                                 docValues.LookupOrd(ord, scratch);
                                 Assert.AreEqual(stringValues[j], scratch.Utf8ToString());
                             }
-                            Debugging.Assert(() => docValues == null || docValues.NextOrd() == SortedSetDocValues.NO_MORE_ORDS);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(() => docValues == null || docValues.NextOrd() == SortedSetDocValues.NO_MORE_ORDS);
                         }
                     }
                 } // ir.Dispose();

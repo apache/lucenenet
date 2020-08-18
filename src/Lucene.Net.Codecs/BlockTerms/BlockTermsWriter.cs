@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public FieldMetaData(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
                 long sumDocFreq, int docCount, int int64sSize)
             {
-                Debugging.Assert(() => numTerms > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => numTerms > 0);
 
                 FieldInfo = fieldInfo;
                 TermsStartPointer = termsStartPointer;
@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public override TermsConsumer AddField(FieldInfo field)
         {
             //System.out.println("\nBTW.addField seg=" + segment + " field=" + field.name);
-            Debugging.Assert(() => currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
             currentField = field;
             TermsIndexWriterBase.FieldWriter fieldIndexWriter = termsIndexWriter.AddField(field, m_output.GetFilePointer());
             return new TermsWriter(this, fieldIndexWriter, field, postingsWriter);
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-                Debugging.Assert(() => stats.DocFreq > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => stats.DocFreq > 0);
                 //System.out.println("BTW: finishTerm term=" + fieldInfo.name + ":" + text.utf8ToString() + " " + text + " seg=" + segment + " df=" + stats.docFreq);
 
                 bool isIndexTerm = fieldIndexWriter.CheckIndexTerm(text, stats);
@@ -302,8 +302,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private int SharedPrefix(BytesRef term1, BytesRef term2)
             {
-                Debugging.Assert(() => term1.Offset == 0);
-                Debugging.Assert(() => term2.Offset == 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => term1.Offset == 0);
+                    Debugging.Assert(() => term2.Offset == 0);
+                }
                 int pos1 = 0;
                 int pos1End = pos1 + Math.Min(term1.Length, term2.Length);
                 int pos2 = 0;
@@ -359,7 +362,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 for (int termCount = 0; termCount < pendingCount; termCount++)
                 {
                     BlockTermState state = pendingTerms[termCount].State;
-                    Debugging.Assert(() => state != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => state != null);
                     bytesWriter.WriteVInt32(state.DocFreq);
                     if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {

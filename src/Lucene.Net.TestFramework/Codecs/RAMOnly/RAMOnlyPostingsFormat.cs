@@ -290,8 +290,8 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-                Debugging.Assert(() => stats.DocFreq > 0);
-                Debugging.Assert(() => stats.DocFreq == current.docs.Count);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => stats.DocFreq > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => stats.DocFreq == current.docs.Count);
                 current.totalTermFreq = stats.TotalTermFreq;
                 field.termToDocs[current.term] = current;
             }
@@ -324,8 +324,8 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
             {
-                Debugging.Assert(() => startOffset == -1);
-                Debugging.Assert(() => endOffset == -1);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => startOffset == -1);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => endOffset == -1);
                 current.positions[posUpto] = position;
                 if (payload != null && payload.Length > 0)
                 {
@@ -341,7 +341,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override void FinishDoc()
             {
-                Debugging.Assert(() => posUpto == current.positions.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => posUpto == current.positions.Length);
             }
         }
 

@@ -57,29 +57,29 @@ namespace Lucene.Net.Codecs.SimpleText
             {
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NUMFIELDS));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NUMFIELDS));
                 var size = Convert.ToInt32(ReadString(SimpleTextFieldInfosWriter.NUMFIELDS.Length, scratch), CultureInfo.InvariantCulture);
                 var infos = new FieldInfo[size];
 
                 for (var i = 0; i < size; i++)
                 {
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NAME));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NAME));
                     string name = ReadString(SimpleTextFieldInfosWriter.NAME.Length, scratch);
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NUMBER));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NUMBER));
                     int fieldNumber = Convert.ToInt32(ReadString(SimpleTextFieldInfosWriter.NUMBER.Length, scratch), CultureInfo.InvariantCulture);
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.ISINDEXED));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.ISINDEXED));
                     bool isIndexed = Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.ISINDEXED.Length, scratch), CultureInfo.InvariantCulture);
 
                     IndexOptions indexOptions;
                     if (isIndexed)
                     {
                         SimpleTextUtil.ReadLine(input, scratch);
-                        Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.INDEXOPTIONS));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.INDEXOPTIONS));
                         indexOptions = (IndexOptions)Enum.Parse(typeof(IndexOptions), ReadString(SimpleTextFieldInfosWriter.INDEXOPTIONS.Length,
                                 scratch));
                     }
@@ -89,46 +89,46 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.STORETV));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.STORETV));
                     bool storeTermVector =
                         Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.STORETV.Length, scratch), CultureInfo.InvariantCulture);
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.PAYLOADS));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.PAYLOADS));
                     bool storePayloads =
                         Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.PAYLOADS.Length, scratch), CultureInfo.InvariantCulture);
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NORMS));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NORMS));
                     bool omitNorms = !Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.NORMS.Length, scratch), CultureInfo.InvariantCulture);
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NORMS_TYPE));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NORMS_TYPE));
                     string nrmType = ReadString(SimpleTextFieldInfosWriter.NORMS_TYPE.Length, scratch);
                     Index.DocValuesType normsType = DocValuesType(nrmType);
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES));
                     string dvType = ReadString(SimpleTextFieldInfosWriter.DOCVALUES.Length, scratch);
                     Index.DocValuesType docValuesType = DocValuesType(dvType);
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES_GEN));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES_GEN));
                     long dvGen = Convert.ToInt64(ReadString(SimpleTextFieldInfosWriter.DOCVALUES_GEN.Length, scratch), CultureInfo.InvariantCulture);
 
                     SimpleTextUtil.ReadLine(input, scratch);
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NUM_ATTS));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NUM_ATTS));
                     int numAtts = Convert.ToInt32(ReadString(SimpleTextFieldInfosWriter.NUM_ATTS.Length, scratch), CultureInfo.InvariantCulture);
                     IDictionary<string, string> atts = new Dictionary<string, string>();
 
                     for (int j = 0; j < numAtts; j++)
                     {
                         SimpleTextUtil.ReadLine(input, scratch);
-                        Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.ATT_KEY));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.ATT_KEY));
                         string key = ReadString(SimpleTextFieldInfosWriter.ATT_KEY.Length, scratch);
 
                         SimpleTextUtil.ReadLine(input, scratch);
-                        Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.ATT_VALUE));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.ATT_VALUE));
                         string value = ReadString(SimpleTextFieldInfosWriter.ATT_VALUE.Length, scratch);
                         atts[key] = value;
                     }

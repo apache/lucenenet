@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
         {
-            Debugging.Assert(() => info.HasDeletions);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => info.HasDeletions);
             var scratch = new BytesRef();
             var scratchUtf16 = new CharsRef();
 
@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 input = dir.OpenChecksumInput(fileName, context);
 
                 SimpleTextUtil.ReadLine(input, scratch);
-                Debugging.Assert(() => StringHelper.StartsWith(scratch, SIZE));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, SIZE));
                 var size = ParseInt32At(scratch, SIZE.Length, scratchUtf16);
 
                 var bits = new BitSet(size);
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 SimpleTextUtil.ReadLine(input, scratch);
                 while (!scratch.Equals(END))
                 {
-                    Debugging.Assert(() => StringHelper.StartsWith(scratch, DOC));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(() => StringHelper.StartsWith(scratch, DOC));
                     var docid = ParseInt32At(scratch, DOC.Length, scratchUtf16);
                     bits.Set(docid);
                     SimpleTextUtil.ReadLine(input, scratch);

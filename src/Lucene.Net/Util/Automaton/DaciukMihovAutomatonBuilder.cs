@@ -131,7 +131,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State NewState(int label)
             {
-                Debugging.Assert(() => Array.BinarySearch(labels, label) < 0, () => "State already has transition labeled: " + label);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => Array.BinarySearch(labels, label) < 0, () => "State already has transition labeled: " + label);
 
                 labels = Arrays.CopyOf(labels, labels.Length + 1);
                 states = Arrays.CopyOf(states, states.Length + 1);
@@ -145,7 +145,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State LastChild() // LUCENENET NOTE: Kept this a method because there is another overload
             {
-                Debugging.Assert(() => HasChildren, () => "No outgoing transitions.");
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => HasChildren, () => "No outgoing transitions.");
                 return states[states.Length - 1];
             }
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     s = states[index];
                 }
-                Debugging.Assert(() => s == GetState(label));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => s == GetState(label));
                 return s;
             }
 
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal void ReplaceLastChild(State state)
             {
-                Debugging.Assert(() => HasChildren, () => "No outgoing transitions.");
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => HasChildren, () => "No outgoing transitions.");
                 states[states.Length - 1] = state;
             }
 
@@ -227,9 +227,12 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public void Add(CharsRef current)
         {
-            Debugging.Assert(() => stateRegistry != null, () => "Automaton already built.");
-            Debugging.Assert(() => previous == null || comparer.Compare(previous, current) <= 0, () => "Input must be in sorted UTF-8 order: " + previous + " >= " + current);
-            Debugging.Assert(() => SetPrevious(current));
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(() => stateRegistry != null, () => "Automaton already built.");
+                Debugging.Assert(() => previous == null || comparer.Compare(previous, current) <= 0, () => "Input must be in sorted UTF-8 order: " + previous + " >= " + current);
+                Debugging.Assert(() => SetPrevious(current));
+            }
 
             // Descend in the automaton (find matching prefix).
             int pos = 0, max = current.Length;

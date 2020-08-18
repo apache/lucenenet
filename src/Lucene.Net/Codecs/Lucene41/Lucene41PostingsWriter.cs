@@ -377,8 +377,11 @@ namespace Lucene.Net.Codecs.Lucene41
 
             if (fieldHasOffsets)
             {
-                Debugging.Assert(() => startOffset >= lastStartOffset);
-                Debugging.Assert(() => endOffset >= startOffset);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => startOffset >= lastStartOffset);
+                    Debugging.Assert(() => endOffset >= startOffset);
+                }
                 offsetStartDeltaBuffer[posBufferUpto] = startOffset - lastStartOffset;
                 offsetLengthBuffer[posBufferUpto] = endOffset - startOffset;
                 lastStartOffset = startOffset;
@@ -439,11 +442,11 @@ namespace Lucene.Net.Codecs.Lucene41
         public override void FinishTerm(BlockTermState state)
         {
             Int32BlockTermState state2 = (Int32BlockTermState)state;
-            Debugging.Assert(() => state2.DocFreq > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => state2.DocFreq > 0);
 
             // TODO: wasteful we are counting this (counting # docs
             // for this term) in two places?
-            Debugging.Assert(() => state2.DocFreq == docCount, () => state2.DocFreq + " vs " + docCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(() => state2.DocFreq == docCount, () => state2.DocFreq + " vs " + docCount);
 
             // if (DEBUG) {
             //   System.out.println("FPW.finishTerm docFreq=" + state2.docFreq);
@@ -498,7 +501,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                 // totalTermFreq is just total number of positions(or payloads, or offsets)
                 // associated with current term.
-                Debugging.Assert(() => state2.TotalTermFreq != -1);
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => state2.TotalTermFreq != -1);
                 if (state2.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     // record file offset for last pos in last block
@@ -576,7 +579,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     if (fieldHasPayloads)
                     {
-                        Debugging.Assert(() => payloadBytesReadUpto == payloadByteUpto);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(() => payloadBytesReadUpto == payloadByteUpto);
                         payloadByteUpto = 0;
                     }
                 }

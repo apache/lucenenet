@@ -774,8 +774,11 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             protected override IList<string[]> LoadFieldValues(IndexSearcher searcher, string[] fields, int[] docids, int maxLength)
             {
-                Debugging.Assert(() => fields.Length == 1);
-                Debugging.Assert(() => docids.Length == 1);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(() => fields.Length == 1);
+                    Debugging.Assert(() => docids.Length == 1);
+                }
                 String[][] contents = RectangularArrays.ReturnRectangularArray<string>(1, 1); //= new String[1][1];
                 contents[0][0] = text;
                 return contents;
@@ -1178,7 +1181,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         {
             protected override char GetMultiValuedSeparator(string field)
             {
-                Debugging.Assert(() => field.Equals("body", StringComparison.Ordinal));
+                if (Debugging.AssertsEnabled) Debugging.Assert(() => field.Equals("body", StringComparison.Ordinal));
                 return '\u2029';
             }
         }
