@@ -56,6 +56,9 @@ namespace Lucene.Net.Facet.Taxonomy
 
         private void Count(IList<FacetsCollector.MatchingDocs> matchingDocs)
         {
+            // LUCENENET specific - performance is significantly better if we instantiate
+            // this outside of the outer loop.
+            BytesRef bytesRef = new BytesRef();
             foreach (FacetsCollector.MatchingDocs hits in matchingDocs)
             {
                 BinaryDocValues dv = hits.Context.AtomicReader.GetBinaryDocValues(m_indexFieldName);
@@ -67,7 +70,6 @@ namespace Lucene.Net.Facet.Taxonomy
                 DocIdSetIterator docs = hits.Bits.GetIterator();
 
                 int doc;
-                BytesRef bytesRef = new BytesRef();
                 while ((doc = docs.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {
                     dv.Get(doc, bytesRef);
