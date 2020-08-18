@@ -84,29 +84,30 @@ namespace Lucene.Net.Facet.Taxonomy
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             return ordsCache.GetValue(cacheKey, (cacheKey) => new CachedOrds(source.GetReader(context), context.Reader.MaxDoc));
 #else
-            syncLock.EnterUpgradeableReadLock();
+            CachedOrds ords;
+            syncLock.EnterReadLock();
             try
             {
-                if (!ordsCache.TryGetValue(cacheKey, out CachedOrds ords))
-                {
-                    ords = new CachedOrds(source.GetReader(context), context.Reader.MaxDoc);
-                    syncLock.EnterWriteLock();
-                    try
-                    {
-                        ordsCache[cacheKey] = ords;
-                    }
-                    finally
-                    {
-                        syncLock.ExitWriteLock();
-                    }
-                }
-
-                return ords;
+                if (ordsCache.TryGetValue(cacheKey, out ords))
+                    return ords;
             }
             finally
             {
-                syncLock.ExitUpgradeableReadLock();
+                syncLock.ExitReadLock();
             }
+
+            ords = new CachedOrds(source.GetReader(context), context.Reader.MaxDoc);
+            syncLock.EnterWriteLock();
+            try
+            {
+                ordsCache[cacheKey] = ords;
+            }
+            finally
+            {
+                syncLock.ExitWriteLock();
+            }
+
+            return ords;
 #endif
         }
 
