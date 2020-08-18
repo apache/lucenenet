@@ -861,7 +861,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
 
-        // LUCENENET: Ensure caller has a lock on syncLock before calling
         private TaxonomyIndexArrays GetTaxoArrays()
         {
             var result = taxoArrays; // LUCENENET: Careful, we need to ensure a parallel thread does't wipe out our return value
