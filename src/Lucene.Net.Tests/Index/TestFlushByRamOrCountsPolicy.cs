@@ -1,5 +1,6 @@
 using J2N.Threading;
 using J2N.Threading.Atomic;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
 using NUnit.Framework;
@@ -62,6 +63,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFlushByRam()
         {
+            // LUCENENET specific - disable the test if asserts are not enabled
+            AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
+
             double ramBuffer = (TestNightly ? 1 : 10) + AtLeast(2) + Random.NextDouble();
             RunFlushByRam(1 + Random.Next(TestNightly ? 5 : 1), ramBuffer, false);
         }
@@ -69,6 +73,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFlushByRamLargeBuffer()
         {
+            // LUCENENET specific - disable the test if asserts are not enabled
+            AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
+
             // with a 256 mb ram buffer we should never stall
             RunFlushByRam(1 + Random.Next(TestNightly ? 5 : 1), 256d, true);
         }
@@ -132,6 +139,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestFlushDocCount()
         {
+            // LUCENENET specific - disable the test if asserts are not enabled
+            AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
+
             int[] numThreads = new int[] { 2 + AtLeast(1), 1 };
             for (int i = 0; i < numThreads.Length; i++)
             {
@@ -184,6 +194,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRandom()
         {
+            // LUCENENET specific - disable the test if asserts are not enabled
+            AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
+
             int numThreads = 1 + Random.Next(8);
             int numDocumentsToIndex = 50 + AtLeast(70);
             AtomicInt32 numDocs = new AtomicInt32(numDocumentsToIndex);
@@ -247,6 +260,8 @@ namespace Lucene.Net.Index
         [Slow] // LUCENENET: occasionally
         public virtual void TestStallControl()
         {
+            // LUCENENET specific - disable the test if asserts are not enabled
+            AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
 
             int[] numThreads = new int[] { 4 + Random.Next(8), 1 };
             int numDocumentsToIndex = 50 + Random.Next(50);

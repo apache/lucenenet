@@ -2,6 +2,7 @@ using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
+using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -497,6 +498,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestExceptionDocumentsWriterInit()
         {
+            // LUCENENET specific - disable the test if asserts are not enabled
+            AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
+
             Directory dir = NewDirectory();
             TestPoint2 testPoint = new TestPoint2();
             IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)), testPoint);
@@ -576,6 +580,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestExceptionOnMergeInit([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
+            // LUCENENET specific - disable the test if asserts are not enabled
+            AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
+
             Directory dir = NewDirectory();
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMaxBufferedDocs(2).SetMergePolicy(NewLogMergePolicy());
 
@@ -1296,23 +1303,17 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestRollbackExceptionHang()
         {
+            // LUCENENET specific - disable the test if asserts are not enabled
+            AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
+
             Directory dir = NewDirectory();
             TestPoint4 testPoint = new TestPoint4();
             IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)), testPoint);
 
             AddDoc(w);
             testPoint.doFail = true;
-            try
-            {
-                w.Rollback();
-                Assert.Fail("did not hit intentional RuntimeException");
-            }
-#pragma warning disable 168
-            catch (Exception re)
-#pragma warning restore 168
-            {
-                // expected
-            }
+            // LUCENENET: Don't assert in try block
+            Assert.Throws<Exception>(() => w.Rollback(), "did not hit intentional RuntimeException");
 
             testPoint.doFail = false;
             w.Rollback();
@@ -2435,6 +2436,9 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestExceptionDuringRollback()
         {
+            // LUCENENET specific - disable the test if asserts are not enabled
+            AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
+
             // currently: fail in two different places
             string messageToFailOn = Random.NextBoolean() ? "rollback: done finish merges" : "rollback before checkpoint";
 
