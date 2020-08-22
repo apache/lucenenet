@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 7.1.0
+﻿// Lucene version compatibility level 8.6.1
 using ICU4N;
 using ICU4N.Globalization;
 using ICU4N.Text;
@@ -124,8 +124,8 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         private BreakIteratorWrapper GetBreakIterator(int scriptCode)
         {
-            if (wordBreakers[scriptCode] == null)
-                wordBreakers[scriptCode] = BreakIteratorWrapper.Wrap(config.GetBreakIterator(scriptCode));
+            if (wordBreakers[scriptCode] is null)
+                wordBreakers[scriptCode] = new BreakIteratorWrapper(config.GetBreakIterator(scriptCode));
             return wordBreakers[scriptCode];
         }
     }

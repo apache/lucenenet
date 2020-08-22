@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 7.1.0
+﻿// Lucene version compatibility level 8.6.1
 using ICU4N.Text;
 using Lucene.Net.Support;
 
@@ -30,15 +30,17 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
     [ExceptionToClassNameConvention]
     public abstract class ICUTokenizerConfig
     {
+        public const int EMOJI_SEQUENCE_STATUS = 299;
+
         /// <summary>
         /// Sole constructor. (For invocation by subclass 
         /// constructors, typically implicit.)
         /// </summary>
-        public ICUTokenizerConfig() { }
+        protected ICUTokenizerConfig() { } // LUCENENET specific - marked protected instead of public
         /// <summary>
         /// Return a breakiterator capable of processing a given script.
         /// </summary>
-        public abstract BreakIterator GetBreakIterator(int script);
+        public abstract RuleBasedBreakIterator GetBreakIterator(int script);
         /// <summary>
         /// Return a token type value for a given script and BreakIterator rule status.
         /// </summary>
