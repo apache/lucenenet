@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 4.8.1
+﻿// Lucene version compatibility level 8.6.1
 using ICU4N;
 using ICU4N.Text;
 using Lucene.Net.Analysis.Icu.TokenAttributes;
@@ -27,6 +27,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
+
     /// <summary>
     /// Breaks text into words according to UAX #29: Unicode Text Segmentation
     /// (http://www.unicode.org/reports/tr29/)
@@ -211,9 +212,9 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         }
 
         /// <summary>
-        /// Returns true if there is a token from the buffer, or null if it is exhausted.
+        /// Returns <c>true</c> if there is a token from the buffer, or <c>false</c> if it is exhausted.
         /// </summary>
-        /// <returns>true if there is a token from the buffer, or null if it is exhausted.</returns>
+        /// <returns><c>true</c> if there is a token from the buffer, or <c>false</c> if it is exhausted.</returns>
         private bool IncrementTokenBuffer()
         {
             int start = breaker.Current;
@@ -222,21 +223,13 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
             // find the next set of boundaries, skipping over non-tokens (rule status 0)
             int end = breaker.Next();
-
-            // LUCENENET specific - ICU 60.1 does not set the rule status back to 0,
-            // so we need to explicitly check whether we went out of bounds.
-            // This is more efficient anyway, since we don't call Next() twice in
-            // this case.
-            if (end == BreakIterator.Done)
-                return false; // BreakIterator exhausted
-
-            while (start != BreakIterator.Done && breaker.RuleStatus == 0)
+            while (end != BreakIterator.Done && breaker.RuleStatus == 0)
             {
                 start = end;
                 end = breaker.Next();
             }
 
-            if (start == BreakIterator.Done)
+            if (end == BreakIterator.Done)
                 return false; // BreakIterator exhausted
 
             termAtt.CopyBuffer(buffer, start, end - start);

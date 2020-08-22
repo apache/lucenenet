@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level < 7.1.0
+﻿// Lucene version compatibility level 8.6.1
 using ICU4N;
 using ICU4N.Globalization;
 using ICU4N.Text;
@@ -69,7 +69,10 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
     [ExceptionToClassNameConvention]
     public class ICUTokenizerFactory : TokenizerFactory, IResourceLoaderAware
     {
-        internal static readonly string RULEFILES = "rulefiles";
+        // SPI Name
+        //public const string NAME = "icu";
+
+        internal const string RULEFILES = "rulefiles";
         private readonly IDictionary<int, string> tailored;
         private ICUTokenizerConfig config;
         private readonly bool cjkAsWords;
@@ -128,11 +131,11 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                 }
             }
 
-            public override BreakIterator GetBreakIterator(int script)
+            public override RuleBasedBreakIterator GetBreakIterator(int script)
             {
                 if (breakers[script] != null)
                 {
-                    return (BreakIterator)breakers[script].Clone();
+                    return (RuleBasedBreakIterator)breakers[script].Clone();
                 }
                 else
                 {

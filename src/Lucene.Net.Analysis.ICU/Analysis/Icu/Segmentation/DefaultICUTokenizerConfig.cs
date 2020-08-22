@@ -1,4 +1,4 @@
-﻿// Lucene version compatibility level 7.1.0
+﻿// Lucene version compatibility level 8.6.1
 using ICU4N.Globalization;
 using ICU4N.Text;
 using J2N;
@@ -53,6 +53,8 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         public static readonly string WORD_LETTER = StandardTokenizer.TOKEN_TYPES[StandardTokenizer.ALPHANUM];
         /// <summary>Token type for words that appear to be numbers</summary>
         public static readonly string WORD_NUMBER = StandardTokenizer.TOKEN_TYPES[StandardTokenizer.NUM];
+        /// <summary>Token type for words that appear to be emoji sequences</summary>
+        public static readonly string WORD_EMOJI = "<EMOJI>"; //StandardTokenizer.TOKEN_TYPES[StandardTokenizer.EMOJI]; // LUCENENET: 4.8.1 StandardTokenizer doesn't contain EMOJI
 
         /// <summary>
         /// the default breakiterators in use. these can be expensive to
@@ -90,21 +92,21 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         public override bool CombineCJ => cjkAsWords;
 
-        public override BreakIterator GetBreakIterator(int script)
+        public override RuleBasedBreakIterator GetBreakIterator(int script)
         {
             switch (script)
             {
-                case UScript.Japanese: return (BreakIterator)cjkBreakIterator.Clone();
+                case UScript.Japanese: return (RuleBasedBreakIterator)cjkBreakIterator.Clone();
                 case UScript.Myanmar:
                     if (myanmarAsWords)
                     {
-                        return (BreakIterator)defaultBreakIterator.Clone();
+                        return (RuleBasedBreakIterator)defaultBreakIterator.Clone();
                     }
                     else
                     {
-                        return (BreakIterator)myanmarSyllableIterator.Clone();
+                        return (RuleBasedBreakIterator)myanmarSyllableIterator.Clone();
                     }
-                default: return (BreakIterator)defaultBreakIterator.Clone();
+                default: return (RuleBasedBreakIterator)defaultBreakIterator.Clone();
             }
         }
 
@@ -120,6 +122,8 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                     return script == UScript.Hangul ? WORD_HANGUL : WORD_LETTER;
                 case BreakIterator.WordNumber: //RuleBasedBreakIterator.WORD_NUMBER:
                     return WORD_NUMBER;
+                case EMOJI_SEQUENCE_STATUS:
+                    return WORD_EMOJI;
                 default: /* some other custom code */
                     return "<OTHER>";
             }
