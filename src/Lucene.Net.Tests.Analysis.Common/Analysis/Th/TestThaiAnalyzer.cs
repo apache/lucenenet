@@ -1,4 +1,5 @@
 ﻿#if FEATURE_BREAKITERATOR
+using J2N.Threading;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
@@ -6,6 +7,9 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Analysis.Th
 {
@@ -171,6 +175,182 @@ namespace Lucene.Net.Analysis.Th
 
             AssertAnalyzesTo(analyzer, "บริษัทชื่อ XY&Z - คุยกับ xyz@demo.com", new string[] { "บริษัท", "ชื่อ", "xy&z", "คุย", "กับ", "xyz@demo.com" });
         }
+
+        [Test]
+        [LuceneNetSpecific]
+        public virtual void TestConcurrency()
+        {
+            ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT);
+
+            char[] chars = new char[] {
+                (char)4160,
+                (char)4124,
+                (char)4097,
+                (char)4177,
+                (char)4113,
+                (char)32,
+                (char)10671,
+            };
+            string contents = new string(chars);
+            AssertAnalyzer(analyzer, contents);
+
+            int numThreads = 4;
+            var startingGun = new CountdownEvent(1);
+            var threads = new ThaiAnalyzerThread[numThreads];
+            for (int i = 0; i < threads.Length; i++)
+            {
+                threads[i] = new ThaiAnalyzerThread(startingGun, analyzer, contents);
+            }
+
+            foreach (var thread in threads)
+            {
+                thread.Start();
+            }
+
+            startingGun.Signal();
+            foreach (var t in threads)
+            {
+                try
+                {
+                    t.Join();
+                }
+#pragma warning disable 168
+                catch (ThreadInterruptedException e)
+#pragma warning restore 168
+                {
+                    fail("Thread interrupted");
+                }
+            }
+        }
+
+        private class ThaiAnalyzerThread : ThreadJob
+        {
+            private readonly CountdownEvent latch;
+            private readonly Analyzer analyzer;
+            private readonly string text;
+
+            public ThaiAnalyzerThread(CountdownEvent latch, Analyzer analyzer, string text)
+            {
+                this.latch = latch;
+                this.analyzer = analyzer;
+                this.text = text;
+            }
+
+            public override void Run()
+            {
+                latch.Wait();
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    AssertAnalyzer(analyzer, text);
+                }
+            }
+        }
+
+        private static void AssertAnalyzer(Analyzer analyzer, string text)
+        {
+            ICharTermAttribute termAtt;
+            IOffsetAttribute offsetAtt;
+            IPositionIncrementAttribute posIncAtt;
+
+            List<string> tokens = new List<string>();
+            List<int> positions = new List<int>();
+            List<int> startOffsets = new List<int>();
+            List<int> endOffsets = new List<int>();
+
+            TokenStream ts;
+            TextReader reader = new StringReader(text);
+
+            using (ts = analyzer.GetTokenStream("dummy", reader))
+            {
+                bool isReset = false;
+                try
+                {
+
+                    termAtt = ts.GetAttribute<ICharTermAttribute>();
+                    offsetAtt = ts.GetAttribute<IOffsetAttribute>();
+                    posIncAtt = ts.GetAttribute<IPositionIncrementAttribute>();
+
+                    ts.Reset();
+                    isReset = true;
+
+                    while (ts.IncrementToken())
+                    {
+                        Assert.IsNotNull(termAtt, "has no CharTermAttribute");
+                        tokens.Add(termAtt.ToString());
+                        positions.Add(posIncAtt.PositionIncrement);
+                        startOffsets.Add(offsetAtt.StartOffset);
+                        endOffsets.Add(offsetAtt.EndOffset);
+                    }
+                }
+                finally
+                {
+                    if (!isReset)
+                    {
+                        try
+                        {
+                            // consume correctly
+                            ts.Reset();
+                            while (ts.IncrementToken()) ;
+                            //ts.End();
+                            //ts.Dispose();
+                        }
+#pragma warning disable 168
+                        catch (Exception ex)
+#pragma warning restore 168
+                        {
+                            // ignore
+                        }
+                    }
+                    ts.End(); // ts.end();
+                }
+            } // ts.Dispose()
+
+            reader = new StringReader(text);
+            using (ts = analyzer.GetTokenStream("dummy", reader))
+            {
+                bool isReset = false;
+                try
+                {
+
+                    // offset + pos
+                    AssertTokenStreamContents(ts,
+                        output: tokens.ToArray(),
+                        startOffsets: ToIntArray(startOffsets),
+                        endOffsets: ToIntArray(endOffsets),
+                        types: null,
+                        posIncrements: ToIntArray(positions),
+                        posLengths: null,
+                        finalOffset: text.Length,
+                        offsetsAreCorrect: true);
+
+                    isReset = true;
+                }
+                finally
+                {
+                    if (!isReset)
+                    {
+                        try
+                        {
+                            // consume correctly
+                            ts.Reset();
+                            while (ts.IncrementToken()) ;
+                            //ts.End();
+                            //ts.Dispose();
+                        }
+#pragma warning disable 168
+                        catch (Exception ex)
+#pragma warning restore 168
+                        {
+                            // ignore
+                        }
+                    }
+                    ts.End(); // ts.end();
+                }
+            }
+
+        } // ts.Dispose()
+
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>
