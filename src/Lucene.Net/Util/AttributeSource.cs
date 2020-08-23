@@ -395,28 +395,19 @@ namespace Lucene.Net.Util
             where T : IAttribute
         {
             var attClass = typeof(T);
-            if (!attributes.ContainsKey(attClass))
+            // LUCENENET: Eliminated exception and used TryGetValue
+            if (!attributes.TryGetValue(attClass, out var result))
             {
                 if (!(attClass.IsInterface && typeof(IAttribute).IsAssignableFrom(attClass)))
                 {
                     throw new ArgumentException("AddAttribute() only accepts an interface that extends IAttribute, but " + attClass.FullName + " does not fulfil this contract.");
                 }
 
-                AddAttributeImpl(this.factory.CreateAttributeInstance<T>());
+                result = this.factory.CreateAttributeInstance<T>();
+                AddAttributeImpl(result);
             }
 
-            T returnAttr;
-            try
-            {
-                returnAttr = (T)(IAttribute)attributes[attClass];
-            }
-#pragma warning disable 168
-            catch (KeyNotFoundException knf)
-#pragma warning restore 168
-            {
-                return default(T);
-            }
-            return returnAttr;
+            return (T)(IAttribute)result;
         }
 
         /// <summary>
