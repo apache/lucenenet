@@ -42,12 +42,12 @@ namespace Lucene.Net.Analysis.Th
     public class ThaiTokenizer : SegmentingTokenizerBase
     {
         // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
-        private static readonly BreakIterator proto = (BreakIterator)BreakIterator.GetWordInstance(new CultureInfo("th")).Clone();
+        private static readonly BreakIterator proto = BreakIterator.GetWordInstance(new CultureInfo("th"));
 
         /// <summary>
         /// used for breaking the text into sentences
         /// </summary>
-        private static readonly BreakIterator sentenceProto = (BreakIterator)BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture).Clone();
+        private static readonly BreakIterator sentenceProto = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
 
         private readonly ThaiWordBreaker wordBreaker;
         private readonly CharArrayIterator wrapper = Analysis.Util.CharArrayIterator.NewWordInstance();
@@ -57,8 +57,6 @@ namespace Lucene.Net.Analysis.Th
 
         private readonly ICharTermAttribute termAtt;
         private readonly IOffsetAttribute offsetAtt;
-
-        private readonly object syncLock = new object();
 
         /// <summary>
         /// Creates a new <see cref="ThaiTokenizer"/> </summary>
@@ -81,49 +79,37 @@ namespace Lucene.Net.Analysis.Th
 
         protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
         {
-            // LUCENENET TODO: This class isn't passing thread safety checks.
-            // Adding locking and extra cloning of BreakIterator seems to help, but
-            // it is not a complete fix.
-            lock (syncLock)
-            {
-                this.sentenceStart = sentenceStart;
-                this.sentenceEnd = sentenceEnd;
-                wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
-                wordBreaker.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
-            }
+            this.sentenceStart = sentenceStart;
+            this.sentenceEnd = sentenceEnd;
+            wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
+            wordBreaker.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
         }
 
         protected override bool IncrementWord()
         {
-            // LUCENENET TODO: This class isn't passing thread safety checks.
-            // Adding locking and extra cloning of BreakIterator seems to help, but
-            // it is not a complete fix.
-            lock (syncLock)
+            int start = wordBreaker.Current;
+            if (start == BreakIterator.Done)
             {
-                int start = wordBreaker.Current;
-                if (start == BreakIterator.Done)
-                {
-                    return false; // BreakIterator exhausted
-                }
-
-                // find the next set of boundaries, skipping over non-tokens
-                int end = wordBreaker.Next();
-                while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
-                {
-                    start = end;
-                    end = wordBreaker.Next();
-                }
-
-                if (end == BreakIterator.Done)
-                {
-                    return false; // BreakIterator exhausted
-                }
-
-                ClearAttributes();
-                termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
-                offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
-                return true;
+                return false; // BreakIterator exhausted
             }
+
+            // find the next set of boundaries, skipping over non-tokens
+            int end = wordBreaker.Next();
+            while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
+            {
+                start = end;
+                end = wordBreaker.Next();
+            }
+
+            if (end == BreakIterator.Done)
+            {
+                return false; // BreakIterator exhausted
+            }
+
+            ClearAttributes();
+            termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
+            offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
+            return true;
         }
     }
 
