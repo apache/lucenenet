@@ -437,11 +437,11 @@ namespace Lucene.Net.Util
         public virtual T GetAttribute<T>() where T : IAttribute
         {
             var attClass = typeof(T);
-            if (!attributes.ContainsKey(attClass))
+            if (!attributes.TryGetValue(attClass, out var result))
             {
-                throw new ArgumentException("this AttributeSource does not have the attribute '" + attClass.Name + "'.");
+                throw new ArgumentException($"this AttributeSource does not have the attribute '{attClass.Name}'.");
             }
-            return (T)(IAttribute)this.attributes[attClass];
+            return (T)(IAttribute)result;
         }
 
         private State GetCurrentState()
