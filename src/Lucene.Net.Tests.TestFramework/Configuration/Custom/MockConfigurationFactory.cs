@@ -43,7 +43,7 @@ namespace Lucene.Net.Configuration.Custom
                 });
         }
 
-        private class MockConfiguration : IConfigurationRoot
+        private class MockConfiguration : IConfiguration
         {
             private readonly IConfiguration wrapped;
             private readonly IDictionary<string, string> settings;
@@ -68,10 +68,6 @@ namespace Lucene.Net.Configuration.Custom
                     wrapped[key] = value;
                 }
             }
-
-#if FEATURE_ICONFIGURATIONROOT_PROVIDERS
-            public IEnumerable<IConfigurationProvider> Providers => (wrapped as IConfigurationRoot)?.Providers;
-#endif
 
             public IEnumerable<IConfigurationSection> GetChildren()
             {

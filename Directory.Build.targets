@@ -90,6 +90,13 @@
     
   </PropertyGroup>
 
+  <!-- Features in .NET Framework 4.6.1+ only -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or $(TargetFramework.StartsWith('net47')) Or $(TargetFramework.StartsWith('net48'))">
+    
+    <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
+    
+  </PropertyGroup>
+
   <!-- Features in .NET Framework 4.6+ only -->
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net46')) Or $(TargetFramework.StartsWith('net47')) Or $(TargetFramework.StartsWith('net48'))">
     
