@@ -57,6 +57,8 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         private readonly ITypeAttribute typeAtt;
         private readonly IScriptAttribute scriptAtt;
 
+        private static readonly object syncLock = new object(); // LUCENENET specific - workaround until BreakIterator is made thread safe (LUCENENET TODO: TO REVERT)
+
         /// <summary>
         /// Construct a new <see cref="ICUTokenizer"/> that breaks text into words from the given
         /// <see cref="TextReader"/>.
@@ -109,23 +111,27 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         public override bool IncrementToken()
         {
-            ClearAttributes();
-            if (length == 0)
-                Refill();
-            while (!IncrementTokenBuffer())
+            lock (syncLock)
             {
-                Refill();
-                if (length <= 0) // no more bytes to read;
-                    return false;
+                ClearAttributes();
+                if (length == 0)
+                    Refill();
+                while (!IncrementTokenBuffer())
+                {
+                    Refill();
+                    if (length <= 0) // no more bytes to read;
+                        return false;
+                }
+                return true;
             }
-            return true;
         }
 
 
         public override void Reset()
         {
             base.Reset();
-            breaker.SetText(buffer, 0, 0);
+            lock (syncLock)
+                breaker.SetText(buffer, 0, 0);
             length = usableLength = offset = 0;
         }
 
@@ -187,7 +193,8 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
                                 */
             }
 
-            breaker.SetText(buffer, 0, Math.Max(0, usableLength));
+            lock (syncLock)
+                breaker.SetText(buffer, 0, Math.Max(0, usableLength));
         }
 
         // TODO: refactor to a shared readFully somewhere
@@ -236,7 +243,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
             offsetAtt.SetOffset(CorrectOffset(offset + start), CorrectOffset(offset + end));
             typeAtt.Type = config.GetType(breaker.ScriptCode, breaker.RuleStatus);
             scriptAtt.Code = breaker.ScriptCode;
-
+            
             return true;
         }
     }
