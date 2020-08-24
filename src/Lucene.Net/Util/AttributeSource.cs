@@ -61,6 +61,7 @@ namespace Lucene.Net.Util
                 // identity for a class, so there is no need for an identity wrapper for it.
                 private static readonly ConditionalWeakTable<Type, WeakReference<Type>> attClassImplMap =
                     new ConditionalWeakTable<Type, WeakReference<Type>>();
+                private static readonly object attClassImplMapLock = new object();
 
                 internal DefaultAttributeFactory()
                 {
@@ -108,16 +109,13 @@ namespace Lucene.Net.Util
                     var attClass = typeof(T);
                     Type clazz;
 
-                    // LUCENENET: If the weakreference is dead, we need to explicitly remove and re-add its key.
-                    // We synchronize on attClassImplMap only to make the operation atomic. This does not actually
-                    // utilize the same lock as attClassImplMap does internally, but since this is the only place
-                    // it is used, it is fine here.
-                    lock (attClassImplMap)
+                    // LUCENENET: If the weakreference is dead, we need to explicitly update its key.
+                    // We synchronize on attClassImplMapLock to make the operation atomic.
+                    lock (attClassImplMapLock)
                     {
                         if (!attClassImplMap.TryGetValue(attClass, out var @ref) || !@ref.TryGetTarget(out clazz))
                         {
 #if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
-                            // There is a small chance that multiple threads will get through here, but it doesn't matter
                             attClassImplMap.AddOrUpdate(attClass, CreateAttributeWeakReference(attClass, out clazz));
 #else
                             attClassImplMap.Remove(attClass);
