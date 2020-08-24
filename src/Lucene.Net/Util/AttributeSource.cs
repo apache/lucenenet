@@ -108,20 +108,13 @@ namespace Lucene.Net.Util
                     var attClass = typeof(T);
                     Type clazz;
 
-#if !FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
                     // LUCENENET: If the weakreference is dead, we need to explicitly remove and re-add its key.
                     // We synchronize on attClassImplMap only to make the operation atomic. This does not actually
                     // utilize the same lock as attClassImplMap does internally, but since this is the only place
                     // it is used, it is fine here.
-
-                    // In .NET Standard 2.1, we can use AddOrUpdate, so don't need the lock.
                     lock (attClassImplMap)
-#endif
                     {
-                        var @ref = attClassImplMap.GetValue(attClass, createValueCallback: (key) =>
-                            CreateAttributeWeakReference(key, out clazz));
-
-                        if (!@ref.TryGetTarget(out clazz))
+                        if (!attClassImplMap.TryGetValue(attClass, out var @ref) || !@ref.TryGetTarget(out clazz))
                         {
 #if FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE
                             // There is a small chance that multiple threads will get through here, but it doesn't matter
