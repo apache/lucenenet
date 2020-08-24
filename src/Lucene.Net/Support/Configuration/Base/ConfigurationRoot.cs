@@ -13,7 +13,12 @@ namespace Lucene.Net.Configuration
     /// <summary>
     /// The root node for a configuration.
     /// </summary>
-    internal class ConfigurationRoot : IConfigurationRoot
+    internal class ConfigurationRoot : IConfiguration
+#if FEATURE_ICONFIGURATIONROOT_PROVIDERS
+        // LUCENENET: Since the IConfigurationRoot interface changed after version 1.1.2, we cannot implement it here
+        // or upgrading the version of Microsoft.Extensions.Configuration will fail.
+        , IConfigurationRoot
+#endif
     {
         private IList<IConfigurationProvider> _providers;
         private ConfigurationReloadToken _changeToken = new ConfigurationReloadToken();
@@ -24,12 +29,7 @@ namespace Lucene.Net.Configuration
         /// <param name="providers">The <see cref="IConfigurationProvider"/>s for this configuration.</param>
         public ConfigurationRoot(IList<IConfigurationProvider> providers)
         {
-            if (providers == null)
-            {
-                throw new ArgumentNullException(nameof(providers));
-            }
-
-            _providers = providers;
+            _providers = providers ?? throw new ArgumentNullException(nameof(providers));
             foreach (var p in providers)
             {
                 p.Load();
@@ -53,12 +53,8 @@ namespace Lucene.Net.Configuration
             {
                 foreach (var provider in _providers.Reverse())
                 {
-                    string value;
-
-                    if (provider.TryGet(key, out value))
-                    {
+                    if (provider.TryGet(key, out string value))
                         return value;
-                    }
                 }
 
                 return null;
