@@ -41,13 +41,27 @@ namespace Lucene.Net.Analysis.Th
     /// </summary>
     public class ThaiTokenizer : SegmentingTokenizerBase
     {
+        private static readonly object syncLock = new object(); // LUCENENET specific - workaround until BreakIterator is made thread safe  (LUCENENET TODO: TO REVERT)
+
         // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
-        private static readonly BreakIterator proto = BreakIterator.GetWordInstance(new CultureInfo("th"));
+        private static readonly BreakIterator proto = LoadProto();
 
         /// <summary>
         /// used for breaking the text into sentences
         /// </summary>
-        private static readonly BreakIterator sentenceProto = BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
+        private static readonly BreakIterator sentenceProto = LoadSentenceProto();
+
+        private static BreakIterator LoadProto()
+        {
+            lock (syncLock)
+                return BreakIterator.GetWordInstance(new CultureInfo("th"));
+        }
+
+        private static BreakIterator LoadSentenceProto()
+        {
+            lock (syncLock)
+                return BreakIterator.GetSentenceInstance(CultureInfo.InvariantCulture);
+        }
 
         private readonly ThaiWordBreaker wordBreaker;
         private readonly CharArrayIterator wrapper = Analysis.Util.CharArrayIterator.NewWordInstance();
@@ -68,48 +82,74 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// Creates a new <see cref="ThaiTokenizer"/>, supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/> </summary>
         public ThaiTokenizer(AttributeFactory factory, TextReader reader)
-            : base(factory, reader, (BreakIterator)sentenceProto.Clone())
+            : base(factory, reader, CreateSentenceClone())
         {
             // LUCENENET specific - DBBI_AVAILABLE removed because ICU always has a dictionary-based BreakIterator
 
-            wordBreaker = new ThaiWordBreaker((BreakIterator)proto.Clone());
+            lock (syncLock)
+                wordBreaker = new ThaiWordBreaker((BreakIterator)proto.Clone());
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }
 
+        private static BreakIterator CreateSentenceClone()
+        {
+            lock (syncLock)
+                return (BreakIterator)sentenceProto.Clone();
+        }
+
+        public override void Reset()
+        {
+            lock (syncLock)
+                base.Reset();
+        }
+
+        public override State CaptureState()
+        {
+            lock (syncLock)
+                return base.CaptureState();
+        }
+
         protected override void SetNextSentence(int sentenceStart, int sentenceEnd)
         {
-            this.sentenceStart = sentenceStart;
-            this.sentenceEnd = sentenceEnd;
-            wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
-            wordBreaker.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
+            lock (syncLock)
+            {
+                this.sentenceStart = sentenceStart;
+                this.sentenceEnd = sentenceEnd;
+                wrapper.SetText(m_buffer, sentenceStart, sentenceEnd - sentenceStart);
+                wordBreaker.SetText(new string(wrapper.Text, wrapper.Start, wrapper.Length));
+            }
         }
 
         protected override bool IncrementWord()
         {
-            int start = wordBreaker.Current;
-            if (start == BreakIterator.Done)
+            int start, end;
+            lock (syncLock)
             {
-                return false; // BreakIterator exhausted
-            }
+                start = wordBreaker.Current;
+                if (start == BreakIterator.Done)
+                {
+                    return false; // BreakIterator exhausted
+                }
 
-            // find the next set of boundaries, skipping over non-tokens
-            int end = wordBreaker.Next();
-            while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
-            {
-                start = end;
+                // find the next set of boundaries, skipping over non-tokens
                 end = wordBreaker.Next();
-            }
+                while (end != BreakIterator.Done && !Character.IsLetterOrDigit(Character.CodePointAt(m_buffer, sentenceStart + start, sentenceEnd)))
+                {
+                    start = end;
+                    end = wordBreaker.Next();
+                }
 
-            if (end == BreakIterator.Done)
-            {
-                return false; // BreakIterator exhausted
-            }
+                if (end == BreakIterator.Done)
+                {
+                    return false; // BreakIterator exhausted
+                }
 
-            ClearAttributes();
-            termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
-            offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
-            return true;
+                ClearAttributes();
+                termAtt.CopyBuffer(m_buffer, sentenceStart + start, end - start);
+                offsetAtt.SetOffset(CorrectOffset(m_offset + sentenceStart + start), CorrectOffset(m_offset + sentenceStart + end));
+                return true;
+            }
         }
     }
 
