@@ -36,6 +36,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # Testing variables
 
 # RunTests: 'true' (Optional - set to 'false' to disable test jobs - useful for debugging. If not provided, tests will be run.)
+# AssertsEnabled: 'true' (Optional - set to 'false' to run tests without asserts, which is less thorough. This can speed up testing and verify the application will run without asserts.)
 # IsNightly: 'false' (Optional - set to 'true' to run additional tests for the nightly build)
 # IsWeekly: 'false' (Optional - set to 'true' to run additional tests for the weekly build)
 # RunSlowTests: 'true' (Optional - set to 'false' to skip slow tests to make testing time shorter)
@@ -143,6 +144,7 @@ stages:
 
     - pwsh: |
         # Generate a lucene.testsettings.json file for use with the test framework
+        $assert = if ($Env:AssertsEnabled -ne 'false') { 'true' } else { 'false' }
         $nightly = if ($Env:IsNightly -eq 'true') { 'true' } else { 'false' }
         $weekly = if ($Env:IsWeekly -eq 'true') { 'true' } else { 'false' }
         $slow = if ($Env:RunSlowTests -ne 'false') { 'true' } else { 'false' }
@@ -153,18 +155,21 @@ stages:
         $directory = if ($Env:Directory -eq $null) { 'random' } else { $Env:Directory }
         $verbose = if ($Env:Verbose -eq 'true') { 'true' } else { 'false' }
         $multiplier = if ($Env:Multiplier -eq $null) { '1' } else { $Env:Multiplier }
-        $fileText = "{`n`t""tests"":`n`t{`n`t`t" +
-                        """nightly"": ""$nightly"",`n`t`t" +
-                        """weekly"": ""$weekly"",`n`t`t" +
-                        """slow"": ""$slow"",`n`t`t" +
-                        """awaitsfix"": ""$awaitsFix"",`n`t`t" +
-                        """codec"": ""$codec"",`n`t`t" +
-                        """docvaluesformat"": ""$docValuesFormat"",`n`t`t" +
-                        """postingsformat"": ""$postingsFormat"",`n`t`t" +
-                        """directory"": ""$directory"",`n`t`t" +
-                        """verbose"": ""$verbose"",`n`t`t" +
-                        """multiplier"": ""$multiplier""`n`t" +
-                    "}`n}"
+        $fileText = "{`n`t" +
+            """assert"": ""$assert"",`n`t" +
+            """tests"": {`n`t`t" +
+                """nightly"": ""$nightly"",`n`t`t" +
+                """weekly"": ""$weekly"",`n`t`t" +
+                """slow"": ""$slow"",`n`t`t" +
+                """awaitsfix"": ""$awaitsFix"",`n`t`t" +
+                """codec"": ""$codec"",`n`t`t" +
+                """docvaluesformat"": ""$docValuesFormat"",`n`t`t" +
+                """postingsformat"": ""$postingsFormat"",`n`t`t" +
+                """directory"": ""$directory"",`n`t`t" +
+                """verbose"": ""$verbose"",`n`t`t" +
+                """multiplier"": ""$multiplier""`n`t" +
+            "}`n" +
+        "}"
         Out-File -filePath "$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)" -encoding UTF8 -inputObject $fileText
       displayName: 'Persist Test Settings to lucene.testsettings.json'
       condition: and(succeeded(), ne(variables['RunTests'], 'false'))
