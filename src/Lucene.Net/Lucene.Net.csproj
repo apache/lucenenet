@@ -34,14 +34,16 @@
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package File Paths">
-    <LuceneNetCodeAnalysisDir>$(SolutionDir)src\dotnet\Lucene.Net.CodeAnalysis\</LuceneNetCodeAnalysisDir>
-    <LuceneNetCodeAnalysisAssemblyFile>$(LuceneNetCodeAnalysisDir)bin\$(Configuration)\netstandard2.0\*.dll</LuceneNetCodeAnalysisAssemblyFile>
+    <LuceneNetDotNetDir>$(SolutionDir)src\dotnet\</LuceneNetDotNetDir>
+    <LuceneNetCodeAnalysisToolsDir>$(LuceneNetDotNetDir)Lucene.Net.CodeAnalysis\tools\</LuceneNetCodeAnalysisToolsDir>
+    <LuceneNetCodeAnalysisCSAssemblyFile>$(LuceneNetDotNetDir)\Lucene.Net.CodeAnalysis.CSharp\bin\$(Configuration)\netstandard2.0\*.dll</LuceneNetCodeAnalysisCSAssemblyFile>
+    <LuceneNetCodeAnalysisVBAssemblyFile>$(LuceneNetDotNetDir)\Lucene.Net.CodeAnalysis.VisualBasic\bin\$(Configuration)\netstandard2.0\*.dll</LuceneNetCodeAnalysisVBAssemblyFile>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Package Files">
-    <None Include="$(LuceneNetCodeAnalysisDir)tools\*.ps1" Pack="true" PackagePath="tools" />
-    <None Include="$(LuceneNetCodeAnalysisAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-    <None Include="$(LuceneNetCodeAnalysisAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/vb" Visible="false" />
+    <None Include="$(LuceneNetCodeAnalysisToolsDir)*.ps1" Pack="true" PackagePath="tools" />
+    <None Include="$(LuceneNetCodeAnalysisCSAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(LuceneNetCodeAnalysisVBAssemblyFile)" Pack="true" PackagePath="analyzers/dotnet/vb" Visible="false" />
   </ItemGroup>
 
   <ItemGroup>

@@ -33,7 +33,7 @@ namespace Lucene.Net.CodeAnalysis
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedAnalyzer();
+            return new Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedVBAnalyzer();
         }
 
 
@@ -72,7 +72,7 @@ Namespace MyNamespace
 End Namespace";
             var expected = new DiagnosticResult
             {
-                Id = Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedAnalyzer.DiagnosticId,
+                Id = Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedVBAnalyzer.DiagnosticId,
                 Message = String.Format("Type name '{0}' must be marked NotInheritable or its IncrementToken() method must be marked NotOverridable.", "TypeName"),
                 Severity = DiagnosticSeverity.Error,
                 Locations =
