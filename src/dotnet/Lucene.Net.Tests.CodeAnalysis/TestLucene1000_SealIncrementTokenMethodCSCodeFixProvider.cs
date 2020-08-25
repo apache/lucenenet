@@ -33,7 +33,7 @@ namespace Lucene.Net.CodeAnalysis
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedAnalyzer();
+            return new Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedCSAnalyzer();
         }
 
 
@@ -72,7 +72,7 @@ namespace MyNamespace
 }";
             var expected = new DiagnosticResult
             {
-                Id = Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedAnalyzer.DiagnosticId,
+                Id = Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedCSAnalyzer.DiagnosticId,
                 Message = String.Format("Type name '{0}' or its IncrementToken() method must be marked sealed.", "TypeName"),
                 Severity = DiagnosticSeverity.Error,
                 Locations =

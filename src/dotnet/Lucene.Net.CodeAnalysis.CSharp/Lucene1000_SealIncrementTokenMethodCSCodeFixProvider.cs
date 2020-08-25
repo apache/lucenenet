@@ -29,12 +29,12 @@ namespace Lucene.Net.CodeAnalysis
      * limitations under the License.
      */
 
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(Lucene1000_SealTokenStreamClassCSCodeFixProvider)), Shared]
-    public class Lucene1000_SealTokenStreamClassCSCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(Lucene1000_SealIncrementTokenMethodCSCodeFixProvider)), Shared]
+    public class Lucene1000_SealIncrementTokenMethodCSCodeFixProvider : CodeFixProvider
     {
-        private const string Title = "Add sealed keyword to class definition";
+        private const string Title = "Add sealed keyword to IncrementToken() method";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedAnalyzer.DiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedCSAnalyzer.DiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
@@ -53,33 +53,61 @@ namespace Lucene.Net.CodeAnalysis
             // Find the type declaration identified by the diagnostic.
             var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
 
-            // Register a code action that will invoke the fix.
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: Title,
-                    createChangedDocument: c => AddSealedKeywordAsync(context.Document, declaration, c),
-                    equivalenceKey: Title),
-                diagnostic);
+            var incrementTokenMethodDeclaration = GetIncrementTokenMethodDeclaration(declaration);
+
+            // If we can't find the method, we skip registration for this fix
+            if (incrementTokenMethodDeclaration != null)
+            {
+                // Register a code action that will invoke the fix.
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        title: Title,
+                        createChangedDocument: c => AddSealedKeywordAsync(context.Document, incrementTokenMethodDeclaration, c),
+                        equivalenceKey: Title),
+                    diagnostic);
+            }
         }
 
-        private async Task<Document> AddSealedKeywordAsync(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
+        private async Task<Document> AddSealedKeywordAsync(Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
             var generator = SyntaxGenerator.GetGenerator(document);
 
             DeclarationModifiers modifiers = DeclarationModifiers.None;
-            if (classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+            if (methodDeclaration.Modifiers.Any(SyntaxKind.NewKeyword))
             {
-                modifiers |= DeclarationModifiers.Partial;
+                modifiers |= DeclarationModifiers.New;
+            }
+            if (methodDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            {
+                modifiers |= DeclarationModifiers.Override;
+            }
+            if (methodDeclaration.Modifiers.Any(SyntaxKind.UnsafeKeyword))
+            {
+                modifiers |= DeclarationModifiers.Unsafe;
             }
             modifiers |= DeclarationModifiers.Sealed;
 
-            var newClassDeclaration = generator.WithModifiers(classDeclaration, modifiers);
+            var newMethodDeclaration = generator.WithModifiers(methodDeclaration, modifiers);
 
             var oldRoot = await document.GetSyntaxRootAsync(cancellationToken);
-            var newRoot = oldRoot.ReplaceNode(classDeclaration, newClassDeclaration);
+            var newRoot = oldRoot.ReplaceNode(methodDeclaration, newMethodDeclaration);
 
             // Return document with transformed tree.
             return document.WithSyntaxRoot(newRoot);
+        }
+
+        private MethodDeclarationSyntax GetIncrementTokenMethodDeclaration(ClassDeclarationSyntax classDeclaration)
+        {
+            foreach (var member in classDeclaration.Members.Where(m => m.Kind() == SyntaxKind.MethodDeclaration))
+            {
+                var methodDeclaration = (MethodDeclarationSyntax)member;
+
+                if (methodDeclaration.Identifier.ValueText == "IncrementToken")
+                {
+                    return methodDeclaration;
+                }
+            }
+            return null;
         }
     }
 }
