@@ -30,12 +30,10 @@ namespace Lucene.Net.Replicator
     public class IndexInputStream : Stream
     {
         private readonly IndexInput input;
-        private long remaining;
 
         public IndexInputStream(IndexInput input)
         {
             this.input = input;
-            remaining = input.Length;
         }
 
         public override void Flush()
@@ -68,8 +66,9 @@ namespace Lucene.Net.Replicator
         public override int Read(byte[] buffer, int offset, int count)
         {
             int remaining = (int) (input.Length - input.GetFilePointer());
-            input.ReadBytes(buffer, offset, Math.Min(remaining, count));
-            return remaining;
+            int readCount = Math.Min(remaining, count);
+            input.ReadBytes(buffer, offset, readCount);
+            return readCount;
         }
 
         public override void Write(byte[] buffer, int offset, int count)
