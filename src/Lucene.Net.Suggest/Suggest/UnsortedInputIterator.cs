@@ -2,7 +2,6 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Search.Suggest
 {
@@ -28,6 +27,90 @@ namespace Lucene.Net.Search.Suggest
     /// random order.
     /// @lucene.experimental
     /// </summary>
+    public class UnsortedInputEnumerator : BufferedInputEnumerator
+    {
+        // TODO keep this for now
+        private readonly int[] ords;
+        private int currentOrd = -1;
+        private readonly BytesRef spare = new BytesRef();
+        private readonly BytesRef payloadSpare = new BytesRef();
+
+        /// <summary>
+        /// Creates a new iterator, wrapping the specified iterator and
+        /// returning elements in a random order.
+        /// </summary>
+        public UnsortedInputEnumerator(IInputEnumerator source)
+            : base(source)
+        {
+            ords = new int[m_entries.Length];
+            Random random = new Random();
+            for (int i = 0; i < ords.Length; i++)
+            {
+                ords[i] = i;
+            }
+            for (int i = 0; i < ords.Length; i++)
+            {
+                int randomPosition = random.Next(ords.Length);
+                int temp = ords[i];
+                ords[i] = ords[randomPosition];
+                ords[randomPosition] = temp;
+            }
+        }
+
+        public override long Weight
+        {
+            get
+            {
+                if (Debugging.AssertsEnabled) Debugging.Assert(currentOrd == ords[m_curPos]);
+                return m_freqs[currentOrd];
+            }
+        }
+
+        public override bool MoveNext()
+        {
+            if (++m_curPos < m_entries.Length)
+            {
+                currentOrd = ords[m_curPos];
+                m_current = m_entries.Get(spare, currentOrd);
+                return true;
+            }
+            m_current = null;
+            return false;
+        }
+
+        public override BytesRef Payload
+        {
+            get
+            {
+                if (HasPayloads && m_curPos < m_payloads.Length)
+                {
+                    if (Debugging.AssertsEnabled) Debugging.Assert(currentOrd == ords[m_curPos]);
+                    return m_payloads.Get(payloadSpare, currentOrd);
+                }
+                return null;
+            }
+        }
+
+        public override ICollection<BytesRef> Contexts
+        {
+            get
+            {
+                if (HasContexts && m_curPos < m_contextSets.Count)
+                {
+                    if (Debugging.AssertsEnabled) Debugging.Assert(currentOrd == ords[m_curPos]);
+                    return m_contextSets[currentOrd];
+                }
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// This wrapper buffers the incoming elements and makes sure they are in
+    /// random order.
+    /// @lucene.experimental
+    /// </summary>
+    [Obsolete("Use UnsortedInputEnumerator instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class UnsortedInputIterator : BufferedInputIterator
     {
         // TODO keep this for now

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -83,6 +84,26 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestFieldNonExistent()
         {
+            IBytesRefEnumerator it;
+            try
+            {
+                indexReader = DirectoryReader.Open(store);
+
+                ld = new LuceneDictionary(indexReader, "nonexistent_field");
+                it = ld.GetEntryEnumerator();
+
+                assertFalse("More elements than expected", it.MoveNext());
+            }
+            finally
+            {
+                if (indexReader != null) { indexReader.Dispose(); }
+            }
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestFieldNonExistentIterator()
+        {
             try
             {
                 indexReader = DirectoryReader.Open(store);
@@ -100,6 +121,27 @@ namespace Lucene.Net.Search.Spell
 
         [Test]
         public void TestFieldAaa()
+        {
+            IBytesRefEnumerator it;
+            try
+            {
+                indexReader = DirectoryReader.Open(store);
+
+                ld = new LuceneDictionary(indexReader, "aaa");
+                it = ld.GetEntryEnumerator();
+                assertTrue("First element doesn't exist.", it.MoveNext());
+                assertTrue("First element isn't correct", it.Current.Utf8ToString().Equals("foo", StringComparison.Ordinal));
+                assertFalse("More elements than expected", it.MoveNext());
+            }
+            finally
+            {
+                if (indexReader != null) { indexReader.Dispose(); }
+            }
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestFieldAaaIterator()
         {
             try
             {
@@ -119,6 +161,41 @@ namespace Lucene.Net.Search.Spell
 
         [Test]
         public void TestFieldContents_1()
+        {
+            IBytesRefEnumerator it;
+            try
+            {
+                indexReader = DirectoryReader.Open(store);
+
+                ld = new LuceneDictionary(indexReader, "contents");
+                it = ld.GetEntryEnumerator();
+
+                assertTrue("First element doesn't exist.", it.MoveNext());
+                assertTrue("First element isn't correct", it.Current.Utf8ToString().Equals("Jerry", StringComparison.Ordinal));
+                assertTrue("Second element doesn't exist.", it.MoveNext());
+                assertTrue("Second element isn't correct", it.Current.Utf8ToString().Equals("Tom", StringComparison.Ordinal));
+                assertFalse("More elements than expected", it.MoveNext());
+
+                ld = new LuceneDictionary(indexReader, "contents");
+                it = ld.GetEntryEnumerator();
+
+                int counter = 2;
+                while (it.MoveNext())
+                {
+                    counter--;
+                }
+
+                assertTrue("Number of words incorrect", counter == 0);
+            }
+            finally
+            {
+                if (indexReader != null) { indexReader.Dispose(); }
+            }
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestFieldContents_1_Iterator()
         {
             try
             {
@@ -153,6 +230,31 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestFieldContents_2()
         {
+            IBytesRefEnumerator it;
+            try
+            {
+                indexReader = DirectoryReader.Open(store);
+
+                ld = new LuceneDictionary(indexReader, "contents");
+                it = ld.GetEntryEnumerator();
+
+                // just iterate through words
+                assertTrue(it.MoveNext());
+                assertEquals("First element isn't correct", "Jerry", it.Current.Utf8ToString());
+                assertTrue(it.MoveNext());
+                assertEquals("Second element isn't correct", "Tom", it.Current.Utf8ToString());
+                assertFalse("Nonexistent element is really null", it.MoveNext());
+            }
+            finally
+            {
+                if (indexReader != null) { indexReader.Dispose(); }
+            }
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestFieldContents_2_Iterator()
+        {
             try
             {
                 indexReader = DirectoryReader.Open(store);
@@ -173,6 +275,28 @@ namespace Lucene.Net.Search.Spell
 
         [Test]
         public void TestFieldZzz()
+        {
+            IBytesRefEnumerator it;
+            try
+            {
+                indexReader = DirectoryReader.Open(store);
+
+                ld = new LuceneDictionary(indexReader, "zzz");
+                it = ld.GetEntryEnumerator();
+
+                assertTrue("First element doesn't exist.", it.MoveNext());
+                assertEquals("First element isn't correct", "bar", it.Current.Utf8ToString());
+                assertFalse("More elements than expected", it.MoveNext());
+            }
+            finally
+            {
+                if (indexReader != null) { indexReader.Dispose(); }
+            }
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestFieldZzzIterator()
         {
             try
             {

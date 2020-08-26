@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
@@ -22,8 +23,113 @@ namespace Lucene.Net.Search.Suggest
 
     /// <summary>
     /// This wrapper buffers incoming elements.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
+    public class BufferedInputEnumerator : IInputEnumerator
+    {
+        // TODO keep this for now
+        /// <summary>
+        /// buffered term entries </summary>
+        protected BytesRefArray m_entries = new BytesRefArray(Counter.NewCounter());
+        /// <summary>
+        /// buffered payload entries </summary>
+        protected BytesRefArray m_payloads = new BytesRefArray(Counter.NewCounter());
+        /// <summary>
+        /// buffered context set entries </summary>
+        protected IList<ICollection<BytesRef>> m_contextSets = new List<ICollection<BytesRef>>();
+        /// <summary>
+        /// current buffer position </summary>
+        protected int m_curPos = -1;
+        /// <summary>
+        /// buffered weights, parallel with <see cref="m_entries"/> </summary>
+        protected long[] m_freqs = new long[1];
+        private readonly BytesRef spare = new BytesRef();
+        private readonly BytesRef payloadSpare = new BytesRef();
+        private readonly bool hasPayloads;
+        private readonly IComparer<BytesRef> comp;
+
+        private readonly bool hasContexts;
+        protected BytesRef m_current;
+
+        /// <summary>
+        /// Creates a new iterator, buffering entries from the specified iterator </summary>
+        public BufferedInputEnumerator(IInputEnumerator source)
+        {
+            int freqIndex = 0;
+            hasPayloads = source.HasPayloads;
+            hasContexts = source.HasContexts;
+            while (source.MoveNext())
+            {
+                m_entries.Append(source.Current);
+                if (hasPayloads)
+                {
+                    m_payloads.Append(source.Payload);
+                }
+                if (hasContexts)
+                {
+                    m_contextSets.Add(source.Contexts);
+                }
+                if (freqIndex >= m_freqs.Length)
+                {
+                    m_freqs = ArrayUtil.Grow(m_freqs, m_freqs.Length + 1);
+                }
+                m_freqs[freqIndex++] = source.Weight;
+            }
+            comp = source.Comparer;
+        }
+
+        public virtual long Weight => m_freqs[m_curPos];
+
+        public virtual BytesRef Current => m_current;
+
+        public virtual bool MoveNext()
+        {
+            if (++m_curPos < m_entries.Length)
+            {
+                m_entries.Get(spare, m_curPos);
+                m_current = spare;
+            }
+            m_current = null;
+            return false;
+        }
+
+        public virtual BytesRef Payload
+        {
+            get
+            {
+                if (hasPayloads && m_curPos < m_payloads.Length)
+                {
+                    return m_payloads.Get(payloadSpare, m_curPos);
+                }
+                return null;
+            }
+        }
+
+        public virtual bool HasPayloads => hasPayloads;
+
+        public virtual IComparer<BytesRef> Comparer => comp;
+
+        public virtual ICollection<BytesRef> Contexts
+        {
+            get
+            {
+                if (hasContexts && m_curPos < m_contextSets.Count)
+                {
+                    return m_contextSets[m_curPos];
+                }
+                return null;
+            }
+        }
+
+        public virtual bool HasContexts => hasContexts;
+    }
+
+    /// <summary>
+    /// This wrapper buffers incoming elements.
+    /// @lucene.experimental
+    /// </summary>
+    [Obsolete("Use BufferedInputEnumerator instead. This will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class BufferedInputIterator : IInputIterator
     {
         // TODO keep this for now

@@ -112,11 +112,11 @@ namespace Lucene.Net.Search.Suggest
             this.fieldDelimiter = fieldDelimiter;
         }
 
-        public virtual IInputIterator GetEntryIterator()
+        public virtual IInputEnumerator GetEntryEnumerator()
         {
             try
             {
-                return new FileIterator(this);
+                return new FileEnumerator(this);
             }
             catch (IOException e)
             {
@@ -124,7 +124,23 @@ namespace Lucene.Net.Search.Suggest
             }
         }
 
-        internal sealed class FileIterator : IInputIterator
+        [Obsolete("Use GetEntryEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public virtual IInputIterator GetEntryIterator()
+        {
+            try
+            {
+                return new FileEnumerator(this);
+            }
+            catch (IOException e)
+            {
+                throw new Exception(e.ToString(), e);
+            }
+        }
+
+        internal sealed class FileEnumerator : IInputEnumerator
+#pragma warning disable CS0618 // Type or member is obsolete
+            , IInputIterator
+#pragma warning restore CS0618 // Type or member is obsolete
         {
             private readonly FileDictionary outerInstance;
 
@@ -133,8 +149,9 @@ namespace Lucene.Net.Search.Suggest
             internal BytesRef curPayload = new BytesRef();
             internal bool isFirstLine = true;
             internal bool hasPayloads = false;
+            private BytesRef current;
 
-            internal FileIterator(FileDictionary outerInstance)
+            internal FileEnumerator(FileDictionary outerInstance)
             {
                 this.outerInstance = outerInstance;
                 outerInstance.line = outerInstance.@in.ReadLine();
@@ -172,6 +189,7 @@ namespace Lucene.Net.Search.Suggest
 
             public long Weight => curWeight;
 
+            [Obsolete("Use MoveNext(), Current instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public BytesRef Next()
             {
                 if (outerInstance.done)
@@ -225,6 +243,68 @@ namespace Lucene.Net.Search.Suggest
                     outerInstance.done = true;
                     IOUtils.Dispose(outerInstance.@in);
                     return null;
+                }
+            }
+
+            public BytesRef Current => current;
+
+            public bool MoveNext()
+            {
+                if (outerInstance.done)
+                {
+                    current = null;
+                    return false;
+                }
+                if (isFirstLine)
+                {
+                    isFirstLine = false;
+                    current = spare;
+                    return true;
+                }
+                outerInstance.line = outerInstance.@in.ReadLine();
+                if (outerInstance.line != null)
+                {
+                    string[] fields = outerInstance.line.Split(new string[] { outerInstance.fieldDelimiter }, StringSplitOptions.RemoveEmptyEntries);
+                    if (fields.Length > 3)
+                    {
+                        throw new ArgumentException("More than 3 fields in one line");
+                    } // term, weight and payload
+                    else if (fields.Length == 3)
+                    {
+                        spare.CopyChars(fields[0]);
+                        ReadWeight(fields[1]);
+                        if (hasPayloads)
+                        {
+                            curPayload.CopyChars(fields[2]);
+                        }
+                    } // term, weight
+                    else if (fields.Length == 2)
+                    {
+                        spare.CopyChars(fields[0]);
+                        ReadWeight(fields[1]);
+                        if (hasPayloads) // have an empty payload
+                        {
+                            curPayload = new BytesRef();
+                        }
+                    } // only term
+                    else
+                    {
+                        spare.CopyChars(fields[0]);
+                        curWeight = 1;
+                        if (hasPayloads)
+                        {
+                            curPayload = new BytesRef();
+                        }
+                    }
+                    current = spare;
+                    return true;
+                }
+                else
+                {
+                    outerInstance.done = true;
+                    IOUtils.Dispose(outerInstance.@in);
+                    current = null;
+                    return false;
                 }
             }
 

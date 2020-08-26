@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search.Suggest;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
@@ -34,7 +35,7 @@ namespace Lucene.Net.Search.Spell
     /// </summary>
     public class HighFrequencyDictionary : IDictionary
     {
-        private IndexReader reader;
+        private readonly IndexReader reader;
         private readonly string field;
         private readonly float thresh;
 
@@ -53,23 +54,30 @@ namespace Lucene.Net.Search.Spell
             this.thresh = thresh;
         }
 
-        public IInputIterator GetEntryIterator()
+        public IInputEnumerator GetEntryEnumerator()
         {
-            return new HighFrequencyIterator(this);
+            return new HighFrequencyEnumerator(this);
         }
 
-        internal sealed class HighFrequencyIterator : IInputIterator
+        [Obsolete("Use GetEntryEnumerator(). This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public IInputIterator GetEntryIterator()
         {
-            private readonly HighFrequencyDictionary outerInstance;
+            return new HighFrequencyEnumerator(this);
+        }
 
+        internal sealed class HighFrequencyEnumerator : IInputEnumerator
+#pragma warning disable CS0618 // Type or member is obsolete
+            , IInputIterator
+#pragma warning restore CS0618 // Type or member is obsolete
+        {
             internal readonly BytesRef spare = new BytesRef();
             internal readonly TermsEnum termsEnum;
             internal int minNumDocs;
             internal long freq;
+            private BytesRef current;
 
-            internal HighFrequencyIterator(HighFrequencyDictionary outerInstance)
+            internal HighFrequencyEnumerator(HighFrequencyDictionary outerInstance)
             {
-                this.outerInstance = outerInstance;
                 Terms terms = MultiFields.GetTerms(outerInstance.reader, outerInstance.field);
                 if (terms != null)
                 {
@@ -89,6 +97,7 @@ namespace Lucene.Net.Search.Spell
 
             public long Weight => freq;
 
+            [Obsolete("Use MoveNext(), Current instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public BytesRef Next()
             {
                 if (termsEnum != null)
@@ -105,6 +114,27 @@ namespace Lucene.Net.Search.Spell
                     }
                 }
                 return null;
+            }
+
+            public BytesRef Current => current;
+
+            public bool MoveNext()
+            {
+                if (!(termsEnum is null))
+                {
+                    while (termsEnum.MoveNext())
+                    {
+                        if (IsFrequent(termsEnum.DocFreq))
+                        {
+                            freq = termsEnum.DocFreq;
+                            spare.CopyBytes(termsEnum.Current);
+                            current = spare;
+                            return true;
+                        }
+                    }
+                }
+                current = null;
+                return false;
             }
 
             public IComparer<BytesRef> Comparer

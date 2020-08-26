@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
@@ -21,8 +22,86 @@ namespace Lucene.Net.Search.Suggest
      */
 
     /// <summary>
+    /// A <seealso cref="InputEnumerator"/> over a sequence of <seealso cref="Input"/>s.
+    /// </summary>
+    public sealed class InputArrayEnumerator : IInputEnumerator
+    {
+        private readonly IEnumerator<Input> i;
+        private readonly bool hasPayloads;
+        private readonly bool hasContexts;
+        private bool first;
+        private Input current;
+        private readonly BytesRef spare = new BytesRef();
+
+        public InputArrayEnumerator(IEnumerator<Input> i)
+        {
+            this.i = i;
+            if (i.MoveNext())
+            {
+                current = i.Current;
+                first = true;
+                this.hasPayloads = current.hasPayloads;
+                this.hasContexts = current.hasContexts;
+            }
+            else
+            {
+                this.hasPayloads = false;
+                this.hasContexts = false;
+            }
+        }
+
+        public InputArrayEnumerator(Input[] i)
+            : this((IEnumerable<Input>)i)
+        {
+        }
+        public InputArrayEnumerator(IEnumerable<Input> i)
+            : this(i.GetEnumerator())
+        {
+        }
+
+        public long Weight => current.v;
+
+        public BytesRef Current { get; private set; }
+
+        public bool MoveNext()
+        {
+            // LUCENENET NOTE: We moved the cursor when 
+            // the instance was created. Make sure we don't
+            // move it again until the second call to Next().
+            if (first && current != null)
+            {
+                first = false;
+            }
+            else if (i.MoveNext())
+            {
+                current = i.Current;
+            }
+            else
+            {
+                Current = null;
+                return false;
+            }
+
+            spare.CopyBytes(current.term);
+            Current = spare;
+            return true;
+        }
+
+        public BytesRef Payload => current.payload;
+
+        public bool HasPayloads => hasPayloads;
+
+        public IComparer<BytesRef> Comparer => null;
+
+        public ICollection<BytesRef> Contexts => current.contexts;
+
+        public bool HasContexts => hasContexts;
+    }
+
+    /// <summary>
     /// A <seealso cref="InputIterator"/> over a sequence of <seealso cref="Input"/>s.
     /// </summary>
+    [Obsolete("Use InputArrayEnumerator. This class will be removed in 4.8.0.")]
     public sealed class InputArrayIterator : IInputIterator
     {
         private readonly IEnumerator<Input> i;

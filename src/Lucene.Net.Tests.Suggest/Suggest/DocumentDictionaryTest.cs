@@ -34,10 +34,10 @@ namespace Lucene.Net.Search.Suggest
     [SuppressCodecs("Lucene3x")]
     public class DocumentDictionaryTest : LuceneTestCase
     {
-        internal static readonly string FIELD_NAME = "f1";
-        internal static readonly string WEIGHT_FIELD_NAME = "w1";
-        internal static readonly string PAYLOAD_FIELD_NAME = "p1";
-        internal static readonly string CONTEXT_FIELD_NAME = "c1";
+        internal const string FIELD_NAME = "f1";
+        internal const string WEIGHT_FIELD_NAME = "w1";
+        internal const string PAYLOAD_FIELD_NAME = "p1";
+        internal const string CONTEXT_FIELD_NAME = "c1";
 
         /** Returns Pair(list of invalid document terms, Map of document term -> document) */
         private KeyValuePair<List<string>, IDictionary<string, Document>> GenerateIndexDocuments(int ndocs, bool requiresPayload, bool requiresContexts)
@@ -124,6 +124,29 @@ namespace Lucene.Net.Search.Suggest
             writer.Dispose();
             IndexReader ir = DirectoryReader.Open(dir);
             IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME, PAYLOAD_FIELD_NAME);
+            IInputEnumerator inputIterator = dictionary.GetEntryEnumerator();
+
+            assertFalse(inputIterator.MoveNext());
+            assertEquals(inputIterator.Weight, 0);
+            assertNull(inputIterator.Payload);
+
+            ir.Dispose();
+            dir.Dispose();
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestEmptyReaderIterator()
+        {
+            Directory dir = NewDirectory();
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            iwc.SetMergePolicy(NewLogMergePolicy());
+            // Make sure the index is created?
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
+            writer.Commit();
+            writer.Dispose();
+            IndexReader ir = DirectoryReader.Open(dir);
+            IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME, PAYLOAD_FIELD_NAME);
             IInputIterator inputIterator = dictionary.GetEntryIterator();
 
             assertNull(inputIterator.Next());
@@ -136,6 +159,50 @@ namespace Lucene.Net.Search.Suggest
 
         [Test]
         public void TestBasic()
+        {
+            Directory dir = NewDirectory();
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            iwc.SetMergePolicy(NewLogMergePolicy());
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
+            KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), true, false);
+            IDictionary<string, Document> docs = res.Value;
+            List<String> invalidDocTerms = res.Key;
+            foreach (Document doc in docs.Values)
+            {
+                writer.AddDocument(doc);
+            }
+            writer.Commit();
+            writer.Dispose();
+            IndexReader ir = DirectoryReader.Open(dir);
+            IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME, PAYLOAD_FIELD_NAME);
+            IInputEnumerator inputIterator = dictionary.GetEntryEnumerator();
+            while (inputIterator.MoveNext())
+            {
+                string field = inputIterator.Current.Utf8ToString();
+                Document doc = docs[field];
+                docs.Remove(field);
+                //Document doc = docs.Remove(inputIterator.Current.Utf8ToString());
+                assertTrue(inputIterator.Current.Equals(new BytesRef(doc.Get(FIELD_NAME))));
+                IIndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
+                assertEquals(inputIterator.Weight, (weightField != null) ? weightField.GetInt64ValueOrDefault() : 0);
+                assertTrue(inputIterator.Payload.Equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
+            }
+
+            foreach (string invalidTerm in invalidDocTerms)
+            {
+                var invalid = docs[invalidTerm];
+                docs.Remove(invalidTerm);
+                assertNotNull(invalid);
+            }
+            assertTrue(docs.Count == 0);
+
+            ir.Dispose();
+            dir.Dispose();
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestBasicIterator()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
@@ -180,6 +247,51 @@ namespace Lucene.Net.Search.Suggest
 
         [Test]
         public void TestWithoutPayload()
+        {
+            Directory dir = NewDirectory();
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            iwc.SetMergePolicy(NewLogMergePolicy());
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
+            KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), false, false);
+            IDictionary<string, Document> docs = res.Value;
+            List<string> invalidDocTerms = res.Key;
+            foreach (Document doc in docs.Values)
+            {
+                writer.AddDocument(doc);
+            }
+            writer.Commit();
+            writer.Dispose();
+            IndexReader ir = DirectoryReader.Open(dir);
+            IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME);
+            IInputEnumerator inputIterator = dictionary.GetEntryEnumerator();
+            while (inputIterator.MoveNext())
+            {
+                var field = inputIterator.Current.Utf8ToString();
+                Document doc = docs[field];
+                docs.Remove(field);
+                assertTrue(inputIterator.Current.equals(new BytesRef(doc.Get(FIELD_NAME))));
+                IIndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
+                assertEquals(inputIterator.Weight, (weightField != null) ? weightField.GetInt64ValueOrDefault() : 0);
+                assertEquals(inputIterator.Payload, null);
+            }
+
+            foreach (string invalidTerm in invalidDocTerms)
+            {
+                var invalid = docs[invalidTerm];
+                docs.Remove(invalidTerm);
+                assertNotNull(invalid);
+            }
+
+
+            assertTrue(docs.Count == 0);
+
+            ir.Dispose();
+            dir.Dispose();
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestWithoutPayloadIterator()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
@@ -241,6 +353,57 @@ namespace Lucene.Net.Search.Suggest
             writer.Dispose();
             IndexReader ir = DirectoryReader.Open(dir);
             IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME, PAYLOAD_FIELD_NAME, CONTEXT_FIELD_NAME);
+            IInputEnumerator inputIterator = dictionary.GetEntryEnumerator();
+            while (inputIterator.MoveNext())
+            {
+                string field = inputIterator.Current.Utf8ToString();
+                Document doc = docs[field];
+                docs.Remove(field);
+                //Document doc = docs.remove(f.utf8ToString());
+                assertTrue(inputIterator.Current.equals(new BytesRef(doc.Get(FIELD_NAME))));
+                IIndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
+                assertEquals(inputIterator.Weight, (weightField != null) ? weightField.GetInt64ValueOrDefault() : 0);
+                assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
+                ISet<BytesRef> oriCtxs = new JCG.HashSet<BytesRef>();
+                ICollection<BytesRef> contextSet = inputIterator.Contexts;
+                foreach (IIndexableField ctxf in doc.GetFields(CONTEXT_FIELD_NAME))
+                {
+                    oriCtxs.add(ctxf.GetBinaryValue());
+                }
+                assertEquals(oriCtxs.size(), contextSet.Count);
+            }
+
+            foreach (string invalidTerm in invalidDocTerms)
+            {
+                var invalid = docs[invalidTerm];
+                docs.Remove(invalidTerm);
+                assertNotNull(invalid);
+            }
+            assertTrue(docs.Count == 0);
+
+            ir.Dispose();
+            dir.Dispose();
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestWithContextsIterator()
+        {
+            Directory dir = NewDirectory();
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            iwc.SetMergePolicy(NewLogMergePolicy());
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
+            KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), true, true);
+            IDictionary<string, Document> docs = res.Value;
+            List<string> invalidDocTerms = res.Key;
+            foreach (Document doc in docs.Values)
+            {
+                writer.AddDocument(doc);
+            }
+            writer.Commit();
+            writer.Dispose();
+            IndexReader ir = DirectoryReader.Open(dir);
+            IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME, PAYLOAD_FIELD_NAME, CONTEXT_FIELD_NAME);
             IInputIterator inputIterator = dictionary.GetEntryIterator();
             BytesRef f;
             while ((f = inputIterator.Next()) != null)
@@ -276,6 +439,77 @@ namespace Lucene.Net.Search.Suggest
 
         [Test]
         public void TestWithDeletions()
+        {
+            Directory dir = NewDirectory();
+            IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
+            iwc.SetMergePolicy(NewLogMergePolicy());
+            RandomIndexWriter writer = new RandomIndexWriter(Random, dir, iwc);
+            KeyValuePair<List<string>, IDictionary<string, Document>> res = GenerateIndexDocuments(AtLeast(1000), false, false);
+            IDictionary<string, Document> docs = res.Value;
+            List<String> invalidDocTerms = res.Key;
+            Random rand = Random;
+            List<string> termsToDel = new List<string>();
+            foreach (Document doc in docs.Values)
+            {
+                IIndexableField f2 = doc.GetField(FIELD_NAME);
+                if (rand.nextBoolean() && f2 != null && !invalidDocTerms.Contains(f2.GetStringValue()))
+                {
+                    termsToDel.Add(doc.Get(FIELD_NAME));
+                }
+                writer.AddDocument(doc);
+            }
+            writer.Commit();
+
+            Term[] delTerms = new Term[termsToDel.size()];
+            for (int i = 0; i < termsToDel.size(); i++)
+            {
+                delTerms[i] = new Term(FIELD_NAME, termsToDel[i]);
+            }
+
+            foreach (Term delTerm in delTerms)
+            {
+                writer.DeleteDocuments(delTerm);
+            }
+            writer.Commit();
+            writer.Dispose();
+
+            foreach (string termToDel in termsToDel)
+            {
+                var toDel = docs[termToDel];
+                assertTrue(toDel != null);
+                docs.Remove(termToDel);
+            }
+
+            IndexReader ir = DirectoryReader.Open(dir);
+            assertEquals(ir.NumDocs, docs.size());
+            IDictionary dictionary = new DocumentDictionary(ir, FIELD_NAME, WEIGHT_FIELD_NAME);
+            IInputEnumerator inputIterator = dictionary.GetEntryEnumerator();
+            while (inputIterator.MoveNext())
+            {
+                var field = inputIterator.Current.Utf8ToString();
+                Document doc = docs[field];
+                docs.Remove(field);
+                assertTrue(inputIterator.Current.equals(new BytesRef(doc.Get(FIELD_NAME))));
+                IIndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
+                assertEquals(inputIterator.Weight, (weightField != null) ? weightField.GetInt64ValueOrDefault() : 0);
+                assertEquals(inputIterator.Payload, null);
+            }
+
+            foreach (string invalidTerm in invalidDocTerms)
+            {
+                var invalid = docs[invalidTerm];
+                docs.Remove(invalidTerm);
+                assertNotNull(invalid);
+            }
+            assertTrue(docs.Count == 0);
+
+            ir.Dispose();
+            dir.Dispose();
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestWithDeletionsIterator()
         {
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));

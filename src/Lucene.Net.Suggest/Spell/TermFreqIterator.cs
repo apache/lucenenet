@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spell
@@ -23,6 +24,45 @@ namespace Lucene.Net.Search.Spell
     /// <summary>
     /// Interface for enumerating term,weight pairs.
     /// </summary>
+    public interface ITermFreqEnumerator : IBytesRefEnumerator
+    {
+
+        /// <summary>
+        /// Gets the term's weight, higher numbers mean better suggestions.
+        /// </summary>
+        long Weight { get; }
+    }
+
+    /// <summary>
+    /// Wraps a <see cref="BytesRefEnumerator"/> as a <see cref="ITermFreqEnumerator"/>, with all weights
+    /// set to <c>1</c>.
+    /// </summary>
+    public class TermFreqEnumeratorWrapper : ITermFreqEnumerator
+    {
+        internal IBytesRefEnumerator wrapped;
+
+        /// <summary>
+        /// Creates a new wrapper, wrapping the specified iterator and 
+        /// specifying a weight value of <code>1</code> for all terms.
+        /// </summary>
+        public TermFreqEnumeratorWrapper(IBytesRefEnumerator wrapped)
+        {
+            this.wrapped = wrapped;
+        }
+
+        public virtual long Weight => 1;
+
+        public BytesRef Current => wrapped.Current;
+
+        public bool MoveNext() => wrapped.MoveNext();
+
+        public virtual IComparer<BytesRef> Comparer => wrapped.Comparer;
+    }
+
+    /// <summary>
+    /// Interface for enumerating term,weight pairs.
+    /// </summary>
+    [Obsolete("Use TermFreqEnumeratorWrapper instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public interface ITermFreqIterator : IBytesRefIterator
     {
 
@@ -36,6 +76,7 @@ namespace Lucene.Net.Search.Spell
     /// Wraps a BytesRefIterator as a TermFreqIterator, with all weights
     /// set to <code>1</code>
     /// </summary>
+    [Obsolete("Use TermFreqEnumeratorWrapper instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class TermFreqIteratorWrapper : ITermFreqIterator
     {
         internal IBytesRefIterator wrapped;

@@ -197,12 +197,12 @@ namespace Lucene.Net.Search.Suggest
         /// <summary>
         /// Build lookup from a dictionary. Some implementations may require sorted
         /// or unsorted keys from the dictionary's iterator - use
-        /// <see cref="SortedInputIterator"/> or
-        /// <see cref="UnsortedInputIterator"/> in such case.
+        /// <see cref="SortedInputEnumerator"/> or
+        /// <see cref="UnsortedInputEnumerator"/> in such case.
         /// </summary>
         public virtual void Build(IDictionary dict)
         {
-            Build(dict.GetEntryIterator());
+            Build(dict.GetEntryEnumerator());
         }
 
         /// <summary>
@@ -245,9 +245,16 @@ namespace Lucene.Net.Search.Suggest
         public abstract long Count { get; }
 
         /// <summary>
+        /// Builds up a new internal <see cref="Lookup"/> representation based on the given <see cref="IInputEnumerator"/>.
+        /// The implementation might re-sort the data internally.
+        /// </summary>
+        public abstract void Build(IInputEnumerator inputEnumerator);
+
+        /// <summary>
         /// Builds up a new internal <see cref="Lookup"/> representation based on the given <see cref="IInputIterator"/>.
         /// The implementation might re-sort the data internally.
         /// </summary>
+        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public abstract void Build(IInputIterator inputIterator);
 
         /// <summary>

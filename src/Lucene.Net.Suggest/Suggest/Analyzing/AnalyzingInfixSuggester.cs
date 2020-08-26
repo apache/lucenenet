@@ -186,6 +186,67 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return FSDirectory.Open(path);
         }
 
+        public override void Build(IInputEnumerator enumerator)
+        {
+            if (m_searcherMgr != null)
+            {
+                m_searcherMgr.Dispose();
+                m_searcherMgr = null;
+            }
+
+            if (writer != null)
+            {
+                writer.Dispose();
+                writer = null;
+            }
+
+            AtomicReader r = null;
+            bool success = false;
+            try
+            {
+                // First pass: build a temporary normal Lucene index,
+                // just indexing the suggestions as they iterate:
+                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
+                //long t0 = System.nanoTime();
+
+                // TODO: use threads?
+                BytesRef text;
+                while (enumerator.MoveNext())
+                {
+                    text = enumerator.Current;
+                    BytesRef payload;
+                    if (enumerator.HasPayloads)
+                    {
+                        payload = enumerator.Payload;
+                    }
+                    else
+                    {
+                        payload = null;
+                    }
+
+                    Add(text, enumerator.Contexts, enumerator.Weight, payload);
+                }
+
+                //System.out.println("initial indexing time: " + ((System.nanoTime()-t0)/1000000) + " msec");
+
+                m_searcherMgr = new SearcherManager(writer, true, null);
+                success = true;
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Dispose(r);
+                }
+                else
+                {
+                    IOUtils.DisposeWhileHandlingException(writer, r);
+                    writer = null;
+                }
+            }
+        }
+
+        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public override void Build(IInputIterator iter)
         {
             if (m_searcherMgr != null)
@@ -701,7 +762,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// matched prefix token, to the provided fragments list. </summary>
         /// <param name="sb"> The <see cref="StringBuilder"/> to append to </param>
         /// <param name="surface"> The fragment of the surface form
-        ///        (indexed during <see cref="Build(IInputIterator)"/>, corresponding to
+        ///        (indexed during <see cref="Build(IInputEnumerator)"/>, corresponding to
         ///        this match </param>
         /// <param name="analyzed"> The analyzed token that matched </param>
         /// <param name="prefixToken"> The prefix of the token that matched </param>

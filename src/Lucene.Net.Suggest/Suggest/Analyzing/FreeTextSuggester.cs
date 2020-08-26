@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     //   - add pruning of low-freq ngrams?   
 
     /// <summary>
-    /// Builds an ngram model from the text sent to <see cref="Build(IInputIterator, double)"/>
+    /// Builds an ngram model from the text sent to <see cref="Build(IInputEnumerator, double)"/>
     /// and predicts based on the last grams-1 tokens in
     /// the request sent to <see cref="DoLookup(string, IEnumerable{BytesRef}, bool, int)"/>.  This tries to
     /// handle the "long tail" of suggestions for when the
@@ -287,6 +287,164 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
+        public override void Build(IInputEnumerator enumerator)
+        {
+            Build(enumerator, IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB);
+        }
+
+        /// <summary>
+        /// Build the suggest index, using up to the specified
+        /// amount of temporary RAM while building.  Note that
+        /// the weights for the suggestions are ignored.
+        /// </summary>
+        public virtual void Build(IInputEnumerator enumerator, double ramBufferSizeMB)
+        {
+            if (enumerator.HasPayloads)
+            {
+                throw new ArgumentException("this suggester doesn't support payloads");
+            }
+            if (enumerator.HasContexts)
+            {
+                throw new ArgumentException("this suggester doesn't support contexts");
+            }
+
+            string prefix = this.GetType().Name;
+            var directory = OfflineSorter.DefaultTempDir();
+
+            // LUCENENET specific - using GetRandomFileName() instead of picking a random int
+            DirectoryInfo tempIndexPath = null;
+            while (true)
+            {
+                tempIndexPath = new DirectoryInfo(Path.Combine(directory.FullName, prefix + ".index." + Path.GetFileNameWithoutExtension(Path.GetRandomFileName())));
+                tempIndexPath.Create();
+                if (System.IO.Directory.Exists(tempIndexPath.FullName))
+                {
+                    break;
+                }
+            }
+
+            Directory dir = FSDirectory.Open(tempIndexPath);
+            try
+            {
+#pragma warning disable 612, 618
+                IndexWriterConfig iwc = new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, indexAnalyzer);
+#pragma warning restore 612, 618
+                iwc.SetOpenMode(OpenMode.CREATE);
+                iwc.SetRAMBufferSizeMB(ramBufferSizeMB);
+                IndexWriter writer = new IndexWriter(dir, iwc);
+
+                var ft = new FieldType(TextField.TYPE_NOT_STORED);
+                // TODO: if only we had IndexOptions.TERMS_ONLY...
+                ft.IndexOptions = IndexOptions.DOCS_AND_FREQS;
+                ft.OmitNorms = true;
+                ft.Freeze();
+
+                Document doc = new Document();
+                Field field = new Field("body", "", ft);
+                doc.Add(field);
+
+                totTokens = 0;
+                IndexReader reader = null;
+
+                bool success = false;
+                count = 0;
+                try
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        BytesRef surfaceForm = enumerator.Current;
+                        field.SetStringValue(surfaceForm.Utf8ToString());
+                        writer.AddDocument(doc);
+                        count++;
+                    }
+
+                    reader = DirectoryReader.Open(writer, false);
+
+                    Terms terms = MultiFields.GetTerms(reader, "body");
+                    if (terms == null)
+                    {
+                        throw new ArgumentException("need at least one suggestion");
+                    }
+
+                    // Move all ngrams into an FST:
+                    TermsEnum termsEnum = terms.GetEnumerator(null);
+
+                    Outputs<long?> outputs = PositiveInt32Outputs.Singleton;
+                    Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+
+                    Int32sRef scratchInts = new Int32sRef();
+                    while (termsEnum.MoveNext())
+                    {
+                        BytesRef term = termsEnum.Current;
+                        if (term == null)
+                        {
+                            break;
+                        }
+                        int ngramCount = CountGrams(term);
+                        if (ngramCount > grams)
+                        {
+                            throw new ArgumentException("tokens must not contain separator byte; got token=" + term + " but gramCount=" + ngramCount + ", which is greater than expected max ngram size=" + grams);
+                        }
+                        if (ngramCount == 1)
+                        {
+                            totTokens += termsEnum.TotalTermFreq;
+                        }
+
+                        builder.Add(Lucene.Net.Util.Fst.Util.ToInt32sRef(term, scratchInts), EncodeWeight(termsEnum.TotalTermFreq));
+                    }
+
+                    fst = builder.Finish();
+                    if (fst == null)
+                    {
+                        throw new ArgumentException("need at least one suggestion");
+                    }
+                    //System.out.println("FST: " + fst.getNodeCount() + " nodes");
+
+                    /*
+                    PrintWriter pw = new PrintWriter("/x/tmp/out.dot");
+                    Util.toDot(fst, pw, true, true);
+                    pw.close();
+                    */
+
+                    success = true;
+                }
+                finally
+                {
+                    if (success)
+                    {
+                        IOUtils.Dispose(writer, reader);
+                    }
+                    else
+                    {
+                        IOUtils.DisposeWhileHandlingException(writer, reader);
+                    }
+                }
+            }
+            finally
+            {
+                try
+                {
+                    IOUtils.Dispose(dir);
+                }
+                finally
+                {
+                    // LUCENENET specific - since we are removing the entire directory anyway,
+                    // it doesn't make sense to first do a loop in order remove the files.
+                    // Let the System.IO.Directory.Delete() method handle that.
+                    // We also need to dispose the Directory instance first before deleting from disk.
+                    try
+                    {
+                        System.IO.Directory.Delete(tempIndexPath.FullName, true);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new InvalidOperationException("failed to remove " + tempIndexPath, e);
+                    }
+                }
+            }
+        }
+
+        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public override void Build(IInputIterator iterator)
         {
             Build(iterator, IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB);
@@ -297,6 +455,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         ///  amount of temporary RAM while building.  Note that
         ///  the weights for the suggestions are ignored. 
         /// </summary>
+        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public virtual void Build(IInputIterator iterator, double ramBufferSizeMB)
         {
             if (iterator.HasPayloads)

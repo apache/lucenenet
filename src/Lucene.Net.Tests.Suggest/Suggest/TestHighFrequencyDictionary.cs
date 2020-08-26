@@ -4,6 +4,7 @@ using Lucene.Net.Search.Spell;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Search.Suggest
 {
@@ -28,6 +29,22 @@ namespace Lucene.Net.Search.Suggest
     {
         [Test]
         public void TestEmpty()
+        {
+            Directory dir = NewDirectory();
+            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            writer.Commit();
+            writer.Dispose();
+            IndexReader ir = DirectoryReader.Open(dir);
+            IDictionary dictionary = new HighFrequencyDictionary(ir, "bogus", 0.1f);
+            IBytesRefEnumerator tf = dictionary.GetEntryEnumerator();
+            assertNull(tf.Comparer);
+            assertFalse(tf.MoveNext());
+            dir.Dispose();
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestEmptyIterator()
         {
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));

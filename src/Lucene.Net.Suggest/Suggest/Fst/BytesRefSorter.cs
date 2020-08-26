@@ -33,7 +33,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// </summary>
         /// <exception cref="IOException"> If an I/O exception occurs. </exception>
         /// <exception cref="InvalidOperationException"> If an addition attempt is performed after
-        /// a call to <see cref="GetIterator"/> has been made. </exception>
+        /// a call to <see cref="GetEnumerator()"/> has been made. </exception>
         void Add(BytesRef utf8);
 
         /// <summary>
@@ -41,6 +41,14 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// an enumerator over all sorted entries.
         /// </summary>
         /// <exception cref="IOException"> If an I/O exception occurs. </exception>
+        IBytesRefEnumerator GetEnumerator();
+
+        /// <summary>
+        /// Sorts the entries added in <see cref="Add(BytesRef)"/> and returns 
+        /// an iterator over all sorted entries.
+        /// </summary>
+        /// <exception cref="IOException"> If an I/O exception occurs. </exception>
+        [Obsolete("Use GetEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         IBytesRefIterator GetIterator();
 
         /// <summary>

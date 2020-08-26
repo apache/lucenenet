@@ -21,6 +21,58 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
+    /// A simple enumerator interface for <see cref="BytesRef"/> iteration.
+    /// </summary>
+    public interface IBytesRefEnumerator
+    {
+        /// <summary>
+        /// Increments the iteration to the next <see cref="BytesRef"/> in the enumerator.
+        /// </summary>
+        /// <returns><c>true</c> if the enumerator was successfully advanced to the next element;
+        /// <c>false</c> if the enumerator has passed the end of the collection.</returns>
+        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        bool MoveNext();
+
+        /// <summary>
+        /// Gets the <see cref="BytesRef"/> for the current iteration. The returned
+        /// <see cref="BytesRef"/> may be reused across calls to <see cref="MoveNext()"/>.
+        /// </summary>
+        BytesRef Current { get; }
+
+        /// <summary>
+        /// Return the <see cref="BytesRef"/> Comparer used to sort terms provided by the
+        /// iterator. This may return <c>null</c> if there are no items or the iterator is not
+        /// sorted. Callers may invoke this method many times, so it's best to cache a
+        /// single instance &amp; reuse it.
+        /// </summary>
+        IComparer<BytesRef> Comparer { get; }
+    }
+
+    /// <summary>
+    /// LUCENENET specific class to make the syntax of creating an empty
+    /// <see cref="IBytesRefEnumerator"/> the same as it was in Lucene. Example:
+    /// <code>
+    /// var iter = BytesRefEnumerator.EMPTY;
+    /// </code>
+    /// </summary>
+    public static class BytesRefEnumerator
+    {
+        /// <summary>
+        /// Singleton <see cref="BytesRefEnumerator"/> that iterates over 0 BytesRefs.
+        /// </summary>
+        public static readonly IBytesRefEnumerator EMPTY = new EmptyBytesRefEnumerator();
+
+        private class EmptyBytesRefEnumerator : IBytesRefEnumerator
+        {
+            public bool MoveNext() => false;
+
+            public IComparer<BytesRef> Comparer => null;
+
+            public BytesRef Current => null;
+        }
+    }
+
+    /// <summary>
     /// A simple iterator interface for <see cref="BytesRef"/> iteration.
     /// </summary>
     public interface IBytesRefIterator
@@ -50,7 +102,7 @@ namespace Lucene.Net.Util
     /// LUCENENET specific class to make the syntax of creating an empty
     /// <see cref="IBytesRefIterator"/> the same as it was in Lucene. Example:
     /// <code>
-    /// var iter = BytesRefIterator.Empty;
+    /// var iter = BytesRefIterator.EMPTY;
     /// </code>
     /// </summary>
     public static class BytesRefIterator
