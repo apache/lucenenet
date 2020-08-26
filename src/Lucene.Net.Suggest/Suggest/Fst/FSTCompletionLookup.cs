@@ -30,7 +30,7 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// An adapter from <see cref="Lookup"/> API to <see cref="FSTCompletion"/>.
     /// 
     /// <para>This adapter differs from <see cref="FSTCompletion"/> in that it attempts
-    /// to discretize any "weights" as passed from in <see cref="IInputIterator.Weight"/>
+    /// to discretize any "weights" as passed from in <see cref="IInputEnumerator.Weight"/>
     /// to match the number of buckets. For the rationale for bucketing, see
     /// <see cref="FSTCompletion"/>.
     /// 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// of this class from an existing FST.
         /// </summary>
         /// <seealso cref="FSTCompletionLookup(FSTCompletion, bool)"/>
-        private static int INVALID_BUCKETS_COUNT = -1;
+        private const int INVALID_BUCKETS_COUNT = -1;
 
         /// <summary>
         /// Shared tail length for conflating in the created automaton. Setting this
@@ -74,8 +74,8 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// </summary>
         private const int sharedTailLength = 5;
 
-        private int buckets;
-        private bool exactMatchFirst;
+        private readonly int buckets;
+        private readonly bool exactMatchFirst;
 
         /// <summary>
         /// Automaton used for completions with higher weights reordering.
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// This constructor prepares for creating a suggested FST using the
-        /// <see cref="Build(IInputIterator)"/> method. The number of weight
+        /// <see cref="Build(IInputEnumerator)"/> method. The number of weight
         /// discretization buckets is set to <see cref="FSTCompletion.DEFAULT_BUCKETS"/> and
         /// exact matches are promoted to the top of the suggestions list.
         /// </summary>
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         /// <summary>
         /// This constructor prepares for creating a suggested FST using the
-        /// <see cref="Build(IInputIterator)"/> method.
+        /// <see cref="Build(IInputEnumerator)"/> method.
         /// </summary>
         /// <param name="buckets">
         ///          The number of weight discretization buckets (see
@@ -137,6 +137,111 @@ namespace Lucene.Net.Search.Suggest.Fst
             this.higherWeightsCompletion = new FSTCompletion(completion.FST, true, exactMatchFirst);
         }
 
+        public override void Build(IInputEnumerator enumerator)
+        {
+            if (enumerator.HasPayloads)
+            {
+                throw new ArgumentException("this suggester doesn't support payloads");
+            }
+            if (enumerator.HasContexts)
+            {
+                throw new ArgumentException("this suggester doesn't support contexts");
+            }
+            FileInfo tempInput = FileSupport.CreateTempFile(typeof(FSTCompletionLookup).Name, ".input", OfflineSorter.DefaultTempDir());
+            FileInfo tempSorted = FileSupport.CreateTempFile(typeof(FSTCompletionLookup).Name, ".sorted", OfflineSorter.DefaultTempDir());
+
+            OfflineSorter.ByteSequencesWriter writer = new OfflineSorter.ByteSequencesWriter(tempInput);
+            OfflineSorter.ByteSequencesReader reader = null;
+            ExternalRefSorter sorter = null;
+
+            // Push floats up front before sequences to sort them. For now, assume they are non-negative.
+            // If negative floats are allowed some trickery needs to be done to find their byte order.
+            bool success = false;
+            count = 0;
+            try
+            {
+                byte[] buffer = Arrays.Empty<byte>();
+                ByteArrayDataOutput output = new ByteArrayDataOutput(buffer);
+                BytesRef spare;
+                while (enumerator.MoveNext())
+                {
+                    spare = enumerator.Current;
+                    if (spare.Length + 4 >= buffer.Length)
+                    {
+                        buffer = ArrayUtil.Grow(buffer, spare.Length + 4);
+                    }
+
+                    output.Reset(buffer);
+                    output.WriteInt32(EncodeWeight(enumerator.Weight));
+                    output.WriteBytes(spare.Bytes, spare.Offset, spare.Length);
+                    writer.Write(buffer, 0, output.Position);
+                }
+                writer.Dispose();
+
+                // We don't know the distribution of scores and we need to bucket them, so we'll sort
+                // and divide into equal buckets.
+                OfflineSorter.SortInfo info = (new OfflineSorter()).Sort(tempInput, tempSorted);
+                tempInput.Delete();
+                FSTCompletionBuilder builder = new FSTCompletionBuilder(buckets, sorter = new ExternalRefSorter(new OfflineSorter()), sharedTailLength);
+
+                int inputLines = info.Lines;
+                reader = new OfflineSorter.ByteSequencesReader(tempSorted);
+                long line = 0;
+                int previousBucket = 0;
+                int previousScore = 0;
+                ByteArrayDataInput input = new ByteArrayDataInput();
+                BytesRef tmp1 = new BytesRef();
+                BytesRef tmp2 = new BytesRef();
+                while (reader.Read(tmp1))
+                {
+                    input.Reset(tmp1.Bytes);
+                    int currentScore = input.ReadInt32();
+
+                    int bucket;
+                    if (line > 0 && currentScore == previousScore)
+                    {
+                        bucket = previousBucket;
+                    }
+                    else
+                    {
+                        bucket = (int)(line * buckets / inputLines);
+                    }
+                    previousScore = currentScore;
+                    previousBucket = bucket;
+
+                    // Only append the input, discard the weight.
+                    tmp2.Bytes = tmp1.Bytes;
+                    tmp2.Offset = input.Position;
+                    tmp2.Length = tmp1.Length - input.Position;
+                    builder.Add(tmp2, bucket);
+
+                    line++;
+                    count++;
+                }
+
+                // The two FSTCompletions share the same automaton.
+                this.higherWeightsCompletion = builder.Build();
+                this.normalCompletion = new FSTCompletion(higherWeightsCompletion.FST, false, exactMatchFirst);
+
+                success = true;
+            }
+            finally
+            {
+                if (success)
+                {
+                    IOUtils.Dispose(reader, writer, sorter);
+                }
+                else
+                {
+                    IOUtils.DisposeWhileHandlingException(reader, writer, sorter);
+                }
+
+                tempInput.Delete();
+                tempSorted.Delete();
+            }
+        }
+
+        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public override void Build(IInputIterator iterator)
         {
             if (iterator.HasPayloads)

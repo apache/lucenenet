@@ -42,12 +42,29 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns an iterator that will step through all
+        /// terms. This method will not return <c>null</c>.
+        /// </summary>
+        public virtual TermsEnum GetEnumerator() // LUCENENET specific - Added for .NET compatibility
+            => GetIterator(null);
+
+        /// <summary>
+        /// Returns an iterator that will step through all
         /// terms. This method will not return <c>null</c>.  If you have
         /// a previous <see cref="TermsEnum"/>, for example from a different
         /// field, you can pass it for possible reuse if the
         /// implementation can do so.
         /// </summary>
-        public abstract TermsEnum GetIterator(TermsEnum reuse);
+        public virtual TermsEnum GetEnumerator(TermsEnum reuse) // LUCENENET specific - Added for .NET compatibility
+            => GetIterator(reuse);
+
+        /// <summary>
+        /// Returns an iterator that will step through all
+        /// terms. This method will not return <c>null</c>.  If you have
+        /// a previous <see cref="TermsEnum"/>, for example from a different
+        /// field, you can pass it for possible reuse if the
+        /// implementation can do so.
+        /// </summary>
+        public abstract TermsEnum GetIterator(TermsEnum reuse); // LUCENENT TODO: API - Mark obsolete/hide
 
         /// <summary>
         /// Returns a <see cref="TermsEnum"/> that iterates over all terms that

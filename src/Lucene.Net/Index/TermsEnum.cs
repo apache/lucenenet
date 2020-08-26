@@ -26,9 +26,9 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// Iterator to seek (<see cref="SeekCeil(BytesRef)"/>, 
+    /// Enumerator to seek (<see cref="SeekCeil(BytesRef)"/>, 
     /// <see cref="SeekExact(BytesRef)"/>) or step through 
-    /// (<see cref="Next()"/> terms to obtain frequency information 
+    /// (<see cref="MoveNext()"/> terms to obtain <see cref="Term"/>, frequency information 
     /// (<see cref="DocFreq"/>), <see cref="DocsEnum"/> or 
     /// <see cref="DocsAndPositionsEnum"/> for the current term 
     /// (<see cref="Docs(IBits, DocsEnum)"/>).
@@ -38,16 +38,35 @@ namespace Lucene.Net.Index
     /// greater than the one before it.
     ///
     /// <para/>The <see cref="TermsEnum"/> is unpositioned when you first obtain it
-    /// and you must first successfully call <see cref="Next"/> or one
+    /// and you must first successfully call <see cref="MoveNext()"/> or one
     /// of the <c>Seek</c> methods.
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public abstract class TermsEnum : IBytesRefIterator
+    public abstract class TermsEnum : IBytesRefEnumerator, IBytesRefIterator // LUCENENET specific: Implemented IBytesRefEnumerator for .NET compatibility
     {
+        protected BytesRef m_current;
+
         public abstract IComparer<BytesRef> Comparer { get; } // LUCENENET specific - must supply implementation for the interface
 
+        /// <inheritdoc/>
         public abstract BytesRef Next(); // LUCENENET specific - must supply implementation for the interface
+
+        /// <inheritdoc/>
+        public virtual BytesRef Current => m_current; // LUCENENET specific - made into enumerator for foreach
+
+        /// <summary>
+        /// Moves to the next item in the <see cref="TermsEnum"/>.
+        /// <para/>
+        /// The default implementation can and should be overridden with a more optimized version.
+        /// </summary>
+        /// <returns><c>true</c> if the enumerator was successfully advanced to the next element;
+        /// <c>false</c> if the enumerator has passed the end of the collection.</returns>
+        public virtual bool MoveNext() // LUCENENET specific - made into enumerator for foreach
+        {
+            m_current = Next();
+            return !(m_current is null);
+        }
 
         private AttributeSource atts = null;
 

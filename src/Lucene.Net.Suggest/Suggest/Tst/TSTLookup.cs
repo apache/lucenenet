@@ -39,11 +39,47 @@ namespace Lucene.Net.Search.Suggest.Tst
 
         /// <summary>
         /// Creates a new TSTLookup with an empty Ternary Search Tree. </summary>
-        /// <seealso cref="Build(IInputIterator)"/>
+        /// <seealso cref="Build(IInputEnumerator)"/>
         public TSTLookup()
         {
         }
 
+        public override void Build(IInputEnumerator enumerator)
+        {
+            if (enumerator.HasPayloads)
+            {
+                throw new ArgumentException("this suggester doesn't support payloads");
+            }
+            if (enumerator.HasContexts)
+            {
+                throw new ArgumentException("this suggester doesn't support contexts");
+            }
+            root = new TernaryTreeNode();
+            // buffer first
+#pragma warning disable 612, 618
+            if (enumerator.Comparer != BytesRef.UTF8SortedAsUTF16Comparer)
+            {
+                // make sure it's sorted and the comparer uses UTF16 sort order
+                enumerator = new SortedInputEnumerator(enumerator, BytesRef.UTF8SortedAsUTF16Comparer);
+            }
+#pragma warning restore 612, 618
+
+            List<string> tokens = new List<string>();
+            List<object> vals = new List<object>();
+            BytesRef spare;
+            CharsRef charsSpare = new CharsRef();
+            while (enumerator.MoveNext())
+            {
+                spare = enumerator.Current;
+                charsSpare.Grow(spare.Length);
+                UnicodeUtil.UTF8toUTF16(spare.Bytes, spare.Offset, spare.Length, charsSpare);
+                tokens.Add(charsSpare.ToString());
+                vals.Add(enumerator.Weight);
+            }
+            autocomplete.BalancedTree(tokens.ToArray(), vals.ToArray(), 0, tokens.Count - 1, root);
+        }
+
+        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public override void Build(IInputIterator tfit)
         {
             if (tfit.HasPayloads)

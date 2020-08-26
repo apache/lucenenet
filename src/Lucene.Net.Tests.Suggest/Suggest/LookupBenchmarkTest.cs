@@ -188,7 +188,7 @@ namespace Lucene.Net.Search.Suggest
                     lookup = (Lookup)ctor.Invoke(new object[] { a });
                 }
             }
-            lookup.Build(new InputArrayIterator(input));
+            lookup.Build(new InputArrayEnumerator(input));
             return lookup;
         }
 

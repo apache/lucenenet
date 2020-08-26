@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search.Suggest;
+using System;
 
 namespace Lucene.Net.Search.Spell
 {
@@ -26,8 +27,8 @@ namespace Lucene.Net.Search.Spell
     /// </summary>
     public class LuceneDictionary : IDictionary
     {
-        private IndexReader reader;
-        private string field;
+        private readonly IndexReader reader;
+        private readonly string field;
 
         /// <summary>
         /// Creates a new Dictionary, pulling source terms from
@@ -39,6 +40,20 @@ namespace Lucene.Net.Search.Spell
             this.field = field;
         }
 
+        public virtual IInputEnumerator GetEntryEnumerator()
+        {
+            Terms terms = MultiFields.GetTerms(reader, field);
+            if (terms != null)
+            {
+                return new InputEnumeratorWrapper(terms.GetEnumerator(null));
+            }
+            else
+            {
+                return InputEnumerator.EMPTY;
+            }
+        }
+
+        [Obsolete("Use GetEntryEnumerator(). This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public virtual IInputIterator GetEntryIterator()
         {
             Terms terms = MultiFields.GetTerms(reader, field);

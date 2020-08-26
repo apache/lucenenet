@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Search.Spell;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Suggest
@@ -23,8 +24,68 @@ namespace Lucene.Net.Search.Suggest
 
     /// <summary>
     /// This wrapper buffers incoming elements.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
+    public class BufferingTermFreqEnumeratorWrapper : ITermFreqEnumerator
+    {
+        // TODO keep this for now
+        /// <summary>
+        /// buffered term entries </summary>
+        protected BytesRefArray m_entries = new BytesRefArray(Counter.NewCounter());
+        /// <summary>
+        /// current buffer position </summary>
+        protected int m_curPos = -1;
+        /// <summary>
+        /// buffered weights, parallel with <see cref="m_entries"/> </summary>
+        protected long[] m_freqs = new long[1];
+        private readonly BytesRef spare = new BytesRef();
+        private readonly IComparer<BytesRef> comp;
+        private BytesRef current;
+
+        /// <summary>
+        /// Creates a new iterator, buffering entries from the specified iterator
+        /// </summary>
+        public BufferingTermFreqEnumeratorWrapper(ITermFreqEnumerator source)
+        {
+            this.comp = source.Comparer;
+            int freqIndex = 0;
+            while (source.MoveNext())
+            {
+                m_entries.Append(source.Current);
+                if (freqIndex >= m_freqs.Length)
+                {
+                    m_freqs = ArrayUtil.Grow(m_freqs, m_freqs.Length + 1);
+                }
+                m_freqs[freqIndex++] = source.Weight;
+            }
+
+        }
+
+        public virtual long Weight => m_freqs[m_curPos];
+
+        public virtual BytesRef Current => current;
+
+        public virtual bool MoveNext()
+        {
+            if (++m_curPos < m_entries.Length)
+            {
+                m_entries.Get(spare, m_curPos);
+                current = spare;
+                return true;
+            }
+            current = null;
+            return false;
+        }
+
+        public virtual IComparer<BytesRef> Comparer => comp;
+    }
+
+    /// <summary>
+    /// This wrapper buffers incoming elements.
+    /// @lucene.experimental
+    /// </summary>
+    [Obsolete("Use BufferingTermFreqEnumeratorWrapper instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public class BufferingTermFreqIteratorWrapper : ITermFreqIterator
     {
         // TODO keep this for now

@@ -26,9 +26,8 @@ namespace Lucene.Net.Search.Suggest.Fst
         [Test]
         public void TestExternalRefSorter()
         {
-            ExternalRefSorter s = new ExternalRefSorter(new OfflineSorter());
-            Check(s);
-            s.Dispose();
+            using (ExternalRefSorter s = new ExternalRefSorter(new OfflineSorter()))
+                Check(s);
         }
 
         [Test]
@@ -38,6 +37,54 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         private void Check(IBytesRefSorter sorter)
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                byte[] current = new byte[Random.Next(256)];
+                Random.NextBytes(current);
+                sorter.Add(new BytesRef(current));
+            }
+
+            // Create two iterators and check that they're aligned with each other.
+            IBytesRefEnumerator i1 = sorter.GetEnumerator();
+            IBytesRefEnumerator i2 = sorter.GetEnumerator();
+
+            // Verify sorter contract.
+            try
+            {
+                sorter.Add(new BytesRef(new byte[1]));
+                fail("expected contract violation.");
+            }
+            catch (InvalidOperationException /*e*/)
+            {
+                // Expected.
+            }
+            while (i1.MoveNext() && i2.MoveNext())
+            {
+                assertEquals(i1.Current, i2.Current);
+            }
+            assertFalse(i1.MoveNext());
+            assertFalse(i2.MoveNext());
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestExternalRefSorterIterator()
+        {
+            ExternalRefSorter s = new ExternalRefSorter(new OfflineSorter());
+            CheckIterator(s);
+            s.Dispose();
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestInMemorySorterIterator()
+        {
+            CheckIterator(new InMemorySorter(BytesRef.UTF8SortedAsUnicodeComparer));
+        }
+
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        private void CheckIterator(IBytesRefSorter sorter)
         {
             for (int i = 0; i < 100; i++)
             {

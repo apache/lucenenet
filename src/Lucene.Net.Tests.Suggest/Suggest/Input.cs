@@ -21,7 +21,7 @@ namespace Lucene.Net.Search.Suggest
      */
 
     /// <summary>
-    /// corresponds to <seealso cref="InputIterator"/>'s entries
+    /// corresponds to <seealso cref="InputEnumerator"/>'s entries
     /// </summary>
     public sealed class Input
     {

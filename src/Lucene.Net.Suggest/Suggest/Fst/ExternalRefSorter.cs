@@ -52,6 +52,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             writer.Write(utf8);
         }
 
+        [Obsolete("Use GetEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public virtual IBytesRefIterator GetIterator()
         {
             if (sorted == null)
@@ -65,7 +66,23 @@ namespace Lucene.Net.Search.Suggest.Fst
                 input = null;
             }
 
-            return new ByteSequenceIterator(new OfflineSorter.ByteSequencesReader(sorted), sort.Comparer);
+            return new ByteSequenceEnumerator(new OfflineSorter.ByteSequencesReader(sorted), sort.Comparer);
+        }
+
+        public virtual IBytesRefEnumerator GetEnumerator()
+        {
+            if (sorted == null)
+            {
+                CloseWriter();
+
+                sorted = new FileInfo(Path.GetTempFileName());
+                sort.Sort(input, sorted);
+
+                input.Delete();
+                input = null;
+            }
+
+            return new ByteSequenceEnumerator(new OfflineSorter.ByteSequencesReader(sorted), sort.Comparer);
         }
 
         private void CloseWriter()
@@ -82,21 +99,30 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Removes any written temporary files.
         /// </summary>
-        public virtual void Dispose()
+        public void Dispose()
         {
-            try
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing) // LUCENENET: Added proper dispose pattern.
+        {
+            if (disposing)
             {
-                CloseWriter();
-            }
-            finally
-            {
-                if (input != null)
+                try
                 {
-                    input.Delete();
+                    CloseWriter();
                 }
-                if (sorted != null)
+                finally
                 {
-                    sorted.Delete();
+                    if (input != null)
+                    {
+                        input.Delete();
+                    }
+                    if (sorted != null)
+                    {
+                        sorted.Delete();
+                    }
                 }
             }
         }
@@ -104,18 +130,22 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// <summary>
         /// Iterate over byte refs in a file.
         /// </summary>
-        internal class ByteSequenceIterator : IBytesRefIterator
+        internal class ByteSequenceEnumerator : IBytesRefEnumerator
+#pragma warning disable CS0618 // Type or member is obsolete
+            , IBytesRefIterator
+#pragma warning restore CS0618 // Type or member is obsolete
         {
             private readonly OfflineSorter.ByteSequencesReader reader;
             private BytesRef scratch = new BytesRef();
             private readonly IComparer<BytesRef> comparer;
 
-            public ByteSequenceIterator(OfflineSorter.ByteSequencesReader reader, IComparer<BytesRef> comparer)
+            public ByteSequenceEnumerator(OfflineSorter.ByteSequencesReader reader, IComparer<BytesRef> comparer)
             {
                 this.reader = reader;
                 this.comparer = comparer;
             }
 
+            [Obsolete("Use MoveNext(), Current instead. This method will be removed in 4.8.0."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public virtual BytesRef Next()
             {
                 if (scratch == null)
@@ -139,6 +169,43 @@ namespace Lucene.Net.Search.Suggest.Fst
                     }
                     success = true;
                     return scratch;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        IOUtils.DisposeWhileHandlingException(reader);
+                    }
+                }
+            }
+
+            public BytesRef Current => scratch;
+
+            public bool MoveNext()
+            {
+                if (scratch is null)
+                {
+                    return false;
+                }
+                bool success = false;
+                try
+                {
+                    byte[] next = reader.Read();
+                    if (next != null)
+                    {
+                        scratch.Bytes = next;
+                        scratch.Length = next.Length;
+                        scratch.Offset = 0;
+                        success = true;
+                        return true;
+                    }
+                    else
+                    {
+                        IOUtils.Dispose(reader);
+                        scratch = null;
+                        success = true;
+                        return false;
+                    }
                 }
                 finally
                 {

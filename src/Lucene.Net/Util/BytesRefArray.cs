@@ -198,10 +198,10 @@ namespace Lucene.Net.Util
         {
             private readonly BytesRefArray outerInstance;
 
-            private IComparer<BytesRef> comp;
-            private BytesRef spare;
-            private int size;
-            private int[] indices;
+            private readonly IComparer<BytesRef> comp;
+            private readonly BytesRef spare;
+            private readonly int size;
+            private readonly int[] indices;
 
             public BytesRefIteratorAnonymousInnerClassHelper(BytesRefArray outerInstance, IComparer<BytesRef> comp, BytesRef spare, int size, int[] indices)
             {
@@ -225,6 +225,70 @@ namespace Lucene.Net.Util
             }
 
             public virtual IComparer<BytesRef> Comparer => comp;
+        }
+
+        /// <summary>
+        /// Sugar for <see cref="GetEnumerator(IComparer{BytesRef})"/> with a <c>null</c> comparer.
+        /// </summary>
+        public IBytesRefEnumerator GetEnumerator()
+            => GetEnumerator(null);
+
+
+        /// <summary>
+        /// <para>
+        /// Returns a <see cref="IBytesRefEnumerator"/> with point in time semantics. The
+        /// enumerator provides access to all so far appended <see cref="BytesRef"/> instances.
+        /// </para>
+        /// <para>
+        /// If a non <c>null</c> <see cref="T:IComparer{BytesRef}"/> is provided the enumerator will
+        /// iterate the byte values in the order specified by the comparer. Otherwise
+        /// the order is the same as the values were appended.
+        /// </para>
+        /// <para>
+        /// This is a non-destructive operation.
+        /// </para>
+        /// </summary>
+        public IBytesRefEnumerator GetEnumerator(IComparer<BytesRef> comparer)
+        {
+            int[] indices = comparer == null ? null : Sort(comparer);
+            return new Enumerator(this, comparer, this.Length, indices);
+        }
+
+        private struct Enumerator : IBytesRefEnumerator
+        {
+            private readonly IComparer<BytesRef> comparer;
+            private readonly BytesRef spare;
+            private readonly int size;
+            private readonly int[] indices;
+
+            private readonly BytesRefArray bytesRefArray;
+            private int pos;
+
+            public Enumerator(BytesRefArray bytesRefArray, IComparer<BytesRef> comparer, int size, int[] indices)
+            {
+                this.spare = new BytesRef();
+                this.pos = 0;
+                this.Current = null;
+                this.bytesRefArray = bytesRefArray;
+                this.comparer = comparer;
+                this.size = size;
+                this.indices = indices;
+            }
+
+            public BytesRef Current { get; private set; }
+
+            public bool MoveNext()
+            {
+                if (pos < size)
+                {
+                    Current = bytesRefArray.Get(spare, indices == null ? pos++ : indices[pos++]);
+                    return true;
+                }
+                Current = null;
+                return false;
+            }
+
+            public IComparer<BytesRef> Comparer => comparer;
         }
     }
 }

@@ -50,6 +50,32 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             MockAnalyzer analyzer = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
             FuzzySuggester suggester = new FuzzySuggester(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
                                                           0, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, FuzzySuggester.DEFAULT_UNICODE_AWARE);
+            suggester.Build(new InputArrayEnumerator(keys));
+            int numIters = AtLeast(10);
+            for (int i = 0; i < numIters; i++)
+            {
+                string addRandomEdit = AddRandomEdit("foo bar boo", FuzzySuggester.DEFAULT_NON_FUZZY_PREFIX);
+                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence(addRandomEdit, Random).ToString(), false, 2);
+                assertEquals(addRandomEdit, 1, results.size());
+                assertEquals("foo bar boo far", results[0].Key.toString());
+                assertEquals(12, results[0].Value, 0.01F);
+            }
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestRandomEditsIterator()
+        {
+            List<Input> keys = new List<Input>();
+            int numTerms = AtLeast(100);
+            for (int i = 0; i < numTerms; i++)
+            {
+                keys.Add(new Input("boo" + TestUtil.RandomSimpleString(Random), 1 + Random.Next(100)));
+            }
+            keys.Add(new Input("foo bar boo far", 12));
+            MockAnalyzer analyzer = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
+            FuzzySuggester suggester = new FuzzySuggester(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
+                                                          0, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, FuzzySuggester.DEFAULT_UNICODE_AWARE);
             suggester.Build(new InputArrayIterator(keys));
             int numIters = AtLeast(10);
             for (int i = 0; i < numIters; i++)
@@ -64,6 +90,32 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         [Test]
         public void TestNonLatinRandomEdits()
+        {
+            List<Input> keys = new List<Input>();
+            int numTerms = AtLeast(100);
+            for (int i = 0; i < numTerms; i++)
+            {
+                keys.Add(new Input("буу" + TestUtil.RandomSimpleString(Random), 1 + Random.nextInt(100)));
+            }
+            keys.Add(new Input("фуу бар буу фар", 12));
+            MockAnalyzer analyzer = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
+            FuzzySuggester suggester = new FuzzySuggester(analyzer, analyzer, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
+                0, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, true);
+            suggester.Build(new InputArrayEnumerator(keys));
+            int numIters = AtLeast(10);
+            for (int i = 0; i < numIters; i++)
+            {
+                string addRandomEdit = AddRandomEdit("фуу бар буу", 0);
+                IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence(addRandomEdit, Random).ToString(), false, 2);
+                assertEquals(addRandomEdit, 1, results.size());
+                assertEquals("фуу бар буу фар", results[0].Key.toString());
+                assertEquals(12, results[0].Value, 0.01F);
+            }
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestNonLatinRandomEditsIterator()
         {
             List<Input> keys = new List<Input>();
             int numTerms = AtLeast(100);
@@ -90,6 +142,82 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /** this is basically the WFST test ported to KeywordAnalyzer. so it acts the same */
         [Test]
         public void TestKeyword()
+        {
+            Input[] keys = new Input[] {
+                new Input("foo", 50),
+                new Input("bar", 10),
+                new Input("barbar", 12),
+                new Input("barbara", 6)
+            };
+
+            FuzzySuggester suggester = new FuzzySuggester(new MockAnalyzer(Random, MockTokenizer.KEYWORD, false));
+            suggester.Build(new InputArrayEnumerator(keys));
+
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("bariar", Random).ToString(), false, 2);
+            assertEquals(2, results.size());
+            assertEquals("barbar", results[0].Key.toString());
+            assertEquals(12, results[0].Value, 0.01F);
+
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbr", Random).ToString(), false, 2);
+            assertEquals(2, results.size());
+            assertEquals("barbar", results[0].Key.toString());
+            assertEquals(12, results[0].Value, 0.01F);
+
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbara", Random).ToString(), false, 2);
+            assertEquals(2, results.size());
+            assertEquals("barbara", results[0].Key.toString());
+            assertEquals(6, results[0].Value, 0.01F);
+
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbar", Random).ToString(), false, 2);
+            assertEquals(2, results.size());
+            assertEquals("barbar", results[0].Key.toString());
+            assertEquals(12, results[0].Value, 0.01F);
+            assertEquals("barbara", results[1].Key.toString());
+            assertEquals(6, results[1].Value, 0.01F);
+
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("barbaa", Random).ToString(), false, 2);
+            assertEquals(2, results.size());
+            assertEquals("barbar", results[0].Key.toString());
+            assertEquals(12, results[0].Value, 0.01F);
+            assertEquals("barbara", results[1].Key.toString());
+            assertEquals(6, results[1].Value, 0.01F);
+
+            // top N of 2, but only foo is available
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("f", Random).ToString(), false, 2);
+            assertEquals(1, results.size());
+            assertEquals("foo", results[0].Key.toString());
+            assertEquals(50, results[0].Value, 0.01F);
+
+            // top N of 1 for 'bar': we return this even though
+            // barbar is higher because exactFirst is enabled:
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("bar", Random).ToString(), false, 1);
+            assertEquals(1, results.size());
+            assertEquals("bar", results[0].Key.toString());
+            assertEquals(10, results[0].Value, 0.01F);
+
+            // top N Of 2 for 'b'
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("b", Random).ToString(), false, 2);
+            assertEquals(2, results.size());
+            assertEquals("barbar", results[0].Key.toString());
+            assertEquals(12, results[0].Value, 0.01F);
+            assertEquals("bar", results[1].Key.toString());
+            assertEquals(10, results[1].Value, 0.01F);
+
+            // top N of 3 for 'ba'
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ba", Random).ToString(), false, 3);
+            assertEquals(3, results.size());
+            assertEquals("barbar", results[0].Key.toString());
+            assertEquals(12, results[0].Value, 0.01F);
+            assertEquals("bar", results[1].Key.toString());
+            assertEquals(10, results[1].Value, 0.01F);
+            assertEquals("barbara", results[2].Key.toString());
+            assertEquals(6, results[2].Value, 0.01F);
+        }
+
+        /** this is basically the WFST test ported to KeywordAnalyzer. so it acts the same */
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestKeywordIterator()
         {
             Input[] keys = new Input[] {
                 new Input("foo", 50),
@@ -175,6 +303,40 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             Analyzer standard = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
             FuzzySuggester suggester = new FuzzySuggester(standard, standard, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, false, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
                 FuzzySuggester.DEFAULT_NON_FUZZY_PREFIX, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, FuzzySuggester.DEFAULT_UNICODE_AWARE);
+            suggester.Build(new InputArrayEnumerator(keys));
+
+            IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("the ghost of chris", Random).ToString(), false, 1);
+            assertEquals(1, results.size());
+            assertEquals("the ghost of christmas past", results[0].Key.toString());
+            assertEquals(50, results[0].Value, 0.01F);
+
+            // omit the 'the' since its a stopword, its suggested anyway
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ghost of chris", Random).ToString(), false, 1);
+            assertEquals(1, results.size());
+            assertEquals("the ghost of christmas past", results[0].Key.toString());
+            assertEquals(50, results[0].Value, 0.01F);
+
+            // omit the 'the' and 'of' since they are stopwords, its suggested anyway
+            results = suggester.DoLookup(TestUtil.StringToCharSequence("ghost chris", Random).ToString(), false, 1);
+            assertEquals(1, results.size());
+            assertEquals("the ghost of christmas past", results[0].Key.toString());
+            assertEquals(50, results[0].Value, 0.01F);
+        }
+
+        /**
+         * basic "standardanalyzer" test with stopword removal
+         */
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestStandardIterator()
+        {
+            Input[] keys = new Input[] {
+                new Input("the ghost of christmas past", 50),
+            };
+
+            Analyzer standard = new MockAnalyzer(Random, MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
+            FuzzySuggester suggester = new FuzzySuggester(standard, standard, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, false, FuzzySuggester.DEFAULT_MAX_EDITS, FuzzySuggester.DEFAULT_TRANSPOSITIONS,
+                FuzzySuggester.DEFAULT_NON_FUZZY_PREFIX, FuzzySuggester.DEFAULT_MIN_FUZZY_LENGTH, FuzzySuggester.DEFAULT_UNICODE_AWARE);
             suggester.Build(new InputArrayIterator(keys));
 
             IList<Lookup.LookupResult> results = suggester.DoLookup(TestUtil.StringToCharSequence("the ghost of chris", Random).ToString(), false, 1);
@@ -207,6 +369,33 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             Analyzer a = new MockAnalyzer(Random);
             FuzzySuggester suggester = new FuzzySuggester(a, a, options, 256, -1, true, 1, true, 1, 3, false);
+            suggester.Build(new InputArrayEnumerator(keys));
+            // TODO: would be nice if "ab " would allow the test to
+            // pass, and more generally if the analyzer can know
+            // that the user's current query has ended at a word, 
+            // but, analyzers don't produce SEP tokens!
+            IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence("ab c", Random).ToString(), false, 2);
+            assertEquals(2, r.size());
+
+            // With no PRESERVE_SEPS specified, "ab c" should also
+            // complete to "abcd", which has higher weight so should
+            // appear first:
+            assertEquals("abcd", r[0].Key.toString());
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestNoSepsIterator()
+        {
+            Input[] keys = new Input[] {
+                new Input("ab cd", 0),
+                new Input("abcd", 1),
+            };
+
+            SuggesterOptions options = 0;
+
+            Analyzer a = new MockAnalyzer(Random);
+            FuzzySuggester suggester = new FuzzySuggester(a, a, options, 256, -1, true, 1, true, 1, 3, false);
             suggester.Build(new InputArrayIterator(keys));
             // TODO: would be nice if "ab " would allow the test to
             // pass, and more generally if the analyzer can know
@@ -220,6 +409,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // appear first:
             assertEquals("abcd", r[0].Key.toString());
         }
+
         internal class TestGraphDupsTokenStreamComponents : TokenStreamComponents
         {
             private readonly FuzzySuggesterTest outerInstance;
@@ -294,6 +484,31 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 new Input("wi fi network is fast", 10),
             };
             FuzzySuggester suggester = new FuzzySuggester(analyzer);
+            suggester.Build(new InputArrayEnumerator(keys));
+
+            IList<Lookup.LookupResult> results = suggester.DoLookup("wifi network", false, 10);
+            if (Verbose)
+            {
+                Console.WriteLine("Results: " + results);
+            }
+            assertEquals(2, results.size());
+            assertEquals("wifi network is slow", results[0].Key);
+            assertEquals(50, results[0].Value);
+            assertEquals("wi fi network is fast", results[1].Key);
+            assertEquals(10, results[1].Value);
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestGraphDupsIterator()
+        {
+            Analyzer analyzer = new TestGraphDupsAnalyzer(this);
+
+            Input[] keys = new Input[] {
+                new Input("wifi network is slow", 50),
+                new Input("wi fi network is fast", 10),
+            };
+            FuzzySuggester suggester = new FuzzySuggester(analyzer);
             suggester.Build(new InputArrayIterator(keys));
 
             IList<Lookup.LookupResult> results = suggester.DoLookup("wifi network", false, 10);
@@ -310,6 +525,17 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         [Test]
         public void TestEmpty()
+        {
+            FuzzySuggester suggester = new FuzzySuggester(new MockAnalyzer(Random, MockTokenizer.KEYWORD, false));
+            suggester.Build(new InputArrayEnumerator(new Input[0]));
+
+            IList<Lookup.LookupResult> result = suggester.DoLookup("a", false, 20);
+            assertTrue(result.Count == 0);
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestEmptyIterator()
         {
             FuzzySuggester suggester = new FuzzySuggester(new MockAnalyzer(Random, MockTokenizer.KEYWORD, false));
             suggester.Build(new InputArrayIterator(new Input[0]));
@@ -378,6 +604,31 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         [Test]
         public void TestInputPathRequired()
+        {
+
+            //  SynonymMap.Builder b = new SynonymMap.Builder(false);
+            //  b.add(new CharsRef("ab"), new CharsRef("ba"), true);
+            //  final SynonymMap map = b.build();
+
+            //  The Analyzer below mimics the functionality of the SynonymAnalyzer
+            //  using the above map, so that the suggest module does not need a dependency on the 
+            //  synonym module 
+
+            Analyzer analyzer = new TestInputPathRequiredAnalyzer(this);
+
+            Input[] keys = new Input[] {
+                new Input("ab xc", 50),
+                new Input("ba xd", 50),
+            };
+            FuzzySuggester suggester = new FuzzySuggester(analyzer);
+            suggester.Build(new InputArrayEnumerator(keys));
+            IList<Lookup.LookupResult> results = suggester.DoLookup("ab x", false, 1);
+            assertTrue(results.size() == 1);
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestInputPathRequiredIterator()
         {
 
             //  SynonymMap.Builder b = new SynonymMap.Builder(false);
@@ -490,6 +741,52 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             Analyzer a = GetUnusualAnalyzer();
             FuzzySuggester suggester = new FuzzySuggester(a, a, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, 1, true, 1, 3, false);
+            suggester.Build(new InputArrayEnumerator(new Input[] {
+                new Input("x y", 1),
+                new Input("x y z", 3),
+                new Input("x", 2),
+                new Input("z z z", 20),
+            }));
+
+            //Console.WriteLine("ALL: " + suggester.DoLookup("x y", false, 6));
+
+            for (int topN = 1; topN < 6; topN++)
+            {
+                IList<Lookup.LookupResult> results = suggester.DoLookup("x y", false, topN);
+                //Console.WriteLine("topN=" + topN + " " + results);
+
+                assertEquals(Math.Min(topN, 4), results.size());
+
+                assertEquals("x y", results[0].Key);
+                assertEquals(1, results[0].Value);
+
+                if (topN > 1)
+                {
+                    assertEquals("z z z", results[1].Key);
+                    assertEquals(20, results[1].Value);
+
+                    if (topN > 2)
+                    {
+                        assertEquals("x y z", results[2].Key);
+                        assertEquals(3, results[2].Value);
+
+                        if (topN > 3)
+                        {
+                            assertEquals("x", results[3].Key);
+                            assertEquals(2, results[3].Value);
+                        }
+                    }
+                }
+            }
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestExactFirstIterator()
+        {
+
+            Analyzer a = GetUnusualAnalyzer();
+            FuzzySuggester suggester = new FuzzySuggester(a, a, SuggesterOptions.EXACT_FIRST | SuggesterOptions.PRESERVE_SEP, 256, -1, true, 1, true, 1, 3, false);
             suggester.Build(new InputArrayIterator(new Input[] {
                 new Input("x y", 1),
                 new Input("x y z", 3),
@@ -531,6 +828,50 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         [Test]
         public void TestNonExactFirst()
+        {
+
+            Analyzer a = GetUnusualAnalyzer();
+            FuzzySuggester suggester = new FuzzySuggester(a, a, SuggesterOptions.PRESERVE_SEP, 256, -1, true, 1, true, 1, 3, false);
+
+            suggester.Build(new InputArrayEnumerator(new Input[] {
+                new Input("x y", 1),
+                new Input("x y z", 3),
+                new Input("x", 2),
+                new Input("z z z", 20),
+            }));
+
+            for (int topN = 1; topN < 6; topN++)
+            {
+                IList<Lookup.LookupResult> results = suggester.DoLookup("p", false, topN);
+
+                assertEquals(Math.Min(topN, 4), results.size());
+
+                assertEquals("z z z", results[0].Key);
+                assertEquals(20, results[0].Value);
+
+                if (topN > 1)
+                {
+                    assertEquals("x y z", results[1].Key);
+                    assertEquals(3, results[1].Value);
+
+                    if (topN > 2)
+                    {
+                        assertEquals("x", results[2].Key);
+                        assertEquals(2, results[2].Value);
+
+                        if (topN > 3)
+                        {
+                            assertEquals("x y", results[3].Key);
+                            assertEquals(1, results[3].Value);
+                        }
+                    }
+                }
+            }
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestNonExactFirstIterator()
         {
 
             Analyzer a = GetUnusualAnalyzer();
@@ -673,8 +1014,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         internal class MockTokenEatingAnalyzer : Analyzer
         {
-            private int numStopChars;
-            private bool preserveHoles;
+            private readonly int numStopChars;
+            private readonly bool preserveHoles;
 
             public MockTokenEatingAnalyzer(int numStopChars, bool preserveHoles)
             {
@@ -718,6 +1059,274 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         [Test]
         [Slow]
         public void TestRandom()
+        {
+
+            int numQueries = AtLeast(100);
+
+            List<TermFreqPayload2> slowCompletor = new List<TermFreqPayload2>();
+            JCG.SortedSet<string> allPrefixes = new JCG.SortedSet<string>(StringComparer.Ordinal);
+            ISet<string> seen = new JCG.HashSet<string>();
+
+            Input[] keys = new Input[numQueries];
+
+            bool preserveSep = Random.nextBoolean();
+            bool unicodeAware = Random.nextBoolean();
+
+            int numStopChars = Random.nextInt(10);
+            bool preserveHoles = Random.nextBoolean();
+
+            if (Verbose)
+            {
+                Console.WriteLine("TEST: " + numQueries + " words; preserveSep=" + preserveSep + " ; unicodeAware=" + unicodeAware + " numStopChars=" + numStopChars + " preserveHoles=" + preserveHoles);
+            }
+
+            for (int i = 0; i < numQueries; i++)
+            {
+                int numTokens = TestUtil.NextInt32(Random, 1, 4);
+                string key;
+                string analyzedKey;
+                while (true)
+                {
+                    key = "";
+                    analyzedKey = "";
+                    bool lastRemoved = false;
+                    for (int token = 0; token < numTokens; token++)
+                    {
+                        String s;
+                        while (true)
+                        {
+                            // TODO: would be nice to fix this slowCompletor/comparer to
+                            // use full range, but we might lose some coverage too...
+                            s = TestUtil.RandomSimpleString(Random);
+                            if (s.Length > 0)
+                            {
+                                if (token > 0)
+                                {
+                                    key += " ";
+                                }
+                                if (preserveSep && analyzedKey.Length > 0 && (unicodeAware ? analyzedKey.CodePointAt(analyzedKey.CodePointCount(0, analyzedKey.Length) - 1) != ' ' : analyzedKey[analyzedKey.Length - 1] != ' '))
+                                {
+                                    analyzedKey += " ";
+                                }
+                                key += s;
+                                if (s.Length == 1 && IsStopChar(s[0], numStopChars))
+                                {
+                                    if (preserveSep && preserveHoles)
+                                    {
+                                        analyzedKey += '\u0000';
+                                    }
+                                    lastRemoved = true;
+                                }
+                                else
+                                {
+                                    analyzedKey += s;
+                                    lastRemoved = false;
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    analyzedKey = Regex.Replace(analyzedKey, "(^| )\u0000$", "");
+
+                    if (preserveSep && lastRemoved)
+                    {
+                        analyzedKey += " ";
+                    }
+
+                    // Don't add same surface form more than once:
+                    if (!seen.Contains(key))
+                    {
+                        seen.Add(key);
+                        break;
+                    }
+                }
+
+                for (int j = 1; j < key.Length; j++)
+                {
+                    allPrefixes.Add(key.Substring(0, j - 0));
+                }
+                // we can probably do Integer.MAX_VALUE here, but why worry.
+                int weight = Random.Next(1 << 24);
+                keys[i] = new Input(key, weight);
+
+                slowCompletor.Add(new TermFreqPayload2(key, analyzedKey, weight));
+            }
+
+            if (Verbose)
+            {
+                // Don't just sort original list, to avoid VERBOSE
+                // altering the test:
+                List<TermFreqPayload2> sorted = new List<TermFreqPayload2>(slowCompletor);
+                // LUCENENET NOTE: Must use TimSort because comparer is not expecting ties
+                CollectionUtil.TimSort(sorted);
+                foreach (TermFreqPayload2 ent in sorted)
+                {
+                    Console.WriteLine("  surface='" + ent.surfaceForm + " analyzed='" + ent.analyzedForm + "' weight=" + ent.weight);
+                }
+            }
+
+            Analyzer a = new MockTokenEatingAnalyzer(numStopChars, preserveHoles);
+            FuzzySuggester suggester = new FuzzySuggester(a, a,
+                                                          preserveSep ? SuggesterOptions.PRESERVE_SEP : 0, 256, -1, true, 1, false, 1, 3, unicodeAware);
+            suggester.Build(new InputArrayEnumerator(keys));
+
+            foreach (string prefix in allPrefixes)
+            {
+
+                if (Verbose)
+                {
+                    Console.WriteLine("\nTEST: prefix=" + prefix);
+                }
+
+                int topN = TestUtil.NextInt32(Random, 1, 10);
+                IList<Lookup.LookupResult> r = suggester.DoLookup(TestUtil.StringToCharSequence(prefix, Random).ToString(), false, topN);
+
+                // 2. go thru whole set to find suggestions:
+                List<Lookup.LookupResult> matches = new List<Lookup.LookupResult>();
+
+                // "Analyze" the key:
+                string[] tokens = prefix.Split(' ').TrimEnd();
+                StringBuilder builder = new StringBuilder();
+                bool lastRemoved = false;
+                for (int i = 0; i < tokens.Length; i++)
+                {
+                    string token = tokens[i];
+                    if (preserveSep && builder.Length > 0 && !builder.ToString().EndsWith(" ", StringComparison.Ordinal))
+                    {
+                        builder.Append(' ');
+                    }
+
+                    if (token.Length == 1 && IsStopChar(token[0], numStopChars))
+                    {
+                        if (preserveSep && preserveHoles)
+                        {
+                            builder.Append("\u0000");
+                        }
+                        lastRemoved = true;
+                    }
+                    else
+                    {
+                        builder.Append(token);
+                        lastRemoved = false;
+                    }
+                }
+
+                string analyzedKey = builder.ToString();
+
+                // Remove trailing sep/holes (TokenStream.end() does
+                // not tell us any trailing holes, yet ... there is an
+                // issue open for this):
+                while (true)
+                {
+                    string s = Regex.Replace(analyzedKey, "(^| )\u0000$", "");
+                    s = Regex.Replace(s, "\\s+$", "");
+                    if (s.Equals(analyzedKey, StringComparison.Ordinal))
+                    {
+                        break;
+                    }
+                    analyzedKey = s;
+                }
+
+                if (analyzedKey.Length == 0)
+                {
+                    // Currently suggester can't suggest from the empty
+                    // string!  You get no results, not all results...
+                    continue;
+                }
+
+                if (preserveSep && (prefix.EndsWith(" ", StringComparison.Ordinal) || lastRemoved))
+                {
+                    analyzedKey += " ";
+                }
+
+                if (Verbose)
+                {
+                    Console.WriteLine("  analyzed: " + analyzedKey);
+                }
+                TokenStreamToAutomaton tokenStreamToAutomaton = suggester.GetTokenStreamToAutomaton();
+
+                // NOTE: not great that we ask the suggester to give
+                // us the "answer key" (ie maybe we have a bug in
+                // suggester.toLevA ...) ... but testRandom2() fixes
+                // this:
+                Automaton automaton = suggester.ConvertAutomaton(suggester.ToLevenshteinAutomata(suggester.ToLookupAutomaton(analyzedKey)));
+                assertTrue(automaton.IsDeterministic);
+                // TODO: could be faster... but its slowCompletor for a reason
+                BytesRef spare = new BytesRef();
+                foreach (TermFreqPayload2 e in slowCompletor)
+                {
+                    spare.CopyChars(e.analyzedForm);
+                    ISet<Int32sRef> finiteStrings = suggester.ToFiniteStrings(spare, tokenStreamToAutomaton);
+                    foreach (Int32sRef intsRef in finiteStrings)
+                    {
+                        State p = automaton.GetInitialState();
+                        BytesRef @ref = Lucene.Net.Util.Fst.Util.ToBytesRef(intsRef, spare);
+                        bool added = false;
+                        for (int i = @ref.Offset; i < @ref.Length; i++)
+                        {
+                            State q = p.Step(@ref.Bytes[i] & 0xff);
+                            if (q == null)
+                            {
+                                break;
+                            }
+                            else if (q.Accept)
+                            {
+                                matches.Add(new Lookup.LookupResult(e.surfaceForm, e.weight));
+                                added = true;
+                                break;
+                            }
+                            p = q;
+                        }
+                        if (!added && p.Accept)
+                        {
+                            matches.Add(new Lookup.LookupResult(e.surfaceForm, e.weight));
+                        }
+                    }
+                }
+
+                assertTrue(numStopChars > 0 || matches.size() > 0);
+
+                if (matches.size() > 1)
+                {
+                    matches.Sort(new TestRandomComparer());
+                }
+
+                if (matches.size() > topN)
+                {
+                    matches = new List<Lookup.LookupResult>(matches.SubList(0, topN));
+                }
+
+                if (Verbose)
+                {
+                    Console.WriteLine("  expected:");
+                    foreach (Lookup.LookupResult lr in matches)
+                    {
+                        Console.WriteLine("    key=" + lr.Key + " weight=" + lr.Value);
+                    }
+
+                    Console.WriteLine("  actual:");
+                    foreach (Lookup.LookupResult lr in r)
+                    {
+                        Console.WriteLine("    key=" + lr.Key + " weight=" + lr.Value);
+                    }
+                }
+
+
+                assertEquals(prefix + "  " + topN, matches.size(), r.size());
+                for (int hit = 0; hit < r.size(); hit++)
+                {
+                    //Console.WriteLine("  check hit " + hit);
+                    assertEquals(prefix + "  " + topN, matches[hit].Key.toString(), r[hit].Key.toString());
+                    assertEquals(matches[hit].Value, r[hit].Value, 0f);
+                }
+            }
+        }
+
+        [Test]
+        [Slow]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestRandomIterator()
         {
 
             int numQueries = AtLeast(100);
@@ -995,6 +1604,30 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             };
 
             keys.Shuffle(Random);
+            suggester.Build(new InputArrayEnumerator(keys));
+
+            IList<Lookup.LookupResult> results = suggester.DoLookup("a", false, 5);
+            assertEquals(2, results.Count);
+            assertEquals(" a", results[0].Key);
+            assertEquals(60, results[0].Value);
+            assertEquals("a ", results[1].Key);
+            assertEquals(50, results[1].Value);
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestMaxSurfaceFormsPerAnalyzedFormIterator()
+        {
+            Analyzer a = new MockAnalyzer(Random);
+            FuzzySuggester suggester = new FuzzySuggester(a, a, 0, 2, -1, true, 1, true, 1, 3, false);
+
+            IList<Input> keys = new Input[] {
+                new Input("a", 40),
+                new Input("a ", 50),
+                new Input(" a", 60),
+            };
+
+            keys.Shuffle(Random);
             suggester.Build(new InputArrayIterator(keys));
 
             IList<Lookup.LookupResult> results = suggester.DoLookup("a", false, 5);
@@ -1007,6 +1640,29 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         [Test]
         public void TestEditSeps()
+        {
+            Analyzer a = new MockAnalyzer(Random);
+            FuzzySuggester suggester = new FuzzySuggester(a, a, SuggesterOptions.PRESERVE_SEP, 2, -1, true, 2, true, 1, 3, false);
+
+            IList<Input> keys = new Input[] {
+                new Input("foo bar", 40),
+                new Input("foo bar baz", 50),
+                new Input("barbaz", 60),
+                new Input("barbazfoo", 10),
+            };
+
+            keys.Shuffle(Random);
+            suggester.Build(new InputArrayEnumerator(keys));
+
+            assertEquals("[foo bar baz/50, foo bar/40]", suggester.DoLookup("foobar", false, 5).toString());
+            assertEquals("[foo bar baz/50]", suggester.DoLookup("foobarbaz", false, 5).toString());
+            assertEquals("[barbaz/60, barbazfoo/10]", suggester.DoLookup("bar baz", false, 5).toString());
+            assertEquals("[barbazfoo/10]", suggester.DoLookup("bar baz foo", false, 5).toString());
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestEditSepsIterator()
         {
             Analyzer a = new MockAnalyzer(Random);
             FuzzySuggester suggester = new FuzzySuggester(a, a, SuggesterOptions.PRESERVE_SEP, 2, -1, true, 2, true, 1, 3, false);
@@ -1115,6 +1771,94 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         [Test]
         public void TestRandom2()
+        {
+            int NUM = AtLeast(200);
+            List<Input> answers = new List<Input>();
+            ISet<string> seen = new JCG.HashSet<string>();
+            for (int i = 0; i < NUM; i++)
+            {
+                string s = RandomSimpleString(8);
+                if (!seen.Contains(s))
+                {
+                    answers.Add(new Input(s, Random.nextInt(1000)));
+                    seen.Add(s);
+                }
+            }
+
+            answers.Sort(new TestRandom2Comparer());
+
+            if (Verbose)
+            {
+                Console.WriteLine("\nTEST: targets");
+                foreach (Input tf in answers)
+                {
+                    Console.WriteLine("  " + tf.term.Utf8ToString() + " freq=" + tf.v);
+                }
+            }
+
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.KEYWORD, false);
+            int maxEdits = Random.nextBoolean() ? 1 : 2;
+            int prefixLen = Random.nextInt(4);
+            bool transpositions = Random.nextBoolean();
+            // TODO: test graph analyzers
+            // TODO: test exactFirst / preserveSep permutations
+            FuzzySuggester suggest = new FuzzySuggester(a, a, 0, 256, -1, true, maxEdits, transpositions, prefixLen, prefixLen, false);
+
+            if (Verbose)
+            {
+                Console.WriteLine("TEST: maxEdits=" + maxEdits + " prefixLen=" + prefixLen + " transpositions=" + transpositions + " num=" + NUM);
+            }
+
+            answers.Shuffle(Random);
+            suggest.Build(new InputArrayEnumerator(answers.ToArray()));
+
+            int ITERS = AtLeast(100);
+            for (int iter = 0; iter < ITERS; iter++)
+            {
+                string frag = RandomSimpleString(6);
+                if (Verbose)
+                {
+                    Console.WriteLine("\nTEST: iter frag=" + frag);
+                }
+                List<Lookup.LookupResult> expected = SlowFuzzyMatch(prefixLen, maxEdits, transpositions, answers, frag);
+                if (Verbose)
+                {
+                    Console.WriteLine("  expected: " + expected.size());
+                    foreach (Lookup.LookupResult c in expected)
+                    {
+                        Console.WriteLine("    " + c);
+                    }
+                }
+                List<Lookup.LookupResult> actual = new List<Lookup.LookupResult>(suggest.DoLookup(frag, false, NUM));
+                if (Verbose)
+                {
+                    Console.WriteLine("  actual: " + actual.size());
+                    foreach (Lookup.LookupResult c in actual)
+                    {
+                        Console.WriteLine("    " + c);
+                    }
+                }
+
+                actual.Sort(new CompareByCostThenAlpha());
+
+                int limit = Math.Min(expected.size(), actual.size());
+                for (int ans = 0; ans < limit; ans++)
+                {
+                    Lookup.LookupResult c0 = expected[ans];
+                    Lookup.LookupResult c1 = actual[ans];
+                    assertEquals("expected " + c0.Key +
+                                 " but got " + c1.Key,
+                                 0,
+                                 CHARSEQUENCE_COMPARER.Compare(c0.Key, c1.Key));
+                    assertEquals(c0.Value, c1.Value);
+                }
+                assertEquals(expected.size(), actual.size());
+            }
+        }
+
+        [Test]
+        [Obsolete("This will be removed in 4.8.0 release candidate.")]
+        public void TestRandom2Iterator()
         {
             int NUM = AtLeast(200);
             List<Input> answers = new List<Input>();

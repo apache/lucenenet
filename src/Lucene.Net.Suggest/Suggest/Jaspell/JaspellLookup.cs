@@ -40,11 +40,48 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// <summary>
         /// Creates a new empty trie
         /// </summary>
-        /// <seealso cref="Build(IInputIterator)"/>
+        /// <seealso cref="Build(IInputEnumerator)"/>
         public JaspellLookup()
         {
         }
 
+        public override void Build(IInputEnumerator enumerator)
+        {
+            if (enumerator.HasPayloads)
+            {
+                throw new ArgumentException("this suggester doesn't support payloads");
+            }
+            if (enumerator.Comparer != null)
+            {
+                // make sure it's unsorted
+                // WTF - this could result in yet another sorted iteration....
+                enumerator = new UnsortedInputEnumerator(enumerator);
+            }
+            if (enumerator.HasContexts)
+            {
+                throw new ArgumentException("this suggester doesn't support contexts");
+            }
+            count = 0;
+            trie = new JaspellTernarySearchTrie { MatchAlmostDiff = editDistance };
+            BytesRef spare;
+
+            var charsSpare = new CharsRef();
+
+            while (enumerator.MoveNext())
+            {
+                spare = enumerator.Current;
+                long weight = enumerator.Weight;
+                if (spare.Length == 0)
+                {
+                    continue;
+                }
+                charsSpare.Grow(spare.Length);
+                UnicodeUtil.UTF8toUTF16(spare.Bytes, spare.Offset, spare.Length, charsSpare);
+                trie.Put(charsSpare.ToString(), weight);
+            }
+        }
+
+        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public override void Build(IInputIterator tfit)
         {
             if (tfit.HasPayloads)

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Search.Suggest;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -34,7 +35,7 @@ namespace Lucene.Net.Search.Spell
     public class PlainTextDictionary : IDictionary
     {
 
-        private TextReader @in;
+        private readonly TextReader @in;
 
         /// <summary>
         /// Creates a dictionary based on a File.
@@ -66,23 +67,34 @@ namespace Lucene.Net.Search.Spell
             @in = reader;
         }
 
-        public virtual IInputIterator GetEntryIterator()
+        public virtual IInputEnumerator GetEntryEnumerator()
         {
-            return new InputIteratorWrapper(new FileIterator(this));
+            return new InputEnumeratorWrapper(new FileEnumerator(this));
         }
 
-        internal sealed class FileIterator : IBytesRefIterator
+        [Obsolete("Use GetEntryEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public virtual IInputIterator GetEntryIterator()
+        {
+            return new InputIteratorWrapper(new FileEnumerator(this));
+        }
+
+        internal sealed class FileEnumerator : IBytesRefEnumerator
+#pragma warning disable CS0618 // Type or member is obsolete
+            , IBytesRefIterator
+#pragma warning restore CS0618 // Type or member is obsolete
         {
             private readonly PlainTextDictionary outerInstance;
 
-            public FileIterator(PlainTextDictionary outerInstance)
+            public FileEnumerator(PlainTextDictionary outerInstance)
             {
                 this.outerInstance = outerInstance;
             }
 
             internal bool done = false;
             internal readonly BytesRef spare = new BytesRef();
+            private BytesRef current;
 
+            [Obsolete("Use MoveNext(), Current instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public BytesRef Next()
             {
                 if (done)
@@ -115,6 +127,42 @@ namespace Lucene.Net.Search.Spell
                     }
                 }
                 return result;
+            }
+
+            public BytesRef Current => current;
+
+            public bool MoveNext()
+            {
+                if (done)
+                    return false;
+
+                bool success = false;
+                bool hasNext = true;
+                try
+                {
+                    string line;
+                    if ((line = outerInstance.@in.ReadLine()) != null)
+                    {
+                        spare.CopyChars(line);
+                        current = spare;
+                    }
+                    else
+                    {
+                        done = true;
+                        IOUtils.Dispose(outerInstance.@in);
+                        current = null;
+                        hasNext = false;
+                    }
+                    success = true;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        IOUtils.DisposeWhileHandlingException(outerInstance.@in);
+                    }
+                }
+                return hasNext;
             }
 
             public IComparer<BytesRef> Comparer => null;

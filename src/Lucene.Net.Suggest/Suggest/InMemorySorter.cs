@@ -51,6 +51,13 @@ namespace Lucene.Net.Search.Suggest
             buffer.Append(utf8);
         }
 
+        public IBytesRefEnumerator GetEnumerator()
+        {
+            closed = true;
+            return buffer.GetEnumerator(comparer);
+        }
+
+        [Obsolete("Use GetEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public IBytesRefIterator GetIterator()
         {
             closed = true;
