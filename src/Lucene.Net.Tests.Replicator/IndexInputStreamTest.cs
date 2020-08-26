@@ -29,6 +29,7 @@ namespace Lucene.Net.Tests.Replicator
      */
 
     //Note: LUCENENET specific
+    [LuceneNetSpecific]
     public class IndexInputStreamTest
     {
         
