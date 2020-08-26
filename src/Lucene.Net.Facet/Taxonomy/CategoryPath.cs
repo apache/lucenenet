@@ -75,7 +75,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public CategoryPath(params string[] components)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(components.Length > 0, () => "use CategoryPath.EMPTY to create an empty path");
+            if (Debugging.AssertsEnabled) Debugging.Assert(components.Length > 0, "use CategoryPath.EMPTY to create an empty path");
             foreach (string comp in components)
             {
                 if (string.IsNullOrEmpty(comp))

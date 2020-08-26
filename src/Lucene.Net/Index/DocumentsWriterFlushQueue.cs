@@ -295,7 +295,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!m_published, () => "ticket was already publised - can not publish twice");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!m_published, "ticket was already publised - can not publish twice");
                 m_published = true;
                 // its a global ticket - no segment to publish
                 FinishFlush(writer, null, m_frozenUpdates);
@@ -316,7 +316,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!m_published, () => "ticket was already publised - can not publish twice");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!m_published, "ticket was already publised - can not publish twice");
                 m_published = true;
                 FinishFlush(writer, segment, m_frozenUpdates);
             }

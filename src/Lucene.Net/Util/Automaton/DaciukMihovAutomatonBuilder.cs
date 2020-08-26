@@ -145,7 +145,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State LastChild() // LUCENENET NOTE: Kept this a method because there is another overload
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(HasChildren, () => "No outgoing transitions.");
+                if (Debugging.AssertsEnabled) Debugging.Assert(HasChildren, "No outgoing transitions.");
                 return states[states.Length - 1];
             }
 
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal void ReplaceLastChild(State state)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(HasChildren, () => "No outgoing transitions.");
+                if (Debugging.AssertsEnabled) Debugging.Assert(HasChildren, "No outgoing transitions.");
                 states[states.Length - 1] = state;
             }
 
@@ -229,7 +229,7 @@ namespace Lucene.Net.Util.Automaton
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(stateRegistry != null, () => "Automaton already built.");
+                Debugging.Assert(stateRegistry != null, "Automaton already built.");
                 Debugging.Assert(previous == null || comparer.Compare(previous, current) <= 0, () => "Input must be in sorted UTF-8 order: " + previous + " >= " + current);
                 Debugging.Assert(SetPrevious(current));
             }

@@ -178,7 +178,7 @@ namespace Lucene.Net.Search
                 if (visitedTerms.TryGetValue(bytes, out ScoreTerm t2))
                 {
                     // if the term is already in the PQ, only update docFreq of term in PQ
-                    if (Debugging.AssertsEnabled) Debugging.Assert(t2.Boost == boost, () => "boost should be equal in all segment TermsEnums");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(t2.Boost == boost, "boost should be equal in all segment TermsEnums");
                     t2.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                 }
                 else
@@ -201,7 +201,7 @@ namespace Lucene.Net.Search
                     {
                         st = new ScoreTerm(termComp, new TermContext(m_topReaderContext));
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(stQueue.Count <= maxSize, () => "the PQ size must be limited to maxSize");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(stQueue.Count <= maxSize, "the PQ size must be limited to maxSize");
                     // set maxBoostAtt with values to help FuzzyTermsEnum to optimize
                     if (stQueue.Count == maxSize)
                     {
@@ -247,7 +247,7 @@ namespace Lucene.Net.Search
 
         private static readonly IComparer<ScoreTerm> scoreTermSortByTermComp = Comparer<ScoreTerm>.Create((st1, st2) =>
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(st1.TermComp == st2.TermComp, () => "term comparer should not change between segments");
+            if (Debugging.AssertsEnabled) Debugging.Assert(st1.TermComp == st2.TermComp, "term comparer should not change between segments");
             return st1.TermComp.Compare(st1.Bytes, st2.Bytes);
         });
         

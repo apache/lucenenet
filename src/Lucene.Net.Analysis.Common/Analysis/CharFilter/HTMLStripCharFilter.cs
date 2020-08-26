@@ -30953,7 +30953,7 @@ namespace Lucene.Net.Analysis.CharFilters
             /// </summary>
             internal int NextChar()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!IsRead, () => "Attempting to read past the end of a segment.");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!IsRead, "Attempting to read past the end of a segment.");
                 return m_buf[pos++];
             }
 

@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
                     G newReference = RefreshIfNeeded(reference);
                     if (newReference != null)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!ReferenceEquals(newReference, reference), () => "refreshIfNeeded should return null if refresh wasn't needed");
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!ReferenceEquals(newReference, reference), "refreshIfNeeded should return null if refresh wasn't needed");
                         try
                         {
                             SwapReference(newReference);

@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
                     Debugging.Assert(packet.Any());
                     Debugging.Assert(CheckDeleteStats());
                     Debugging.Assert(packet.DelGen < nextGen);
-                    Debugging.Assert(updates.Count == 0 || updates[updates.Count - 1].DelGen < packet.DelGen, () => "Delete packets must be in order");
+                    Debugging.Assert(updates.Count == 0 || updates[updates.Count - 1].DelGen < packet.DelGen, "Delete packets must be in order");
                 }
                 updates.Add(packet);
                 numTerms.AddAndGet(packet.numTermDeletes);

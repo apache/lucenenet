@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!Monitor.IsEntered(writer), () => "IndexWriter lock should never be hold when aborting");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!Monitor.IsEntered(writer), "IndexWriter lock should never be hold when aborting");
                 bool success = false;
                 JCG.HashSet<string> newFilesSet = new JCG.HashSet<string>();
                 try
@@ -498,7 +498,7 @@ namespace Lucene.Net.Index
                 if (!perThread.IsActive)
                 {
                     EnsureOpen();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "perThread is not active but we are still open");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "perThread is not active but we are still open");
                 }
                 EnsureInitialized(perThread);
                 if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsInitialized);
@@ -544,7 +544,7 @@ namespace Lucene.Net.Index
                 if (!perThread.IsActive)
                 {
                     EnsureOpen();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "perThread is not active but we are still open");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "perThread is not active but we are still open");
                 }
                 EnsureInitialized(perThread);
                 if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsInitialized);

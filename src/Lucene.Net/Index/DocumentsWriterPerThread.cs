@@ -400,7 +400,7 @@ namespace Lucene.Net.Index
                 if (delTerm != null)
                 {
                     deleteQueue.Add(delTerm, deleteSlice);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(deleteSlice.IsTailItem(delTerm), () => "expected the delete term as the tail item");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(deleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
                     deleteSlice.Apply(pendingUpdates, numDocsInRAM - docCount);
                 }
             }
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
             if (delTerm != null)
             {
                 deleteQueue.Add(delTerm, deleteSlice);
-                if (Debugging.AssertsEnabled) Debugging.Assert(deleteSlice.IsTailItem(delTerm), () => "expected the delete term as the tail item");
+                if (Debugging.AssertsEnabled) Debugging.Assert(deleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
             }
             else
             {
@@ -512,7 +512,7 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(numDocsInRAM > 0);
-                Debugging.Assert(deleteSlice.IsEmpty, () => "all deletes must be applied in prepareFlush");
+                Debugging.Assert(deleteSlice.IsEmpty, "all deletes must be applied in prepareFlush");
             }
             segmentInfo.DocCount = numDocsInRAM;
             SegmentWriteState flushState = new SegmentWriteState(infoStream, directory, segmentInfo, fieldInfos.Finish(), indexWriterConfig.TermIndexInterval, pendingUpdates, new IOContext(new FlushInfo(numDocsInRAM, BytesUsed)));

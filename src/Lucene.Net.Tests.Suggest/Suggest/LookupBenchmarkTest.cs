@@ -75,7 +75,7 @@ namespace Lucene.Net.Search.Suggest
 
         public override void SetUp()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "disable assertions before running benchmarks!");
+            if (Debugging.AssertsEnabled) Debugging.Assert(false, "disable assertions before running benchmarks!");
             IList<Input> input = ReadTop50KWiki();
             input.Shuffle(Random);
             dictionaryInput = input.ToArray();
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search.Suggest
             List<Input> input = new List<Input>();
 
             var resource = typeof(LookupBenchmarkTest).FindAndGetManifestResourceStream("Top50KWiki.utf8");
-            if (Debugging.AssertsEnabled) Debugging.Assert(resource != null, () => "Resource missing: Top50KWiki.utf8");
+            if (Debugging.AssertsEnabled) Debugging.Assert(resource != null, "Resource missing: Top50KWiki.utf8");
 
             string line = null;
             using (TextReader br = new StreamReader(resource, UTF_8))
