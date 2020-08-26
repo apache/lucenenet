@@ -190,7 +190,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // verify (to some extent) that merge policy in effect would preserve category docids 
             if (indexWriter != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!(indexWriter.Config.MergePolicy is TieredMergePolicy), () => "for preserving category docids, merging none-adjacent segments is not allowed");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!(indexWriter.Config.MergePolicy is TieredMergePolicy), "for preserving category docids, merging none-adjacent segments is not allowed");
             }
 
             // after we opened the writer, and the index is locked, it's safe to check
@@ -826,7 +826,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                                 FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(t.Utf8ToString()));
                                 docsEnum = termsEnum.Docs(null, docsEnum, DocsFlags.NONE);
                                 bool res = cache.Put(cp, docsEnum.NextDoc() + ctx.DocBase);
-                                if (Debugging.AssertsEnabled) Debugging.Assert(!res, () => "entries should not have been evicted from the cache");
+                                if (Debugging.AssertsEnabled) Debugging.Assert(!res, "entries should not have been evicted from the cache");
                             }
                             else
                             {

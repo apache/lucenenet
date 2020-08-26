@@ -300,7 +300,7 @@ namespace Lucene.Net.Analysis
             state = runAutomaton.InitialState;
             lastOffset = off = 0;
             bufferedCodePoint = -1;
-            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState != State.RESET, () => "Double Reset()");
+            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState != State.RESET, "Double Reset()");
             streamState = State.RESET;
         }
 
@@ -333,7 +333,7 @@ namespace Lucene.Net.Analysis
             // these tests should disable this check (in general you should consume the entire stream)
             try
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState == State.INCREMENT_FALSE, () => "End() called before IncrementToken() returned false!");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState == State.INCREMENT_FALSE, "End() called before IncrementToken() returned false!");
             }
             finally
             {

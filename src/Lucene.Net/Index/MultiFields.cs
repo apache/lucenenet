@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             {
                 IList<AtomicReaderContext> leaves = reader.Leaves;
                 int size = leaves.Count;
-                if (Debugging.AssertsEnabled) Debugging.Assert(size > 0, () => "A reader with deletions must have at least one leave");
+                if (Debugging.AssertsEnabled) Debugging.Assert(size > 0, "A reader with deletions must have at least one leave");
                 if (size == 1)
                 {
                     return leaves[0].AtomicReader.LiveDocs;

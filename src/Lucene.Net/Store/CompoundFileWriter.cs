@@ -253,7 +253,7 @@ namespace Lucene.Net.Store
             bool outputLocked = false;
             try
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(name != null, () => "name must not be null");
+                if (Debugging.AssertsEnabled) Debugging.Assert(name != null, "name must not be null");
                 if (entries.ContainsKey(name))
                 {
                     throw new ArgumentException("File " + name + " already exists");

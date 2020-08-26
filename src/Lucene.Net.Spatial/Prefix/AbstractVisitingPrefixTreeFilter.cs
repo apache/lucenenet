@@ -135,7 +135,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             public virtual DocIdSet GetDocIdSet()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(curVNode == null, () => "Called more than once?");
+                if (Debugging.AssertsEnabled) Debugging.Assert(curVNode == null, "Called more than once?");
                 if (m_termsEnum == null)
                 {
                     return null;
@@ -206,7 +206,7 @@ namespace Lucene.Net.Spatial.Prefix
                     if (compare > 0)
                     {
                         // leap frog (termsEnum is beyond where we would otherwise seek)
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!m_context.AtomicReader.GetTerms(m_outerInstance.m_fieldName).GetIterator(null).SeekExact(curVNodeTerm), () => "should be absent");
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!m_context.AtomicReader.GetTerms(m_outerInstance.m_fieldName).GetIterator(null).SeekExact(curVNodeTerm), "should be absent");
                     }
                     else
                     {

@@ -59,8 +59,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public override Query GetQuery(String query, ICommonQueryParserConfiguration cqpC)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(cqpC != null, () => "Parameter must not be null");
-            if (Debugging.AssertsEnabled) Debugging.Assert((cqpC is StandardQueryParser), () => "Parameter must be instance of StandardQueryParser");
+            if (Debugging.AssertsEnabled) Debugging.Assert(cqpC != null, "Parameter must not be null");
+            if (Debugging.AssertsEnabled) Debugging.Assert((cqpC is StandardQueryParser), "Parameter must be instance of StandardQueryParser");
             StandardQueryParser qp = (StandardQueryParser)cqpC;
             return Parse(query, qp);
         }

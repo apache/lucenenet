@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
 
         public override int NextDoc()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, () => "NextDoc() called after NO_MORE_DOCS");
+            if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "NextDoc() called after NO_MORE_DOCS");
             int nextDoc = base.NextDoc();
             if (Debugging.AssertsEnabled) Debugging.Assert(nextDoc > doc, () => "backwards NextDoc from " + doc + " to " + nextDoc + " " + m_input);
             if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
 
         public override int Advance(int target)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, () => "Advance() called after NO_MORE_DOCS");
+            if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "Advance() called after NO_MORE_DOCS");
             if (Debugging.AssertsEnabled) Debugging.Assert(target > doc, () => "target must be > DocID, got " + target + " <= " + doc);
             int advanced = base.Advance(target);
             if (Debugging.AssertsEnabled) Debugging.Assert(advanced >= target, () => "backwards advance from: " + target + " to: " + advanced);
@@ -162,8 +162,8 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, () => "Freq called before NextDoc()/Advance()");
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, () => "Freq called after NO_MORE_DOCS");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, "Freq called before NextDoc()/Advance()");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "Freq called after NO_MORE_DOCS");
                 int freq = base.Freq;
                 if (Debugging.AssertsEnabled) Debugging.Assert(freq > 0);
                 return freq;
@@ -409,7 +409,7 @@ namespace Lucene.Net.Index
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, () => "Docs(...) called on unpositioned TermsEnum");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, "Docs(...) called on unpositioned TermsEnum");
 
                 // TODO: should we give this thing a random to be super-evil,
                 // and randomly *not* unwrap?
@@ -423,7 +423,7 @@ namespace Lucene.Net.Index
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, () => "DocsAndPositions(...) called on unpositioned TermsEnum");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, "DocsAndPositions(...) called on unpositioned TermsEnum");
 
                 // TODO: should we give this thing a random to be super-evil,
                 // and randomly *not* unwrap?
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
             // someone should not call next() after it returns null!!!!
             public override BytesRef Next()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(state == State.INITIAL || state == State.POSITIONED, () => "Next() called on unpositioned TermsEnum");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state == State.INITIAL || state == State.POSITIONED, "Next() called on unpositioned TermsEnum");
                 BytesRef result = base.Next();
                 if (result == null)
                 {
@@ -457,7 +457,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, () => "Ord called on unpositioned TermsEnum");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, "Ord called on unpositioned TermsEnum");
                     return base.Ord;
                 }
             }
@@ -466,7 +466,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, () => "DocFreq called on unpositioned TermsEnum");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, "DocFreq called on unpositioned TermsEnum");
                     return base.DocFreq;
                 }
             }
@@ -475,7 +475,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, () => "TotalTermFreq called on unpositioned TermsEnum");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, "TotalTermFreq called on unpositioned TermsEnum");
                     return base.TotalTermFreq;
                 }
             }
@@ -484,7 +484,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, () => "Term called on unpositioned TermsEnum");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, "Term called on unpositioned TermsEnum");
                     BytesRef ret = base.Term;
                     if (Debugging.AssertsEnabled) Debugging.Assert(ret == null || ret.IsValid());
                     return ret;
@@ -529,7 +529,7 @@ namespace Lucene.Net.Index
 
             public override TermState GetTermState()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, () => "GetTermState() called on unpositioned TermsEnum");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state == State.POSITIONED, "GetTermState() called on unpositioned TermsEnum");
                 return base.GetTermState();
             }
 
@@ -562,7 +562,7 @@ namespace Lucene.Net.Index
 
             public override int NextDoc()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, () => "NextDoc() called after NO_MORE_DOCS");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "NextDoc() called after NO_MORE_DOCS");
                 int nextDoc = base.NextDoc();
                 if (Debugging.AssertsEnabled) Debugging.Assert(nextDoc > doc, () => "backwards nextDoc from " + doc + " to " + nextDoc);
                 positionCount = 0;
@@ -582,7 +582,7 @@ namespace Lucene.Net.Index
 
             public override int Advance(int target)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, () => "Advance() called after NO_MORE_DOCS");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "Advance() called after NO_MORE_DOCS");
                 if (Debugging.AssertsEnabled) Debugging.Assert(target > doc, () => "target must be > DocID, got " + target + " <= " + doc);
                 int advanced = base.Advance(target);
                 if (Debugging.AssertsEnabled) Debugging.Assert(advanced >= target, () => "backwards advance from: " + target + " to: " + advanced);
@@ -614,8 +614,8 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, () => "Freq called before NextDoc()/Advance()");
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, () => "Freq called after NO_MORE_DOCS");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, "Freq called before NextDoc()/Advance()");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "Freq called after NO_MORE_DOCS");
                     int freq = base.Freq;
                     if (Debugging.AssertsEnabled) Debugging.Assert(freq > 0);
                     return freq;
@@ -624,9 +624,9 @@ namespace Lucene.Net.Index
 
             public override int NextPosition()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, () => "NextPosition() called before NextDoc()/Advance()");
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, () => "NextPosition() called after NO_MORE_DOCS");
-                if (Debugging.AssertsEnabled) Debugging.Assert(positionCount < positionMax, () => "NextPosition() called more than Freq times!");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, "NextPosition() called before NextDoc()/Advance()");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "NextPosition() called after NO_MORE_DOCS");
+                if (Debugging.AssertsEnabled) Debugging.Assert(positionCount < positionMax, "NextPosition() called more than Freq times!");
                 int position = base.NextPosition();
                 if (Debugging.AssertsEnabled) Debugging.Assert(position >= 0 || position == -1, () => "invalid position: " + position);
                 positionCount++;
@@ -637,9 +637,9 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, () => "StartOffset called before NextDoc()/Advance()");
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, () => "StartOffset called after NO_MORE_DOCS");
-                    if (Debugging.AssertsEnabled) Debugging.Assert(positionCount > 0, () => "StartOffset called before NextPosition()!");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, "StartOffset called before NextDoc()/Advance()");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "StartOffset called after NO_MORE_DOCS");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(positionCount > 0, "StartOffset called before NextPosition()!");
                     return base.StartOffset;
                 }
             }
@@ -648,20 +648,20 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, () => "EndOffset called before NextDoc()/Advance()");
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, () => "EndOffset called after NO_MORE_DOCS");
-                    if (Debugging.AssertsEnabled) Debugging.Assert(positionCount > 0, () => "EndOffset called before NextPosition()!");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, "EndOffset called before NextDoc()/Advance()");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "EndOffset called after NO_MORE_DOCS");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(positionCount > 0, "EndOffset called before NextPosition()!");
                     return base.EndOffset;
                 }
             }
 
             public override BytesRef GetPayload()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, () => "GetPayload() called before NextDoc()/Advance()");
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, () => "GetPayload() called after NO_MORE_DOCS");
-                if (Debugging.AssertsEnabled) Debugging.Assert(positionCount > 0, () => "GetPayload() called before NextPosition()!");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.START, "GetPayload() called before NextDoc()/Advance()");
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "GetPayload() called after NO_MORE_DOCS");
+                if (Debugging.AssertsEnabled) Debugging.Assert(positionCount > 0, "GetPayload() called before NextPosition()!");
                 BytesRef payload = base.GetPayload();
-                if (Debugging.AssertsEnabled) Debugging.Assert(payload == null || payload.IsValid() && payload.Length > 0, () => "GetPayload() returned payload with invalid length!");
+                if (Debugging.AssertsEnabled) Debugging.Assert(payload == null || payload.IsValid() && payload.Length > 0, "GetPayload() returned payload with invalid length!");
                 return payload;
             }
         }
