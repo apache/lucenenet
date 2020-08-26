@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Lucene.Net.Attributes;
 using Lucene.Net.Index;
 using Lucene.Net.Replicator;
 using Lucene.Net.Store;
 using NUnit.Framework;
+using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Tests.Replicator
 {
@@ -31,6 +33,7 @@ namespace Lucene.Net.Tests.Replicator
     {
         
         [Test]
+        [LuceneNetSpecific]
         public void Read_RemainingIndexInputLargerThanReadCount_ReturnsReadCount()
         {
             byte[] buffer = new byte[8.KiloBytes()];
@@ -39,10 +42,11 @@ namespace Lucene.Net.Tests.Replicator
 
             int readBytes = 2.KiloBytes();
             byte[] readBuffer = new byte[readBytes];
-            Assert.That(stream.Read(readBuffer, 0, readBytes), Is.EqualTo(readBytes));
+            Assert.AreEqual(stream.Read(readBuffer, 0, readBytes), readBytes);
         }
 
         [Test]
+        [LuceneNetSpecific]
         public void Read_RemainingIndexInputLargerThanReadCount_ReturnsExpectedSection([Range(1,8)]int section)
         {
             byte[] buffer = new byte[8.KiloBytes()];
@@ -53,8 +57,7 @@ namespace Lucene.Net.Tests.Replicator
             byte[] readBuffer = new byte[readBytes];
             for (int i = section; i > 0; i--)
                 stream.Read(readBuffer, 0, readBytes);
-
-            Assert.That(readBuffer, Is.EqualTo(buffer.Skip((section-1) * readBytes).Take(readBytes).ToArray()));
+            Assert.AreEqual(readBuffer, buffer.Skip((section - 1) * readBytes).Take(readBytes).ToArray());
         }
 
     }
