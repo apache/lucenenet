@@ -68,8 +68,9 @@ namespace Lucene.Net.Util.Fst
         public BytesRefFSTEnum.InputOutput<T> Next()
         {
             //System.out.println("  enum.next");
-            DoNext();
-            return SetResult();
+            if (MoveNext())
+                return result;
+            return null;
         }
 
         /// <summary>

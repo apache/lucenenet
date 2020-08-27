@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <returns><c>true</c> if the enumerator was successfully advanced to the next element;
         /// <c>false</c> if the enumerator has passed the end of the collection.</returns>
-        public abstract bool MoveNext(); // LUCENENET specific - made into enumerator for foreach
+        public abstract bool MoveNext(); // LUCENENET specific - must supply implementation for the interface
 
         private AttributeSource atts = null;
 

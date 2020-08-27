@@ -237,10 +237,14 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    actualTerm = tenum.Next();
-                    if (actualTerm == null)
+                    if (tenum.MoveNext())
+                    {
+                        actualTerm = tenum.Term;
+                    }
+                    else
                     {
                         // enum exhausted
+                        actualTerm = null;
                         return false;
                     }
                 }
@@ -270,58 +274,9 @@ namespace Lucene.Net.Index
 
         public override BytesRef Next()
         {
-            //System.out.println("FTE.next doSeek=" + doSeek);
-            //new Throwable().printStackTrace(System.out);
-            for (; ; )
-            {
-                // Seek or forward the iterator
-                if (doSeek)
-                {
-                    doSeek = false;
-                    BytesRef t = NextSeekTerm(actualTerm);
-                    //System.out.println("  seek to t=" + (t == null ? "null" : t.utf8ToString()) + " tenum=" + tenum);
-                    // Make sure we always seek forward:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(actualTerm == null || t == null || Comparer.Compare(t, actualTerm) > 0, () => "curTerm=" + actualTerm + " seekTerm=" + t);
-                    if (t == null || tenum.SeekCeil(t) == SeekStatus.END)
-                    {
-                        // no more terms to seek to or enum exhausted
-                        //System.out.println("  return null");
-                        return null;
-                    }
-                    actualTerm = tenum.Term;
-                    //System.out.println("  got term=" + actualTerm.utf8ToString());
-                }
-                else
-                {
-                    actualTerm = tenum.Next();
-                    if (actualTerm == null)
-                    {
-                        // enum exhausted
-                        return null;
-                    }
-                }
-
-                // check if term is accepted
-                switch (Accept(actualTerm))
-                {
-                    case FilteredTermsEnum.AcceptStatus.YES_AND_SEEK:
-                        doSeek = true;
-                        // term accepted, but we need to seek so fall-through
-                        goto case FilteredTermsEnum.AcceptStatus.YES;
-                    case FilteredTermsEnum.AcceptStatus.YES:
-                        // term accepted
-                        return actualTerm;
-
-                    case FilteredTermsEnum.AcceptStatus.NO_AND_SEEK:
-                        // invalid term, seek next time
-                        doSeek = true;
-                        break;
-
-                    case FilteredTermsEnum.AcceptStatus.END:
-                        // we are supposed to end the enum
-                        return null;
-                }
-            }
+            if (MoveNext())
+                return actualTerm;
+            return null;
         }
     }
 }

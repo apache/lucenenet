@@ -1093,6 +1093,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 private readonly BytesRef term;
 
                 // LUCENENET specific - duplicate logic for better enumerator optimization
+                // LUCENENET specific - factored out DoNext() and made into MoveNext()
                 public override bool MoveNext()
                 {
                     if (++currentOrd >= outerInstance.numValues)
@@ -1112,31 +1113,9 @@ namespace Lucene.Net.Codecs.Lucene45
 
                 public override BytesRef Next()
                 {
-                    if (DoNext() == null)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        SetTerm();
+                    if (MoveNext())
                         return term;
-                    }
-                }
-
-                private BytesRef DoNext()
-                {
-                    if (++currentOrd >= outerInstance.numValues)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        int start = input.ReadVInt32();
-                        int suffix = input.ReadVInt32();
-                        input.ReadBytes(termBuffer.Bytes, start, suffix);
-                        termBuffer.Length = start + suffix;
-                        return termBuffer;
-                    }
+                    return null;
                 }
 
                 public override TermsEnum.SeekStatus SeekCeil(BytesRef text)
@@ -1177,7 +1156,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     long block = low - 1;
                     DoSeek(block < 0 ? -1 : block * outerInstance.interval);
 
-                    while (DoNext() != null)
+                    while (MoveNext())
                     {
                         int cmp = termBuffer.CompareTo(text);
                         if (cmp == 0)
@@ -1218,7 +1197,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
                     while (currentOrd < ord)
                     {
-                        DoNext();
+                        MoveNext();
                     }
                 }
 

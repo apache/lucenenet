@@ -727,15 +727,9 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override BytesRef Next()
             {
-                var io = @in.Next();
-                if (io == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return io.Input;
-                }
+                if (MoveNext())
+                    return @in.Current.Input;
+                return null;
             }
 
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;

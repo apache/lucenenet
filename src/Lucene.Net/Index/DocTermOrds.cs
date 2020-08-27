@@ -788,16 +788,9 @@ namespace Lucene.Net.Index
 
             public override BytesRef Next()
             {
-                if (++ord < 0)
-                {
-                    ord = 0;
-                }
-                if (termsEnum.Next() == null)
-                {
-                    term = null;
-                    return null;
-                }
-                return SetTerm(); // this is extra work if we know we are in bounds...
+                if (MoveNext())
+                    return term;
+                return null;
             }
 
             public override int DocFreq => termsEnum.DocFreq;

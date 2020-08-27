@@ -557,70 +557,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override BytesRef Next()
             {
-                if (nextTerm >= numTerms)
-                {
-                    return null;
-                }
-                term.CopyBytes(lastTerm);
-                int start = tvf.ReadVInt32();
-                int deltaLen = tvf.ReadVInt32();
-                term.Length = start + deltaLen;
-                term.Grow(term.Length);
-                tvf.ReadBytes(term.Bytes, start, deltaLen);
-                freq = tvf.ReadVInt32();
-
-                if (storePayloads)
-                {
-                    positions = new int[freq];
-                    payloadOffsets = new int[freq];
-                    int totalPayloadLength = 0;
-                    int pos = 0;
-                    for (int posUpto = 0; posUpto < freq; posUpto++)
-                    {
-                        int code = tvf.ReadVInt32();
-                        pos += (int)((uint)code >> 1);
-                        positions[posUpto] = pos;
-                        if ((code & 1) != 0)
-                        {
-                            // length change
-                            lastPayloadLength = tvf.ReadVInt32();
-                        }
-                        payloadOffsets[posUpto] = totalPayloadLength;
-                        totalPayloadLength += lastPayloadLength;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(totalPayloadLength >= 0);
-                    }
-                    payloadData = new byte[totalPayloadLength];
-                    tvf.ReadBytes(payloadData, 0, payloadData.Length);
-                } // no payloads
-                else if (storePositions)
-                {
-                    // TODO: we could maybe reuse last array, if we can
-                    // somehow be careful about consumer never using two
-                    // D&PEnums at once...
-                    positions = new int[freq];
-                    int pos = 0;
-                    for (int posUpto = 0; posUpto < freq; posUpto++)
-                    {
-                        pos += tvf.ReadVInt32();
-                        positions[posUpto] = pos;
-                    }
-                }
-
-                if (storeOffsets)
-                {
-                    startOffsets = new int[freq];
-                    endOffsets = new int[freq];
-                    int offset = 0;
-                    for (int posUpto = 0; posUpto < freq; posUpto++)
-                    {
-                        startOffsets[posUpto] = offset + tvf.ReadVInt32();
-                        offset = endOffsets[posUpto] = startOffsets[posUpto] + tvf.ReadVInt32();
-                    }
-                }
-
-                lastTerm.CopyBytes(term);
-                nextTerm++;
-                return term;
+                if (MoveNext())
+                    return term;
+                return null;
             }
 
             public override BytesRef Term => term;

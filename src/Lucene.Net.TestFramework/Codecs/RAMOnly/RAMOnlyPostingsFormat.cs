@@ -376,16 +376,9 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override BytesRef Next()
             {
-                EnsureEnumeratorInitialized();
-                if (it.MoveNext())
-                {
-                    current = it.Current;
+                if (MoveNext())
                     return new BytesRef(current);
-                }
-                else
-                {
-                    return null;
-                }
+                return null;
             }
 
             private void EnsureEnumeratorInitialized() // LUCENENET specific - factored out initialization step

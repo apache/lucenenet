@@ -558,11 +558,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override BytesRef Next()
             {
-                if (++currentTerm >= numTerms)
-                {
-                    return null;
-                }
-                return Term;
+                if (MoveNext())
+                    return Term;
+                return null;
             }
 
             public override BytesRef Term => termAndPostings[currentTerm].Term;

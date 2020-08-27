@@ -520,14 +520,9 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override BytesRef Next()
                 {
-                    if (seekPending) // previously positioned, but termOutputs not fetched
-                    {
-                        seekPending = false;
-                        var status = SeekCeil(term);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(status == SeekStatus.FOUND); // must positioned on valid term
-                    }
-                    UpdateEnum(fstEnum.Next());
-                    return term;
+                    if (MoveNext())
+                        return term;
+                    return null;
                 }
 
                 public override bool SeekExact(BytesRef target)
@@ -712,46 +707,9 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override BytesRef Next()
                 {
-                    //if (TEST) System.out.println("Enum next()");
-                    if (pending)
-                    {
-                        pending = false;
-                        DecodeStats();
+                    if (MoveNext())
                         return term;
-                    }
-                    decoded = false;
-                    while (level > 0)
-                    {
-                        Frame frame = NewFrame();
-                        if (LoadExpandFrame(TopFrame(), frame) != null) // has valid target
-                        {
-                            PushFrame(frame);
-                            if (IsAccept(frame)) // gotcha
-                            {
-                                break;
-                            }
-                            continue; // check next target
-                        }
-                        frame = PopFrame();
-                        while (level > 0)
-                        {
-                            if (LoadNextFrame(TopFrame(), frame) != null) // has valid sibling
-                            {
-                                PushFrame(frame);
-                                if (IsAccept(frame)) // gotcha
-                                {
-                                    goto DFSBreak;
-                                }
-                                goto DFSContinue; // check next target
-                            }
-                            frame = PopFrame();
-                        }
-                        return null;
-                    DFSContinue:;
-                    }
-                DFSBreak:
-                    DecodeStats();
-                    return term;
+                    return null;
                 }
 
                 private BytesRef DoSeekCeil(BytesRef target)

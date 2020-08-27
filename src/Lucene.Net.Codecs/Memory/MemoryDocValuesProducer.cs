@@ -771,8 +771,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override BytesRef Next()
             {
-                var io = input.Next();
-                return io == null ? null : io.Input;
+                return !MoveNext() ? null : input.Current.Input;
             }
 
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
