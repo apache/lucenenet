@@ -363,6 +363,34 @@ namespace Lucene.Net.Codecs.Memory
                     seekPending = false;
                 }
 
+                // LUCENENET specific - duplicate logic for better enumerator optimization
+                public override bool MoveNext()
+                {
+                    if (seekPending) // previously positioned, but termOutputs not fetched
+                    {
+                        seekPending = false;
+                        SeekStatus status = SeekCeil(term);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(status == SeekStatus.FOUND); // must positioned on valid term
+                    }
+                    // LUCENENET specific - extracted logic of UpdateEnum() so we can eliminate the null check
+                    var moved = fstEnum.MoveNext();
+                    if (moved)
+                    {
+                        var pair = fstEnum.Current;
+                        term = pair.Input;
+                        meta = pair.Output;
+                        state.DocFreq = meta.docFreq;
+                        state.TotalTermFreq = meta.totalTermFreq;
+                    }
+                    else
+                    {
+                        term = null;
+                    }
+                    decoded = false;
+                    seekPending = false;
+                    return moved;
+                }
+
                 public override BytesRef Next()
                 {
                     if (seekPending) // previously positioned, but termOutputs not fetched
@@ -551,6 +579,51 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         return term.Equals(target) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
                     }
+                }
+
+                // LUCENENET specific - duplicate logic for better enumerator optimization
+                public override bool MoveNext()
+                {
+                    //if (TEST) System.out.println("Enum next()");
+                    if (pending)
+                    {
+                        pending = false;
+                        LoadMetaData();
+                        return true;
+                    }
+                    decoded = false;
+                    while (level > 0)
+                    {
+                        Frame frame = NewFrame();
+                        if (LoadExpandFrame(TopFrame(), frame) != null) // has valid target
+                        {
+                            PushFrame(frame);
+                            if (IsAccept(frame)) // gotcha
+                            {
+                                break;
+                            }
+                            continue; // check next target
+                        }
+                        frame = PopFrame();
+                        while (level > 0)
+                        {
+                            if (LoadNextFrame(TopFrame(), frame) != null) // has valid sibling
+                            {
+                                PushFrame(frame);
+                                if (IsAccept(frame)) // gotcha
+                                {
+                                    goto DFSBreak;
+                                }
+                                goto DFSContinue; // check next target
+                            }
+                            frame = PopFrame();
+                        }
+                        return false;
+                    DFSContinue:;
+                    }
+                DFSBreak:
+                    LoadMetaData();
+                    return true;
                 }
 
                 public override BytesRef Next()

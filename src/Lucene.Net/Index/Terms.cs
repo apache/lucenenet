@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
         /// <see cref="CompiledAutomaton"/>.  If the <paramref name="startTerm"/> is
         /// provided then the returned enum will only accept terms
         /// &gt; <paramref name="startTerm"/>, but you still must call
-        /// <see cref="TermsEnum.Next()"/> first to get to the first term.  Note that the
+        /// <see cref="TermsEnum.MoveNext()"/> first to get to the first term.  Note that the
         /// provided <paramref name="startTerm"/> must be accepted by
         /// the automaton.
         ///

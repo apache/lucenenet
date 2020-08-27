@@ -1,6 +1,7 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Lucene.Net.Index
 {
@@ -45,15 +46,14 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class TermsEnum : IBytesRefEnumerator, IBytesRefIterator // LUCENENET specific: Implemented IBytesRefEnumerator for .NET compatibility
     {
-        protected BytesRef m_current;
-
         public abstract IComparer<BytesRef> Comparer { get; } // LUCENENET specific - must supply implementation for the interface
 
         /// <inheritdoc/>
         public abstract BytesRef Next(); // LUCENENET specific - must supply implementation for the interface
 
         /// <inheritdoc/>
-        public virtual BytesRef Current => m_current; // LUCENENET specific - made into enumerator for foreach
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public BytesRef Current => Term; // LUCENENET specific - made into enumerator for foreach
 
         /// <summary>
         /// Moves to the next item in the <see cref="TermsEnum"/>.
@@ -62,11 +62,7 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <returns><c>true</c> if the enumerator was successfully advanced to the next element;
         /// <c>false</c> if the enumerator has passed the end of the collection.</returns>
-        public virtual bool MoveNext() // LUCENENET specific - made into enumerator for foreach
-        {
-            m_current = Next();
-            return !(m_current is null);
-        }
+        public abstract bool MoveNext(); // LUCENENET specific - made into enumerator for foreach
 
         private AttributeSource atts = null;
 
@@ -295,10 +291,6 @@ namespace Lucene.Net.Index
 
         private class TermsEnumAnonymousInnerClassHelper : TermsEnum
         {
-            public TermsEnumAnonymousInnerClassHelper()
-            {
-            }
-
             public override SeekStatus SeekCeil(BytesRef term)
             {
                 return SeekStatus.END;
@@ -326,6 +318,12 @@ namespace Lucene.Net.Index
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 throw new InvalidOperationException("this method should never be called");
+            }
+
+            // LUCENENET specific
+            public override bool MoveNext()
+            {
+                return false;
             }
 
             public override BytesRef Next()

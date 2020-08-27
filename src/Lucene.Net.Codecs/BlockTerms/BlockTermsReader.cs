@@ -654,6 +654,64 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                 }
 
+                // LUCENENET specific - duplicate logic for better enumerator optimization
+                public override bool MoveNext()
+                {
+                    //System.out.println("BTR.next() seekPending=" + seekPending + " pendingSeekCount=" + state.termBlockOrd);
+
+                    // If seek was previously called and the term was cached,
+                    // usually caller is just going to pull a D/&PEnum or get
+                    // docFreq, etc.  But, if they then call next(),
+                    // this method catches up all internal state so next()
+                    // works properly:
+                    if (seekPending)
+                    {
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!indexIsCurrent);
+                        input.Seek(state.BlockFilePointer);
+                        int pendingSeekCount = state.TermBlockOrd;
+                        bool result = NextBlock();
+
+                        long savOrd = state.Ord;
+
+                        // Block must exist since seek(TermState) was called w/ a
+                        // TermState previously returned by this enum when positioned
+                        // on a real term:
+                        if (Debugging.AssertsEnabled) Debugging.Assert(result);
+
+                        while (state.TermBlockOrd < pendingSeekCount)
+                        {
+                            BytesRef nextResult = _next();
+                            if (Debugging.AssertsEnabled) Debugging.Assert(nextResult != null);
+                        }
+                        seekPending = false;
+                        state.Ord = savOrd;
+                    }
+                    //System.out.println("BTR._next seg=" + segment + " this=" + this + " termCount=" + state.termBlockOrd + " (vs " + blockTermCount + ")");
+                    if (state.TermBlockOrd == blockTermCount && !NextBlock())
+                    {
+                        //System.out.println("  eof");
+                        indexIsCurrent = false;
+                        return false;
+                    }
+
+                    // TODO: cutover to something better for these ints!  simple64?
+                    int suffix = termSuffixesReader.ReadVInt32();
+                    //System.out.println("  suffix=" + suffix);
+
+                    term.Length = termBlockPrefix + suffix;
+                    if (term.Bytes.Length < term.Length)
+                    {
+                        term.Grow(term.Length);
+                    }
+                    termSuffixesReader.ReadBytes(term.Bytes, termBlockPrefix, suffix);
+                    state.TermBlockOrd++;
+
+                    // NOTE: meaningless in the non-ord case
+                    state.Ord++;
+
+                    return true;
+                }
+
                 public override BytesRef Next()
                 {
                     //System.out.println("BTR.next() seekPending=" + seekPending + " pendingSeekCount=" + state.termBlockOrd);

@@ -76,6 +76,19 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Scan for terms containing the letter 'e'. </summary>
+                // LUCENENET specific - duplicate logic for better enumerator optimization
+                public override bool MoveNext()
+                {
+                    while (m_input.MoveNext())
+                    {
+                        if (m_input.Term.Utf8ToString().IndexOf('e') != -1)
+                            return true;
+                    }
+                    return false;
+                }
+
+                /// <summary>
+                /// Scan for terms containing the letter 'e'. </summary>
                 public override BytesRef Next()
                 {
                     BytesRef text;

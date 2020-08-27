@@ -291,6 +291,11 @@ namespace Lucene.Net.Codecs.Bloom
                     // (clone IndexInput)
                     delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetIterator(_reuseDelegate));
 
+                public override bool MoveNext() // LUCENENET specific - shortcut for better enumerator optimization
+                {
+                    return Delegate.MoveNext();
+                }
+
                 public override sealed BytesRef Next()
                 {
                     return Delegate.Next();

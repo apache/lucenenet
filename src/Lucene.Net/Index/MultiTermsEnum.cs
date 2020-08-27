@@ -356,6 +356,39 @@ namespace Lucene.Net.Index
             numTop = 0;
         }
 
+        // LUCENENET specific - duplicate logic for better enumerator optimization
+        public override bool MoveNext()
+        {
+            if (lastSeekExact)
+            {
+                // Must SeekCeil at this point, so those subs that
+                // didn't have the term can find the following term.
+                // NOTE: we could save some CPU by only SeekCeil the
+                // subs that didn't match the last exact seek... but
+                // most impls short-circuit if you SeekCeil to term
+                // they are already on.
+                SeekStatus status = SeekCeil(current);
+                if (Debugging.AssertsEnabled) Debugging.Assert(status == SeekStatus.FOUND);
+                lastSeekExact = false;
+            }
+            lastSeek = null;
+
+            // restore queue
+            PushTop();
+
+            // gather equal top fields
+            if (queue.Count > 0)
+            {
+                PullTop();
+                return !(current is null);
+            }
+            else
+            {
+                current = null;
+                return false;
+            }
+        }
+
         public override BytesRef Next()
         {
             if (lastSeekExact)

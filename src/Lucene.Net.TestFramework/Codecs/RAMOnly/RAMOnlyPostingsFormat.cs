@@ -359,20 +359,24 @@ namespace Lucene.Net.Codecs.RAMOnly
             public override IComparer<BytesRef> Comparer
                 => BytesRef.UTF8SortedAsUnicodeComparer;
 
+            // LUCENENET specific - duplicate logic for better enumerator optimization
+            public override bool MoveNext()
+            {
+                EnsureEnumeratorInitialized();
+                if (it.MoveNext())
+                {
+                    current = it.Current;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
             public override BytesRef Next()
             {
-                if (it == null)
-                {
-                    if (current == null)
-                    {
-                        it = ramField.termToDocs.Keys.GetEnumerator();
-                    }
-                    else
-                    {
-                        //It = RamField.TermToDocs.tailMap(Current).Keys.GetEnumerator();
-                        it = ramField.termToDocs.Where(kvpair => string.CompareOrdinal(kvpair.Key, current) >= 0).ToDictionary(kvpair => kvpair.Key, kvpair => kvpair.Value).Keys.GetEnumerator();
-                    }
-                }
+                EnsureEnumeratorInitialized();
                 if (it.MoveNext())
                 {
                     current = it.Current;
@@ -381,6 +385,22 @@ namespace Lucene.Net.Codecs.RAMOnly
                 else
                 {
                     return null;
+                }
+            }
+
+            private void EnsureEnumeratorInitialized() // LUCENENET specific - factored out initialization step
+            {
+                if (it is null)
+                {
+                    if (current is null)
+                    {
+                        it = ramField.termToDocs.Keys.GetEnumerator();
+                    }
+                    else
+                    {
+                        //It = RamField.TermToDocs.tailMap(Current).Keys.GetEnumerator();
+                        it = ramField.termToDocs.Where(kvpair => string.CompareOrdinal(kvpair.Key, current) >= 0).Select(pair => pair.Key).GetEnumerator();
+                    }
                 }
             }
 

@@ -47,6 +47,24 @@ namespace Lucene.Net.Util.Fst
 
         public BytesRefFSTEnum.InputOutput<T> Current => result;
 
+        // LUCENENET specific - duplicate logic for better enumerator optimization
+        public bool MoveNext()
+        {
+            //System.out.println("  enum.next");
+            DoNext();
+
+            if (m_upto == 0)
+            {
+                return false;
+            }
+            else
+            {
+                current.Length = m_upto - 1;
+                result.Output = m_output[m_upto];
+                return true;
+            }
+        }
+
         public BytesRefFSTEnum.InputOutput<T> Next()
         {
             //System.out.println("  enum.next");

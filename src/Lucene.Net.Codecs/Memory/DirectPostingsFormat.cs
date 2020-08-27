@@ -864,6 +864,21 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
+                // LUCENENET specific - duplicate logic for better enumerator optimization
+                public override bool MoveNext()
+                {
+                    termOrd++;
+                    if (termOrd < outerInstance.terms.Length)
+                    {
+                        SetTerm();
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
                 public override BytesRef Next()
                 {
                     termOrd++;
@@ -1375,6 +1390,301 @@ namespace Lucene.Net.Codecs.Memory
                         newStates[states.Length] = new State(this);
                         states = newStates;
                     }
+                }
+
+                // LUCENENET specific - duplicate logic for better enumerator optimization
+                public override bool MoveNext()
+                {
+                    // if (DEBUG) {
+                    //   System.out.println("\nIE.next");
+                    // }
+
+                    termOrd++;
+                    int skipUpto = 0;
+
+                    if (termOrd == 0 && outerInstance.termOffsets[1] == 0)
+                    {
+                        // Special-case empty string:
+                        if (Debugging.AssertsEnabled) Debugging.Assert(stateUpto == 0);
+                        // if (DEBUG) {
+                        //   System.out.println("  visit empty string");
+                        // }
+                        if (runAutomaton.IsAccept(states[0].state))
+                        {
+                            scratch.Bytes = outerInstance.termBytes;
+                            scratch.Offset = 0;
+                            scratch.Length = 0;
+                            return true;
+                        }
+                        termOrd++;
+                    }
+
+
+                    while (true)
+                    {
+                        // if (DEBUG) {
+                        //   System.out.println("  cycle termOrd=" + termOrd + " stateUpto=" + stateUpto + " skipUpto=" + skipUpto);
+                        // }
+                        if (termOrd == outerInstance.terms.Length)
+                        {
+                            // if (DEBUG) {
+                            //   System.out.println("  return END");
+                            // }
+                            return false;
+                        }
+
+                        State state = states[stateUpto];
+                        if (termOrd == state.changeOrd)
+                        {
+                            // Pop:
+                            // if (DEBUG) {
+                            //   System.out.println("  pop stateUpto=" + stateUpto);
+                            // }
+                            stateUpto--;
+
+                            continue;
+                        }
+
+                        int termOffset = outerInstance.termOffsets[termOrd];
+                        int termLength = outerInstance.termOffsets[termOrd + 1] - termOffset;
+                        int skipOffset = outerInstance.skipOffsets[termOrd];
+                        int numSkips = outerInstance.skipOffsets[termOrd + 1] - skipOffset;
+
+                        // if (DEBUG) {
+                        //   System.out.println("  term=" + new BytesRef(termBytes, termOffset, termLength).utf8ToString() + " skips=" + Arrays.toString(skips));
+                        // }
+
+                        if (Debugging.AssertsEnabled) Debugging.Assert(termOrd < state.changeOrd);
+
+                        if (Debugging.AssertsEnabled) Debugging.Assert(stateUpto <= termLength, () => "term.length=" + termLength + "; stateUpto=" + stateUpto);
+                        int label = outerInstance.termBytes[termOffset + stateUpto] & 0xFF;
+
+                        while (label > state.transitionMax)
+                        {
+                            //System.out.println("  label=" + label + " vs max=" + state.transitionMax + " transUpto=" + state.transitionUpto + " vs " + state.transitions.length);
+                            state.transitionUpto++;
+                            if (state.transitionUpto == state.transitions.Length)
+                            {
+                                // We've exhausted transitions leaving this
+                                // state; force pop+next/skip now:
+                                //System.out.println("forcepop: stateUpto=" + stateUpto);
+                                if (stateUpto == 0)
+                                {
+                                    termOrd = outerInstance.terms.Length;
+                                    return false;
+                                }
+                                else
+                                {
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(state.changeOrd > termOrd);
+                                    // if (DEBUG) {
+                                    //   System.out.println("  jumpend " + (state.changeOrd - termOrd));
+                                    // }
+                                    //System.out.println("  jump to termOrd=" + states[stateUpto].changeOrd + " vs " + termOrd);
+                                    termOrd = states[stateUpto].changeOrd;
+                                    skipUpto = 0;
+                                    stateUpto--;
+                                }
+                                goto nextTermContinue;
+                            }
+                            if (Debugging.AssertsEnabled) Debugging.Assert(state.transitionUpto < state.transitions.Length,
+                                () => " state.transitionUpto=" + state.transitionUpto + " vs " + state.transitions.Length);
+                            state.transitionMin = state.transitions[state.transitionUpto].Min;
+                            state.transitionMax = state.transitions[state.transitionUpto].Max;
+                            if (Debugging.AssertsEnabled)
+                            {
+                                Debugging.Assert(state.transitionMin >= 0);
+                                Debugging.Assert(state.transitionMin <= 255);
+                                Debugging.Assert(state.transitionMax >= 0);
+                                Debugging.Assert(state.transitionMax <= 255);
+                            }
+                        }
+
+                        int targetLabel = state.transitionMin;
+
+                        if ((outerInstance.termBytes[termOffset + stateUpto] & 0xFF) < targetLabel)
+                        {
+                            // if (DEBUG) {
+                            //   System.out.println("    do bin search");
+                            // }
+                            //int startTermOrd = termOrd;
+                            int low = termOrd + 1;
+                            int high = state.changeOrd - 1;
+                            while (true)
+                            {
+                                if (low > high)
+                                {
+                                    // Label not found
+                                    termOrd = low;
+                                    // if (DEBUG) {
+                                    //   System.out.println("      advanced by " + (termOrd - startTermOrd));
+                                    // }
+                                    //System.out.println("  jump " + (termOrd - startTermOrd));
+                                    skipUpto = 0;
+                                    goto nextTermContinue;
+                                }
+                                int mid = (int)((uint)(low + high) >> 1);
+                                int cmp = (outerInstance.termBytes[outerInstance.termOffsets[mid] + stateUpto] & 0xFF) -
+                                          targetLabel;
+                                // if (DEBUG) {
+                                //   System.out.println("      bin: check label=" + (char) (termBytes[termOffsets[low] + stateUpto] & 0xFF) + " ord=" + mid);
+                                // }
+                                if (cmp < 0)
+                                {
+                                    low = mid + 1;
+                                }
+                                else if (cmp > 0)
+                                {
+                                    high = mid - 1;
+                                }
+                                else
+                                {
+                                    // Label found; walk backwards to first
+                                    // occurrence:
+                                    while (mid > termOrd &&
+                                           (outerInstance.termBytes[outerInstance.termOffsets[mid - 1] + stateUpto] &
+                                            0xFF) == targetLabel)
+                                    {
+                                        mid--;
+                                    }
+                                    termOrd = mid;
+                                    // if (DEBUG) {
+                                    //   System.out.println("      advanced by " + (termOrd - startTermOrd));
+                                    // }
+                                    //System.out.println("  jump " + (termOrd - startTermOrd));
+                                    skipUpto = 0;
+                                    goto nextTermContinue;
+                                }
+                            }
+                        }
+
+                        int nextState = runAutomaton.Step(states[stateUpto].state, label);
+
+                        if (nextState == -1)
+                        {
+                            // Skip
+                            // if (DEBUG) {
+                            //   System.out.println("  automaton doesn't accept; skip");
+                            // }
+                            if (skipUpto < numSkips)
+                            {
+                                // if (DEBUG) {
+                                //   System.out.println("  jump " + (skips[skipOffset+skipUpto]-1 - termOrd));
+                                // }
+                                termOrd = outerInstance.skips[skipOffset + skipUpto];
+                            }
+                            else
+                            {
+                                termOrd++;
+                            }
+                            skipUpto = 0;
+                        }
+                        else if (skipUpto < numSkips)
+                        {
+                            Grow();
+                            stateUpto++;
+                            states[stateUpto].state = nextState;
+                            states[stateUpto].changeOrd = outerInstance.skips[skipOffset + skipUpto++];
+                            states[stateUpto].transitions = compiledAutomaton.SortedTransitions[nextState];
+                            states[stateUpto].transitionUpto = -1;
+                            states[stateUpto].transitionMax = -1;
+
+                            if (stateUpto == termLength)
+                            {
+                                // if (DEBUG) {
+                                //   System.out.println("  term ends after push");
+                                // }
+                                if (runAutomaton.IsAccept(nextState))
+                                {
+                                    // if (DEBUG) {
+                                    //   System.out.println("  automaton accepts: return");
+                                    // }
+                                    scratch.Bytes = outerInstance.termBytes;
+                                    scratch.Offset = outerInstance.termOffsets[termOrd];
+                                    scratch.Length = outerInstance.termOffsets[1 + termOrd] - scratch.Offset;
+                                    // if (DEBUG) {
+                                    //   System.out.println("  ret " + scratch.utf8ToString());
+                                    // }
+                                    return true;
+                                }
+                                else
+                                {
+                                    // if (DEBUG) {
+                                    //   System.out.println("  automaton rejects: nextTerm");
+                                    // }
+                                    termOrd++;
+                                    skipUpto = 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Run the non-indexed tail of this term:
+
+                            // TODO: add assert that we don't inc too many times
+
+                            if (compiledAutomaton.CommonSuffixRef != null)
+                            {
+                                //System.out.println("suffix " + compiledAutomaton.commonSuffixRef.utf8ToString());
+                                if (Debugging.AssertsEnabled) Debugging.Assert(compiledAutomaton.CommonSuffixRef.Offset == 0);
+                                if (termLength < compiledAutomaton.CommonSuffixRef.Length)
+                                {
+                                    termOrd++;
+                                    skipUpto = 0;
+                                    goto nextTermContinue;
+                                }
+                                int offset = termOffset + termLength - compiledAutomaton.CommonSuffixRef.Length;
+                                for (int suffix = 0; suffix < compiledAutomaton.CommonSuffixRef.Length; suffix++)
+                                {
+                                    if (outerInstance.termBytes[offset + suffix] !=
+                                        compiledAutomaton.CommonSuffixRef.Bytes[suffix])
+                                    {
+                                        termOrd++;
+                                        skipUpto = 0;
+                                        goto nextTermContinue;
+                                    }
+                                }
+                            }
+
+                            int upto = stateUpto + 1;
+                            while (upto < termLength)
+                            {
+                                nextState = runAutomaton.Step(nextState, outerInstance.termBytes[termOffset + upto] & 0xFF);
+                                if (nextState == -1)
+                                {
+                                    termOrd++;
+                                    skipUpto = 0;
+                                    // if (DEBUG) {
+                                    //   System.out.println("  nomatch tail; next term");
+                                    // }
+                                    goto nextTermContinue;
+                                }
+                                upto++;
+                            }
+
+                            if (runAutomaton.IsAccept(nextState))
+                            {
+                                scratch.Bytes = outerInstance.termBytes;
+                                scratch.Offset = outerInstance.termOffsets[termOrd];
+                                scratch.Length = outerInstance.termOffsets[1 + termOrd] - scratch.Offset;
+                                // if (DEBUG) {
+                                //   System.out.println("  match tail; return " + scratch.utf8ToString());
+                                //   System.out.println("  ret2 " + scratch.utf8ToString());
+                                // }
+                                return true;
+                            }
+                            else
+                            {
+                                termOrd++;
+                                skipUpto = 0;
+                                // if (DEBUG) {
+                                //   System.out.println("  nomatch tail; next term");
+                                // }
+                            }
+                        }
+                    nextTermContinue:;
+                    }
+
+                    //nextTermBreak: ; // LUCENENET NOTE: Not used
                 }
 
                 public override BytesRef Next()
