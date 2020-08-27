@@ -864,7 +864,6 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-                // LUCENENET specific - duplicate logic for better enumerator optimization
                 public override bool MoveNext()
                 {
                     termOrd++;
@@ -879,6 +878,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
+                [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                 public override BytesRef Next()
                 {
                     if (MoveNext())
@@ -1386,7 +1386,6 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                // LUCENENET specific - duplicate logic for better enumerator optimization
                 public override bool MoveNext()
                 {
                     // if (DEBUG) {
@@ -1681,6 +1680,7 @@ namespace Lucene.Net.Codecs.Memory
                     //nextTermBreak: ; // LUCENENET NOTE: Not used
                 }
 
+                [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                 public override BytesRef Next()
                 {
                     if (MoveNext())

@@ -850,7 +850,6 @@ namespace Lucene.Net.Codecs.Memory
 
             public override BytesRef Term => current.Input;
 
-            // LUCENENET specific - duplicate logic for better enumerator optimization
             public override bool MoveNext()
             {
                 //System.out.println("te.next");
@@ -866,6 +865,7 @@ namespace Lucene.Net.Codecs.Memory
                 return false;
             }
 
+            [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public override BytesRef Next()
             {
                 if (MoveNext())

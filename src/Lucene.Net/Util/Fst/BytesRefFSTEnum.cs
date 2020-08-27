@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using System;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -47,7 +48,6 @@ namespace Lucene.Net.Util.Fst
 
         public BytesRefFSTEnum.InputOutput<T> Current => result;
 
-        // LUCENENET specific - duplicate logic for better enumerator optimization
         public bool MoveNext()
         {
             //System.out.println("  enum.next");
@@ -65,6 +65,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+        [Obsolete("Use MoveNext() and Current instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public BytesRefFSTEnum.InputOutput<T> Next()
         {
             //System.out.println("  enum.next");

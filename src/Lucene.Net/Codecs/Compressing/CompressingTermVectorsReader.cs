@@ -835,7 +835,6 @@ namespace Lucene.Net.Codecs.Compressing
                 ord = -1;
             }
 
-            // LUCENENET specific - duplicate logic for better enumerator optimization
             public override bool MoveNext()
             {
                 if (ord == numTerms - 1)
@@ -860,6 +859,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return true;
             }
 
+            [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public override BytesRef Next()
             {
                 if (MoveNext())

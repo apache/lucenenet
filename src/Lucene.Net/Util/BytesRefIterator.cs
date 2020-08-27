@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -75,6 +76,7 @@ namespace Lucene.Net.Util
     /// <summary>
     /// A simple iterator interface for <see cref="BytesRef"/> iteration.
     /// </summary>
+    [Obsolete("Use IBytesRefEnumerator instead. This interface will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public interface IBytesRefIterator
     {
         /// <summary>
@@ -105,6 +107,7 @@ namespace Lucene.Net.Util
     /// var iter = BytesRefIterator.EMPTY;
     /// </code>
     /// </summary>
+    [Obsolete("Use BytesRefEnumerator instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public static class BytesRefIterator
     {
         /// <summary>

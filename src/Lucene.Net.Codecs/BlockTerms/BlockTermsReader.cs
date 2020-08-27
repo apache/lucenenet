@@ -5,7 +5,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.BlockTerms
@@ -654,7 +653,6 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                 }
 
-                // LUCENENET specific - duplicate logic for better enumerator optimization
                 public override bool MoveNext()
                 {
                     //System.out.println("BTR.next() seekPending=" + seekPending + " pendingSeekCount=" + state.termBlockOrd);
@@ -712,6 +710,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     return true;
                 }
 
+                [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                 public override BytesRef Next()
                 {
                     if (MoveNext())

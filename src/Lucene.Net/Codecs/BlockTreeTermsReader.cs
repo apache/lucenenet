@@ -1270,7 +1270,6 @@ namespace Lucene.Net.Codecs
                     if (Debugging.AssertsEnabled) Debugging.Assert(false);
                 }
 
-                // LUCENENET specific - duplicate logic for better enumerator optimization
                 public override bool MoveNext()
                 {
                     // if (DEBUG) {
@@ -1443,6 +1442,7 @@ namespace Lucene.Net.Codecs
                     //nextTermBreak:;
                 }
 
+                [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                 public override BytesRef Next()
                 {
                     if (MoveNext())
@@ -2429,7 +2429,6 @@ namespace Lucene.Net.Codecs
                 /* Decodes only the term bytes of the next term.  If caller then asks for
                    metadata, ie docFreq, totalTermFreq or pulls a D/&PEnum, we then (lazily)
                    decode all metadata up to the current term. */
-                // LUCENENET specific - duplicate logic for better enumerator optimization
                 public override bool MoveNext()
                 {
                     if (@in == null)
@@ -2538,6 +2537,7 @@ namespace Lucene.Net.Codecs
                 /* Decodes only the term bytes of the next term.  If caller then asks for
                    metadata, ie docFreq, totalTermFreq or pulls a D/&PEnum, we then (lazily)
                    decode all metadata up to the current term. */
+                [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                 public override BytesRef Next()
                 {
                     if (MoveNext())

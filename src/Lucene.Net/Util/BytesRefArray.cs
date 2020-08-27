@@ -167,6 +167,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sugar for <see cref="GetIterator(IComparer{BytesRef})"/> with a <c>null</c> comparer
         /// </summary>
+        [Obsolete("Use GetEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public IBytesRefIterator GetIterator()
         {
             return GetIterator(null);
@@ -186,6 +187,7 @@ namespace Lucene.Net.Util
         /// This is a non-destructive operation.
         /// </para>
         /// </summary>
+        [Obsolete("Use GetEnumerator(IComparer<BytesRef>) instead. This method will be removed in 4.8.0 release candidate"), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public IBytesRefIterator GetIterator(IComparer<BytesRef> comp)
         {
             BytesRef spare = new BytesRef();
@@ -194,6 +196,7 @@ namespace Lucene.Net.Util
             return new BytesRefIteratorAnonymousInnerClassHelper(this, comp, spare, size, indices);
         }
 
+        [Obsolete("This class will be removed in 4.8.0 release candidate"), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         private class BytesRefIteratorAnonymousInnerClassHelper : IBytesRefIterator
         {
             private readonly BytesRefArray outerInstance;

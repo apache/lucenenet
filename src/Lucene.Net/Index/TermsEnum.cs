@@ -49,6 +49,7 @@ namespace Lucene.Net.Index
         public abstract IComparer<BytesRef> Comparer { get; } // LUCENENET specific - must supply implementation for the interface
 
         /// <inheritdoc/>
+        [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public abstract BytesRef Next(); // LUCENENET specific - must supply implementation for the interface
 
         /// <inheritdoc/>
@@ -326,6 +327,7 @@ namespace Lucene.Net.Index
                 return false;
             }
 
+            [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public override BytesRef Next()
             {
                 return null;
