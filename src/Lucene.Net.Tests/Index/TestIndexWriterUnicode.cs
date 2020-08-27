@@ -148,19 +148,15 @@ namespace Lucene.Net.Index
 
         private void CheckTermsOrder(IndexReader r, ISet<string> allTerms, bool isTop)
         {
-            TermsEnum terms = MultiFields.GetFields(r).GetTerms("f").GetIterator(null);
+            TermsEnum terms = MultiFields.GetFields(r).GetTerms("f").GetEnumerator();
 
             BytesRef last = new BytesRef();
 
             ISet<string> seenTerms = new JCG.HashSet<string>();
 
-            while (true)
+            while (terms.MoveNext())
             {
-                BytesRef term = terms.Next();
-                if (term == null)
-                {
-                    break;
-                }
+                BytesRef term = terms.Term;
 
                 Assert.IsTrue(last.CompareTo(term) < 0);
                 last.CopyBytes(term);

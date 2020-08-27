@@ -352,9 +352,9 @@ namespace Lucene.Net.Index
             {
                 Console.WriteLine("TEST: verify prefix=" + (prefixRef == null ? "null" : prefixRef.Utf8ToString()));
                 Console.WriteLine("TEST: all TERMS:");
-                TermsEnum allTE = MultiFields.GetTerms(r, "field").GetIterator(null);
+                TermsEnum allTE = MultiFields.GetTerms(r, "field").GetEnumerator();
                 int ord = 0;
-                while (allTE.Next() != null)
+                while (allTE.MoveNext())
                 {
                     Console.WriteLine("  ord=" + (ord++) + " term=" + allTE.Term.Utf8ToString());
                 }
@@ -373,7 +373,7 @@ namespace Lucene.Net.Index
                     Terms terms = MultiFields.GetTerms(r, "field");
                     if (terms != null)
                     {
-                        TermsEnum termsEnum = terms.GetIterator(null);
+                        TermsEnum termsEnum = terms.GetEnumerator();
                         TermsEnum.SeekStatus result = termsEnum.SeekCeil(prefixRef);
                         if (result != TermsEnum.SeekStatus.END)
                         {
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     Console.WriteLine("  ord=" + te.Ord + " term=" + te.Term.Utf8ToString());
-                    if (te.Next() == null)
+                    if (!te.MoveNext())
                     {
                         break;
                     }
@@ -495,11 +495,14 @@ namespace Lucene.Net.Index
             TermsEnum termsEnum = dv.GetTermsEnum();
 
             // next()
-            Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
+            Assert.IsTrue(termsEnum.MoveNext());
+            Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
             Assert.AreEqual(0, termsEnum.Ord);
-            Assert.AreEqual("hello", termsEnum.Next().Utf8ToString());
+            Assert.IsTrue(termsEnum.MoveNext());
+            Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
             Assert.AreEqual(1, termsEnum.Ord);
-            Assert.AreEqual("world", termsEnum.Next().Utf8ToString());
+            Assert.IsTrue(termsEnum.MoveNext());
+            Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
             Assert.AreEqual(2, termsEnum.Ord);
 
             // seekCeil()

@@ -427,8 +427,9 @@ namespace Lucene.Net.Documents
                 Terms tvs = tvFields.GetTerms(field);
                 Assert.IsNotNull(tvs);
                 Assert.AreEqual(2, tvs.Count);
-                TermsEnum tvsEnum = tvs.GetIterator(null);
-                Assert.AreEqual(new BytesRef("abc"), tvsEnum.Next());
+                TermsEnum tvsEnum = tvs.GetEnumerator();
+                Assert.IsTrue(tvsEnum.MoveNext());
+                Assert.AreEqual(new BytesRef("abc"), tvsEnum.Term);
                 DocsAndPositionsEnum dpEnum = tvsEnum.DocsAndPositions(null, null);
                 if (field.Equals("tv", StringComparison.Ordinal))
                 {
@@ -438,8 +439,9 @@ namespace Lucene.Net.Documents
                 {
                     Assert.IsNotNull(dpEnum);
                 }
-                Assert.AreEqual(new BytesRef("xyz"), tvsEnum.Next());
-                Assert.IsNull(tvsEnum.Next());
+                Assert.IsTrue(tvsEnum.MoveNext());
+                Assert.AreEqual(new BytesRef("xyz"), tvsEnum.Term);
+                Assert.IsFalse(tvsEnum.MoveNext());
             }
 
             r.Dispose();

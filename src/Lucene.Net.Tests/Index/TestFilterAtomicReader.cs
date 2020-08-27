@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
             reader = DirectoryReader.Open(target);
 
             TermsEnum terms = MultiFields.GetTerms(reader, "default").GetIterator(null);
-            while (terms.Next() != null)
+            while (terms.MoveNext())
             {
                 Assert.IsTrue(terms.Term.Utf8ToString().IndexOf('e') != -1);
             }

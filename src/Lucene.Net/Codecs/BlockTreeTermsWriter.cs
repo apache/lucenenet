@@ -556,8 +556,9 @@ namespace Lucene.Net.Codecs
             {
                 BytesRefFSTEnum<BytesRef> subIndexEnum = new BytesRefFSTEnum<BytesRef>(subIndex);
                 BytesRefFSTEnum.InputOutput<BytesRef> indexEnt;
-                while ((indexEnt = subIndexEnum.Next()) != null)
+                while (subIndexEnum.MoveNext())
                 {
+                    indexEnt = subIndexEnum.Current;
                     //if (DEBUG) {
                     //  System.out.println("      add sub=" + indexEnt.input + " " + indexEnt.input + " output=" + indexEnt.output);
                     //}

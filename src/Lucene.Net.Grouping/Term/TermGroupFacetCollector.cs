@@ -211,7 +211,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
                 protected internal override void NextTerm()
                 {
-                    m_mergeTerm = tenum.Next();
+                    m_mergeTerm = tenum.MoveNext() ? tenum.Term : null;
                 }
             }
         }
@@ -435,7 +435,7 @@ namespace Lucene.Net.Search.Grouping.Terms
 
                 protected internal override void NextTerm()
                 {
-                    m_mergeTerm = tenum.Next();
+                    m_mergeTerm = tenum.MoveNext() ? tenum.Term : null;
                 }
             }
         }

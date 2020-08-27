@@ -199,9 +199,9 @@ namespace Lucene.Net.Search
                         {
                             // TODO: try to "focus" on high freq terms sometimes too
                             // TODO: maybe also periodically reset the terms...?
-                            TermsEnum termsEnum = MultiFields.GetTerms(mockReader, "body").GetIterator(null);
+                            TermsEnum termsEnum = MultiFields.GetTerms(mockReader, "body").GetEnumerator();
                             terms = new List<BytesRef>();
-                            while (termsEnum.Next() != null)
+                            while (termsEnum.MoveNext())
                             {
                                 terms.Add(BytesRef.DeepCopyOf(termsEnum.Term));
                             }

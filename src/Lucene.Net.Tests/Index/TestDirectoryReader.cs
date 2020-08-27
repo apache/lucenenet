@@ -677,15 +677,16 @@ namespace Lucene.Net.Index
                     Assert.IsNull(fields2.GetTerms(field1));
                     continue;
                 }
-                TermsEnum enum1 = terms1.GetIterator(null);
+                TermsEnum enum1 = terms1.GetEnumerator();
 
                 Terms terms2 = fields2.GetTerms(field1);
                 Assert.IsNotNull(terms2);
-                TermsEnum enum2 = terms2.GetIterator(null);
+                TermsEnum enum2 = terms2.GetEnumerator();
 
-                while (enum1.Next() != null)
+                while (enum1.MoveNext())
                 {
-                    Assert.AreEqual(enum1.Term, enum2.Next(), "Different terms");
+                    Assert.IsTrue(enum2.MoveNext());
+                    Assert.AreEqual(enum1.Term, enum2.Term, "Different terms");
                     DocsAndPositionsEnum tp1 = enum1.DocsAndPositions(liveDocs, null);
                     DocsAndPositionsEnum tp2 = enum2.DocsAndPositions(liveDocs, null);
 

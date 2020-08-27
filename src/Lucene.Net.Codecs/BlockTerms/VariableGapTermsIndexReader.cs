@@ -159,14 +159,15 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override long Next()
             {
                 //System.out.println("VGR: next field=" + fieldInfo.name);
-                current = fstEnum.Next();
-                if (current == null)
+                if (!fstEnum.MoveNext())
                 {
+                    current = null;
                     //System.out.println("  eof");
                     return -1;
                 }
                 else
                 {
+                    current = fstEnum.Current;
                     if (current.Output.HasValue)
                     {
                         return current.Output.Value;
@@ -235,8 +236,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                         BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
                         BytesRefFSTEnum.InputOutput<long?> result;
                         int count = outerInstance.indexDivisor;
-                        while ((result = fstEnum.Next()) != null)
+                        while (fstEnum.MoveNext())
                         {
+                            result = fstEnum.Current;
                             if (count == outerInstance.indexDivisor)
                             {
                                 builder.Add(Util.Fst.Util.ToInt32sRef(result.Input, scratchIntsRef), result.Output);

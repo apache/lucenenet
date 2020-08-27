@@ -465,7 +465,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                 }
 
-                while (Next() != null)
+                while (MoveNext())
                 {
                     int cmp = text.CompareTo(term);
                     if (cmp < 0)

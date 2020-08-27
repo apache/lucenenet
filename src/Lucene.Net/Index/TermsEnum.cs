@@ -44,7 +44,11 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public abstract class TermsEnum : IBytesRefEnumerator, IBytesRefIterator // LUCENENET specific: Implemented IBytesRefEnumerator for .NET compatibility
+
+    public abstract class TermsEnum : IBytesRefEnumerator
+#pragma warning disable CS0618 // Type or member is obsolete
+        , IBytesRefIterator
+#pragma warning restore CS0618 // Type or member is obsolete
     {
         public abstract IComparer<BytesRef> Comparer { get; } // LUCENENET specific - must supply implementation for the interface
 

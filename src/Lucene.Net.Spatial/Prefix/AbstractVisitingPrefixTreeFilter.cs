@@ -141,10 +141,11 @@ namespace Lucene.Net.Spatial.Prefix
                     return null;
                 }
                 //advance
-                if ((thisTerm = m_termsEnum.Next()) == null)
+                if (!m_termsEnum.MoveNext())
                 {
                     return null;// all done
                 }
+                thisTerm = m_termsEnum.Term;
                 
                 curVNode = new VNode(null);
                 curVNode.Reset(m_outerInstance.m_grid.WorldCell);
@@ -227,10 +228,12 @@ namespace Lucene.Net.Spatial.Prefix
                         // Visit!
                         bool descend = Visit(curVNode.cell);
                         //advance
-                        if ((thisTerm = m_termsEnum.Next()) == null)
+                        if (!m_termsEnum.MoveNext())
                         {
+                            thisTerm = null;
                             break;// all done
                         }
+                        thisTerm = m_termsEnum.Term;
                         if (descend)
                         {
                             AddIntersectingChildren();
@@ -267,10 +270,11 @@ namespace Lucene.Net.Spatial.Prefix
                     {
                         VisitLeaf(scanCell);
                         //advance
-                        if ((thisTerm = m_termsEnum.Next()) == null)
+                        if (!m_termsEnum.MoveNext())
                         {
                             return;// all done
                         }
+                        thisTerm = m_termsEnum.Term;
                     }
                 }
                 
@@ -312,7 +316,7 @@ namespace Lucene.Net.Spatial.Prefix
             }
 
             /// <summary>
-            /// Scans (<c>termsEnum.Next()</c>) terms until a term is found that does
+            /// Scans (<c>termsEnum.MoveNext()</c>) terms until a term is found that does
             /// not start with curVNode's cell. If it finds a leaf cell or a cell at
             /// level <paramref name="scanDetailLevel"/> then it calls
             /// <see cref="VisitScanned(Lucene.Net.Spatial.Prefix.Tree.Cell)"/>.
@@ -320,24 +324,33 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="IOException"></exception>
             protected internal virtual void Scan(int scanDetailLevel)
             {
-                for (;
-                    thisTerm != null && StringHelper.StartsWith(thisTerm, curVNodeTerm);//TODO refactor to use method on curVNode.cell
-                    thisTerm = m_termsEnum.Next())
+                // LUCENENET specific - on the first loop, we need to check for null,
+                // but on each subsequent loop, we can use the result of MoveNext()
+                if (!(thisTerm is null) && StringHelper.StartsWith(thisTerm, curVNodeTerm)) //TODO refactor to use method on curVNode.cell
                 {
-                    scanCell = m_outerInstance.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
+                    bool moved;
+                    do
+                    {
+                        scanCell = m_outerInstance.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
 
-                    int termLevel = scanCell.Level;
-                    if (termLevel < scanDetailLevel)
-                    {
-                        if (scanCell.IsLeaf)
-                            VisitScanned(scanCell);
-                    }
-                    else if (termLevel == scanDetailLevel)
-                    {
-                        if (!scanCell.IsLeaf)//LUCENE-5529
-                            VisitScanned(scanCell);
-                    }
-                }//term loop
+                        int termLevel = scanCell.Level;
+                        if (termLevel < scanDetailLevel)
+                        {
+                            if (scanCell.IsLeaf)
+                                VisitScanned(scanCell);
+                        }
+                        else if (termLevel == scanDetailLevel)
+                        {
+                            if (!scanCell.IsLeaf)//LUCENE-5529
+                                VisitScanned(scanCell);
+                        }
+
+                    } while ((moved = m_termsEnum.MoveNext()) && StringHelper.StartsWith(thisTerm = m_termsEnum.Term, curVNodeTerm));
+
+                    // LUCENENET: Enusure we set thisTerm to null if the iteration ends
+                    if (!moved)
+                        thisTerm = null;
+                }
             }
 
             #region Nested type: VNodeCellIterator

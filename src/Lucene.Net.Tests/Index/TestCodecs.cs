@@ -371,8 +371,8 @@ namespace Lucene.Net.Index
                     DocsEnum docsEnum = null;
                     for (int i = 0; i < NUM_TERMS; i++)
                     {
-                        BytesRef term = termsEnum.Next();
-                        Assert.IsNotNull(term);
+                        Assert.IsTrue(termsEnum.MoveNext());
+                        BytesRef term = termsEnum.Term;
                         Assert.AreEqual(terms[i].text2, term.Utf8ToString());
 
                         // do this twice to stress test the codec's reuse, ie,
@@ -385,7 +385,7 @@ namespace Lucene.Net.Index
                             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.NextDoc());
                         }
                     }
-                    Assert.IsNull(termsEnum.Next());
+                    Assert.IsFalse(termsEnum.MoveNext());
 
                     for (int i = 0; i < NUM_TERMS; i++)
                     {
@@ -604,13 +604,9 @@ namespace Lucene.Net.Index
 
                     int upto = 0;
                     // Test straight enum of the terms:
-                    while (true)
+                    while (termsEnum.MoveNext())
                     {
-                        BytesRef term = termsEnum.Next();
-                        if (term == null)
-                        {
-                            break;
-                        }
+                        BytesRef term = termsEnum.Term;
                         BytesRef expected = new BytesRef(field.terms[upto++].text2);
                         Assert.IsTrue(expected.BytesEquals(term), "expected=" + expected + " vs actual " + term);
                     }
@@ -797,7 +793,7 @@ namespace Lucene.Net.Index
                             }
                         }
                         upto++;
-                    } while (termsEnum.Next() != null);
+                    } while (termsEnum.MoveNext());
 
                     Assert.AreEqual(upto, field.terms.Length);
                 }

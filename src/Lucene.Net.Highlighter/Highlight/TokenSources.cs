@@ -206,25 +206,24 @@ namespace Lucene.Net.Search.Highlight
             bool hasPayloads = tpv.HasPayloads;
 
             // code to reconstruct the original sequence of Tokens
-            TermsEnum termsEnum = tpv.GetIterator(null);
+            TermsEnum termsEnum = tpv.GetEnumerator();
             int totalTokens = 0;
-            while (termsEnum.Next() != null)
+            while (termsEnum.MoveNext())
             {
                 totalTokens += (int)termsEnum.TotalTermFreq;
             }
             Token[] tokensInOriginalOrder = new Token[totalTokens];
             List<Token> unsortedTokens = null;
-            termsEnum = tpv.GetIterator(null);
-            BytesRef text;
+            termsEnum = tpv.GetEnumerator();
             DocsAndPositionsEnum dpEnum = null;
-            while ((text = termsEnum.Next()) != null)
+            while (termsEnum.MoveNext())
             {
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                 if (dpEnum == null)
                 {
                     throw new ArgumentException("Required TermVector Offset information was not found");
                 }
-                string term = text.Utf8ToString();
+                string term = termsEnum.Term.Utf8ToString();
 
                 dpEnum.NextDoc();
                 int freq = dpEnum.Freq;

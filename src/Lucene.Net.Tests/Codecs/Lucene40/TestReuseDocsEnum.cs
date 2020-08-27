@@ -71,10 +71,10 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 AtomicReader indexReader = (AtomicReader)ctx.Reader;
                 Terms terms = indexReader.GetTerms("body");
-                TermsEnum iterator = terms.GetIterator(null);
+                TermsEnum iterator = terms.GetEnumerator();
                 IDictionary<DocsEnum, bool?> enums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
                 MatchNoBits bits = new MatchNoBits(indexReader.MaxDoc);
-                while ((iterator.Next()) != null)
+                while (iterator.MoveNext())
                 {
                     DocsEnum docs = iterator.Docs(Random.NextBoolean() ? bits : new MatchNoBits(indexReader.MaxDoc), null, Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
@@ -100,11 +100,11 @@ namespace Lucene.Net.Codecs.Lucene40
             foreach (AtomicReaderContext ctx in open.Leaves)
             {
                 Terms terms = ((AtomicReader)ctx.Reader).GetTerms("body");
-                TermsEnum iterator = terms.GetIterator(null);
+                TermsEnum iterator = terms.GetEnumerator();
                 IDictionary<DocsEnum, bool?> enums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
                 MatchNoBits bits = new MatchNoBits(open.MaxDoc);
                 DocsEnum docs = null;
-                while ((iterator.Next()) != null)
+                while (iterator.MoveNext())
                 {
                     docs = iterator.Docs(bits, docs, Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
@@ -112,9 +112,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 Assert.AreEqual(1, enums.Count);
                 enums.Clear();
-                iterator = terms.GetIterator(null);
+                iterator = terms.GetEnumerator();
                 docs = null;
-                while ((iterator.Next()) != null)
+                while (iterator.MoveNext())
                 {
                     docs = iterator.Docs(new MatchNoBits(open.MaxDoc), docs, Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
@@ -122,9 +122,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 Assert.AreEqual(terms.Count, enums.Count);
 
                 enums.Clear();
-                iterator = terms.GetIterator(null);
+                iterator = terms.GetEnumerator();
                 docs = null;
-                while ((iterator.Next()) != null)
+                while (iterator.MoveNext())
                 {
                     docs = iterator.Docs(null, docs, Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
@@ -156,24 +156,26 @@ namespace Lucene.Net.Codecs.Lucene40
             foreach (AtomicReaderContext ctx in leaves)
             {
                 Terms terms = ((AtomicReader)ctx.Reader).GetTerms("body");
-                TermsEnum iterator = terms.GetIterator(null);
+                TermsEnum iterator = terms.GetEnumerator();
                 IDictionary<DocsEnum, bool?> enums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
                 MatchNoBits bits = new MatchNoBits(firstReader.MaxDoc);
-                iterator = terms.GetIterator(null);
+                iterator = terms.GetEnumerator();
                 DocsEnum docs = null;
                 BytesRef term = null;
-                while ((term = iterator.Next()) != null)
+                while (iterator.MoveNext())
                 {
+                    term = iterator.Term;
                     docs = iterator.Docs(null, RandomDocsEnum("body", term, leaves2, bits), Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
                 }
                 Assert.AreEqual(terms.Count, enums.Count);
 
-                iterator = terms.GetIterator(null);
+                iterator = terms.GetEnumerator();
                 enums.Clear();
                 docs = null;
-                while ((term = iterator.Next()) != null)
+                while (iterator.MoveNext())
                 {
+                    term = iterator.Term;
                     docs = iterator.Docs(bits, RandomDocsEnum("body", term, leaves2, bits), Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
                     enums[docs] = true;
                 }

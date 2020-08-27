@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Spell
                         if (IsFrequent(termsEnum.DocFreq))
                         {
                             freq = termsEnum.DocFreq;
-                            spare.CopyBytes(termsEnum.Current);
+                            spare.CopyBytes(termsEnum.Term);
                             current = spare;
                             return true;
                         }

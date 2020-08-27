@@ -116,7 +116,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                     text = null;
                 }
 
-                while (text != null)
+                while (true)
                 {
                     if (text != null && StringHelper.StartsWith(text, prefixRef))
                     {
@@ -131,7 +131,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                     {
                         break;
                     }
-                    text = termsEnum.Next();
+                    if (termsEnum.MoveNext())
+                        text = termsEnum.Term;
+                    else
+                        break;
                 }
             }
         }

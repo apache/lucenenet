@@ -375,11 +375,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     Int32sRef scratchInts = new Int32sRef();
                     while (termsEnum.MoveNext())
                     {
-                        BytesRef term = termsEnum.Current;
-                        if (term == null)
-                        {
-                            break;
-                        }
+                        BytesRef term = termsEnum.Term;
                         int ngramCount = CountGrams(term);
                         if (ngramCount > grams)
                         {

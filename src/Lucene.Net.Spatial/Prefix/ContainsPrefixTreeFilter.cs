@@ -174,12 +174,12 @@ namespace Lucene.Net.Spatial.Prefix
 
                 if (m_termsEnum == null)
                     return null;
-                BytesRef nextTerm = this.m_termsEnum.Next();
-                if (nextTerm == null)
+                if (!m_termsEnum.MoveNext())
                 {
                     m_termsEnum = null;//signals all done
                     return null;
                 }
+                BytesRef nextTerm = m_termsEnum.Term;
                 nextCell = m_outerInstance.m_grid.GetCell(nextTerm.Bytes, nextTerm.Offset, nextTerm.Length, this.nextCell);
                 if (nextCell.Level == leafCell.Level && nextCell.IsLeaf)
                 {

@@ -421,8 +421,8 @@ namespace Lucene.Net.Tests.Queries
             Util.PriorityQueue<TermAndFreq> highFreqQueue = new AnonymousPriorityQueue1(this, 5);
             try
             {
-                TermsEnum iterator = terms.GetIterator(null);
-                while (iterator.Next() != null)
+                TermsEnum iterator = terms.GetEnumerator();
+                while (iterator.MoveNext())
                 {
                     if (highFreqQueue.Count < 5)
                     {

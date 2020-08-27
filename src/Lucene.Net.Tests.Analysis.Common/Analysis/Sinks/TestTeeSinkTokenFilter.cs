@@ -108,8 +108,8 @@ namespace Lucene.Net.Analysis.Sinks
             IndexReader r = DirectoryReader.Open(dir);
             Terms vector = r.GetTermVectors(0).GetTerms("field");
             assertEquals(1, vector.Count);
-            TermsEnum termsEnum = vector.GetIterator(null);
-            termsEnum.Next();
+            TermsEnum termsEnum = vector.GetEnumerator();
+            termsEnum.MoveNext();
             assertEquals(2, termsEnum.TotalTermFreq);
             DocsAndPositionsEnum positions = termsEnum.DocsAndPositions(null, null);
             assertTrue(positions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);

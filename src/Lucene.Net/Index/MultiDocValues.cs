@@ -481,7 +481,7 @@ namespace Lucene.Net.Index
                 MultiTermsEnum mte = new MultiTermsEnum(slices);
                 mte.Reset(indexes);
                 long globalOrd = 0;
-                while (mte.Next() != null)
+                while (mte.MoveNext())
                 {
                     TermsEnumWithSlice[] matches = mte.MatchArray;
                     for (int i = 0; i < mte.MatchCount; i++)

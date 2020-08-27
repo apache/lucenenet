@@ -176,15 +176,15 @@ namespace Lucene.Net.Index.Memory
                     assertEquals(iwTerms.DocCount, memTerms.DocCount);
                     assertEquals(iwTerms.SumDocFreq, memTerms.SumDocFreq);
                     assertEquals(iwTerms.SumTotalTermFreq, memTerms.SumTotalTermFreq);
-                    TermsEnum iwTermsIter = iwTerms.GetIterator(null);
-                    TermsEnum memTermsIter = memTerms.GetIterator(null);
+                    TermsEnum iwTermsIter = iwTerms.GetEnumerator();
+                    TermsEnum memTermsIter = memTerms.GetEnumerator();
                     if (iwTerms.HasPositions)
                     {
                         bool offsets = iwTerms.HasOffsets && memTerms.HasOffsets;
 
-                        while (iwTermsIter.Next() != null)
+                        while (iwTermsIter.MoveNext())
                         {
-                            assertNotNull(memTermsIter.Next());
+                            assertTrue(memTermsIter.MoveNext());
                             assertEquals(iwTermsIter.Term, memTermsIter.Term);
                             DocsAndPositionsEnum iwDocsAndPos = iwTermsIter.DocsAndPositions(null, null);
                             DocsAndPositionsEnum memDocsAndPos = memTermsIter.DocsAndPositions(null, null);
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index.Memory
                     }
                     else
                     {
-                        while (iwTermsIter.Next() != null)
+                        while (iwTermsIter.MoveNext())
                         {
                             assertEquals(iwTermsIter.Term, memTermsIter.Term);
                             DocsEnum iwDocsAndPos = iwTermsIter.Docs(null, null);
@@ -576,12 +576,12 @@ namespace Lucene.Net.Index.Memory
         protected void CompareTermVectors(Terms terms, Terms memTerms, string field_name)
         {
 
-            TermsEnum termEnum = terms.GetIterator(null);
-            TermsEnum memTermEnum = memTerms.GetIterator(null);
+            TermsEnum termEnum = terms.GetEnumerator();
+            TermsEnum memTermEnum = memTerms.GetEnumerator();
 
-            while (termEnum.Next() != null)
+            while (termEnum.MoveNext())
             {
-                assertNotNull(memTermEnum.Next());
+                assertTrue(memTermEnum.MoveNext());
 
                 assertEquals(termEnum.TotalTermFreq, memTermEnum.TotalTermFreq);
 
@@ -608,7 +608,7 @@ namespace Lucene.Net.Index.Memory
                     assertEquals("Missing payload test failed" + failDesc, docsPosEnum.GetPayload(), null);
                 }
             }
-            assertNull("Still some tokens not processed", memTermEnum.Next());
+            assertFalse("Still some tokens not processed", memTermEnum.MoveNext());
         }
     }
 }

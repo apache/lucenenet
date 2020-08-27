@@ -37,7 +37,9 @@ namespace Lucene.Net.Search.Spell
 
         private IndexReader indexReader = null;
         private LuceneDictionary ld;
+#pragma warning disable CS0618 // Type or member is obsolete
         private IBytesRefIterator it;
+#pragma warning restore CS0618 // Type or member is obsolete
         private BytesRef spare = new BytesRef();
 
 

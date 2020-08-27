@@ -84,10 +84,9 @@ namespace Lucene.Net.Search
                 lastTermComp = newTermComp;
                 collector.SetReaderContext(topReaderContext, context);
                 collector.SetNextEnum(termsEnum);
-                BytesRef bytes;
-                while ((bytes = termsEnum.Next()) != null)
+                while (termsEnum.MoveNext())
                 {
-                    if (!collector.Collect(bytes))
+                    if (!collector.Collect(termsEnum.Term))
                     {
                         return; // interrupt whole term collection, so also don't iterate other subReaders
                     }

@@ -239,14 +239,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private double CreateCoefficient(IndexSearcher searcher, int doc, ICollection<string> matchedTokens, string prefixToken)
         {
             Terms tv = searcher.IndexReader.GetTermVector(doc, TEXT_FIELD_NAME);
-            TermsEnum it = tv.GetIterator(TermsEnum.EMPTY);
+            TermsEnum it = tv.GetEnumerator(TermsEnum.EMPTY);
 
-            int? position = int.MaxValue;
-            BytesRef term;
+            int position = int.MaxValue;
             // find the closest token position
-            while ((term = it.Next()) != null)
+            while (it.MoveNext())
             {
-                string docTerm = term.Utf8ToString();
+                string docTerm = it.Term.Utf8ToString();
 
                 if (matchedTokens.Contains(docTerm) || docTerm.StartsWith(prefixToken, StringComparison.Ordinal))
                 {
@@ -263,7 +262,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
 
             // create corresponding coefficient based on position
-            return CalculateCoefficient(position.Value);
+            return CalculateCoefficient(position);
         }
 
         /// <summary>

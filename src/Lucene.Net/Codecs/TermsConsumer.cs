@@ -117,8 +117,9 @@ namespace Lucene.Net.Codecs
 
                 MultiDocsEnum docsEnumIn = null;
 
-                while ((term = termsEnum.Next()) != null)
+                while (termsEnum.MoveNext())
                 {
+                    term = termsEnum.Term;
                     // We can pass null for liveDocs, because the
                     // mapping enum will skip the non-live docs:
                     docsEnumIn = (MultiDocsEnum)termsEnum.Docs(null, docsEnumIn, DocsFlags.NONE);
@@ -152,8 +153,9 @@ namespace Lucene.Net.Codecs
 
                 MultiDocsEnum docsAndFreqsEnumIn = null;
 
-                while ((term = termsEnum.Next()) != null)
+                while (termsEnum.MoveNext())
                 {
+                    term = termsEnum.Term;
                     // We can pass null for liveDocs, because the
                     // mapping enum will skip the non-live docs:
                     docsAndFreqsEnumIn = (MultiDocsEnum)termsEnum.Docs(null, docsAndFreqsEnumIn);
@@ -183,8 +185,9 @@ namespace Lucene.Net.Codecs
                 }
                 postingsEnum.MergeState = mergeState;
                 MultiDocsAndPositionsEnum postingsEnumIn = null;
-                while ((term = termsEnum.Next()) != null)
+                while (termsEnum.MoveNext())
                 {
+                    term = termsEnum.Term;
                     // We can pass null for liveDocs, because the
                     // mapping enum will skip the non-live docs:
                     postingsEnumIn = (MultiDocsAndPositionsEnum)termsEnum.DocsAndPositions(null, postingsEnumIn, DocsAndPositionsFlags.PAYLOADS);
@@ -216,8 +219,9 @@ namespace Lucene.Net.Codecs
                 }
                 postingsEnum.MergeState = mergeState;
                 MultiDocsAndPositionsEnum postingsEnumIn = null;
-                while ((term = termsEnum.Next()) != null)
+                while (termsEnum.MoveNext())
                 {
+                    term = termsEnum.Term;
                     // We can pass null for liveDocs, because the
                     // mapping enum will skip the non-live docs:
                     postingsEnumIn = (MultiDocsAndPositionsEnum)termsEnum.DocsAndPositions(null, postingsEnumIn);

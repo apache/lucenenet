@@ -548,7 +548,7 @@ namespace Lucene.Net.Index
                 }
 
                 termNum++;
-                if (te.Next() == null)
+                if (!te.MoveNext())
                 {
                     break;
                 }
@@ -854,7 +854,7 @@ namespace Lucene.Net.Index
 
                 while (term != null && term.CompareTo(target) < 0)
                 {
-                    Next();
+                    MoveNext();
                 }
 
                 if (term == null)
@@ -892,8 +892,7 @@ namespace Lucene.Net.Index
 
                 while (--delta >= 0)
                 {
-                    BytesRef br = termsEnum.Next();
-                    if (br == null)
+                    if (!termsEnum.MoveNext())
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(false);
                         return;

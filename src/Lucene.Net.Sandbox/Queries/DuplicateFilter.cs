@@ -80,39 +80,31 @@ namespace Lucene.Net.Sandbox.Queries
                 return bits;
             }
 
-            TermsEnum termsEnum = terms.GetIterator(null);
+            TermsEnum termsEnum = terms.GetEnumerator();
             DocsEnum docs = null;
-            while (true)
+            while (termsEnum.MoveNext())
             {
-                BytesRef currTerm = termsEnum.Next();
-                if (currTerm == null)
+                docs = termsEnum.Docs(acceptDocs, docs, DocsFlags.NONE);
+                int doc = docs.NextDoc();
+                if (doc != DocIdSetIterator.NO_MORE_DOCS)
                 {
-                    break;
-                }
-                else
-                {
-                    docs = termsEnum.Docs(acceptDocs, docs, DocsFlags.NONE);
-                    int doc = docs.NextDoc();
-                    if (doc != DocIdSetIterator.NO_MORE_DOCS)
+                    if (keepMode == KeepMode.KM_USE_FIRST_OCCURRENCE)
                     {
-                        if (keepMode == KeepMode.KM_USE_FIRST_OCCURRENCE)
+                        bits.Set(doc);
+                    }
+                    else
+                    {
+                        int lastDoc/* = doc*/; // LUCENENET: Removed unnecessary assignment
+                        while (true)
                         {
-                            bits.Set(doc);
-                        }
-                        else
-                        {
-                            int lastDoc = doc;
-                            while (true)
+                            lastDoc = doc;
+                            doc = docs.NextDoc();
+                            if (doc == DocIdSetIterator.NO_MORE_DOCS)
                             {
-                                lastDoc = doc;
-                                doc = docs.NextDoc();
-                                if (doc == DocIdSetIterator.NO_MORE_DOCS)
-                                {
-                                    break;
-                                }
+                                break;
                             }
-                            bits.Set(lastDoc);
                         }
+                        bits.Set(lastDoc);
                     }
                 }
             }
@@ -130,47 +122,39 @@ namespace Lucene.Net.Sandbox.Queries
                 return bits;
             }
 
-            TermsEnum termsEnum = terms.GetIterator(null);
+            TermsEnum termsEnum = terms.GetEnumerator();
             DocsEnum docs = null;
-            while (true)
+            while (termsEnum.MoveNext())
             {
-                BytesRef currTerm = termsEnum.Next();
-                if (currTerm == null)
+                if (termsEnum.DocFreq > 1)
                 {
-                    break;
-                }
-                else
-                {
-                    if (termsEnum.DocFreq > 1)
+                    // unset potential duplicates
+                    docs = termsEnum.Docs(acceptDocs, docs, DocsFlags.NONE);
+                    int doc = docs.NextDoc();
+                    if (doc != DocIdSetIterator.NO_MORE_DOCS)
                     {
-                        // unset potential duplicates
-                        docs = termsEnum.Docs(acceptDocs, docs, DocsFlags.NONE);
-                        int doc = docs.NextDoc();
-                        if (doc != DocIdSetIterator.NO_MORE_DOCS)
+                        if (keepMode == KeepMode.KM_USE_FIRST_OCCURRENCE)
                         {
-                            if (keepMode == KeepMode.KM_USE_FIRST_OCCURRENCE)
-                            {
-                                doc = docs.NextDoc();
-                            }
-                        }
-
-                        int lastDoc = -1;
-                        while (true)
-                        {
-                            lastDoc = doc;
-                            bits.Clear(lastDoc);
                             doc = docs.NextDoc();
-                            if (doc == DocIdSetIterator.NO_MORE_DOCS)
-                            {
-                                break;
-                            }
                         }
+                    }
 
-                        if (keepMode == KeepMode.KM_USE_LAST_OCCURRENCE)
+                    int lastDoc/* = -1*/; // LUCENENET: Unnecessary assignment
+                    while (true)
+                    {
+                        lastDoc = doc;
+                        bits.Clear(lastDoc);
+                        doc = docs.NextDoc();
+                        if (doc == DocIdSetIterator.NO_MORE_DOCS)
                         {
-                            // restore the last bit
-                            bits.Set(lastDoc);
+                            break;
                         }
+                    }
+
+                    if (keepMode == KeepMode.KM_USE_LAST_OCCURRENCE)
+                    {
+                        // restore the last bit
+                        bits.Set(lastDoc);
                     }
                 }
             }

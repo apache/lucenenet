@@ -112,10 +112,11 @@ namespace Lucene.Net.Util
                 }
                 for (int i = 0; i < 2; i++)
                 {
-                    IBytesRefIterator iterator = list.GetIterator();
+                    IBytesRefEnumerator iterator = list.GetEnumerator();
                     foreach (string @string in stringList)
                     {
-                        Assert.AreEqual(@string, iterator.Next().Utf8ToString());
+                        Assert.IsTrue(iterator.MoveNext());
+                        Assert.AreEqual(@string, iterator.Current.Utf8ToString());
                     }
                 }
             }

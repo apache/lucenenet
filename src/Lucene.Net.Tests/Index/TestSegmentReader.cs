@@ -143,8 +143,8 @@ namespace Lucene.Net.Index
             {
                 Terms terms = fields.GetTerms(field);
                 Assert.IsNotNull(terms);
-                TermsEnum termsEnum = terms.GetIterator(null);
-                while (termsEnum.Next() != null)
+                TermsEnum termsEnum = terms.GetEnumerator();
+                while (termsEnum.MoveNext())
                 {
                     BytesRef term = termsEnum.Term;
                     Assert.IsTrue(term != null);
@@ -212,8 +212,8 @@ namespace Lucene.Net.Index
             Terms result = reader.GetTermVectors(0).GetTerms(DocHelper.TEXT_FIELD_2_KEY);
             Assert.IsNotNull(result);
             Assert.AreEqual(3, result.Count);
-            TermsEnum termsEnum = result.GetIterator(null);
-            while (termsEnum.Next() != null)
+            TermsEnum termsEnum = result.GetEnumerator();
+            while (termsEnum.MoveNext())
             {
                 string term = termsEnum.Term.Utf8ToString();
                 int freq = (int)termsEnum.TotalTermFreq;

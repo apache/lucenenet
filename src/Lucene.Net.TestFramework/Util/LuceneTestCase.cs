@@ -2707,9 +2707,11 @@ namespace Lucene.Net.Util
             DocsEnum leftDocs = null;
             DocsEnum rightDocs = null;
 
-            while ((term = leftTermsEnum.Next()) != null)
+            while (leftTermsEnum.MoveNext())
             {
-                Assert.AreEqual(term, rightTermsEnum.Next(), info);
+                term = leftTermsEnum.Term;
+                rightTermsEnum.MoveNext();
+                Assert.AreEqual(term, rightTermsEnum.Term, info);
                 AssertTermStatsEquals(info, leftTermsEnum, rightTermsEnum);
                 if (deep)
                 {
@@ -2736,7 +2738,7 @@ namespace Lucene.Net.Util
                     AssertDocsSkippingEquals(info, leftReader, leftTermsEnum.DocFreq, leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsFlags.NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsFlags.NONE), false);
                 }
             }
-            Assert.IsNull(rightTermsEnum.Next(), info);
+            Assert.IsFalse(rightTermsEnum.MoveNext(), info);
         }
 
         /// <summary>
@@ -2895,9 +2897,10 @@ namespace Lucene.Net.Util
             while (numPasses < 10 && tests.Count < numTests)
             {
                 leftEnum = leftTerms.GetIterator(leftEnum);
-                BytesRef term = null;
-                while ((term = leftEnum.Next()) != null)
+                BytesRef term;
+                while (leftEnum.MoveNext())
                 {
+                    term = leftEnum.Term;
                     int code = random.Next(10);
                     if (code == 0)
                     {

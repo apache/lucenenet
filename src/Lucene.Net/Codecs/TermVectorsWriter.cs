@@ -306,18 +306,18 @@ namespace Lucene.Net.Codecs
                 {
                     // count manually. It is stupid, but needed, as Terms.size() is not a mandatory statistics function
                     numTerms = 0;
-                    termsEnum = terms.GetIterator(termsEnum);
-                    while (termsEnum.Next() != null)
+                    termsEnum = terms.GetEnumerator(termsEnum);
+                    while (termsEnum.MoveNext())
                     {
                         numTerms++;
                     }
                 }
 
                 StartField(fieldInfo, numTerms, hasPositions, hasOffsets, hasPayloads);
-                termsEnum = terms.GetIterator(termsEnum);
+                termsEnum = terms.GetEnumerator(termsEnum);
 
                 int termCount = 0;
-                while (termsEnum.Next() != null)
+                while (termsEnum.MoveNext())
                 {
                     termCount++;
 

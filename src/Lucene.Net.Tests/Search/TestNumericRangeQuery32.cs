@@ -495,8 +495,9 @@ namespace Lucene.Net.Search
             Assert.IsNotNull(termEnum);
             int count = 0;
             BytesRef cur, last = null;
-            while ((cur = termEnum.Next()) != null)
+            while (termEnum.MoveNext())
             {
+                cur = termEnum.Term;
                 count++;
                 if (last != null)
                 {

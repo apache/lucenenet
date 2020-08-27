@@ -110,7 +110,7 @@ namespace Lucene.Net.Search
 
             TermsEnum termsEnum = m_query.GetTermsEnum(terms);
             if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
-            if (termsEnum.Next() != null)
+            if (termsEnum.MoveNext())
             {
                 // fill into a FixedBitSet
                 FixedBitSet bitSet = new FixedBitSet(context.AtomicReader.MaxDoc);
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search
                     {
                         bitSet.Set(docid);
                     }
-                } while (termsEnum.Next() != null);
+                } while (termsEnum.MoveNext());
 
                 return bitSet;
             }
