@@ -835,6 +835,31 @@ namespace Lucene.Net.Codecs.Compressing
                 ord = -1;
             }
 
+            // LUCENENET specific - duplicate logic for better enumerator optimization
+            public override bool MoveNext()
+            {
+                if (ord == numTerms - 1)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ord < numTerms);
+                    ++ord;
+                }
+
+                // read term
+                term.Offset = 0;
+                term.Length = prefixLengths[ord] + suffixLengths[ord];
+                if (term.Length > term.Bytes.Length)
+                {
+                    term.Bytes = ArrayUtil.Grow(term.Bytes, term.Length);
+                }
+                @in.ReadBytes(term.Bytes, prefixLengths[ord], suffixLengths[ord]);
+
+                return true;
+            }
+
             public override BytesRef Next()
             {
                 if (ord == numTerms - 1)

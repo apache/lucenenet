@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// On the first call to <see cref="Next()"/> or if <see cref="Accept(BytesRef)"/> returns
+        /// On the first call to <see cref="MoveNext()"/> or if <see cref="Accept(BytesRef)"/> returns
         /// <see cref="AcceptStatus.YES_AND_SEEK"/> or <see cref="AcceptStatus.NO_AND_SEEK"/>,
         /// this method will be called to eventually seek the underlying <see cref="TermsEnum"/>
         /// to a new position.
@@ -209,6 +209,63 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(tenum != null);
             return tenum.GetTermState();
+        }
+
+        // LUCENENET specific - duplicate logic for better enumerator optimization
+        public override bool MoveNext()
+        {
+            //System.out.println("FTE.next doSeek=" + doSeek);
+            //new Throwable().printStackTrace(System.out);
+            for (; ; )
+            {
+                // Seek or forward the iterator
+                if (doSeek)
+                {
+                    doSeek = false;
+                    BytesRef t = NextSeekTerm(actualTerm);
+                    //System.out.println("  seek to t=" + (t == null ? "null" : t.utf8ToString()) + " tenum=" + tenum);
+                    // Make sure we always seek forward:
+                    if (Debugging.AssertsEnabled) Debugging.Assert(actualTerm == null || t == null || Comparer.Compare(t, actualTerm) > 0, () => "curTerm=" + actualTerm + " seekTerm=" + t);
+                    if (t == null || tenum.SeekCeil(t) == SeekStatus.END)
+                    {
+                        // no more terms to seek to or enum exhausted
+                        //System.out.println("  return null");
+                        return false;
+                    }
+                    actualTerm = tenum.Term;
+                    //System.out.println("  got term=" + actualTerm.utf8ToString());
+                }
+                else
+                {
+                    actualTerm = tenum.Next();
+                    if (actualTerm == null)
+                    {
+                        // enum exhausted
+                        return false;
+                    }
+                }
+
+                // check if term is accepted
+                switch (Accept(actualTerm))
+                {
+                    case FilteredTermsEnum.AcceptStatus.YES_AND_SEEK:
+                        doSeek = true;
+                        // term accepted, but we need to seek so fall-through
+                        goto case FilteredTermsEnum.AcceptStatus.YES;
+                    case FilteredTermsEnum.AcceptStatus.YES:
+                        // term accepted
+                        return true;
+
+                    case FilteredTermsEnum.AcceptStatus.NO_AND_SEEK:
+                        // invalid term, seek next time
+                        doSeek = true;
+                        break;
+
+                    case FilteredTermsEnum.AcceptStatus.END:
+                        // we are supposed to end the enum
+                        return false;
+                }
+            }
         }
 
         public override BytesRef Next()

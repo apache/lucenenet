@@ -118,7 +118,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 private readonly SortingTermsEnum outerInstance;
 
-                private IBits liveDocs;
+                private readonly IBits liveDocs;
 
                 public BitsAnonymousInnerClassHelper(SortingTermsEnum outerInstance, IBits liveDocs)
                 {

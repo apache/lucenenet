@@ -273,6 +273,33 @@ namespace Lucene.Net.Search
 
         private BytesRef queuedBottom = null;
 
+        // LUCENENET specific - duplicate logic for better enumerator optimization
+        public override bool MoveNext()
+        {
+            if (queuedBottom != null)
+            {
+                BottomChanged(queuedBottom, false);
+                queuedBottom = null;
+            }
+
+            BytesRef term = actualEnum.Next();
+            boostAtt.Boost = actualBoostAtt.Boost;
+
+            float bottom = maxBoostAtt.MaxNonCompetitiveBoost;
+            BytesRef bottomTerm = maxBoostAtt.CompetitiveTerm;
+            if (actualEnum.MoveNext() && (bottom != this.bottom || bottomTerm != this.bottomTerm))
+            {
+                this.bottom = bottom;
+                this.bottomTerm = bottomTerm;
+                // clone the term before potentially doing something with it
+                // this is a rare but wonderful occurrence anyway
+                queuedBottom = BytesRef.DeepCopyOf(actualEnum.Term);
+                return true;
+            }
+
+            return false;
+        }
+
         public override BytesRef Next()
         {
             if (queuedBottom != null)

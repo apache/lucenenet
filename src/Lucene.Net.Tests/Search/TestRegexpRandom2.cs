@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
                 private readonly TestRegexpRandom2.DumbRegexpQuery outerInstance;
 
                 private CharacterRunAutomaton runAutomaton;
-                private CharsRef utf16 = new CharsRef(10);
+                private readonly CharsRef utf16 = new CharsRef(10);
 
                 internal SimpleAutomatonTermsEnum(TestRegexpRandom2.DumbRegexpQuery outerInstance, TermsEnum tenum)
                     : base(tenum)

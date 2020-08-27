@@ -1074,7 +1074,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 private readonly CompressedBinaryDocValues outerInstance;
 
-                private IndexInput input;
+                private readonly IndexInput input;
 
                 public TermsEnumAnonymousInnerClassHelper(CompressedBinaryDocValues outerInstance, IndexInput input)
                 {
@@ -1091,6 +1091,24 @@ namespace Lucene.Net.Codecs.Lucene45
                 private readonly BytesRef termBuffer;
 
                 private readonly BytesRef term;
+
+                // LUCENENET specific - duplicate logic for better enumerator optimization
+                public override bool MoveNext()
+                {
+                    if (++currentOrd >= outerInstance.numValues)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        int start = input.ReadVInt32();
+                        int suffix = input.ReadVInt32();
+                        input.ReadBytes(termBuffer.Bytes, start, suffix);
+                        termBuffer.Length = start + suffix;
+                        SetTerm();
+                        return true;
+                    }
+                }
 
                 public override BytesRef Next()
                 {

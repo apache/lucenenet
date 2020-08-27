@@ -161,6 +161,12 @@ namespace Lucene.Net.Index
                 m_input.SeekExact(ord);
             }
 
+            // LUCENENET specific - duplicate logic for better enumerator optimization
+            public override bool MoveNext()
+            {
+                return m_input.MoveNext();
+            }
+
             public override BytesRef Next()
             {
                 return m_input.Next();

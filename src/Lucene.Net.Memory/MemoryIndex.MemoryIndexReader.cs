@@ -289,6 +289,21 @@ namespace Lucene.Net.Index.Memory
                     termUpto = (int)ord;
                 }
 
+                // LUCENEENT specific - duplicate logic for better enumerator optimization
+                public override bool MoveNext()
+                {
+                    termUpto++;
+                    if (termUpto >= info.terms.Count)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        info.terms.Get(info.sortedTerms[termUpto], br);
+                        return true;
+                    }
+                }
+
                 public override BytesRef Next()
                 {
                     termUpto++;

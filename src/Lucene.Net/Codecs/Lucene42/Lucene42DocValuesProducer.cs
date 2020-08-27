@@ -722,6 +722,9 @@ namespace Lucene.Net.Codecs.Lucene42
                 bytesReader = fst.GetBytesReader();
             }
 
+            // LUCENENET specific - duplicate logic for better enumerator optimization
+            public override bool MoveNext() => @in.MoveNext();
+
             public override BytesRef Next()
             {
                 var io = @in.Next();

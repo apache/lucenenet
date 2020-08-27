@@ -770,6 +770,22 @@ namespace Lucene.Net.Index
 
             public override BytesRef Term => term;
 
+            // LUCENENET specific - duplicate logic for better enumerator optimization
+            public override bool MoveNext()
+            {
+                if (++ord < 0)
+                {
+                    ord = 0;
+                }
+                if (!termsEnum.MoveNext())
+                {
+                    term = null;
+                    return false;
+                }
+                SetTerm(); // this is extra work if we know we are in bounds...
+                return true;
+            }
+
             public override BytesRef Next()
             {
                 if (++ord < 0)

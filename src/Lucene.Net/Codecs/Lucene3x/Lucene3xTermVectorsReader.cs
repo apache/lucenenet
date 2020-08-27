@@ -429,8 +429,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private class TVTermsEnum : TermsEnum
         {
-            private readonly Lucene3xTermVectorsReader outerInstance;
-
             internal bool unicodeSortOrder;
             internal readonly IndexInput origTVF;
             internal readonly IndexInput tvf;
@@ -444,7 +442,6 @@ namespace Lucene.Net.Codecs.Lucene3x
             // NOTE: tvf is pre-positioned by caller
             public TVTermsEnum(Lucene3xTermVectorsReader outerInstance)
             {
-                this.outerInstance = outerInstance;
                 this.origTVF = outerInstance.tvf;
                 tvf = (IndexInput)origTVF.Clone();
             }
@@ -547,6 +544,16 @@ namespace Lucene.Net.Codecs.Lucene3x
             public override void SeekExact(long ord)
             {
                 throw new NotSupportedException();
+            }
+
+            // LUCENENET specific - duplicate logic for better enumerator optimization
+            public override bool MoveNext()
+            {
+                if (++currentTerm >= numTerms)
+                {
+                    return false;
+                }
+                return true;
             }
 
             public override BytesRef Next()

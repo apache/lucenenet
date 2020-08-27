@@ -435,6 +435,23 @@ namespace Lucene.Net.Index
                 return docs == null ? null : new AssertingDocsAndPositionsEnum(docs);
             }
 
+            // LUCENENET specific - duplicate logic for better enumerator optimization
+            public override bool MoveNext()
+            {
+                if (Debugging.AssertsEnabled) Debugging.Assert(state == State.INITIAL || state == State.POSITIONED, "MoveNext() called on unpositioned TermsEnum");
+                if (!base.MoveNext())
+                {
+                    state = State.UNPOSITIONED;
+                    return false;
+                }
+                else
+                {
+                    if (Debugging.AssertsEnabled) Debugging.Assert(base.Term.IsValid());
+                    state = State.POSITIONED;
+                    return true;
+                }
+            }
+
             // TODO: we should separately track if we are 'at the end' ?
             // someone should not call next() after it returns null!!!!
             public override BytesRef Next()

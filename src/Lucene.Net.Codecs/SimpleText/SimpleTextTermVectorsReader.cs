@@ -370,22 +370,35 @@ namespace Lucene.Net.Codecs.SimpleText
                 _iterator = newTerms.GetEnumerator();
 
                 // LUCENENET specific: Since in .NET we don't have a HasNext() method, we need
-                // to call Next() and check the result if it is null instead. Since we need
-                // to check the result of Next() anyway for the Equals() comparison, this makes sense here.
-                var next = Next();
-                if (next == null)
+                // to call MoveNext(). Since we need
+                // to check the result anyway for the Equals() comparison, this makes sense here.
+                if (!MoveNext())
                 {
                     return SeekStatus.END;
                 }
                 else
                 {
-                    return next.Equals(text) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+                    return _current.Key.Equals(text) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
                 }
             }
 
             public override void SeekExact(long ord)
             {
                 throw new NotSupportedException();
+            }
+
+            // LUCENENET specific - duplicate logic for better enumerator optimization
+            public override bool MoveNext()
+            {
+                if (_iterator.MoveNext())
+                {
+                    _current = _iterator.Current;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
 
             public override BytesRef Next()

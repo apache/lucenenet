@@ -850,6 +850,20 @@ namespace Lucene.Net.Codecs.Memory
 
             public override BytesRef Term => current.Input;
 
+            // LUCENENET specific - duplicate logic for better enumerator optimization
+            public override bool MoveNext()
+            {
+                //System.out.println("te.next");
+                if (fstEnum.MoveNext())
+                {
+                    didDecode = false;
+                    //System.out.println("  term=" + field.name + ":" + current.input.utf8ToString());
+                    return true;
+                }
+                //System.out.println("  END");
+                return false;
+            }
+
             public override BytesRef Next()
             {
                 //System.out.println("te.next");

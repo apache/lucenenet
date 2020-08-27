@@ -764,6 +764,11 @@ namespace Lucene.Net.Codecs.Memory
                 bytesReader = fst.GetBytesReader();
             }
 
+            public override bool MoveNext()
+            {
+                return input.MoveNext();
+            }
+
             public override BytesRef Next()
             {
                 var io = input.Next();

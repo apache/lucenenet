@@ -157,6 +157,22 @@ namespace Lucene.Net.Codecs.SimpleText
 
             }
 
+            // LUCENENET specific - duplicate logic for better enumerator optimization
+            public override bool MoveNext()
+            {
+                //if (Debugging.AssertsEnabled) Debugging.Assert(!ended); // LUCENENET: Ended field is never set, so this can never fail
+                var result = _fstEnum.MoveNext();
+
+                if (!result) return false;
+
+                var pair1 = _fstEnum.Current.Output;
+                var pair2 = pair1.Output2;
+                _docsStart = pair1.Output1.Value;
+                _docFreq = (int)pair2.Output1;
+                _totalTermFreq = pair2.Output2.Value;
+                return true;
+            }
+
             public override BytesRef Next()
             {
                 //if (Debugging.AssertsEnabled) Debugging.Assert(!ended); // LUCENENET: Ended field is never set, so this can never fail

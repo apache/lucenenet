@@ -450,8 +450,6 @@ namespace Lucene.Net.Codecs.Memory
             // Iterates through all terms in this field
             private sealed class SegmentTermsEnum : BaseTermsEnum
             {
-                private readonly FSTOrdTermsReader.TermsReader outerInstance;
-
                 private readonly BytesRefFSTEnum<long?> fstEnum;
 
                 /* True when current term's metadata is decoded */
@@ -462,7 +460,6 @@ namespace Lucene.Net.Codecs.Memory
 
                 internal SegmentTermsEnum(FSTOrdTermsReader.TermsReader outerInstance) : base(outerInstance)
                 {
-                    this.outerInstance = outerInstance;
                     this.fstEnum = new BytesRefFSTEnum<long?>(outerInstance.index);
                     this.decoded = false;
                     this.seekPending = false;
@@ -492,6 +489,33 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     decoded = false;
                     seekPending = false;
+                }
+
+                // LUCENENET specific - duplicate logic for better enumerator optimization
+                public override bool MoveNext()
+                {
+                    if (seekPending) // previously positioned, but termOutputs not fetched
+                    {
+                        seekPending = false;
+                        var status = SeekCeil(term);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(status == SeekStatus.FOUND); // must positioned on valid term
+                    }
+                    // LUCENENET specific - extracted logic of UpdateEnum() so we can eliminate the null check
+                    var moved = fstEnum.MoveNext();
+                    if (moved)
+                    {
+                        var pair = fstEnum.Current;
+                        term = pair.Input;
+                        ord = pair.Output.Value;
+                        DecodeStats();
+                    }
+                    else
+                    {
+                        term = null;
+                    }
+                    decoded = false;
+                    seekPending = false;
+                    return moved;
                 }
 
                 public override BytesRef Next()
@@ -639,6 +663,51 @@ namespace Lucene.Net.Codecs.Memory
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
                     throw new NotSupportedException();
+                }
+
+                // LUCENENET specific - duplicate logic for better enumerator optimization
+                public override bool MoveNext()
+                {
+                    //if (TEST) System.out.println("Enum next()");
+                    if (pending)
+                    {
+                        pending = false;
+                        DecodeStats();
+                        return true;
+                    }
+                    decoded = false;
+                    while (level > 0)
+                    {
+                        Frame frame = NewFrame();
+                        if (LoadExpandFrame(TopFrame(), frame) != null) // has valid target
+                        {
+                            PushFrame(frame);
+                            if (IsAccept(frame)) // gotcha
+                            {
+                                break;
+                            }
+                            continue; // check next target
+                        }
+                        frame = PopFrame();
+                        while (level > 0)
+                        {
+                            if (LoadNextFrame(TopFrame(), frame) != null) // has valid sibling
+                            {
+                                PushFrame(frame);
+                                if (IsAccept(frame)) // gotcha
+                                {
+                                    goto DFSBreak;
+                                }
+                                goto DFSContinue; // check next target
+                            }
+                            frame = PopFrame();
+                        }
+                        return false;
+                    DFSContinue:;
+                    }
+                DFSBreak:
+                    DecodeStats();
+                    return true;
                 }
 
                 public override BytesRef Next()

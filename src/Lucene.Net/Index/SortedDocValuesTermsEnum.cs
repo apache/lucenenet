@@ -99,6 +99,18 @@ namespace Lucene.Net.Index
             values.LookupOrd(currentOrd, term);
         }
 
+        // LUCENENET specific - duplicate logic for better enumerator optimization
+        public override bool MoveNext()
+        {
+            currentOrd++;
+            if (currentOrd >= values.ValueCount)
+            {
+                return false;
+            }
+            values.LookupOrd(currentOrd, term);
+            return true;
+        }
+
         public override BytesRef Next()
         {
             currentOrd++;
