@@ -138,11 +138,10 @@ namespace Lucene.Net.Index
             Terms terms = air.GetTerms("field");
             // numTerms-1 because there cannot be a term 0 with 0 postings:
             Assert.AreEqual(numTerms - 1, terms.Count);
-            TermsEnum termsEnum = terms.GetIterator(null);
-            BytesRef termBR;
-            while ((termBR = termsEnum.Next()) != null)
+            TermsEnum termsEnum = terms.GetEnumerator();
+            while (termsEnum.MoveNext())
             {
-                int value = Convert.ToInt32(termBR.Utf8ToString(), CultureInfo.InvariantCulture);
+                int value = Convert.ToInt32(termsEnum.Term.Utf8ToString(), CultureInfo.InvariantCulture);
                 Assert.AreEqual(value, termsEnum.TotalTermFreq);
                 // don't really need to check more than this, as CheckIndex
                 // will verify that totalTermFreq == total number of positions seen

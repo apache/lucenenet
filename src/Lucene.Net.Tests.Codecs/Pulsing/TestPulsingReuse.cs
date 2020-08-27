@@ -51,8 +51,8 @@ namespace Lucene.Net.Codecs.Pulsing
             AtomicReader segment = GetOnlySegmentReader(ir);
             DocsEnum reuse = null;
             IDictionary<DocsEnum, bool?> allEnums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
-            TermsEnum te = segment.GetTerms("foo").GetIterator(null);
-            while (te.Next() != null)
+            TermsEnum te = segment.GetTerms("foo").GetEnumerator();
+            while (te.MoveNext())
             {
                 reuse = te.Docs(null, reuse, DocsFlags.NONE);
                 allEnums[reuse] = true;
@@ -62,8 +62,8 @@ namespace Lucene.Net.Codecs.Pulsing
 
             allEnums.Clear();
             DocsAndPositionsEnum posReuse = null;
-            te = segment.GetTerms("foo").GetIterator(null);
-            while (te.Next() != null)
+            te = segment.GetTerms("foo").GetEnumerator();
+            while (te.MoveNext())
             {
                 posReuse = te.DocsAndPositions(null, posReuse);
                 allEnums[posReuse] = true;
@@ -96,8 +96,8 @@ namespace Lucene.Net.Codecs.Pulsing
             AtomicReader segment = GetOnlySegmentReader(ir);
             DocsEnum reuse = null;
             IDictionary<DocsEnum, bool?> allEnums = new JCG.Dictionary<DocsEnum, bool?>(IdentityEqualityComparer<DocsEnum>.Default);
-            TermsEnum te = segment.GetTerms("foo").GetIterator(null);
-            while (te.Next() != null)
+            TermsEnum te = segment.GetTerms("foo").GetEnumerator();
+            while (te.MoveNext())
             {
                 reuse = te.Docs(null, reuse, DocsFlags.NONE);
                 allEnums[reuse] = true;
@@ -107,8 +107,8 @@ namespace Lucene.Net.Codecs.Pulsing
 
             allEnums.Clear();
             DocsAndPositionsEnum posReuse = null;
-            te = segment.GetTerms("foo").GetIterator(null);
-            while (te.Next() != null)
+            te = segment.GetTerms("foo").GetEnumerator();
+            while (te.MoveNext())
             {
                 posReuse = te.DocsAndPositions(null, posReuse);
                 allEnums[posReuse] = true;

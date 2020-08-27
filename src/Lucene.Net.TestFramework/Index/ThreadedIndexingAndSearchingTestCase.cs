@@ -488,7 +488,7 @@ namespace Lucene.Net.Index
                                 {
                                     continue;
                                 }
-                                TermsEnum termsEnum = terms.GetIterator(null);
+                                TermsEnum termsEnum = terms.GetEnumerator();
                                 int seenTermCount = 0;
                                 int shift;
                                 int trigger;
@@ -504,8 +504,7 @@ namespace Lucene.Net.Index
                                 }
                                 while (Environment.TickCount < stopTimeMS)
                                 {
-                                    BytesRef term = termsEnum.Next();
-                                    if (term == null)
+                                    if (!termsEnum.MoveNext())
                                     {
                                         totTermCount.Value = seenTermCount;
                                         break;
@@ -517,7 +516,7 @@ namespace Lucene.Net.Index
                                         //if (VERBOSE) {
                                         //System.out.println(Thread.currentThread().getName() + " now search body:" + term.Utf8ToString());
                                         //}
-                                        totHits.AddAndGet(outerInstance.RunQuery(s, new TermQuery(new Term("body", term))));
+                                        totHits.AddAndGet(outerInstance.RunQuery(s, new TermQuery(new Term("body", termsEnum.Term))));
                                     }
                                 }
                                 //if (VERBOSE) {

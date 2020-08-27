@@ -72,8 +72,8 @@ namespace Lucene.Net.Search
             IndexSearcher s = NewSearcher(r);
             Terms terms = MultiFields.GetFields(r).GetTerms("body");
             int termCount = 0;
-            TermsEnum termsEnum = terms.GetIterator(null);
-            while (termsEnum.Next() != null)
+            TermsEnum termsEnum = terms.GetEnumerator();
+            while (termsEnum.MoveNext())
             {
                 termCount++;
             }
@@ -81,9 +81,9 @@ namespace Lucene.Net.Search
 
             // Target ~10 terms to search:
             double chance = 10.0 / termCount;
-            termsEnum = terms.GetIterator(termsEnum);
+            termsEnum = terms.GetEnumerator(termsEnum);
             IDictionary<BytesRef, TopDocs> answers = new Dictionary<BytesRef, TopDocs>();
-            while (termsEnum.Next() != null)
+            while (termsEnum.MoveNext())
             {
                 if (Random.NextDouble() <= chance)
                 {

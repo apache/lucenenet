@@ -437,8 +437,9 @@ namespace Lucene.Net.Search.Spell
             BytesRef candidateTerm;
             ScoreTerm st = new ScoreTerm();
             IBoostAttribute boostAtt = e.Attributes.AddAttribute<IBoostAttribute>();
-            while ((candidateTerm = e.Next()) != null)
+            while (e.MoveNext())
             {
+                candidateTerm = e.Term;
                 float boost = boostAtt.Boost;
                 // ignore uncompetitive hits
                 if (stQueue.Count >= numSug && boost <= stQueue.Peek().Boost)

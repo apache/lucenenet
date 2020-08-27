@@ -101,13 +101,13 @@ namespace Lucene.Net.Search
                 TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, docTermOrds));
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
-                if (termsEnum.Next() != null)
+                if (termsEnum.MoveNext())
                 {
                     // fill into a bitset
                     do
                     {
                         termSet.Set(termsEnum.Ord);
-                    } while (termsEnum.Next() != null);
+                    } while (termsEnum.MoveNext());
                 }
                 else
                 {

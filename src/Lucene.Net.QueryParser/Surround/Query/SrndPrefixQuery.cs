@@ -89,17 +89,13 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
                 if (!skip)
                 {
-                    while (true)
+                    while (termsEnum.MoveNext())
                     {
-                        BytesRef text = termsEnum.Next();
-                        if (text != null && StringHelper.StartsWith(text, prefixRef))
-                        {
+                        BytesRef text = termsEnum.Term;
+                        if (StringHelper.StartsWith(text, prefixRef))
                             mtv.VisitMatchingTerm(new Term(fieldName, text.Utf8ToString()));
-                        }
                         else
-                        {
                             break;
-                        }
                     }
                 }
             }

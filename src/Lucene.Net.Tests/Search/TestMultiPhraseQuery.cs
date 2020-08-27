@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
 
             // this TermEnum gives "piccadilly", "pie" and "pizza".
             string prefix = "pi";
-            TermsEnum te = MultiFields.GetFields(reader).GetTerms("body").GetIterator(null);
+            TermsEnum te = MultiFields.GetFields(reader).GetTerms("body").GetEnumerator();
             te.SeekCeil(new BytesRef(prefix));
             do
             {
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search
                 {
                     break;
                 }
-            } while (te.Next() != null);
+            } while (te.MoveNext());
 
             query1.Add(termsWithPrefix.ToArray(/*new Term[0]*/));
             Assert.AreEqual("body:\"blueberry (piccadilly pie pizza)\"", query1.ToString());
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
                 {
                     termsWithPrefix.AddLast(new Term("body", te.Term.Utf8ToString()));
                 }
-            } while (te.Next() != null);
+            } while (te.MoveNext());
 
             query3.Add(termsWithPrefix.ToArray(/*new Term[0]*/));
             query3.Add(new Term("body", "pizza"));

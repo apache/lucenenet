@@ -539,11 +539,12 @@ namespace Lucene.Net.Queries.Mlt
         /// <param name="vector"> List of terms and their frequencies for a doc/field </param>
         private void AddTermFrequencies(IDictionary<string, Int32> termFreqMap, Terms vector)
         {
-            var termsEnum = vector.GetIterator(null);
+            var termsEnum = vector.GetEnumerator();
             var spare = new CharsRef();
             BytesRef text;
-            while ((text = termsEnum.Next()) != null)
+            while (termsEnum.MoveNext())
             {
+                text = termsEnum.Term;
                 UnicodeUtil.UTF8toUTF16(text, spare);
                 var term = spare.ToString();
                 if (IsNoiseWord(term))
@@ -553,8 +554,7 @@ namespace Lucene.Net.Queries.Mlt
                 var freq = (int)termsEnum.TotalTermFreq;
 
                 // increment frequency
-                Int32 cnt;
-                if (!termFreqMap.TryGetValue(term, out cnt))
+                if (!termFreqMap.TryGetValue(term, out Int32 cnt))
                 {
                     cnt = new Int32();
                     termFreqMap[term] = cnt;

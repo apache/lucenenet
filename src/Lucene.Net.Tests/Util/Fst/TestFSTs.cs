@@ -366,7 +366,7 @@ namespace Lucene.Net.Util.Fst
             if (terms != null)
             {
                 Int32sRef scratchIntsRef = new Int32sRef();
-                TermsEnum termsEnum = terms.GetIterator(null);
+                TermsEnum termsEnum = terms.GetEnumerator();
                 if (Verbose)
                 {
                     Console.WriteLine("TEST: got termsEnum=" + termsEnum);
@@ -377,10 +377,11 @@ namespace Lucene.Net.Util.Fst
                 Automaton automaton = (new RegExp(".*", RegExpSyntax.NONE)).ToAutomaton();
                 TermsEnum termsEnum2 = terms.Intersect(new CompiledAutomaton(automaton, false, false), null);
 
-                while ((term = termsEnum.Next()) != null)
+                while (termsEnum.MoveNext())
                 {
-                    BytesRef term2 = termsEnum2.Next();
-                    Assert.IsNotNull(term2);
+                    term = termsEnum.Term;
+                    Assert.IsTrue(termsEnum2.MoveNext());
+                    BytesRef term2 = termsEnum2.Term;
                     Assert.AreEqual(term, term2);
                     Assert.AreEqual(termsEnum.DocFreq, termsEnum2.DocFreq);
                     Assert.AreEqual(termsEnum.TotalTermFreq, termsEnum2.TotalTermFreq);
@@ -460,13 +461,13 @@ namespace Lucene.Net.Util.Fst
                                         Console.WriteLine("  ord=" + termsEnum.Ord);
                                     }
                                 }
-                                if (termsEnum.Next() != null)
+                                if (termsEnum.MoveNext())
                                 {
                                     if (Verbose)
                                     {
                                         Console.WriteLine("  term=" + termsEnum.Term.Utf8ToString());
                                     }
-                                    Assert.IsNotNull(fstEnum.Next());
+                                    Assert.IsTrue(fstEnum.MoveNext());
                                     AssertSame(termsEnum, fstEnum, storeOrd);
                                 }
                                 else
@@ -475,9 +476,10 @@ namespace Lucene.Net.Util.Fst
                                     {
                                         Console.WriteLine("  end!");
                                     }
-                                    BytesRefFSTEnum.InputOutput<long?> nextResult = fstEnum.Next();
-                                    if (nextResult != null)
+                                    BytesRefFSTEnum.InputOutput<long?> nextResult;
+                                    if (fstEnum.MoveNext())
                                     {
+                                        nextResult = fstEnum.Current;
                                         Console.WriteLine("expected null but got: input=" + nextResult.Input.Utf8ToString() + " output=" + outputs.OutputToString(nextResult.Output));
                                         Assert.Fail();
                                     }
@@ -909,7 +911,7 @@ namespace Lucene.Net.Util.Fst
             // count the input paths
             int count = 0;
             BytesRefFSTEnum<object> fstEnum = new BytesRefFSTEnum<object>(fst);
-            while (fstEnum.Next() != null)
+            while (fstEnum.MoveNext())
             {
                 count++;
             }
@@ -1106,7 +1108,7 @@ namespace Lucene.Net.Util.Fst
                 }
 
                 // Verify w/ MultiTermsEnum
-                TermsEnum termsEnum = MultiFields.GetTerms(r, "id").GetIterator(null);
+                TermsEnum termsEnum = MultiFields.GetTerms(r, "id").GetEnumerator();
                 for (int iter = 0; iter < 2 * NUM_IDS; iter++)
                 {
                     string id;

@@ -335,8 +335,9 @@ namespace Lucene.Net.Analysis
             AtomicReader reader = GetOnlySegmentReader(writer.GetReader());
             Fields fields = reader.GetTermVectors(0);
             Terms terms = fields.GetTerms("f");
-            TermsEnum te = terms.GetIterator(null);
-            Assert.AreEqual(new BytesRef("a"), te.Next());
+            TermsEnum te = terms.GetEnumerator();
+            Assert.IsTrue(te.MoveNext());
+            Assert.AreEqual(new BytesRef("a"), te.Term);
             DocsAndPositionsEnum dpe = te.DocsAndPositions(null, null);
             Assert.AreEqual(0, dpe.NextDoc());
             Assert.AreEqual(2, dpe.Freq);
@@ -345,7 +346,7 @@ namespace Lucene.Net.Analysis
             int endOffset = dpe.EndOffset;
             Assert.AreEqual(1 + positionGap, dpe.NextPosition());
             Assert.AreEqual(1 + endOffset + offsetGap, dpe.EndOffset);
-            Assert.AreEqual(null, te.Next());
+            Assert.IsFalse(te.MoveNext());
             reader.Dispose();
             writer.Dispose();
             writer.IndexWriter.Directory.Dispose();

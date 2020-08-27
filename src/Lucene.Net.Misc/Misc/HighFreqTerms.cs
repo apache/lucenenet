@@ -204,10 +204,9 @@ namespace Lucene.Net.Misc
 
             internal void Fill(string field, TermsEnum termsEnum)
             {
-                BytesRef term = null;
-                while ((term = termsEnum.Next()) != null)
+                while (termsEnum.MoveNext())
                 {
-                    InsertWithOverflow(new TermStats(field, term, termsEnum.DocFreq, termsEnum.TotalTermFreq));
+                    InsertWithOverflow(new TermStats(field, termsEnum.Term, termsEnum.DocFreq, termsEnum.TotalTermFreq));
                 }
             }
         }

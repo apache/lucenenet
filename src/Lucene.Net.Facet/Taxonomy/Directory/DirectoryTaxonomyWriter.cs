@@ -812,8 +812,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     Terms terms = ctx.AtomicReader.GetTerms(Consts.FULL);
                     if (terms != null) // cannot really happen, but be on the safe side
                     {
-                        termsEnum = terms.GetIterator(termsEnum);
-                        while (termsEnum.Next() != null)
+                        termsEnum = terms.GetEnumerator(termsEnum);
+                        while (termsEnum.MoveNext())
                         {
                             if (!cache.IsFull)
                             {
@@ -933,8 +933,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 {
                     AtomicReader ar = ctx.AtomicReader;
                     Terms terms = ar.GetTerms(Consts.FULL);
-                    te = terms.GetIterator(te);
-                    while (te.Next() != null)
+                    te = terms.GetEnumerator(te);
+                    while (te.MoveNext())
                     {
                         FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(te.Term.Utf8ToString()));
                         int ordinal = AddCategory(cp);

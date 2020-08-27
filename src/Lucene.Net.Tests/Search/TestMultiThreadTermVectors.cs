@@ -214,7 +214,7 @@ namespace Lucene.Net.Search
                 Terms vector = reader.GetTermVectors(docId).GetTerms("field");
                 timeElapsed += Environment.TickCount - start;
 
-                VerifyVector(vector.GetIterator(null), docId);
+                VerifyVector(vector.GetEnumerator(), docId);
             }
         }
 
@@ -224,14 +224,14 @@ namespace Lucene.Net.Search
             {
                 Terms terms = vectors.GetTerms(field);
                 if (Debugging.AssertsEnabled) Debugging.Assert(terms != null);
-                VerifyVector(terms.GetIterator(null), num);
+                VerifyVector(terms.GetEnumerator(), num);
             }
         }
 
         private void VerifyVector(TermsEnum vector, int num)
         {
             StringBuilder temp = new StringBuilder();
-            while (vector.Next() != null)
+            while (vector.MoveNext())
             {
                 temp.Append(vector.Term.Utf8ToString());
             }

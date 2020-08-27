@@ -81,19 +81,19 @@ namespace Lucene.Net.Index
         private void CheckTerms(Terms terms, IBits liveDocs, params string[] termsList)
         {
             Assert.IsNotNull(terms);
-            TermsEnum te = terms.GetIterator(null);
+            TermsEnum te = terms.GetEnumerator();
 
             foreach (string t in termsList)
             {
-                BytesRef b = te.Next();
-                Assert.IsNotNull(b);
+                Assert.IsTrue(te.MoveNext());
+                BytesRef b = te.Term;
                 Assert.AreEqual(t, b.Utf8ToString());
                 DocsEnum td = TestUtil.Docs(Random, te, liveDocs, null, DocsFlags.NONE);
                 Assert.IsTrue(td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 Assert.AreEqual(0, td.DocID);
                 Assert.AreEqual(td.NextDoc(), DocIdSetIterator.NO_MORE_DOCS);
             }
-            Assert.IsNull(te.Next());
+            Assert.IsFalse(te.MoveNext());
         }
 
         [Test]

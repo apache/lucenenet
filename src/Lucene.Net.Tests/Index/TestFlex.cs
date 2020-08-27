@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
 
                 IndexReader r = w.GetReader();
 
-                TermsEnum terms = MultiFields.GetTerms(r, "field3").GetIterator(null);
+                TermsEnum terms = MultiFields.GetTerms(r, "field3").GetEnumerator();
                 Assert.AreEqual(TermsEnum.SeekStatus.END, terms.SeekCeil(new BytesRef("abc")));
                 r.Dispose();
             }
@@ -81,8 +81,8 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             w.ForceMerge(1);
             DirectoryReader r = w.GetReader();
-            TermsEnum terms = GetOnlySegmentReader(r).Fields.GetTerms("f").GetIterator(null);
-            Assert.IsTrue(terms.Next() != null);
+            TermsEnum terms = GetOnlySegmentReader(r).Fields.GetTerms("f").GetEnumerator();
+            Assert.IsTrue(terms.MoveNext());
             try
             {
                 Assert.AreEqual(0, terms.Ord);

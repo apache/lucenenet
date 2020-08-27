@@ -510,12 +510,12 @@ namespace Lucene.Net.Search.Spell
 
                     try
                     {
-                        IBytesRefIterator iter = dict.GetEntryIterator();
+                        IBytesRefEnumerator iter = dict.GetEntryEnumerator();
                         BytesRef currentTerm;
 
-                        while ((currentTerm = iter.Next()) != null)
+                        while (iter.MoveNext())
                         {
-
+                            currentTerm = iter.Current;
                             string word = currentTerm.Utf8ToString();
                             int len = word.Length;
                             if (len < 3)

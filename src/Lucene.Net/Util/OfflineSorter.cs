@@ -364,13 +364,11 @@ namespace Lucene.Net.Util
 
             using (var @out = new ByteSequencesWriter(tempFile))
             {
-                BytesRef spare;
-
-                IBytesRefIterator iter = buffer.GetIterator(comparer);
-                while ((spare = iter.Next()) != null)
+                IBytesRefEnumerator iter = buffer.GetEnumerator(comparer);
+                while (iter.MoveNext())
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(spare.Length <= ushort.MaxValue);
-                    @out.Write(spare);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(iter.Current.Length <= ushort.MaxValue);
+                    @out.Write(iter.Current);
                 }
             }
 

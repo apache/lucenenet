@@ -778,34 +778,34 @@ namespace Lucene.Net.Index
             {
                 Directory dir = oldIndexDirs[name];
                 IndexReader r = DirectoryReader.Open(dir);
-                TermsEnum terms = MultiFields.GetFields(r).GetTerms("content").GetIterator(null);
-                BytesRef t = terms.Next();
-                Assert.IsNotNull(t);
+                TermsEnum terms = MultiFields.GetFields(r).GetTerms("content").GetEnumerator();
+                Assert.IsTrue(terms.MoveNext());
+                BytesRef t = terms.Term;
 
                 // content field only has term aaa:
                 Assert.AreEqual("aaa", t.Utf8ToString());
-                Assert.IsNull(terms.Next());
+                Assert.IsFalse(terms.MoveNext());
 
                 BytesRef aaaTerm = new BytesRef("aaa");
 
                 // should be found exactly
                 Assert.AreEqual(TermsEnum.SeekStatus.FOUND, terms.SeekCeil(aaaTerm));
                 Assert.AreEqual(35, CountDocs(TestUtil.Docs(Random, terms, null, null, DocsFlags.NONE)));
-                Assert.IsNull(terms.Next());
+                Assert.IsFalse(terms.MoveNext());
 
                 // should hit end of field
                 Assert.AreEqual(TermsEnum.SeekStatus.END, terms.SeekCeil(new BytesRef("bbb")));
-                Assert.IsNull(terms.Next());
+                Assert.IsFalse(terms.MoveNext());
 
                 // should seek to aaa
                 Assert.AreEqual(TermsEnum.SeekStatus.NOT_FOUND, terms.SeekCeil(new BytesRef("a")));
                 Assert.IsTrue(terms.Term.BytesEquals(aaaTerm));
                 Assert.AreEqual(35, CountDocs(TestUtil.Docs(Random, terms, null, null, DocsFlags.NONE)));
-                Assert.IsNull(terms.Next());
+                Assert.IsFalse(terms.MoveNext());
 
                 Assert.AreEqual(TermsEnum.SeekStatus.FOUND, terms.SeekCeil(aaaTerm));
                 Assert.AreEqual(35, CountDocs(TestUtil.Docs(Random, terms, null, null, DocsFlags.NONE)));
-                Assert.IsNull(terms.Next());
+                Assert.IsFalse(terms.MoveNext());
 
                 r.Dispose();
             }

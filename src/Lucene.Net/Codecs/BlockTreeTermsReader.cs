@@ -2277,7 +2277,7 @@ namespace Lucene.Net.Codecs
                                 term.CopyBytes(target);
                                 termExists = false;
 
-                                if (Next() != null)
+                                if (MoveNext())
                                 {
                                     //if (DEBUG) {
                                     //System.out.println("  return NOT_FOUND term=" + brToString(term) + " " + term);
@@ -2339,7 +2339,7 @@ namespace Lucene.Net.Codecs
                     {
                         term.CopyBytes(target);
                         termExists = false;
-                        if (Next() != null)
+                        if (MoveNext())
                         {
                             //if (DEBUG) {
                             //System.out.println("  return NOT_FOUND term=" + term.utf8ToString() + " " + term);

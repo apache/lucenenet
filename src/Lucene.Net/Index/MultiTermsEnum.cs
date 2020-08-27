@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// The terms array must be newly created <see cref="TermsEnum"/>, ie
-        /// <see cref="TermsEnum.Next()"/> has not yet been called.
+        /// <see cref="TermsEnum.MoveNext()"/> has not yet been called.
         /// </summary>
         public TermsEnum Reset(TermsEnumIndex[] termsEnumsIndex)
         {
@@ -133,9 +133,10 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                BytesRef term = termsEnumIndex.TermsEnum.Next();
-                if (term != null)
+                BytesRef term;
+                if (termsEnumIndex.TermsEnum.MoveNext())
                 {
+                    term = termsEnumIndex.TermsEnum.Term;
                     TermsEnumWithSlice entry = subs[termsEnumIndex.SubIndex];
                     entry.Reset(termsEnumIndex.TermsEnum, term);
                     queue.Add(entry);
@@ -343,14 +344,16 @@ namespace Lucene.Net.Index
             // call next() on each top, and put back into queue
             for (int i = 0; i < numTop; i++)
             {
-                top[i].Current = top[i].Terms.Next();
-                if (top[i].Current != null)
+                var topi = top[i];
+                if (topi.Terms.MoveNext())
                 {
-                    queue.Add(top[i]);
+                    topi.Current = topi.Terms.Term;
+                    queue.Add(topi);
                 }
                 else
                 {
                     // no more fields in this reader
+                    topi.Current = null;
                 }
             }
             numTop = 0;

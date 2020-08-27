@@ -367,7 +367,7 @@ namespace Lucene.Net.Index
                 Assert.IsTrue(MultiFields.GetFields(r2) == null || MultiFields.GetFields(r2).GetTerms(idField) == null);
                 return;
             }
-            TermsEnum termsEnum = terms1.GetIterator(null);
+            TermsEnum termsEnum = terms1.GetEnumerator();
 
             IBits liveDocs1 = MultiFields.GetLiveDocs(r1);
             IBits liveDocs2 = MultiFields.GetLiveDocs(r2);
@@ -379,7 +379,7 @@ namespace Lucene.Net.Index
                 // deleted docs):
                 IBits liveDocs = MultiFields.GetLiveDocs(r1);
                 DocsEnum docs = null;
-                while (termsEnum.Next() != null)
+                while (termsEnum.MoveNext())
                 {
                     docs = TestUtil.Docs(Random, termsEnum, liveDocs, docs, DocsFlags.NONE);
                     while (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
@@ -390,19 +390,15 @@ namespace Lucene.Net.Index
                 return;
             }
             Terms terms2 = fields.GetTerms(idField);
-            TermsEnum termsEnum2 = terms2.GetIterator(null);
+            TermsEnum termsEnum2 = terms2.GetEnumerator();
 
             DocsEnum termDocs1 = null;
             DocsEnum termDocs2 = null;
 
-            while (true)
+            while (termsEnum.MoveNext())
             {
-                BytesRef term = termsEnum.Next();
+                BytesRef term = termsEnum.Term;
                 //System.out.println("TEST: match id term=" + term);
-                if (term == null)
-                {
-                    break;
-                }
 
                 termDocs1 = TestUtil.Docs(Random, termsEnum, liveDocs1, termDocs1, DocsFlags.NONE);
                 if (termsEnum2.SeekExact(term))
@@ -462,11 +458,10 @@ namespace Lucene.Net.Index
                             Console.WriteLine("    " + field + ":");
                             Terms terms3 = tv1.GetTerms(field);
                             Assert.IsNotNull(terms3);
-                            TermsEnum termsEnum3 = terms3.GetIterator(null);
-                            BytesRef term2;
-                            while ((term2 = termsEnum3.Next()) != null)
+                            TermsEnum termsEnum3 = terms3.GetEnumerator();
+                            while (termsEnum3.MoveNext())
                             {
-                                Console.WriteLine("      " + term2.Utf8ToString() + ": freq=" + termsEnum3.TotalTermFreq);
+                                Console.WriteLine("      " + termsEnum3.Term.Utf8ToString() + ": freq=" + termsEnum3.TotalTermFreq);
                                 dpEnum = termsEnum3.DocsAndPositions(null, dpEnum);
                                 if (dpEnum != null)
                                 {
@@ -501,11 +496,10 @@ namespace Lucene.Net.Index
                             Console.WriteLine("    " + field + ":");
                             Terms terms3 = tv2.GetTerms(field);
                             Assert.IsNotNull(terms3);
-                            TermsEnum termsEnum3 = terms3.GetIterator(null);
-                            BytesRef term2;
-                            while ((term2 = termsEnum3.Next()) != null)
+                            TermsEnum termsEnum3 = terms3.GetEnumerator();
+                            while (termsEnum3.MoveNext())
                             {
-                                Console.WriteLine("      " + term2.Utf8ToString() + ": freq=" + termsEnum3.TotalTermFreq);
+                                Console.WriteLine("      " + termsEnum3.Term.Utf8ToString() + ": freq=" + termsEnum3.TotalTermFreq);
                                 dpEnum = termsEnum3.DocsAndPositions(null, dpEnum);
                                 if (dpEnum != null)
                                 {
@@ -572,15 +566,16 @@ namespace Lucene.Net.Index
                         {
                             continue;
                         }
-                        termsEnum1 = terms.GetIterator(null);
+                        termsEnum1 = terms.GetEnumerator();
                     }
-                    term1 = termsEnum1.Next();
-                    if (term1 == null)
+                    if (!termsEnum1.MoveNext())
                     {
+                        term1 = null;
                         // no more terms in this field
                         termsEnum1 = null;
                         continue;
                     }
+                    term1 = termsEnum1.Term;
 
                     //System.out.println("TEST: term1=" + term1);
                     docs1 = TestUtil.Docs(Random, termsEnum1, liveDocs1, docs1, DocsFlags.FREQS);
@@ -614,15 +609,16 @@ namespace Lucene.Net.Index
                         {
                             continue;
                         }
-                        termsEnum2 = terms.GetIterator(null);
+                        termsEnum2 = terms.GetEnumerator();
                     }
-                    term2 = termsEnum2.Next();
-                    if (term2 == null)
+                    if (!termsEnum2.MoveNext())
                     {
+                        term2 = null;
                         // no more terms in this field
                         termsEnum2 = null;
                         continue;
                     }
+                    term2 = termsEnum2.Term;
 
                     //System.out.println("TEST: term1=" + term1);
                     docs2 = TestUtil.Docs(Random, termsEnum2, liveDocs2, docs2, DocsFlags.FREQS);
@@ -712,11 +708,11 @@ namespace Lucene.Net.Index
 
                 Terms terms1 = d1.GetTerms(field1);
                 Assert.IsNotNull(terms1);
-                TermsEnum termsEnum1 = terms1.GetIterator(null);
+                TermsEnum termsEnum1 = terms1.GetEnumerator();
 
                 Terms terms2 = d2.GetTerms(field2);
                 Assert.IsNotNull(terms2);
-                TermsEnum termsEnum2 = terms2.GetIterator(null);
+                TermsEnum termsEnum2 = terms2.GetEnumerator();
 
                 DocsAndPositionsEnum dpEnum1 = null;
                 DocsAndPositionsEnum dpEnum2 = null;
@@ -724,9 +720,11 @@ namespace Lucene.Net.Index
                 DocsEnum dEnum2 = null;
 
                 BytesRef term1;
-                while ((term1 = termsEnum1.Next()) != null)
+                while (termsEnum1.MoveNext())
                 {
-                    BytesRef term2 = termsEnum2.Next();
+                    term1 = termsEnum1.Term;
+                    termsEnum2.MoveNext();
+                    BytesRef term2 = termsEnum2.Term;
                     Assert.AreEqual(term1, term2);
                     Assert.AreEqual(termsEnum1.TotalTermFreq, termsEnum2.TotalTermFreq);
 
@@ -791,7 +789,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                Assert.IsNull(termsEnum2.Next());
+                Assert.IsFalse(termsEnum2.MoveNext());
             }
             Assert.IsFalse(fieldsEnum2.MoveNext());
         }

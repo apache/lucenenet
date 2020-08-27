@@ -653,7 +653,7 @@ namespace Lucene.Net.Codecs.Memory
                     if (frame != null) // got larger term('s prefix)
                     {
                         PushFrame(frame);
-                        return IsAccept(frame) ? term : Next();
+                        return IsAccept(frame) ? term : (MoveNext() ? term : null);
                     }
                     while (level > 0) // got target's prefix, advance to larger term
                     {
@@ -665,7 +665,7 @@ namespace Lucene.Net.Codecs.Memory
                         if (LoadNextFrame(TopFrame(), frame) != null)
                         {
                             PushFrame(frame);
-                            return IsAccept(frame) ? term : Next();
+                            return IsAccept(frame) ? term : (MoveNext() ? term : null);
                         }
                     }
                     return null;

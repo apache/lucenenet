@@ -158,14 +158,15 @@ namespace Lucene.Net.Index
         {
             for (int i = 0; i < numIterations; i++)
             {
-                TermsEnum te = MultiFields.GetTerms(reader, "field").GetIterator(null);
+                TermsEnum te = MultiFields.GetTerms(reader, "field").GetEnumerator();
 
                 foreach (BytesRef term in terms)
                 {
                     int c = Random.Next(3);
                     if (c == 0)
                     {
-                        Assert.AreEqual(term, te.Next());
+                        Assert.IsTrue(te.MoveNext());
+                        Assert.AreEqual(term, te.Term);
                     }
                     else if (c == 1)
                     {
@@ -193,7 +194,7 @@ namespace Lucene.Net.Index
                 TermsEnum te = MultiFields.GetTerms(reader, "field").Intersect(ca, null);
                 Automaton expected = BasicOperations.Intersection(termsAutomaton, automaton);
                 JCG.SortedSet<BytesRef> found = new JCG.SortedSet<BytesRef>();
-                while (te.Next() != null)
+                while (te.MoveNext())
                 {
                     found.Add(BytesRef.DeepCopyOf(te.Term));
                 }

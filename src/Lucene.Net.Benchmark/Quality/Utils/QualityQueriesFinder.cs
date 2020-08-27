@@ -100,8 +100,8 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
                 Terms terms = MultiFields.GetTerms(ir, field);
                 if (terms != null)
                 {
-                    TermsEnum termsEnum = terms.GetIterator(null);
-                    while (termsEnum.Next() != null)
+                    TermsEnum termsEnum = terms.GetEnumerator();
+                    while (termsEnum.MoveNext())
                     {
                         int df = termsEnum.DocFreq;
                         if (df < threshold)

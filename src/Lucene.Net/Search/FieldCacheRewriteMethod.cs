@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                 TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(fcsi));
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
-                if (termsEnum.Next() != null)
+                if (termsEnum.MoveNext())
                 {
                     // fill into a bitset
                     do
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search
                         {
                             termSet.Set(ord);
                         }
-                    } while (termsEnum.Next() != null);
+                    } while (termsEnum.MoveNext());
                 }
                 else
                 {

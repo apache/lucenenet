@@ -228,10 +228,11 @@ namespace Lucene.Net.Codecs.Lucene41
             int numPasses = 0;
             while (numPasses < 10 && tests.Count < numTests)
             {
-                leftEnum = leftTerms.GetIterator(leftEnum);
+                leftEnum = leftTerms.GetEnumerator(leftEnum);
                 BytesRef term = null;
-                while ((term = leftEnum.Next()) != null)
+                while (leftEnum.MoveNext())
                 {
+                    term = leftEnum.Term;
                     int code = random.Next(10);
                     if (code == 0)
                     {
@@ -321,16 +322,16 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         public virtual void AssertTermsEnum(TermsEnum leftTermsEnum, TermsEnum rightTermsEnum, bool deep)
         {
-            BytesRef term;
             IBits randomBits = new RandomBits(MAXDOC, Random.NextDouble(), Random);
             DocsAndPositionsEnum leftPositions = null;
             DocsAndPositionsEnum rightPositions = null;
             DocsEnum leftDocs = null;
             DocsEnum rightDocs = null;
 
-            while ((term = leftTermsEnum.Next()) != null)
+            while (leftTermsEnum.MoveNext())
             {
-                Assert.AreEqual(term, rightTermsEnum.Next());
+                Assert.IsTrue(rightTermsEnum.MoveNext());
+                Assert.AreEqual(leftTermsEnum.Term, rightTermsEnum.Term);
                 AssertTermStats(leftTermsEnum, rightTermsEnum);
                 if (deep)
                 {
@@ -378,7 +379,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     AssertDocsSkipping(leftTermsEnum.DocFreq, leftDocs = leftTermsEnum.Docs(randomBits, leftDocs, DocsFlags.NONE), rightDocs = rightTermsEnum.Docs(randomBits, rightDocs, DocsFlags.NONE));
                 }
             }
-            Assert.IsNull(rightTermsEnum.Next());
+            Assert.IsFalse(rightTermsEnum.MoveNext());
         }
 
         /// <summary>

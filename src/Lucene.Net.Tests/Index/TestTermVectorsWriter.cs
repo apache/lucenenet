@@ -70,8 +70,8 @@ namespace Lucene.Net.Index
             IndexReader r = DirectoryReader.Open(dir);
             Terms vector = r.GetTermVectors(0).GetTerms("field");
             Assert.IsNotNull(vector);
-            TermsEnum termsEnum = vector.GetIterator(null);
-            Assert.IsNotNull(termsEnum.Next());
+            TermsEnum termsEnum = vector.GetEnumerator();
+            Assert.IsTrue(termsEnum.MoveNext());
             Assert.AreEqual("", termsEnum.Term.Utf8ToString());
 
             // Token "" occurred once
@@ -85,7 +85,8 @@ namespace Lucene.Net.Index
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
 
             // Token "abcd" occurred three times
-            Assert.AreEqual(new BytesRef("abcd"), termsEnum.Next());
+            Assert.IsTrue(termsEnum.MoveNext());
+            Assert.AreEqual(new BytesRef("abcd"), termsEnum.Term);
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.AreEqual(3, termsEnum.TotalTermFreq);
 
@@ -103,7 +104,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(12, dpEnum.EndOffset);
 
             Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
-            Assert.IsNull(termsEnum.Next());
+            Assert.IsFalse(termsEnum.MoveNext());
             r.Dispose();
             dir.Dispose();
         }
@@ -126,8 +127,8 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
-            Assert.IsNotNull(termsEnum.Next());
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetEnumerator();
+            Assert.IsTrue(termsEnum.MoveNext());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(2, termsEnum.TotalTermFreq);
 
@@ -163,8 +164,8 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
-            Assert.IsNotNull(termsEnum.Next());
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetEnumerator();
+            Assert.IsTrue(termsEnum.MoveNext());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(2, termsEnum.TotalTermFreq);
 
@@ -217,7 +218,7 @@ namespace Lucene.Net.Index
 
             IndexReader r = DirectoryReader.Open(dir);
             TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
-            Assert.IsNotNull(termsEnum.Next());
+            Assert.IsTrue(termsEnum.MoveNext());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(2, termsEnum.TotalTermFreq);
 
@@ -253,8 +254,8 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
-            Assert.IsNotNull(termsEnum.Next());
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetEnumerator();
+            Assert.IsTrue(termsEnum.MoveNext());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(2, termsEnum.TotalTermFreq);
 
@@ -291,8 +292,8 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
-            Assert.IsNotNull(termsEnum.Next());
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetEnumerator();
+            Assert.IsTrue(termsEnum.MoveNext());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
 
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
@@ -300,14 +301,14 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, dpEnum.StartOffset);
             Assert.AreEqual(4, dpEnum.EndOffset);
 
-            Assert.IsNotNull(termsEnum.Next());
+            Assert.IsTrue(termsEnum.MoveNext());
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
             Assert.AreEqual(11, dpEnum.StartOffset);
             Assert.AreEqual(17, dpEnum.EndOffset);
 
-            Assert.IsNotNull(termsEnum.Next());
+            Assert.IsTrue(termsEnum.MoveNext());
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
@@ -337,8 +338,8 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
-            Assert.IsNotNull(termsEnum.Next());
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetEnumerator();
+            Assert.IsTrue(termsEnum.MoveNext());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
 
             Assert.AreEqual(1, (int)termsEnum.TotalTermFreq);
@@ -347,7 +348,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, dpEnum.StartOffset);
             Assert.AreEqual(7, dpEnum.EndOffset);
 
-            Assert.IsNotNull(termsEnum.Next());
+            Assert.IsTrue(termsEnum.MoveNext());
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();
@@ -381,8 +382,8 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
-            Assert.IsNotNull(termsEnum.Next());
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetEnumerator();
+            Assert.IsTrue(termsEnum.MoveNext());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
 
             Assert.AreEqual(1, (int)termsEnum.TotalTermFreq);
@@ -391,7 +392,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(0, dpEnum.StartOffset);
             Assert.AreEqual(4, dpEnum.EndOffset);
 
-            Assert.IsNotNull(termsEnum.Next());
+            Assert.IsTrue(termsEnum.MoveNext());
             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             dpEnum.NextPosition();

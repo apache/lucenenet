@@ -884,13 +884,8 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                 }
                 // linear scan
-                while (true)
+                while (MoveNext())
                 {
-                    BytesRef term = Next();
-                    if (term == null)
-                    {
-                        return TermsEnum.SeekStatus.END;
-                    }
                     int cmp = term.CompareTo(text);
                     if (cmp > 0)
                     {
@@ -901,6 +896,7 @@ namespace Lucene.Net.Codecs.Compressing
                         return TermsEnum.SeekStatus.FOUND;
                     }
                 }
+                return TermsEnum.SeekStatus.END;
             }
 
             public override void SeekExact(long ord)

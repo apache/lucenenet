@@ -105,8 +105,8 @@ namespace Lucene.Net.Index
                 }
 
                 long computedSumDocFreq = 0;
-                TermsEnum termsEnum = terms.GetIterator(null);
-                while (termsEnum.Next() != null)
+                TermsEnum termsEnum = terms.GetEnumerator();
+                while (termsEnum.MoveNext())
                 {
                     computedSumDocFreq += termsEnum.DocFreq;
                 }

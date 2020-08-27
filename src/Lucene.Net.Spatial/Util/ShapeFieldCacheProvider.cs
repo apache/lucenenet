@@ -68,11 +68,10 @@ namespace Lucene.Net.Spatial.Util
                 TermsEnum te = null;
                 if (terms != null)
                 {
-                    te = terms.GetIterator(te);
-                    BytesRef term = te.Next();
-                    while (term != null)
+                    te = terms.GetEnumerator(te);
+                    while (te.MoveNext())
                     {
-                        T shape = ReadShape(term);
+                        T shape = ReadShape(te.Term);
                         if (shape != null)
                         {
                             docs = te.Docs(null, docs, DocsFlags.NONE);
@@ -84,7 +83,6 @@ namespace Lucene.Net.Spatial.Util
                                 count++;
                             }
                         }
-                        term = te.Next();
                     }
                 }
                 /*long elapsed = Runtime.CurrentTimeMillis() - startTime;

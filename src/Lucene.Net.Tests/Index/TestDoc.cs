@@ -251,8 +251,8 @@ namespace Lucene.Net.Index
             {
                 Terms terms = fields.GetTerms(field);
                 Assert.IsNotNull(terms);
-                TermsEnum tis = terms.GetIterator(null);
-                while (tis.Next() != null)
+                TermsEnum tis = terms.GetEnumerator();
+                while (tis.MoveNext())
                 {
                     @out.Write("  term=" + field + ":" + tis.Term);
                     @out.WriteLine("    DF=" + tis.DocFreq);

@@ -227,8 +227,9 @@ namespace Lucene.Net.Sandbox.Queries
                         BytesRef possibleMatch;
                         IBoostAttribute boostAtt =
                           fe.Attributes.AddAttribute<IBoostAttribute>();
-                        while ((possibleMatch = fe.Next()) != null)
+                        while (fe.MoveNext())
                         {
+                            possibleMatch = fe.Term;
                             numVariants++;
                             totalVariantDocFreqs += fe.DocFreq;
                             float score = boostAtt.Boost;

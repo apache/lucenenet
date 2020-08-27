@@ -173,8 +173,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 Terms terms = fields.GetTerms(field);
                 Assert.IsNotNull(terms);
-                TermsEnum termsEnum = terms.GetIterator(null);
-                while (termsEnum.Next() != null)
+                TermsEnum termsEnum = terms.GetEnumerator();
+                while (termsEnum.MoveNext())
                 {
                     if (sample.Count >= size)
                     {

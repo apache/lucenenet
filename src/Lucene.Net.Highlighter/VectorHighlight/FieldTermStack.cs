@@ -89,14 +89,15 @@ namespace Lucene.Net.Search.VectorHighlight
             }
 
             CharsRef spare = new CharsRef();
-            TermsEnum termsEnum = vector.GetIterator(null);
+            TermsEnum termsEnum = vector.GetEnumerator();
             DocsAndPositionsEnum dpEnum = null;
             BytesRef text;
 
             int numDocs = reader.MaxDoc;
 
-            while ((text = termsEnum.Next()) != null)
+            while (termsEnum.MoveNext())
             {
+                text = termsEnum.Term;
                 UnicodeUtil.UTF8toUTF16(text, spare);
                 string term = spare.ToString();
                 if (!termSet.Contains(term))

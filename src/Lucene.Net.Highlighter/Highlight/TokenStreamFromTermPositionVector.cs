@@ -54,12 +54,13 @@ namespace Lucene.Net.Search.Highlight
 
             bool hasOffsets = vector.HasOffsets;
             bool hasPayloads = vector.HasPayloads;
-            TermsEnum termsEnum = vector.GetIterator(null);
+            TermsEnum termsEnum = vector.GetEnumerator();
             BytesRef text;
             DocsAndPositionsEnum dpEnum = null;
 
-            while ((text = termsEnum.Next()) != null)
+            while (termsEnum.MoveNext())
             {
+                text = termsEnum.Term;
                 dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                 dpEnum.NextDoc();
                 int freq = dpEnum.Freq;

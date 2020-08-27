@@ -89,8 +89,8 @@ namespace Lucene.Net.Index
                 }
                 int docCount = terms.DocCount;
                 FixedBitSet visited = new FixedBitSet(ir.MaxDoc);
-                TermsEnum te = terms.GetIterator(null);
-                while (te.Next() != null)
+                TermsEnum te = terms.GetEnumerator();
+                while (te.MoveNext())
                 {
                     DocsEnum de = TestUtil.Docs(Random, te, null, null, DocsFlags.NONE);
                     while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)

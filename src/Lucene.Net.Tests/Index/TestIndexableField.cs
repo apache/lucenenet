@@ -329,22 +329,24 @@ namespace Lucene.Net.Index
                         {
                             Terms tfv = r.GetTermVectors(docID).GetTerms(name);
                             Assert.IsNotNull(tfv);
-                            TermsEnum termsEnum = tfv.GetIterator(null);
-                            Assert.AreEqual(new BytesRef("" + counter), termsEnum.Next());
+                            TermsEnum termsEnum = tfv.GetEnumerator();
+                            Assert.IsTrue(termsEnum.MoveNext());
+                            Assert.AreEqual(new BytesRef("" + counter), termsEnum.Term);
                             Assert.AreEqual(1, termsEnum.TotalTermFreq);
                             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
                             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                             Assert.AreEqual(1, dpEnum.Freq);
                             Assert.AreEqual(1, dpEnum.NextPosition());
 
-                            Assert.AreEqual(new BytesRef("text"), termsEnum.Next());
+                            Assert.IsTrue(termsEnum.MoveNext());
+                            Assert.AreEqual(new BytesRef("text"), termsEnum.Term);
                             Assert.AreEqual(1, termsEnum.TotalTermFreq);
                             dpEnum = termsEnum.DocsAndPositions(null, dpEnum);
                             Assert.IsTrue(dpEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                             Assert.AreEqual(1, dpEnum.Freq);
                             Assert.AreEqual(0, dpEnum.NextPosition());
 
-                            Assert.IsNull(termsEnum.Next());
+                            Assert.IsFalse(termsEnum.MoveNext());
 
                             // TODO: offsets
                         }

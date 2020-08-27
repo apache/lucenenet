@@ -148,11 +148,12 @@ namespace Lucene.Net.Classification
             BytesRef foundClass = new BytesRef();
 
             Terms terms = MultiFields.GetTerms(_atomicReader, _classFieldName);
-            TermsEnum termsEnum = terms.GetIterator(null);
+            TermsEnum termsEnum = terms.GetEnumerator();
             BytesRef next;
             string[] tokenizedDoc = TokenizeDoc(inputDocument);
-            while ((next = termsEnum.Next()) != null) 
+            while (termsEnum.MoveNext()) 
             {
+                next = termsEnum.Term;
                 double clVal = CalculateLogPrior(next) + CalculateLogLikelihood(tokenizedDoc, next);
                 if (clVal > max) 
                 {

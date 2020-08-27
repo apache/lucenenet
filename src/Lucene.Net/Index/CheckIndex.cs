@@ -1094,13 +1094,9 @@ namespace Lucene.Net.Index
                 long sumTotalTermFreq = 0;
                 long sumDocFreq = 0;
                 FixedBitSet visitedDocs = new FixedBitSet(maxDoc);
-                while (true)
+                while (termsEnum.MoveNext())
                 {
-                    BytesRef term = termsEnum.Next();
-                    if (term == null)
-                    {
-                        break;
-                    }
+                    BytesRef term = termsEnum.Term;
 
                     if (Debugging.AssertsEnabled) Debugging.Assert(term.IsValid());
 
@@ -2151,9 +2147,10 @@ namespace Lucene.Net.Index
                                 postingsTermsEnum = postingsTerms.GetIterator(postingsTermsEnum);
 
                                 bool hasProx = terms.HasOffsets || terms.HasPositions;
-                                BytesRef term = null;
-                                while ((term = termsEnum.Next()) != null)
+                                BytesRef term;
+                                while (termsEnum.MoveNext())
                                 {
+                                    term = termsEnum.Term;
                                     if (hasProx)
                                     {
                                         postings = termsEnum.DocsAndPositions(null, postings);

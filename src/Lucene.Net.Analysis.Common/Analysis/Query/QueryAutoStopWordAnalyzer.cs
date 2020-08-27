@@ -132,13 +132,12 @@ namespace Lucene.Net.Analysis.Query
                 CharsRef spare = new CharsRef();
                 if (terms != null)
                 {
-                    TermsEnum te = terms.GetIterator(null);
-                    BytesRef text;
-                    while ((text = te.Next()) != null)
+                    TermsEnum te = terms.GetEnumerator();
+                    while (te.MoveNext())
                     {
                         if (te.DocFreq > maxDocFreq)
                         {
-                            UnicodeUtil.UTF8toUTF16(text, spare);
+                            UnicodeUtil.UTF8toUTF16(te.Term, spare);
                             stopWords.Add(spare.ToString());
                         }
                     }

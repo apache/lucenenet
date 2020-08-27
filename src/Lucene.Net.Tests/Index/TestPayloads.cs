@@ -497,10 +497,10 @@ namespace Lucene.Net.Index
             }
             writer.Dispose();
             IndexReader reader = DirectoryReader.Open(dir);
-            TermsEnum terms = MultiFields.GetFields(reader).GetTerms(field).GetIterator(null);
+            TermsEnum terms = MultiFields.GetFields(reader).GetTerms(field).GetEnumerator();
             IBits liveDocs = MultiFields.GetLiveDocs(reader);
             DocsAndPositionsEnum tp = null;
-            while (terms.Next() != null)
+            while (terms.MoveNext())
             {
                 string termText = terms.Term.Utf8ToString();
                 tp = terms.DocsAndPositions(liveDocs, tp);

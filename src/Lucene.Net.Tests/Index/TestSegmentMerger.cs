@@ -132,10 +132,10 @@ namespace Lucene.Net.Index
             Terms vector = mergedReader.GetTermVectors(0).GetTerms(DocHelper.TEXT_FIELD_2_KEY);
             Assert.IsNotNull(vector);
             Assert.AreEqual(3, vector.Count);
-            TermsEnum termsEnum = vector.GetIterator(null);
+            TermsEnum termsEnum = vector.GetEnumerator();
 
             int i = 0;
-            while (termsEnum.Next() != null)
+            while (termsEnum.MoveNext())
             {
                 string term = termsEnum.Term.Utf8ToString();
                 int freq = (int)termsEnum.TotalTermFreq;

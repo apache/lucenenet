@@ -408,8 +408,9 @@ namespace Lucene.Net.Codecs.Memory
                 //   System.out.println("\nLOAD terms seg=" + state.segmentInfo.name + " field=" + field + " hasOffsets=" + hasOffsets + " hasFreq=" + hasFreq + " hasPos=" + hasPos + " hasPayloads=" + hasPayloads);
                 // }
 
-                while ((term = termsEnum.Next()) != null)
+                while (termsEnum.MoveNext())
                 {
+                    term = termsEnum.Term;
                     int docFreq = termsEnum.DocFreq;
                     long totalTermFreq = termsEnum.TotalTermFreq;
 

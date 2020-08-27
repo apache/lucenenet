@@ -976,11 +976,14 @@ namespace Lucene.Net.Index
                     TermsEnum termsEnum = dv.GetTermsEnum();
 
                     // next()
-                    Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
+                    Assert.IsTrue(termsEnum.MoveNext());
+                    Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
                     Assert.AreEqual(0L, termsEnum.Ord); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
-                    Assert.AreEqual("hello", termsEnum.Next().Utf8ToString());
+                    Assert.IsTrue(termsEnum.MoveNext());
+                    Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
                     Assert.AreEqual(1L, termsEnum.Ord); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
-                    Assert.AreEqual("world", termsEnum.Next().Utf8ToString());
+                    Assert.IsTrue(termsEnum.MoveNext());
+                    Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
                     Assert.AreEqual(2L, termsEnum.Ord); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
 
                     // seekCeil()
@@ -2522,11 +2525,14 @@ namespace Lucene.Net.Index
                     TermsEnum termsEnum = dv.GetTermsEnum();
 
                     // next()
-                    Assert.AreEqual("beer", termsEnum.Next().Utf8ToString());
+                    Assert.IsTrue(termsEnum.MoveNext());
+                    Assert.AreEqual("beer", termsEnum.Term.Utf8ToString());
                     Assert.AreEqual(0L, termsEnum.Ord); // LUCENENET specific - 0L required because types don't match (xUnit checks this)
-                    Assert.AreEqual("hello", termsEnum.Next().Utf8ToString());
+                    Assert.IsTrue(termsEnum.MoveNext());
+                    Assert.AreEqual("hello", termsEnum.Term.Utf8ToString());
                     Assert.AreEqual(1L, termsEnum.Ord); // LUCENENET specific - 1L required because types don't match (xUnit checks this)
-                    Assert.AreEqual("world", termsEnum.Next().Utf8ToString());
+                    Assert.IsTrue(termsEnum.MoveNext());
+                    Assert.AreEqual("world", termsEnum.Term.Utf8ToString());
                     Assert.AreEqual(2L, termsEnum.Ord); // LUCENENET specific - 2L required because types don't match (xUnit checks this)
 
                     // seekCeil()
@@ -2761,16 +2767,14 @@ namespace Lucene.Net.Index
 
         private void AssertEquals(long numOrds, TermsEnum expected, TermsEnum actual)
         {
-            BytesRef @ref;
-
             // sequential next() through all terms
-            while ((@ref = expected.Next()) != null)
+            while (expected.MoveNext())
             {
-                Assert.AreEqual(@ref, actual.Next());
+                Assert.IsTrue(actual.MoveNext());
                 Assert.AreEqual(expected.Ord, actual.Ord);
                 Assert.AreEqual(expected.Term, actual.Term);
             }
-            Assert.IsNull(actual.Next());
+            Assert.IsFalse(actual.MoveNext());
 
             // sequential seekExact(ord) through all terms
             for (long i = 0; i < numOrds; i++)

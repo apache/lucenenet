@@ -519,9 +519,9 @@ namespace Lucene.Net.Benchmarks.ByTask
                 {
                     continue;
                 }
-                TermsEnum termsEnum = terms.GetIterator(null);
+                TermsEnum termsEnum = terms.GetEnumerator();
                 DocsEnum docs = null;
-                while (termsEnum.Next() != null)
+                while (termsEnum.MoveNext())
                 {
                     docs = TestUtil.Docs(Random, termsEnum, MultiFields.GetLiveDocs(reader), docs, DocsFlags.FREQS);
                     while (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)

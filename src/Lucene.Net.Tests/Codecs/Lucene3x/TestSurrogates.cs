@@ -138,11 +138,12 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     Terms terms = fields.GetTerms(field);
                     Assert.IsNotNull(terms);
-                    TermsEnum termsEnum = terms.GetIterator(null);
+                    TermsEnum termsEnum = terms.GetEnumerator();
                     BytesRef text;
                     BytesRef lastText = null;
-                    while ((text = termsEnum.Next()) != null)
+                    while (termsEnum.MoveNext())
                     {
+                        text = termsEnum.Term;
                         Term exp = fieldTerms[termCount];
                         if (Verbose)
                         {
@@ -228,12 +229,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                     term = fieldTerms[1 + spot + i];
                     if (!term.Field.Equals(field, StringComparison.Ordinal))
                     {
-                        Assert.IsNull(te.Next());
+                        Assert.IsFalse(te.MoveNext());
                         break;
                     }
                     else
                     {
-                        BytesRef t = te.Next();
+                        Assert.IsTrue(te.MoveNext());
+                        BytesRef t = te.Term;
 
                         if (Verbose)
                         {
@@ -319,12 +321,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                                 Term term = fieldTerms[1 + spot + i];
                                 if (!term.Field.Equals(field, StringComparison.Ordinal))
                                 {
-                                    Assert.IsNull(te.Next());
+                                    Assert.IsFalse(te.MoveNext());
                                     break;
                                 }
                                 else
                                 {
-                                    BytesRef t = te.Next();
+                                    Assert.IsTrue(te.MoveNext());
+                                    BytesRef t = te.Term;
 
                                     if (Verbose)
                                     {

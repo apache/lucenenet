@@ -303,7 +303,8 @@ namespace Lucene.Net.Search
             BytesRef val = new BytesRef();
             for (int i = 0; i < nTerms; i++)
             {
-                BytesRef val1 = tenum.Next();
+                tenum.MoveNext();
+                BytesRef val1 = tenum.Term;
                 termsIndex.LookupOrd(i, val);
                 // System.out.println("i="+i);
                 Assert.AreEqual(val, val1);

@@ -437,7 +437,9 @@ namespace Lucene.Net.Index.Sorter
             {
                 Terms terms = reader.GetTermVector(i, TERM_VECTORS_FIELD);
                 assertNotNull("term vectors not found for doc " + i + " field [" + TERM_VECTORS_FIELD + "]", terms);
-                assertEquals("incorrect term vector for doc " + i, sortedValues[i].toString(), terms.GetIterator(null).Next().Utf8ToString());
+                var iter = terms.GetEnumerator();
+                iter.MoveNext();
+                assertEquals("incorrect term vector for doc " + i, sortedValues[i].toString(), iter.Term.Utf8ToString());
             }
         }
     }
