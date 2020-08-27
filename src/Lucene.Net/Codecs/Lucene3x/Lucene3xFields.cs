@@ -964,7 +964,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (DEBUG_SURROGATES)
                 {
-                    Console.WriteLine("TE.next()");
+                    Console.WriteLine("TE.MoveNext()");
                 }
                 if (skipNext)
                 {
@@ -1043,81 +1043,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override BytesRef Next()
             {
-                if (DEBUG_SURROGATES)
-                {
-                    Console.WriteLine("TE.next()");
-                }
-                if (skipNext)
-                {
-                    if (DEBUG_SURROGATES)
-                    {
-                        Console.WriteLine("  skipNext=true");
-                    }
-                    skipNext = false;
-                    if (termEnum.Term() == null)
-                    {
-                        return null;
-                        // PreFlex codec interns field names:
-                    }
-                    else if (termEnum.Term().Field != internedFieldName)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        return current = termEnum.Term().Bytes;
-                    }
-                }
-
-                // TODO: can we use STE's prevBuffer here?
-                prevTerm.CopyBytes(termEnum.Term().Bytes);
-
-                if (termEnum.Next() && termEnum.Term().Field == internedFieldName)
-                {
-                    newSuffixStart = termEnum.newSuffixStart;
-                    if (DEBUG_SURROGATES)
-                    {
-                        Console.WriteLine("  newSuffixStart=" + newSuffixStart);
-                    }
-                    SurrogateDance();
-                    Term t = termEnum.Term();
-                    if (t == null || t.Field != internedFieldName)
-                    {
-                        // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
-                        current = null;
-                    }
-                    else
-                    {
-                        current = t.Bytes;
-                    }
+                if (MoveNext())
                     return current;
-                }
-                else
-                {
-                    // this field is exhausted, but we have to give
-                    // surrogateDance a chance to seek back:
-                    if (DEBUG_SURROGATES)
-                    {
-                        Console.WriteLine("  force cont");
-                    }
-                    //newSuffixStart = prevTerm.length;
-                    newSuffixStart = 0;
-                    SurrogateDance();
-
-                    Term t = termEnum.Term();
-                    if (t == null || t.Field != internedFieldName)
-                    {
-                        // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
-                        return null;
-                    }
-                    else
-                    {
-                        current = t.Bytes;
-                        return current;
-                    }
-                }
+                return null;
             }
 
             public override BytesRef Term => current;

@@ -457,17 +457,9 @@ namespace Lucene.Net.Index
             public override BytesRef Next()
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(state == State.INITIAL || state == State.POSITIONED, "Next() called on unpositioned TermsEnum");
-                BytesRef result = base.Next();
-                if (result == null)
-                {
-                    state = State.UNPOSITIONED;
-                }
-                else
-                {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(result.IsValid());
-                    state = State.POSITIONED;
-                }
-                return result;
+                if (MoveNext())
+                    return base.Term;
+                return null;
             }
 
             public override long Ord

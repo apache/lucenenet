@@ -862,26 +862,9 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override BytesRef Next()
             {
-                if (ord == numTerms - 1)
-                {
-                    return null;
-                }
-                else
-                {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ord < numTerms);
-                    ++ord;
-                }
-
-                // read term
-                term.Offset = 0;
-                term.Length = prefixLengths[ord] + suffixLengths[ord];
-                if (term.Length > term.Bytes.Length)
-                {
-                    term.Bytes = ArrayUtil.Grow(term.Bytes, term.Length);
-                }
-                @in.ReadBytes(term.Bytes, prefixLengths[ord], suffixLengths[ord]);
-
-                return term;
+                if (MoveNext())
+                    return term;
+                return null;
             }
 
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;

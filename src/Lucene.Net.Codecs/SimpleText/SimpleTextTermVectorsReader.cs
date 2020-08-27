@@ -403,15 +403,9 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override BytesRef Next()
             {
-                if (_iterator.MoveNext())
-                {
-                    _current = _iterator.Current;
+                if (MoveNext())
                     return _current.Key;
-                }
-                else
-                {
-                    return null;
-                }
+                return null;
             }
 
             public override BytesRef Term => _current.Key;

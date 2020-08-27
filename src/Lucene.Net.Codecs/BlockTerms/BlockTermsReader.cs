@@ -714,36 +714,9 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 public override BytesRef Next()
                 {
-                    //System.out.println("BTR.next() seekPending=" + seekPending + " pendingSeekCount=" + state.termBlockOrd);
-
-                    // If seek was previously called and the term was cached,
-                    // usually caller is just going to pull a D/&PEnum or get
-                    // docFreq, etc.  But, if they then call next(),
-                    // this method catches up all internal state so next()
-                    // works properly:
-                    if (seekPending)
-                    {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!indexIsCurrent);
-                        input.Seek(state.BlockFilePointer);
-                        int pendingSeekCount = state.TermBlockOrd;
-                        bool result = NextBlock();
-
-                        long savOrd = state.Ord;
-
-                        // Block must exist since seek(TermState) was called w/ a
-                        // TermState previously returned by this enum when positioned
-                        // on a real term:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(result);
-
-                        while (state.TermBlockOrd < pendingSeekCount)
-                        {
-                            BytesRef nextResult = _next();
-                            if (Debugging.AssertsEnabled) Debugging.Assert(nextResult != null);
-                        }
-                        seekPending = false;
-                        state.Ord = savOrd;
-                    }
-                    return _next();
+                    if (MoveNext())
+                        return term;
+                    return null;
                 }
 
                 /// <summary>

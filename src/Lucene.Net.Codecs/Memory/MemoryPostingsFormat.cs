@@ -856,26 +856,21 @@ namespace Lucene.Net.Codecs.Memory
                 //System.out.println("te.next");
                 if (fstEnum.MoveNext())
                 {
+                    current = fstEnum.Current;
                     didDecode = false;
                     //System.out.println("  term=" + field.name + ":" + current.input.utf8ToString());
                     return true;
                 }
+                current = null;
                 //System.out.println("  END");
                 return false;
             }
 
             public override BytesRef Next()
             {
-                //System.out.println("te.next");
-                current = fstEnum.Next();
-                if (current == null)
-                {
-                    //System.out.println("  END");
-                    return null;
-                }
-                didDecode = false;
-                //System.out.println("  term=" + field.name + ":" + current.input.utf8ToString());
-                return current.Input;
+                if (MoveNext())
+                    return current.Input;
+                return null;
             }
 
             public override int DocFreq

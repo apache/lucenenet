@@ -91,14 +91,8 @@ namespace Lucene.Net.Index
                 /// Scan for terms containing the letter 'e'. </summary>
                 public override BytesRef Next()
                 {
-                    BytesRef text;
-                    while ((text = m_input.Next()) != null)
-                    {
-                        if (text.Utf8ToString().IndexOf('e') != -1)
-                        {
-                            return text;
-                        }
-                    }
+                    if (MoveNext())
+                        return m_input.Term;
                     return null;
                 }
 

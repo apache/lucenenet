@@ -306,16 +306,9 @@ namespace Lucene.Net.Index.Memory
 
                 public override BytesRef Next()
                 {
-                    termUpto++;
-                    if (termUpto >= info.terms.Count)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        info.terms.Get(info.sortedTerms[termUpto], br);
+                    if (MoveNext())
                         return br;
-                    }
+                    return null;
                 }
 
                 public override BytesRef Term => br;

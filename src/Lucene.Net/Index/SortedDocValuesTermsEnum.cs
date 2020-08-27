@@ -113,13 +113,9 @@ namespace Lucene.Net.Index
 
         public override BytesRef Next()
         {
-            currentOrd++;
-            if (currentOrd >= values.ValueCount)
-            {
-                return null;
-            }
-            values.LookupOrd(currentOrd, term);
-            return term;
+            if (MoveNext())
+                return term;
+            return null;
         }
 
         public override BytesRef Term => term;

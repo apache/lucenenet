@@ -169,7 +169,9 @@ namespace Lucene.Net.Index
 
             public override BytesRef Next()
             {
-                return m_input.Next();
+                if (MoveNext())
+                    return m_input.Term;
+                return null;
             }
 
             public override BytesRef Term => m_input.Term;

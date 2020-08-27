@@ -282,47 +282,28 @@ namespace Lucene.Net.Search
                 queuedBottom = null;
             }
 
-            BytesRef term = actualEnum.Next();
+            bool moved = actualEnum.MoveNext();
             boostAtt.Boost = actualBoostAtt.Boost;
 
             float bottom = maxBoostAtt.MaxNonCompetitiveBoost;
             BytesRef bottomTerm = maxBoostAtt.CompetitiveTerm;
-            if (actualEnum.MoveNext() && (bottom != this.bottom || bottomTerm != this.bottomTerm))
+            if (moved && (bottom != this.bottom || bottomTerm != this.bottomTerm))
             {
                 this.bottom = bottom;
                 this.bottomTerm = bottomTerm;
                 // clone the term before potentially doing something with it
                 // this is a rare but wonderful occurrence anyway
                 queuedBottom = BytesRef.DeepCopyOf(actualEnum.Term);
-                return true;
             }
 
-            return false;
+            return moved;
         }
 
         public override BytesRef Next()
         {
-            if (queuedBottom != null)
-            {
-                BottomChanged(queuedBottom, false);
-                queuedBottom = null;
-            }
-
-            BytesRef term = actualEnum.Next();
-            boostAtt.Boost = actualBoostAtt.Boost;
-
-            float bottom = maxBoostAtt.MaxNonCompetitiveBoost;
-            BytesRef bottomTerm = maxBoostAtt.CompetitiveTerm;
-            if (term != null && (bottom != this.bottom || bottomTerm != this.bottomTerm))
-            {
-                this.bottom = bottom;
-                this.bottomTerm = bottomTerm;
-                // clone the term before potentially doing something with it
-                // this is a rare but wonderful occurrence anyway
-                queuedBottom = BytesRef.DeepCopyOf(term);
-            }
-
-            return term;
+            if (MoveNext())
+                return actualEnum.Term;
+            return null;
         }
 
         // proxy all other enum calls to the actual enum
