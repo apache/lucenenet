@@ -359,7 +359,6 @@ namespace Lucene.Net.Codecs.RAMOnly
             public override IComparer<BytesRef> Comparer
                 => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            // LUCENENET specific - duplicate logic for better enumerator optimization
             public override bool MoveNext()
             {
                 EnsureEnumeratorInitialized();
@@ -374,6 +373,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 }
             }
 
+            [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public override BytesRef Next()
             {
                 if (MoveNext())

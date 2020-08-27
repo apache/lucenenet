@@ -387,7 +387,6 @@ namespace Lucene.Net.Codecs.SimpleText
                 throw new NotSupportedException();
             }
 
-            // LUCENENET specific - duplicate logic for better enumerator optimization
             public override bool MoveNext()
             {
                 if (_iterator.MoveNext())
@@ -401,6 +400,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
 
+            [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public override BytesRef Next()
             {
                 if (MoveNext())

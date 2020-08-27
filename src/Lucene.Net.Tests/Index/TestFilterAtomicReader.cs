@@ -76,7 +76,6 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Scan for terms containing the letter 'e'. </summary>
-                // LUCENENET specific - duplicate logic for better enumerator optimization
                 public override bool MoveNext()
                 {
                     while (m_input.MoveNext())
@@ -89,6 +88,7 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Scan for terms containing the letter 'e'. </summary>
+                [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                 public override BytesRef Next()
                 {
                     if (MoveNext())

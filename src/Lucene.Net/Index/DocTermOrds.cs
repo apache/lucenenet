@@ -770,7 +770,6 @@ namespace Lucene.Net.Index
 
             public override BytesRef Term => term;
 
-            // LUCENENET specific - duplicate logic for better enumerator optimization
             public override bool MoveNext()
             {
                 if (++ord < 0)
@@ -786,6 +785,7 @@ namespace Lucene.Net.Index
                 return true;
             }
 
+            [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public override BytesRef Next()
             {
                 if (MoveNext())

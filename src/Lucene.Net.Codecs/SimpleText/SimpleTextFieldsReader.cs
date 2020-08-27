@@ -157,7 +157,6 @@ namespace Lucene.Net.Codecs.SimpleText
 
             }
 
-            // LUCENENET specific - duplicate logic for better enumerator optimization
             public override bool MoveNext()
             {
                 //if (Debugging.AssertsEnabled) Debugging.Assert(!ended); // LUCENENET: Ended field is never set, so this can never fail
@@ -171,6 +170,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return true;
             }
 
+            [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public override BytesRef Next()
             {
                 if (MoveNext())

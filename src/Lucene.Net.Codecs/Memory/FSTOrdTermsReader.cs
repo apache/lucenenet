@@ -491,7 +491,6 @@ namespace Lucene.Net.Codecs.Memory
                     seekPending = false;
                 }
 
-                // LUCENENET specific - duplicate logic for better enumerator optimization
                 public override bool MoveNext()
                 {
                     if (seekPending) // previously positioned, but termOutputs not fetched
@@ -518,6 +517,7 @@ namespace Lucene.Net.Codecs.Memory
                     return moved;
                 }
 
+                [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                 public override BytesRef Next()
                 {
                     if (MoveNext())
@@ -660,7 +660,6 @@ namespace Lucene.Net.Codecs.Memory
                     throw new NotSupportedException();
                 }
 
-                // LUCENENET specific - duplicate logic for better enumerator optimization
                 public override bool MoveNext()
                 {
                     //if (TEST) System.out.println("Enum next()");
@@ -705,6 +704,7 @@ namespace Lucene.Net.Codecs.Memory
                     return true;
                 }
 
+                [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                 public override BytesRef Next()
                 {
                     if (MoveNext())

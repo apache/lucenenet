@@ -289,7 +289,6 @@ namespace Lucene.Net.Index.Memory
                     termUpto = (int)ord;
                 }
 
-                // LUCENEENT specific - duplicate logic for better enumerator optimization
                 public override bool MoveNext()
                 {
                     termUpto++;
@@ -304,6 +303,7 @@ namespace Lucene.Net.Index.Memory
                     }
                 }
 
+                [Obsolete("Use MoveNext() and Term instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                 public override BytesRef Next()
                 {
                     if (MoveNext())
