@@ -658,7 +658,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
         }
 
@@ -693,7 +693,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
         }
 
@@ -723,7 +723,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
 
             public override string ToString()
@@ -765,7 +765,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
 
             public override string ToString()
@@ -800,7 +800,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
 
             public override string ToString()
@@ -841,7 +841,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
 
             public override string ToString()
@@ -870,7 +870,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return NumericUtils.FilterPrefixCodedInt32s(terms.GetIterator(null));
+                return NumericUtils.FilterPrefixCodedInt32s(terms.GetEnumerator());
             }
 
             public override string ToString()
@@ -904,7 +904,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return NumericUtils.FilterPrefixCodedInt32s(terms.GetIterator(null));
+                return NumericUtils.FilterPrefixCodedInt32s(terms.GetEnumerator());
             }
         }
 
@@ -933,7 +933,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return NumericUtils.FilterPrefixCodedInt64s(terms.GetIterator(null));
+                return NumericUtils.FilterPrefixCodedInt64s(terms.GetEnumerator());
             }
         }
 
@@ -957,7 +957,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return NumericUtils.FilterPrefixCodedInt64s(terms.GetIterator(null));
+                return NumericUtils.FilterPrefixCodedInt64s(terms.GetEnumerator());
             }
         }
 

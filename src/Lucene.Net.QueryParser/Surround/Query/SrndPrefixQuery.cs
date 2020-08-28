@@ -62,7 +62,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             Terms terms = MultiFields.GetTerms(reader, fieldName);
             if (terms != null)
             {
-                TermsEnum termsEnum = terms.GetIterator(null);
+                TermsEnum termsEnum = terms.GetEnumerator();
 
                 bool skip = false;
                 TermsEnum.SeekStatus status = termsEnum.SeekCeil(new BytesRef(Prefix));

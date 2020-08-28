@@ -366,7 +366,7 @@ namespace Lucene.Net.Index
                     Terms terms2 = reader.GetTerms(fieldName);
                     Assert.IsNotNull(terms2);
 
-                    TermsEnum termsEnum = terms2.GetIterator(null);
+                    TermsEnum termsEnum = terms2.GetEnumerator();
 
                     DocsEnum docsEnum = null;
                     for (int i = 0; i < NUM_TERMS; i++)
@@ -593,7 +593,7 @@ namespace Lucene.Net.Index
                 for (int iter = 0; iter < NUM_TEST_ITER; iter++)
                 {
                     FieldData field = fields[Random.Next(fields.Length)];
-                    TermsEnum termsEnum = termsDict.GetTerms(field.fieldInfo.Name).GetIterator(null);
+                    TermsEnum termsEnum = termsDict.GetTerms(field.fieldInfo.Name).GetEnumerator();
 #pragma warning disable 612, 618
                     if (si.Codec is Lucene3xCodec)
 #pragma warning restore 612, 618

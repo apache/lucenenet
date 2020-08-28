@@ -232,7 +232,7 @@ namespace Lucene.Net.Queries
             {
                 if ((terms = fields.GetTerms(termsAndField.field)) != null)
                 {
-                    termsEnum = terms.GetIterator(termsEnum); // this won't return null
+                    termsEnum = terms.GetEnumerator(termsEnum); // this won't return null
                     for (int i = termsAndField.start; i < termsAndField.end; i++)
                     {
                         spare.Offset = offsets[i];

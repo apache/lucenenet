@@ -251,7 +251,7 @@ namespace Lucene.Net.Index.Sorter
         [Test]
         public virtual void TestDocsAndPositionsEnum()
         {
-            TermsEnum termsEnum = reader.GetTerms(DOC_POSITIONS_FIELD).GetIterator(null);
+            TermsEnum termsEnum = reader.GetTerms(DOC_POSITIONS_FIELD).GetEnumerator();
             assertEquals(TermsEnum.SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef(DOC_POSITIONS_TERM)));
             DocsAndPositionsEnum sortedPositions = termsEnum.DocsAndPositions(null, null);
             int doc;
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index.Sorter
         public virtual void TestDocsEnum()
         {
             IBits mappedLiveDocs = RandomLiveDocs(reader.MaxDoc);
-            TermsEnum termsEnum = reader.GetTerms(DOCS_ENUM_FIELD).GetIterator(null);
+            TermsEnum termsEnum = reader.GetTerms(DOCS_ENUM_FIELD).GetEnumerator();
             assertEquals(TermsEnum.SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef(DOCS_ENUM_TERM)));
             DocsEnum docs = termsEnum.Docs(mappedLiveDocs, null);
 

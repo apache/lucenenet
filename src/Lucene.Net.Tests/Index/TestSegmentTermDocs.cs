@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
             Assert.IsTrue(reader != null);
             Assert.AreEqual(indexDivisor, reader.TermInfosIndexDivisor);
 
-            TermsEnum terms = reader.Fields.GetTerms(DocHelper.TEXT_FIELD_2_KEY).GetIterator(null);
+            TermsEnum terms = reader.Fields.GetTerms(DocHelper.TEXT_FIELD_2_KEY).GetEnumerator();
             terms.SeekCeil(new BytesRef("field"));
             DocsEnum termDocs = TestUtil.Docs(Random, terms, reader.LiveDocs, null, DocsFlags.FREQS);
             if (termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)

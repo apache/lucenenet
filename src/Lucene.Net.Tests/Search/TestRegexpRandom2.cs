@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
 
             protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
             {
-                return new SimpleAutomatonTermsEnum(this, terms.GetIterator(null));
+                return new SimpleAutomatonTermsEnum(this, terms.GetEnumerator());
             }
 
             private sealed class SimpleAutomatonTermsEnum : FilteredTermsEnum

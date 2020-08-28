@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 TermsEnum te;
                 if (!tes.TryGetValue(field, out te))
                 {
-                    te = MultiFields.GetTerms(reader, field).GetIterator(null);
+                    te = MultiFields.GetTerms(reader, field).GetEnumerator();
                     tes[field] = te;
                 }
 
@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         TermsEnum te;
                         if (!tes.TryGetValue(field, out te))
                         {
-                            te = MultiFields.GetTerms(reader, field).GetIterator(null);
+                            te = MultiFields.GetTerms(reader, field).GetEnumerator();
                             tes[field] = te;
                         }
 

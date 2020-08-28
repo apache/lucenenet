@@ -396,7 +396,7 @@ namespace Lucene.Net.Codecs.Memory
                 BytesRef term;
                 DocsEnum docsEnum = null;
                 DocsAndPositionsEnum docsAndPositionsEnum = null;
-                TermsEnum termsEnum = termsIn.GetIterator(null);
+                TermsEnum termsEnum = termsIn.GetEnumerator();
                 int termOffset = 0;
 
                 Int32ArrayWriter scratch = new Int32ArrayWriter();

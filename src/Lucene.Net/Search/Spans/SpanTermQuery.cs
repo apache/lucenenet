@@ -124,7 +124,7 @@ namespace Lucene.Net.Search.Spans
                     Terms terms = fields.GetTerms(m_term.Field);
                     if (terms != null)
                     {
-                        TermsEnum termsEnum = terms.GetIterator(null);
+                        TermsEnum termsEnum = terms.GetEnumerator();
                         if (termsEnum.SeekExact(m_term.Bytes))
                         {
                             state = termsEnum.GetTermState();
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.Spans
                 return TermSpans.EMPTY_TERM_SPANS;
             }
 
-            TermsEnum termsEnum_ = context.AtomicReader.GetTerms(m_term.Field).GetIterator(null);
+            TermsEnum termsEnum_ = context.AtomicReader.GetTerms(m_term.Field).GetEnumerator();
             termsEnum_.SeekExact(m_term.Bytes, state);
 
             DocsAndPositionsEnum postings = termsEnum_.DocsAndPositions(acceptDocs, null, DocsAndPositionsFlags.PAYLOADS);

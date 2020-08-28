@@ -54,7 +54,7 @@ namespace Lucene.Net.Queries
                 return null;
             }
 
-            TermsEnum termsEnum = terms.GetIterator(null);
+            TermsEnum termsEnum = terms.GetEnumerator();
             if (!termsEnum.SeekExact(term.Bytes))
             {
                 return null;

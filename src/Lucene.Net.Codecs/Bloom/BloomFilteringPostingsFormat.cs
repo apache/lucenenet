@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs.Bloom
                     // this can be a relativly heavy operation depending on the 
                     // delegate postings format and they underlying directory
                     // (clone IndexInput)
-                    delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetIterator(_reuseDelegate));
+                    delegateTermsEnum ?? (delegateTermsEnum = _delegateTerms.GetEnumerator(_reuseDelegate));
 
                 public override bool MoveNext()
                 {

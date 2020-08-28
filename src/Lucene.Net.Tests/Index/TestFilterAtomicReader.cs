@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
             reader.Dispose();
             reader = DirectoryReader.Open(target);
 
-            TermsEnum terms = MultiFields.GetTerms(reader, "default").GetIterator(null);
+            TermsEnum terms = MultiFields.GetTerms(reader, "default").GetEnumerator();
             while (terms.MoveNext())
             {
                 Assert.IsTrue(terms.Term.Utf8ToString().IndexOf('e') != -1);

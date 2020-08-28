@@ -287,9 +287,9 @@ namespace Lucene.Net.Util.Automaton
             return Type switch
             {
                 AUTOMATON_TYPE.NONE => TermsEnum.EMPTY,
-                AUTOMATON_TYPE.ALL => terms.GetIterator(null),
-                AUTOMATON_TYPE.SINGLE => new SingleTermsEnum(terms.GetIterator(null), Term),
-                AUTOMATON_TYPE.PREFIX => new PrefixTermsEnum(terms.GetIterator(null), Term),// TODO: this is very likely faster than .intersect,
+                AUTOMATON_TYPE.ALL => terms.GetEnumerator(),
+                AUTOMATON_TYPE.SINGLE => new SingleTermsEnum(terms.GetEnumerator(), Term),
+                AUTOMATON_TYPE.PREFIX => new PrefixTermsEnum(terms.GetEnumerator(), Term),// TODO: this is very likely faster than .intersect,
                                                                                             // but we should test and maybe cutover
                 AUTOMATON_TYPE.NORMAL => terms.Intersect(this, null),
                 _ => throw new Exception("unhandled case"),// unreachable

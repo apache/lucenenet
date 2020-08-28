@@ -358,7 +358,7 @@ namespace Lucene.Net.Index.Memory
             assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
             // now reuse and check again
-            TermsEnum te = reader.GetTerms("foo").GetIterator(null);
+            TermsEnum te = reader.GetTerms("foo").GetEnumerator();
             assertTrue(te.SeekExact(new BytesRef("bar")));
             disi = te.Docs(null, disi, DocsFlags.NONE);
             docid = disi.DocID;
@@ -399,7 +399,7 @@ namespace Lucene.Net.Index.Memory
                 assertEquals(3, disi.EndOffset);
 
                 // now reuse and check again
-                TermsEnum te = reader.GetTerms("foo").GetIterator(null);
+                TermsEnum te = reader.GetTerms("foo").GetEnumerator();
                 assertTrue(te.SeekExact(new BytesRef("bar")));
                 disi = te.DocsAndPositions(null, disi);
                 docid = disi.DocID;

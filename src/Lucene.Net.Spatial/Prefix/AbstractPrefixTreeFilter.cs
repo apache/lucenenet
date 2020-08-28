@@ -106,7 +106,7 @@ namespace Lucene.Net.Spatial.Prefix
                 Terms terms = reader.GetTerms(outerInstance.m_fieldName);
                 if (terms != null)
                 {
-                    m_termsEnum = terms.GetIterator(null);
+                    m_termsEnum = terms.GetEnumerator();
                 }
             }
 

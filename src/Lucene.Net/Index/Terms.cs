@@ -89,11 +89,11 @@ namespace Lucene.Net.Index
             }
             if (startTerm == null)
             {
-                return new AutomatonTermsEnum(GetIterator(null), compiled);
+                return new AutomatonTermsEnum(GetEnumerator(), compiled);
             }
             else
             {
-                return new AutomatonTermsEnumAnonymousInnerClassHelper(this, GetIterator(null), compiled, startTerm);
+                return new AutomatonTermsEnumAnonymousInnerClassHelper(this, GetEnumerator(), compiled, startTerm);
             }
         }
 

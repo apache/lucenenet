@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Pulsing
             IndexReader ir = iw.GetReader();
             iw.Dispose();
 
-            TermsEnum te = MultiFields.GetTerms(ir, "field").GetIterator(null);
+            TermsEnum te = MultiFields.GetTerms(ir, "field").GetEnumerator();
             DocsEnum de = null;
 
             for (int i = 0; i < 10050; i++)
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Pulsing
             IndexReader ir = iw.GetReader();
             iw.Dispose();
 
-            TermsEnum te = MultiFields.GetTerms(ir, "field").GetIterator(null);
+            TermsEnum te = MultiFields.GetTerms(ir, "field").GetEnumerator();
             DocsEnum de = null;
 
             for (int i = 0; i < 10050; i++)

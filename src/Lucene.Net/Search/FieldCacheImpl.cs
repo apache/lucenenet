@@ -1944,7 +1944,7 @@ namespace Lucene.Net.Search
                 if (terms != null)
                 {
                     int termCount = 0;
-                    TermsEnum termsEnum = terms.GetIterator(null);
+                    TermsEnum termsEnum = terms.GetEnumerator();
                     DocsEnum docs = null;
                     while (true)
                     {
