@@ -44,8 +44,16 @@ namespace Lucene.Net.Index
         /// Returns an iterator that will step through all
         /// terms. This method will not return <c>null</c>.
         /// </summary>
-        public virtual TermsEnum GetEnumerator() // LUCENENET specific - Added for .NET compatibility
-            => GetIterator(null);
+        public abstract TermsEnum GetEnumerator(); // LUCENENET specific - Refactored to require both overloads, so we don't have a strange null parameter unless needed
+
+        /// <summary>
+        /// Returns an iterator that will step through all
+        /// terms. This method will not return <c>null</c>.
+        /// </summary>
+        /// <param name="reuse">If you have a previous <see cref="TermsEnum"/>,
+        /// for example from a different field, you can pass it for possible
+        /// reuse if the implementation can do so.</param>
+        public virtual TermsEnum GetEnumerator(TermsEnum reuse) => GetEnumerator(); // LUCENENET specific - Refactored to require both overloads, so we don't have a strange null parameter unless needed
 
         /// <summary>
         /// Returns an iterator that will step through all
@@ -54,17 +62,8 @@ namespace Lucene.Net.Index
         /// field, you can pass it for possible reuse if the
         /// implementation can do so.
         /// </summary>
-        public virtual TermsEnum GetEnumerator(TermsEnum reuse) // LUCENENET specific - Added for .NET compatibility
-            => GetIterator(reuse);
-
-        /// <summary>
-        /// Returns an iterator that will step through all
-        /// terms. This method will not return <c>null</c>.  If you have
-        /// a previous <see cref="TermsEnum"/>, for example from a different
-        /// field, you can pass it for possible reuse if the
-        /// implementation can do so.
-        /// </summary>
-        public abstract TermsEnum GetIterator(TermsEnum reuse); // LUCENENT TODO: API - Mark obsolete/hide
+        [Obsolete("Use GetEnumerator() or GetEnumerator(TermsEnum). This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public virtual TermsEnum GetIterator(TermsEnum reuse) => GetEnumerator(reuse);
 
         /// <summary>
         /// Returns a <see cref="TermsEnum"/> that iterates over all terms that

@@ -272,7 +272,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
             {
                 return new SegmentTermsEnum(this);
             }

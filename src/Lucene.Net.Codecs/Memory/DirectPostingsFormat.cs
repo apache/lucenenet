@@ -791,21 +791,18 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
             {
-                DirectTermsEnum termsEnum;
-                if (reuse != null && reuse is DirectTermsEnum)
-                {
-                    termsEnum = (DirectTermsEnum) reuse;
-                    if (!termsEnum.CanReuse(terms))
-                    {
-                        termsEnum = new DirectTermsEnum(this);
-                    }
-                }
-                else
-                {
+                var termsEnum = new DirectTermsEnum(this);
+                termsEnum.Reset();
+                return termsEnum;
+            }
+
+            public override TermsEnum GetEnumerator(TermsEnum reuse)
+            {
+                if (!(reuse is DirectTermsEnum termsEnum) || !termsEnum.CanReuse(terms))
                     termsEnum = new DirectTermsEnum(this);
-                }
+
                 termsEnum.Reset();
                 return termsEnum;
             }

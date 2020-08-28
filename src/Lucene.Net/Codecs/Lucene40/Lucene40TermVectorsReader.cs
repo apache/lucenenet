@@ -352,21 +352,31 @@ namespace Lucene.Net.Codecs.Lucene40
                 tvfFPStart = outerInstance.tvf.GetFilePointer();
             }
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
+            {
+                var termsEnum = new TVTermsEnum(outerInstance);
+                termsEnum.Reset(numTerms, tvfFPStart, storePositions, storeOffsets, storePayloads);
+                return termsEnum;
+            }
+
+            public override TermsEnum GetEnumerator(TermsEnum reuse)
             {
                 TVTermsEnum termsEnum;
-                if (reuse is TVTermsEnum)
-                {
-                    termsEnum = (TVTermsEnum)reuse;
-                    if (!termsEnum.CanReuse(outerInstance.tvf))
-                    {
-                        termsEnum = new TVTermsEnum(outerInstance);
-                    }
-                }
-                else
+#pragma warning disable IDE0038 // Use pattern matching
+                if (reuse is null || !(reuse is TVTermsEnum))
+#pragma warning restore IDE0038 // Use pattern matching
                 {
                     termsEnum = new TVTermsEnum(outerInstance);
                 }
+                else
+                {
+                    var reusable = (TVTermsEnum)reuse;
+                    if (reusable.CanReuse(outerInstance.tvf))
+                        termsEnum = reusable;
+                    else
+                        termsEnum = new TVTermsEnum(outerInstance);
+                }
+
                 termsEnum.Reset(numTerms, tvfFPStart, storePositions, storeOffsets, storePayloads);
                 return termsEnum;
             }

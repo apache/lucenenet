@@ -82,9 +82,14 @@ namespace Lucene.Net.Index.Sorter
                 this.indexOptions = indexOptions;
             }
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
             {
-                return new SortingTermsEnum(m_input.GetIterator(reuse), docMap, indexOptions);
+                return new SortingTermsEnum(m_input.GetEnumerator(), docMap, indexOptions);
+            }
+
+            public override TermsEnum GetEnumerator(TermsEnum reuse)
+            {
+                return new SortingTermsEnum(m_input.GetEnumerator(reuse), docMap, indexOptions);
             }
 
             public override TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)

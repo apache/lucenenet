@@ -87,7 +87,7 @@ namespace Lucene.Net.Sandbox.Queries
             /// </summary>
             /// <exception cref="IOException">If there is a low-level I/O error.</exception>
             public LinearFuzzyTermsEnum(SlowFuzzyTermsEnum outerInstance)
-                : base(outerInstance.m_terms.GetIterator(null))
+                : base(outerInstance.m_terms.GetEnumerator())
             {
                 this.outerInstance = outerInstance;
                 this.boostAtt = Attributes.AddAttribute<IBoostAttribute>();

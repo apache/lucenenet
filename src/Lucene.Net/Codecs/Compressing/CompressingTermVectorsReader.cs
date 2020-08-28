@@ -764,17 +764,21 @@ namespace Lucene.Net.Codecs.Compressing
                 this.termBytes = termBytes;
             }
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
+            {
+                var termsEnum = new TVTermsEnum();
+                termsEnum.Reset(numTerms, flags, prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex, payloadBytes, new ByteArrayDataInput(termBytes.Bytes, termBytes.Offset, termBytes.Length));
+                return termsEnum;
+            }
+
+            public override TermsEnum GetEnumerator(TermsEnum reuse)
             {
                 TVTermsEnum termsEnum;
-                if (reuse != null && reuse is TVTermsEnum)
-                {
+                if (!(reuse is null) && reuse is TVTermsEnum)
                     termsEnum = (TVTermsEnum)reuse;
-                }
                 else
-                {
                     termsEnum = new TVTermsEnum();
-                }
+
                 termsEnum.Reset(numTerms, flags, prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex, payloadBytes, new ByteArrayDataInput(termBytes.Bytes, termBytes.Offset, termBytes.Length));
                 return termsEnum;
             }

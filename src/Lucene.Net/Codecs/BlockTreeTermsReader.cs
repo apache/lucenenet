@@ -620,7 +620,7 @@ namespace Lucene.Net.Codecs
 
             public override bool HasPayloads => fieldInfo.HasPayloads;
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
             {
                 return new SegmentTermsEnum(this);
             }
