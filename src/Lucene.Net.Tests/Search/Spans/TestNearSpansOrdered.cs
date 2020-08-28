@@ -106,11 +106,11 @@ namespace Lucene.Net.Search.Spans
         {
             SpanNearQuery q = MakeQuery();
             Spans span = MultiSpansWrapper.Wrap(searcher.TopReaderContext, q);
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(0, 0, 3), s(span));
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(1, 0, 4), s(span));
-            Assert.AreEqual(false, span.Next());
+            Assert.AreEqual(false, span.MoveNext());
         }
 
         /// <summary>
@@ -135,11 +135,11 @@ namespace Lucene.Net.Search.Spans
         {
             SpanNearQuery q = MakeQuery();
             Spans span = MultiSpansWrapper.Wrap(searcher.TopReaderContext, q);
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(0, 0, 3), s(span));
             Assert.AreEqual(true, span.SkipTo(1));
             Assert.AreEqual(s(1, 0, 4), s(span));
-            Assert.AreEqual(false, span.Next());
+            Assert.AreEqual(false, span.MoveNext());
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search.Spans
         {
             SpanNearQuery q = MakeQuery();
             Spans span = MultiSpansWrapper.Wrap(searcher.TopReaderContext, q);
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(0, 0, 3), s(span));
             Assert.AreEqual(false, span.SkipTo(2));
         }

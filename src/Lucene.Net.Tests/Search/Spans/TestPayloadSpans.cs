@@ -282,7 +282,7 @@ namespace Lucene.Net.Search.Spans
             ISet<string> payloadSet = new JCG.HashSet<string>();
             for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
             {
-                while (spans.Next())
+                while (spans.MoveNext())
                 {
                     var payloads = spans.GetPayload();
                     foreach (var payload in payloads)
@@ -321,7 +321,7 @@ namespace Lucene.Net.Search.Spans
             ISet<string> payloadSet = new JCG.HashSet<string>();
             for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
             {
-                while (spans.Next())
+                while (spans.MoveNext())
                 {
                     var payloads = spans.GetPayload();
                     foreach (var payload in payloads)
@@ -360,7 +360,7 @@ namespace Lucene.Net.Search.Spans
             ISet<string> payloadSet = new JCG.HashSet<string>();
             for (int i = 0; i < topDocs.ScoreDocs.Length; i++)
             {
-                while (spans.Next())
+                while (spans.MoveNext())
                 {
                     var payloads = spans.GetPayload();
                     foreach (var payload in payloads)
@@ -418,7 +418,7 @@ namespace Lucene.Net.Search.Spans
             //each position match should have a span associated with it, since there is just one underlying term query, there should
             //only be one entry in the span
             int seen = 0;
-            while (spans.Next() == true)
+            while (spans.MoveNext() == true)
             {
                 //if we expect payloads, then isPayloadAvailable should be true
                 if (expectedNumPayloads > 0)
@@ -474,7 +474,7 @@ namespace Lucene.Net.Search.Spans
         {
             int cnt = 0;
 
-            while (spans.Next() == true)
+            while (spans.MoveNext() == true)
             {
                 if (Verbose)
                 {

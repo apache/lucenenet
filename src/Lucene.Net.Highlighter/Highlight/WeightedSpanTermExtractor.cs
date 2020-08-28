@@ -303,7 +303,7 @@ namespace Lucene.Net.Search.Highlight
                 Spans.Spans spans = q.GetSpans(context, acceptDocs, termContexts);
 
                 // collect span positions
-                while (spans.Next())
+                while (spans.MoveNext())
                 {
                     spanPositions.Add(new PositionSpan(spans.Start, spans.End - 1));
                 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -30,7 +31,12 @@ namespace Lucene.Net.Search.Spans
     {
         /// <summary>
         /// Move to the next match, returning true if any such exists. </summary>
-        public abstract bool Next();
+        public abstract bool MoveNext();
+
+        /// <summary>
+        /// Move to the next match, returning true if any such exists. </summary>
+        [Obsolete("Use MoveNext() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public virtual bool Next() => MoveNext();
 
         /// <summary>
         /// Skips to the first match beyond the current, whose document number is
@@ -70,10 +76,10 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Returns the payload data for the current span.
-        /// this is invalid until <see cref="Next()"/> is called for
+        /// this is invalid until <see cref="MoveNext()"/> is called for
         /// the first time.
         /// This method must not be called more than once after each call
-        /// of <see cref="Next()"/>. However, most payloads are loaded lazily,
+        /// of <see cref="MoveNext()"/>. However, most payloads are loaded lazily,
         /// so if the payload data for the current position is not needed,
         /// this method may not be called at all for performance reasons. An ordered
         /// SpanQuery does not lazy load, so if you have payloads in your index and
@@ -94,7 +100,7 @@ namespace Lucene.Net.Search.Spans
         /// Checks if a payload can be loaded at this position.
         /// <para/>
         /// Payloads can only be loaded once per call to
-        /// <see cref="Next()"/>.
+        /// <see cref="MoveNext()"/>.
         /// </summary>
         /// <returns> <c>true</c> if there is a payload available at this position that can be loaded </returns>
         public abstract bool IsPayloadAvailable { get; }

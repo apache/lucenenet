@@ -575,8 +575,8 @@ namespace Lucene.Net.Search.Spans
             Spans s1 = MultiSpansWrapper.Wrap(searcher.TopReaderContext, t1);
             Spans s2 = MultiSpansWrapper.Wrap(searcher.TopReaderContext, t2);
 
-            Assert.IsTrue(s1.Next());
-            Assert.IsTrue(s2.Next());
+            Assert.IsTrue(s1.MoveNext());
+            Assert.IsTrue(s2.MoveNext());
 
             bool hasMore = true;
 
@@ -605,7 +605,7 @@ namespace Lucene.Net.Search.Spans
         {
             do
             {
-                if (!s.Next())
+                if (!s.MoveNext())
                 {
                     return false;
                 }

@@ -289,7 +289,7 @@ namespace Lucene.Net.Search.Payloads
                     Spans[] spansArr = new Spans[1];
                     spansArr[0] = spans;
                     GetPayloads(spansArr);
-                    m_more = spans.Next();
+                    m_more = spans.MoveNext();
                 } while (m_more && (m_doc == spans.Doc));
                 return true;
             }

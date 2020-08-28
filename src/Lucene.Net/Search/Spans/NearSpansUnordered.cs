@@ -95,9 +95,9 @@ namespace Lucene.Net.Search.Spans
                 this.index = index;
             }
 
-            public override bool Next()
+            public override bool MoveNext()
             {
-                return Adjust(spans.Next());
+                return Adjust(spans.MoveNext());
             }
 
             public override bool SkipTo(int target)
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Spans
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public virtual Spans[] SubSpans => subSpans;
 
-        public override bool Next()
+        public override bool MoveNext()
         {
             if (firstTime)
             {
@@ -181,7 +181,7 @@ namespace Lucene.Net.Search.Spans
             }
             else if (more)
             {
-                if (Min.Next()) // trigger further scanning
+                if (Min.MoveNext()) // trigger further scanning
                 {
                     queue.UpdateTop(); // maintain queue
                 }
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search.Spans
                     return true;
                 }
 
-                more = Min.Next();
+                more = Min.MoveNext();
                 if (more)
                 {
                     queue.UpdateTop(); // maintain queue
@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Spans
                     }
                 }
             }
-            return more && (AtMatch || Next());
+            return more && (AtMatch || MoveNext());
         }
 
         private SpansCell Min => queue.Top;
@@ -336,7 +336,7 @@ namespace Lucene.Net.Search.Spans
                 SpansCell cell = ordered[i];
                 if (next)
                 {
-                    more = cell.Next(); // move to first entry
+                    more = cell.MoveNext(); // move to first entry
                 }
                 if (more)
                 {

@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Payloads
                         m_numMatches++;
                         ProcessPayload(outerInstance.m_similarity);
 
-                        m_more = m_spans.Next(); // this moves positions to the next match in this
+                        m_more = m_spans.MoveNext(); // this moves positions to the next match in this
                         // document
                     }
                     return m_more || (m_freq != 0);

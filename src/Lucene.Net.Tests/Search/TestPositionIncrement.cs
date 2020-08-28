@@ -276,7 +276,7 @@ namespace Lucene.Net.Search
                 Console.WriteLine("\ngetPayloadSpans test");
             }
             Search.Spans.Spans pspans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
-            while (pspans.Next())
+            while (pspans.MoveNext())
             {
                 if (Verbose)
                 {
@@ -300,7 +300,7 @@ namespace Lucene.Net.Search
             Search.Spans.Spans spans = MultiSpansWrapper.Wrap(@is.TopReaderContext, snq);
             count = 0;
             sawZero = false;
-            while (spans.Next())
+            while (spans.MoveNext())
             {
                 count++;
                 sawZero |= spans.Start == 0;

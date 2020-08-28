@@ -77,13 +77,13 @@ namespace Lucene.Net.Search.Spans
         /// Implementing classes are required to return whether the current position is a match for the passed in
         /// "match" <see cref="Lucene.Net.Search.Spans.SpanQuery"/>.
         /// <para/>
-        /// This is only called if the underlying <see cref="Lucene.Net.Search.Spans.Spans.Next()"/> for the
+        /// This is only called if the underlying <see cref="Lucene.Net.Search.Spans.Spans.MoveNext()"/> for the
         /// match is successful
         /// </summary>
         /// <param name="spans"> The <see cref="Lucene.Net.Search.Spans.Spans"/> instance, positioned at the spot to check </param>
         /// <returns> Whether the match is accepted, rejected, or rejected and should move to the next doc.
         /// </returns>
-        /// <seealso cref="Lucene.Net.Search.Spans.Spans.Next()"/>
+        /// <seealso cref="Lucene.Net.Search.Spans.Spans.MoveNext()"/>
         protected abstract AcceptStatus AcceptPosition(Spans spans);
 
         public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
@@ -124,9 +124,9 @@ namespace Lucene.Net.Search.Spans
                 spans = outerInstance.m_match.GetSpans(context, acceptDocs, termContexts);
             }
 
-            public override bool Next()
+            public override bool MoveNext()
             {
-                if (!spans.Next())
+                if (!spans.MoveNext())
                 {
                     return false;
                 }
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.Spans
                             return true;
 
                         case AcceptStatus.NO:
-                            if (!spans.Next())
+                            if (!spans.MoveNext())
                             {
                                 return false;
                             }

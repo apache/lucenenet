@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Spans
             return new MultiSpansWrapper(leaves, query, termContexts);
         }
 
-        public override bool Next()
+        public override bool MoveNext()
         {
             if (leafOrd >= numLeaves)
             {
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Spans
             }
             while (true)
             {
-                if (current.Next())
+                if (current.MoveNext())
                 {
                     return true;
                 }
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Spans
                 if (target < leaves[leafOrd].DocBase)
                 {
                     // target was in the previous slice
-                    if (current.Next())
+                    if (current.MoveNext())
                     {
                         return true;
                     }
