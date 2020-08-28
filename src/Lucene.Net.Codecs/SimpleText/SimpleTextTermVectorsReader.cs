@@ -314,7 +314,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 terms = new JCG.SortedDictionary<BytesRef, SimpleTVPostings>();
             }
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
             {
                 // TODO: reuse
                 return new SimpleTVTermsEnum(terms);

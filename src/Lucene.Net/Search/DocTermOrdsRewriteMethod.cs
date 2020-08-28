@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -98,7 +99,7 @@ namespace Lucene.Net.Search
                 SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds((context.AtomicReader), m_query.m_field);
                 // Cannot use FixedBitSet because we require long index (ord):
                 Int64BitSet termSet = new Int64BitSet(docTermOrds.ValueCount);
-                TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(this, docTermOrds));
+                TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(docTermOrds));
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
                 if (termsEnum.MoveNext())
@@ -131,19 +132,16 @@ namespace Lucene.Net.Search
 
             private class TermsAnonymousInnerClassHelper : Terms
             {
-                private readonly MultiTermQueryDocTermOrdsWrapperFilter outerInstance;
+                private readonly SortedSetDocValues docTermOrds;
 
-                private SortedSetDocValues docTermOrds;
-
-                public TermsAnonymousInnerClassHelper(MultiTermQueryDocTermOrdsWrapperFilter outerInstance, SortedSetDocValues docTermOrds)
+                public TermsAnonymousInnerClassHelper(SortedSetDocValues docTermOrds)
                 {
-                    this.outerInstance = outerInstance;
                     this.docTermOrds = docTermOrds;
                 }
 
                 public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-                public override TermsEnum GetIterator(TermsEnum reuse)
+                public override TermsEnum GetEnumerator()
                 {
                     return docTermOrds.GetTermsEnum();
                 }

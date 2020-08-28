@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override int DocCount => docCount;
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
             {
                 return new SegmentTermsEnum(this);
             }
@@ -436,7 +436,7 @@ namespace Lucene.Net.Codecs.Memory
                 /// <summary>True when current term's metadata is decoded.</summary>
                 private bool decoded;
 
-                /// <summary>True when there is pending term when calling <see cref="Next()"/>.</summary>
+                /// <summary>True when there is pending term when calling <see cref="MoveNext()"/>.</summary>
                 private bool pending;
      
                 /// <summary>

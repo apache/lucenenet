@@ -64,15 +64,22 @@ namespace Lucene.Net.Index
             return new AssertingAtomicReader.AssertingTermsEnum(termsEnum);
         }
 
-        public override TermsEnum GetIterator(TermsEnum reuse)
+        public override TermsEnum GetEnumerator()
+        {
+            var termsEnum = base.GetEnumerator();
+            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
+            return new AssertingAtomicReader.AssertingTermsEnum(termsEnum);
+        }
+
+        public override TermsEnum GetEnumerator(TermsEnum reuse)
         {
             // TODO: should we give this thing a random to be super-evil,
             // and randomly *not* unwrap?
-            if (reuse is AssertingAtomicReader.AssertingTermsEnum)
+            if (!(reuse is null) && reuse is AssertingAtomicReader.AssertingTermsEnum reusable)
             {
-                reuse = ((AssertingAtomicReader.AssertingTermsEnum)reuse).m_input;
+                reuse = reusable.m_input;
             }
-            TermsEnum termsEnum = base.GetIterator(reuse);
+            TermsEnum termsEnum = base.GetEnumerator(reuse);
             if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
             return new AssertingAtomicReader.AssertingTermsEnum(termsEnum);
         }
@@ -687,7 +694,7 @@ namespace Lucene.Net.Index
         public override NumericDocValues GetNumericDocValues(string field)
         {
             NumericDocValues dv = base.GetNumericDocValues(field);
-            FieldInfo fi = FieldInfos.FieldInfo(field);
+            FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (dv != null)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
@@ -704,7 +711,7 @@ namespace Lucene.Net.Index
         public override BinaryDocValues GetBinaryDocValues(string field)
         {
             BinaryDocValues dv = base.GetBinaryDocValues(field);
-            FieldInfo fi = FieldInfos.FieldInfo(field);
+            FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (dv != null)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
@@ -721,7 +728,7 @@ namespace Lucene.Net.Index
         public override SortedDocValues GetSortedDocValues(string field)
         {
             SortedDocValues dv = base.GetSortedDocValues(field);
-            FieldInfo fi = FieldInfos.FieldInfo(field);
+            FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (dv != null)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
@@ -738,7 +745,7 @@ namespace Lucene.Net.Index
         public override SortedSetDocValues GetSortedSetDocValues(string field)
         {
             SortedSetDocValues dv = base.GetSortedSetDocValues(field);
-            FieldInfo fi = FieldInfos.FieldInfo(field);
+            FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (dv != null)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
@@ -755,7 +762,7 @@ namespace Lucene.Net.Index
         public override NumericDocValues GetNormValues(string field)
         {
             NumericDocValues dv = base.GetNormValues(field);
-            FieldInfo fi = FieldInfos.FieldInfo(field);
+            FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (dv != null)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
@@ -793,7 +800,7 @@ namespace Lucene.Net.Index
         public override IBits GetDocsWithField(string field)
         {
             IBits docsWithField = base.GetDocsWithField(field);
-            FieldInfo fi = FieldInfos.FieldInfo(field);
+            FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (docsWithField != null)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);

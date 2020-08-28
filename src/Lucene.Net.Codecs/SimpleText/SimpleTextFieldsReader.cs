@@ -652,10 +652,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 return (_fst != null) ? _fst.GetSizeInBytes() : 0;
             }
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
             {
-                return (_fst != null) 
-                    ? new SimpleTextTermsEnum(_outerInstance, _fst, _fieldInfo.IndexOptions) 
+                return (_fst != null)
+                    ? new SimpleTextTermsEnum(_outerInstance, _fst, _fieldInfo.IndexOptions)
                     : TermsEnum.EMPTY;
             }
 

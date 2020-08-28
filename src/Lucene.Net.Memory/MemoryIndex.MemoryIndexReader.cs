@@ -176,7 +176,7 @@ namespace Lucene.Net.Index.Memory
                         this.info = info;
                     }
 
-                    public override TermsEnum GetIterator(TermsEnum reuse)
+                    public override TermsEnum GetEnumerator()
                     {
                         return new MemoryTermsEnum(outerInstance.outerInstance, info);
                     }

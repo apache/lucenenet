@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -140,10 +141,7 @@ namespace Lucene.Net.Search
 
                 public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-                public override TermsEnum GetIterator(TermsEnum reuse)
-                {
-                    return fcsi.GetTermsEnum();
-                }
+                public override TermsEnum GetEnumerator() => fcsi.GetTermsEnum();
 
                 public override long SumTotalTermFreq => -1;
 

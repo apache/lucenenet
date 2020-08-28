@@ -227,22 +227,32 @@ namespace Lucene.Net.Codecs.Bloom
                     return _delegateTerms.Intersect(compiled, startTerm);
                 }
 
-                public override TermsEnum GetIterator(TermsEnum reuse)
+                public override TermsEnum GetEnumerator()
                 {
-                    if (!(reuse is BloomFilteredTermsEnum))
-                        return new BloomFilteredTermsEnum(_delegateTerms, reuse, _filter);
-
-                    // recycle the existing BloomFilteredTermsEnum by asking the delegate
-                    // to recycle its contained TermsEnum
-                    var bfte = (BloomFilteredTermsEnum) reuse;
-
-                    // We have been handed something we cannot reuse (either null, wrong
-                    // class or wrong filter) so allocate a new object
-                    if (bfte.filter != _filter) return new BloomFilteredTermsEnum(_delegateTerms, reuse, _filter);
-                    bfte.Reset(_delegateTerms, bfte.delegateTermsEnum);
-                    return bfte;
-                    
+                    return new BloomFilteredTermsEnum(_delegateTerms, reuseDelegate: null, _filter);
                 }
+
+                public override TermsEnum GetEnumerator(TermsEnum reuse)
+                {
+#pragma warning disable IDE0038 // Use pattern matching
+                    if (!(reuse is null) && reuse is BloomFilteredTermsEnum)
+#pragma warning restore IDE0038 // Use pattern matching
+                    {
+                        BloomFilteredTermsEnum bfte = (BloomFilteredTermsEnum)reuse;
+                        if (bfte.filter == _filter)
+                        {
+                            // recycle the existing BloomFilteredTermsEnum by asking the delegate
+                            // to recycle its contained TermsEnum
+                            bfte.Reset(_delegateTerms, bfte.delegateTermsEnum);
+                            return bfte;
+                        }
+                    }
+
+                    // We have been handed something we cannot reuse (either wrong
+                    // class or wrong filter) so allocate a new object
+                    return new BloomFilteredTermsEnum(_delegateTerms, reuse, _filter);
+                }
+
 
                 public override IComparer<BytesRef> Comparer => _delegateTerms.Comparer;
 

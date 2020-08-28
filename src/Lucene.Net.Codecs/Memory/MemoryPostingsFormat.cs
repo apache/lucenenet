@@ -941,7 +941,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override long Count => termCount;
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
             {
                 return new FSTTermsEnum(field, fst);
             }

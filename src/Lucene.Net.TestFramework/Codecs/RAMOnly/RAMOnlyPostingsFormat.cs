@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override int DocCount => docCount;
 
-            public override TermsEnum GetIterator(TermsEnum reuse)
+            public override TermsEnum GetEnumerator()
             {
                 return new RAMTermsEnum(this);
             }
