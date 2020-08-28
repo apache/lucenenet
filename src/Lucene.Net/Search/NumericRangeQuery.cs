@@ -190,7 +190,7 @@ namespace Lucene.Net.Search
             {
                 return TermsEnum.EMPTY;
             }
-            return new NumericRangeTermsEnum(this, terms.GetIterator(null));
+            return new NumericRangeTermsEnum(this, terms.GetEnumerator());
         }
 
         /// <summary>

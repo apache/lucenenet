@@ -545,7 +545,7 @@ namespace Lucene.Net.Index
             }
             BytesRef[] sortedTerms = uniqueTerms.ToArray(/*new BytesRef[0]*/);
             Array.Sort(sortedTerms, terms.Comparer);
-            TermsEnum termsEnum = terms.GetIterator(Random.NextBoolean() ? null : this.termsEnum.Value);
+            TermsEnum termsEnum = terms.GetEnumerator(Random.NextBoolean() ? null : this.termsEnum.Value);
             this.termsEnum.Value = termsEnum;
             for (int i = 0; i < sortedTerms.Length; ++i)
             {

@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.Compressing
             AtomicReader ir = GetOnlySegmentReader(iw.GetReader());
             Terms terms = ir.GetTermVector(0, "foo");
             Assert.IsNotNull(terms);
-            TermsEnum termsEnum = terms.GetIterator(null);
+            TermsEnum termsEnum = terms.GetEnumerator();
             Assert.AreEqual(TermsEnum.SeekStatus.FOUND, termsEnum.SeekCeil(new BytesRef("this")));
             try
             {

@@ -1082,7 +1082,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                TermsEnum termsEnum = terms.GetIterator(null);
+                TermsEnum termsEnum = terms.GetEnumerator();
 
                 bool hasOrd = true;
                 long termCountStart = status.DelTermCount + status.TermCount;
@@ -2134,7 +2134,7 @@ namespace Lucene.Net.Index
                             if (crossCheckTermVectors)
                             {
                                 Terms terms = tfv.GetTerms(field);
-                                termsEnum = terms.GetIterator(termsEnum);
+                                termsEnum = terms.GetEnumerator(termsEnum);
                                 bool postingsHasFreq = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
                                 bool postingsHasPayload = fieldInfo.HasPayloads;
                                 bool vectorsHasPayload = terms.HasPayloads;
@@ -2144,7 +2144,7 @@ namespace Lucene.Net.Index
                                 {
                                     throw new Exception("vector field=" + field + " does not exist in postings; doc=" + j);
                                 }
-                                postingsTermsEnum = postingsTerms.GetIterator(postingsTermsEnum);
+                                postingsTermsEnum = postingsTerms.GetEnumerator(postingsTermsEnum);
 
                                 bool hasProx = terms.HasOffsets || terms.HasPositions;
                                 BytesRef term;

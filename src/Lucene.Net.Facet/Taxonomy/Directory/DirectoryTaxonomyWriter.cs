@@ -458,7 +458,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         Terms terms = ctx.AtomicReader.GetTerms(Consts.FULL);
                         if (terms != null)
                         {
-                            termsEnum = terms.GetIterator(termsEnum);
+                            termsEnum = terms.GetEnumerator(termsEnum);
                             if (termsEnum.SeekExact(catTerm))
                             {
                                 // liveDocs=null because the taxonomy has no deletes

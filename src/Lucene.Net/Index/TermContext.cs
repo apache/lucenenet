@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                     Terms terms = fields.GetTerms(field);
                     if (terms != null)
                     {
-                        TermsEnum termsEnum = terms.GetIterator(null);
+                        TermsEnum termsEnum = terms.GetEnumerator();
                         if (termsEnum.SeekExact(bytes))
                         {
                             TermState termState = termsEnum.GetTermState();

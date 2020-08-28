@@ -107,7 +107,7 @@ namespace Lucene.Net.Misc
                 Terms terms = fields.GetTerms(field);
                 if (terms != null)
                 {
-                    TermsEnum termsEnum = terms.GetIterator(null);
+                    TermsEnum termsEnum = terms.GetEnumerator();
                     tiq = new TermStatsQueue(numTerms, comparer);
                     tiq.Fill(field, termsEnum);
                 }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Misc
                     Terms terms = fields.GetTerms(fieldName);
                     if (terms != null)
                     {
-                        tiq.Fill(fieldName, terms.GetIterator(null));
+                        tiq.Fill(fieldName, terms.GetEnumerator());
                     }
                 }
             }

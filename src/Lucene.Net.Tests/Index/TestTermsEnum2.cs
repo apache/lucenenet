@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
             {
                 string reg = AutomatonTestUtil.RandomRegexp(Random);
                 Automaton automaton = (new RegExp(reg, RegExpSyntax.NONE)).ToAutomaton();
-                TermsEnum te = MultiFields.GetTerms(reader, "field").GetIterator(null);
+                TermsEnum te = MultiFields.GetTerms(reader, "field").GetEnumerator();
                 IList<BytesRef> unsortedTerms = new List<BytesRef>(terms);
                 unsortedTerms.Shuffle(Random);
 

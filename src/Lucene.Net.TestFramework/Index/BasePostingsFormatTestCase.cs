@@ -1208,7 +1208,7 @@ namespace Lucene.Net.Index
 
                 Terms terms = fieldsSource.GetTerms(fieldAndTerm.Field);
                 Assert.IsNotNull(terms);
-                termsEnum = terms.GetIterator(null);
+                termsEnum = terms.GetEnumerator();
 
                 if (!useTermState)
                 {

@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
             DirectoryReader reader = writer.GetReader();
             Terms terms = reader.GetTermVector(1, "field");
             if (Debugging.AssertsEnabled) Debugging.Assert(terms != null);
-            TermsEnum termsEnum = terms.GetIterator(null);
+            TermsEnum termsEnum = terms.GetEnumerator();
             Assert.IsTrue(termsEnum.SeekExact(new BytesRef("withPayload")));
             DocsAndPositionsEnum de = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(0, de.NextDoc());
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
             DirectoryReader reader = writer.GetReader();
             Terms terms = reader.GetTermVector(0, "field");
             if (Debugging.AssertsEnabled) Debugging.Assert(terms != null);
-            TermsEnum termsEnum = terms.GetIterator(null);
+            TermsEnum termsEnum = terms.GetEnumerator();
             Assert.IsTrue(termsEnum.SeekExact(new BytesRef("withPayload")));
             DocsAndPositionsEnum de = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(0, de.NextDoc());

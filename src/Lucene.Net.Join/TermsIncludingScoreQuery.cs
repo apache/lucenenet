@@ -172,7 +172,7 @@ namespace Lucene.Net.Join
                 // what is the runtime...seems ok?
                 long cost = context.AtomicReader.MaxDoc * terms.Count;
 
-                segmentTermsEnum = terms.GetIterator(segmentTermsEnum);
+                segmentTermsEnum = terms.GetEnumerator(segmentTermsEnum);
                 if (outerInstance._multipleValuesPerDocument)
                 {
                     return new MVInOrderScorer(outerInstance, this, acceptDocs, segmentTermsEnum, context.AtomicReader.MaxDoc, cost);
@@ -196,7 +196,7 @@ namespace Lucene.Net.Join
                 // what is the runtime...seems ok?
                 long cost = context.AtomicReader.MaxDoc * terms.Count;
 
-                segmentTermsEnum = terms.GetIterator(segmentTermsEnum);
+                segmentTermsEnum = terms.GetEnumerator(segmentTermsEnum);
                 // Optimized impls that take advantage of docs
                 // being allowed to be out of order:
                 if (outerInstance._multipleValuesPerDocument)

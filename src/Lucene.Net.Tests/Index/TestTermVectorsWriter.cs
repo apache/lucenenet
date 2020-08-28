@@ -217,7 +217,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetEnumerator();
             Assert.IsTrue(termsEnum.MoveNext());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(2, termsEnum.TotalTermFreq);

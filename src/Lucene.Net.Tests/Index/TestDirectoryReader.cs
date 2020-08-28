@@ -100,11 +100,11 @@ namespace Lucene.Net.Index
             MultiReader mr3 = new MultiReader(readers2);
 
             // test mixing up TermDocs and TermEnums from different readers.
-            TermsEnum te2 = MultiFields.GetTerms(mr2, "body").GetIterator(null);
+            TermsEnum te2 = MultiFields.GetTerms(mr2, "body").GetEnumerator();
             te2.SeekCeil(new BytesRef("wow"));
             DocsEnum td = TestUtil.Docs(Random, mr2, "body", te2.Term, MultiFields.GetLiveDocs(mr2), null, 0);
 
-            TermsEnum te3 = MultiFields.GetTerms(mr3, "body").GetIterator(null);
+            TermsEnum te3 = MultiFields.GetTerms(mr3, "body").GetEnumerator();
             te3.SeekCeil(new BytesRef("wow"));
             td = TestUtil.Docs(Random, te3, MultiFields.GetLiveDocs(mr3), td, 0);
 

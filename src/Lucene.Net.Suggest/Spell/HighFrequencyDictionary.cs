@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Spell
                 Terms terms = MultiFields.GetTerms(outerInstance.reader, outerInstance.field);
                 if (terms != null)
                 {
-                    termsEnum = terms.GetIterator(null);
+                    termsEnum = terms.GetEnumerator();
                 }
                 else
                 {

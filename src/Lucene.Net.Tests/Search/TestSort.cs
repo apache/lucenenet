@@ -1762,7 +1762,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
         }
 
@@ -1826,7 +1826,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
         }
 
@@ -1893,7 +1893,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
         }
 
@@ -1958,7 +1958,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
         }
 
@@ -2023,7 +2023,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
         }
 
@@ -2085,7 +2085,7 @@ namespace Lucene.Net.Search
 
             public TermsEnum TermsEnum(Terms terms)
             {
-                return terms.GetIterator(null);
+                return terms.GetEnumerator();
             }
         }
 

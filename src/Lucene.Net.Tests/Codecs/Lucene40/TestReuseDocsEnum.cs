@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 return null;
             }
-            TermsEnum iterator = terms.GetIterator(null);
+            TermsEnum iterator = terms.GetEnumerator();
             if (iterator.SeekExact(term))
             {
                 return iterator.Docs(bits, null, Random.NextBoolean() ? DocsFlags.FREQS : DocsFlags.NONE);
