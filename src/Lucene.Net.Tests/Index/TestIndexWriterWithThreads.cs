@@ -827,6 +827,10 @@ namespace Lucene.Net.Index
                                 {
                                     // ok
                                 }
+                                catch (AssertionException)
+                                {
+                                    // ok
+                                }
                                 break;
                         }
                     }
