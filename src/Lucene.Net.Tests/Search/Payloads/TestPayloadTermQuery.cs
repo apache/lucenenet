@@ -236,7 +236,7 @@ namespace Lucene.Net.Search.Payloads
             //should be two matches per document
             int count = 0;
             //100 hits times 2 matches per hit, we should have 200 in count
-            while (spans.Next())
+            while (spans.MoveNext())
             {
                 count++;
             }
@@ -284,7 +284,7 @@ namespace Lucene.Net.Search.Payloads
             //should be two matches per document
             int count = 0;
             //100 hits times 2 matches per hit, we should have 200 in count
-            while (spans.Next())
+            while (spans.MoveNext())
             {
                 count++;
             }

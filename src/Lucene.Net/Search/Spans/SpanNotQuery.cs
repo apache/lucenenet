@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Spans
                 includeSpans = outerInstance.include.GetSpans(context, acceptDocs, termContexts);
                 moreInclude = true;
                 excludeSpans = outerInstance.exclude.GetSpans(context, acceptDocs, termContexts);
-                moreExclude = excludeSpans.Next();
+                moreExclude = excludeSpans.MoveNext();
             }
 
             private Spans includeSpans;
@@ -149,11 +149,11 @@ namespace Lucene.Net.Search.Spans
             private Spans excludeSpans;
             private bool moreExclude;
 
-            public override bool Next()
+            public override bool MoveNext()
             {
                 if (moreInclude) // move to next include
                 {
-                    moreInclude = includeSpans.Next();
+                    moreInclude = includeSpans.MoveNext();
                 }
 
                 while (moreInclude && moreExclude)
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search.Spans
 
                     while (moreExclude && includeSpans.Doc == excludeSpans.Doc && excludeSpans.End <= includeSpans.Start - outerInstance.pre) // while exclude is before
                     {
-                        moreExclude = excludeSpans.Next(); // increment exclude
+                        moreExclude = excludeSpans.MoveNext(); // increment exclude
                     }
 
                     if (!moreExclude || includeSpans.Doc != excludeSpans.Doc || includeSpans.End + outerInstance.post <= excludeSpans.Start) // if no intersection
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search.Spans
                         break; // we found a match
                     }
 
-                    moreInclude = includeSpans.Next(); // intersected: keep scanning
+                    moreInclude = includeSpans.MoveNext(); // intersected: keep scanning
                 }
                 return moreInclude;
             }
@@ -197,7 +197,7 @@ namespace Lucene.Net.Search.Spans
 
                 while (moreExclude && includeSpans.Doc == excludeSpans.Doc && excludeSpans.End <= includeSpans.Start - outerInstance.pre) // while exclude is before
                 {
-                    moreExclude = excludeSpans.Next(); // increment exclude
+                    moreExclude = excludeSpans.MoveNext(); // increment exclude
                 }
 
                 if (!moreExclude || includeSpans.Doc != excludeSpans.Doc || includeSpans.End + outerInstance.post <= excludeSpans.Start) // if no intersection
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search.Spans
                     return true; // we found a match
                 }
 
-                return Next(); // scan to next match
+                return MoveNext(); // scan to next match
             }
 
             public override int Doc => includeSpans.Doc;

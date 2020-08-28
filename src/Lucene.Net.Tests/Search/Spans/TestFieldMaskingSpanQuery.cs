@@ -239,34 +239,34 @@ namespace Lucene.Net.Search.Spans
 
             Spans span = MultiSpansWrapper.Wrap(searcher.TopReaderContext, q);
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(0, 0, 1), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(1, 0, 1), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(1, 1, 2), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(2, 0, 1), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(2, 1, 2), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(2, 2, 3), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(3, 0, 1), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(4, 0, 1), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(4, 1, 2), s(span));
 
-            Assert.AreEqual(false, span.Next());
+            Assert.AreEqual(false, span.MoveNext());
         }
 
         [Test]
@@ -283,12 +283,12 @@ namespace Lucene.Net.Search.Spans
             Spans spanA = MultiSpansWrapper.Wrap(searcher.TopReaderContext, qA);
             Spans spanB = MultiSpansWrapper.Wrap(searcher.TopReaderContext, qB);
 
-            while (spanA.Next())
+            while (spanA.MoveNext())
             {
-                Assert.IsTrue(spanB.Next(), "spanB not still going");
+                Assert.IsTrue(spanB.MoveNext(), "spanB not still going");
                 Assert.AreEqual(s(spanA), s(spanB), "spanA not equal spanB");
             }
-            Assert.IsTrue(!(spanB.Next()), "spanB still going even tough spanA is done");
+            Assert.IsTrue(!(spanB.MoveNext()), "spanB still going even tough spanA is done");
         }
 
         [Test]
@@ -304,22 +304,22 @@ namespace Lucene.Net.Search.Spans
 
             Spans span = MultiSpansWrapper.Wrap(searcher.TopReaderContext, q);
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(0, 0, 1), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(1, 1, 2), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(2, 0, 1), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(2, 2, 3), s(span));
 
-            Assert.AreEqual(true, span.Next());
+            Assert.AreEqual(true, span.MoveNext());
             Assert.AreEqual(s(3, 0, 1), s(span));
 
-            Assert.AreEqual(false, span.Next());
+            Assert.AreEqual(false, span.MoveNext());
         }
 
         public virtual string s(Spans span)

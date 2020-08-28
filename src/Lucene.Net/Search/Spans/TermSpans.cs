@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Spans
             m_postings = null;
         }
 
-        public override bool Next()
+        public override bool MoveNext()
         {
             if (m_count == m_freq)
             {
@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Spans
 
         private sealed class EmptyTermSpans : TermSpans
         {
-            public override bool Next()
+            public override bool MoveNext()
             {
                 return false;
             }

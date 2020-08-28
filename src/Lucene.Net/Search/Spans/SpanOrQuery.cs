@@ -244,7 +244,7 @@ namespace Lucene.Net.Search.Spans
                 {
                     Spans spans = clause.GetSpans(context, acceptDocs, termContexts);
                     cost += spans.GetCost();
-                    if (((target == -1) && spans.Next()) || ((target != -1) && spans.SkipTo(target)))
+                    if (((target == -1) && spans.MoveNext()) || ((target != -1) && spans.SkipTo(target)))
                     {
                         queue.Add(spans);
                     }
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Spans
                 return queue.Count != 0;
             }
 
-            public override bool Next()
+            public override bool MoveNext()
             {
                 if (queue == null)
                 {
@@ -264,7 +264,7 @@ namespace Lucene.Net.Search.Spans
                     return false;
                 }
 
-                if (Top.Next()) // move to next
+                if (Top.MoveNext()) // move to next
                 {
                     queue.UpdateTop();
                     return true;
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search.Spans
                 {
                     return queue.Count != 0;
                 }
-                return Next();
+                return MoveNext();
             }
 
             public override int Doc => Top.Doc;

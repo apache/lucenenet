@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Spans
             this.m_spans = spans;
 
             m_doc = -1;
-            m_more = spans.Next();
+            m_more = spans.MoveNext();
         }
 
         public override int NextDoc()
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.Spans
                 int matchLength = m_spans.End - m_spans.Start;
                 m_freq += m_docScorer.ComputeSlopFactor(matchLength);
                 m_numMatches++;
-                m_more = m_spans.Next();
+                m_more = m_spans.MoveNext();
             } while (m_more && (m_doc == m_spans.Doc));
             return true;
         }

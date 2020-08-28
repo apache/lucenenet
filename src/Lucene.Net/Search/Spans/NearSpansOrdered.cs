@@ -168,14 +168,14 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Move to the next match, returning true iff any such exists. </summary>
-        public override bool Next()
+        public override bool MoveNext()
         {
             if (firstTime)
             {
                 firstTime = false;
                 for (int i = 0; i < subSpans.Length; i++)
                 {
-                    if (!subSpans[i].Next())
+                    if (!subSpans[i].MoveNext())
                     {
                         more = false;
                         return false;
@@ -325,7 +325,7 @@ namespace Lucene.Net.Search.Spans
             {
                 while (!DocSpansOrdered(subSpans[i - 1], subSpans[i]))
                 {
-                    if (!subSpans[i].Next())
+                    if (!subSpans[i].MoveNext())
                     {
                         inSameDoc = false;
                         more = false;
@@ -373,7 +373,7 @@ namespace Lucene.Net.Search.Spans
                 int prevEnd = prevSpans.End;
                 while (true) // Advance prevSpans until after (lastStart, lastEnd)
                 {
-                    if (!prevSpans.Next())
+                    if (!prevSpans.MoveNext())
                     {
                         inSameDoc = false;
                         more = false;

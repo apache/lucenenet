@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Spans
 
             public override int End => throw new NotSupportedException(UNSUPPORTED_MSG);
 
-            public override bool Next()
+            public override bool MoveNext()
             {
                 throw new NotSupportedException(UNSUPPORTED_MSG);
             }
@@ -96,7 +96,7 @@ namespace Lucene.Net.Search.Spans
 
             public override int End => throw new NotSupportedException(UNSUPPORTED_MSG);
 
-            public override bool Next()
+            public override bool MoveNext()
             {
                 throw new NotSupportedException(UNSUPPORTED_MSG);
             }

@@ -194,7 +194,7 @@ namespace Lucene.Net.Search.Payloads
             foreach (AtomicReaderContext atomicReaderContext in context.Leaves)
             {
                 Spans spans = query.GetSpans(atomicReaderContext, atomicReaderContext.AtomicReader.LiveDocs, termContexts);
-                while (spans.Next() == true)
+                while (spans.MoveNext() == true)
                 {
                     if (spans.IsPayloadAvailable)
                     {
