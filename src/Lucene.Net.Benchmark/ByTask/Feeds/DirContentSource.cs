@@ -42,7 +42,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// <summary>
         /// Iterator over the files in the directory.
         /// </summary>
-        public class Iterator : IEnumerator<FileInfo>
+        public class Enumerator : IEnumerator<FileInfo>
         {
 
             private class Comparer : IComparer<FileInfo>
@@ -86,7 +86,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             private FileInfo current;
 
-            public Iterator(DirectoryInfo f)
+            public Enumerator(DirectoryInfo f)
             {
                 Push(f);
             }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         private DirectoryInfo dataDir = null;
         private int iteration = 0;
-        private Iterator inputFiles = null;
+        private Enumerator inputFiles = null;
 
         private DateTime? ParseDate(string dateStr)
         {
@@ -185,7 +185,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     {
                         throw new NoMoreDataException();
                     }
-                    inputFiles = new Iterator(dataDir);
+                    inputFiles = new Enumerator(dataDir);
                     iteration++;
                 }
                 f = inputFiles.Current;
@@ -227,7 +227,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             lock (this)
             {
                 base.ResetInputs();
-                inputFiles = new Iterator(dataDir);
+                inputFiles = new Enumerator(dataDir);
                 iteration = 0;
             }
         }
@@ -238,9 +238,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             DirectoryInfo workDir = new DirectoryInfo(config.Get("work.dir", "work"));
             string d = config.Get("docs.dir", "dir-out");
-            dataDir = new DirectoryInfo(d);
 
-            inputFiles = new Iterator(dataDir);
+            if (Path.IsPathRooted(d))
+                dataDir = new DirectoryInfo(d);
+            else
+                dataDir = new DirectoryInfo(Path.Combine(workDir.FullName, d));
+
+            inputFiles = new Enumerator(dataDir);
 
             if (inputFiles == null)
             {
