@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -36,12 +35,12 @@ namespace Lucene.Net.Codecs.Memory
     internal class DirectDocValuesConsumer : DocValuesConsumer
     {
         private IndexOutput data, meta;
-        private readonly int maxDoc;
+        //private readonly int maxDoc; // LUCENENET: Not used
 
         internal DirectDocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension,
             string metaCodec, string metaExtension)
         {
-            maxDoc = state.SegmentInfo.DocCount;
+            //maxDoc = state.SegmentInfo.DocCount; // LUCENENET: Not used
             bool success = false;
             try
             {
@@ -294,7 +293,7 @@ namespace Lucene.Net.Codecs.Memory
             // First write docToOrdCounts, except we "aggregate" the
             // counts so they turn into addresses, and add a final
             // value = the total aggregate:
-            AddNumericFieldValues(field, new IterableAnonymousInnerClassHelper(this, docToOrdCount));
+            AddNumericFieldValues(field, new EnumerableAnonymousInnerClassHelper(docToOrdCount));
 
             // Write ordinals for all docs, appended into one big
             // numerics:
@@ -304,15 +303,12 @@ namespace Lucene.Net.Codecs.Memory
             AddBinaryFieldValues(field, values);
         }
 
-        private class IterableAnonymousInnerClassHelper : IEnumerable<long?>
+        private class EnumerableAnonymousInnerClassHelper : IEnumerable<long?>
         {
-            private readonly DirectDocValuesConsumer _outerInstance;
             private readonly IEnumerable<long?> _docToOrdCount;
 
-            public IterableAnonymousInnerClassHelper(DirectDocValuesConsumer outerInstance,
-                IEnumerable<long?> docToOrdCount)
+            public EnumerableAnonymousInnerClassHelper(IEnumerable<long?> docToOrdCount)
             {
-                _outerInstance = outerInstance;
                 _docToOrdCount = docToOrdCount;
             }
 
@@ -321,20 +317,16 @@ namespace Lucene.Net.Codecs.Memory
             // (the final sum):
             public virtual IEnumerator<long?> GetEnumerator()
             {
-                return new IteratorAnonymousInnerClassHelper(this, _docToOrdCount);
+                return new Enumerator( _docToOrdCount);
             }
 
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-            private class IteratorAnonymousInnerClassHelper : IEnumerator<long?>
+            private sealed class Enumerator : IEnumerator<long?>
             {
                 private readonly IEnumerator<long?> iter;
 
-                public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance,
-                    IEnumerable<long?> docToOrdCount)
+                public Enumerator(IEnumerable<long?> docToOrdCount)
                 {
                     this.iter = docToOrdCount.GetEnumerator();
                 }
@@ -384,38 +376,15 @@ namespace Lucene.Net.Codecs.Memory
 
                 #region IDisposable Support
                 private bool disposedValue = false; // To detect redundant calls
-
-                protected virtual void Dispose(bool disposing)
+                public void Dispose()
                 {
                     if (!disposedValue)
                     {
-                        if (disposing)
-                        {
-                            // TODO: dispose managed state (managed objects).
-                            iter.Dispose();         
-                        }
-
-                        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                        // TODO: set large fields to null.
-
+                        iter.Dispose();
                         disposedValue = true;
                     }
                 }
 
-                // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources. 
-                // ~IteratorAnonymousInnerClassHelper() {
-                //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-                //   Dispose(false);
-                // }
-
-                // This code added to correctly implement the disposable pattern.
-                public void Dispose()
-                {
-                    // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-                    Dispose(true);
-                    // TODO: uncomment the following line if the finalizer is overridden above.
-                    // GC.SuppressFinalize(this);
-                }
                 #endregion
             }
         }
