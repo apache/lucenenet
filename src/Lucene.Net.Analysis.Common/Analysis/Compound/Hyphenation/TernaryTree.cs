@@ -449,11 +449,13 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             int i = 0, n = m_length;
             string[] k = new string[n];
             char[] v = new char[n];
-            Iterator iter = new Iterator(this);
-            while (iter.MoveNext())
+            using (Enumerator iter = new Enumerator(this))
             {
-                v[i] = iter.Value;
-                k[i++] = iter.Current;
+                while (iter.MoveNext())
+                {
+                    v[i] = iter.Value;
+                    k[i++] = iter.Current;
+                }
             }
             Init();
             InsertBalanced(k, v, 0, n);
@@ -520,25 +522,30 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             }
         }
 
-        public virtual IEnumerator<string> Keys()
+        /// <summary>
+        /// Gets an enumerator over the keys of this <see cref="TernaryTree"/>.
+        /// <para/>
+        /// NOTE: This was keys() in Lucene.
+        /// </summary>
+        /// <returns>An enumerator over the keys of this <see cref="TernaryTree"/>.</returns>
+        public virtual IEnumerator<string> GetEnumerator()
         {
-            return new Iterator(this);
+            return new Enumerator(this);
         }
 
         /// <summary>
         /// Enumerator for TernaryTree
-        /// 
+        /// <para/>
         /// LUCENENET NOTE: This differs a bit from its Java counterpart to adhere to
-        /// .NET IEnumerator semantics. In Java, when the <see cref="Iterator"/> is
+        /// .NET IEnumerator semantics. In Java, when the <see cref="Enumerator"/> is
         /// instantiated, it is already positioned at the first element. However,
         /// to act like a .NET IEnumerator, the initial state is undefined and considered
         /// to be before the first element until <see cref="MoveNext"/> is called, and
         /// if a move took place it will return <c>true</c>;
         /// </summary>
-        public class Iterator : IEnumerator<string>
+        public class Enumerator : IEnumerator<string>
         {
             private readonly TernaryTree outerInstance;
-
 
             /// <summary>
             /// current node index
@@ -558,11 +565,12 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 internal char parent;
                 internal char child;
 
-                public Item()
-                {
-                    parent = (char)0;
-                    child = (char)0;
-                }
+                // LUCENENET: This constructor is unnecessary
+                //public Item()
+                //{
+                //    parent = (char)0;
+                //    child = (char)0;
+                //}
 
                 public Item(char p, char c)
                 {
@@ -574,7 +582,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 {
                     return new Item(parent, child);
                 }
-
             }
 
             /// <summary>
@@ -589,7 +596,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             private bool isInitialized = false;
 
-            public Iterator(TernaryTree ternaryTree)
+            public Enumerator(TernaryTree ternaryTree)
             {
                 this.outerInstance = ternaryTree;
                 cur = -1;
@@ -623,7 +630,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             /// </summary>
             private int Up()
             {
-                Item i = new Item();
+                Item i/* = new Item()*/; // LUCENENET: Removed unnecessary assignment
                 int res = 0;
 
                 if (ns.Count == 0)
