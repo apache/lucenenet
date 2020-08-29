@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
             {
                 subIterators[i] = subs[i].GetEnumerator();
             }
-            return new MergedIterator<string>(subIterators);
+            return new MergedEnumerator<string>(subIterators);
         }
 
         public override Terms GetTerms(string field)

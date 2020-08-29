@@ -153,7 +153,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 {
                     allInfos[index++] = fplToMerge.phraseList.GetEnumerator();
                 }
-                using (MergedIterator<WeightedPhraseInfo> itr = new MergedIterator<WeightedPhraseInfo>(false, allInfos))
+                using (MergedEnumerator<WeightedPhraseInfo> itr = new MergedEnumerator<WeightedPhraseInfo>(false, allInfos))
                 {
                     // Step 2.  Walk the sorted list merging infos that overlap
                     phraseList = new List<WeightedPhraseInfo>();
@@ -202,10 +202,7 @@ namespace Lucene.Net.Search.VectorHighlight
             }
             finally
             {
-                foreach (var allInfo in allInfos)
-                {
-                    allInfo.Dispose();
-                }
+                IOUtils.Dispose(allInfos);
             }
         }
 
@@ -336,7 +333,7 @@ namespace Lucene.Net.Search.VectorHighlight
                         }
 
                         // Step 2.  Walk the sorted list merging overlaps
-                        using (MergedIterator<Toffs> itr = new MergedIterator<Toffs>(false, allToffs))
+                        using (MergedEnumerator<Toffs> itr = new MergedEnumerator<Toffs>(false, allToffs))
                         {
                             termsOffsets = new List<Toffs>();
                             if (!itr.MoveNext())
@@ -363,10 +360,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
                 finally
                 {
-                    foreach (var allToff in allToffs)
-                    {
-                        allToff.Dispose();
-                    }
+                    IOUtils.Dispose(allToffs);
                 }
             }
 
