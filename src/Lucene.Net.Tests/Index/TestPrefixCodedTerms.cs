@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
             b2.Add(t2);
             PrefixCodedTerms pb2 = b2.Finish();
 
-            IEnumerator<Term> merged = new MergedIterator<Term>(pb1.GetEnumerator(), pb2.GetEnumerator());
+            IEnumerator<Term> merged = new MergedEnumerator<Term>(pb1.GetEnumerator(), pb2.GetEnumerator());
             Assert.IsTrue(merged.MoveNext());
             Assert.AreEqual(t1, merged.Current);
             Assert.IsTrue(merged.MoveNext());
@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             }
 
             IEnumerator<Term> expected = superSet.GetEnumerator();
-            IEnumerator<Term> actual = new MergedIterator<Term>(subs.ToArray());
+            IEnumerator<Term> actual = new MergedEnumerator<Term>(subs.ToArray());
             while (actual.MoveNext())
             {
                 Assert.IsTrue(expected.MoveNext());

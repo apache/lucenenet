@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
                 {
                     subs[i] = outerInstance.iterables[i].GetEnumerator();
                 }
-                return new MergedIterator<Term>(subs);
+                return new MergedEnumerator<Term>(subs);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
