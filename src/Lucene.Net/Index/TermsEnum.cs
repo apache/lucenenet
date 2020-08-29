@@ -58,7 +58,9 @@ namespace Lucene.Net.Index
 
         /// <inheritdoc/>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public BytesRef Current => Term; // LUCENENET specific - made into enumerator for foreach
+        public TermsEnum Current => this; // LUCENENET specific - made into enumerator for foreach
+
+        BytesRef IBytesRefEnumerator.Current => Term;
 
         /// <summary>
         /// Moves to the next item in the <see cref="TermsEnum"/>.
