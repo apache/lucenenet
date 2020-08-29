@@ -66,55 +66,5 @@ namespace Lucene.Net.Search.Suggest.Fst
             assertFalse(i1.MoveNext());
             assertFalse(i2.MoveNext());
         }
-
-        [Test]
-        [Obsolete("This will be removed in 4.8.0 release candidate.")]
-        public void TestExternalRefSorterIterator()
-        {
-            ExternalRefSorter s = new ExternalRefSorter(new OfflineSorter());
-            CheckIterator(s);
-            s.Dispose();
-        }
-
-        [Test]
-        [Obsolete("This will be removed in 4.8.0 release candidate.")]
-        public void TestInMemorySorterIterator()
-        {
-            CheckIterator(new InMemorySorter(BytesRef.UTF8SortedAsUnicodeComparer));
-        }
-
-        [Obsolete("This will be removed in 4.8.0 release candidate.")]
-        private void CheckIterator(IBytesRefSorter sorter)
-        {
-            for (int i = 0; i < 100; i++)
-            {
-                byte[] current = new byte[Random.nextInt(256)];
-                Random.NextBytes(current);
-                sorter.Add(new BytesRef(current));
-            }
-
-            // Create two iterators and check that they're aligned with each other.
-            IBytesRefIterator i1 = sorter.GetIterator();
-            IBytesRefIterator i2 = sorter.GetIterator();
-
-            // Verify sorter contract.
-            try
-            {
-                sorter.Add(new BytesRef(new byte[1]));
-                fail("expected contract violation.");
-            }
-            catch (InvalidOperationException /*e*/)
-            {
-                // Expected.
-            }
-            BytesRef spare1;
-            BytesRef spare2;
-            while ((spare1 = i1.Next()) != null && (spare2 = i2.Next()) != null)
-            {
-                assertEquals(spare1, spare2);
-            }
-            assertNull(i1.Next());
-            assertNull(i2.Next());
-        }
     }
 }
