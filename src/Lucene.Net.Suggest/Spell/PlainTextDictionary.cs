@@ -72,16 +72,7 @@ namespace Lucene.Net.Search.Spell
             return new InputEnumeratorWrapper(new FileEnumerator(this));
         }
 
-        [Obsolete("Use GetEntryEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public virtual IInputIterator GetEntryIterator()
-        {
-            return new InputIteratorWrapper(new FileEnumerator(this));
-        }
-
         internal sealed class FileEnumerator : IBytesRefEnumerator
-#pragma warning disable CS0618 // Type or member is obsolete
-            , IBytesRefIterator
-#pragma warning restore CS0618 // Type or member is obsolete
         {
             private readonly PlainTextDictionary outerInstance;
 
@@ -93,41 +84,6 @@ namespace Lucene.Net.Search.Spell
             internal bool done = false;
             internal readonly BytesRef spare = new BytesRef();
             private BytesRef current;
-
-            [Obsolete("Use MoveNext(), Current instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            public BytesRef Next()
-            {
-                if (done)
-                {
-                    return null;
-                }
-                bool success = false;
-                BytesRef result;
-                try
-                {
-                    string line;
-                    if ((line = outerInstance.@in.ReadLine()) != null)
-                    {
-                        spare.CopyChars(line);
-                        result = spare;
-                    }
-                    else
-                    {
-                        done = true;
-                        IOUtils.Dispose(outerInstance.@in);
-                        result = null;
-                    }
-                    success = true;
-                }
-                finally
-                {
-                    if (!success)
-                    {
-                        IOUtils.DisposeWhileHandlingException(outerInstance.@in);
-                    }
-                }
-                return result;
-            }
 
             public BytesRef Current => current;
 

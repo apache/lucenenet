@@ -57,13 +57,6 @@ namespace Lucene.Net.Search.Suggest
             return buffer.GetEnumerator(comparer);
         }
 
-        [Obsolete("Use GetEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public IBytesRefIterator GetIterator()
-        {
-            closed = true;
-            return buffer.GetIterator(comparer);
-        }
-
         public IComparer<BytesRef> Comparer => comparer;
     }
 }

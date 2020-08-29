@@ -102,12 +102,6 @@ namespace Lucene.Net.Search.Suggest
             return new DocumentValueSourceInputEnumerator(this, m_payloadField != null, m_contextsField != null);
         }
 
-        [Obsolete("Use GetEntryEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public override IInputIterator GetEntryIterator()
-        {
-            return new DocumentValueSourceInputIterator(this, m_payloadField != null, m_contextsField != null);
-        }
-
         internal sealed class DocumentValueSourceInputEnumerator : DocumentDictionary.DocumentInputEnumerator
         {
             private readonly DocumentValueSourceDictionary outerInstance;
@@ -125,64 +119,6 @@ namespace Lucene.Net.Search.Suggest
             internal int currentLeafIndex = 0;
 
             public DocumentValueSourceInputEnumerator(DocumentValueSourceDictionary outerInstance, bool hasPayloads, bool hasContexts)
-                : base(outerInstance, hasPayloads, hasContexts)
-            {
-                this.outerInstance = outerInstance;
-                leaves = outerInstance.m_reader.Leaves;
-                starts = new int[leaves.Count + 1];
-                for (int i = 0; i < leaves.Count; i++)
-                {
-                    starts[i] = leaves[i].DocBase;
-                }
-                starts[leaves.Count] = outerInstance.m_reader.MaxDoc;
-                currentWeightValues = (leaves.Count > 0) ? outerInstance.weightsValueSource.GetValues(new Dictionary<string, object>(), leaves[currentLeafIndex]) : null;
-            }
-
-            /// <summary>
-            /// Returns the weight for the current <paramref name="docId"/> as computed 
-            /// by the <see cref="weightsValueSource"/>
-            /// </summary>
-            protected internal override long GetWeight(Document doc, int docId)
-            {
-                if (currentWeightValues == null)
-                {
-                    return 0;
-                }
-                int subIndex = ReaderUtil.SubIndex(docId, starts);
-                if (subIndex != currentLeafIndex)
-                {
-                    currentLeafIndex = subIndex;
-                    try
-                    {
-                        currentWeightValues = outerInstance.weightsValueSource.GetValues(new Dictionary<string, object>(), leaves[currentLeafIndex]);
-                    }
-                    catch (IOException e)
-                    {
-                        throw new Exception(e.ToString(), e);
-                    }
-                }
-                return currentWeightValues.Int64Val(docId - starts[subIndex]);
-            }
-        }
-
-        [Obsolete("Use DocumentValueSourceInputEnumerator instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        internal sealed class DocumentValueSourceInputIterator : DocumentDictionary.DocumentInputIterator
-        {
-            private readonly DocumentValueSourceDictionary outerInstance;
-
-
-            internal FunctionValues currentWeightValues;
-            /// <summary>
-            /// leaves of the reader </summary>
-            internal readonly IList<AtomicReaderContext> leaves;
-            /// <summary>
-            /// starting docIds of all the leaves </summary>
-            internal readonly int[] starts;
-            /// <summary>
-            /// current leave index </summary>
-            internal int currentLeafIndex = 0;
-
-            public DocumentValueSourceInputIterator(DocumentValueSourceDictionary outerInstance, bool hasPayloads, bool hasContexts)
                 : base(outerInstance, hasPayloads, hasContexts)
             {
                 this.outerInstance = outerInstance;

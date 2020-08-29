@@ -246,66 +246,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public override void Build(IInputIterator iter)
-        {
-            if (m_searcherMgr != null)
-            {
-                m_searcherMgr.Dispose();
-                m_searcherMgr = null;
-            }
-
-            if (writer != null)
-            {
-                writer.Dispose();
-                writer = null;
-            }
-
-            AtomicReader r = null;
-            bool success = false;
-            try
-            {
-                // First pass: build a temporary normal Lucene index,
-                // just indexing the suggestions as they iterate:
-                writer = new IndexWriter(dir, GetIndexWriterConfig(matchVersion, GetGramAnalyzer(), OpenMode.CREATE));
-                //long t0 = System.nanoTime();
-
-                // TODO: use threads?
-                BytesRef text;
-                while ((text = iter.Next()) != null)
-                {
-                    BytesRef payload;
-                    if (iter.HasPayloads)
-                    {
-                        payload = iter.Payload;
-                    }
-                    else
-                    {
-                        payload = null;
-                    }
-
-                    Add(text, iter.Contexts, iter.Weight, payload);
-                }
-
-                //System.out.println("initial indexing time: " + ((System.nanoTime()-t0)/1000000) + " msec");
-
-                m_searcherMgr = new SearcherManager(writer, true, null);
-                success = true;
-            }
-            finally
-            {
-                if (success)
-                {
-                    IOUtils.Dispose(r);
-                }
-                else
-                {
-                    IOUtils.DisposeWhileHandlingException(writer, r);
-                    writer = null;
-                }
-            }
-        }
-
         private Analyzer GetGramAnalyzer() 
             => new AnalyzerWrapperAnonymousInnerClassHelper(this, Analyzer.PER_FIELD_REUSE_STRATEGY);
 

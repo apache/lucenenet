@@ -117,45 +117,6 @@ namespace Lucene.Net.Search.Suggest.Fst
             fst = builder.Finish();
         }
 
-        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public override void Build(IInputIterator iterator)
-        {
-            if (iterator.HasPayloads)
-            {
-                throw new ArgumentException("this suggester doesn't support payloads");
-            }
-            if (iterator.HasContexts)
-            {
-                throw new ArgumentException("this suggester doesn't support contexts");
-            }
-            count = 0;
-            var scratch = new BytesRef();
-            IInputIterator iter = new WFSTInputIterator(this, iterator);
-            var scratchInts = new Int32sRef();
-            BytesRef previous = null;
-            var outputs = PositiveInt32Outputs.Singleton;
-            var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
-            while ((scratch = iter.Next()) != null)
-            {
-                long cost = iter.Weight;
-
-                if (previous == null)
-                {
-                    previous = new BytesRef();
-                }
-                else if (scratch.Equals(previous))
-                {
-                    continue; // for duplicate suggestions, the best weight is actually
-                    // added
-                }
-                Lucene.Net.Util.Fst.Util.ToInt32sRef(scratch, scratchInts);
-                builder.Add(scratchInts, cost);
-                previous.CopyBytes(scratch);
-                count++;
-            }
-            fst = builder.Finish();
-        }
-
         public override bool Store(DataOutput output)
         {
             output.WriteVInt64(count);
@@ -330,40 +291,6 @@ namespace Lucene.Net.Search.Suggest.Fst
             internal WFSTInputEnumerator(IInputEnumerator source)
                 : base(source)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(source.HasPayloads == false);
-            }
-
-            protected internal override void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload, ICollection<BytesRef> contexts, long weight)
-            {
-                if (spare.Length + 4 >= buffer.Length)
-                {
-                    buffer = ArrayUtil.Grow(buffer, spare.Length + 4);
-                }
-                output.Reset(buffer);
-                output.WriteBytes(spare.Bytes, spare.Offset, spare.Length);
-                output.WriteInt32(EncodeWeight(weight));
-                writer.Write(buffer, 0, output.Position);
-            }
-
-            protected internal override long Decode(BytesRef scratch, ByteArrayDataInput tmpInput)
-            {
-                scratch.Length -= 4; // int
-                // skip suggestion:
-                tmpInput.Reset(scratch.Bytes, scratch.Offset + scratch.Length, 4);
-                return tmpInput.ReadInt32();
-            }
-        }
-
-        [Obsolete("Use WFSTInputEnumerator instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        private sealed class WFSTInputIterator : SortedInputIterator
-        {
-            private readonly WFSTCompletionLookup outerInstance;
-
-
-            internal WFSTInputIterator(WFSTCompletionLookup outerInstance, IInputIterator source)
-                : base(source)
-            {
-                this.outerInstance = outerInstance;
                 if (Debugging.AssertsEnabled) Debugging.Assert(source.HasPayloads == false);
             }
 

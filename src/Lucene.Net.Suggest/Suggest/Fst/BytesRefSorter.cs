@@ -44,14 +44,6 @@ namespace Lucene.Net.Search.Suggest.Fst
         IBytesRefEnumerator GetEnumerator();
 
         /// <summary>
-        /// Sorts the entries added in <see cref="Add(BytesRef)"/> and returns 
-        /// an iterator over all sorted entries.
-        /// </summary>
-        /// <exception cref="IOException"> If an I/O exception occurs. </exception>
-        [Obsolete("Use GetEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        IBytesRefIterator GetIterator();
-
-        /// <summary>
         /// Comparer used to determine the sort order of entries.
         /// </summary>
         IComparer<BytesRef> Comparer { get; }

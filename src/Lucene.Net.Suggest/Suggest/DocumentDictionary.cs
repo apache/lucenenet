@@ -104,29 +104,6 @@ namespace Lucene.Net.Search.Suggest
             return new DocumentInputEnumerator(this, m_payloadField != null, m_contextsField != null);
         }
 
-        [Obsolete("Use GetEntryEnumerator() instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public virtual IInputIterator GetEntryIterator()
-        {
-            return new DocumentInputIterator(this, m_payloadField != null, m_contextsField != null);
-        }
-
-        /// <summary>
-        /// Implements <see cref="IInputIterator"/> from stored fields. </summary>
-        [Obsolete("Use DocumentInputEnumerator instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        protected internal class DocumentInputIterator : DocumentInputEnumerator, IInputIterator
-        {
-            /// <summary>
-            /// Creates an iterator over term, weight and payload fields from the lucene
-            /// index. Setting <paramref name="hasPayloads"/> to <c>false</c>, implies an iterator
-            /// over only term and weight.
-            /// </summary>
-            public DocumentInputIterator(DocumentDictionary outerInstance, bool hasPayloads, bool hasContexts)
-                : base(outerInstance, hasPayloads, hasContexts)
-            { }
-
-            public virtual BytesRef Next() => base.Next();
-        }
-
         /// <summary>
         /// Implements <see cref="IInputEnumerator"/> from stored fields. </summary>
         protected internal class DocumentInputEnumerator : IInputEnumerator
@@ -164,65 +141,6 @@ namespace Lucene.Net.Search.Suggest
             public virtual long Weight => currentWeight;
 
             public virtual IComparer<BytesRef> Comparer => null;
-
-            [Obsolete("Use MoveNext(), Current instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            public virtual BytesRef Next()
-            {
-                while (currentDocId < docCount)
-                {
-                    currentDocId++;
-                    if (liveDocs != null && !liveDocs.Get(currentDocId))
-                    {
-                        continue;
-                    }
-
-                    Document doc = outerInstance.m_reader.Document(currentDocId, relevantFields);
-
-                    BytesRef tempPayload = null;
-                    BytesRef tempTerm = null;
-                    ISet<BytesRef> tempContexts = new JCG.HashSet<BytesRef>();
-
-                    if (hasPayloads)
-                    {
-                        IIndexableField payload = doc.GetField(outerInstance.m_payloadField);
-                        if (payload == null || (payload.GetBinaryValue() == null && payload.GetStringValue() == null))
-                        {
-                            continue;
-                        }
-                        tempPayload = payload.GetBinaryValue() ?? new BytesRef(payload.GetStringValue());
-                    }
-
-                    if (hasContexts)
-                    {
-                        IIndexableField[] contextFields = doc.GetFields(outerInstance.m_contextsField);
-                        foreach (IIndexableField contextField in contextFields)
-                        {
-                            if (contextField.GetBinaryValue() == null && contextField.GetStringValue() == null)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                tempContexts.Add(contextField.GetBinaryValue() ?? new BytesRef(contextField.GetStringValue()));
-                            }
-                        }
-                    }
-
-                    IIndexableField fieldVal = doc.GetField(outerInstance.field);
-                    if (fieldVal == null || (fieldVal.GetBinaryValue() == null && fieldVal.GetStringValue() == null))
-                    {
-                        continue;
-                    }
-                    tempTerm = (fieldVal.GetStringValue() != null) ? new BytesRef(fieldVal.GetStringValue()) : fieldVal.GetBinaryValue();
-
-                    currentPayload = tempPayload;
-                    currentContexts = tempContexts;
-                    currentWeight = GetWeight(doc, currentDocId);
-
-                    return tempTerm;
-                }
-                return null;
-            }
 
             public BytesRef Current => current;
 
