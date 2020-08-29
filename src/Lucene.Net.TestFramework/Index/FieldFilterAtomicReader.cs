@@ -1,5 +1,6 @@
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Index
@@ -176,29 +177,15 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
             }
 
-            public override int Count =>
-                // this information is not cheap, return -1 like MultiFields does:
-                -1;
+            // this information is not cheap, return -1 like MultiFields does:
+            public override int Count => -1;
 
             public override IEnumerator<string> GetEnumerator()
             {
-                return new FilterIteratorAnonymousInnerClassHelper(this, base.GetEnumerator());
-            }
-
-            private class FilterIteratorAnonymousInnerClassHelper : FilterIterator<string>
-            {
-                private readonly FieldFilterFields outerInstance;
-
-                public FilterIteratorAnonymousInnerClassHelper(FieldFilterFields outerInstance, IEnumerator<string> iterator)
-                    : base(iterator)
-                {
-                    this.outerInstance = outerInstance;
-                }
-
-                protected override bool PredicateFunction(string field)
-                {
-                    return outerInstance.outerInstance.HasField(field);
-                }
+                // LUCENENET: Performance is better and code simpler with simple where clause
+                // and yield return.
+                foreach (var field in m_input.Where((f) => outerInstance.HasField(f)))
+                    yield return field;
             }
 
             public override Terms GetTerms(string field)
