@@ -79,41 +79,6 @@ namespace Lucene.Net.Search.Suggest.Tst
             autocomplete.BalancedTree(tokens.ToArray(), vals.ToArray(), 0, tokens.Count - 1, root);
         }
 
-        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public override void Build(IInputIterator tfit)
-        {
-            if (tfit.HasPayloads)
-            {
-                throw new ArgumentException("this suggester doesn't support payloads");
-            }
-            if (tfit.HasContexts)
-            {
-                throw new ArgumentException("this suggester doesn't support contexts");
-            }
-            root = new TernaryTreeNode();
-            // buffer first
-#pragma warning disable 612, 618
-            if (tfit.Comparer != BytesRef.UTF8SortedAsUTF16Comparer)
-            {
-                // make sure it's sorted and the comparer uses UTF16 sort order
-                tfit = new SortedInputIterator(tfit, BytesRef.UTF8SortedAsUTF16Comparer);
-            }
-#pragma warning restore 612, 618
-
-            List<string> tokens = new List<string>();
-            List<object> vals = new List<object>();
-            BytesRef spare;
-            CharsRef charsSpare = new CharsRef();
-            while ((spare = tfit.Next()) != null)
-            {
-                charsSpare.Grow(spare.Length);
-                UnicodeUtil.UTF8toUTF16(spare.Bytes, spare.Offset, spare.Length, charsSpare);
-                tokens.Add(charsSpare.ToString());
-                vals.Add(tfit.Weight);
-            }
-            autocomplete.BalancedTree(tokens.ToArray(), vals.ToArray(), 0, tokens.Count - 1, root);
-        }
-
         /// <summary>
         /// Adds a new node if <code>key</code> already exists,
         /// otherwise replaces its value.

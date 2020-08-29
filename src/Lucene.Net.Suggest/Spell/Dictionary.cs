@@ -32,11 +32,5 @@ namespace Lucene.Net.Search.Spell
         /// Returns an enumerator over all the entries.</summary>
         /// <returns> Enumerator </returns>
         IInputEnumerator GetEntryEnumerator();
-
-        /// <summary>
-        /// Returns an iterator over all the entries </summary>
-        /// <returns> Iterator </returns>
-        [Obsolete("Use GetEntryEnumerator(). This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        IInputIterator GetEntryIterator();
     }
 }

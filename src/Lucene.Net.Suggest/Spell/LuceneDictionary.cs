@@ -52,19 +52,5 @@ namespace Lucene.Net.Search.Spell
                 return InputEnumerator.EMPTY;
             }
         }
-
-        [Obsolete("Use GetEntryEnumerator(). This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public virtual IInputIterator GetEntryIterator()
-        {
-            Terms terms = MultiFields.GetTerms(reader, field);
-            if (terms != null)
-            {
-                return new InputIteratorWrapper(terms.GetIterator(null));
-            }
-            else
-            {
-                return EmptyInputIterator.Instance;
-            }
-        }
     }
 }

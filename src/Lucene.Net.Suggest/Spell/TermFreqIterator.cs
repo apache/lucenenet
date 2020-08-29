@@ -58,45 +58,4 @@ namespace Lucene.Net.Search.Spell
 
         public virtual IComparer<BytesRef> Comparer => wrapped.Comparer;
     }
-
-    /// <summary>
-    /// Interface for enumerating term,weight pairs.
-    /// </summary>
-    [Obsolete("Use TermFreqEnumeratorWrapper instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public interface ITermFreqIterator : IBytesRefIterator
-    {
-
-        /// <summary>
-        /// Gets the term's weight, higher numbers mean better suggestions.
-        /// </summary>
-        long Weight { get; }
-    }
-
-    /// <summary>
-    /// Wraps a BytesRefIterator as a TermFreqIterator, with all weights
-    /// set to <code>1</code>
-    /// </summary>
-    [Obsolete("Use TermFreqEnumeratorWrapper instead. This class will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public class TermFreqIteratorWrapper : ITermFreqIterator
-    {
-        internal IBytesRefIterator wrapped;
-
-        /// <summary>
-        /// Creates a new wrapper, wrapping the specified iterator and 
-        /// specifying a weight value of <code>1</code> for all terms.
-        /// </summary>
-        public TermFreqIteratorWrapper(IBytesRefIterator wrapped)
-        {
-            this.wrapped = wrapped;
-        }
-
-        public virtual long Weight => 1;
-
-        public virtual BytesRef Next()
-        {
-            return wrapped.Next();
-        }
-
-        public virtual IComparer<BytesRef> Comparer => wrapped.Comparer;
-    }
 }

@@ -81,43 +81,6 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             }
         }
 
-        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public override void Build(IInputIterator tfit)
-        {
-            if (tfit.HasPayloads)
-            {
-                throw new ArgumentException("this suggester doesn't support payloads");
-            }
-            if (tfit.Comparer != null)
-            {
-                // make sure it's unsorted
-                // WTF - this could result in yet another sorted iteration....
-                tfit = new UnsortedInputIterator(tfit);
-            }
-            if (tfit.HasContexts)
-            {
-                throw new ArgumentException("this suggester doesn't support contexts");
-            }
-            count = 0;
-            trie = new JaspellTernarySearchTrie { MatchAlmostDiff = editDistance };
-            BytesRef spare;
-
-            var charsSpare = new CharsRef();
-
-            while ((spare = tfit.Next()) != null)
-            {
-
-                long weight = tfit.Weight;
-                if (spare.Length == 0)
-                {
-                    continue;
-                }
-                charsSpare.Grow(spare.Length);
-                UnicodeUtil.UTF8toUTF16(spare.Bytes, spare.Offset, spare.Length, charsSpare);
-                trie.Put(charsSpare.ToString(), weight);
-            }
-        }
-
         /// <summary>
         /// Adds a new node if <code>key</code> already exists,
         /// otherwise replaces its value.

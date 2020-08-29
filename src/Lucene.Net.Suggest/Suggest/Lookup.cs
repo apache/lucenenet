@@ -251,13 +251,6 @@ namespace Lucene.Net.Search.Suggest
         public abstract void Build(IInputEnumerator inputEnumerator);
 
         /// <summary>
-        /// Builds up a new internal <see cref="Lookup"/> representation based on the given <see cref="IInputIterator"/>.
-        /// The implementation might re-sort the data internally.
-        /// </summary>
-        [Obsolete("Use Build(IInputEnumerator) instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public abstract void Build(IInputIterator inputIterator);
-
-        /// <summary>
         /// Look up a key and return possible completion for this key. </summary>
         /// <param name="key"> lookup key. Depending on the implementation this may be
         /// a prefix, misspelling, or even infix. </param>

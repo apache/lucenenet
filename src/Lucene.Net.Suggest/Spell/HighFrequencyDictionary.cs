@@ -59,16 +59,7 @@ namespace Lucene.Net.Search.Spell
             return new HighFrequencyEnumerator(this);
         }
 
-        [Obsolete("Use GetEntryEnumerator(). This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public IInputIterator GetEntryIterator()
-        {
-            return new HighFrequencyEnumerator(this);
-        }
-
         internal sealed class HighFrequencyEnumerator : IInputEnumerator
-#pragma warning disable CS0618 // Type or member is obsolete
-            , IInputIterator
-#pragma warning restore CS0618 // Type or member is obsolete
         {
             internal readonly BytesRef spare = new BytesRef();
             internal readonly TermsEnum termsEnum;
@@ -96,25 +87,6 @@ namespace Lucene.Net.Search.Spell
             }
 
             public long Weight => freq;
-
-            [Obsolete("Use MoveNext(), Current instead. This method will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-            public BytesRef Next()
-            {
-                if (termsEnum != null)
-                {
-                    BytesRef next;
-                    while ((next = termsEnum.Next()) != null)
-                    {
-                        if (IsFrequent(termsEnum.DocFreq))
-                        {
-                            freq = termsEnum.DocFreq;
-                            spare.CopyBytes(next);
-                            return spare;
-                        }
-                    }
-                }
-                return null;
-            }
 
             public BytesRef Current => current;
 
