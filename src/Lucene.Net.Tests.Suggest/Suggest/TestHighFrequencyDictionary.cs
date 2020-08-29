@@ -41,21 +41,5 @@ namespace Lucene.Net.Search.Suggest
             assertFalse(tf.MoveNext());
             dir.Dispose();
         }
-
-        [Test]
-        [Obsolete("This will be removed in 4.8.0 release candidate.")]
-        public void TestEmptyIterator()
-        {
-            Directory dir = NewDirectory();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-            writer.Commit();
-            writer.Dispose();
-            IndexReader ir = DirectoryReader.Open(dir);
-            IDictionary dictionary = new HighFrequencyDictionary(ir, "bogus", 0.1f);
-            IBytesRefIterator tf = dictionary.GetEntryIterator();
-            assertNull(tf.Comparer);
-            assertNull(tf.Next());
-            dir.Dispose();
-        }
     }
 }

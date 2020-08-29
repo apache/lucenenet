@@ -205,63 +205,12 @@ namespace Lucene.Net.Search.Suggest.Fst
         }
 
         [Test]
-        [Obsolete("This will be removed in 4.8.0 release candidate.")]
-        public void TestLargeInputConstantWeightsIterator()
-        {
-            FSTCompletionLookup lookup = new FSTCompletionLookup(10, true);
-
-            Random r = Random;
-            List<Input> keys = new List<Input>();
-            for (int i = 0; i < 5000; i++)
-            {
-                keys.Add(new Input(TestUtil.RandomSimpleString(r), -1));
-            }
-
-            lookup.Build(new InputArrayIterator(keys));
-
-            // All the weights were constant, so all returned buckets must be constant, whatever they
-            // are.
-            long? previous = null;
-            foreach (Input tf in keys)
-            {
-                long? current = (Convert.ToInt64(lookup.Get(TestUtil.BytesToCharSequence(tf.term, Random).ToString())));
-                if (previous != null)
-                {
-                    assertEquals(previous, current);
-                }
-                previous = current;
-            }
-        }
-
-
-        [Test]
         public void TestMultilingualInput()
         {
             IList<Input> input = LookupBenchmarkTest.ReadTop50KWiki();
 
             FSTCompletionLookup lookup = new FSTCompletionLookup();
             lookup.Build(new InputArrayEnumerator(input));
-            assertEquals(input.size(), lookup.Count);
-            foreach (Input tf in input)
-            {
-                assertNotNull("Not found: " + tf.term.toString(), lookup.Get(TestUtil.BytesToCharSequence(tf.term, Random).ToString()));
-                assertEquals(tf.term.Utf8ToString(), lookup.DoLookup(TestUtil.BytesToCharSequence(tf.term, Random).ToString(), true, 1)[0].Key.toString());
-            }
-
-            IList<Lookup.LookupResult> result = lookup.DoLookup(StringToCharSequence("wit").ToString(), true, 5);
-            assertEquals(5, result.size());
-            assertTrue(result[0].Key.toString().Equals("wit", StringComparison.Ordinal));  // exact match.
-            assertTrue(result[1].Key.toString().Equals("with", StringComparison.Ordinal)); // highest count.
-        }
-
-        [Test]
-        [Obsolete("This will be removed in 4.8.0 release candidate.")]
-        public void TestMultilingualInputIterator()
-        {
-            IList<Input> input = LookupBenchmarkTest.ReadTop50KWiki();
-
-            FSTCompletionLookup lookup = new FSTCompletionLookup();
-            lookup.Build(new InputArrayIterator(input));
             assertEquals(input.size(), lookup.Count);
             foreach (Input tf in input)
             {
@@ -295,35 +244,6 @@ namespace Lucene.Net.Search.Suggest.Fst
 
             FSTCompletionLookup lookup = new FSTCompletionLookup();
             lookup.Build(new InputArrayEnumerator(freqs.ToArray()));
-
-            foreach (Input tf in freqs)
-            {
-                string term = tf.term.Utf8ToString();
-                for (int i = 1; i < term.Length; i++)
-                {
-                    String prefix = term.Substring(0, i - 0);
-                    foreach (Lookup.LookupResult lr in lookup.DoLookup(StringToCharSequence(prefix).ToString(), true, 10))
-                    {
-                        assertTrue(lr.Key.toString().StartsWith(prefix, StringComparison.Ordinal));
-                    }
-                }
-            }
-        }
-
-        [Test]
-        [Obsolete("This will be removed in 4.8.0 release candidate.")]
-        public void TestRandomIterator()
-        {
-            List<Input> freqs = new List<Input>();
-            Random rnd = Random;
-            for (int i = 0; i < 2500 + rnd.nextInt(2500); i++)
-            {
-                int weight = rnd.nextInt(100);
-                freqs.Add(new Input("" + rnd.Next(), weight));
-            }
-
-            FSTCompletionLookup lookup = new FSTCompletionLookup();
-            lookup.Build(new InputArrayIterator(freqs.ToArray()));
 
             foreach (Input tf in freqs)
             {
