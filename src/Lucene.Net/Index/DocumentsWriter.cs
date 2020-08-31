@@ -526,8 +526,8 @@ namespace Lucene.Net.Index
             }
             finally
             {
-					perThreadPool.Release(perThread);
-				}
+                perThreadPool.Release(perThread);
+            }
 
             return PostUpdate(flushingDWPT, hasEvents);
         }
@@ -572,10 +572,10 @@ namespace Lucene.Net.Index
             }
             finally
             {
-				perThreadPool.Release(perThread);
-			}
+                perThreadPool.Release(perThread);
+            }
 
-			return PostUpdate(flushingDWPT, hasEvents);
+            return PostUpdate(flushingDWPT, hasEvents);
         }
 
         private bool DoFlush(DocumentsWriterPerThread flushingDWPT)
@@ -809,7 +809,7 @@ namespace Lucene.Net.Index
         internal sealed class ApplyDeletesEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new ApplyDeletesEvent();
-            private int instCount = 0;
+            private static int instCount = 0; // LUCENENET: Made static, otherwise this makes no sense at all
 
             internal ApplyDeletesEvent()
             {
@@ -826,7 +826,7 @@ namespace Lucene.Net.Index
         internal sealed class MergePendingEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new MergePendingEvent();
-            private int instCount = 0;
+            private static int instCount = 0; // LUCENENET: Made static, otherwise this makes no sense at all
 
             internal MergePendingEvent()
             {
@@ -843,7 +843,7 @@ namespace Lucene.Net.Index
         internal sealed class ForcedPurgeEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new ForcedPurgeEvent();
-            private int instCount = 0;
+            private static int instCount = 0; // LUCENENET: Made static, otherwise this makes no sense at all
 
             internal ForcedPurgeEvent()
             {
