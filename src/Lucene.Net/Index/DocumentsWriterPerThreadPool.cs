@@ -1,3 +1,4 @@
+// Lucene version compatibility level: 4.8.1
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System;
@@ -153,16 +154,16 @@ namespace Lucene.Net.Index
             public bool IsFlushPending => flushPending;
         }
 
-        private ThreadState[] threadStates;
+        private readonly ThreadState[] threadStates;
         private volatile int numThreadStatesActive;
 
-		private ThreadState[] freeList;
-		private volatile int freeCount;
+        private readonly ThreadState[] freeList;
+        private volatile int freeCount;
 
-		/// <summary>
-		/// Creates a new <see cref="DocumentsWriterPerThreadPool"/> with a given maximum of <see cref="ThreadState"/>s.
-		/// </summary>
-		internal DocumentsWriterPerThreadPool(int maxNumThreadStates)
+        /// <summary>
+        /// Creates a new <see cref="DocumentsWriterPerThreadPool"/> with a given maximum of <see cref="ThreadState"/>s.
+        /// </summary>
+        internal DocumentsWriterPerThreadPool(int maxNumThreadStates)
         {
             if (maxNumThreadStates < 1)
             {
@@ -174,29 +175,29 @@ namespace Lucene.Net.Index
             {
                 threadStates[i] = new ThreadState(null);
             }
-			freeList = new ThreadState[maxNumThreadStates];
-		}
+            freeList = new ThreadState[maxNumThreadStates];
+        }
 
-        public DocumentsWriterPerThreadPool Clone()
+        public object Clone()
         {
             // We should only be cloned before being used:
             if (numThreadStatesActive != 0)
             {
                 throw new InvalidOperationException("clone this object before it is used!");
             }
-			return new DocumentsWriterPerThreadPool(threadStates.Length);
+            return new DocumentsWriterPerThreadPool(threadStates.Length);
         }
 
         /// <summary>
         /// Returns the max number of <see cref="ThreadState"/> instances available in this
         /// <see cref="DocumentsWriterPerThreadPool"/>
         /// </summary>
-        public virtual int MaxThreadStates => threadStates.Length;
+        public int MaxThreadStates => threadStates.Length;
 
         /// <summary>
         /// Returns the active number of <see cref="ThreadState"/> instances.
         /// </summary>
-        public virtual int NumThreadStatesActive => numThreadStatesActive; // LUCENENET NOTE: Changed from getActiveThreadState() because the name wasn't clear
+        public int NumThreadStatesActive => numThreadStatesActive; // LUCENENET NOTE: Changed from getActiveThreadState() because the name wasn't clear
 
         /// <summary>
         /// Returns a new <see cref="ThreadState"/> iff any new state is available otherwise
@@ -208,37 +209,37 @@ namespace Lucene.Net.Index
         ///         <c>null</c> </returns>
         public ThreadState NewThreadState()
         {
-				if (Debugging.AssertsEnabled) Debugging.Assert(numThreadStatesActive < threadStates.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numThreadStatesActive < threadStates.Length);
 
-				ThreadState threadState = threadStates[numThreadStatesActive];
-				threadState.Lock(); // lock so nobody else will get this ThreadState
-				bool unlock = true;
-				try
-				{
-					if (threadState.IsActive)
-					{
-						// unreleased thread states are deactivated during DW#close()
-						numThreadStatesActive++; // increment will publish the ThreadState
-															//System.out.println("activeCount=" + numThreadStatesActive);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(threadState.dwpt == null);
-						unlock = false;
-						return threadState;
-					}
-					// we are closed: unlock since the threadstate is not active anymore
-                        if (Debugging.AssertsEnabled) Debugging.Assert(AssertUnreleasedThreadStatesInactive());
-					return null;
-				}
-				finally
-				{
-					if (unlock)
-					{
-						// in any case make sure we unlock if we fail 
-						threadState.Unlock();
-					}
-				}
-		}
+            ThreadState threadState = threadStates[numThreadStatesActive];
+            threadState.Lock(); // lock so nobody else will get this ThreadState
+            bool unlock = true;
+            try
+            {
+                if (threadState.IsActive)
+                {
+                    // unreleased thread states are deactivated during DW#close()
+                    numThreadStatesActive++; // increment will publish the ThreadState
+                                                        //System.out.println("activeCount=" + numThreadStatesActive);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(threadState.dwpt == null);
+                    unlock = false;
+                    return threadState;
+                }
+                // we are closed: unlock since the threadstate is not active anymore
+                    if (Debugging.AssertsEnabled) Debugging.Assert(AssertUnreleasedThreadStatesInactive());
+                return null;
+            }
+            finally
+            {
+                if (unlock)
+                {
+                    // in any case make sure we unlock if we fail 
+                    threadState.Unlock();
+                }
+            }
+        }
 
-		private bool AssertUnreleasedThreadStatesInactive()
+        private bool AssertUnreleasedThreadStatesInactive()
         {
             lock (this)
             {
@@ -301,89 +302,88 @@ namespace Lucene.Net.Index
             // don't recycle DWPT by default
         }
 
-		// you cannot subclass this without being in o.a.l.index package anyway, so
-		// the class is already pkg-private... fix me: see LUCENE-4013
-		public ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
-		{
-			ThreadState threadState = null;
-			lock (this)
-			{
-				for (;;)
-				{
-					if (freeCount > 0)
-					{
-						// Important that we are LIFO here! This way if number of concurrent indexing threads was once high, but has now reduced, we only use a
-						// limited number of thread states:
-						threadState = freeList[freeCount - 1];
-						if (threadState.dwpt == null)
-						{
-							// This thread-state is not initialized, e.g. it
-							// was just flushed. See if we can instead find
-							// another free thread state that already has docs
-							// indexed. This way if incoming thread concurrency
-							// has decreased, we don't leave docs
-							// indefinitely buffered, tying up RAM.  This
-							// will instead get those thread states flushed,
-							// freeing up RAM for larger segment flushes:
-							for (int i = 0; i < freeCount; i++)
-							{
-								if (freeList[i].dwpt != null)
-								{
-									// Use this one instead, and swap it with
-									// the un-initialized one:
-									ThreadState ts = freeList[i];
-									freeList[i] = threadState;
-									threadState = ts;
-									break;
-								}
-							}
-						}
+        // you cannot subclass this without being in o.a.l.index package anyway, so
+        // the class is already pkg-private... fix me: see LUCENE-4013
+        public ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
+        {
+            ThreadState threadState = null;
+            lock (this)
+            {
+                for (;;)
+                {
+                    if (freeCount > 0)
+                    {
+                        // Important that we are LIFO here! This way if number of concurrent indexing threads was once high, but has now reduced, we only use a
+                        // limited number of thread states:
+                        threadState = freeList[freeCount - 1];
+                        if (threadState.dwpt == null)
+                        {
+                            // This thread-state is not initialized, e.g. it
+                            // was just flushed. See if we can instead find
+                            // another free thread state that already has docs
+                            // indexed. This way if incoming thread concurrency
+                            // has decreased, we don't leave docs
+                            // indefinitely buffered, tying up RAM.  This
+                            // will instead get those thread states flushed,
+                            // freeing up RAM for larger segment flushes:
+                            for (int i = 0; i < freeCount; i++)
+                            {
+                                if (freeList[i].dwpt != null)
+                                {
+                                    // Use this one instead, and swap it with
+                                    // the un-initialized one:
+                                    ThreadState ts = freeList[i];
+                                    freeList[i] = threadState;
+                                    threadState = ts;
+                                    break;
+                                }
+                            }
+                        }
 
-						freeCount--;
-						break;
-					}
-					else if (NumThreadStatesActive < threadStates.Length)
-					{
-						// ThreadState is already locked before return by this method:
-						return NewThreadState();
-					}
-					else
-					{
-						// Wait until a thread state frees up:
-						Monitor.Wait(this);
-					}
-				}
-			}
+                        freeCount--;
+                        break;
+                    }
+                    else if (NumThreadStatesActive < threadStates.Length)
+                    {
+                        // ThreadState is already locked before return by this method:
+                        return NewThreadState();
+                    }
+                    else
+                    {
+                        // Wait until a thread state frees up:
+                        Monitor.Wait(this);
+                    }
+                }
+            }
 
-			// This could take time, e.g. if the threadState is [briefly] checked for flushing:
-			threadState.Lock();
+            // This could take time, e.g. if the threadState is [briefly] checked for flushing:
+            threadState.Lock();
 
-			return threadState;
+            return threadState;
+        }
 
-		}
+        public void Release(ThreadState state)
+        {
+            state.Unlock();
+            lock (this)
+            {
+                Debug.Assert(freeCount < freeList.Length);
+                freeList[freeCount++] = state;
+                // In case any thread is waiting, wake one of them up since we just released a thread state; notify() should be sufficient but we do
+                // notifyAll defensively:
+                Monitor.PulseAll(this);
+            }
+        }
 
-		public void Release(ThreadState state)
-		{
-			state.Unlock();
-			lock (this)
-			{
-				Debug.Assert(freeCount < freeList.Length);
-				freeList[freeCount++] = state;
-				// In case any thread is waiting, wake one of them up since we just released a thread state; notify() should be sufficient but we do
-				// notifyAll defensively:
-				Monitor.PulseAll(this);
-			}
-		}
-
-		/// <summary>
-		/// Returns the <i>i</i>th active <seealso cref="ThreadState"/> where <i>i</i> is the
-		/// given ord.
-		/// </summary>
-		/// <param name="ord">
-		///          the ordinal of the <seealso cref="ThreadState"/> </param>
-		/// <returns> the <i>i</i>th active <seealso cref="ThreadState"/> where <i>i</i> is the
-		///         given ord. </returns>
-		internal ThreadState GetThreadState(int ord)
+        /// <summary>
+        /// Returns the <i>i</i>th active <seealso cref="ThreadState"/> where <i>i</i> is the
+        /// given ord.
+        /// </summary>
+        /// <param name="ord">
+        ///          the ordinal of the <seealso cref="ThreadState"/> </param>
+        /// <returns> the <i>i</i>th active <seealso cref="ThreadState"/> where <i>i</i> is the
+        ///         given ord. </returns>
+        internal ThreadState GetThreadState(int ord)
         {
             return threadStates[ord];
         }

@@ -1606,7 +1606,8 @@ namespace Lucene.Net.Util
             {
                 int maxNumThreadStates = Rarely(random) ? TestUtil.NextInt32(random, 5, 20) : TestUtil.NextInt32(random, 1, 4); // reasonable value -  crazy value
 
-				c.SetMaxThreadStates(maxNumThreadStates);
+                // LUCENENET specific - Removed RandomDocumentsWriterPerThreadPool, as was done in Lucene 4.8.1 (see #208)
+                c.SetMaxThreadStates(maxNumThreadStates);
             }
 #if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             c.SetMergePolicy(NewMergePolicy(random));
