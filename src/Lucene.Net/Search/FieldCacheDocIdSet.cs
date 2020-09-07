@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -31,12 +33,24 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public abstract class FieldCacheDocIdSet : DocIdSet
+    public class FieldCacheDocIdSet : DocIdSet
     {
         protected readonly int m_maxDoc;
         protected readonly IBits m_acceptDocs;
+        private readonly Predicate<int> matchDoc;
+        private readonly bool hasMatchDoc;
 
-        public FieldCacheDocIdSet(int maxDoc, IBits acceptDocs)
+        // LUCENENET specific - added constructor to allow the class to be used without hand-coding
+        // a subclass by passing a predicate.
+        public FieldCacheDocIdSet(int maxDoc, IBits acceptDocs, Predicate<int> matchDoc)
+        {
+            this.matchDoc = matchDoc ?? throw new ArgumentNullException(nameof(matchDoc));
+            this.hasMatchDoc = true;
+            this.m_maxDoc = maxDoc;
+            this.m_acceptDocs = acceptDocs;
+        }
+
+        protected FieldCacheDocIdSet(int maxDoc, IBits acceptDocs)
         {
             this.m_maxDoc = maxDoc;
             this.m_acceptDocs = acceptDocs;
@@ -45,7 +59,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// This method checks, if a doc is a hit
         /// </summary>
-        protected internal abstract bool MatchDoc(int doc);
+        protected internal virtual bool MatchDoc(int doc) => hasMatchDoc && matchDoc(doc);
 
         /// <summary>
         /// This DocIdSet is always cacheable (does not go back

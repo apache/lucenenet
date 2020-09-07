@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
                 {
                     return null;
                 }
-                return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.AtomicReader.MaxDoc, acceptDocs, docsWithField);
+                return new FieldCacheDocIdSet(context.AtomicReader.MaxDoc, acceptDocs, (doc) => !docsWithField.Get(doc));
             }
             else
             {
@@ -93,45 +93,7 @@ namespace Lucene.Net.Search
                     // :-)
                     return BitsFilteredDocIdSet.Wrap((DocIdSet)docsWithField, acceptDocs);
                 }
-                return new FieldCacheDocIdSetAnonymousInnerClassHelper2(this, context.AtomicReader.MaxDoc, acceptDocs, docsWithField);
-            }
-        }
-
-        private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
-        {
-            private readonly FieldValueFilter outerInstance;
-
-            private IBits docsWithField;
-
-            public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldValueFilter outerInstance, int maxDoc, IBits acceptDocs, IBits docsWithField)
-                : base(maxDoc, acceptDocs)
-            {
-                this.outerInstance = outerInstance;
-                this.docsWithField = docsWithField;
-            }
-
-            protected internal override sealed bool MatchDoc(int doc)
-            {
-                return !docsWithField.Get(doc);
-            }
-        }
-
-        private class FieldCacheDocIdSetAnonymousInnerClassHelper2 : FieldCacheDocIdSet
-        {
-            private readonly FieldValueFilter outerInstance;
-
-            private readonly IBits docsWithField;
-
-            public FieldCacheDocIdSetAnonymousInnerClassHelper2(FieldValueFilter outerInstance, int maxDoc, IBits acceptDocs, IBits docsWithField)
-                : base(maxDoc, acceptDocs)
-            {
-                this.outerInstance = outerInstance;
-                this.docsWithField = docsWithField;
-            }
-
-            protected internal override sealed bool MatchDoc(int doc)
-            {
-                return docsWithField.Get(doc);
+                return new FieldCacheDocIdSet(context.AtomicReader.MaxDoc, acceptDocs, (doc) => docsWithField.Get(doc));
             }
         }
 

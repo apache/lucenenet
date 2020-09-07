@@ -125,27 +125,7 @@ namespace Lucene.Net.Search
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
-                return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.AtomicReader.MaxDoc, acceptDocs, docTermOrds, inclusiveLowerPoint, inclusiveUpperPoint);
-            }
-
-            private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
-            {
-                private readonly DocTermOrdsRangeFilterAnonymousInnerClassHelper outerInstance;
-
-                private readonly SortedSetDocValues docTermOrds;
-                private readonly long inclusiveLowerPoint;
-                private readonly long inclusiveUpperPoint;
-
-                public FieldCacheDocIdSetAnonymousInnerClassHelper(DocTermOrdsRangeFilterAnonymousInnerClassHelper outerInstance, int maxDoc, IBits acceptDocs, SortedSetDocValues docTermOrds, long inclusiveLowerPoint, long inclusiveUpperPoint)
-                    : base(maxDoc, acceptDocs)
-                {
-                    this.outerInstance = outerInstance;
-                    this.docTermOrds = docTermOrds;
-                    this.inclusiveLowerPoint = inclusiveLowerPoint;
-                    this.inclusiveUpperPoint = inclusiveUpperPoint;
-                }
-
-                protected internal override sealed bool MatchDoc(int doc)
+                return new FieldCacheDocIdSet(context.AtomicReader.MaxDoc, acceptDocs, (doc) =>
                 {
                     docTermOrds.SetDocument(doc);
                     long ord;
@@ -161,7 +141,7 @@ namespace Lucene.Net.Search
                         }
                     }
                     return false;
-                }
+                });
             }
         }
 
