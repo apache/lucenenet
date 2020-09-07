@@ -92,11 +92,10 @@ namespace Lucene.Net.Search
     ///
     /// Which filter is best is very application dependent.
     /// </summary>
-
     public class FieldCacheTermsFilter : Filter
     {
-        private string field;
-        private BytesRef[] terms;
+        private readonly string field;
+        private readonly BytesRef[] terms;
 
         public FieldCacheTermsFilter(string field, params BytesRef[] terms)
         {
@@ -128,25 +127,7 @@ namespace Lucene.Net.Search
                     bits.Set(ord);
                 }
             }
-            return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader.MaxDoc, acceptDocs, fcsi, bits);
-        }
-
-        private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
-        {
-            private readonly FieldCacheTermsFilter outerInstance;
-
-            private SortedDocValues fcsi;
-            private FixedBitSet bits;
-
-            public FieldCacheDocIdSetAnonymousInnerClassHelper(FieldCacheTermsFilter outerInstance, int maxDoc, IBits acceptDocs, SortedDocValues fcsi, FixedBitSet bits)
-                : base(maxDoc, acceptDocs)
-            {
-                this.outerInstance = outerInstance;
-                this.fcsi = fcsi;
-                this.bits = bits;
-            }
-
-            protected internal override sealed bool MatchDoc(int doc)
+            return new FieldCacheDocIdSet(context.Reader.MaxDoc, acceptDocs, (doc) =>
             {
                 int ord = fcsi.GetOrd(doc);
                 if (ord == -1)
@@ -158,7 +139,7 @@ namespace Lucene.Net.Search
                 {
                     return bits.Get(ord);
                 }
-            }
+            });
         }
     }
 }
