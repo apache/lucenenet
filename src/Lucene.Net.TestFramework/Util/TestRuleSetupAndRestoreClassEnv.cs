@@ -287,7 +287,7 @@ namespace Lucene.Net.Util
             savedLocale = CultureInfo.CurrentCulture;
             CultureInfo randomLocale = LuceneTestCase.RandomCulture(random);
             locale = testLocale.Equals("random", StringComparison.Ordinal) ? randomLocale : LuceneTestCase.CultureForName(testLocale);
-#if NETSTANDARD
+#if FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER
             CultureInfo.CurrentCulture = locale;
 #else
             Thread.CurrentThread.CurrentCulture = locale;
@@ -384,7 +384,7 @@ namespace Lucene.Net.Util
             if (savedLocale != null)
             {
                 locale = savedLocale;
-#if NETSTANDARD
+#if FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER
                 CultureInfo.CurrentCulture = savedLocale;
 #else
                 Thread.CurrentThread.CurrentCulture = savedLocale;

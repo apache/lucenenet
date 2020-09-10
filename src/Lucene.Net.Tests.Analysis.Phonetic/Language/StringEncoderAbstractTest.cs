@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                     for (int j = 0; j < locales.Length; j++)
                     {
                         //Locale.setDefault(locales[j]);
-#if NETSTANDARD
+#if FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER
                         CultureInfo.CurrentCulture = locales[j];
 #else
                         Thread.CurrentThread.CurrentCulture = locales[j];
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             finally
             {
                 //Locale.setDefault(orig);
-#if NETSTANDARD
+#if FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER
                 CultureInfo.CurrentCulture = orig;
 #else
                 Thread.CurrentThread.CurrentCulture = orig;
