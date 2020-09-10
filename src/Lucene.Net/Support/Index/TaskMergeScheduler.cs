@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-#if NETSTANDARD1_6
+#if !FEATURE_THREAD_PRIORITY
                 return 2;
 #else
                 return (int)ThreadPriority.Normal;

@@ -281,7 +281,7 @@ namespace Lucene.Net.Search
 
             nrtDeletesThread = new ControlledRealTimeReopenThread<IndexSearcher>(genWriter, nrtDeletes, maxReopenSec, minReopenSec);
             nrtDeletesThread.Name = "NRTDeletes Reopen Thread";
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_PRIORITY
             nrtDeletesThread.Priority = (ThreadPriority)Math.Min((int)Thread.CurrentThread.Priority + 2, (int)ThreadPriority.Highest);
 #endif
             nrtDeletesThread.IsBackground = (true);
@@ -289,7 +289,7 @@ namespace Lucene.Net.Search
 
             nrtNoDeletesThread = new ControlledRealTimeReopenThread<IndexSearcher>(genWriter, nrtNoDeletes, maxReopenSec, minReopenSec);
             nrtNoDeletesThread.Name = "NRTNoDeletes Reopen Thread";
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_PRIORITY
             nrtNoDeletesThread.Priority = (ThreadPriority)Math.Min((int)Thread.CurrentThread.Priority + 2, (int)ThreadPriority.Highest);
 #endif
             nrtNoDeletesThread.IsBackground = (true);
