@@ -49,6 +49,7 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) ">
     
     <DefineConstants>$(DefineConstants);FEATURE_CONCURRENTMERGESCHEDULER</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CULTUREINFO_GETCULTURES</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_DTD_PROCESSING</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
