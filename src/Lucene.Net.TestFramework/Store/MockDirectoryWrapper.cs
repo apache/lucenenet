@@ -545,7 +545,7 @@ namespace Lucene.Net.Store
         {
             if (randomState.NextBoolean())
             {
-#if NETSTANDARD1_6
+#if !FEATURE_THREAD_YIELD
                 Thread.Sleep(0);
 #else
                 Thread.Yield();

@@ -26,7 +26,7 @@ namespace Lucene.Net
 
     public class TestWorstCaseTestBehavior : LuceneTestCase
     {
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_YIELD
         [Ignore("Ignored in Lucene")]
         [Test]
         public virtual void TestThreadLeak()

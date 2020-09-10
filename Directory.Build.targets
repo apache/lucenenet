@@ -51,6 +51,7 @@
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREAD_INTERRUPT</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREAD_PRIORITY</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_THREAD_YIELD</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_XSLT</DefineConstants>
 
