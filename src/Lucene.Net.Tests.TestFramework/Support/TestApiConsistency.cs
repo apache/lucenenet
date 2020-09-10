@@ -84,7 +84,7 @@ namespace Lucene.Net.Tests.TestFramework
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD1_6
+#if FEATURE_METHODBASE_GETMETHODBODY
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.RandomExtensions))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

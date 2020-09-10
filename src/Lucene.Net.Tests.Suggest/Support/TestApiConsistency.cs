@@ -83,7 +83,7 @@ namespace Lucene.Net.Tests.Suggest
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD1_6
+#if FEATURE_METHODBASE_GETMETHODBODY
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Search.Suggest.IInputIterator))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

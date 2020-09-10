@@ -83,7 +83,7 @@ namespace Lucene.Net.Classification
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD1_6
+#if FEATURE_METHODBASE_GETMETHODBODY
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Classification.KNearestNeighborClassifier))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

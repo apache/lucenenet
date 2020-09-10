@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Support
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD1_6
+#if FEATURE_METHODBASE_GETMETHODBODY
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Cn.Smart.AnalyzerProfile))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

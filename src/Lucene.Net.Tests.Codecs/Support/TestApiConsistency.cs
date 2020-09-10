@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.Tests
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD1_6
+#if FEATURE_METHODBASE_GETMETHODBODY
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Codecs.BlockTerms.BlockTermsReader))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
