@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
 using System.Security.Permissions;
 #endif
 
@@ -37,7 +37,7 @@ namespace Lucene.Net.Util
         public static TextReader In { get; set; } = Console.In;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(bool value)
@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(char value)
@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(char[] buffer)
@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(decimal value)
@@ -73,7 +73,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(double value)
@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(int value)
@@ -91,7 +91,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(long value)
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(object value)
@@ -109,7 +109,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(float value)
@@ -118,7 +118,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(string value)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining), CLSCompliant(false)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(uint value)
@@ -136,7 +136,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining), CLSCompliant(false)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(ulong value)
@@ -145,7 +145,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(string format, object arg0)
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(string format, params object[] arg)
@@ -170,7 +170,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(char[] buffer, int index, int count)
@@ -179,7 +179,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(string format, object arg0, object arg1)
@@ -188,7 +188,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void Write(string format, object arg0, object arg1, object arg2)
@@ -196,9 +196,11 @@ namespace Lucene.Net.Util
             Out.Write(format, arg0, arg1, arg2);
         }
 
-#if !NETSTANDARD
+#if FEATURE_ARGITERATOR
         [MethodImpl(MethodImplOptions.NoInlining), CLSCompliant(false)]
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
+#endif
         public static void Write(string format, object arg0, object arg1, object arg2, object arg3, __arglist)
         {
             ArgIterator iterator = new ArgIterator(__arglist);
@@ -217,7 +219,7 @@ namespace Lucene.Net.Util
 #endif
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine()
@@ -226,7 +228,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(bool value)
@@ -235,7 +237,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(char value)
@@ -244,7 +246,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(char[] buffer)
@@ -253,7 +255,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(decimal value)
@@ -262,7 +264,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(double value)
@@ -271,7 +273,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(int value)
@@ -280,7 +282,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(long value)
@@ -289,7 +291,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(object value)
@@ -298,7 +300,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(float value)
@@ -307,7 +309,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(string value)
@@ -316,7 +318,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining), CLSCompliant(false)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(uint value)
@@ -325,7 +327,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining), CLSCompliant(false)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(ulong value)
@@ -334,7 +336,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(string format, object arg0)
@@ -343,7 +345,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(string format, params object[] arg)
@@ -359,7 +361,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(char[] buffer, int index, int count)
@@ -368,7 +370,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(string format, object arg0, object arg1)
@@ -377,7 +379,7 @@ namespace Lucene.Net.Util
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-#if !NETSTANDARD
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
 #endif
         public static void WriteLine(string format, object arg0, object arg1, object arg2)
@@ -385,9 +387,11 @@ namespace Lucene.Net.Util
             Out.WriteLine(format, arg0, arg1, arg2);
         }
 
-#if !NETSTANDARD
+#if FEATURE_ARGITERATOR
         [MethodImpl(MethodImplOptions.NoInlining), CLSCompliant(false)]
+#if FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION
         [HostProtection(SecurityAction.LinkDemand, UI = true)]
+#endif
         public static void WriteLine(string format, object arg0, object arg1, object arg2, object arg3, __arglist)
         {
             ArgIterator iterator = new ArgIterator(__arglist);
