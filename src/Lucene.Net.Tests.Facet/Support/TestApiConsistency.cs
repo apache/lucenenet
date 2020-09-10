@@ -83,7 +83,7 @@ namespace Lucene.Net.Tests.Facet
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD1_6
+#if FEATURE_METHODBASE_GETMETHODBODY
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Facet.Facets))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
