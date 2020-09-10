@@ -137,12 +137,12 @@ namespace Lucene.Net.Store
                     throw e;
                 }
 
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                try
 //                {
 //#endif
                     Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
-//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                }
 //                catch (ThreadInterruptedException ie)
 //                {

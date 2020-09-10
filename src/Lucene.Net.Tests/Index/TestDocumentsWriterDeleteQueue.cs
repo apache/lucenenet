@@ -318,12 +318,12 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                try
 //                {
 //#endif
                     latch.Wait();
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                }
 //                catch (ThreadInterruptedException e) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                {

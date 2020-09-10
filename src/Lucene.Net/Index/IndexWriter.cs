@@ -1187,14 +1187,14 @@ namespace Lucene.Net.Index
 
                         if (waitForMerges)
                         {
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                             try
                             {
 #endif    
                             // Give merge scheduler last chance to run, in case
                                 // any pending merges are waiting:
                                 mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                             }
                             catch (ThreadInterruptedException)
                             {
@@ -1212,13 +1212,13 @@ namespace Lucene.Net.Index
                         {
                             for (; ; )
                             {
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                                 try
                                 {
 #endif
                                     FinishMerges(waitForMerges && !interrupted);
                                     break;
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                                 }
                                 catch (ThreadInterruptedException)
                                 {
@@ -1299,7 +1299,7 @@ namespace Lucene.Net.Index
                 // finally, restore interrupt status:
                 if (interrupted)
                 {
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                     Thread.CurrentThread.Interrupt();
 #endif
                 }
@@ -5345,12 +5345,12 @@ namespace Lucene.Net.Index
                 // fails to be called, we wait for at most 1 second
                 // and then return so caller can check if wait
                 // conditions are satisfied:
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                try
 //                {
 //#endif
                     Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                }
 //                catch (ThreadInterruptedException ie)
 //                {

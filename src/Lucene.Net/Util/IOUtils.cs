@@ -563,13 +563,13 @@ namespace Lucene.Net.Util
         //                    {
         //                        throw;
         //                    }
-        //#if !NETSTANDARD1_6
+        //#if FEATURE_THREAD_INTERRUPT
         //                    try
         //                    {
         //#endif
         //                        // Pause 5 msec
         //                        Thread.Sleep(5);
-        //#if !NETSTANDARD1_6
+        //#if FEATURE_THREAD_INTERRUPT
         //                    }
         //                    catch (ThreadInterruptedException ie)
         //                    {

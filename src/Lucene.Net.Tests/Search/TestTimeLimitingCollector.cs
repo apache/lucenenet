@@ -405,7 +405,7 @@ namespace Lucene.Net.Search
                     //{
                     ThreadJob.Sleep(slowdown);
 //                    }
-//#if NETSTANDARD1_6
+//#if !FEATURE_THREAD_INTERRUPT
 //                    catch (Exception)
 //                    {
 //                        throw;

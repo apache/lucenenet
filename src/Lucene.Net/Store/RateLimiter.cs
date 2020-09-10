@@ -120,12 +120,12 @@ namespace Lucene.Net.Store
                     var pauseNS = targetNS - curNS;
                     if (pauseNS > 0)
                     {
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                        try
 //                        {
 //#endif
                             Thread.Sleep(TimeSpan.FromMilliseconds(pauseNS / 1000000));
-//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                        }
 //                        catch (ThreadInterruptedException ie)
 //                        {

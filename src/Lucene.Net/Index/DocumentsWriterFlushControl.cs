@@ -313,12 +313,12 @@ namespace Lucene.Net.Index
             {
                 while (flushingWriters.Count != 0)
                 {
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                    try
 //                    {
 //#endif
                     Monitor.Wait(this);
-//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                    }
 //                    catch (ThreadInterruptedException e)
 //                    {

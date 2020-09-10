@@ -54,12 +54,12 @@ namespace Lucene.Net
 
             public override void Run()
             {
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                 try
                 {
 #endif
                     Thread.Sleep(10000);
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException e)
@@ -142,12 +142,12 @@ namespace Lucene.Net
         {
             while (true)
             {
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                 try
                 {
 #endif
                     Thread.Sleep(1000);
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException e)
