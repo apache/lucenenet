@@ -494,12 +494,12 @@ namespace Lucene.Net.Search
 
             public override void Run()
             {
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                 try
                 {
 #endif
                     thread.WaitForGeneration(lastGen);
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                 }
                 catch (ThreadInterruptedException ie)
                 {
@@ -529,7 +529,7 @@ namespace Lucene.Net.Search
             public override void UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
             {
                 base.UpdateDocument(term, doc, analyzer);
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                try
 //                {
 //#endif
@@ -538,7 +538,7 @@ namespace Lucene.Net.Search
                         signal.Reset(signal.CurrentCount == 0 ? 0 : signal.CurrentCount - 1);
                         latch.Wait();
                     }
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                }
 //                catch (ThreadInterruptedException) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                {

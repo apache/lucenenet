@@ -1331,7 +1331,7 @@ namespace Lucene.Net.Index
                             allowInterrupt = true;
                         }
                     }
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                     catch (ThreadInterruptedException re)
                     {
                         // NOTE: important to leave this verbosity/noise
@@ -1376,7 +1376,7 @@ namespace Lucene.Net.Index
                         {
                             w.Rollback();
                         }
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                         // LUCENENET specific - there is a chance that our thread will be
                         // interrupted here, so we need to catch and ignore that exception
                         // when our MockDirectoryWrapper throws it.

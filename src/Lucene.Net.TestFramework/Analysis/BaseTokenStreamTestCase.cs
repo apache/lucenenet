@@ -792,12 +792,12 @@ namespace Lucene.Net.Analysis
                 startingGun.Signal();
                 foreach (var t in threads)
                 {
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                     try
                     {
 #endif
                         t.Join();
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                     }
 #pragma warning disable 168
                     catch (ThreadInterruptedException e)

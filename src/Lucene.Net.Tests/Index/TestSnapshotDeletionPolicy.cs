@@ -227,12 +227,12 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                    try
 //                    {
 //#endif 
                         Thread.Sleep(1);
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                    }
 //                    catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                    {

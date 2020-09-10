@@ -77,12 +77,12 @@ namespace Lucene.Net.Facet
             {
                 sTime = random.Next(sTime);
             }
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //            try
 //            {
 //#endif
                 Thread.Sleep(sTime);
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //            }
 //            catch (ThreadInterruptedException e) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //            {

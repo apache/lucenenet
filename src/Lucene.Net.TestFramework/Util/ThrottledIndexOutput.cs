@@ -144,12 +144,12 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //            try
 //            {
 //#endif 
                 Thread.Sleep(TimeSpan.FromMilliseconds(ms));
-//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //            }
 //            catch (ThreadInterruptedException e)
 //            {

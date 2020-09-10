@@ -46,12 +46,13 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) ">
     
     <DefineConstants>$(DefineConstants);FEATURE_CONCURRENTMERGESCHEDULER</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_DTD_PROCESSING</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_DTD_PROCESSING</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_XSLT</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_THREAD_INTERRUPT</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREAD_PRIORITY</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_XSLT</DefineConstants>
 
     <!-- NOTE: Microsoft's recommendation is not to use the ICloneable interface.
         To add it to the build, just add /p:IncludeICloneable to the command line. -->

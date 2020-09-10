@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
                 {
                     Thread.Sleep(50);
                 }
-//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                catch (ThreadInterruptedException ie)
 //                {
 //                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);

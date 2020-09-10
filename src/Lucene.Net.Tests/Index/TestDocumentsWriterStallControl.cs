@@ -264,12 +264,12 @@ namespace Lucene.Net.Index
                         ctrl.WaitIfStalled();
                         if (checkPoint)
                         {
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                             try
                             {
 #endif
                                 Assert.IsTrue(sync.await());
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                             }
                             catch (ThreadInterruptedException /*e*/)
                             {
@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
                             {
                                 Assert.IsTrue(sync.await());
                             }
-#if !NETSTANDARD1_6
+#if FEATURE_THREAD_INTERRUPT
                             catch (ThreadInterruptedException /*e*/)
                             {
                                 Console.WriteLine("[Updater] got interrupted - wait count: " + sync.waiter.CurrentCount);

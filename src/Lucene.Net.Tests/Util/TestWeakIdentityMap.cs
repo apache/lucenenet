@@ -140,7 +140,7 @@
 //            int size = map.Count;
 //            for (int i = 0; size > 0 && i < 10; i++)
 //            {
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                try
 //                {
 //#endif
@@ -159,7 +159,7 @@
 //                    Assert.IsTrue(size >= c, "previousSize(" + size + ")>=iteratorSize(" + c + ")");
 //                    Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
 //                    size = newSize;
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                }
 //#pragma warning disable 168
 //                catch (ThreadInterruptedException ie)
@@ -255,7 +255,7 @@
 //            int size = map.Count;
 //            for (int i = 0; size > 0 && i < 10; i++)
 //            {
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                try
 //                {
 //#endif
@@ -274,7 +274,7 @@
 //                    Assert.IsTrue(size >= c, "previousSize(" + size + ")>=iteratorSize(" + c + ")");
 //                    Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
 //                    size = newSize;
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                }
 //#pragma warning disable 168
 //                catch (ThreadInterruptedException ie)

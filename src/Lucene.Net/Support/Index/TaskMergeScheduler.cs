@@ -377,7 +377,7 @@ namespace Lucene.Net.Index
                 return;
             }
 
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //            try
 //            {
 //#endif
@@ -388,7 +388,7 @@ namespace Lucene.Net.Index
                 // so, we sleep here to avoid saturating CPU in such
                 // cases:
                 Thread.Sleep(250);
-//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //            }
 //            catch (ThreadInterruptedException ie)
 //            {

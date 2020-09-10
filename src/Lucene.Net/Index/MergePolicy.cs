@@ -296,14 +296,14 @@ namespace Lucene.Net.Index
 
                     while (paused)
                     {
-//#if !NETSTANDARD1_6
+//#if FEATURE_THREAD_INTERRUPT
 //                        try
 //                        {
 //#endif
                             // In theory we could wait() indefinitely, but we
                             // do 1000 msec, defensively
                             Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-//#if !NETSTANDARD1_6 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
 //                        }
 //                        catch (ThreadInterruptedException ie)
 //                        {
