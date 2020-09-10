@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD1_6
+﻿#if FEATURE_XSLT
 using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
@@ -9,10 +9,6 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Lucene.Net.QueryParsers.Xml
@@ -38,8 +34,8 @@ namespace Lucene.Net.QueryParsers.Xml
     /// This class illustrates how form input (such as from a web page or Swing gui) can be
     /// turned into Lucene queries using a choice of XSL templates for different styles of queries.
     /// 
-    /// LUCENENET (.NET Core):  This is not compiled this because .NET Standard
-    /// does not currently support XSL Transform.
+    /// LUCENENET (.NET Standard 1.x):  This is not compiled this because .NET Standard 1.x
+    /// does not support XSL Transform.
     /// </summary>
     public class TestQueryTemplateManager : LuceneTestCase
     {
