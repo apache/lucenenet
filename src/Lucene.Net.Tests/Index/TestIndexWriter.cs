@@ -787,7 +787,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-#if !NETSTANDARD1_6 //NOTE: Cannot set ThreadPriority in .NET Core.
+#if FEATURE_THREAD_PRIORITY
         // LUCENE-1036
         [Test]
         public virtual void TestMaxThreadPriority()
