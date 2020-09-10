@@ -21,8 +21,11 @@
 <Project>
   <!-- Features in .NET Standard and .NET Core only (no .NET Framework support) -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) ">
+    
     <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ARRAYEMPTY</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER</DefineConstants>
+    
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
