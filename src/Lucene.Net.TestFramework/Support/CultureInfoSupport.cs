@@ -21,7 +21,7 @@ namespace Lucene.Net.Util
 
     public static class CultureInfoSupport
     {
-#if NETSTANDARD1_6
+#if !FEATURE_CULTUREINFO_GETCULTURES
 
         #region culturePool
         private static readonly string[] specificCulturePool =
@@ -632,7 +632,7 @@ namespace Lucene.Net.Util
 
         public static CultureInfo[] GetNeutralAndSpecificCultures()
         {
-#if NETSTANDARD1_6
+#if !FEATURE_CULTUREINFO_GETCULTURES
             return supportedSpecificCultures.Union(supportedNeutralCultures).ToArray();
 #else
             return CultureInfo.GetCultures(CultureTypes.SpecificCultures | CultureTypes.NeutralCultures);
