@@ -19,6 +19,14 @@
 
 -->
 <Project>
+
+  <!-- Features in .NET Core 3.x and .NET 5 only -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netcoreapp')) Or '$(TargetFramework)' == 'net5.0' ">
+
+    <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
+
+  </PropertyGroup>
+  
   <!-- Features in .NET Standard and .NET Core only (no .NET Framework support) -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) ">
     
@@ -74,12 +82,19 @@
 
   <!-- Features in .NET Framework 4.6+ only -->
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net46')) Or $(TargetFramework.StartsWith('net47')) Or $(TargetFramework.StartsWith('net48'))">
+    
     <DefineConstants>$(DefineConstants);FEATURE_ARRAYEMPTY</DefineConstants>
+
   </PropertyGroup>
 
+  <!-- Features in .NET Framework 4.5+ -->
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
     
+    <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
+    <!-- Although HostProtectionAttribute is available in .NET Standard 2.0+ via platform extensions, we are excluding
+         it due to the fact it is not a primary feature of Lucene.NET -->
+    <DefineConstants>$(DefineConstants);FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION</DefineConstants>
     
     <DebugType>full</DebugType>
   </PropertyGroup>
