@@ -107,6 +107,7 @@
     <!-- Although HostProtectionAttribute is available in .NET Standard 2.0+ via platform extensions, we are excluding
          it due to the fact it is not a primary feature of Lucene.NET -->
     <DefineConstants>$(DefineConstants);FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_STACKOVERFLOWEXCEPTION__ISCATCHABLE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_CREATEOBJREF</DefineConstants>
     
     <DebugType>full</DebugType>
