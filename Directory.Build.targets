@@ -68,6 +68,7 @@
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_METHODBASE_GETMETHODBODY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_STACKTRACE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_CLOSE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREAD_INTERRUPT</DefineConstants>
@@ -86,7 +87,6 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard1.')) Or $(TargetFramework.StartsWith('netcoreapp1.')) ">
     
     <DefineConstants>$(DefineConstants);NETSTANDARD1_X</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_STACKTRACE</DefineConstants>
     
   </PropertyGroup>
 
