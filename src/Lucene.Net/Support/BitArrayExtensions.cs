@@ -153,13 +153,7 @@ namespace Lucene.Net.Support
                 throw new ArgumentNullException(nameof(bits));
             int count = 0;
 
-#if NETSTANDARD1_6
-            for (int i = 0; i < bits.Length; i++)
-            {
-                if (bits[i])
-                    count++;
-            }
-#else
+#if FEATURE_BITARRAY_COPYTO
             int bitsLength = bits.Length;
             int[] ints = new int[(bitsLength >> 5) + 1];
             int intsLength = ints.Length;
@@ -183,6 +177,12 @@ namespace Lucene.Net.Support
                 }
 
                 count += c;
+            }
+#else
+            for (int i = 0; i < bits.Length; i++)
+            {
+                if (bits[i])
+                    count++;
             }
 #endif
             return count;
