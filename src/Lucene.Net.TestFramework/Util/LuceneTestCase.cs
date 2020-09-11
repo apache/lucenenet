@@ -2050,7 +2050,7 @@ namespace Lucene.Net.Util
         public static CultureInfo RandomCulture(Random random) // LUCENENET specific renamed from RandomLocale
         {
             ICollection<CultureInfo> systemCultures = CultureInfoSupport.GetNeutralAndSpecificCultures();
-#if NETSTANDARD1_6
+#if NETSTANDARD1_X
             // .NET Core 1.0 on macOS seems to be flakey here and not return results occasionally, so compensate by
             // returning CultureInfo.InvariantCulture when it happens.
             if (systemCultures.Count == 0)
@@ -2067,7 +2067,7 @@ namespace Lucene.Net.Util
         public static TimeZoneInfo RandomTimeZone(Random random)
         {
             var systemTimeZones = TimeZoneInfo.GetSystemTimeZones();
-#if NETSTANDARD1_6
+#if NETSTANDARD1_X
             // .NET Core 1.0 on macOS seems to be flakey here and not return results occasionally, so compensate by
             // returning TimeZoneInfo.Local when it happens.
             if (systemTimeZones.Count == 0)
