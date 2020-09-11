@@ -63,9 +63,4 @@
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
 </Project>
