@@ -311,7 +311,7 @@ namespace Lucene.Net.Store
                     mapName: null, 
                     capacity: length, 
                     access: MemoryMappedFileAccess.Read,
-#if !NETSTANDARD
+#if FEATURE_MEMORYMAPPEDFILESECURITY
                     memoryMappedFileSecurity: null,
 #endif
                     inheritability: HandleInheritability.Inheritable, 

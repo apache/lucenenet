@@ -102,6 +102,7 @@
 
     <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_MEMORYMAPPEDFILESECURITY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
     <!-- Although HostProtectionAttribute is available in .NET Standard 2.0+ via platform extensions, we are excluding
          it due to the fact it is not a primary feature of Lucene.NET -->
