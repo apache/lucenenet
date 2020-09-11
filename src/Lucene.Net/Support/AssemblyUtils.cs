@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-#if NETSTANDARD1_6
+#if !FEATURE_APPDOMAIN_GETASSEMBLIES
 using Microsoft.Extensions.DependencyModel;
 #endif
 using JCG = J2N.Collections.Generic;
@@ -45,15 +45,15 @@ namespace Lucene.Net.Support
             // hoping would be loaded hasn't been loaded yet into the app domain,
             // it is unavailable. So we go to the next level on each and check each referenced
             // assembly.
-#if NETSTANDARD1_6
+#if FEATURE_APPDOMAIN_GETASSEMBLIES
+            var assembliesLoaded = AppDomain.CurrentDomain.GetAssemblies();
+#else
             var dependencyContext = DependencyContext.Default;
             var assemblyNames = dependencyContext.RuntimeLibraries
                 .SelectMany(lib => lib.GetDefaultAssemblyNames(dependencyContext))
                 .Where(x => !DotNetFrameworkFilter.IsFrameworkAssembly(x))
                 .Distinct();
             var assembliesLoaded = LoadAssemblyFromName(assemblyNames);
-#else
-            var assembliesLoaded = AppDomain.CurrentDomain.GetAssemblies();
 #endif
             assembliesLoaded = assembliesLoaded.Where(x => !DotNetFrameworkFilter.IsFrameworkAssembly(x)).ToArray();
 
@@ -71,10 +71,12 @@ namespace Lucene.Net.Support
             return assembliesLoaded.Concat(referencedAssemblies).Distinct().ToList();
         }
 
+#if !FEATURE_APPDOMAIN_GETASSEMBLIES
         private static IEnumerable<Assembly> LoadAssemblyFromName(IEnumerable<AssemblyName> assemblyNames)
         {
             return assemblyNames.Select(x => LoadAssemblyFromName(x)).Where(x => x != null);
         }
+#endif
 
         private static Assembly LoadAssemblyFromName(AssemblyName assemblyName)
         {
