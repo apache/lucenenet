@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
-#if !NETSTANDARD
-using System.Runtime.Remoting;
-#endif
 using System.Text;
 using System.Threading.Tasks;
 
@@ -80,14 +77,14 @@ namespace Lucene.Net.Support.IO
             }
         }
 
-#if !NETSTANDARD1_6
+#if FEATURE_TEXTWRITER_CLOSE
         public override void Close()
         {
             Run(() => textWriter.Close());
         }
 #endif
-#if !NETSTANDARD
-        public override ObjRef CreateObjRef(Type requestedType)
+#if FEATURE_TEXTWRITER_CREATEOBJREF
+        public override System.Runtime.Remoting.ObjRef CreateObjRef(Type requestedType)
         {
             return Run(() => textWriter.CreateObjRef(requestedType));
         }
@@ -114,7 +111,7 @@ namespace Lucene.Net.Support.IO
             return Run(() => textWriter.GetHashCode());
         }
 
-#if !NETSTANDARD1_6
+#if FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE
         public override object InitializeLifetimeService()
         {
             return Run(() => textWriter.InitializeLifetimeService());

@@ -62,6 +62,8 @@
     <DefineConstants>$(DefineConstants);FEATURE_FILESTREAM_LOCK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_METHODBASE_GETMETHODBODY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_CLOSE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREAD_INTERRUPT</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREAD_PRIORITY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREAD_YIELD</DefineConstants>
@@ -96,6 +98,7 @@
     <!-- Although HostProtectionAttribute is available in .NET Standard 2.0+ via platform extensions, we are excluding
          it due to the fact it is not a primary feature of Lucene.NET -->
     <DefineConstants>$(DefineConstants);FEATURE_SECURITYPERMISSIONS_HOSTPROTECTION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_TEXTWRITER_CREATEOBJREF</DefineConstants>
     
     <DebugType>full</DebugType>
   </PropertyGroup>
