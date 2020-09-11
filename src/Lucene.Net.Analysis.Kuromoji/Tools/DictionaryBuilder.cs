@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         static DictionaryBuilder()
         {
-#if NETSTANDARD
+#if FEATURE_ENCODINGPROVIDERS
             // Support for EUC-JP encoding. See: https://docs.microsoft.com/en-us/dotnet/api/system.text.codepagesencodingprovider?view=netcore-2.0
             var encodingProvider = System.Text.CodePagesEncodingProvider.Instance;
             System.Text.Encoding.RegisterProvider(encodingProvider);
