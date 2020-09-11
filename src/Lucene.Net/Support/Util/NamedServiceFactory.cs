@@ -173,10 +173,10 @@ namespace Lucene.Net.Util
         {
             get
             {
-#if NETSTANDARD
-                return true; // Partial trust is obsolete
-#else
+#if FEATURE_APPDOMAIN_ISFULLYTRUSTED
                 return AppDomain.CurrentDomain.IsFullyTrusted; // Partial trust support
+#else
+                return true; // Partial trust not supported
 #endif
             }
         }
