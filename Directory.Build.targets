@@ -59,6 +59,7 @@
 
     <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_BASEDIRECTORY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_ISFULLYTRUSTED</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ASSEMBLY_GETCALLINGASSEMBLY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONCURRENTMERGESCHEDULER</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CULTUREINFO_GETCULTURES</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_DTD_PROCESSING</DefineConstants>
