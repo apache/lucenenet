@@ -296,7 +296,7 @@ namespace Lucene.Net.Analysis.Util
                 return SIZE - pos > 0;
             }
 
-//#if !NETSTANDARD
+//#if FEATURE_TEXTWRITER_CLOSE
 //            public override void Close()
 //            {
 //            }

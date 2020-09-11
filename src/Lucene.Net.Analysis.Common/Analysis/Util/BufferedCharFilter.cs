@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Util
         private int mark = -1;
         private int markLimit = -1;
 
-#if !NETSTANDARD1_6
+#if FEATURE_TEXTWRITER_CLOSE
         /// <summary>
         /// LUCENENET specific to throw an exception if the user calls <see cref="Close()"/> instead of <see cref="TextReader.Dispose()"/>
         /// </summary>
@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (disposing)
             {
-#if !NETSTANDARD1_6
+#if FEATURE_TEXTWRITER_CLOSE
                 this.isDisposing = true;
 #endif
                 lock (m_lock)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Util
                         buf = null;
                     }
                 }
-#if !NETSTANDARD1_6
+#if FEATURE_TEXTWRITER_CLOSE
                 this.isDisposing = false;
 #endif
             }
@@ -607,12 +607,14 @@ namespace Lucene.Net.Analysis.Util
         {
             throw new NotImplementedException();
         }
-#if !NETSTANDARD1_6
+#if FEATURE_TEXTWRITER_INITIALIZELIFETIMESERVICE
         public override object InitializeLifetimeService()
         {
             throw new NotImplementedException();
         }
+#endif
 
+#if FEATURE_TEXTWRITER_CLOSE
         public override void Close()
         {
             if (!isDisposing)
