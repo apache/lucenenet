@@ -26,13 +26,13 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestConstants : LuceneTestCase
     {
-        private string VersionDetails => " (LUCENE_MAIN_VERSION=" + Constants.LUCENE_MAIN_VERSION + ", LUCENE_MAIN_VERSION(without alpha/beta)=" + Constants.MainVersionWithoutAlphaBeta() + ", LUCENE_VERSION=" + Constants.LUCENE_VERSION + ")";
+        private string VersionDetails => " (LUCENE_MAIN_VERSION=" + Constants.LUCENE_MAIN_VERSION + ", LUCENE_MAIN_VERSION(without alpha/beta)=" + Constants.MainVersionWithoutAlphaBeta + ", LUCENE_VERSION=" + Constants.LUCENE_VERSION + ")";
 
         [Test]
         public virtual void TestLuceneMainVersionConstant()
         {
             Assert.IsTrue(Regex.IsMatch(Constants.LUCENE_MAIN_VERSION, "\\d+\\.\\d+(|\\.0\\.\\d+)", RegexOptions.IgnoreCase), "LUCENE_MAIN_VERSION does not follow pattern: 'x.y' (stable release) or 'x.y.0.z' (alpha/beta version)" + VersionDetails);
-            Assert.IsTrue(Constants.LUCENE_VERSION.StartsWith(Constants.MainVersionWithoutAlphaBeta(), StringComparison.Ordinal), "LUCENE_VERSION does not start with LUCENE_MAIN_VERSION (without alpha/beta marker)" + VersionDetails);
+            Assert.IsTrue(Constants.LUCENE_VERSION.StartsWith(Constants.MainVersionWithoutAlphaBeta, StringComparison.Ordinal), "LUCENE_VERSION does not start with LUCENE_MAIN_VERSION (without alpha/beta marker)" + VersionDetails);
         }
 
         [Test]
