@@ -33,6 +33,7 @@
     <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ARRAYEMPTY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CULTUREINFO_CURRENTCULTURE_SETTER</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_ENCODINGPROVIDERS</DefineConstants>
     
     <DebugType>portable</DebugType>
   </PropertyGroup>

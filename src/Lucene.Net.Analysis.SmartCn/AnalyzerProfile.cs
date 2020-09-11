@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         // from ever being loaded).
         private static void Init()
         {
-#if NETSTANDARD
+#if FEATURE_ENCODINGPROVIDERS
             // Support for GB2312 encoding. See: https://docs.microsoft.com/en-us/dotnet/api/system.text.codepagesencodingprovider?view=netcore-2.0
             var encodingProvider = System.Text.CodePagesEncodingProvider.Instance;
             System.Text.Encoding.RegisterProvider(encodingProvider);
