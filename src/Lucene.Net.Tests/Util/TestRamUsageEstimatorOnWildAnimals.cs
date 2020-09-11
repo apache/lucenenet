@@ -27,7 +27,7 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestRamUsageEstimatorOnWildAnimals : LuceneTestCase
     {
-#if !NETSTANDARD // StackOverflowException cannot be caught in .NET Core. This test does not apply.
+#if FEATURE_STACKOVERFLOWEXCEPTION__ISCATCHABLE // StackOverflowException cannot be caught in .NET Core. This test does not apply.
         public class ListElement
         {
             internal ListElement Next;
