@@ -1062,7 +1062,7 @@ namespace Lucene.Net.Util
                 _testClassName = context.FullyQualifiedTestClassName;
                 _testName = context.TestName;
 
-#if !NETSTANDARD1_6
+#if FEATURE_ASSEMBLY_GETCALLINGASSEMBLY
                 var callingAssembly = Assembly.GetCallingAssembly();
                 _testClassType = callingAssembly.GetType(_testClassName);
 #else
