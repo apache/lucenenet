@@ -1269,8 +1269,7 @@ namespace Lucene.Net.Util
                 return testClass;
 
             // 2nd attempt - try scanning the referenced assemblies to see if we can find the class by fullname
-            var referencedAssemblies = AssemblyUtils.GetReferencedAssemblies();
-            testClass = referencedAssemblies.SelectMany(a => a.GetTypes().Where(t => t.FullName == testClassName)).FirstOrDefault();
+            testClass = AssemblyUtils.GetReferencedAssemblies().SelectMany(a => a.GetTypes().Where(t => t.FullName == testClassName)).FirstOrDefault();
             if (testClass != null)
                 return testClass;
 #endif

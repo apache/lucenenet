@@ -39,7 +39,7 @@ namespace Lucene.Net.Support
         /// Microsoft assemblies here.
         /// </summary>
         /// <returns></returns>
-        public static IList<Assembly> GetReferencedAssemblies()
+        public static IEnumerable<Assembly> GetReferencedAssemblies()
         {
             // .NET Port Hack: We do a 2-level deep check here because if the assembly you're
             // hoping would be loaded hasn't been loaded yet into the app domain,
@@ -55,9 +55,9 @@ namespace Lucene.Net.Support
                 .Distinct();
             var assembliesLoaded = LoadAssemblyFromName(assemblyNames);
 #endif
-            assembliesLoaded = assembliesLoaded.Where(x => !DotNetFrameworkFilter.IsFrameworkAssembly(x)).ToArray();
+            var nonFrameworkAssembliesLoaded = assembliesLoaded.Where(x => !DotNetFrameworkFilter.IsFrameworkAssembly(x));
 
-            var referencedAssemblies = assembliesLoaded
+            var referencedAssemblies = nonFrameworkAssembliesLoaded
                 .SelectMany(assembly =>
                 {
                     return assembly
@@ -68,7 +68,7 @@ namespace Lucene.Net.Support
                 .Where(x => x != null)
                 .Distinct();
 
-            return assembliesLoaded.Concat(referencedAssemblies).Distinct().ToList();
+            return nonFrameworkAssembliesLoaded.Concat(referencedAssemblies).Distinct();
         }
 
 #if !FEATURE_APPDOMAIN_GETASSEMBLIES

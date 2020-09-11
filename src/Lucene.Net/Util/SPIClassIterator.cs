@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
@@ -32,29 +33,33 @@ namespace Lucene.Net.Util
     /// </summary>
     public class SPIClassIterator<S> : IEnumerable<Type>
     {
-        private static JCG.HashSet<Type> types = LoadTypes();
+        private static readonly JCG.HashSet<Type> types = LoadTypes();
 
         private static JCG.HashSet<Type> LoadTypes() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            types = new JCG.HashSet<Type>();
+            var types = new JCG.HashSet<Type>();
 
             var assembliesToExamine = Support.AssemblyUtils.GetReferencedAssemblies();
 
-            // LUCENENET HACK:
-            // Tests such as TestImpersonation.cs expect that the assemblies
-            // are probed in a certain order. NamedSPILoader, lines 68 - 75 adds
-            // the first item it sees with that name. So if you have multiple
-            // codecs, it may not add the right one, depending on the order of
-            // the assemblies that were examined.
-            // This results in many test failures if Types from Lucene.Net.Codecs
-            // are examined and added to NamedSPILoader first before
-            // Lucene.Net.TestFramework.
-            var testFrameworkAssembly = assembliesToExamine.FirstOrDefault(x => string.Equals(x.GetName().Name, "Lucene.Net.TestFramework", StringComparison.Ordinal));
-            if (testFrameworkAssembly != null)
-            {
-                assembliesToExamine.Remove(testFrameworkAssembly);
-                assembliesToExamine.Insert(0, testFrameworkAssembly);
-            }
+            // LUCENENET NOTE: The following hack is not required because we are using abstract factories 
+            // and pure DI to ensure the order of the codecs are always correct during testing.
+
+            //// LUCENENET HACK:
+            //// Tests such as TestImpersonation.cs expect that the assemblies
+            //// are probed in a certain order. NamedSPILoader, lines 68 - 75 adds
+            //// the first item it sees with that name. So if you have multiple
+            //// codecs, it may not add the right one, depending on the order of
+            //// the assemblies that were examined.
+            //// This results in many test failures if Types from Lucene.Net.Codecs
+            //// are examined and added to NamedSPILoader first before
+            //// Lucene.Net.TestFramework.
+            //var testFrameworkAssembly = assembliesToExamine.FirstOrDefault(x => string.Equals(x.GetName().Name, "Lucene.Net.TestFramework", StringComparison.Ordinal));
+            //if (testFrameworkAssembly != null)
+            //{
+            //    //assembliesToExamine.Remove(testFrameworkAssembly);
+            //    //assembliesToExamine.Insert(0, testFrameworkAssembly);
+            //    assembliesToExamine = new Assembly[] { testFrameworkAssembly }.Concat(assembliesToExamine.Where(a => !testFrameworkAssembly.Equals(a)));
+            //}
 
             foreach (var assembly in assembliesToExamine)
             {
