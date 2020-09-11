@@ -2,7 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-#if NETSTANDARD1_6
+#if !FEATURE_TYPE_GETMETHOD__BINDINGFLAGS_PARAMS
 using System.Linq;
 #endif
 using System.Reflection;
@@ -207,7 +207,9 @@ namespace Lucene.Net.Util
 
         private MethodInfo GetMethod(Type clazz, string methodName, BindingFlags bindingFlags, Type[] methodParameters)
         {
-#if NETSTANDARD1_6
+#if FEATURE_TYPE_GETMETHOD__BINDINGFLAGS_PARAMS
+            return clazz.GetMethod(methodName, bindingFlags, null, methodParameters, null);
+#else
             var methods = clazz.GetTypeInfo().GetMethods(bindingFlags).Where(x => {
                 return x.Name.Equals(methodName, StringComparison.Ordinal)
                     && x.GetParameters().Select(y => y.ParameterType).SequenceEqual(methodParameters);
@@ -226,8 +228,6 @@ namespace Lucene.Net.Util
                 var formatted = string.Format("Found more than one match for type {0}, methodName {1}, bindingFlags {2}, parameters {3}", clazz, methodName, bindingFlags, methodParameters);
                 throw new AmbiguousMatchException(formatted);
             }
-#else
-            return clazz.GetMethod(methodName, bindingFlags, null, methodParameters, null);
 #endif
         }
     }

@@ -69,6 +69,7 @@
     <DefineConstants>$(DefineConstants);FEATURE_THREAD_PRIORITY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREAD_YIELD</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_TYPE_GETMETHOD__BINDINGFLAGS_PARAMS</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_XSLT</DefineConstants>
 
     <!-- NOTE: Microsoft's recommendation is not to use the ICloneable interface.
