@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-#if !NETSTANDARD
+#if NETFRAMEWORK
 using Microsoft.Win32;
 #endif
 using System.Text.RegularExpressions;
@@ -74,15 +74,15 @@ namespace Lucene.Net.Util
 
         public static readonly string OS_VERSION = ExtractString(RuntimeInformation.OSDescription, VERSION);
 
-#if NETSTANDARD
+#if NETFRAMEWORK
         /// <summary>
-        /// The value of the version parsed from <see cref="RuntimeInformation.FrameworkDescription"/>.
+        /// The value of the currently installed .NET Framework version on Windows or <see cref="Environment.Version"/> on other operating systems.
         /// <para/>
         /// NOTE: This was JAVA_VERSION in Lucene
         /// </summary>
 #else
         /// <summary>
-        /// The value of the currently installed .NET Framework version on Windows or <see cref="Environment.Version"/> on other operating systems.
+        /// The value of the version parsed from <see cref="RuntimeInformation.FrameworkDescription"/>.
         /// <para/>
         /// NOTE: This was JAVA_VERSION in Lucene
         /// </summary>
@@ -91,10 +91,10 @@ namespace Lucene.Net.Util
 
         private static string LoadRuntimeVersion() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-#if NETSTANDARD
-            return ExtractString(RuntimeInformation.FrameworkDescription, VERSION);
-#else
+#if NETFRAMEWORK
             return WINDOWS ? GetFramework45PlusFromRegistry() : Environment.Version.ToString();
+#else
+            return ExtractString(RuntimeInformation.FrameworkDescription, VERSION);
 #endif
         }
 
@@ -162,8 +162,7 @@ namespace Lucene.Net.Util
 
         private static readonly Regex MAIN_VERSION_WITHOUT_ALPHA_BETA = new Regex("\\.", RegexOptions.Compiled);
 
-#if !NETSTANDARD
-
+#if NETFRAMEWORK
         // Gets the .NET Framework Version (if at least 4.5)
         // Reference: https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
         private static string GetFramework45PlusFromRegistry()
@@ -220,7 +219,6 @@ namespace Lucene.Net.Util
             // that 4.5 or later is installed.
             return "No 4.5 or later version detected";
         }
-
 #endif
 
         /// <summary>

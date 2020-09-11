@@ -93,7 +93,8 @@
 
   <!-- Features in .NET Framework 4.5+ -->
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
-    
+
+    <DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ARGITERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
     <!-- Although HostProtectionAttribute is available in .NET Standard 2.0+ via platform extensions, we are excluding
