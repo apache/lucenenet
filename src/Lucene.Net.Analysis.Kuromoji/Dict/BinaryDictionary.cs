@@ -61,10 +61,10 @@ namespace Lucene.Net.Analysis.Ja.Dict
         {
             // LUCENENET specific - reformatted with :, renamed from "analysis.data.dir"
             string currentPath = SystemProperties.GetProperty("kuromoji:data:dir",
-#if NETSTANDARD1_6
-                System.AppContext.BaseDirectory
-#else
+#if FEATURE_APPDOMAIN_BASEDIRECTORY
                 AppDomain.CurrentDomain.BaseDirectory
+#else
+                System.AppContext.BaseDirectory
 #endif
                 );
 

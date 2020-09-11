@@ -74,10 +74,10 @@ namespace Lucene.Net.Analysis.Cn.Smart
             if (ANALYSIS_DATA_DIR.Length != 0)
                 return;
 
-#if NETSTANDARD1_6
-            string currentPath = System.AppContext.BaseDirectory;
-#else
+#if FEATURE_APPDOMAIN_BASEDIRECTORY
             string currentPath = AppDomain.CurrentDomain.BaseDirectory;
+#else
+            string currentPath = System.AppContext.BaseDirectory;
 #endif
 
             //FileInfo[] cadidateFiles = new FileInfo[] { new FileInfo(currentPath + "/" + dirName),
