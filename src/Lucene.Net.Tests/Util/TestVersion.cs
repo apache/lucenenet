@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
         {
             LuceneVersion[] values = Enum.GetValues(typeof(LuceneVersion)).Cast<LuceneVersion>().ToArray();
             Assert.IsTrue(values.Length >= 2);
-            string mainVersionWithoutAlphaBeta = Constants.MainVersionWithoutAlphaBeta();
+            string mainVersionWithoutAlphaBeta = Constants.MainVersionWithoutAlphaBeta;
             LuceneVersion mainVersionParsed = LuceneVersionExtensions.ParseLeniently(mainVersionWithoutAlphaBeta);
             Assert.AreEqual(mainVersionParsed, values[values.Length - 2], "Constant one before last must be the same as the parsed LUCENE_MAIN_VERSION (without alpha/beta) constant: " + mainVersionWithoutAlphaBeta);
         }
