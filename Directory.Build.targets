@@ -58,6 +58,7 @@
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) ">
 
     <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_BASEDIRECTORY</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_GETASSEMBLIES</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_ISFULLYTRUSTED</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ASSEMBLY_GETCALLINGASSEMBLY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONCURRENTMERGESCHEDULER</DefineConstants>
