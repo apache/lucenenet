@@ -85,7 +85,7 @@
   <!-- Features in .NET Standard 1.x and .NET Core 1.x -->
   <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard1.')) Or $(TargetFramework.StartsWith('netcoreapp1.')) ">
     
-    <DefineConstants>$(DefineConstants);NETSTANDARD1_6</DefineConstants>
+    <DefineConstants>$(DefineConstants);NETSTANDARD1_X</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_STACKTRACE</DefineConstants>
     
   </PropertyGroup>

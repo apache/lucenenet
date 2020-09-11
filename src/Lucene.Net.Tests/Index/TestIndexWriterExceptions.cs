@@ -2518,7 +2518,7 @@ namespace Lucene.Net.Index
             }
         }
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_X
         [Slow]
 #endif
         [Test]
