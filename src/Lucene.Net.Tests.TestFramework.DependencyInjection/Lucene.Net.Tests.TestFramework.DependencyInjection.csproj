@@ -24,6 +24,9 @@
   <Import Project="$(SolutionDir)TestTargetFramework.props" />
 
   <PropertyGroup>
+    <TargetFrameworks></TargetFrameworks>
+    <TargetFramework>net48</TargetFramework>
+    
     <AssemblyTitle>Lucene.Net.Tests.TestFramework.DependencyInjection</AssemblyTitle>
     <RootNamespace>Lucene.Net</RootNamespace>
 
