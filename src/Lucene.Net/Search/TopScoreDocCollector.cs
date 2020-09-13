@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search
 {
@@ -46,6 +47,9 @@ namespace Lucene.Net.Search
             {
             }
 
+#if NETFRAMEWORK
+            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled
+#endif
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
@@ -89,6 +93,9 @@ namespace Lucene.Net.Search
                 this.after = after;
             }
 
+#if NETFRAMEWORK
+            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled
+#endif
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
@@ -146,6 +153,9 @@ namespace Lucene.Net.Search
             {
             }
 
+#if NETFRAMEWORK
+            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled
+#endif
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
@@ -189,6 +199,9 @@ namespace Lucene.Net.Search
                 this.after = after;
             }
 
+#if NETFRAMEWORK
+            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled
+#endif
             public override void Collect(int doc)
             {
                 float score = scorer.GetScore();
@@ -302,7 +315,7 @@ namespace Lucene.Net.Search
             // it means the largest element is already in results, use its score as
             // maxScore. Otherwise pop everything else, until the largest element is
             // extracted and use its score as maxScore.
-            float maxScore = float.NaN;
+            float maxScore/* = float.NaN*/; // LUCENENET: Removed unnecessary assignment
             if (start == 0)
             {
                 maxScore = results[0].Score;
