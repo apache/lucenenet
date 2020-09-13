@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Sandbox.Queries
 {
@@ -120,6 +121,9 @@ namespace Lucene.Net.Sandbox.Queries
             /// where distance is the Levenshtein distance for the two words.
             /// </para>
             /// </summary>
+#if NETFRAMEWORK
+            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled. Fixes TestTokenLengthOpt.
+#endif
             protected override sealed AcceptStatus Accept(BytesRef term)
             {
                 if (StringHelper.StartsWith(term, prefixBytesRef))

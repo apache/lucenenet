@@ -6,6 +6,7 @@ using Lucene.Net.Search.Similarities;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Sandbox.Queries
@@ -363,6 +364,9 @@ namespace Lucene.Net.Sandbox.Queries
             /// (non-Javadoc)
             /// <see cref="Util.PriorityQueue{T}.LessThan(T, T)"/>
             /// </summary>
+#if NETFRAMEWORK
+            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing score equality fails in x86 on .NET Framework with optimizations enabled
+#endif
             protected internal override bool LessThan(ScoreTerm termA, ScoreTerm termB)
             {
                 if (termA.Score == termB.Score)
