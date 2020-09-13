@@ -7,6 +7,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -381,6 +382,9 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Finds the smallest Lev(n) DFA that accepts the term. </summary>
+#if NETFRAMEWORK
+            [MethodImpl(MethodImplOptions.NoOptimization)] // LUCENENET specific: comparing float equality fails in x86 on .NET Framework with optimizations enabled, and is causing the TestTokenLengthOpt test to fail
+#endif
             protected override AcceptStatus Accept(BytesRef term)
             {
                 //System.out.println("AFTE.accept term=" + term);
