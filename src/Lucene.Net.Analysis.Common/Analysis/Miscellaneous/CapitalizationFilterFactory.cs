@@ -38,6 +38,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// minWordLength is 3, "and" > "And" but "or" stays "or"<para/>
     /// "maxWordCount" - if the token contains more then maxWordCount words, the capitalization is
     /// assumed to be correct.<para/>
+    /// "culture" - the culture to use to apply the capitalization rules. If not supplied or the string
+    /// "invariant" is supplied, the invariant culture is used.<para/>
     /// 
     /// <code>
     /// &lt;fieldType name="text_cptlztn" class="solr.TextField" positionIncrementGap="100"&gt;

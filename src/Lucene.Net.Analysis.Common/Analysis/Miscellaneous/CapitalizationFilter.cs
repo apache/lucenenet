@@ -50,10 +50,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
         // invariant culture (which makes this class more generally useful).
         // Per MSDN, InvariantCulture shouldn't be used for cases such as this:
         // https://msdn.microsoft.com/en-us/library/dd465121(v=vs.110).aspx
+        // However, it would seem unnatural to rely on the current culture as a default
+        // when choosing a filter or analyzer. To match the behavior of other filters,
+        // the invariant culture is used as a default, but we added constructors so the
+        // user can specify to override the behavior, if needed.
         private readonly CultureInfo culture;
 
         /// <summary>
-        /// Creates a <see cref="CapitalizationFilter"/> with the default parameters using the culture from the current thread.
+        /// Creates a <see cref="CapitalizationFilter"/> with the default parameters using the invariant culture.
         /// <para>
         /// Calls <see cref="CapitalizationFilter.CapitalizationFilter(TokenStream, bool, CharArraySet, bool, ICollection{char[]}, int, int, int)">
         ///     CapitalizationFilter(in, true, null, true, null, 0, DEFAULT_MAX_WORD_COUNT, DEFAULT_MAX_TOKEN_LENGTH, null)
@@ -74,7 +78,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </para>
         /// </summary>
         /// <param name="in"> input tokenstream </param>
-        /// <param name="culture"> The culture to use for the casing operation. If null, the culture of the current thread will be used. </param>
+        /// <param name="culture"> The culture to use for the casing operation. If null, <see cref="CultureInfo.InvariantCulture"/> will be used. </param>
         // LUCENENET specific overload for specifying culture instead of using
         // invariant culture (which makes this class more generally useful).
         public CapitalizationFilter(TokenStream @in, CultureInfo culture)
@@ -83,7 +87,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         }
 
         /// <summary>
-        /// Creates a <see cref="CapitalizationFilter"/> with the specified parameters using the culture from the current thread.</summary>
+        /// Creates a <see cref="CapitalizationFilter"/> with the specified parameters using the invariant culture.</summary>
         /// <param name="in"> input tokenstream </param>
         /// <param name="onlyFirstWord"> should each word be capitalized or all of the words? </param>
         /// <param name="keep"> a keep word list.  Each word that should be kept separated by whitespace. </param>
@@ -111,7 +115,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="maxWordCount"> if the token contains more then maxWordCount words, the capitalization is
         ///                     assumed to be correct. </param>
         /// <param name="maxTokenLength"> The maximum length for an individual token. Tokens that exceed this length will not have the capitalization operation performed. </param>
-        /// <param name="culture"> The culture to use for the casing operation. If null, the culture of the current thread will be used. </param>
+        /// <param name="culture"> The culture to use for the casing operation. If null, <see cref="CultureInfo.InvariantCulture"/> will be used. </param>
         // LUCENENET specific overload for specifying culture instead of using
         // invariant culture (which makes this class more generally useful).
         public CapitalizationFilter(TokenStream @in, bool onlyFirstWord, CharArraySet keep, bool forceFirstLetter, ICollection<char[]> okPrefix, int minWordLength, int maxWordCount, int maxTokenLength, CultureInfo culture)
@@ -140,7 +144,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             this.minWordLength = minWordLength;
             this.maxWordCount = maxWordCount;
             this.maxTokenLength = maxTokenLength;
-            this.culture = culture;
+            this.culture = culture ?? CultureInfo.InvariantCulture;
             termAtt = AddAttribute<ICharTermAttribute>();
         }
 
@@ -208,7 +212,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 for (int i = 0; i < length; i++)
                 {
-                    buffer[offset + i] = Culture.TextInfo.ToLower(buffer[offset + i]);
+                    buffer[offset + i] = culture.TextInfo.ToLower(buffer[offset + i]);
                 }
                 return;
             }
@@ -217,7 +221,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 if (wordCount == 0 && forceFirstLetter)
                 {
-                    buffer[offset] = Culture.TextInfo.ToUpper(buffer[offset]);
+                    buffer[offset] = culture.TextInfo.ToUpper(buffer[offset]);
                 }
                 return;
             }
@@ -254,19 +258,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /*char[] chars = w.toCharArray();
             StringBuilder word = new StringBuilder( w.length() );
             word.append( Character.toUpperCase( chars[0] ) );*/
-            buffer[offset] = Culture.TextInfo.ToUpper(buffer[offset]);
+            buffer[offset] = culture.TextInfo.ToUpper(buffer[offset]);
 
             for (int i = 1; i < length; i++)
             {
-                buffer[offset + i] = Culture.TextInfo.ToLower(buffer[offset + i]);
+                buffer[offset + i] = culture.TextInfo.ToLower(buffer[offset + i]);
             }
             //return word.toString();
         }
-
-        // LUCENENET specific - we get the culture from the current thread if it wasn't
-        // provided in the constructor. This allows us to change the culture on the current
-        // thread and work like other .NET components. But culture can be overridden by
-        // passing it to the constructor.
-        private CultureInfo Culture => culture ?? CultureInfo.CurrentCulture;
     }
 }
