@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(text, hitDoc.Get("fieldname"));
                         if (Debugging.AssertsEnabled) Debugging.Assert(ireader.Leaves.Count == 1);
                         NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv");
-                        Assert.AreEqual((long)J2N.BitConversion.SingleToInt32Bits(5.7f), dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - cast required because types don't match (xUnit checks this)
+                        Assert.AreEqual((long)J2N.BitConversion.SingleToRawInt32Bits(5.7f), dv.Get(hits.ScoreDocs[i].Doc)); // LUCENENET specific - cast required because types don't match (xUnit checks this)
                     }
                 } // ireader.Dispose();
             } // directory.Dispose();

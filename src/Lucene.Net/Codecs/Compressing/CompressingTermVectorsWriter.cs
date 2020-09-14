@@ -708,7 +708,7 @@ namespace Lucene.Net.Codecs.Compressing
             // start offsets
             for (int i = 0; i < fieldNums.Length; ++i)
             {
-                vectorsStream.WriteInt32(J2N.BitConversion.SingleToInt32Bits(charsPerTerm[i]));
+                vectorsStream.WriteInt32(J2N.BitConversion.SingleToRawInt32Bits(charsPerTerm[i]));
             }
 
             writer.Reset(vectorsStream);
