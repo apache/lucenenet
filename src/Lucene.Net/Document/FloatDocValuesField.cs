@@ -43,13 +43,13 @@ namespace Lucene.Net.Documents
         /// <param name="value"> 32-bit <see cref="float"/> value </param>
         /// <exception cref="ArgumentNullException"> if the field name is <c>null</c> </exception>
         public SingleDocValuesField(string name, float value)
-            : base(name, BitConversion.SingleToInt32Bits(value))
+            : base(name, BitConversion.SingleToRawInt32Bits(value))
         {
         }
 
         public override void SetSingleValue(float value)
         {
-            base.SetInt64Value(BitConversion.SingleToInt32Bits(value));
+            base.SetInt64Value(BitConversion.SingleToRawInt32Bits(value));
         }
 
         public override void SetInt64Value(long value)
