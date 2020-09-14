@@ -35,10 +35,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
   </ItemGroup>
 
@@ -58,24 +54,8 @@
     <PackageReference Include="System.Reflection.TypeExtensions" Version="$(SystemReflectionTypeExtensionsPackageVersion)" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net45' ">
-    <Compile Remove="Properties\Settings.Designer.cs" />
+  <ItemGroup>
     <EmbeddedResource Include="JS\JavascriptCompiler.properties" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
 </Project>

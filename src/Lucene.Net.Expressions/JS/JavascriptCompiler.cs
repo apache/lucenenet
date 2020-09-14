@@ -7,17 +7,13 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using JCG = J2N.Collections.Generic;
 using J2N;
-
-#if NETSTANDARD
-using System.IO;
-#else
-using System.Configuration;
-#endif
+using System.Text;
 
 namespace Lucene.Net.Expressions.JS
 {
@@ -166,11 +162,7 @@ namespace Lucene.Net.Expressions.JS
         /// <param name="functions">The set of functions to compile with</param>
         private JavascriptCompiler(string sourceText, IDictionary<string, MethodInfo> functions)
         {
-            if (sourceText == null)
-            {
-                throw new ArgumentNullException();
-            }
-            this.sourceText = sourceText;
+            this.sourceText = sourceText ?? throw new ArgumentNullException(nameof(sourceText));
             this.functions = functions;
         }
 
@@ -657,31 +649,11 @@ namespace Lucene.Net.Expressions.JS
 
         private static IDictionary<string, string> GetDefaultSettings()
         {
-#if NETSTANDARD
             var settings = new Dictionary<string, string>();
             var type = typeof(JavascriptCompiler);
-            using (var reader = new StreamReader(type.FindAndGetManifestResourceStream(type.Name + ".properties")))
-            {
-                string line;
-                while(!string.IsNullOrWhiteSpace(line = reader.ReadLine()))
-                {
-                    if (line.StartsWith("#", StringComparison.Ordinal) || !line.Contains('='))
-                    {
-                        continue;
-                    }
-                    var parts = line.Split('=').Select(x => x.Trim()).ToArray();
-                    settings[parts[0]] = parts[1];
-                }
-            }
+            using  (var reader = new StreamReader(type.FindAndGetManifestResourceStream(type.Name + ".properties"), Encoding.UTF8))
+                settings.LoadProperties(reader);
             return settings;
-#else
-            var props = Properties.Settings.Default;
-
-            return props.Properties
-                .Cast<SettingsProperty>()
-                .ToDictionary(key => key.Name, value => props[value.Name].ToString());
-#endif
-
         }
 
         private static void CheckFunction(MethodInfo method)
