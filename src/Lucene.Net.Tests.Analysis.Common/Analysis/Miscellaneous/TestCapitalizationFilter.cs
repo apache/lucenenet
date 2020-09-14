@@ -73,8 +73,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
         internal static void AssertCapitalizesTo(Tokenizer tokenizer, string[] expected, bool onlyFirstWord, CharArraySet keep, bool forceFirstLetter, ICollection<char[]> okPrefix, int minWordLength, int maxWordCount, int maxTokenLength)
         {
             CapitalizationFilter filter = new CapitalizationFilter(tokenizer, onlyFirstWord, keep, forceFirstLetter, okPrefix, minWordLength, maxWordCount, maxTokenLength,
-                // LUCENENET specific - pass in the invariant culture to get the same behavior as Lucene,
-                // otherwise the filter is culture-sensitive.
+                // LUCENENET specific - pass in the invariant culture to get the same behavior as Lucene.
+                // This is the default, but it makes the test more readable.
                 CultureInfo.InvariantCulture);
             AssertTokenStreamContents(filter, expected);
         }
