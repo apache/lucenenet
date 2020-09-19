@@ -9,11 +9,11 @@ Making a release of Lucene.Net
 
 ## Versioning
 
-For Package Version, Nuget version and branch naming guidelines see the [Versioning Procedure Overview](xref:contributing/versioning) document. 
+For Package Version, NuGet version and branch naming guidelines see the [Versioning Procedure Overview](xref:contributing/versioning) document. 
 
 ## Release Preparation
 
-- Nominate a release manager (must be a Lucene.NET committer)
+- Nominate a release manager (must be a Lucene.NET committer).
 
 - Review all GitHub issues associated with the release milestone. All issues should be resolved or closed.
 
@@ -23,7 +23,7 @@ For Package Version, Nuget version and branch naming guidelines see the [Version
 
 The following steps need only to be performed once.
 
-- Install the [Java Runtime Environment](https://www.oracle.com/java/technologies/javase-jre8-downloads.html)
+- Install the [Java Runtime Environment](https://www.oracle.com/java/technologies/javase-jre8-downloads.html). This is a dependency of the Release Audit Tool.
 
 - Install a subversion command line client, such as [TortoiseSVN](https://tortoisesvn.net/downloads.html)
 
@@ -85,13 +85,13 @@ The following steps need only to be performed once.
     git push <remote> master --tags
     ```
 
-- Execute a complete test locally (it can take up to an hour, but you may do the next step in parallel): 
+- Execute a complete test locally (it can take around 20 minutes, but you may do the next step in parallel): 
 
   ```powershell
   build -pv:<packageVersion> -t -mp:10
   ```
 
-- Execute a complete test on a temporary Azure DevOps organization (it can take up to an hour) (see [build instructions on README.md](https://github.com/apache/lucenenet#azure-devops)).
+- Execute a complete test on a temporary Azure DevOps organization (it can take around 30-40 minutes) (see [build instructions on README.md](https://github.com/apache/lucenenet#azure-devops)).
 
 
 ## Successful Release Preparation
@@ -110,7 +110,21 @@ The following steps need only to be performed once.
 
 - Click the back arrow to return to the main view
 
-- Click the `Run` button to begin the build (it will take about an hour)
+- Click the `Run` button to begin the build (it will take about 40 minutes)
+
+
+### Check the Release Artifacts
+
+- Upon successful Azure DevOps build, download the `release` build artifact and unzip it. Note you will need to copy the files in a later step.
+
+Perform basic checks against the release binary:
+
+- Check presence and appropriateness of LICENSE, NOTICE, and README files.
+
+- Check the `nupkg` files to ensure they can be referenced in Visual Studio.
+
+
+### Sign the Release
 
 - On your local Git clone, check out the SVN distribution repositories
 
@@ -118,7 +132,7 @@ The following steps need only to be performed once.
   dotnet msbuild -t:CheckoutRelease
   ```
 
-- Upon successful Azure DevOps build, download the `release` build artifact, which contains the release binaries and copy both the `.src.zip` and `.bin.zip` files to a new folder named `<repo root>/svn-dev/<packageVersion>/`
+- From the `release` build artifact that you downloaded from Azure DevOps in the **Check the Release Artifacts** section, copy both the `.src.zip` and `.bin.zip` files to a new folder named `<repo root>/svn-dev/<packageVersion>/`
 
 - On your local Git clone, tag the repository using the info in `RELEASE-TODO.txt`
   - `git log`
@@ -136,14 +150,6 @@ The following steps need only to be performed once.
   > You may be prompted for your password
 
 - Check signature of generated artifacts (the `SignReleaseCandidate` target above runs the commands)
-
-### Check the Release Artifacts
-
-Perform basic checks against the release binary:
-
-- Check presence and appropriateness of LICENSE, NOTICE, and README files.
-
-- Check the `nupkg` files to ensure they can be referenced in Visual Studio.
 
 
 ### Add Release Artifacts to the SVN `dev` Distribution Repository
@@ -174,7 +180,7 @@ The release was made from the Apache Lucene.NET [version] tag at:
 https://github.com/apache/lucenenet/tree/[tag]
 
 The release notes are listed at:
-https://github.com/apache/lucenenet/releases/tag/[tag-url]"
+https://github.com/apache/lucenenet/releases/tag/[tag-url]
 
 The release was made using the Lucene.NET release process, documented on the website:
 https://lucenenet.apache.org/contributing/make-release.html
@@ -188,6 +194,7 @@ Only votes from Lucene.NET PMC are binding, but everyone is welcome to check the
 The vote passes if at least three binding +1 votes are cast.
 
 [ ] +1 Release the packages as Apache Lucene.NET [VERSION]
+
 [ ] -1 Do not release the packages because...
 
 ```
@@ -240,6 +247,17 @@ Commit the distribution via SVN to [https://dist.apache.org/repos/dist/release](
 dotnet msbuild -t:CommitRelease -p:PackageVersion=<packageVersion>
 ```
 
+> [!NOTE]
+> If preferred or if the above command fails, this step can be done manually using Windows Explorer/TortoiseSVN by doing the following steps:
+> 
+> * Copy `<repo root>/svn-dev/KEYS` to `<repo root>/svn-release/KEYS`
+> * Copy `<repo root>/svn-dev/<packageVersion>` to `<repo root>/svn-release/<packageVersion>`
+> * Right-click on `<repo root>/svn-release`, and click "SVN Commit..."
+> * Add the commit message `Added Apache-Lucene.Net-<packageVersion> to release/lucenenet` and click OK
+> * Right-click on `<repo root>/svn-dev/<packageVersion>` and click "TortoiseSVN > Delete"
+> * Right-click on `<repo root>/svn-dev` and click "SVN Commit..."
+> * Add the commit message `Removed Apache-Lucene.Net-<packageVersion> from dev/lucenenet` and click OK
+
 ### Archive Old Release(s)
 
 To reduce the load on the ASF mirrors, projects are required to delete old releases (see http://www.apache.org/legal/release-policy.html#when-to-archive).
@@ -277,7 +295,7 @@ Remove the old releases from SVN under https://dist.apache.org/repos/dist/releas
 
 - Publish the Draft [GitHub Release](https://github.com/apache/lucenenet/releases) that was [created earlier](#release-steps), updating the tag if necessary
 
-- Send announcement email
+- Send announcement email 24 hours after the release (to ensure the mirrors have propagated the download locations)
 
   > [!IMPORTANT]
   > Only include announce@apache.org if it is a stable release version
