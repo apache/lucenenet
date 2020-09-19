@@ -117,7 +117,7 @@ There is also a dotnet command line tool available on NuGet. It contains all of 
 - [Prerequisite: .NET Core 3.1.0 Runtime](https://www.microsoft.com/net/download/core#/runtime)
 
 ```
-dotnet tool install lucene-cli -g --version 4.8.0-beta00007
+dotnet tool install lucene-cli -g --version 4.8.0-beta00012
 ```
 
 Once installed, you can explore the commands and options that are available by entering the command `lucene`.
