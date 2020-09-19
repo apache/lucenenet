@@ -80,7 +80,7 @@ The process overview is:
 * Run the documentation build script to produce the documentation site
 * Publish the output to the [`lucenenet-site`](https://github.com/apache/lucenenet-site) repository into a correpsonding named version directory
 
-We don't want to manually change the converted resulting markdown files (`.md`) because they would get overwritten again when the conversion process is re-executed. Therefor to fix any formatting issues or customized output of the project docs, these customizations/fixes/tweaks are built directly in to the conversion process itself in the `JavaDocToMarkdownConverter.csproj` project.
+We don't want to manually change the converted resulting markdown files (`.md`) because they would get overwritten again when the conversion process is re-executed. Therefore to fix any formatting issues or customized output of the project docs, these customizations/fixes/tweaks are built directly into the conversion process itself in the `JavaDocToMarkdownConverter.csproj` project.
 
 ### Building the docs
 
