@@ -48,9 +48,11 @@ writer.Flush(triggerMerge: false, applyAllDeletes: false);
 <p class="text-center">Construct a query</p>
 <pre class="clean">
 <code class="csharp">// search with a phrase
-var phrase = new MultiPhraseQuery();
-phrase.Add(new Term("favoritePhrase", "brown"));
-phrase.Add(new Term("favoritePhrase", "fox"));
+var phrase = new MultiPhraseQuery
+{
+    new Term("favoritePhrase", "brown");
+    new Term("favoritePhrase", "fox");
+};
 </code>
 </pre>
 </div>                    
