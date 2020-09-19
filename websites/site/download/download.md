@@ -7,6 +7,12 @@ Download Lucene.Net
 
 ---------------
 
+## [Lucene 4.8.0-beta00012](xref:download/4.8.0-beta00012)
+
+_Status:_ __`Beta`__
+
+_Released:_ `2020-09-19`
+
 ## [Lucene 4.8.0-beta00011](xref:download/4.8.0-beta00011)
 
 _Status:_ __`Beta`__
