@@ -32,6 +32,7 @@ namespace Lucene.Net.Tests.BenchmarkDotNet
             {
                 var baseJob = Job.MediumRun;
 
+                AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00012").WithNuGet("Lucene.Net.Facet", "4.8.0-beta00012").WithId("4.8.0-beta00012"));
                 AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00011").WithNuGet("Lucene.Net.Facet", "4.8.0-beta00011").WithId("4.8.0-beta00011"));
                 AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00010").WithNuGet("Lucene.Net.Facet", "4.8.0-beta00010").WithId("4.8.0-beta00010"));
                 AddJob(baseJob.WithNuGet("Lucene.Net.Analysis.Common", "4.8.0-beta00009").WithNuGet("Lucene.Net.Facet", "4.8.0-beta00009").WithId("4.8.0-beta00009"));
