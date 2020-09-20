@@ -14,8 +14,8 @@ _Status:_ __`Beta`__
 
 _Released:_ `2020-07-01`
 
+* Binary release: __[Lucene.Net-4.8.0-beta00009.bin.zip](https://www.apache.org/dyn/closer.lua/lucenenet/4.8.0-beta00009/Apache-Lucene.Net-4.8.0-beta00009.bin.zip)__ [[PGP](https://downloads.apache.org/lucenenet/4.8.0-beta00009/Apache-Lucene.Net-4.8.0-beta00009.bin.zip.asc)] [[SHA512](https://downloads.apache.org/lucenenet/4.8.0-beta00009/Apache-Lucene.Net-4.8.0-beta00009.bin.zip.sha512)]
 * Source release: __[Lucene.Net-4.8.0-beta00009.src.zip](https://www.apache.org/dyn/closer.lua/lucenenet/4.8.0-beta00009/Apache-Lucene.Net-4.8.0-beta00009.src.zip)__ [[PGP](https://downloads.apache.org/lucenenet/4.8.0-beta00009/Apache-Lucene.Net-4.8.0-beta00009.src.zip.asc)] [[SHA512](https://downloads.apache.org/lucenenet/4.8.0-beta00009/Apache-Lucene.Net-4.8.0-beta00009.src.zip.sha512)]
-* Binary release: __[Lucene.Net-4.8.0-beta00009.src.zip](https://www.apache.org/dyn/closer.lua/lucenenet/4.8.0-beta00009/Apache-Lucene.Net-4.8.0-beta00009.bin.zip)__ [[PGP](https://downloads.apache.org/lucenenet/4.8.0-beta00009/Apache-Lucene.Net-4.8.0-beta00009.bin.zip.asc)] [[SHA512](https://downloads.apache.org/lucenenet/4.8.0-beta00009/Apache-Lucene.Net-4.8.0-beta00009.bin.zip.sha512)]
 *  [Change log](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_4_8_0_beta00009)
 
 <div class="nuget-well" style="text-align:left;">

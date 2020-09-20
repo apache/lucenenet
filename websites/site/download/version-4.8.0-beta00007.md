@@ -13,8 +13,8 @@ _Status:_ __`Beta`__
 
 _Released:_ `2019-12-29`
 
+* Binary release: __[Lucene.Net-4.8.0-beta00007.bin.zip](https://www.apache.org/dyn/closer.lua/lucenenet/4.8.0-beta00007/Apache-Lucene.Net-4.8.0-beta00007.bin.zip)__ [[PGP](https://downloads.apache.org/lucenenet/4.8.0-beta00007/Apache-Lucene.Net-4.8.0-beta00007.bin.zip.asc)] [[SHA512](https://downloads.apache.org/lucenenet/4.8.0-beta00007/Apache-Lucene.Net-4.8.0-beta00007.bin.zip.sha512)]
 * Source release: __[Lucene.Net-4.8.0-beta00007.src.zip](https://www.apache.org/dyn/closer.lua/lucenenet/4.8.0-beta00007/Apache-Lucene.Net-4.8.0-beta00007.src.zip)__ [[PGP](https://downloads.apache.org/lucenenet/4.8.0-beta00007/Apache-Lucene.Net-4.8.0-beta00007.src.zip.asc)] [[SHA512](https://downloads.apache.org/lucenenet/4.8.0-beta00007/Apache-Lucene.Net-4.8.0-beta00007.src.zip.sha512)]
-* Binary release: __[Lucene.Net-4.8.0-beta00007.src.zip](https://www.apache.org/dyn/closer.lua/lucenenet/4.8.0-beta00007/Apache-Lucene.Net-4.8.0-beta00007.bin.zip)__ [[PGP](https://downloads.apache.org/lucenenet/4.8.0-beta00007/Apache-Lucene.Net-4.8.0-beta00007.bin.zip.asc)] [[SHA512](https://downloads.apache.org/lucenenet/4.8.0-beta00007/Apache-Lucene.Net-4.8.0-beta00007.bin.zip.sha512)]
 
 <div class="nuget-well" style="text-align:left;">
     PM> Install-Package Lucene.Net -Version 4.8.0-beta00007
