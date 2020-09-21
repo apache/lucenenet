@@ -58,16 +58,16 @@ namespace Lucene.Net.Search
     /// </summary>
     internal class FieldCacheImpl : IFieldCache
     {
-        Cache caches_typeof_sbyte;
-        Cache caches_typeof_short;
-        Cache caches_typeof_int;
-        Cache caches_typeof_float;
-        Cache caches_typeof_long;
-        Cache caches_typeof_double;
-        Cache caches_typeof_BinaryDocValues;
-        Cache caches_typeof_SortedDocValues;
-        Cache caches_typeof_DocTermOrds;
-        Cache caches_typeof_DocsWithFieldCache;
+        private Cache caches_typeof_sbyte;
+        private Cache caches_typeof_short;
+        private Cache caches_typeof_int;
+        private Cache caches_typeof_float;
+        private Cache caches_typeof_long;
+        private Cache caches_typeof_double;
+        private Cache caches_typeof_BinaryDocValues;
+        private Cache caches_typeof_SortedDocValues;
+        private Cache caches_typeof_DocTermOrds;
+        private Cache caches_typeof_DocsWithFieldCache;
         internal FieldCacheImpl()
         {
             Init();
