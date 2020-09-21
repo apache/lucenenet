@@ -58,8 +58,16 @@ namespace Lucene.Net.Search
     /// </summary>
     internal class FieldCacheImpl : IFieldCache
     {
-        private IDictionary<Type, Cache> caches;
-
+        Cache caches_typeof_sbyte;
+        Cache caches_typeof_short;
+        Cache caches_typeof_int;
+        Cache caches_typeof_float;
+        Cache caches_typeof_long;
+        Cache caches_typeof_double;
+        Cache caches_typeof_BinaryDocValues;
+        Cache caches_typeof_SortedDocValues;
+        Cache caches_typeof_DocTermOrds;
+        Cache caches_typeof_DocsWithFieldCache;
         internal FieldCacheImpl()
         {
             Init();
@@ -73,17 +81,16 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
-                caches = new Dictionary<Type, Cache>(9);
-                caches[typeof(sbyte)] = new ByteCache(this);
-                caches[typeof(short)] = new Int16Cache(this);
-                caches[typeof(int)] = new Int32Cache(this);
-                caches[typeof(float)] = new SingleCache(this);
-                caches[typeof(long)] = new Int64Cache(this);
-                caches[typeof(double)] = new DoubleCache(this);
-                caches[typeof(BinaryDocValues)] = new BinaryDocValuesCache(this);
-                caches[typeof(SortedDocValues)] = new SortedDocValuesCache(this);
-                caches[typeof(DocTermOrds)] = new DocTermOrdsCache(this);
-                caches[typeof(DocsWithFieldCache)] = new DocsWithFieldCache(this);
+                caches_typeof_sbyte              = new ByteCache(this);
+                caches_typeof_short              = new Int16Cache(this);
+                caches_typeof_int                = new Int32Cache(this);
+                caches_typeof_float              = new SingleCache(this);
+                caches_typeof_long               = new Int64Cache(this);
+                caches_typeof_double             = new DoubleCache(this);
+                caches_typeof_BinaryDocValues    = new BinaryDocValuesCache(this);
+                caches_typeof_SortedDocValues    = new SortedDocValuesCache(this);
+                caches_typeof_DocTermOrds        = new DocTermOrdsCache(this);
+                caches_typeof_DocsWithFieldCache = new DocsWithFieldCache(this);
             }
         }
 
@@ -95,13 +102,27 @@ namespace Lucene.Net.Search
             }
         }
 
+        private IEnumerable<KeyValuePair<Type, Cache>> GetCaches()
+        {
+            yield return new KeyValuePair<Type, Cache>(typeof(sbyte), caches_typeof_sbyte);
+            yield return new KeyValuePair<Type, Cache>(typeof(short), caches_typeof_short);
+            yield return new KeyValuePair<Type, Cache>(typeof(int), caches_typeof_int);
+            yield return new KeyValuePair<Type, Cache>(typeof(float), caches_typeof_float);
+            yield return new KeyValuePair<Type, Cache>(typeof(long), caches_typeof_long);
+            yield return new KeyValuePair<Type, Cache>(typeof(double), caches_typeof_double);
+            yield return new KeyValuePair<Type, Cache>(typeof(BinaryDocValues), caches_typeof_BinaryDocValues);
+            yield return new KeyValuePair<Type, Cache>(typeof(SortedDocValues), caches_typeof_SortedDocValues);
+            yield return new KeyValuePair<Type, Cache>(typeof(DocTermOrds), caches_typeof_DocTermOrds);
+            yield return new KeyValuePair<Type, Cache>(typeof(DocsWithFieldCache), caches_typeof_DocsWithFieldCache);
+        }
+
         public virtual void PurgeByCacheKey(object coreCacheKey)
         {
             lock (this)
             {
-                foreach (Cache c in caches.Values)
+                foreach (var kv in GetCaches())
                 {
-                    c.PurgeByCacheKey(coreCacheKey);
+                    kv.Value.PurgeByCacheKey(coreCacheKey);
                 }
             }
         }
@@ -111,7 +132,7 @@ namespace Lucene.Net.Search
             lock (this)
             {
                 IList<FieldCache.CacheEntry> result = new List<FieldCache.CacheEntry>(17);
-                foreach (KeyValuePair<Type, Cache> cacheEntry in caches)
+                foreach (var cacheEntry in GetCaches())
                 {
                     Cache cache = cacheEntry.Value;
                     Type cacheType = cacheEntry.Key;
@@ -482,7 +503,7 @@ namespace Lucene.Net.Search
             {
                 bits = docsWithField;
             }
-            caches[typeof(DocsWithFieldCache)].Put(reader, new CacheKey(field, null), bits);
+            caches_typeof_DocsWithFieldCache.Put(reader, new CacheKey(field, null), bits);
         }
 
         /// <summary>
@@ -528,7 +549,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Bytes.EMPTY;
                 }
-                return (FieldCache.Bytes)caches[typeof(sbyte)].Get(reader, new CacheKey(field, parser), setDocsWithField);
+                return (FieldCache.Bytes)caches_typeof_sbyte.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
 
@@ -697,7 +718,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Int16s.EMPTY;
                 }
-                return (FieldCache.Int16s)caches[typeof(short)].Get(reader, new CacheKey(field, parser), setDocsWithField);
+                return (FieldCache.Int16s)caches_typeof_short.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
 
@@ -870,7 +891,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Int32s.EMPTY;
                 }
-                return (FieldCache.Int32s)caches[typeof(int)].Get(reader, new CacheKey(field, parser), setDocsWithField);
+                return (FieldCache.Int32s)caches_typeof_int.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
 
@@ -1069,7 +1090,7 @@ namespace Lucene.Net.Search
             {
                 return new Lucene.Net.Util.Bits.MatchNoBits(reader.MaxDoc);
             }
-            return (IBits)caches[typeof(DocsWithFieldCache)].Get(reader, new CacheKey(field, null), false);
+            return (IBits)caches_typeof_DocsWithFieldCache.Get(reader, new CacheKey(field, null), false);
         }
 
         internal sealed class DocsWithFieldCache : Cache
@@ -1169,7 +1190,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Singles.EMPTY;
                 }
-                return (FieldCache.Singles)caches[typeof(float)].Get(reader, new CacheKey(field, parser), setDocsWithField);
+                return (FieldCache.Singles)caches_typeof_float.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
 
@@ -1340,7 +1361,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Int64s.EMPTY;
                 }
-                return (FieldCache.Int64s)caches[typeof(long)].Get(reader, new CacheKey(field, parser), setDocsWithField);
+                return (FieldCache.Int64s)caches_typeof_long.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
 
@@ -1523,7 +1544,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Doubles.EMPTY;
                 }
-                return (FieldCache.Doubles)caches[typeof(double)].Get(reader, new CacheKey(field, parser), setDocsWithField);
+                return (FieldCache.Doubles)caches_typeof_double.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
 
@@ -1718,7 +1739,7 @@ namespace Lucene.Net.Search
                 {
                     return DocValues.EMPTY_SORTED;
                 }
-                return (SortedDocValues)caches[typeof(SortedDocValues)].Get(reader, new CacheKey(field, acceptableOverheadRatio), false);
+                return (SortedDocValues)caches_typeof_SortedDocValues.Get(reader, new CacheKey(field, acceptableOverheadRatio), false);
             }
         }
 
@@ -1884,7 +1905,7 @@ namespace Lucene.Net.Search
                 return DocValues.EMPTY_BINARY;
             }
 
-            return (BinaryDocValues)caches[typeof(BinaryDocValues)].Get(reader, new CacheKey(field, acceptableOverheadRatio), setDocsWithField);
+            return (BinaryDocValues)caches_typeof_BinaryDocValues.Get(reader, new CacheKey(field, acceptableOverheadRatio), setDocsWithField);
         }
 
         internal sealed class BinaryDocValuesCache : Cache
@@ -2036,7 +2057,7 @@ namespace Lucene.Net.Search
                 return DocValues.EMPTY_SORTED_SET;
             }
 
-            DocTermOrds dto = (DocTermOrds)caches[typeof(DocTermOrds)].Get(reader, new CacheKey(field, null), false);
+            DocTermOrds dto = (DocTermOrds)caches_typeof_DocTermOrds.Get(reader, new CacheKey(field, null), false);
             return dto.GetIterator(reader);
         }
 
