@@ -265,7 +265,7 @@ namespace Lucene.Net.Support.IO
             byte[] result = Encoding.UTF8.GetBytes(absPath);
 
             string canonPath;
-            if (fileCanonPathCache.TryGetValue(absPath, out canonPath) && canonPathis object)
+            if (fileCanonPathCache.TryGetValue(absPath, out canonPath) && canonPath is object)
             {
                 return canonPath;
             }
