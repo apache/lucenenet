@@ -36,18 +36,18 @@ namespace Lucene.Net.Diagnostics
         /// </summary>
         /// 
 
-        private static readonly Lazy<bool> _assertsEnabled = new Lazy<bool>(() => SystemProperties.GetPropertyAsBoolean("assert", false));
+        private static Lazy<bool> _assertsEnabled = new Lazy<bool>(() => SystemProperties.GetPropertyAsBoolean("assert", false));
 
         public static bool AssertsEnabled
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-#if DEBUG
                 return _assertsEnabled.Value;
-#else
-                return false;
-#endif
+            }
+            set
+            {
+                _assertsEnabled = new Lazy<bool>(() => value);
             }
         }
 

@@ -443,17 +443,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public void And(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID == -1)
+            if (iter is OpenBitSetIterator obs && iter.DocID == -1)
             {
-                OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 And(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
             }
-            else if (iter is FixedBitSetIterator && iter.DocID == -1)
+            else if (iter is FixedBitSetIterator fbs && iter.DocID == -1)
             {
-                FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
                 And(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
