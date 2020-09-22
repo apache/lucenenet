@@ -58,6 +58,7 @@ namespace Lucene.Net.Search
     /// </summary>
     internal class FieldCacheImpl : IFieldCache
     {
+        // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
         private Cache caches_typeof_sbyte;
         private Cache caches_typeof_short;
         private Cache caches_typeof_int;
@@ -81,6 +82,7 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
+                // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 caches_typeof_sbyte              = new ByteCache(this);
                 caches_typeof_short              = new Int16Cache(this);
                 caches_typeof_int                = new Int32Cache(this);
@@ -102,6 +104,7 @@ namespace Lucene.Net.Search
             }
         }
 
+        // LUCENENET specific - added GetCaches() to allow looping over the caches even though they are no longer in a collection
         private IEnumerable<KeyValuePair<Type, Cache>> GetCaches()
         {
             yield return new KeyValuePair<Type, Cache>(typeof(sbyte), caches_typeof_sbyte);
@@ -120,6 +123,7 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
+                // LUCENENET specific - added GetCaches() to allow looping over the caches even though they are no longer in a collection
                 foreach (var kv in GetCaches())
                 {
                     kv.Value.PurgeByCacheKey(coreCacheKey);
@@ -132,6 +136,7 @@ namespace Lucene.Net.Search
             lock (this)
             {
                 IList<FieldCache.CacheEntry> result = new List<FieldCache.CacheEntry>(17);
+                // LUCENENET specific - added GetCaches() to allow looping over the caches even though they are no longer in a collection
                 foreach (var cacheEntry in GetCaches())
                 {
                     Cache cache = cacheEntry.Value;
@@ -502,6 +507,7 @@ namespace Lucene.Net.Search
             {
                 bits = docsWithField;
             }
+            // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
             caches_typeof_DocsWithFieldCache.Put(reader, new CacheKey(field, null), bits);
         }
 
@@ -548,6 +554,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Bytes.EMPTY;
                 }
+                // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Bytes)caches_typeof_sbyte.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
@@ -717,6 +724,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Int16s.EMPTY;
                 }
+                // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Int16s)caches_typeof_short.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
@@ -890,6 +898,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Int32s.EMPTY;
                 }
+                // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Int32s)caches_typeof_int.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
@@ -1089,6 +1098,7 @@ namespace Lucene.Net.Search
             {
                 return new Lucene.Net.Util.Bits.MatchNoBits(reader.MaxDoc);
             }
+            // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
             return (IBits)caches_typeof_DocsWithFieldCache.Get(reader, new CacheKey(field, null), false);
         }
 
@@ -1189,6 +1199,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Singles.EMPTY;
                 }
+                // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Singles)caches_typeof_float.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
@@ -1360,6 +1371,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Int64s.EMPTY;
                 }
+                // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Int64s)caches_typeof_long.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
@@ -1543,6 +1555,7 @@ namespace Lucene.Net.Search
                 {
                     return FieldCache.Doubles.EMPTY;
                 }
+                // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Doubles)caches_typeof_double.Get(reader, new CacheKey(field, parser), setDocsWithField);
             }
         }
@@ -1738,6 +1751,7 @@ namespace Lucene.Net.Search
                 {
                     return DocValues.EMPTY_SORTED;
                 }
+                // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (SortedDocValues)caches_typeof_SortedDocValues.Get(reader, new CacheKey(field, acceptableOverheadRatio), false);
             }
         }
@@ -1904,6 +1918,7 @@ namespace Lucene.Net.Search
                 return DocValues.EMPTY_BINARY;
             }
 
+            // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
             return (BinaryDocValues)caches_typeof_BinaryDocValues.Get(reader, new CacheKey(field, acceptableOverheadRatio), setDocsWithField);
         }
 
@@ -2056,6 +2071,7 @@ namespace Lucene.Net.Search
                 return DocValues.EMPTY_SORTED_SET;
             }
 
+            // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
             DocTermOrds dto = (DocTermOrds)caches_typeof_DocTermOrds.Get(reader, new CacheKey(field, null), false);
             return dto.GetIterator(reader);
         }
