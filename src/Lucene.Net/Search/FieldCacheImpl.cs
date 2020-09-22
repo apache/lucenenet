@@ -824,7 +824,7 @@ namespace Lucene.Net.Search
 #pragma warning restore 612, 618
 
                 values = new short[maxDoc];
-                Uninvert u = new UninvertAnonymousInnerClassHelper(this, values, parser);
+                Uninvert u = new UninvertAnonymousInnerClassHelper(values, parser);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -837,16 +837,13 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly Int16Cache outerInstance;
-
-                private short[] values;
+                private readonly short[] values;
 #pragma warning disable 612, 618
-                private FieldCache.IInt16Parser parser;
+                private readonly FieldCache.IInt16Parser parser;
 
-                public UninvertAnonymousInnerClassHelper(Int16Cache outerInstance, short[] values, FieldCache.IInt16Parser parser)
+                public UninvertAnonymousInnerClassHelper(short[] values, FieldCache.IInt16Parser parser)
 #pragma warning restore 612, 618
                 {
-                    this.outerInstance = outerInstance;
                     this.values = values;
                     this.parser = parser;
                 }
@@ -1019,7 +1016,7 @@ namespace Lucene.Net.Search
 
                 HoldsOneThing<GrowableWriterAndMinValue> valuesRef = new HoldsOneThing<GrowableWriterAndMinValue>();
 
-                Uninvert u = new UninvertAnonymousInnerClassHelper(this, reader, parser, valuesRef);
+                Uninvert u = new UninvertAnonymousInnerClassHelper(reader, parser, valuesRef);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -1037,15 +1034,12 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly Int32Cache outerInstance;
+                private readonly AtomicReader reader;
+                private readonly FieldCache.IInt32Parser parser;
+                private readonly FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef;
 
-                private AtomicReader reader;
-                private FieldCache.IInt32Parser parser;
-                private FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef;
-
-                public UninvertAnonymousInnerClassHelper(Int32Cache outerInstance, AtomicReader reader, FieldCache.IInt32Parser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
+                public UninvertAnonymousInnerClassHelper(AtomicReader reader, FieldCache.IInt32Parser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
                 {
-                    this.outerInstance = outerInstance;
                     this.reader = reader;
                     this.parser = parser;
                     this.valuesRef = valuesRef;
@@ -1271,7 +1265,7 @@ namespace Lucene.Net.Search
 
                 HoldsOneThing<float[]> valuesRef = new HoldsOneThing<float[]>();
 
-                Uninvert u = new UninvertAnonymousInnerClassHelper(this, reader, parser, valuesRef);
+                Uninvert u = new UninvertAnonymousInnerClassHelper(reader, parser, valuesRef);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -1290,15 +1284,12 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly SingleCache outerInstance;
+                private readonly AtomicReader reader;
+                private readonly FieldCache.ISingleParser parser;
+                private readonly FieldCacheImpl.HoldsOneThing<float[]> valuesRef;
 
-                private AtomicReader reader;
-                private FieldCache.ISingleParser parser;
-                private FieldCacheImpl.HoldsOneThing<float[]> valuesRef;
-
-                public UninvertAnonymousInnerClassHelper(SingleCache outerInstance, AtomicReader reader, FieldCache.ISingleParser parser, FieldCacheImpl.HoldsOneThing<float[]> valuesRef)
+                public UninvertAnonymousInnerClassHelper(AtomicReader reader, FieldCache.ISingleParser parser, FieldCacheImpl.HoldsOneThing<float[]> valuesRef)
                 {
-                    this.outerInstance = outerInstance;
                     this.reader = reader;
                     this.parser = parser;
                     this.valuesRef = valuesRef;
@@ -1427,7 +1418,7 @@ namespace Lucene.Net.Search
 
                 HoldsOneThing<GrowableWriterAndMinValue> valuesRef = new HoldsOneThing<GrowableWriterAndMinValue>();
 
-                Uninvert u = new UninvertAnonymousInnerClassHelper(this, reader, parser, valuesRef);
+                Uninvert u = new UninvertAnonymousInnerClassHelper(reader, parser, valuesRef);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -1445,15 +1436,12 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly Int64Cache outerInstance;
+                private readonly AtomicReader reader;
+                private readonly FieldCache.IInt64Parser parser;
+                private readonly FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef;
 
-                private AtomicReader reader;
-                private FieldCache.IInt64Parser parser;
-                private FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef;
-
-                public UninvertAnonymousInnerClassHelper(Int64Cache outerInstance, AtomicReader reader, FieldCache.IInt64Parser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
+                public UninvertAnonymousInnerClassHelper(AtomicReader reader, FieldCache.IInt64Parser parser, FieldCacheImpl.HoldsOneThing<GrowableWriterAndMinValue> valuesRef)
                 {
-                    this.outerInstance = outerInstance;
                     this.reader = reader;
                     this.parser = parser;
                     this.valuesRef = valuesRef;
@@ -1585,7 +1573,7 @@ namespace Lucene.Net.Search
 
                 HoldsOneThing<double[]> valuesRef = new HoldsOneThing<double[]>();
 
-                Uninvert u = new UninvertAnonymousInnerClassHelper(this, reader, parser, valuesRef);
+                Uninvert u = new UninvertAnonymousInnerClassHelper(reader, parser, valuesRef);
 
                 u.DoUninvert(reader, key.field, setDocsWithField);
 
@@ -1603,15 +1591,12 @@ namespace Lucene.Net.Search
 
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
-                private readonly DoubleCache outerInstance;
+                private readonly AtomicReader reader;
+                private readonly FieldCache.IDoubleParser parser;
+                private readonly FieldCacheImpl.HoldsOneThing<double[]> valuesRef;
 
-                private AtomicReader reader;
-                private FieldCache.IDoubleParser parser;
-                private FieldCacheImpl.HoldsOneThing<double[]> valuesRef;
-
-                public UninvertAnonymousInnerClassHelper(DoubleCache outerInstance, AtomicReader reader, FieldCache.IDoubleParser parser, FieldCacheImpl.HoldsOneThing<double[]> valuesRef)
+                public UninvertAnonymousInnerClassHelper(AtomicReader reader, FieldCache.IDoubleParser parser, FieldCacheImpl.HoldsOneThing<double[]> valuesRef)
                 {
-                    this.outerInstance = outerInstance;
                     this.reader = reader;
                     this.parser = parser;
                     this.valuesRef = valuesRef;
@@ -1973,7 +1958,7 @@ namespace Lucene.Net.Search
                 PackedInt32s.Reader offsetReader = docToOffset.Mutable;
                 if (setDocsWithField)
                 {
-                    wrapper.SetDocsWithField(reader, key.field, new BitsAnonymousInnerClassHelper(this, maxDoc, offsetReader));
+                    wrapper.SetDocsWithField(reader, key.field, new BitsAnonymousInnerClassHelper(maxDoc, offsetReader));
                 }
                 // maybe an int-only impl?
                 return new BinaryDocValuesImpl(bytes.Freeze(true), offsetReader);
@@ -1981,14 +1966,11 @@ namespace Lucene.Net.Search
 
             private class BitsAnonymousInnerClassHelper : IBits
             {
-                private readonly BinaryDocValuesCache outerInstance;
+                private readonly int maxDoc;
+                private readonly PackedInt32s.Reader offsetReader;
 
-                private int maxDoc;
-                private PackedInt32s.Reader offsetReader;
-
-                public BitsAnonymousInnerClassHelper(BinaryDocValuesCache outerInstance, int maxDoc, PackedInt32s.Reader offsetReader)
+                public BitsAnonymousInnerClassHelper(int maxDoc, PackedInt32s.Reader offsetReader)
                 {
-                    this.outerInstance = outerInstance;
                     this.maxDoc = maxDoc;
                     this.offsetReader = offsetReader;
                 }
