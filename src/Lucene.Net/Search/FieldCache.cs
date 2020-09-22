@@ -995,7 +995,14 @@ namespace Lucene.Net.Search
 
             public Type CacheType => cacheType;
 
+            [Obsolete("Use Parser and AcceptableOverheadRatio instead to eliminate boxing. This property will be removed in 4.8.0 release candidate."), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
             public object Custom => custom;
+
+            // LUCENENET specific - Added property for when custom is an IParser
+            public IParser Parser => custom as IParser;
+
+            // LUCENENET specific - Added AcceptableOverheadRatio to eliminate boxing/unboxing
+            public float? AcceptableOverheadRatio => custom is AcceptableOverheadRatio ratio ? ratio.Value : (float?)null;
 
             public object Value => value;
 
@@ -1020,17 +1027,51 @@ namespace Lucene.Net.Search
                 StringBuilder b = new StringBuilder();
                 b.Append("'").Append(ReaderKey).Append("'=>");
                 b.Append("'").Append(FieldName).Append("',");
-                b.Append(CacheType).Append(",").Append(Custom);
+                b.Append(CacheType).Append(",").Append(custom is null ? "null" : custom.ToString()); // LUCENENET specific: use field instead of property
                 b.Append("=>").Append(Value.GetType().FullName).Append("#");
                 b.Append(RuntimeHelpers.GetHashCode(Value));
 
-                String s = EstimatedSize;
+                string s = EstimatedSize;
                 if (null != s)
                 {
                     b.Append(" (size =~ ").Append(s).Append(')');
                 }
 
                 return b.ToString();
+            }
+        }
+
+        // LUCENENET specific reference type to be used to store float value in the field cache
+        // to avoid boxing/unboxing.
+        internal class AcceptableOverheadRatio
+        {
+            public AcceptableOverheadRatio(float value)
+            {
+                Value = value;
+            }
+
+            public float Value { get; }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is AcceptableOverheadRatio)
+                {
+#pragma warning disable IDE0020 // Use pattern matching
+                    AcceptableOverheadRatio other = (AcceptableOverheadRatio)obj;
+#pragma warning restore IDE0020 // Use pattern matching
+                    return Value.Equals(other.Value);
+                }
+                return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return Value.GetHashCode();
+            }
+
+            public override string ToString()
+            {
+                return Value.ToString();
             }
         }
     }
