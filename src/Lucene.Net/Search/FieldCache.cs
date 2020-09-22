@@ -363,25 +363,36 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Field values as 8-bit signed bytes
         /// </summary>
-        public abstract class Bytes
+        public class Bytes // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
+            private readonly Func<int, byte> get;
+            private readonly bool hasGet;
+
             /// <summary>
-            /// Return a single Byte representation of this field's value.
+            /// Initialize an instance of <see cref="Bytes"/>.
             /// </summary>
-            public abstract byte Get(int docID);
+            protected Bytes() { } // LUCENENET specific - Added default constructor for subclasses
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Bytes"/> with the specified
+            /// <paramref name="get"/> delegate method.
+            /// </summary>
+            /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
+            public Bytes(Func<int, byte> get) 
+            {
+                this.get = get ?? throw new ArgumentNullException(nameof(get));
+                this.hasGet = true;
+            }
+
+            /// <summary>
+            /// Return a single <see cref="byte"/> representation of this field's value.
+            /// </summary>
+            public virtual byte Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Bytes EMPTY = new EmptyBytes();
-
-            private sealed class EmptyBytes : Bytes
-            {
-                public override byte Get(int docID)
-                {
-                    return 0;
-                }
-            }
+            public static readonly Bytes EMPTY = new Bytes((docID) => 0);
         }
 
         /// <summary>
@@ -389,25 +400,36 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was Shorts in Lucene
         /// </summary>
-        public abstract class Int16s
+        public class Int16s // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
+            private readonly Func<int, short> get;
+            private readonly bool hasGet;
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Int16s"/>.
+            /// </summary>
+            protected Int16s() { } // LUCENENET specific - Added default constructor for subclasses
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Int16s"/> with the specified
+            /// <paramref name="get"/> delegate method.
+            /// </summary>
+            /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
+            public Int16s(Func<int, short> get)
+            {
+                this.get = get ?? throw new ArgumentNullException(nameof(get));
+                this.hasGet = true;
+            }
+
             /// <summary>
             /// Return a <see cref="short"/> representation of this field's value.
             /// </summary>
-            public abstract short Get(int docID);
+            public virtual short Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Int16s EMPTY = new EmptyInt16s();
-
-            private sealed class EmptyInt16s : Int16s
-            {
-                public override short Get(int docID)
-                {
-                    return 0;
-                }
-            }
+            public static readonly Int16s EMPTY = new Int16s((docID) => 0);
         }
 
         /// <summary>
@@ -415,25 +437,36 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was Ints in Lucene
         /// </summary>
-        public abstract class Int32s
+        public class Int32s // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
+            private readonly Func<int, int> get;
+            private readonly bool hasGet;
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Int32s"/>.
+            /// </summary>
+            protected Int32s() { } // LUCENENET specific - Added default constructor for subclasses
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Int32s"/> with the specified
+            /// <paramref name="get"/> delegate method.
+            /// </summary>
+            /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
+            public Int32s(Func<int, int> get)
+            {
+                this.get = get ?? throw new ArgumentNullException(nameof(get));
+                this.hasGet = true;
+            }
+
             /// <summary>
             /// Return an <see cref="int"/> representation of this field's value.
             /// </summary>
-            public abstract int Get(int docID);
+            public virtual int Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Int32s EMPTY = new EmptyInt32s();
-
-            private sealed class EmptyInt32s : Int32s
-            {
-                public override int Get(int docID)
-                {
-                    return 0;
-                }
-            }
+            public static readonly Int32s EMPTY = new Int32s((docID) => 0);
         }
 
         /// <summary>
@@ -441,25 +474,36 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was Longs in Lucene
         /// </summary>
-        public abstract class Int64s
+        public class Int64s // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
+            private readonly Func<int, long> get;
+            private readonly bool hasGet;
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Int64s"/>.
+            /// </summary>
+            protected Int64s() { } // LUCENENET specific - Added default constructor for subclasses
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Int64s"/> with the specified
+            /// <paramref name="get"/> delegate method.
+            /// </summary>
+            /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
+            public Int64s(Func<int, long> get)
+            {
+                this.get = get ?? throw new ArgumentNullException(nameof(get));
+                this.hasGet = true;
+            }
+
             /// <summary>
             /// Return an <see cref="long"/> representation of this field's value.
             /// </summary>
-            public abstract long Get(int docID);
+            public virtual long Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Int64s EMPTY = new EmptyInt64s();
-
-            private sealed class EmptyInt64s : Int64s
-            {
-                public override long Get(int docID)
-                {
-                    return 0;
-                }
-            }
+            public static readonly Int64s EMPTY = new Int64s((docID) => 0);
         }
 
         /// <summary>
@@ -467,50 +511,71 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was Floats in Lucene
         /// </summary>
-        public abstract class Singles
+        public class Singles // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
+            private readonly Func<int, float> get;
+            private readonly bool hasGet;
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Singles"/>.
+            /// </summary>
+            protected Singles() { } // LUCENENET specific - Added default constructor for subclasses
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Singles"/> with the specified
+            /// <paramref name="get"/> delegate method.
+            /// </summary>
+            /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
+            public Singles(Func<int, float> get)
+            {
+                this.get = get ?? throw new ArgumentNullException(nameof(get));
+                this.hasGet = true;
+            }
+
             /// <summary>
             /// Return an <see cref="float"/> representation of this field's value.
             /// </summary>
-            public abstract float Get(int docID);
+            public virtual float Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Singles EMPTY = new EmptySingles();
-
-            private sealed class EmptySingles : Singles
-            {
-                public override float Get(int docID)
-                {
-                    return 0;
-                }
-            }
+            public static readonly Singles EMPTY = new Singles((docID) => 0);
         }
 
         /// <summary>
         /// Field values as 64-bit doubles
         /// </summary>
-        public abstract class Doubles
+        public class Doubles // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
+            private readonly Func<int, double> get;
+            private readonly bool hasGet;
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Doubles"/>.
+            /// </summary>
+            protected Doubles() { } // LUCENENET specific - Added default constructor for subclasses
+
+            /// <summary>
+            /// Initialize an instance of <see cref="Doubles"/> with the specified
+            /// <paramref name="get"/> delegate method.
+            /// </summary>
+            /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
+            public Doubles(Func<int, double> get)
+            {
+                this.get = get ?? throw new ArgumentNullException(nameof(get));
+                this.hasGet = true;
+            }
+
             /// <summary>
             /// Return a <see cref="double"/> representation of this field's value.
             /// </summary>
-            /// <param name="docID"></param>
-            public abstract double Get(int docID);
+            public virtual double Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Doubles EMPTY = new EmptyDoubles();
-
-            private sealed class EmptyDoubles : Doubles
-            {
-                public override double Get(int docID)
-                {
-                    return 0;
-                }
-            }
+            public static readonly Doubles EMPTY = new Doubles((docID) => 0);
         }
 
         /// <summary>
