@@ -494,7 +494,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static void ReThrow(Exception th)
         {
-            if (this object)
+            if (th is object)
             {
                 if (th is IOException)
                 {
@@ -511,7 +511,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static void ReThrowUnchecked(Exception th)
         {
-            if (this object)
+            if (th is object)
             {
                 throw th;
             }

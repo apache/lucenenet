@@ -143,11 +143,11 @@ namespace Lucene.Net.Index
             }
 
             // If any errors occured, throw it.
-            if (this object)
+            if (th is object)
             {
-                if (th is Exception)
+                if (th is Exception exp)
                 {
-                    throw (Exception)th;
+                    throw exp;
                 }
                 // defensive code - we should not hit unchecked exceptions
                 throw new Exception(th.Message, th);
