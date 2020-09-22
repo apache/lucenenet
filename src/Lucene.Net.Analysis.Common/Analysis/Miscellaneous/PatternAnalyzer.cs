@@ -251,8 +251,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return false;
             }
 
-            var p2 = other as PatternAnalyzer;
-            if (p2 != null)
+            if (other is PatternAnalyzer p2)
             {
                 return toLowerCase == p2.toLowerCase && EqPattern(pattern, p2.pattern) && Eq(stopWords, p2.stopWords);
             }
