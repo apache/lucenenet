@@ -589,7 +589,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_BytesAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache.Bytes(get: (docID) => (byte)valuesIn.Get(docID));
             }
             else
             {
@@ -610,24 +610,6 @@ namespace Lucene.Net.Search
 #pragma warning disable CS0612 // Type or member is obsolete
                 return (FieldCache.Bytes)caches_typeof_sbyte.Get(reader, new CacheKey<FieldCache.IByteParser>(field, parser), setDocsWithField);
 #pragma warning restore CS0612 // Type or member is obsolete
-            }
-        }
-
-        private class FieldCache_BytesAnonymousInnerClassHelper : FieldCache.Bytes
-        {
-            private readonly FieldCacheImpl outerInstance;
-
-            private NumericDocValues valuesIn;
-
-            public FieldCache_BytesAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
-            {
-                this.outerInstance = outerInstance;
-                this.valuesIn = valuesIn;
-            }
-
-            public override byte Get(int docID)
-            {
-                return (byte)valuesIn.Get(docID);
             }
         }
 
@@ -765,7 +747,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_Int16sAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache.Int16s(get: (docID) => (short)valuesIn.Get(docID));
             }
             else
             {
@@ -784,24 +766,6 @@ namespace Lucene.Net.Search
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Int16s)caches_typeof_short.Get(reader, new CacheKey<FieldCache.IInt16Parser>(field, parser), setDocsWithField);
-            }
-        }
-
-        private class FieldCache_Int16sAnonymousInnerClassHelper : FieldCache.Int16s
-        {
-            private readonly FieldCacheImpl outerInstance;
-
-            private NumericDocValues valuesIn;
-
-            public FieldCache_Int16sAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
-            {
-                this.outerInstance = outerInstance;
-                this.valuesIn = valuesIn;
-            }
-
-            public override short Get(int docID)
-            {
-                return (short)valuesIn.Get(docID);
             }
         }
 
@@ -943,7 +907,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_Int32sAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache.Int32s(get: (docID) => (int)valuesIn.Get(docID));
             }
             else
             {
@@ -962,24 +926,6 @@ namespace Lucene.Net.Search
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Int32s)caches_typeof_int.Get(reader, new CacheKey<FieldCache.IInt32Parser>(field, parser), setDocsWithField);
-            }
-        }
-
-        private class FieldCache_Int32sAnonymousInnerClassHelper : FieldCache.Int32s
-        {
-            private readonly FieldCacheImpl outerInstance;
-
-            private NumericDocValues valuesIn;
-
-            public FieldCache_Int32sAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
-            {
-                this.outerInstance = outerInstance;
-                this.valuesIn = valuesIn;
-            }
-
-            public override int Get(int docID)
-            {
-                return (int)valuesIn.Get(docID);
             }
         }
 
@@ -1244,7 +1190,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_SinglesAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache.Singles(get: (docID) => J2N.BitConversion.Int32BitsToSingle((int)valuesIn.Get(docID)));
             }
             else
             {
@@ -1263,24 +1209,6 @@ namespace Lucene.Net.Search
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Singles)caches_typeof_float.Get(reader, new CacheKey<FieldCache.ISingleParser>(field, parser), setDocsWithField);
-            }
-        }
-
-        private class FieldCache_SinglesAnonymousInnerClassHelper : FieldCache.Singles
-        {
-            private readonly FieldCacheImpl outerInstance;
-
-            private NumericDocValues valuesIn;
-
-            public FieldCache_SinglesAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
-            {
-                this.outerInstance = outerInstance;
-                this.valuesIn = valuesIn;
-            }
-
-            public override float Get(int docID)
-            {
-                return J2N.BitConversion.Int32BitsToSingle((int)valuesIn.Get(docID));
             }
         }
 
@@ -1416,7 +1344,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_Int64sAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache.Int64s(get: (docID) => valuesIn.Get(docID));
             }
             else
             {
@@ -1435,24 +1363,6 @@ namespace Lucene.Net.Search
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Int64s)caches_typeof_long.Get(reader, new CacheKey<FieldCache.IInt64Parser>(field, parser), setDocsWithField);
-            }
-        }
-
-        private class FieldCache_Int64sAnonymousInnerClassHelper : FieldCache.Int64s
-        {
-            private readonly FieldCacheImpl outerInstance;
-
-            private NumericDocValues valuesIn;
-
-            public FieldCache_Int64sAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
-            {
-                this.outerInstance = outerInstance;
-                this.valuesIn = valuesIn;
-            }
-
-            public override long Get(int docID)
-            {
-                return valuesIn.Get(docID);
             }
         }
 
@@ -1600,7 +1510,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_DoublesAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache.Doubles(get: (docID) => J2N.BitConversion.Int64BitsToDouble(valuesIn.Get(docID)));
             }
             else
             {
@@ -1619,24 +1529,6 @@ namespace Lucene.Net.Search
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
                 return (FieldCache.Doubles)caches_typeof_double.Get(reader, new CacheKey<FieldCache.IDoubleParser>(field, parser), setDocsWithField);
-            }
-        }
-
-        private class FieldCache_DoublesAnonymousInnerClassHelper : FieldCache.Doubles
-        {
-            private readonly FieldCacheImpl outerInstance;
-
-            private NumericDocValues valuesIn;
-
-            public FieldCache_DoublesAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
-            {
-                this.outerInstance = outerInstance;
-                this.valuesIn = valuesIn;
-            }
-
-            public override double Get(int docID)
-            {
-                return J2N.BitConversion.Int64BitsToDouble(valuesIn.Get(docID));
             }
         }
 
