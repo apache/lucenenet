@@ -77,9 +77,9 @@ namespace Lucene.Net.Util
     public abstract class FilterIterator<T> : IEnumerator<T>
     {
         private readonly IEnumerator<T> iter;
-        private T next = default(T);
+        private T next = default;
         private bool nextIsSet = false;
-        private T current = default(T);
+        private T current = default;
 
         /// <summary>
         /// Returns <c>true</c>, if this element should be set to <see cref="Current"/> by <see cref="SetNext()"/>. </summary>
@@ -105,7 +105,7 @@ namespace Lucene.Net.Util
             finally
             {
                 nextIsSet = false;
-                next = default(T);
+                next = default;
             }
             return true;
         }

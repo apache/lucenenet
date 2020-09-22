@@ -43,20 +43,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             this.field = field;
             this.minimumMatchingmElements = minimumMatchingElements;
 
-            if (clauses != null)
+            if (clauses is object)
             {
                 foreach (IQueryNode clause in clauses)
                 {
                     if (clause is FieldQueryNode)
                     {
-                        if (clause is QueryNode)
+                        if (clause is QueryNode node)
                         {
-                            ((QueryNode)clause).m_toQueryStringIgnoreFields = true;
+                            node.m_toQueryStringIgnoreFields = true;
                         }
 
-                        if (clause is IFieldableNode)
+                        if (clause is IFieldableNode fieldNode)
                         {
-                            ((IFieldableNode)clause).Field = field;
+                            fieldNode.Field = field;
                         }
                     }
                 }
@@ -83,7 +83,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <returns>the field as a <see cref="string"/></returns>
         public virtual string GetFieldAsString()
         {
-            if (this.field == null)
+            if (this.field is null)
                 return null;
             else
                 return this.field.ToString();
@@ -102,7 +102,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public override string ToString()
         {
             var children = GetChildren();
-            if (children == null || children.Count == 0)
+            if (children is null || children.Count == 0)
                 return "<any field='" + this.field + "'  matchelements="
                     + this.minimumMatchingmElements + "/>";
             StringBuilder sb = new StringBuilder();
@@ -123,7 +123,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             StringBuilder sb = new StringBuilder();
             var children = GetChildren();
-            if (children == null || children.Count == 0)
+            if (children is null || children.Count == 0)
             {
                 // no childs case
             }

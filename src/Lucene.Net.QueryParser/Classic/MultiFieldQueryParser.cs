@@ -107,16 +107,16 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetFieldQuery(string field, string queryText, int slop)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
                 {
                     Query q = base.GetFieldQuery(m_fields[i], queryText, true);
-                    if (q != null)
+                    if (q is object)
                     {
                         //If the user passes a map of boosts
-                        if (m_boosts != null)
+                        if (m_boosts is object)
                         {
                             //Get the boost from the map and apply them
                             float boost = m_boosts[m_fields[i]];
@@ -138,28 +138,28 @@ namespace Lucene.Net.QueryParsers.Classic
 
         private void ApplySlop(Query q, int slop)
         {
-            if (q is PhraseQuery)
+            if (q is PhraseQuery phraseQuery)
             {
-                ((PhraseQuery)q).Slop = slop;
+                phraseQuery.Slop = slop;
             }
-            else if (q is MultiPhraseQuery)
+            else if (q is MultiPhraseQuery multiPhraseQuery)
             {
-                ((MultiPhraseQuery)q).Slop = slop;
+                multiPhraseQuery.Slop = slop;
             }
         }
 
         protected internal override Query GetFieldQuery(string field, string queryText, bool quoted)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
                 {
                     Query q = base.GetFieldQuery(m_fields[i], queryText, quoted);
-                    if (q != null)
+                    if (q is object)
                     {
                         //If the user passes a map of boosts
-                        if (m_boosts != null)
+                        if (m_boosts is object)
                         {
                             //Get the boost from the map and apply them
                             float boost = m_boosts[m_fields[i]];
@@ -178,7 +178,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetFuzzyQuery(string field, string termStr, float minSimilarity)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -192,7 +192,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetPrefixQuery(string field, string termStr)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -206,7 +206,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetWildcardQuery(string field, string termStr)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -221,7 +221,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetRangeQuery(string field, string part1, string part2, bool startInclusive, bool endInclusive)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -235,7 +235,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal override Query GetRegexpQuery(string field, string termStr)
         {
-            if (field == null)
+            if (field is null)
             {
                 IList<BooleanClause> clauses = new List<BooleanClause>();
                 for (int i = 0; i < m_fields.Length; i++)
@@ -277,7 +277,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
                 Query q = qp.Parse(queries[i]);
-                if (q != null && (!(q is BooleanQuery) || ((BooleanQuery)q).Clauses.Count > 0))
+                if (q is object && (!(q is BooleanQuery boolQuery) || boolQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, Occur.SHOULD);
                 }
@@ -325,7 +325,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
                 Query q = qp.Parse(query);
-                if (q != null && (!(q is BooleanQuery) || ((BooleanQuery)q).Clauses.Count > 0))
+                if (q is object && (!(q is BooleanQuery boolQuery) || boolQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, flags[i]);
                 }
@@ -371,7 +371,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
                 Query q = qp.Parse(queries[i]);
-                if (q != null && (!(q is BooleanQuery) || ((BooleanQuery)q).Clauses.Count > 0))
+                if (q is object && (!(q is BooleanQuery boolQuery) || boolQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, flags[i]);
                 }

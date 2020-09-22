@@ -49,13 +49,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             BooleanQuery bQuery = new BooleanQuery(booleanNode.DisableCoord);
             IList<IQueryNode> children = booleanNode.GetChildren();
 
-            if (children != null)
+            if (children is object)
             {
                 foreach (IQueryNode child in children)
                 {
                     object obj = child.GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
 
-                    if (obj != null)
+                    if (obj is object)
                     {
                         Query query = (Query)obj;
 
@@ -79,9 +79,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
         private static Occur GetModifierValue(IQueryNode node)
         {
-            if (node is ModifierQueryNode)
+            if (node is ModifierQueryNode mNode)
             {
-                ModifierQueryNode mNode = ((ModifierQueryNode)node);
                 Modifier modifier = mNode.Modifier;
 
                 if (Modifier.MOD_NONE.Equals(modifier))

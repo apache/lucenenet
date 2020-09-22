@@ -116,9 +116,9 @@ namespace Lucene.Net.Search
             {
                 // Deleted but the deletion is not yet reflected in
                 // the reader:
-                return default(T);
+                return default;
             }
-            else if (!comparer.Equals(value, default(T)))
+            else if (!comparer.Equals(value, default))
             {
                 return value;
             }
@@ -129,9 +129,9 @@ namespace Lucene.Net.Search
                 {
                     // Deleted but the deletion is not yet reflected in
                     // the reader:
-                    return default(T);
+                    return default;
                 }
-                else if (!comparer.Equals(value, default(T)))
+                else if (!comparer.Equals(value, default))
                 {
                     return value;
                 }

@@ -32,46 +32,46 @@ namespace Lucene.Net.Documents
         protected abstract class Number
         {
             /// <summary>
-            /// Returns this object's value as a <see cref="byte"/>. Might involve rounding and/or
+            /// Returns th is object's value as a <see cref="byte"/>. Might involve rounding and/or
             /// truncating the value, so it fits into a <see cref="byte"/>.
             /// </summary>
-            /// <returns>the primitive <see cref="byte"/> value of this object.</returns>
+            /// <returns>the primitive <see cref="byte"/> value of th is object.</returns>
             public virtual byte GetByteValue()
             {
                 return (byte)GetInt32Value();
             }
 
             /// <summary>
-            /// Returns this object's value as a <see cref="double"/>. Might involve rounding.
+            /// Returns th is object's value as a <see cref="double"/>. Might involve rounding.
             /// </summary>
-            /// <returns>the primitive <see cref="double"/> value of this object.</returns>
+            /// <returns>the primitive <see cref="double"/> value of th is object.</returns>
             public abstract double GetDoubleValue();
 
             /// <summary>
-            /// Returns this object's value as a <see cref="float"/>. Might involve rounding.
+            /// Returns th is object's value as a <see cref="float"/>. Might involve rounding.
             /// </summary>
-            /// <returns>the primitive <see cref="float"/> value of this object.</returns>
+            /// <returns>the primitive <see cref="float"/> value of th is object.</returns>
             public abstract float GetSingleValue();
 
             /// <summary>
-            /// Returns this object's value as an <see cref="int"/>. Might involve rounding and/or
+            /// Returns th is object's value as an <see cref="int"/>. Might involve rounding and/or
             /// truncating the value, so it fits into an <see cref="int"/>.
             /// </summary>
-            /// <returns>the primitive <see cref="int"/> value of this object.</returns>
+            /// <returns>the primitive <see cref="int"/> value of th is object.</returns>
             public abstract int GetInt32Value();
 
             /// <summary>
-            /// Returns this object's value as a <see cref="long"/>. Might involve rounding and/or
+            /// Returns th is object's value as a <see cref="long"/>. Might involve rounding and/or
             /// truncating the value, so it fits into a <see cref="long"/>.
             /// </summary>
-            /// <returns>the primitive <see cref="long"/> value of this object.</returns>
+            /// <returns>the primitive <see cref="long"/> value of th is object.</returns>
             public abstract long GetInt64Value();
 
             /// <summary>
-            /// Returns this object's value as a <see cref="short"/>. Might involve rounding and/or
+            /// Returns th is object's value as a <see cref="short"/>. Might involve rounding and/or
             /// truncating the value, so it fits into a <see cref="short"/>.
             /// </summary>
-            /// <returns>the primitive <see cref="short"/> value of this object.</returns>
+            /// <returns>the primitive <see cref="short"/> value of th is object.</returns>
             public virtual short GetInt16Value()
             {
                 return (short)GetInt32Value();

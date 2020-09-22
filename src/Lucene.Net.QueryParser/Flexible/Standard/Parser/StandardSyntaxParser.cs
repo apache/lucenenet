@@ -194,7 +194,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         goto label_1_break;
                 }
                 c = DisjQuery(field);
-                if (clauses == null)
+                if (clauses is null)
                 {
                     clauses = new List<IQueryNode>();
                     clauses.Add(first);
@@ -202,7 +202,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 clauses.Add(c);
             }
             label_1_break:
-            if (clauses != null)
+            if (clauses is object)
             {
                 { if (true) return new BooleanQueryNode(clauses); }
             }
@@ -232,7 +232,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 Jj_consume_token(RegexpToken.OR);
                 c = ConjQuery(field);
-                if (clauses == null)
+                if (clauses is null)
                 {
                     clauses = new List<IQueryNode>();
                     clauses.Add(first);
@@ -240,7 +240,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 clauses.Add(c);
             }
             label_2_break:
-            if (clauses != null)
+            if (clauses is object)
             {
                 { if (true) return new OrQueryNode(clauses); }
             }
@@ -270,7 +270,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 }
                 Jj_consume_token(RegexpToken.AND);
                 c = ModClause(field);
-                if (clauses == null)
+                if (clauses is null)
                 {
                     clauses = new List<IQueryNode>();
                     clauses.Add(first);
@@ -278,7 +278,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 clauses.Add(c);
             }
             label_3_break:
-            if (clauses != null)
+            if (clauses is object)
             {
                 { if (true) return new AndQueryNode(clauses); }
             }
@@ -320,7 +320,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         //   }
         //   )*
         //     {
-        //      if (clauses.size() == 1 && firstQuery != null)
+        //      if (clauses.size() == 1 && firstQuery is object)
         //         return firstQuery;
         //       else {
         //       return new BooleanQueryNode(clauses);
@@ -537,14 +537,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         throw new ParseException();
                 }
             }
-            if (boost != null)
+            if (boost is object)
             {
                 float f = (float)1.0;
                 try
                 {
                     f = Convert.ToSingle(boost.Image, CultureInfo.InvariantCulture);
                     // avoid boosting null queries, such as those caused by stop words
-                    if (q != null)
+                    if (q is object)
                     {
                         q = new BoostQueryNode(q, f);
                     }
@@ -768,7 +768,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     }
                     int phraseSlop = 0;
 
-                    if (fuzzySlop != null)
+                    if (fuzzySlop is object)
                     {
                         try
                         {
@@ -790,14 +790,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     Jj_consume_token(-1);
                     throw new ParseException();
             }
-            if (boost != null)
+            if (boost is object)
             {
                 float f = (float)1.0;
                 try
                 {
                     f = Convert.ToSingle(boost.Image, CultureInfo.InvariantCulture);
                     // avoid boosting null queries, such as those caused by stop words
-                    if (q != null)
+                    if (q is object)
                     {
                         q = new BoostQueryNode(q, f);
                     }
@@ -1051,7 +1051,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private Token Jj_consume_token(int kind)
         {
             Token oldToken;
-            if ((oldToken = Token).Next != null) Token = Token.Next;
+            if ((oldToken = Token).Next is object) Token = Token.Next;
             else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
             if (Token.Kind == kind)
@@ -1063,7 +1063,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                     for (int i = 0; i < jj_2_rtns.Length; i++)
                     {
                         JJCalls c = jj_2_rtns[i];
-                        while (c != null)
+                        while (c is object)
                         {
                             if (c.gen < jj_gen) c.first = null;
                             c = c.next;
@@ -1105,7 +1105,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
-                if (jj_scanpos.Next == null)
+                if (jj_scanpos.Next is null)
                 {
                     jj_lastpos = jj_scanpos = jj_scanpos.Next = TokenSource.GetNextToken();
                 }
@@ -1121,8 +1121,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             if (jj_rescan)
             {
                 int i = 0; Token tok = Token;
-                while (tok != null && tok != jj_scanpos) { i++; tok = tok.Next; }
-                if (tok != null) Jj_add_error_token(kind, i);
+                while (tok is object && tok != jj_scanpos) { i++; tok = tok.Next; }
+                if (tok is object) Jj_add_error_token(kind, i);
             }
             if (jj_scanpos.Kind != kind) return true;
             if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
@@ -1133,7 +1133,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// <summary>Get the next Token.</summary>
         public Token GetNextToken()
         {
-            if (Token.Next != null) Token = Token.Next;
+            if (Token.Next is object) Token = Token.Next;
             else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
             jj_gen++;
@@ -1146,7 +1146,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             Token t = Token;
             for (int i = 0; i < index; i++)
             {
-                if (t.Next != null) t = t.Next;
+                if (t.Next is object) t = t.Next;
                 else t = t.Next = TokenSource.GetNextToken();
             }
             return t;
@@ -1154,7 +1154,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         private int Jj_ntk()
         {
-            if ((Jj_nt = Token.Next) == null)
+            if ((Jj_nt = Token.Next) is null)
                 return (jj_ntk = (Token.Next = TokenSource.GetNextToken()).Kind);
             else
                 return (jj_ntk = Jj_nt.Kind);
@@ -1282,7 +1282,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                             }
                         }
                         p = p.next;
-                    } while (p != null);
+                    } while (p is object);
                 }
 #pragma warning disable 168
                 catch (LookaheadSuccess ls) { }
@@ -1296,7 +1296,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             JJCalls p = jj_2_rtns[index];
             while (p.gen > jj_gen)
             {
-                if (p.next == null) { p = p.next = new JJCalls(); break; }
+                if (p.next is null) { p = p.next = new JJCalls(); break; }
                 p = p.next;
             }
             p.gen = jj_gen + xla - jj_la; p.first = Token; p.arg = xla;

@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 
         private class BoolRefWrapper
         {
-            private bool value;
+            private readonly bool value;
 
             // .NET port: this is needed as bool is not a reference type
             public BoolRefWrapper(bool value)
@@ -95,7 +95,7 @@ namespace Lucene.Net.Store
             // LUCENENET specific: MMapIndexInput calls SetBuffers() to populate
             // the buffers, so we need to skip that call if it is null here, and
             // do the seek inside SetBuffers()
-            if (buffers != null)
+            if (buffers is object)
             {
                 SetBuffers(buffers);
             }
@@ -310,7 +310,7 @@ namespace Lucene.Net.Store
             clone.length = length;
 
             // register the new clone in our clone list to clean it up on closing:
-            if (clones != null)
+            if (clones is object)
             {
                 this.clones.Add(clone, true);
             }
@@ -375,7 +375,7 @@ namespace Lucene.Net.Store
                     // make local copy, then un-set early
                     ByteBuffer[] bufs = buffers;
                     UnsetBuffers();
-                    if (clones != null)
+                    if (clones is object)
                     {
                         clones.Remove(this);
                     }
@@ -386,7 +386,7 @@ namespace Lucene.Net.Store
                     }
 
                     // for extra safety unset also all clones' buffers:
-                    if (clones != null)
+                    if (clones is object)
                     {
                         // LUCENENET: Since .NET will GC types that go out of scope automatically,
                         // this isn't strictly necessary. However, we are doing it anyway when
@@ -421,7 +421,7 @@ namespace Lucene.Net.Store
 
         public override sealed string ToString()
         {
-            if (sliceDescription != null)
+            if (sliceDescription is object)
             {
                 return base.ToString() + " [slice=" + sliceDescription + "]";
             }

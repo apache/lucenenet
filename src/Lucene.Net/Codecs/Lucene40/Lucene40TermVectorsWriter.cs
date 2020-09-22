@@ -156,7 +156,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private int[] offsetStartBuffer = new int[10];
 
         private int[] offsetEndBuffer = new int[10];
-        private BytesRef payloadData = new BytesRef(10);
+        private readonly BytesRef payloadData = new BytesRef(10);
         private int bufferedIndex = 0;
         private int bufferedFreq = 0;
         private bool positions = false;
@@ -215,7 +215,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 tvf.WriteBytes(payloadData.Bytes, payloadData.Offset, payloadData.Length);
             }
-            else if (positions != null)
+            else if (positions is object)
             {
                 // pure positions, no payloads
                 for (int i = 0; i < numProx; i++)
@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
 
-            if (offsets != null)
+            if (offsets is object)
             {
                 for (int i = 0; i < numProx; i++)
                 {
@@ -385,16 +385,16 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 SegmentReader matchingSegmentReader = mergeState.MatchingSegmentReaders[idx++];
                 Lucene40TermVectorsReader matchingVectorsReader = null;
-                if (matchingSegmentReader != null)
+                if (matchingSegmentReader is object)
                 {
                     TermVectorsReader vectorsReader = matchingSegmentReader.TermVectorsReader;
 
-                    if (vectorsReader != null && vectorsReader is Lucene40TermVectorsReader)
+                    if (vectorsReader is Lucene40TermVectorsReader luc40termReader)
                     {
-                        matchingVectorsReader = (Lucene40TermVectorsReader)vectorsReader;
+                        matchingVectorsReader = luc40termReader;
                     }
                 }
-                if (reader.LiveDocs != null)
+                if (reader.LiveDocs is object)
                 {
                     numDocs += CopyVectorsWithDeletions(mergeState, matchingVectorsReader, reader, rawDocLengths, rawDocLengths2);
                 }
@@ -418,7 +418,7 @@ namespace Lucene.Net.Codecs.Lucene40
             int maxDoc = reader.MaxDoc;
             IBits liveDocs = reader.LiveDocs;
             int totalNumDocs = 0;
-            if (matchingVectorsReader != null)
+            if (matchingVectorsReader is object)
             {
                 // We can bulk-copy because the fieldInfos are "congruent"
                 for (int docNum = 0; docNum < maxDoc; )
@@ -477,7 +477,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private int CopyVectorsNoDeletions(MergeState mergeState, Lucene40TermVectorsReader matchingVectorsReader, AtomicReader reader, int[] rawDocLengths, int[] rawDocLengths2)
         {
             int maxDoc = reader.MaxDoc;
-            if (matchingVectorsReader != null)
+            if (matchingVectorsReader is object)
             {
                 // We can bulk-copy because the fieldInfos are "congruent"
                 int docCount = 0;

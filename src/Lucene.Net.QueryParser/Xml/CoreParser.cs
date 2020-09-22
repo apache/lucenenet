@@ -73,7 +73,7 @@ namespace Lucene.Net.QueryParsers.Xml
             m_queryFactory.AddBuilder("BooleanQuery", new BooleanQueryBuilder(m_queryFactory));
             m_queryFactory.AddBuilder("NumericRangeQuery", new NumericRangeQueryBuilder());
             m_queryFactory.AddBuilder("DisjunctionMaxQuery", new DisjunctionMaxQueryBuilder(m_queryFactory));
-            if (parser != null)
+            if (parser is object)
             {
                 m_queryFactory.AddBuilder("UserQuery", new UserInputQueryBuilder(parser));
             }

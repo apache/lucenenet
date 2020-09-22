@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs
             foreach (var postingsFormatType in localPostingsFormatTypes)
                 PutPostingsFormatTypeImpl(postingsFormatType);
             ScanForPostingsFormats(this.CodecsAssembly);
-            if (CustomPostingsFormatTypes != null)
+            if (CustomPostingsFormatTypes is object)
             {
                 foreach (var postingsFormatType in CustomPostingsFormatTypes)
                     PutPostingsFormatType(postingsFormatType);

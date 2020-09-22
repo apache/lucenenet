@@ -83,9 +83,7 @@ namespace Lucene.Net.Codecs
         /// <exception cref="ArgumentNullException">The <paramref name="docValuesFormatFactory"/> parameter is <c>null</c>.</exception>
         public static void SetDocValuesFormatFactory(IDocValuesFormatFactory docValuesFormatFactory)
         {
-            if (docValuesFormatFactory == null)
-                throw new ArgumentNullException("docValuesFormatFactory");
-            DocValuesFormat.docValuesFormatFactory = docValuesFormatFactory;
+            DocValuesFormat.docValuesFormatFactory = docValuesFormatFactory ?? throw new ArgumentNullException("docValuesFormatFactory");
         }
 
         /// <summary>
@@ -154,9 +152,9 @@ namespace Lucene.Net.Codecs
         {
             get
             {
-                if (docValuesFormatFactory is IServiceListable)
+                if (docValuesFormatFactory is IServiceListable listable)
                 {
-                    return ((IServiceListable)docValuesFormatFactory).AvailableServices;
+                    return listable.AvailableServices;
                 }
                 else
                 {

@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             get
             {
                 IndexWriter w = m_writer.Get();
-                return w != null && w.infoStream.IsEnabled("LMP");
+                return w is object && w.infoStream.IsEnabled("LMP");
             }
         }
 
@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
                 SegmentCommitInfo info = infos.Info(i);
                 bool? isOriginal;
                 segmentsToMerge.TryGetValue(info, out isOriginal);
-                if (isOriginal != null)
+                if (isOriginal is object)
                 {
                     segmentIsOriginal = isOriginal.Value;
                     numToMerge++;
@@ -469,7 +469,7 @@ namespace Lucene.Net.Index
             var spec = new MergeSpecification();
             int firstSegmentWithDeletions = -1;
             IndexWriter w = m_writer.Get();
-            if (Debugging.AssertsEnabled) Debugging.Assert(w != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(w is object);
             for (int i = 0; i < numSegments; i++)
             {
                 SegmentCommitInfo info = segmentInfos.Info(i);
@@ -526,7 +526,7 @@ namespace Lucene.Net.Index
         {
             internal readonly SegmentCommitInfo info;
             internal readonly float level;
-            private int index;
+            private readonly int index;
 
             public SegmentInfoAndLevel(SegmentCommitInfo info, float level, int index)
             {

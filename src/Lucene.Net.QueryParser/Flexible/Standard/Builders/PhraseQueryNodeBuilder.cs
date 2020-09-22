@@ -41,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             IList<IQueryNode> children = phraseNode.GetChildren();
 
-            if (children != null)
+            if (children is object)
             {
                 foreach (IQueryNode child in children)
                 {

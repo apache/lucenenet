@@ -46,9 +46,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
         /// </summary>
         public static IQueryNode LogicalAnd(IQueryNode q1, IQueryNode q2)
         {
-            if (q1 == null)
+            if (q1 is null)
                 return q2;
-            if (q2 == null)
+            if (q2 is null)
                 return q1;
 
             ANDOperation op/* = null*/;

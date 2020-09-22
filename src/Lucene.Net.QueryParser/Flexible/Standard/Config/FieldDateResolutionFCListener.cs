@@ -45,17 +45,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             DateTools.Resolution? dateRes = null;
             IDictionary<string, DateTools.Resolution?> dateResMap = this.config.Get(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP);
 
-            if (dateResMap != null)
+            if (dateResMap is object)
             {
                 dateResMap.TryGetValue(fieldConfig.Field, out dateRes);
             }
 
-            if (dateRes == null)
+            if (dateRes is null)
             {
                 dateRes = this.config.Get(ConfigurationKeys.DATE_RESOLUTION);
             }
 
-            if (dateRes != null)
+            if (dateRes is object)
             {
                 fieldConfig.Set(ConfigurationKeys.DATE_RESOLUTION, dateRes.Value);
             }

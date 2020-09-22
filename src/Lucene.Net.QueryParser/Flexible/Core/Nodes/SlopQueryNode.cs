@@ -42,7 +42,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <param name="value">slop value</param>
         public SlopQueryNode(IQueryNode query, int value)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new QueryNodeError(new Message(
                     QueryParserMessages.NODE_ACTION_NOT_SUPPORTED, "query", "null"));
@@ -78,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            if (GetChild() == null)
+            if (GetChild() is null)
                 return "";
             return GetChild().ToQueryString(escapeSyntaxParser) + "~"
                 + GetValueString();
@@ -99,20 +99,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             {
                 IQueryNode child = GetChild();
 
-                if (child is IFieldableNode)
-                {
-                    return ((IFieldableNode)child).Field;
-                }
-
-                return null;
+                return child is IFieldableNode fieldNode ? fieldNode.Field : null;
             }
             set
             {
                 IQueryNode child = GetChild();
 
-                if (child is IFieldableNode)
+                if (child is IFieldableNode fieldNode)
                 {
-                    ((IFieldableNode)child).Field = value;
+                    fieldNode.Field = value;
                 }
             }
         }

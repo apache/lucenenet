@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         private FixedBitSet docsWithField;
         private PagedMutable docs;
         private PagedGrowableWriter offsets, lengths;
-        private BytesRef values;
+        private readonly BytesRef values;
         private int size;
 
         public BinaryDocValuesFieldUpdates(string field, int maxDoc)
@@ -187,10 +187,10 @@ namespace Lucene.Net.Index
         {
             private readonly BinaryDocValuesFieldUpdates outerInstance;
 
-            private PagedMutable docs;
-            private PagedGrowableWriter offsets;
-            private PagedGrowableWriter lengths;
-            private FixedBitSet docsWithField;
+            private readonly PagedMutable docs;
+            private readonly PagedGrowableWriter offsets;
+            private readonly PagedGrowableWriter lengths;
+            private readonly FixedBitSet docsWithField;
 
             public InPlaceMergeSorterAnonymousInnerClassHelper(BinaryDocValuesFieldUpdates outerInstance, PagedMutable docs, PagedGrowableWriter offsets, PagedGrowableWriter lengths, FixedBitSet docsWithField)
             {

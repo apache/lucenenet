@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
     ///     // If possible, obtain the same searcher as the last
     ///     // search:
     ///     IndexSearcher searcher = mgr.Acquire(token);
-    ///     if (searcher != null) 
+    ///     if (searcher is object) 
     ///     {
     ///         // Searcher is still here
     ///         try 

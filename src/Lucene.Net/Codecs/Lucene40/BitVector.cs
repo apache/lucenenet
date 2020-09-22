@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private byte[] bits;
         private int size;
         private int count;
-        private int version;
+        private readonly int version;
 
         /// <summary>
         /// Constructs a vector capable of holding <paramref name="n"/> bits. </summary>
@@ -232,7 +232,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return c;
         }
 
-        private static string CODEC = "BitVector";
+        private static readonly string CODEC = "BitVector";
 
         // Version before version tracking was added:
         public readonly static int VERSION_PRE = -1;

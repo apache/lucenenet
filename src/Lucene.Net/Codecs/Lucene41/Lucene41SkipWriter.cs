@@ -44,11 +44,11 @@ namespace Lucene.Net.Codecs.Lucene41
     {
         // private boolean DEBUG = Lucene41PostingsReader.DEBUG;
 
-        private int[] lastSkipDoc;
-        private long[] lastSkipDocPointer;
-        private long[] lastSkipPosPointer;
-        private long[] lastSkipPayPointer;
-        private int[] lastPayloadByteUpto;
+        private readonly int[] lastSkipDoc;
+        private readonly long[] lastSkipDocPointer;
+        private readonly long[] lastSkipPosPointer;
+        private readonly long[] lastSkipPayPointer;
+        private readonly int[] lastPayloadByteUpto;
 
         private readonly IndexOutput docOut;
         private readonly IndexOutput posOut;
@@ -73,10 +73,10 @@ namespace Lucene.Net.Codecs.Lucene41
 
             lastSkipDoc = new int[maxSkipLevels];
             lastSkipDocPointer = new long[maxSkipLevels];
-            if (posOut != null)
+            if (posOut is object)
             {
                 lastSkipPosPointer = new long[maxSkipLevels];
-                if (payOut != null)
+                if (payOut is object)
                 {
                     lastSkipPayPointer = new long[maxSkipLevels];
                 }

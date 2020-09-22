@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
                 foreach (string field in this)
                 {
                     Terms terms = GetTerms(field);
-                    if (terms != null)
+                    if (terms is object)
                     {
                         long termCount = terms.Count;
                         if (termCount == -1)

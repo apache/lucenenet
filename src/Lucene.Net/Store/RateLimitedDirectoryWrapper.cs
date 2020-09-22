@@ -46,7 +46,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             var output = base.CreateOutput(name, context);
             var limiter = GetRateLimiter(context.Context);
-            if (limiter != null)
+            if (limiter is object)
             {
                 return new RateLimitedIndexOutput(limiter, output);
             }
@@ -67,7 +67,7 @@ namespace Lucene.Net.Store
 
         private RateLimiter GetRateLimiter(IOContext.UsageContext context)
         {
-            //if (Debugging.AssertsEnabled) Debugging.Assert(context != null); // LUCENENET NOTE: In .NET, enum can never be null
+            //if (Debugging.AssertsEnabled) Debugging.Assert(context is object); // LUCENENET NOTE: In .NET, enum can never be null
             RateLimiter ret;
             return _contextRateLimiters.TryGetValue(context, out ret) ? ret : null;
         }
@@ -103,13 +103,13 @@ namespace Lucene.Net.Store
 
             if (mbPerSec == null)
             {
-                if (limiter != null)
+                if (limiter is object)
                 {
                     limiter.SetMbPerSec(double.MaxValue);
                     _contextRateLimiters[context] = null;
                 }
             }
-            else if (limiter != null)
+            else if (limiter is object)
             {
                 limiter.SetMbPerSec(mbPerSec.Value);
                 _contextRateLimiters[context] = limiter; // cross the mem barrier again

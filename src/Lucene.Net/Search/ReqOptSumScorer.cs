@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
         /// The scorers passed from the constructor.
         /// These are set to <c>null</c> as soon as their Next() or SkipTo() returns <c>false</c>.
         /// </summary>
-        private Scorer reqScorer;
+        private readonly Scorer reqScorer;
 
         private Scorer optScorer;
 
@@ -45,8 +45,8 @@ namespace Lucene.Net.Search
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(reqScorer != null);
-                Debugging.Assert(optScorer != null);
+                Debugging.Assert(reqScorer is object);
+                Debugging.Assert(optScorer is object);
             }
             this.reqScorer = reqScorer;
             this.optScorer = optScorer;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search
             {
                 // we might have deferred advance()
                 GetScore();
-                return (optScorer != null && optScorer.DocID == reqScorer.DocID) ? 2 : 1;
+                return (optScorer is object && optScorer.DocID == reqScorer.DocID) ? 2 : 1;
             }
         }
 

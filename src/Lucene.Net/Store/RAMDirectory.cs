@@ -165,7 +165,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             RAMFile file;
-            if (m_fileMap.TryRemove(name, out file) && file != null)
+            if (m_fileMap.TryRemove(name, out file) && file is object)
             {
                 file.directory = null;
                 m_sizeInBytes.AddAndGet(-file.m_sizeInBytes);
@@ -183,7 +183,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             RAMFile file = NewRAMFile();
             RAMFile existing;
-            if (m_fileMap.TryRemove(name, out existing) && existing != null)
+            if (m_fileMap.TryRemove(name, out existing) && existing is object)
             {
                 m_sizeInBytes.AddAndGet(-existing.m_sizeInBytes);
                 existing.directory = null;

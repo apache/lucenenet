@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                 IList<IQueryNode> children = node.GetChildren();
                 bool removeBoolean = false;
 
-                if (children == null || children.Count == 0)
+                if (children is null || children.Count == 0)
                 {
                     removeBoolean = true;
                 }

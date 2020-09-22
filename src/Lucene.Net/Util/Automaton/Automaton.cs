@@ -191,7 +191,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        internal bool IsSingleton => singleton != null;
+        internal bool IsSingleton => singleton is object;
 
         /// <summary>
         /// Returns the singleton string for this automaton. An automaton that accepts
@@ -550,7 +550,7 @@ namespace Lucene.Net.Util.Automaton
                 s.SortTransitions(Transition.COMPARE_BY_MIN_MAX_THEN_DEST);
                 s.TrimTransitionsArray();
                 transitions[s.number] = s.TransitionsArray;
-                if (Debugging.AssertsEnabled) Debugging.Assert(s.TransitionsArray != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(s.TransitionsArray is object);
             }
             return transitions;
         }

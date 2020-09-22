@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
                 get
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(this.IsHeldByCurrentThread);
-                    return IsActive && dwpt != null;
+                    return IsActive && dwpt is object;
                 }
             }
                 
@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
             // We should only be cloned before being used:
             if (numThreadStatesActive != 0)
             {
-                throw new InvalidOperationException("clone this object before it is used!");
+                throw new InvalidOperationException("clone th is object before it is used!");
             }
             return new DocumentsWriterPerThreadPool(threadStates.Length);
         }
@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
                             // freeing up RAM for larger segment flushes:
                             for (int i = 0; i < freeCount; i++)
                             {
-                                if (freeList[i].dwpt != null)
+                                if (freeList[i].dwpt is object)
                                 {
                                     // Use this one instead, and swap it with
                                     // the un-initialized one:

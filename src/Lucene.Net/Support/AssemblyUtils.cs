@@ -65,7 +65,7 @@ namespace Lucene.Net.Support
                         .Where(reference => !DotNetFrameworkFilter.IsFrameworkAssembly(reference))
                         .Select(assemblyName => LoadAssemblyFromName(assemblyName));
                 })
-                .Where(x => x != null)
+                .Where(x => x is object)
                 .Distinct();
 
             return nonFrameworkAssembliesLoaded.Concat(referencedAssemblies).Distinct();
@@ -74,7 +74,7 @@ namespace Lucene.Net.Support
 #if !FEATURE_APPDOMAIN_GETASSEMBLIES
         private static IEnumerable<Assembly> LoadAssemblyFromName(IEnumerable<AssemblyName> assemblyNames)
         {
-            return assemblyNames.Select(x => LoadAssemblyFromName(x)).Where(x => x != null);
+            return assemblyNames.Select(x => LoadAssemblyFromName(x)).Where(x => x is object);
         }
 #endif
 
@@ -127,7 +127,7 @@ namespace Lucene.Net.Support
             /// </summary>
             public static bool IsFrameworkAssembly(Assembly assembly)
             {
-                return assembly != null && IsFrameworkAssembly(assembly.GetName());
+                return assembly is object && IsFrameworkAssembly(assembly.GetName());
             }
 
             /// <summary>

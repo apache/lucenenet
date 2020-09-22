@@ -279,10 +279,10 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         numNegatives++;
                     }
 
-                    if (qc is BooleanQuery)
+                    if (qc is BooleanQuery boolQuery)
                     {
                         List<SpanQuery> sc = new List<SpanQuery>();
-                        AddComplexPhraseClause(sc, (BooleanQuery)qc);
+                        AddComplexPhraseClause(sc, boolQuery);
                         if (sc.Count > 0)
                         {
                             allSpanClauses[i] = sc[0];
@@ -298,9 +298,8 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                     }
                     else
                     {
-                        if (qc is TermQuery)
+                        if (qc is TermQuery tq)
                         {
-                            TermQuery tq = (TermQuery)qc;
                             allSpanClauses[i] = new SpanTermQuery(tq.Term);
                         }
                         else
@@ -370,16 +369,14 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         chosenList = nots;
                     }
 
-                    if (childQuery is TermQuery)
+                    if (childQuery is TermQuery tq)
                     {
-                        TermQuery tq = (TermQuery)childQuery;
                         SpanTermQuery stq = new SpanTermQuery(tq.Term);
                         stq.Boost = tq.Boost;
                         chosenList.Add(stq);
                     }
-                    else if (childQuery is BooleanQuery)
+                    else if (childQuery is BooleanQuery cbq)
                     {
-                        BooleanQuery cbq = (BooleanQuery)childQuery;
                         AddComplexPhraseClause(chosenList, cbq);
                     }
                     else
@@ -417,10 +414,10 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
             {
                 int prime = 31;
                 int result = base.GetHashCode();
-                result = prime * result + ((field == null) ? 0 : field.GetHashCode());
+                result = prime * result + ((field is null) ? 0 : field.GetHashCode());
                 result = prime
                     * result
-                    + ((phrasedQueryStringContents == null) ? 0
+                    + ((phrasedQueryStringContents is null) ? 0
                         : phrasedQueryStringContents.GetHashCode());
                 result = prime * result + slopFactor;
                 result = prime * result + (inOrder ? 1 : 0);
@@ -431,7 +428,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
             {
                 if (this == obj)
                     return true;
-                if (obj == null)
+                if (obj is null)
                     return false;
                 if (GetType() != obj.GetType())
                     return false;
@@ -440,16 +437,16 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                     return false;
                 }
                 ComplexPhraseQuery other = (ComplexPhraseQuery)obj;
-                if (field == null)
+                if (field is null)
                 {
-                    if (other.field != null)
+                    if (other.field is object)
                         return false;
                 }
                 else if (!field.Equals(other.field, StringComparison.Ordinal))
                     return false;
-                if (phrasedQueryStringContents == null)
+                if (phrasedQueryStringContents is null)
                 {
-                    if (other.phrasedQueryStringContents != null)
+                    if (other.phrasedQueryStringContents is object)
                         return false;
                 }
                 else if (!phrasedQueryStringContents

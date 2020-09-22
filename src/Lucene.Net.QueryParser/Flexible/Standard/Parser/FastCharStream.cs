@@ -60,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
             if (tokenStart == 0)
             {        // token won't fit in buffer
-                if (buffer == null)
+                if (buffer is null)
                 {        // first time: alloc buffer
                     buffer = new char[2048];
                 }

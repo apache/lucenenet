@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < termsEnumsIndex.Length; i++)
             {
                 TermsEnumIndex termsEnumIndex = termsEnumsIndex[i];
-                if (Debugging.AssertsEnabled) Debugging.Assert(termsEnumIndex != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termsEnumIndex is object);
 
                 // init our term comp
                 if (termComp == null)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
                     // We cannot merge sub-readers that have
                     // different TermComps
                     IComparer<BytesRef> subTermComp = termsEnumIndex.TermsEnum.Comparer;
-                    if (subTermComp != null && !subTermComp.Equals(termComp))
+                    if (subTermComp is object && !subTermComp.Equals(termComp))
                     {
                         throw new InvalidOperationException("sub-readers have different BytesRef.Comparers: " + subTermComp + " vs " + termComp + "; cannot merge");
                     }
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
             numTop = 0;
 
             bool seekOpt = false;
-            if (lastSeek != null && termComp.Compare(lastSeek, term) <= 0)
+            if (lastSeek is object && termComp.Compare(lastSeek, term) <= 0)
             {
                 seekOpt = true;
             }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
                 if (seekOpt)
                 {
                     BytesRef curTerm = currentSubs[i].Current;
-                    if (curTerm != null)
+                    if (curTerm is object)
                     {
                         int cmp = termComp.Compare(term, curTerm);
                         if (cmp == 0)
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
             lastSeekExact = false;
 
             bool seekOpt = false;
-            if (lastSeek != null && termComp.Compare(lastSeek, term) <= 0)
+            if (lastSeek is object && termComp.Compare(lastSeek, term) <= 0)
             {
                 seekOpt = true;
             }
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
                 if (seekOpt)
                 {
                     BytesRef curTerm = currentSubs[i].Current;
-                    if (curTerm != null)
+                    if (curTerm is object)
                     {
                         int cmp = termComp.Compare(term, curTerm);
                         if (cmp == 0)
@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
                     if (status == SeekStatus.NOT_FOUND)
                     {
                         currentSubs[i].Current = currentSubs[i].Terms.Term;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(currentSubs[i].Current != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(currentSubs[i].Current is object);
                         queue.Add(currentSubs[i]);
                     }
                     else
@@ -434,7 +434,7 @@ namespace Lucene.Net.Index
         {
             MultiDocsEnum docsEnum;
             // Can only reuse if incoming enum is also a MultiDocsEnum
-            if (reuse != null && reuse is MultiDocsEnum)
+            if (reuse is object && reuse is MultiDocsEnum)
             {
                 docsEnum = (MultiDocsEnum)reuse;
                 // ... and was previously created w/ this MultiTermsEnum:
@@ -466,7 +466,7 @@ namespace Lucene.Net.Index
 
                 IBits b;
 
-                if (multiLiveDocs != null)
+                if (multiLiveDocs is object)
                 {
                     // optimize for common case: requested skip docs is a
                     // congruent sub-slice of MultiBits: in this case, we
@@ -485,7 +485,7 @@ namespace Lucene.Net.Index
                         b = new BitsSlice(liveDocs, entry.SubSlice);
                     }
                 }
-                else if (liveDocs != null)
+                else if (liveDocs is object)
                 {
                     b = new BitsSlice(liveDocs, entry.SubSlice);
                 }
@@ -497,7 +497,7 @@ namespace Lucene.Net.Index
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(entry.Index < docsEnum.subDocsEnum.Length, () => entry.Index + " vs " + docsEnum.subDocsEnum.Length + "; " + subs.Length);
                 DocsEnum subDocsEnum = entry.Terms.Docs(b, docsEnum.subDocsEnum[entry.Index], flags);
-                if (subDocsEnum != null)
+                if (subDocsEnum is object)
                 {
                     docsEnum.subDocsEnum[entry.Index] = subDocsEnum;
                     subDocs[upto].DocsEnum = subDocsEnum;
@@ -525,7 +525,7 @@ namespace Lucene.Net.Index
         {
             MultiDocsAndPositionsEnum docsAndPositionsEnum;
             // Can only reuse if incoming enum is also a MultiDocsAndPositionsEnum
-            if (reuse != null && reuse is MultiDocsAndPositionsEnum)
+            if (reuse is object && reuse is MultiDocsAndPositionsEnum)
             {
                 docsAndPositionsEnum = (MultiDocsAndPositionsEnum)reuse;
                 // ... and was previously created w/ this MultiTermsEnum:
@@ -557,7 +557,7 @@ namespace Lucene.Net.Index
 
                 IBits b;
 
-                if (multiLiveDocs != null)
+                if (multiLiveDocs is object)
                 {
                     // Optimize for common case: requested skip docs is a
                     // congruent sub-slice of MultiBits: in this case, we
@@ -577,7 +577,7 @@ namespace Lucene.Net.Index
                         b = new BitsSlice(liveDocs, top[i].SubSlice);
                     }
                 }
-                else if (liveDocs != null)
+                else if (liveDocs is object)
                 {
                     b = new BitsSlice(liveDocs, top[i].SubSlice);
                 }
@@ -590,7 +590,7 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled) Debugging.Assert(entry.Index < docsAndPositionsEnum.subDocsAndPositionsEnum.Length, () => entry.Index + " vs " + docsAndPositionsEnum.subDocsAndPositionsEnum.Length + "; " + subs.Length);
                 DocsAndPositionsEnum subPostings = entry.Terms.DocsAndPositions(b, docsAndPositionsEnum.subDocsAndPositionsEnum[entry.Index], flags);
 
-                if (subPostings != null)
+                if (subPostings is object)
                 {
                     docsAndPositionsEnum.subDocsAndPositionsEnum[entry.Index] = subPostings;
                     subDocsAndPositions[upto].DocsAndPositionsEnum = subPostings;
@@ -599,7 +599,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (entry.Terms.Docs(b, null, DocsFlags.NONE) != null)
+                    if (entry.Terms.Docs(b, null, DocsFlags.NONE) is object)
                     {
                         // At least one of our subs does not store
                         // offsets or positions -- we can't correctly

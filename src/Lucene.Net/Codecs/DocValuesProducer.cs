@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs
         public abstract void CheckIntegrity();
 
         /// <summary>
-        /// Disposes all resources used by this object.
+        /// Disposes all resources used by th is object.
         /// </summary>
         public virtual void Dispose()
         {

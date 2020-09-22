@@ -73,7 +73,7 @@ namespace Lucene.Net.Search.Spans
         private int matchDoc = -1;
         private int matchStart = -1;
         private int matchEnd = -1;
-        private List<byte[]> matchPayload;
+        private readonly List<byte[]> matchPayload;
 
         private readonly Spans[] subSpansByDoc;
 
@@ -101,8 +101,8 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        private SpanNearQuery query;
-        private bool collectPayloads = true;
+        private readonly SpanNearQuery query;
+        private readonly bool collectPayloads = true;
 
         public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             : this(spanNearQuery, context, acceptDocs, termContexts, true)
@@ -404,7 +404,7 @@ namespace Lucene.Net.Search.Spans
                     }
                 }
 
-                if (collectPayloads && possiblePayload != null)
+                if (collectPayloads && possiblePayload is object)
                 {
                     possibleMatchPayloads.UnionWith(possiblePayload);
                 }

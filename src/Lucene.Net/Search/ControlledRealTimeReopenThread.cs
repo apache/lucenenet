@@ -52,8 +52,8 @@ namespace Lucene.Net.Search
         private long searchingGen;
         private long refreshStartGen;
 
-        private EventWaitHandle reopenCond = new AutoResetEvent(false);
-        private EventWaitHandle available = new AutoResetEvent(false);
+        private readonly EventWaitHandle reopenCond = new AutoResetEvent(false);
+        private readonly EventWaitHandle available = new AutoResetEvent(false);
 
         /// <summary>
         /// Create <see cref="ControlledRealTimeReopenThread{T}"/>, to periodically

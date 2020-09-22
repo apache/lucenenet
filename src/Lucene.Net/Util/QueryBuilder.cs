@@ -140,9 +140,8 @@ namespace Lucene.Net.Util
             }
 
             Query query = CreateFieldQuery(analyzer, Occur.SHOULD, field, queryText, false, 0);
-            if (query is BooleanQuery)
+            if (query is BooleanQuery bq)
             {
-                BooleanQuery bq = (BooleanQuery)query;
                 bq.MinimumNumberShouldMatch = (int)(fraction * bq.Clauses.Count);
             }
             return query;
@@ -214,7 +213,7 @@ namespace Lucene.Net.Util
                     posIncrAtt = buffer.GetAttribute<IPositionIncrementAttribute>();
                 }
 
-                if (termAtt != null)
+                if (termAtt is object)
                 {
                     try
                     {
@@ -222,7 +221,7 @@ namespace Lucene.Net.Util
                         while (hasMoreTokens)
                         {
                             numTokens++;
-                            int positionIncrement = (posIncrAtt != null) ? posIncrAtt.PositionIncrement : 1;
+                            int positionIncrement = (posIncrAtt is object) ? posIncrAtt.PositionIncrement : 1;
                             if (positionIncrement != 0)
                             {
                                 positionCount += positionIncrement;
@@ -318,7 +317,7 @@ namespace Lucene.Net.Util
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
-                                if (posIncrAtt != null && posIncrAtt.PositionIncrement == 0)
+                                if (posIncrAtt is object && posIncrAtt.PositionIncrement == 0)
                                 {
                                     if (!(currentQuery is BooleanQuery))
                                     {
@@ -330,7 +329,7 @@ namespace Lucene.Net.Util
                                 }
                                 else
                                 {
-                                    if (currentQuery != null)
+                                    if (currentQuery is object)
                                     {
                                         q.Add(currentQuery, @operator);
                                     }
@@ -356,7 +355,7 @@ namespace Lucene.Net.Util
                                 bool hasNext = buffer.IncrementToken();
                                 if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
                                 termAtt.FillBytesRef();
-                                if (posIncrAtt != null)
+                                if (posIncrAtt is object)
                                 {
                                     positionIncrement = posIncrAtt.PositionIncrement;
                                 }
@@ -407,7 +406,7 @@ namespace Lucene.Net.Util
                             bool hasNext = buffer.IncrementToken();
                             if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
                             termAtt.FillBytesRef();
-                            if (posIncrAtt != null)
+                            if (posIncrAtt is object)
                             {
                                 positionIncrement = posIncrAtt.PositionIncrement;
                             }

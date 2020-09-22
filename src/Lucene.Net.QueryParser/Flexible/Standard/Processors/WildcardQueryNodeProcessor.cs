@@ -78,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         private bool IsWildcard(string text)
         {
-            if (text == null || text.Length <= 0) return false;
+            if (text is null || text.Length <= 0) return false;
 
             // If a un-escaped '*' or '?' if found return true
             // start at the end since it's more common to put wildcards at the end
@@ -95,7 +95,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         private bool IsPrefixWildcard(string text)
         {
-            if (text == null || text.Length <= 0 || !IsWildcard(text)) return false;
+            if (text is null || text.Length <= 0 || !IsWildcard(text)) return false;
 
             // Validate last character is a '*' and was not escaped
             // If single '*' is is a wildcard not prefix to simulate old queryparser

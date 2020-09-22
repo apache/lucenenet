@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
             }
 
             TermsEnum termsEnum = m_query.GetTermsEnum(terms);
-            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum is object);
             if (termsEnum.MoveNext())
             {
                 // fill into a FixedBitSet

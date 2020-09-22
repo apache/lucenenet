@@ -159,7 +159,7 @@ namespace Lucene.Net.Util
 
         private sealed class FunctorComparer<T> : IComparer<T>
         {
-            private Comparison<T> comparison;
+            private readonly Comparison<T> comparison;
 
             public FunctorComparer(Comparison<T> comparison)
             {

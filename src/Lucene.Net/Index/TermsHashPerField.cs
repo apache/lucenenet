@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
             streamCount = consumer.StreamCount;
             numPostingInt = 2 * streamCount;
             this.fieldInfo = fieldInfo;
-            if (nextTermsHash != null)
+            if (nextTermsHash is object)
             {
                 nextPerField = (TermsHashPerField)nextTermsHash.AddField(docInverterPerField, fieldInfo);
             }
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
         public void Reset()
         {
             bytesHash.Clear(false);
-            if (nextPerField != null)
+            if (nextPerField is object)
             {
                 nextPerField.Reset();
             }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
         public override void Abort()
         {
             Reset();
-            if (nextPerField != null)
+            if (nextPerField is object)
             {
                 nextPerField.Abort();
             }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
             termAtt = fieldState.AttributeSource.GetAttribute<ITermToBytesRefAttribute>();
             termBytesRef = termAtt.BytesRef;
             consumer.Start(f);
-            if (nextPerField != null)
+            if (nextPerField is object)
             {
                 nextPerField.Start(f);
             }
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
         {
             doCall = consumer.Start(fields, count);
             bytesHash.Reinit();
-            if (nextPerField != null)
+            if (nextPerField is object)
             {
                 doNextCall = nextPerField.Start(fields, count);
             }
@@ -291,7 +291,7 @@ namespace Lucene.Net.Index
         {
             int upto = intUptos[intUptoStart + stream];
             var bytes = bytePool.Buffers[upto >> ByteBlockPool.BYTE_BLOCK_SHIFT];
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytes != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bytes is object);
             int offset = upto & ByteBlockPool.BYTE_BLOCK_MASK;
             if (bytes[offset] != 0)
             {
@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
         internal override void Finish()
         {
             consumer.Finish();
-            if (nextPerField != null)
+            if (nextPerField is object)
             {
                 nextPerField.Finish();
             }
@@ -369,7 +369,7 @@ namespace Lucene.Net.Index
 
             public override int[] Clear()
             {
-                if (perField.postingsArray != null)
+                if (perField.postingsArray is object)
                 {
                     bytesUsed.AddAndGet(-(perField.postingsArray.size * perField.postingsArray.BytesPerPosting()));
                     perField.postingsArray = null;

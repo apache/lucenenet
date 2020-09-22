@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Holds all the configuration that is used to create an <see cref="IndexWriter"/>.
-    /// Once <see cref="IndexWriter"/> has been created with this object, changes to this
+    /// Once <see cref="IndexWriter"/> has been created with th is object, changes to this
     /// object will not affect the <see cref="IndexWriter"/> instance. For that, use
     /// <see cref="LiveIndexWriterConfig"/> that is returned from <see cref="IndexWriter.Config"/>.
     ///
@@ -242,11 +242,7 @@ namespace Lucene.Net.Index
             get => delPolicy;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentException("indexDeletionPolicy must not be null");
-                }
-                this.delPolicy = value;
+                this.delPolicy = value ?? throw new ArgumentException("indexDeletionPolicy must not be null");
             }
         }
 
@@ -278,11 +274,7 @@ namespace Lucene.Net.Index
             get => similarity;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentException("similarity must not be null");
-                }
-                this.similarity = value;
+                this.similarity = value ?? throw new ArgumentException("similarity must not be null");
             }
         }
 
@@ -316,11 +308,7 @@ namespace Lucene.Net.Index
             }
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentException("mergeScheduler must not be null");
-                }
-                this.mergeScheduler = value;
+                this.mergeScheduler = value ?? throw new ArgumentException("mergeScheduler must not be null");
             }
         }
 
@@ -352,11 +340,7 @@ namespace Lucene.Net.Index
             get => codec;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentException("codec must not be null");
-                }
-                this.codec = value;
+                this.codec = value ?? throw new ArgumentException("codec must not be null");
             }
         }
 
@@ -375,11 +359,7 @@ namespace Lucene.Net.Index
             get => mergePolicy;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentException("mergePolicy must not be null");
-                }
-                this.mergePolicy = value;
+                this.mergePolicy = value ?? throw new ArgumentException("mergePolicy must not be null");
             }
         }
 
@@ -405,11 +385,7 @@ namespace Lucene.Net.Index
             get => indexerThreadPool;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentException("threadPool must not be null");
-                }
-                this.indexerThreadPool = value;
+                this.indexerThreadPool = value ?? throw new ArgumentException("threadPool must not be null");
             }
         }
 
@@ -474,11 +450,7 @@ namespace Lucene.Net.Index
             get => indexingChain;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentException("indexingChain must not be null");
-                }
-                this.indexingChain = value;
+                this.indexingChain = value ?? throw new ArgumentException("indexingChain must not be null");
             }
         }
 
@@ -522,11 +494,7 @@ namespace Lucene.Net.Index
             get => flushPolicy;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentException("flushPolicy must not be null");
-                }
-                this.flushPolicy = value;
+                this.flushPolicy = value ?? throw new ArgumentException("flushPolicy must not be null");
             }
         }
 
@@ -604,12 +572,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public IndexWriterConfig SetInfoStream(InfoStream infoStream)
         {
-            if (infoStream == null)
-            {
-                throw new ArgumentException("Cannot set InfoStream implementation to null. " + 
+            this.infoStream = infoStream ?? throw new ArgumentException("Cannot set InfoStream implementation to null. " + 
                     "To disable logging use InfoStream.NO_OUTPUT");
-            }
-            this.infoStream = infoStream;
             return this;
         }
 

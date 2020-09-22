@@ -41,8 +41,8 @@ namespace Lucene.Net.Index
     internal class SortedSetDocValuesWriter : DocValuesWriter
     {
         internal readonly BytesRefHash hash;
-        private AppendingPackedInt64Buffer pending; // stream of all termIDs
-        private AppendingDeltaPackedInt64Buffer pendingCounts; // termIDs per doc
+        private readonly AppendingPackedInt64Buffer pending; // stream of all termIDs
+        private readonly AppendingDeltaPackedInt64Buffer pendingCounts; // termIDs per doc
         private readonly Counter iwBytesUsed;
         private long bytesUsed; // this only tracks differences in 'pending' and 'pendingCounts'
         private readonly FieldInfo fieldInfo;

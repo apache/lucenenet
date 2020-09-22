@@ -48,11 +48,7 @@ namespace Lucene.Net.Store
         /// </summary>
         protected IndexInput(string resourceDescription)
         {
-            if (resourceDescription == null)
-            {
-                throw new ArgumentException("resourceDescription must not be null");
-            }
-            this.resourceDescription = resourceDescription;
+            this.resourceDescription = resourceDescription ?? throw new ArgumentException("resourceDescription must not be null");
         }
 
         /// <summary>

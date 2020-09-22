@@ -580,7 +580,7 @@ namespace Lucene.Net.Search
                 var ord = new int?();
                 foreach (var t in pp.terms)
                 {
-                    if (tord.TryGetValue(t, out ord) && ord != null)
+                    if (tord.TryGetValue(t, out ord) && ord is object)
                         b.Set((int)ord);
                 }
                 bb.Add(b);

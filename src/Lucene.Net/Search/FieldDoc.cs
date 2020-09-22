@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Expert: A <see cref="ScoreDoc"/> which also contains information about
     /// how to sort the referenced document.  In addition to the
-    /// document number and score, this object contains an array
+    /// document number and score, th is object contains an array
     /// of values for the document from the field(s) used to sort.
     /// For example, if the sort criteria was to sort by fields
     /// "a", "b" then "c", the <c>fields</c> object array

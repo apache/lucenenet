@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// Sole constructor. </summary>
         public CompressingStoredFieldsWriter(Directory directory, SegmentInfo si, string segmentSuffix, IOContext context, string formatName, CompressionMode compressionMode, int chunkSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(directory != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(directory is object);
             this.directory = directory;
             this.segment = si.Name;
             this.segmentSuffix = segmentSuffix;
@@ -310,7 +310,7 @@ namespace Lucene.Net.Codecs.Compressing
             else
             {
                 bytes = field.GetBinaryValue();
-                if (bytes != null)
+                if (bytes is object)
                 {
                     bits = BYTE_ARR;
                     @string = null;
@@ -329,12 +329,12 @@ namespace Lucene.Net.Codecs.Compressing
             long infoAndBits = (((long)info.Number) << TYPE_BITS) | (uint)bits;
             bufferedDocs.WriteVInt64(infoAndBits);
 
-            if (bytes != null)
+            if (bytes is object)
             {
                 bufferedDocs.WriteVInt32(bytes.Length);
                 bufferedDocs.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
             }
-            else if (@string != null)
+            else if (@string is object)
             {
                 bufferedDocs.WriteString(field.GetStringValue());
             }
@@ -398,13 +398,13 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 SegmentReader matchingSegmentReader = mergeState.MatchingSegmentReaders[idx++];
                 CompressingStoredFieldsReader matchingFieldsReader = null;
-                if (matchingSegmentReader != null)
+                if (matchingSegmentReader is object)
                 {
                     StoredFieldsReader fieldsReader = matchingSegmentReader.FieldsReader;
                     // we can only bulk-copy if the matching reader is also a CompressingStoredFieldsReader
-                    if (fieldsReader != null && fieldsReader is CompressingStoredFieldsReader)
+                    if (fieldsReader is CompressingStoredFieldsReader csfReader)
                     {
-                        matchingFieldsReader = (CompressingStoredFieldsReader)fieldsReader;
+                        matchingFieldsReader = csfReader;
                     }
                 }
 

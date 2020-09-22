@@ -87,14 +87,14 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly FieldInfos fieldInfos;
         private readonly IndexInput fieldsStream;
         private readonly IndexInput indexStream;
-        private int numTotalDocs;
-        private int size;
+        private readonly int numTotalDocs;
+        private readonly int size;
         private bool closed;
         private readonly int format;
 
         // The docID offset where our docs begin in the index
         // file.  this will be 0 if we have our own private file.
-        private int docStoreOffset;
+        private readonly int docStoreOffset;
 
         // when we are inside a compound share doc store (CFX),
         // (lucene 3.0 indexes only), we privately open our own fd.

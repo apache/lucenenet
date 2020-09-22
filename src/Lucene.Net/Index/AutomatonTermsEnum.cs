@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
         {
             this.finite = compiled.Finite;
             this.runAutomaton = compiled.RunAutomaton;
-            if (Debugging.AssertsEnabled) Debugging.Assert(this.runAutomaton != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(this.runAutomaton is object);
             this.commonSuffixRef = compiled.CommonSuffixRef;
             this.allTransitions = compiled.SortedTransitions;
 

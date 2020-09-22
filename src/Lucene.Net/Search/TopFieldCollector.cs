@@ -938,7 +938,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Implements a <see cref="TopFieldCollector"/> when after != null.
+        /// Implements a <see cref="TopFieldCollector"/> when after is object.
         /// </summary>
         private sealed class PagingFieldCollector : TopFieldCollector
         {

@@ -122,7 +122,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     foreach (State qq in partition[j])
                     {
-                        if (reverse[qq.number, x] != null)
+                        if (reverse[qq.number, x] is object)
                         {
                             active2[qq.number, x] = active[j, x].Add(qq);
                         }
@@ -145,10 +145,10 @@ namespace Lucene.Net.Util.Automaton
                 int x = ip.n2;
                 pending2.Clear(x * statesLen + p);
                 // find states that need to be split off their blocks
-                for (StateListNode m = active[p, x].First; m != null; m = m.Next)
+                for (StateListNode m = active[p, x].First; m is object; m = m.Next)
                 {
                     List<State> r = reverse[m.Q.number, x];
-                    if (r != null)
+                    if (r is object)
                     {
                         foreach (State s in r)
                         {
@@ -183,7 +183,7 @@ namespace Lucene.Net.Util.Automaton
                             for (int c = 0; c < sigmaLen; c++)
                             {
                                 StateListNode sn = active2[s.number, c];
-                                if (sn != null && sn.Sl == active[j, c])
+                                if (sn is object && sn.Sl == active[j, c])
                                 {
                                     sn.Remove();
                                     active2[s.number, c] = active[k, c].Add(s);

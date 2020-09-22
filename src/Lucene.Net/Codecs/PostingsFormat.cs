@@ -86,9 +86,7 @@ namespace Lucene.Net.Codecs
         /// <exception cref="ArgumentNullException">The <paramref name="postingsFormatFactory"/> parameter is <c>null</c>.</exception>
         public static void SetPostingsFormatFactory(IPostingsFormatFactory postingsFormatFactory)
         {
-            if (postingsFormatFactory == null)
-                throw new ArgumentNullException("postingsFormatFactory");
-            PostingsFormat.postingsFormatFactory = postingsFormatFactory;
+            PostingsFormat.postingsFormatFactory = postingsFormatFactory ?? throw new ArgumentNullException("postingsFormatFactory");
         }
 
         /// <summary>
@@ -151,9 +149,9 @@ namespace Lucene.Net.Codecs
         {
             get
             {
-                if (postingsFormatFactory is IServiceListable)
+                if (postingsFormatFactory is IServiceListable listable)
                 {
-                    return ((IServiceListable)postingsFormatFactory).AvailableServices;
+                    return listable.AvailableServices;
                 }
                 else
                 {

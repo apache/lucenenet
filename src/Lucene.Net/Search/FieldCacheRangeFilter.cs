@@ -215,7 +215,7 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 sbyte inclusiveLowerPoint, inclusiveUpperPoint;
-                if (lowerVal != null)
+                if (lowerVal is object)
                 {
                     sbyte i = (sbyte)lowerVal;
                     if (!includeLower && i == sbyte.MaxValue)
@@ -226,7 +226,7 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = sbyte.MinValue;
                 }
-                if (upperVal != null)
+                if (upperVal is object)
                 {
                     sbyte i = (sbyte)upperVal;
                     if (!includeUpper && i == sbyte.MinValue)
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
             {
                 short inclusiveLowerPoint, inclusiveUpperPoint;
 
-                if (lowerVal != null)
+                if (lowerVal is object)
                 {
                     short i = (short)lowerVal;
                     if (!includeLower && i == short.MaxValue)
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = short.MinValue;
                 }
-                if (upperVal != null)
+                if (upperVal is object)
                 {
                     short i = (short)upperVal;
                     if (!includeUpper && i == short.MinValue)
@@ -321,7 +321,7 @@ namespace Lucene.Net.Search
             {
                 int inclusiveLowerPoint, inclusiveUpperPoint;
 
-                if (lowerVal != null)
+                if (lowerVal is object)
                 {
                     int i = (int)lowerVal;
                     if (!includeLower && i == int.MaxValue)
@@ -332,7 +332,7 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = int.MinValue;
                 }
-                if (upperVal != null)
+                if (upperVal is object)
                 {
                     int i = (int)upperVal;
                     if (!includeUpper && i == int.MinValue)
@@ -371,7 +371,7 @@ namespace Lucene.Net.Search
             {
                 long inclusiveLowerPoint, inclusiveUpperPoint;
 
-                if (lowerVal != null)
+                if (lowerVal is object)
                 {
                     long i = (long)lowerVal;
                     if (!includeLower && i == long.MaxValue)
@@ -382,7 +382,7 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = long.MinValue;
                 }
-                if (upperVal != null)
+                if (upperVal is object)
                 {
                     long i = (long)upperVal;
                     if (!includeUpper && i == long.MinValue)
@@ -423,7 +423,7 @@ namespace Lucene.Net.Search
                 // using NumericUtils to easier find the next bigger/lower value
                 float inclusiveLowerPoint;
                 float inclusiveUpperPoint;
-                if (lowerVal != null)
+                if (lowerVal is object)
                 {
                     float f = (float)lowerVal;
                     if (!includeUpper && f > 0.0f && float.IsInfinity(f))
@@ -435,7 +435,7 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = float.NegativeInfinity;
                 }
-                if (upperVal != null)
+                if (upperVal is object)
                 {
                     float f = (float)upperVal;
                     if (!includeUpper && f < 0.0f && float.IsInfinity(f))
@@ -478,7 +478,7 @@ namespace Lucene.Net.Search
                 // using NumericUtils to easier find the next bigger/lower value
                 double inclusiveLowerPoint;
                 double inclusiveUpperPoint;
-                if (lowerVal != null)
+                if (lowerVal is object)
                 {
                     double f = (double)lowerVal;
                     if (!includeUpper && f > 0.0 && double.IsInfinity(f))
@@ -490,7 +490,7 @@ namespace Lucene.Net.Search
                 {
                     inclusiveLowerPoint = double.NegativeInfinity;
                 }
-                if (upperVal != null)
+                if (upperVal is object)
                 {
                     double f = (double)upperVal;
                     if (!includeUpper && f < 0.0 && double.IsInfinity(f))
@@ -727,15 +727,15 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (this.lowerVal != null ? !this.lowerVal.Equals(other.lowerVal) : other.lowerVal != null)
+            if (this.lowerVal is object ? !this.lowerVal.Equals(other.lowerVal) : other.lowerVal is object)
             {
                 return false;
             }
-            if (this.upperVal != null ? !this.upperVal.Equals(other.upperVal) : other.upperVal != null)
+            if (this.upperVal is object ? !this.upperVal.Equals(other.upperVal) : other.upperVal is object)
             {
                 return false;
             }
-            if (this.parser != null ? !this.parser.Equals(other.parser) : other.parser != null)
+            if (this.parser is object ? !this.parser.Equals(other.parser) : other.parser is object)
             {
                 return false;
             }
@@ -745,10 +745,10 @@ namespace Lucene.Net.Search
         public override sealed int GetHashCode()
         {
             int h = field.GetHashCode();
-            h ^= (lowerVal != null) ? lowerVal.GetHashCode() : 550356204;
+            h ^= (lowerVal is object) ? lowerVal.GetHashCode() : 550356204;
             h = (h << 1) | ((int)((uint)h >> 31)); // rotate to distinguish lower from upper
-            h ^= (upperVal != null) ? upperVal.GetHashCode() : -1674416163;
-            h ^= (parser != null) ? parser.GetHashCode() : -1572457324;
+            h ^= (upperVal is object) ? upperVal.GetHashCode() : -1674416163;
+            h ^= (parser is object) ? parser.GetHashCode() : -1572457324;
             h ^= (includeLower ? 1549299360 : -365038026) ^ (includeUpper ? 1721088258 : 1948649653);
             return h;
         }

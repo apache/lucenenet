@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
         public static AtomicReader Wrap(IndexReader reader)
         {
             CompositeReader compositeReader = reader as CompositeReader;
-            if (compositeReader != null)
+            if (compositeReader is object)
             {
                 return new SlowCompositeReaderWrapper(compositeReader);
             }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
                     // uncached, or not a multi dv
                     SortedDocValues dv = MultiDocValues.GetSortedValues(@in, field);
                     MultiSortedDocValues docValues = dv as MultiSortedDocValues;
-                    if (docValues != null)
+                    if (docValues is object)
                     {
                         map = docValues.Mapping;
                         if (map.owner == CoreCacheKey)
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
                     // uncached, or not a multi dv
                     SortedSetDocValues dv = MultiDocValues.GetSortedSetValues(@in, field);
                     MultiSortedSetDocValues docValues = dv as MultiSortedSetDocValues;
-                    if (docValues != null)
+                    if (docValues is object)
                     {
                         map = docValues.Mapping;
                         if (map.owner == CoreCacheKey)
@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
             {
                 return null;
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(map != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(map is object);
             int size = @in.Leaves.Count;
             var values = new SortedSetDocValues[size];
             int[] starts = new int[size + 1];

@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public override object Clone()
         {
             PayloadAttribute clone = (PayloadAttribute)base.Clone();
-            if (payload != null)
+            if (payload is object)
             {
                 clone.payload = (BytesRef)payload.Clone();
             }
@@ -73,9 +73,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return true;
             }
 
-            if (other is PayloadAttribute)
+            if (other is PayloadAttribute o)
             {
-                PayloadAttribute o = (PayloadAttribute)other;
                 if (o.payload == null || payload == null)
                 {
                     return o.payload == null && payload == null;

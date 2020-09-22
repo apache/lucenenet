@@ -229,7 +229,7 @@ namespace Lucene.Net.Util.Automaton
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(stateRegistry != null, "Automaton already built.");
+                Debugging.Assert(stateRegistry is object, "Automaton already built.");
                 Debugging.Assert(previous == null || comparer.Compare(previous, current) <= 0, () => "Input must be in sorted UTF-8 order: " + previous + " >= " + current);
                 Debugging.Assert(SetPrevious(current));
             }
@@ -237,7 +237,7 @@ namespace Lucene.Net.Util.Automaton
             // Descend in the automaton (find matching prefix).
             int pos = 0, max = current.Length;
             State next, state = root;
-            while (pos < max && (next = state.LastChild(Character.CodePointAt(current, pos))) != null)
+            while (pos < max && (next = state.LastChild(Character.CodePointAt(current, pos))) is object)
             {
                 state = next;
                 // todo, optimize me
@@ -280,7 +280,7 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="visited">Must use a dictionary with <see cref="IdentityEqualityComparer{State}.Default"/> passed into its constructor.</param>
         private static Util.Automaton.State Convert(State s, IDictionary<State, Util.Automaton.State> visited)
         {
-            if (visited.TryGetValue(s, out Util.Automaton.State converted) && converted != null)
+            if (visited.TryGetValue(s, out Util.Automaton.State converted) && converted is object)
             {
                 return converted;
             }

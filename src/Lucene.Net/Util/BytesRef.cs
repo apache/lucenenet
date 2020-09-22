@@ -164,7 +164,7 @@ namespace Lucene.Net.Util
         /// <param name="other"> Another <see cref="BytesRef"/>, should not be <c>null</c>. </param>
         public bool BytesEquals(BytesRef other)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(other != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(other is object);
             if (Length == other.Length)
             {
                 var otherUpto = other.Offset;
@@ -307,7 +307,7 @@ namespace Lucene.Net.Util
         public int CompareTo(object other) // LUCENENET specific: Implemented IComparable for FieldComparer
         {
             BytesRef br = other as BytesRef;
-            if (Debugging.AssertsEnabled) Debugging.Assert(br != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(br is object);
             return utf8SortedAsUnicodeSortOrder.Compare(this, br);
         }
 

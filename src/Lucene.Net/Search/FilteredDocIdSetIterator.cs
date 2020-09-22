@@ -35,11 +35,7 @@ namespace Lucene.Net.Search
         /// <param name="innerIter"> Underlying <see cref="DocIdSetIterator"/>. </param>
         public FilteredDocIdSetIterator(DocIdSetIterator innerIter)
         {
-            if (innerIter == null)
-            {
-                throw new ArgumentException("null iterator");
-            }
-            m_innerIter = innerIter;
+            m_innerIter = innerIter ?? throw new ArgumentException("null iterator");
             doc = -1;
         }
 

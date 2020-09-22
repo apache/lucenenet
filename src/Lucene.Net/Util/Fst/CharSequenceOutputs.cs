@@ -44,8 +44,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(output1 != null);
-                Debugging.Assert(output2 != null);
+                Debugging.Assert(output1 is object);
+                Debugging.Assert(output2 is object);
             }
 
             int pos1 = output1.Offset;
@@ -86,8 +86,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(output != null);
-                Debugging.Assert(inc != null);
+                Debugging.Assert(output is object);
+                Debugging.Assert(inc is object);
             }
             if (inc == NO_OUTPUT)
             {
@@ -114,8 +114,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(prefix != null);
-                Debugging.Assert(output != null);
+                Debugging.Assert(prefix is object);
+                Debugging.Assert(output is object);
             }
             if (prefix == NO_OUTPUT)
             {
@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(CharsRef prefix, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(prefix != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(prefix is object);
             @out.WriteVInt32(prefix.Length);
             // TODO: maybe UTF8?
             for (int idx = 0; idx < prefix.Length; idx++)

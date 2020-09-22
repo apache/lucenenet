@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
                 {
                     throw new NotSupportedException("this is not a top-level context.");
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(leaves != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(leaves is object);
                 return leaves;
             }
         }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
             internal IndexReaderContext Build(CompositeReaderContext parent, IndexReader reader, int ord, int docBase)
             {
                 var ar = reader as AtomicReader;
-                if (ar != null)
+                if (ar is object)
                 {
                     var atomic = new AtomicReaderContext(parent, ar, ord, docBase, leaves.Count, leafDocBase);
                     leaves.Add(atomic);

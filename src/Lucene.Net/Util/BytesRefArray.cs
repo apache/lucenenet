@@ -121,8 +121,8 @@ namespace Lucene.Net.Util
         {
             private readonly BytesRefArray outerInstance;
 
-            private IComparer<BytesRef> comp;
-            private int[] orderedEntries;
+            private readonly IComparer<BytesRef> comp;
+            private readonly int[] orderedEntries;
 
             public IntroSorterAnonymousInnerClassHelper(BytesRefArray outerInstance, IComparer<BytesRef> comp, int[] orderedEntries)
             {

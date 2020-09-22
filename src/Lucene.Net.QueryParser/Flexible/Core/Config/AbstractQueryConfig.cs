@@ -46,13 +46,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         /// <returns>the value held by the given key</returns>
         public virtual T Get<T>(ConfigurationKey<T> key)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw new ArgumentException("key cannot be null!");
             }
             object result;
             this.configMap.TryGetValue(key, out result);
-            return result == null ? default(T) : (T)result;
+            return result is null ? default(T) : (T)result;
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         /// <returns><c>true</c> if there is a value set with the given key, otherwise <c>false</c></returns>
         public virtual bool Has<T>(ConfigurationKey<T> key)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw new ArgumentException("key cannot be null!");
             }
@@ -79,12 +79,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         /// <param name="value">value to set</param>
         public virtual void Set<T>(ConfigurationKey<T> key, T value)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw new ArgumentException("key cannot be null!");
             }
 
-            if (value == null)
+            if (value is null)
             {
                 Unset(key);
             }
@@ -102,7 +102,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         /// <returns><c>true</c> if the key and value was set and removed, otherwise <c>false</c></returns>
         public virtual bool Unset<T>(ConfigurationKey<T> key)
         {
-            if (key == null)
+            if (key is null)
             {
                 throw new ArgumentException("key cannot be null!");
             }

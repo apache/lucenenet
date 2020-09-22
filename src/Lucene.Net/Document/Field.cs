@@ -140,16 +140,8 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>. </exception>
         protected internal Field(string name, FieldType type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException("name", "name cannot be null");
-            }
-            if (type == null)
-            {
-                throw new ArgumentNullException("type", "type cannot be null");
-            }
-            this.m_name = name;
-            this.m_type = type;
+            this.m_name = name ?? throw new ArgumentNullException("name", "name cannot be null");
+            this.m_type = type ?? throw new ArgumentNullException("type", "type cannot be null");
         }
 
         /// <summary>
@@ -163,18 +155,11 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>, or if the reader is <c>null</c> </exception>
         public Field(string name, TextReader reader, FieldType type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException("name", "name cannot be null");
-            }
             if (type == null)
             {
                 throw new ArgumentNullException("type", "type cannot be null");
             }
-            if (reader == null)
-            {
-                throw new ArgumentNullException("reader", "reader cannot be null");
-            }
+
             if (type.IsStored)
             {
                 throw new ArgumentException("fields with a Reader value cannot be stored");
@@ -184,8 +169,8 @@ namespace Lucene.Net.Documents
                 throw new ArgumentException("non-tokenized fields must use String values");
             }
 
-            this.m_name = name;
-            this.FieldsData = reader;
+            this.m_name = name ?? throw new ArgumentNullException("name", "name cannot be null");
+            this.FieldsData = reader ?? throw new ArgumentNullException("reader", "reader cannot be null");
             this.m_type = type;
         }
 
@@ -200,14 +185,6 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>, or if the <paramref name="tokenStream"/> is <c>null</c> </exception>
         public Field(string name, TokenStream tokenStream, FieldType type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException("name", "name cannot be null");
-            }
-            if (tokenStream == null)
-            {
-                throw new ArgumentNullException("tokenStream", "tokenStream cannot be null");
-            }
             if (type == null)
             {
                 throw new ArgumentNullException("type", "type cannot be null");
@@ -221,9 +198,9 @@ namespace Lucene.Net.Documents
                 throw new ArgumentException("TokenStream fields cannot be stored");
             }
 
-            this.m_name = name;
+            this.m_name = name ?? throw new ArgumentNullException("name", "name cannot be null");
             this.FieldsData = null;
-            this.m_tokenStream = tokenStream;
+            this.m_tokenStream = tokenStream ?? throw new ArgumentNullException("tokenStream", "tokenStream cannot be null");
             this.m_type = type;
         }
 
@@ -277,10 +254,6 @@ namespace Lucene.Net.Documents
         ///         or the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, BytesRef bytes, FieldType type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException("name", "name cannot be null");
-            }
             if (type == null)
             {
                 throw new ArgumentNullException("type", "type cannot be null");
@@ -291,7 +264,7 @@ namespace Lucene.Net.Documents
             }
             this.FieldsData = bytes;
             this.m_type = type;
-            this.m_name = name;
+            this.m_name = name ?? throw new ArgumentNullException("name", "name cannot be null");
         }
 
         // TODO: allow direct construction of int, long, float, double value too..?
@@ -307,14 +280,6 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>, or if the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, string value, FieldType type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException("name", "name cannot be null");
-            }
-            if (value == null)
-            {
-                throw new ArgumentNullException("value", "value cannot be null");
-            }
             if (type == null)
             {
                 throw new ArgumentNullException("type", "type cannot be null");
@@ -329,8 +294,8 @@ namespace Lucene.Net.Documents
             }
 
             this.m_type = type;
-            this.m_name = name;
-            this.FieldsData = value;
+            this.m_name = name ?? throw new ArgumentNullException("name", "name cannot be null");
+            this.FieldsData = value ?? throw new ArgumentNullException("value", "value cannot be null");
         }
 
         /// <summary>
@@ -361,13 +326,13 @@ namespace Lucene.Net.Documents
         // LUCENENET specific overload.
         public virtual string GetStringValue(IFormatProvider provider) 
         {
-            if (FieldsData is string)
+            if (FieldsData is string str)
             {
-                return FieldsData.ToString();
+                return str;
             }
-            else if (FieldsData is Number)
+            else if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).ToString(provider);
+                return number.ToString(provider);
             }
             else
             {
@@ -385,13 +350,13 @@ namespace Lucene.Net.Documents
         // LUCENENET specific overload.
         public virtual string GetStringValue(string format) 
         {
-            if (FieldsData is string)
+            if (FieldsData is string str)
             {
-                return FieldsData.ToString();
+                return str;
             }
-            else if (FieldsData is Number)
+            else if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).ToString(format);
+                return number.ToString(format);
             }
             else
             {
@@ -414,9 +379,9 @@ namespace Lucene.Net.Documents
             {
                 return FieldsData.ToString();
             }
-            else if (FieldsData is Number)
+            else if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).ToString(format, provider);
+                return number.ToString(format, provider);
             }
             else
             {
@@ -431,7 +396,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual TextReader GetReaderValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            return FieldsData is TextReader ? (TextReader)FieldsData : null;
+            return FieldsData is TextReader reader ? reader : null;
         }
 
         /// <summary>
@@ -646,29 +611,29 @@ namespace Lucene.Net.Documents
             // wrong StoredFieldsVisitor method will be called (in this case it was calling Int64Field() instead of StringField()).
             // This is an extremely difficult thing to track down and very confusing to end users.
 
-            if (FieldsData is Int32)
+            if (FieldsData is Int32 int32)
             {
-                return ((Int32)FieldsData).GetInt32Value();
+                return int32.GetInt32Value();
             }
-            else if (FieldsData is Int64)
+            else if (FieldsData is Int64 int64)
             {
-                return ((Int64)FieldsData).GetInt64Value();
+                return int64.GetInt64Value();
             }
-            else if (FieldsData is Single)
+            else if (FieldsData is Single single)
             {
-                return ((Single)FieldsData).GetSingleValue();
+                return single.GetSingleValue();
             }
-            else if (FieldsData is Double)
+            else if (FieldsData is Double dbl)
             {
-                return ((Double)FieldsData).GetDoubleValue();
+                return dbl.GetDoubleValue();
             }
-            else if (FieldsData is Int16)
+            else if (FieldsData is Int16 int16)
             {
-                return ((Int16)FieldsData).GetInt16Value();
+                return int16.GetInt16Value();
             }
-            else if (FieldsData is Byte)
+            else if (FieldsData is Byte byteVal)
             {
-                return ((Byte)FieldsData).GetByteValue();
+                return byteVal.GetByteValue();
             }
 
             return null;
@@ -702,14 +667,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
         public virtual byte? GetByteValue()
         {
-            if (FieldsData is Number)
-            {
-                return ((Number)FieldsData).GetByteValue();
-            }
-            else
-            {
-                return null;
-            }
+            return FieldsData is Number number ? number.GetByteValue() : (byte?)null;
         }
 
         /// <summary>
@@ -720,14 +678,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Short, since we have no Number class in .NET
         public virtual short? GetInt16Value()
         {
-            if (FieldsData is Number)
-            {
-                return ((Number)FieldsData).GetInt16Value();
-            }
-            else
-            {
-                return null;
-            }
+            return FieldsData is Number number ? number.GetInt16Value() : (short?)null;
         }
 
         /// <summary>
@@ -738,14 +689,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Int32, since we have no Number class in .NET
         public virtual int? GetInt32Value()
         {
-            if (FieldsData is Number)
-            {
-                return ((Number)FieldsData).GetInt32Value();
-            }
-            else
-            {
-                return null;
-            }
+            return FieldsData is Number number ? number.GetInt32Value() : (int?)null;
         }
 
         /// <summary>
@@ -756,9 +700,9 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Int64, since we have no Number class in .NET
         public virtual long? GetInt64Value()
         {
-            if (FieldsData is Number)
+            if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).GetInt64Value();
+                return number.GetInt64Value();
             }
             else
             {
@@ -774,9 +718,9 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Single, since we have no Number class in .NET
         public virtual float? GetSingleValue()
         {
-            if (FieldsData is Number)
+            if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).GetSingleValue();
+                return number.GetSingleValue();
             }
             else
             {
@@ -792,28 +736,14 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Double, since we have no Number class in .NET
         public virtual double? GetDoubleValue()
         {
-            if (FieldsData is Number)
-            {
-                return ((Number)FieldsData).GetDoubleValue();
-            }
-            else
-            {
-                return null;
-            }
+            return FieldsData is Number number ? number.GetDoubleValue() : (double?)null;
         }
 
         /// <summary>
         /// Non-null if this field has a binary value. </summary>
         public virtual BytesRef GetBinaryValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            if (FieldsData is BytesRef)
-            {
-                return (BytesRef)FieldsData;
-            }
-            else
-            {
-                return null;
-            }
+            return FieldsData is BytesRef bytesRef ? bytesRef : null;
         }
 
         /// <summary>
@@ -826,7 +756,7 @@ namespace Lucene.Net.Documents
             result.Append(m_name);
             result.Append(':');
 
-            if (FieldsData != null)
+            if (FieldsData is object)
             {
                 result.Append(FieldsData);
             }
@@ -908,15 +838,15 @@ namespace Lucene.Net.Documents
                 return internalTokenStream;
             }
 
-            if (m_tokenStream != null)
+            if (m_tokenStream is object)
             {
                 return m_tokenStream;
             }
-            else if (GetReaderValue() != null)
+            else if (GetReaderValue() is object)
             {
                 return analyzer.GetTokenStream(Name, GetReaderValue());
             }
-            else if (stringValue != null)
+            else if (stringValue is object)
             {
                 TextReader sr = new StringReader(stringValue);
                 return analyzer.GetTokenStream(Name, sr);

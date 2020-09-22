@@ -385,7 +385,7 @@ namespace Lucene.Net.Util.Fst
             /// </summary>
             protected virtual void AddIfCompetitive(FSTPath<T> path)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(queue != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(queue is object);
 
                 T cost = fst.Outputs.Add(path.Cost, path.Arc.Output);
                 //System.out.println("  addIfCompetitive queue.size()=" + queue.size() + " path=" + path + " + label=" + path.arc.label);
@@ -519,7 +519,7 @@ namespace Lucene.Net.Util.Fst
                     lock (syncLock)
                     {
                         path = queue.Min;
-                        if (path != null)
+                        if (path is object)
                         {
                             queue.Remove(path);
                         }
@@ -585,7 +585,7 @@ namespace Lucene.Net.Util.Fst
                                     AddIfCompetitive(path);
                                 }
                             }
-                            else if (queue != null)
+                            else if (queue is object)
                             {
                                 AddIfCompetitive(path);
                             }
@@ -598,7 +598,7 @@ namespace Lucene.Net.Util.Fst
 
                         if (Debugging.AssertsEnabled) Debugging.Assert(foundZero);
 
-                        if (queue != null)
+                        if (queue is object)
                         {
                             // TODO: maybe we can save this copyFrom if we
                             // are more clever above... eg on finding the
@@ -869,7 +869,7 @@ namespace Lucene.Net.Util.Fst
                                 }
 
                                 string finalOutput;
-                                if (arc.NextFinalOutput != null && !arc.NextFinalOutput.Equals(NO_OUTPUT))
+                                if (arc.NextFinalOutput is object && !arc.NextFinalOutput.Equals(NO_OUTPUT))
                                 {
                                     finalOutput = fst.Outputs.OutputToString(arc.NextFinalOutput);
                                 }
@@ -959,9 +959,9 @@ namespace Lucene.Net.Util.Fst
         {
             @out.Write("  " + name 
                 + " [" 
-                + (shape != null ? "shape=" + shape : "") + " " 
-                + (color != null ? "color=" + color : "") + " " 
-                + (label != null ? "label=\"" + label + "\"" : "label=\"\"") + " " 
+                + (shape is object ? "shape=" + shape : "") + " " 
+                + (color is object ? "color=" + color : "") + " " 
+                + (label is object ? "label=\"" + label + "\"" : "label=\"\"") + " " 
                 + "]\n");
         }
 

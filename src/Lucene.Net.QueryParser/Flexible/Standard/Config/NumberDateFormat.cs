@@ -115,7 +115,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         // LUCENENET specific
         public string GetDateFormat()
         {
-            if (dateFormat != null) return dateFormat;
+            if (dateFormat is object) return dateFormat;
 
             return GetDateFormat(this.dateStyle, this.timeStyle, Culture);
         }

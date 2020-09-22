@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
                     }
                 }
                 // throw the first exception
-                if (ioe != null)
+                if (ioe is object)
                 {
                     throw ioe;
                 }

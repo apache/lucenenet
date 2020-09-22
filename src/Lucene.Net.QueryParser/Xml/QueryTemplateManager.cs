@@ -170,7 +170,7 @@ namespace Lucene.Net.QueryParsers.Xml
             {
                 string propName = prop.Key;
                 string value = prop.Value;
-                if ((value != null) && (value.Length > 0))
+                if ((value is object) && (value.Length > 0))
                 {
                     DOMUtils.InsertChild(root, propName, value);
                 }

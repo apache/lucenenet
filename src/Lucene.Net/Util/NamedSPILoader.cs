@@ -66,7 +66,7 @@
 //                SPIClassIterator<S> loader = SPIClassIterator<S>.Get();
 
 //                // Ensure there is a default constructor (the SPIClassIterator contains types that don't)
-//                foreach (Type c in loader.Where(t => t.GetConstructor(Type.EmptyTypes) != null))
+//                foreach (Type c in loader.Where(t => t.GetConstructor(Type.EmptyTypes) is object))
 //                {
 //                    try
 //                    {

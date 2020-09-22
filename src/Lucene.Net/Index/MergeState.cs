@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
 
             internal static DocMap Build(int maxDoc, IBits liveDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(liveDocs != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(liveDocs is object);
                 MonotonicAppendingInt64Buffer docMap = new MonotonicAppendingInt64Buffer();
                 int del = 0;
                 for (int i = 0; i < maxDoc; ++i)
@@ -101,10 +101,10 @@ namespace Lucene.Net.Index
 
             private class DocMapAnonymousInnerClassHelper : DocMap
             {
-                private int maxDoc;
-                private IBits liveDocs;
-                private MonotonicAppendingInt64Buffer docMap;
-                private int numDeletedDocs;
+                private readonly int maxDoc;
+                private readonly IBits liveDocs;
+                private readonly MonotonicAppendingInt64Buffer docMap;
+                private readonly int numDeletedDocs;
 
                 public DocMapAnonymousInnerClassHelper(int maxDoc, IBits liveDocs, MonotonicAppendingInt64Buffer docMap, int numDeletedDocs)
                 {

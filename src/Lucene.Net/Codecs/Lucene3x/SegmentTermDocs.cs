@@ -45,8 +45,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         internal int doc = 0;
         internal int freq;
 
-        private int skipInterval;
-        private int maxSkipLevels;
+        private readonly int skipInterval;
+        private readonly int maxSkipLevels;
         private Lucene3xSkipListReader skipListReader;
 
         private long freqBasePointer;
@@ -103,8 +103,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             m_count = 0;
             FieldInfo fi = fieldInfos.FieldInfo(term.Field);
-            this.m_indexOptions = (fi != null) ? fi.IndexOptions : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-            m_currentFieldStoresPayloads = (fi != null) && fi.HasPayloads;
+            this.m_indexOptions = (fi is object) ? fi.IndexOptions : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+            m_currentFieldStoresPayloads = (fi is object) && fi.HasPayloads;
             if (ti == null)
             {
                 m_df = 0;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (disposing)
             {
                 m_freqStream.Dispose();
-                if (skipListReader != null)
+                if (skipListReader is object)
                 {
                     skipListReader.Dispose();
                 }

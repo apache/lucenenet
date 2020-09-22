@@ -261,9 +261,9 @@ namespace Lucene.Net.Analysis
             while (pos <= positions.MaxPos)
             {
                 posData = positions.Get(pos);
-                if (posData.arriving != null)
+                if (posData.arriving is object)
                 {
-                    if (endState != null)
+                    if (endState is object)
                     {
                         posData.arriving.AddTransition(new Transition(POS_SEP, endState));
                     }
@@ -313,7 +313,7 @@ namespace Lucene.Net.Analysis
                     {
                         prevPosData.leaving = new State();
                     }
-                    if (prevPosData.arriving != null)
+                    if (prevPosData.arriving is object)
                     {
                         prevPosData.arriving.AddTransition(new Transition(POS_SEP, prevPosData.leaving));
                     }

@@ -73,7 +73,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         // in a centralized DI configuration builder.
         public static void SetResourceManagerFactory(IResourceManagerFactory resourceManagerFactory)
         {
-            if (resourceManagerFactory == null)
+            if (resourceManagerFactory is null)
             {
                 throw new ArgumentNullException("resourceManagerFactory");
             }
@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         public static string GetLocalizedMessage(string key, CultureInfo locale)
         {
             string message = GetResourceBundleObject(key, locale);
-            if (message == null)
+            if (message is null)
             {
                 return "Message with key:" + key + " and locale: " + locale
                     + " not found.";
@@ -145,12 +145,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             {
                 Type clazz = bundles[key];
                 ResourceManager resourceBundle = resourceManagerFactory.Create(clazz);
-                if (resourceBundle != null)
+                if (resourceBundle is object)
                 {
                     try
                     {
                         string obj = resourceBundle.GetString(messageKey, locale);
-                        if (obj != null)
+                        if (obj is object)
                             return obj;
                     }
 #pragma warning disable 168
@@ -200,12 +200,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
             try
             {
                 ResourceManager resourceBundle = resourceManagerFactory.Create(clazz);
-                if (resourceBundle != null)
+                if (resourceBundle is object)
                 {
                     try
                     {
                         string obj = resourceBundle.GetString(key);
-                        //if (obj == null)
+                        //if (obj is null)
                         //  System.err.println("WARN: Message with key:" + key + " and locale: "
                         //      + Locale.getDefault() + " not found.");
                     }

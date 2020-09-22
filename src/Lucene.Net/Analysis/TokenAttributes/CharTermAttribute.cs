@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         }
 
         // LUCENENET specific - ICharSequence member from J2N
-        bool ICharSequence.HasValue => termBuffer != null;
+        bool ICharSequence.HasValue => termBuffer is object;
 
         public void CopyBuffer(char[] buffer, int offset, int length)
         {

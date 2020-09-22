@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
             foreach (AtomicReader reader in this.parallelReaders)
             {
                 Fields readerFields = reader.Fields;
-                if (readerFields != null)
+                if (readerFields is object)
                 {
                     foreach (string field in readerFields)
                     {
@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
             {
                 string fieldName = ent.Key;
                 Terms vector = ent.Value.GetTermVector(docID, fieldName);
-                if (vector != null)
+                if (vector is object)
                 {
                     if (fields == null)
                     {
@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
                     }
                 }
                 // throw the first exception
-                if (ioe != null)
+                if (ioe is object)
                 {
                     throw ioe;
                 }

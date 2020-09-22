@@ -160,14 +160,14 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 try
                 {
-                    if (freqIn != null)
+                    if (freqIn is object)
                     {
                         freqIn.Dispose();
                     }
                 }
                 finally
                 {
-                    if (proxIn != null)
+                    if (proxIn is object)
                     {
                         proxIn.Dispose();
                     }
@@ -225,9 +225,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private bool CanReuse(DocsEnum reuse, IBits liveDocs)
         {
-            if (reuse != null && (reuse is SegmentDocsEnumBase))
+            if (reuse is SegmentDocsEnumBase docsEnum)
             {
-                SegmentDocsEnumBase docsEnum = (SegmentDocsEnumBase)reuse;
                 // If you are using ParellelReader, and pass in a
                 // reused DocsEnum, it could have come from another
                 // reader also using standard codec
@@ -263,13 +262,9 @@ namespace Lucene.Net.Codecs.Lucene40
             if (fieldInfo.HasPayloads || hasOffsets)
             {
                 SegmentFullPositionsEnum docsEnum;
-                if (reuse == null || !(reuse is SegmentFullPositionsEnum))
+                if (reuse is SegmentFullPositionsEnum segmentFullPositionsReuse)
                 {
-                    docsEnum = new SegmentFullPositionsEnum(this, freqIn, proxIn);
-                }
-                else
-                {
-                    docsEnum = (SegmentFullPositionsEnum)reuse;
+                    docsEnum = segmentFullPositionsReuse;
                     if (docsEnum.startFreqIn != freqIn)
                     {
                         // If you are using ParellelReader, and pass in a
@@ -278,18 +273,18 @@ namespace Lucene.Net.Codecs.Lucene40
                         docsEnum = new SegmentFullPositionsEnum(this, freqIn, proxIn);
                     }
                 }
+                else
+                {
+                    docsEnum = new SegmentFullPositionsEnum(this, freqIn, proxIn);
+                }
                 return docsEnum.Reset(fieldInfo, (StandardTermState)termState, liveDocs);
             }
             else
             {
                 SegmentDocsAndPositionsEnum docsEnum;
-                if (reuse == null || !(reuse is SegmentDocsAndPositionsEnum))
+                if (reuse is SegmentDocsAndPositionsEnum segDocsAndPosReuse)
                 {
-                    docsEnum = new SegmentDocsAndPositionsEnum(this, freqIn, proxIn);
-                }
-                else
-                {
-                    docsEnum = (SegmentDocsAndPositionsEnum)reuse;
+                    docsEnum = segDocsAndPosReuse;
                     if (docsEnum.startFreqIn != freqIn)
                     {
                         // If you are using ParellelReader, and pass in a
@@ -297,6 +292,10 @@ namespace Lucene.Net.Codecs.Lucene40
                         // reader also using standard codec
                         docsEnum = new SegmentDocsAndPositionsEnum(this, freqIn, proxIn);
                     }
+                }
+                else
+                {
+                    docsEnum = new SegmentDocsAndPositionsEnum(this, freqIn, proxIn);
                 }
                 return docsEnum.Reset(fieldInfo, (StandardTermState)termState, liveDocs);
             }
@@ -639,7 +638,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 : base(outerInstance, startFreqIn, liveDocs)
             {
                 this.outerInstance = outerInstance;
-                if (Debugging.AssertsEnabled) Debugging.Assert(liveDocs != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(liveDocs is object);
             }
 
             public override int NextDoc()

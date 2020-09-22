@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
-            if (writer != null)
+            if (writer is object)
             {
                 int numDocs = state.SegmentInfo.DocCount;
                 if (Debugging.AssertsEnabled) Debugging.Assert(numDocs > 0);
@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     Fill(numDocs);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state.SegmentInfo != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(state.SegmentInfo is object);
                     writer.Finish(state.FieldInfos, numDocs);
                 }
                 finally
@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
         {
             hasVectors = false;
 
-            if (writer != null)
+            if (writer is object)
             {
                 writer.Abort();
                 writer = null;
@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
         {
             try
             {
-                return lastVectorFieldName != null ? lastVectorFieldName.CompareToOrdinal(fi.Name) < 0 : true;
+                return lastVectorFieldName is object ? lastVectorFieldName.CompareToOrdinal(fi.Name) < 0 : true;
             }
             finally
             {

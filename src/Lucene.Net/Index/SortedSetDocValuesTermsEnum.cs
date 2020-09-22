@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
 
         public override void SeekExact(BytesRef term, TermState state)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(state != null && state is OrdTermState);
+            if (Debugging.AssertsEnabled) Debugging.Assert(state is object && state is OrdTermState);
             this.SeekExact(((OrdTermState)state).Ord);
         }
 

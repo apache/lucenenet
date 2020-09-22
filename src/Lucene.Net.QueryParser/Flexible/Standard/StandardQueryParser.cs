@@ -177,7 +177,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             get
             {
                 bool? lowercaseExpandedTerms = QueryConfigHandler.Get(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS);
-                return lowercaseExpandedTerms.HasValue ? lowercaseExpandedTerms.Value : true;
+                return lowercaseExpandedTerms ?? true;
             }
             set => QueryConfigHandler.Set(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, value);
         }
@@ -196,7 +196,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             get
             {
                 bool? allowLeadingWildcard = QueryConfigHandler.Get(ConfigurationKeys.ALLOW_LEADING_WILDCARD);
-                return allowLeadingWildcard.HasValue ? allowLeadingWildcard.Value : false;
+                return allowLeadingWildcard ?? false;
             }
             set => QueryConfigHandler.Set(ConfigurationKeys.ALLOW_LEADING_WILDCARD, value);
         }
@@ -215,7 +215,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             get
             {
                 bool? enablePositionsIncrements = QueryConfigHandler.Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS);
-                return enablePositionsIncrements.HasValue ? enablePositionsIncrements.Value : false;
+                return enablePositionsIncrements ?? false;
             }
             set => QueryConfigHandler.Set(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, value);
         }
@@ -244,7 +244,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public virtual void SetMultiFields(string[] fields)
         {
 
-            if (fields == null)
+            if (fields is null)
             {
                 fields = new string[0];
             }
@@ -272,7 +272,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             {
                 FuzzyConfig fuzzyConfig = QueryConfigHandler.Get(ConfigurationKeys.FUZZY_CONFIG);
 
-                if (fuzzyConfig == null)
+                if (fuzzyConfig is null)
                 {
                     return FuzzyQuery.DefaultPrefixLength;
                 }
@@ -286,7 +286,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 QueryConfigHandler config = QueryConfigHandler;
                 FuzzyConfig fuzzyConfig = config.Get(ConfigurationKeys.FUZZY_CONFIG);
 
-                if (fuzzyConfig == null)
+                if (fuzzyConfig is null)
                 {
                     fuzzyConfig = new FuzzyConfig();
                     config.Set(ConfigurationKeys.FUZZY_CONFIG, fuzzyConfig);
@@ -310,7 +310,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             get
             {
                 var culture = QueryConfigHandler.Get(ConfigurationKeys.LOCALE);
-                return culture == null ? CultureInfo.CurrentCulture : culture;
+                return culture is null ? CultureInfo.CurrentCulture : culture;
             }
             set => QueryConfigHandler.Set(ConfigurationKeys.LOCALE, value);
         }
@@ -320,7 +320,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             get
             {
                 var timeZone = QueryConfigHandler.Get(ConfigurationKeys.TIMEZONE);
-                return timeZone == null ? TimeZoneInfo.Local : timeZone;
+                return timeZone is null ? TimeZoneInfo.Local : timeZone;
             }
             set => QueryConfigHandler.Set(ConfigurationKeys.TIMEZONE, value);
         }
@@ -351,7 +351,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             get
             {
                 int? phraseSlop = QueryConfigHandler.Get(ConfigurationKeys.PHRASE_SLOP);
-                return phraseSlop.HasValue ? phraseSlop.Value : 0;
+                return phraseSlop ?? 0;
             }
             set => QueryConfigHandler.Set(ConfigurationKeys.PHRASE_SLOP, value);
         }
@@ -365,7 +365,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             get
             {
                 FuzzyConfig fuzzyConfig = QueryConfigHandler.Get(ConfigurationKeys.FUZZY_CONFIG);
-                return (fuzzyConfig != null) ? fuzzyConfig.MinSimilarity
+                return (fuzzyConfig is object) ? fuzzyConfig.MinSimilarity
 #pragma warning disable 612, 618
                     : FuzzyQuery.DefaultMinSimilarity;
 #pragma warning restore 612, 618
@@ -375,7 +375,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 QueryConfigHandler config = QueryConfigHandler;
                 FuzzyConfig fuzzyConfig = config.Get(ConfigurationKeys.FUZZY_CONFIG);
 
-                if (fuzzyConfig == null)
+                if (fuzzyConfig is null)
                 {
                     fuzzyConfig = new FuzzyConfig();
                     config.Set(ConfigurationKeys.FUZZY_CONFIG, fuzzyConfig);

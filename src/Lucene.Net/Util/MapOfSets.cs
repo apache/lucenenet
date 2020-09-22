@@ -29,13 +29,13 @@ namespace Lucene.Net.Util
     {
         private readonly IDictionary<TKey, ISet<TValue>> theMap;
 
-        /// <param name="m"> The backing store for this object. </param>
+        /// <param name="m"> The backing store for th is object. </param>
         public MapOfSets(IDictionary<TKey, ISet<TValue>> m) 
         {
             theMap = m;
         }
 
-        /// <returns> Direct access to the map backing this object. </returns>
+        /// <returns> Direct access to the map backing th is object. </returns>
         public virtual IDictionary<TKey, ISet<TValue>> Map => theMap;
 
         /// <summary>

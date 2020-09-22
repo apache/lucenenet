@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
                 InitFieldsWriter(state.Context);
                 Fill(numDocs);
             }
-            if (fieldsWriter != null)
+            if (fieldsWriter is object)
             {
                 bool success = false;
                 try
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         {
             Reset();
 
-            if (fieldsWriter != null)
+            if (fieldsWriter is object)
             {
                 fieldsWriter.Abort();
                 fieldsWriter = null;
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
             InitFieldsWriter(IOContext.DEFAULT);
             Fill(docState.docID);
 
-            if (fieldsWriter != null && numStoredFields > 0)
+            if (fieldsWriter is object && numStoredFields > 0)
             {
                 fieldsWriter.StartDocument(numStoredFields);
                 for (int i = 0; i < numStoredFields; i++)

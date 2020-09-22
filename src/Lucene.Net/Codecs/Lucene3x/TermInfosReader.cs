@@ -227,7 +227,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             TermInfoAndOrd tiOrd = termsCache.Get(new CloneableTerm(term));
             ThreadResources resources = GetThreadResources();
 
-            if (!mustSeekEnum && tiOrd != null)
+            if (!mustSeekEnum && tiOrd is object)
             {
                 return tiOrd;
             }
@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             // optimize sequential access: first try scanning cached enum w/o seeking
-            if (enumerator.Term() != null && ((enumerator.Prev() != null && CompareAsUTF16(term, enumerator.Prev()) > 0) || CompareAsUTF16(term, enumerator.Term()) >= 0)) // term is at or past current
+            if (enumerator.Term() is object && ((enumerator.Prev() is object && CompareAsUTF16(term, enumerator.Prev()) > 0) || CompareAsUTF16(term, enumerator.Term()) >= 0)) // term is at or past current
             {
                 int enumOffset = (int)(enumerator.position / totalIndexInterval) + 1;
                 if (indexLength == enumOffset || index.CompareTo(term, enumOffset) < 0) // but before end of block
@@ -274,7 +274,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     TermInfo ti;
                     int numScans = enumerator.ScanTo(term);
-                    if (enumerator.Term() != null && CompareAsUTF16(term, enumerator.Term()) == 0)
+                    if (enumerator.Term() is object && CompareAsUTF16(term, enumerator.Term()) == 0)
                     {
                         ti = enumerator.termInfo;
                         if (numScans > 1)
@@ -309,7 +309,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             // random-access: must seek
             int indexPos;
-            if (tiOrd != null)
+            if (tiOrd is object)
             {
                 indexPos = (int)(tiOrd.termOrd / totalIndexInterval);
             }
@@ -323,7 +323,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             enumerator.ScanTo(term);
             TermInfo ti_;
 
-            if (enumerator.Term() != null && CompareAsUTF16(term, enumerator.Term()) == 0)
+            if (enumerator.Term() is object && CompareAsUTF16(term, enumerator.Term()) == 0)
             {
                 ti_ = enumerator.termInfo;
                 if (tiOrd == null)

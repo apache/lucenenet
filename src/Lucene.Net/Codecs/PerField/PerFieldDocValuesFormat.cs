@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.PerField
                 {
                     string formatName = field.GetAttribute(PER_FIELD_FORMAT_KEY);
                     // this means the field never existed in that segment, yet is applied updates
-                    if (formatName != null)
+                    if (formatName is object)
                     {
                         format = DocValuesFormat.ForName(formatName);
                     }
@@ -170,7 +170,7 @@ namespace Lucene.Net.Codecs.PerField
                         // even when dvGen is != -1, it can still be a new field, that never
                         // existed in the segment, and therefore doesn't have the recorded
                         // attributes yet.
-                        if (suffixAtt != null)
+                        if (suffixAtt is object)
                         {
                             suffix = Convert.ToInt32(suffixAtt, CultureInfo.InvariantCulture);
                         }
@@ -261,11 +261,11 @@ namespace Lucene.Net.Codecs.PerField
                         {
                             string fieldName = fi.Name;
                             string formatName = fi.GetAttribute(PER_FIELD_FORMAT_KEY);
-                            if (formatName != null)
+                            if (formatName is object)
                             {
                                 // null formatName means the field is in fieldInfos, but has no docvalues!
                                 string suffix = fi.GetAttribute(PER_FIELD_SUFFIX_KEY);
-                                if (Debugging.AssertsEnabled) Debugging.Assert(suffix != null);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(suffix is object);
                                 DocValuesFormat format = DocValuesFormat.ForName(formatName);
                                 string segmentSuffix = GetFullSegmentSuffix(readState.SegmentSuffix, GetSuffix(formatName, suffix));
                                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
@@ -306,7 +306,7 @@ namespace Lucene.Net.Codecs.PerField
                 {
                     DocValuesProducer producer;
                     oldToNew.TryGetValue(ent.Value, out producer);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(producer != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(producer is object);
                     fields[ent.Key] = producer;
                 }
             }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Codecs.PerField
             public override NumericDocValues GetNumeric(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out producer) && producer is object)
                 {
                     return producer.GetNumeric(field);
                 }
@@ -324,7 +324,7 @@ namespace Lucene.Net.Codecs.PerField
             public override BinaryDocValues GetBinary(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out producer) && producer is object)
                 {
                     return producer.GetBinary(field);
                 }
@@ -334,7 +334,7 @@ namespace Lucene.Net.Codecs.PerField
             public override SortedDocValues GetSorted(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out producer) && producer is object)
                 {
                     return producer.GetSorted(field);
                 }
@@ -344,7 +344,7 @@ namespace Lucene.Net.Codecs.PerField
             public override SortedSetDocValues GetSortedSet(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out producer) && producer is object)
                 {
                     return producer.GetSortedSet(field);
                 }
@@ -354,7 +354,7 @@ namespace Lucene.Net.Codecs.PerField
             public override IBits GetDocsWithField(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out producer) && producer is object)
                 {
                     return producer.GetDocsWithField(field);
                 }

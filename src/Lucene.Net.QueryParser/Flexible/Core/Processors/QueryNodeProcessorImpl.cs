@@ -107,7 +107,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             IList<IQueryNode> children = queryTree.GetChildren();
             ChildrenList newChildren;
 
-            if (children != null && children.Count > 0)
+            if (children is object && children.Count > 0)
             {
                 newChildren = AllocateChildrenList();
 
@@ -117,7 +117,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                     {
                         var child2 = ProcessIteration(child);
 
-                        if (child2 == null)
+                        if (child2 is null)
                         {
                             throw new NullReferenceException(); // LUCENENET TODO: Change to ArgumentException ?
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
                 }
             }
 
-            if (list == null)
+            if (list is null)
             {
                 list = new ChildrenList();
                 this.childrenListPool.Add(list);

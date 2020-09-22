@@ -54,11 +54,11 @@ namespace Lucene.Net.Codecs.Lucene41
         // private boolean DEBUG = Lucene41PostingsReader.DEBUG;
         private readonly int blockSize;
 
-        private long[] docPointer;
-        private long[] posPointer;
-        private long[] payPointer;
-        private int[] posBufferUpto;
-        private int[] payloadByteUpto;
+        private readonly long[] docPointer;
+        private readonly long[] posPointer;
+        private readonly long[] payPointer;
+        private readonly int[] posBufferUpto;
+        private readonly int[] payloadByteUpto;
 
         private long lastPosPointer;
         private long lastPayPointer;
@@ -119,10 +119,10 @@ namespace Lucene.Net.Codecs.Lucene41
             lastPayPointer = payBasePointer;
 
             Arrays.Fill(docPointer, docBasePointer);
-            if (posPointer != null)
+            if (posPointer is object)
             {
                 Arrays.Fill(posPointer, posBasePointer);
-                if (payPointer != null)
+                if (payPointer is object)
                 {
                     Arrays.Fill(payPointer, payBasePointer);
                 }
@@ -156,15 +156,15 @@ namespace Lucene.Net.Codecs.Lucene41
             //   System.out.println("seekChild level=" + level);
             // }
             docPointer[level] = lastDocPointer;
-            if (posPointer != null)
+            if (posPointer is object)
             {
                 posPointer[level] = lastPosPointer;
                 posBufferUpto[level] = lastPosBufferUpto;
-                if (payloadByteUpto != null)
+                if (payloadByteUpto is object)
                 {
                     payloadByteUpto[level] = lastPayloadByteUpto;
                 }
-                if (payPointer != null)
+                if (payPointer is object)
                 {
                     payPointer[level] = lastPayPointer;
                 }
@@ -179,18 +179,18 @@ namespace Lucene.Net.Codecs.Lucene41
             //   System.out.println("setLastSkipData level=" + value);
             //   System.out.println("  lastDocPointer=" + lastDocPointer);
             // }
-            if (posPointer != null)
+            if (posPointer is object)
             {
                 lastPosPointer = posPointer[level];
                 lastPosBufferUpto = posBufferUpto[level];
                 // if (DEBUG) {
                 //   System.out.println("  lastPosPointer=" + lastPosPointer + " lastPosBUfferUpto=" + lastPosBufferUpto);
                 // }
-                if (payPointer != null)
+                if (payPointer is object)
                 {
                     lastPayPointer = payPointer[level];
                 }
-                if (payloadByteUpto != null)
+                if (payloadByteUpto is object)
                 {
                     lastPayloadByteUpto = payloadByteUpto[level];
                 }
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.Lucene41
             //   System.out.println("  docFP=" + docPointer[level]);
             // }
 
-            if (posPointer != null)
+            if (posPointer is object)
             {
                 posPointer[level] += skipStream.ReadVInt32();
                 // if (DEBUG) {
@@ -222,12 +222,12 @@ namespace Lucene.Net.Codecs.Lucene41
                 //   System.out.println("  posBufferUpto=" + posBufferUpto[level]);
                 // }
 
-                if (payloadByteUpto != null)
+                if (payloadByteUpto is object)
                 {
                     payloadByteUpto[level] = skipStream.ReadVInt32();
                 }
 
-                if (payPointer != null)
+                if (payPointer is object)
                 {
                     payPointer[level] += skipStream.ReadVInt32();
                 }

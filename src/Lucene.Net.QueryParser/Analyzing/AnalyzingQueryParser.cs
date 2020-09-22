@@ -41,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
     public class AnalyzingQueryParser : Classic.QueryParser
     {
         // gobble escaped chars or find a wildcard character 
-        private readonly Regex wildcardPattern = new Regex(@"(\\.)|([?*]+)", RegexOptions.Compiled);
+        private static readonly Regex wildcardPattern = new Regex(@"(\\.)|([?*]+)", RegexOptions.Compiled);
 
         public AnalyzingQueryParser(LuceneVersion matchVersion, string field, Analyzer analyzer)
             : base(matchVersion, field, analyzer)
@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
         /// <returns>Resulting <see cref="Query"/> built for the term</returns>
         protected internal override Query GetWildcardQuery(string field, string termStr)
         {
-            if (termStr == null)
+            if (termStr is null)
             {
                 //can't imagine this would ever happen
                 throw new ParseException("Passed null value as term to GetWildcardQuery");

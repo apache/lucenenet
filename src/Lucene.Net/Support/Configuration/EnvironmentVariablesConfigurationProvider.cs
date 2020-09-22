@@ -118,7 +118,7 @@ namespace Lucene.Net.Configuration
             return indexOf < 0 ? key.Substring(prefixLength) : key.Substring(prefixLength, indexOf - prefixLength);
         }
 
-        private IChangeToken _reloadToken = new ConfigurationReloadToken();
+        private readonly IChangeToken _reloadToken = new ConfigurationReloadToken();
 
         /// <summary>
         /// Returns a <see cref="IChangeToken"/> that can be used to listen when this provider is reloaded.

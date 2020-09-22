@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
                 }
                 if (GetRefCount(@ref) == 0 && (object)current == (object)@ref)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(@ref != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(@ref is object);
                     /* if we can't increment the reader but we are
                        still the current reference the RM is in a
                        illegal states since we can't make any progress
@@ -172,7 +172,7 @@ namespace Lucene.Net.Search
         /// </exception>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && current != null)
+            if (disposing && current is object)
             {
                 // make sure we can call this more than once
                 // closeable javadoc says:
@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
                 {
                     NotifyRefreshListenersBefore();
                     G newReference = RefreshIfNeeded(reference);
-                    if (newReference != null)
+                    if (newReference is object)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(!ReferenceEquals(newReference, reference), "refreshIfNeeded should return null if refresh wasn't needed");
                         try

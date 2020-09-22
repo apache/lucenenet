@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
                 if (state.FieldInfos.HasNorms)
                 {
                     NormsFormat normsFormat = state.SegmentInfo.Codec.NormsFormat;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(normsFormat != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(normsFormat is object);
                     normsConsumer = normsFormat.NormsConsumer(state);
 
                     foreach (FieldInfo fi in state.FieldInfos)
@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
                         // changed for this field since the first time we added it.
                         if (!fi.OmitsNorms)
                         {
-                            if (toWrite != null && !toWrite.IsEmpty)
+                            if (toWrite is object && !toWrite.IsEmpty)
                             {
                                 toWrite.Flush(state, normsConsumer);
                                 if (Debugging.AssertsEnabled) Debugging.Assert(fi.NormType == DocValuesType.NUMERIC);

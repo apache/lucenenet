@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs.Lucene41
         private readonly IndexInput payIn;
 
         private readonly ForUtil forUtil;
-        private int version;
+        private readonly int version;
 
         // public static boolean DEBUG = false;
 
@@ -236,9 +236,9 @@ namespace Lucene.Net.Codecs.Lucene41
         public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             BlockDocsEnum docsEnum;
-            if (reuse is BlockDocsEnum)
+            if (reuse is BlockDocsEnum blocsReuse)
             {
-                docsEnum = (BlockDocsEnum)reuse;
+                docsEnum = blocsReuse;
                 if (!docsEnum.CanReuse(docIn, fieldInfo))
                 {
                     docsEnum = new BlockDocsEnum(this, fieldInfo);
@@ -261,9 +261,9 @@ namespace Lucene.Net.Codecs.Lucene41
             if ((!indexHasOffsets || (flags & DocsAndPositionsFlags.OFFSETS) == 0) && (!indexHasPayloads || (flags & DocsAndPositionsFlags.PAYLOADS) == 0))
             {
                 BlockDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse is BlockDocsAndPositionsEnum)
+                if (reuse is BlockDocsAndPositionsEnum docsAndPosReuse)
                 {
-                    docsAndPositionsEnum = (BlockDocsAndPositionsEnum)reuse;
+                    docsAndPositionsEnum = docsAndPosReuse;
                     if (!docsAndPositionsEnum.CanReuse(docIn, fieldInfo))
                     {
                         docsAndPositionsEnum = new BlockDocsAndPositionsEnum(this, fieldInfo);
@@ -278,9 +278,9 @@ namespace Lucene.Net.Codecs.Lucene41
             else
             {
                 EverythingEnum everythingEnum;
-                if (reuse is EverythingEnum)
+                if (reuse is EverythingEnum eeReuse)
                 {
-                    everythingEnum = (EverythingEnum)reuse;
+                    everythingEnum = eeReuse;
                     if (!everythingEnum.CanReuse(docIn, fieldInfo))
                     {
                         everythingEnum = new EverythingEnum(this, fieldInfo);
@@ -1705,15 +1705,15 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             if (version >= Lucene41PostingsWriter.VERSION_CHECKSUM)
             {
-                if (docIn != null)
+                if (docIn is object)
                 {
                     CodecUtil.ChecksumEntireFile(docIn);
                 }
-                if (posIn != null)
+                if (posIn is object)
                 {
                     CodecUtil.ChecksumEntireFile(posIn);
                 }
-                if (payIn != null)
+                if (payIn is object)
                 {
                     CodecUtil.ChecksumEntireFile(payIn);
                 }

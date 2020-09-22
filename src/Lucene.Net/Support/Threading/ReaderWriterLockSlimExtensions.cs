@@ -41,7 +41,7 @@ namespace Lucene.Net.Support.Threading
 
             public void Dispose()
             {
-                if (_readerWriterLockSlim != null)
+                if (_readerWriterLockSlim is object)
                 {
                     _readerWriterLockSlim.ExitReadLock();
                     _readerWriterLockSlim = null;
@@ -61,7 +61,7 @@ namespace Lucene.Net.Support.Threading
 
             public void Dispose()
             {
-                if (_readerWriterLockSlim != null)
+                if (_readerWriterLockSlim is object)
                 {
                     _readerWriterLockSlim.ExitWriteLock();
                     _readerWriterLockSlim = null;

@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     internal class SortedDocValuesWriter : DocValuesWriter
     {
         internal readonly BytesRefHash hash;
-        private AppendingDeltaPackedInt64Buffer pending;
+        private readonly AppendingDeltaPackedInt64Buffer pending;
         private readonly Counter iwBytesUsed;
         private long bytesUsed; // this currently only tracks differences in 'pending'
         private readonly FieldInfo fieldInfo;

@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis
 
         public override void End()
         {
-            if (finalState != null)
+            if (finalState is object)
             {
                 RestoreState(finalState);
             }
@@ -83,7 +83,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public override void Reset()
         {
-            if (cache != null)
+            if (cache is object)
             {
                 iterator = cache.GetEnumerator();
             }

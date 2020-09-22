@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
                     //Using weak references
                     IndexReader target = parent.Target;
 
-                    if (target != null)
+                    if (target is object)
                     {
                         target.closedByChild = true;
                         // cross memory barrier by a fake write:

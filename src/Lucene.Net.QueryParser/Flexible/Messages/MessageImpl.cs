@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         {
             object[] args = GetArguments();
             StringBuilder sb = new StringBuilder(Key);
-            if (args != null)
+            if (args is object)
             {
                 for (int i = 0; i < args.Length; i++)
                 {

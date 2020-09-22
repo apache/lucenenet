@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
                     // We cannot merge sub-readers that have
                     // different TermComps
                     IComparer<BytesRef> subTermComp = subs[i].Comparer;
-                    if (subTermComp != null && !subTermComp.Equals(_termComp))
+                    if (subTermComp is object && !subTermComp.Equals(_termComp))
                     {
                         throw new InvalidOperationException("sub-readers have different BytesRef.Comparers; cannot merge");
                     }
@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < subs.Length; i++)
             {
                 TermsEnum termsEnum = subs[i].Intersect(compiled, startTerm);
-                if (termsEnum != null)
+                if (termsEnum is object)
                 {
                     termsEnums.Add(new MultiTermsEnum.TermsEnumIndex(termsEnum, i));
                 }
@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < subs.Length; i++)
             {
                 TermsEnum termsEnum = subs[i].GetEnumerator();
-                if (termsEnum != null)
+                if (termsEnum is object)
                 {
                     termsEnums.Add(new MultiTermsEnum.TermsEnumIndex(termsEnum, i));
                 }

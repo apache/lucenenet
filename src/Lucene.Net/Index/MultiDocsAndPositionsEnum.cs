@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(current != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(current is object);
                 return current.Freq;
             }
         }
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled) Debugging.Assert(target > doc);
             while (true)
             {
-                if (current != null)
+                if (current is object)
                 {
                     int doc;
                     if (target < currentBase)

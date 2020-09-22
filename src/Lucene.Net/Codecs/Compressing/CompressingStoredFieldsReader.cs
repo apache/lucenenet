@@ -379,8 +379,8 @@ namespace Lucene.Net.Codecs.Compressing
         {
             private readonly CompressingStoredFieldsReader outerInstance;
 
-            private int offset;
-            private int length;
+            private readonly int offset;
+            private readonly int length;
 
             public DataInputAnonymousInnerClassHelper(CompressingStoredFieldsReader outerInstance, int offset, int length)
             {

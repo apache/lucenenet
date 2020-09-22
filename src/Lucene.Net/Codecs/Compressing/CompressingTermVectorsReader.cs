@@ -413,7 +413,7 @@ namespace Lucene.Net.Codecs.Compressing
                     int[] fStartOffsets = startOffsets[i];
                     int[] fPositions = positions[i];
                     // patch offsets from positions
-                    if (fStartOffsets != null && fPositions != null)
+                    if (fStartOffsets is object && fPositions is object)
                     {
                         float fieldCharsPerTerm = charsPerTerm[fieldNumOffs[i]];
                         for (int j = 0; j < startOffsets[i].Length; ++j)
@@ -421,7 +421,7 @@ namespace Lucene.Net.Codecs.Compressing
                             fStartOffsets[j] += (int)(fieldCharsPerTerm * fPositions[j]);
                         }
                     }
-                    if (fStartOffsets != null)
+                    if (fStartOffsets is object)
                     {
                         int[] fPrefixLengths = prefixLengths[i];
                         int[] fSuffixLengths = suffixLengths[i];
@@ -451,7 +451,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     int[] fPositions = positions[i];
                     int[] fpositionIndex = positionIndex[i];
-                    if (fPositions != null)
+                    if (fPositions is object)
                     {
                         for (int j = 0, end = (int)numTerms.Get(skip + i); j < end; ++j)
                         {
@@ -773,11 +773,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override TermsEnum GetEnumerator(TermsEnum reuse)
             {
-                TVTermsEnum termsEnum;
-                if (!(reuse is null) && reuse is TVTermsEnum)
-                    termsEnum = (TVTermsEnum)reuse;
-                else
-                    termsEnum = new TVTermsEnum();
+                TVTermsEnum termsEnum = reuse is TVTermsEnum tvReuse ? tvReuse : new TVTermsEnum();
 
                 termsEnum.Reset(numTerms, flags, prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex, payloadBytes, new ByteArrayDataInput(termBytes.Bytes, termBytes.Offset, termBytes.Length));
                 return termsEnum;
@@ -918,15 +914,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override sealed DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                TVDocsEnum docsEnum;
-                if (reuse != null && reuse is TVDocsEnum)
-                {
-                    docsEnum = (TVDocsEnum)reuse;
-                }
-                else
-                {
-                    docsEnum = new TVDocsEnum();
-                }
+                TVDocsEnum docsEnum = reuse is TVDocsEnum reuseDocs ? reuseDocs : new TVDocsEnum();
 
                 docsEnum.Reset(liveDocs, termFreqs[ord], positionIndex[ord], positions, startOffsets, lengths, payloads, payloadIndex);
                 return docsEnum;
@@ -1016,7 +1004,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 ++i;
 
-                if (payloadIndex != null)
+                if (payloadIndex is object)
                 {
                     payload.Offset = basePayloadOffset + payloadIndex[positionIndex + i];
                     payload.Length = payloadIndex[positionIndex + i + 1] - payloadIndex[positionIndex + i];

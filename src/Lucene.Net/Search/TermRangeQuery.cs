@@ -44,10 +44,10 @@ namespace Lucene.Net.Search
 
     public class TermRangeQuery : MultiTermQuery
     {
-        private BytesRef lowerTerm;
-        private BytesRef upperTerm;
-        private bool includeLower;
-        private bool includeUpper;
+        private readonly BytesRef lowerTerm;
+        private readonly BytesRef upperTerm;
+        private readonly bool includeLower;
+        private readonly bool includeUpper;
 
         /// <summary>
         /// Constructs a query selecting all terms greater/equal than <paramref name="lowerTerm"/>
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
 
         protected override TermsEnum GetTermsEnum(Terms terms, AttributeSource atts)
         {
-            if (lowerTerm != null && upperTerm != null && lowerTerm.CompareTo(upperTerm) > 0)
+            if (lowerTerm is object && upperTerm is object && lowerTerm.CompareTo(upperTerm) > 0)
             {
                 return TermsEnum.EMPTY;
             }
@@ -133,9 +133,9 @@ namespace Lucene.Net.Search
             }
             buffer.Append(includeLower ? '[' : '{');
             // TODO: all these toStrings for queries should just output the bytes, it might not be UTF-8!
-            buffer.Append(lowerTerm != null ? ("*".Equals(Term.ToString(lowerTerm), StringComparison.Ordinal) ? "\\*" : Term.ToString(lowerTerm)) : "*");
+            buffer.Append(lowerTerm is object ? ("*".Equals(Term.ToString(lowerTerm), StringComparison.Ordinal) ? "\\*" : Term.ToString(lowerTerm)) : "*");
             buffer.Append(" TO ");
-            buffer.Append(upperTerm != null ? ("*".Equals(Term.ToString(upperTerm), StringComparison.Ordinal) ? "\\*" : Term.ToString(upperTerm)) : "*");
+            buffer.Append(upperTerm is object ? ("*".Equals(Term.ToString(upperTerm), StringComparison.Ordinal) ? "\\*" : Term.ToString(upperTerm)) : "*");
             buffer.Append(includeUpper ? ']' : '}');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
             }
             if (lowerTerm == null)
             {
-                if (other.lowerTerm != null)
+                if (other.lowerTerm is object)
                 {
                     return false;
                 }
@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
             }
             if (upperTerm == null)
             {
-                if (other.upperTerm != null)
+                if (other.upperTerm is object)
                 {
                     return false;
                 }

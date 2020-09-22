@@ -301,7 +301,7 @@
 //                while (enumerator.MoveNext())
 //                {
 //                    next = enumerator.Current.Key.Target;
-//                    if (next != null)
+//                    if (next is object)
 //                    {
 //                        // unfold "null" special value:
 //                        if (next == NULL)
@@ -357,7 +357,7 @@
 //                }
 //            }
 
-//            if (keysToRemove != null)
+//            if (keysToRemove is object)
 //                foreach (var key in keysToRemove)
 //                {
 //                    backingStore.Remove(key);
@@ -389,7 +389,7 @@
 //                    return true;
 //                }
 //                IdentityWeakReference @ref = o as IdentityWeakReference;
-//                if (@ref != null)
+//                if (@ref is object)
 //                {
 //                    if (this.Target == @ref.Target)
 //                    {

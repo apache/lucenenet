@@ -169,7 +169,7 @@ namespace Lucene.Net.Util
             }
             bool overridden = false;
             int distance = 0;
-            for (Type clazz = subclazz; clazz != baseClass && clazz != null; clazz = clazz.BaseType)
+            for (Type clazz = subclazz; clazz != baseClass && clazz is object; clazz = clazz.BaseType)
             {
                 // lookup method, if success mark as overridden
                 if (!overridden)
@@ -178,7 +178,7 @@ namespace Lucene.Net.Util
                         BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
                         parameters);
 
-                    if (mi != null)
+                    if (mi is object)
                         overridden = true;
                 }
 

@@ -61,10 +61,7 @@ namespace Lucene.Net.Support
             if (toIndex < fromIndex)
                 throw new ArgumentOutOfRangeException(nameof(toIndex));
 
-            if (list == null)
-                throw new ArgumentNullException(nameof(list));
-
-            this.list = list;
+            this.list = list ?? throw new ArgumentNullException(nameof(list));
             this.fromIndex = fromIndex;
             this.toIndex = toIndex;
         }

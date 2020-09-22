@@ -189,7 +189,7 @@ namespace Lucene.Net.Search
                 {
                     // we will advance() subscorers
                     Scorer subScorer = w.GetScorer(context, acceptDocs);
-                    if (subScorer != null)
+                    if (subScorer is object)
                     {
                         scorers.Add(subScorer);
                     }
@@ -272,7 +272,7 @@ namespace Lucene.Net.Search
                     clone.disjuncts[i] = rewrite;
                 }
             }
-            if (clone != null)
+            if (clone is object)
             {
                 return clone;
             }

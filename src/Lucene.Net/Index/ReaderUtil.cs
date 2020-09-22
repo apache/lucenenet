@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static IndexReaderContext GetTopLevelContext(IndexReaderContext context)
         {
-            while (context.Parent != null)
+            while (context.Parent is object)
             {
                 context = context.Parent;
             }

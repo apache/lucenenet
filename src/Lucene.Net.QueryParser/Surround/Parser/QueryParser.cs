@@ -128,7 +128,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         protected static void CheckDistanceSubQueries(DistanceQuery distq, string opName)
         {
             string m = distq.DistanceSubQueryNotAllowed();
-            if (m != null)
+            if (m is object)
             {
                 throw new ParseException("Operator " + opName + ": " + m);
             }
@@ -201,7 +201,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             IList<string> fieldNames;
             fieldNames = OptionalFields();
             q = OrQuery();
-            { if (true) return (fieldNames == null) ? q : GetFieldsQuery(q, fieldNames); }
+            { if (true) return (fieldNames is null) ? q : GetFieldsQuery(q, fieldNames); }
             throw new Exception("Missing return statement in function");
         }
 
@@ -223,7 +223,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 // to the colon
                 fieldName = Jj_consume_token(RegexpToken.TERM);
                 Jj_consume_token(RegexpToken.COLON);
-                if (fieldNames == null)
+                if (fieldNames is null)
                 {
                     fieldNames = new List<string>();
                 }
@@ -254,7 +254,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 }
                 oprt = Jj_consume_token(RegexpToken.OR);
                 /* keep only last used operator */
-                if (queries == null)
+                if (queries is null)
                 {
                     queries = new List<SrndQuery>();
                     queries.Add(q);
@@ -263,7 +263,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 queries.Add(q);
             }
         label_2:
-            { if (true) return (queries == null) ? q : GetOrQuery(queries, true /* infix */, oprt); }
+            { if (true) return (queries is null) ? q : GetOrQuery(queries, true /* infix */, oprt); }
             throw new Exception("Missing return statement in function");
         }
 
@@ -287,7 +287,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 }
                 oprt = Jj_consume_token(RegexpToken.AND);
                 /* keep only last used operator */
-                if (queries == null)
+                if (queries is null)
                 {
                     queries = new List<SrndQuery>();
                     queries.Add(q);
@@ -296,7 +296,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 queries.Add(q);
             }
         label_3:
-            { if (true) return (queries == null) ? q : GetAndQuery(queries, true /* infix */, oprt); }
+            { if (true) return (queries is null) ? q : GetAndQuery(queries, true /* infix */, oprt); }
             throw new Exception("Missing return statement in function");
         }
 
@@ -320,7 +320,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 }
                 oprt = Jj_consume_token(RegexpToken.NOT);
                 /* keep only last used operator */
-                if (queries == null)
+                if (queries is null)
                 {
                     queries = new List<SrndQuery>();
                     queries.Add(q);
@@ -329,7 +329,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 queries.Add(q);
             }
         label_4:
-            { if (true) return (queries == null) ? q : GetNotQuery(queries, oprt); }
+            { if (true) return (queries is null) ? q : GetNotQuery(queries, oprt); }
             throw new Exception("Missing return statement in function");
         }
 
@@ -668,7 +668,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         private Token Jj_consume_token(int kind)
         {
             Token oldToken;
-            if ((oldToken = Token).Next != null) Token = Token.Next;
+            if ((oldToken = Token).Next is object) Token = Token.Next;
             else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
             if (Token.Kind == kind)
@@ -680,7 +680,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                     for (int i = 0; i < jj_2_rtns.Length; i++)
                     {
                         JJCalls c = jj_2_rtns[i];
-                        while (c != null)
+                        while (c is object)
                         {
                             if (c.gen < jj_gen) c.first = null;
                             c = c.next;
@@ -725,7 +725,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
-                if (jj_scanpos.Next == null)
+                if (jj_scanpos.Next is null)
                 {
                     jj_lastpos = jj_scanpos = jj_scanpos.Next = TokenSource.GetNextToken();
                 }
@@ -741,8 +741,8 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             if (jj_rescan)
             {
                 int i = 0; Token tok = Token;
-                while (tok != null && tok != jj_scanpos) { i++; tok = tok.Next; }
-                if (tok != null) Jj_add_error_token(kind, i);
+                while (tok is object && tok != jj_scanpos) { i++; tok = tok.Next; }
+                if (tok is object) Jj_add_error_token(kind, i);
             }
             if (jj_scanpos.Kind != kind) return true;
             if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
@@ -752,7 +752,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         /// <summary>Get the next Token.</summary>
         public Token GetNextToken()
         {
-            if (Token.Next != null) Token = Token.Next;
+            if (Token.Next is object) Token = Token.Next;
             else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
             jj_gen++;
@@ -765,7 +765,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             Token t = Token;
             for (int i = 0; i < index; i++)
             {
-                if (t.Next != null) t = t.Next;
+                if (t.Next is object) t = t.Next;
                 else t = t.Next = TokenSource.GetNextToken();
             }
             return t;
@@ -773,7 +773,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
 
         private int Jj_ntk()
         {
-            if ((Jj_nt = Token.Next) == null)
+            if ((Jj_nt = Token.Next) is null)
                 return (jj_ntk = (Token.Next = TokenSource.GetNextToken()).Kind);
             else
                 return (jj_ntk = Jj_nt.Kind);
@@ -892,7 +892,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                             }
                         }
                         p = p.next;
-                    } while (p != null);
+                    } while (p is object);
                 }
                 catch (LookaheadSuccess /*ls*/) { }
             }
@@ -904,7 +904,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             JJCalls p = jj_2_rtns[index];
             while (p.gen > jj_gen)
             {
-                if (p.next == null) { p = p.next = new JJCalls(); break; }
+                if (p.next is null) { p = p.next = new JJCalls(); break; }
                 p = p.next;
             }
             p.gen = jj_gen + xla - jj_la; p.first = Token; p.arg = xla;

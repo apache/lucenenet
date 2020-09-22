@@ -39,7 +39,7 @@ namespace Lucene.Net.Store
         /// </summary>
         protected internal void SetLockDir(DirectoryInfo lockDir)
         {
-            if (this.m_lockDir != null)
+            if (this.m_lockDir is object)
             {
                 throw new InvalidOperationException("You can set the lock directory for this factory only once.");
             }

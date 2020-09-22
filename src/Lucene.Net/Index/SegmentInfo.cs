@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
         }
 
         [Obsolete("separate norms are not supported in >= 4.0")]
-        internal bool HasSeparateNorms => GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_KEY) != null;
+        internal bool HasSeparateNorms => GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_KEY) is object;
 
         /// <summary>
         /// Gets or Sets whether this segment is stored as a compound file.
@@ -138,11 +138,7 @@ namespace Lucene.Net.Index
             set
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(this.codec == null);
-                if (value == null)
-                {
-                    throw new ArgumentException("codec must be non-null");
-                }
-                this.codec = value;
+                this.codec = value ?? throw new ArgumentException("codec must be non-null");
             }
         }
 
@@ -200,7 +196,7 @@ namespace Lucene.Net.Index
         public string ToString(Directory dir, int delCount)
         {
             StringBuilder s = new StringBuilder();
-            s.Append(Name).Append('(').Append(version == null ? "?" : version).Append(')').Append(':');
+            s.Append(Name).Append('(').Append(version ?? "?").Append(')').Append(':');
             char cfs = UseCompoundFile ? 'c' : 'C';
             s.Append(cfs);
 
@@ -230,9 +226,8 @@ namespace Lucene.Net.Index
             {
                 return true;
             }
-            if (obj is SegmentInfo)
+            if (obj is SegmentInfo other)
             {
-                SegmentInfo other = (SegmentInfo)obj;
                 return other.Dir == Dir && other.Name.Equals(Name, StringComparison.Ordinal);
             }
             else

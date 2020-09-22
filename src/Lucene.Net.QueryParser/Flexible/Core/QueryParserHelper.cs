@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             this.processor = processor;
             this.builder = builder;
 
-            if (processor != null)
+            if (processor is object)
             {
                 processor.SetQueryConfigHandler(queryConfigHandler);
             }
@@ -107,7 +107,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// <seealso cref="ISyntaxParser"/>
         public virtual void SetSyntaxParser(ISyntaxParser syntaxParser)
         {
-            if (syntaxParser == null)
+            if (syntaxParser is null)
             {
                 throw new ArgumentException("textParser should not be null!");
             }
@@ -124,7 +124,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// <seealso cref="IQueryBuilder{TQuery}"/>
         public virtual void SetQueryBuilder(IQueryBuilder<TQuery> queryBuilder)
         {
-            if (queryBuilder == null)
+            if (queryBuilder is null)
             {
                 throw new ArgumentException("queryBuilder should not be null!");
             }
@@ -171,7 +171,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             this.config = config;
             IQueryNodeProcessor processor = QueryNodeProcessor;
 
-            if (processor != null)
+            if (processor is object)
             {
                 processor.SetQueryConfigHandler(config);
             }
@@ -208,7 +208,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
 
             IQueryNodeProcessor processor = QueryNodeProcessor;
 
-            if (processor != null)
+            if (processor is object)
             {
                 queryTree = processor.Process(queryTree);
             }

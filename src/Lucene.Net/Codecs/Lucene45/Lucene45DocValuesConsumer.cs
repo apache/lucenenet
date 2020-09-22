@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     minValue = Math.Min(minValue, v);
                     maxValue = Math.Max(maxValue, v);
 
-                    if (uniqueValues != null)
+                    if (uniqueValues is object)
                     {
                         if (uniqueValues.Add(v))
                         {
@@ -184,7 +184,7 @@ namespace Lucene.Net.Codecs.Lucene45
             long delta = maxValue - minValue;
 
             int format;
-            if (uniqueValues != null && (delta < 0L || PackedInt32s.BitsRequired(uniqueValues.Count - 1) < PackedInt32s.BitsRequired(delta)) && count <= int.MaxValue)
+            if (uniqueValues is object && (delta < 0L || PackedInt32s.BitsRequired(uniqueValues.Count - 1) < PackedInt32s.BitsRequired(delta)) && count <= int.MaxValue)
             {
                 format = TABLE_COMPRESSED;
             }
@@ -274,7 +274,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     count = 0;
                     bits = 0;
                 }
-                if (v != null)
+                if (v is object)
                 {
                     bits |= (sbyte)(1 << (count & 7));
                 }
@@ -310,7 +310,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 minLength = Math.Min(minLength, length);
                 maxLength = Math.Max(maxLength, length);
-                if (v != null)
+                if (v is object)
                 {
                     data.WriteBytes(v.Bytes, v.Offset, v.Length);
                 }
@@ -343,7 +343,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 long addr = 0;
                 foreach (BytesRef v in values)
                 {
-                    if (v != null)
+                    if (v is object)
                     {
                         addr += v.Length;
                     }
@@ -511,12 +511,12 @@ namespace Lucene.Net.Codecs.Lucene45
                 bool success = false;
                 try
                 {
-                    if (meta != null)
+                    if (meta is object)
                     {
                         meta.WriteVInt32(-1); // write EOF marker
                         CodecUtil.WriteFooter(meta); // write checksum
                     }
-                    if (data != null)
+                    if (data is object)
                     {
                         CodecUtil.WriteFooter(data); // write checksum
                     }

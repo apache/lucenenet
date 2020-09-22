@@ -31,7 +31,7 @@ namespace Lucene.Net.Store
     /// <seealso cref="LockFactory"/>
     public class SingleInstanceLockFactory : LockFactory
     {
-        private JCG.HashSet<string> locks = new JCG.HashSet<string>();
+        private readonly JCG.HashSet<string> locks = new JCG.HashSet<string>();
 
         public override Lock MakeLock(string lockName)
         {
@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
     internal class SingleInstanceLock : Lock
     {
         internal string lockName;
-        private JCG.HashSet<string> locks;
+        private readonly JCG.HashSet<string> locks;
 
         public SingleInstanceLock(JCG.HashSet<string> locks, string lockName)
         {

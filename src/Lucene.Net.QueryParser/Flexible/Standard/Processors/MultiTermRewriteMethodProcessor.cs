@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             {
                 MultiTermQuery.RewriteMethod rewriteMethod = GetQueryConfigHandler().Get(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD);
 
-                if (rewriteMethod == null)
+                if (rewriteMethod is null)
                 {
                     // This should not happen, this configuration is set in the
                     // StandardQueryConfigHandler

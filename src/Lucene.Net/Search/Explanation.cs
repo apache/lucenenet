@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
             buffer.Append("\n");
 
             Explanation[] details = GetDetails();
-            if (details != null)
+            if (details is object)
             {
                 for (int i = 0; i < details.Length; i++)
                 {
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
             buffer.Append("<br />\n");
 
             Explanation[] details = GetDetails();
-            if (details != null)
+            if (details is object)
             {
                 for (int i = 0; i < details.Length; i++)
                 {

@@ -79,7 +79,7 @@ namespace Lucene.Net.Search
                     endDoc = readerContext.DocBase + readerContext.Reader.MaxDoc;
                 }
 
-                if (readerContext != null)
+                if (readerContext is object)
                 {
                     // We advanced to another segment:
                     docBase = readerContext.DocBase;
@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
 
         private class QueryRescorerAnonymousInnerClassHelper : QueryRescorer
         {
-            private double weight;
+            private readonly double weight;
 
             public QueryRescorerAnonymousInnerClassHelper(Lucene.Net.Search.Query query, double weight)
                 : base(query)

@@ -154,9 +154,9 @@ namespace Lucene.Net.Index
         {
             private readonly NumericDocValuesFieldUpdates outerInstance;
 
-            private PagedMutable docs;
-            private PagedGrowableWriter values;
-            private FixedBitSet docsWithField;
+            private readonly PagedMutable docs;
+            private readonly PagedGrowableWriter values;
+            private readonly FixedBitSet docsWithField;
 
             public InPlaceMergeSorterAnonymousInnerClassHelper(NumericDocValuesFieldUpdates outerInstance, PagedMutable docs, PagedGrowableWriter values, FixedBitSet docsWithField)
             {

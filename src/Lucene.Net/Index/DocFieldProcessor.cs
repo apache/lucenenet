@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
             foreach (DocFieldProcessorPerField field in fieldHash)
             {
                 DocFieldProcessorPerField fieldNext = field;
-                while (fieldNext != null)
+                while (fieldNext is object)
                 {
                     DocFieldProcessorPerField next = fieldNext.next;
                     try
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
             }
 
             // If any errors occured, throw it.
-            if (th != null)
+            if (th is object)
             {
                 if (th is Exception)
                 {
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < fieldHash.Length; i++)
             {
                 DocFieldProcessorPerField field = fieldHash[i];
-                while (field != null)
+                while (field is object)
                 {
                     fields.Add(field.consumer);
                     field = field.next;
@@ -182,7 +182,7 @@ namespace Lucene.Net.Index
             for (int j = 0; j < fieldHash.Length; j++)
             {
                 DocFieldProcessorPerField fp0 = fieldHash[j];
-                while (fp0 != null)
+                while (fp0 is object)
                 {
                     int hashPos2 = fp0.fieldInfo.Name.GetHashCode() & newHashMask;
                     DocFieldProcessorPerField nextFP0 = fp0.next;
@@ -217,7 +217,7 @@ namespace Lucene.Net.Index
                 // Make sure we have a PerField allocated
                 int hashPos = fieldName.GetHashCode() & hashMask;
                 DocFieldProcessorPerField fp = fieldHash[hashPos];
-                while (fp != null && !fp.fieldInfo.Name.Equals(fieldName, StringComparison.Ordinal))
+                while (fp is object && !fp.fieldInfo.Name.Equals(fieldName, StringComparison.Ordinal))
                 {
                     fp = fp.next;
                 }

@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Spans
     public class FieldMaskingSpanQuery : SpanQuery
     {
         private SpanQuery maskedQuery;
-        private string field;
+        private readonly string field;
 
         public FieldMaskingSpanQuery(SpanQuery maskedQuery, string maskedField)
         {
@@ -115,7 +115,7 @@ namespace Lucene.Net.Search.Spans
                 clone.maskedQuery = rewritten;
             }
 
-            if (clone != null)
+            if (clone is object)
             {
                 return clone;
             }

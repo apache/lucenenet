@@ -85,7 +85,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                     }
                     else
                     {
-                        if (occs != null)
+                        if (occs is object)
                         {
                             throw new ParserException("Invalid value for \"occurs\" attribute of clause:" + occs);
                         }

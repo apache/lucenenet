@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
             int n = 0;
             foreach (ICollector c in collectors)
             {
-                if (c != null)
+                if (c is object)
                 {
                     n++;
                 }
@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
                 ICollector col = null;
                 foreach (ICollector c in collectors)
                 {
-                    if (c != null)
+                    if (c is object)
                     {
                         col = c;
                         break;
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
                 n = 0;
                 foreach (ICollector c in collectors)
                 {
-                    if (c != null)
+                    if (c is object)
                     {
                         colls[n++] = c;
                     }

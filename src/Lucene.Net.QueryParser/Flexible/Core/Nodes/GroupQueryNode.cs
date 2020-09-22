@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         public GroupQueryNode(IQueryNode query)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new QueryNodeError(new Message(
                     QueryParserMessages.PARAMETER_VALUE_NOT_SUPPORTED, "query", "null"));
@@ -60,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            if (GetChild() == null)
+            if (GetChild() is null)
                 return "";
 
             return "( " + GetChild().ToQueryString(escapeSyntaxParser) + " )";

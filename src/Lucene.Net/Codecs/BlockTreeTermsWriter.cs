@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(numTerms > 0);
                 this.FieldInfo = fieldInfo;
-                if (Debugging.AssertsEnabled) Debugging.Assert(rootCode != null, () => "field=" + fieldInfo.Name + " numTerms=" + numTerms);
+                if (Debugging.AssertsEnabled) Debugging.Assert(rootCode is object, () => "field=" + fieldInfo.Name + " numTerms=" + numTerms);
                 this.RootCode = rootCode;
                 this.IndexStartFP = indexStartFP;
                 this.NumTerms = numTerms;
@@ -481,7 +481,7 @@ namespace Lucene.Net.Codecs
                 // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
                 // it might contain garbage that cannot be converted into text.
                 if (Debugging.AssertsEnabled) Debugging.Assert(
-                    (IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null),
+                    (IsFloor && floorBlocks is object && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null),
                     () => "isFloor=" + IsFloor + " floorBlocks=" + ToString(floorBlocks));
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(scratchBytes.GetFilePointer() == 0);
@@ -515,7 +515,7 @@ namespace Lucene.Net.Codecs
 
                 // Copy over index for all sub-blocks
 
-                if (SubIndices != null)
+                if (SubIndices is object)
                 {
                     foreach (FST<BytesRef> subIndex in SubIndices)
                     {
@@ -523,11 +523,11 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
-                if (floorBlocks != null)
+                if (floorBlocks is object)
                 {
                     foreach (PendingBlock sub in floorBlocks)
                     {
-                        if (sub.SubIndices != null)
+                        if (sub.SubIndices is object)
                         {
                             foreach (FST<BytesRef> subIndex in sub.SubIndices)
                             {
@@ -882,7 +882,7 @@ namespace Lucene.Net.Codecs
                                 if (Debugging.AssertsEnabled)
                                 {
                                     Debugging.Assert(startLabel != -1);
-                                    Debugging.Assert(firstBlock != null);
+                                    Debugging.Assert(firstBlock is object);
                                 }
                                 prevTerm.Int32s[prevTerm.Offset + prefixLength] = startLabel;
                                 //System.out.println("  final " + (numSubs-sub-1) + " subs");
@@ -903,7 +903,7 @@ namespace Lucene.Net.Codecs
 
                     prevTerm.Int32s[prevTerm.Offset + prefixLength] = savLabel;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(firstBlock != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(firstBlock is object);
                     firstBlock.CompileIndex(floorBlocks, outerInstance.scratchBytes);
 
                     pending.Add(firstBlock);
@@ -1212,7 +1212,7 @@ namespace Lucene.Net.Codecs
                     if (Debugging.AssertsEnabled)
                     {
                         Debugging.Assert(root.Prefix.Length == 0);
-                        Debugging.Assert(root.Index.EmptyOutput != null);
+                        Debugging.Assert(root.Index.EmptyOutput is object);
                     }
 
                     this.sumTotalTermFreq = sumTotalTermFreq;
@@ -1252,7 +1252,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Disposes all resources used by this object.
+        /// Disposes all resources used by th is object.
         /// </summary>
         protected override void Dispose(bool disposing)
         {

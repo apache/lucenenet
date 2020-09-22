@@ -68,11 +68,8 @@ namespace Lucene.Net.Search
             {
                 throw new ArgumentException("Query and filter cannot be null.");
             }
-            if (strategy == null)
-            {
-                throw new ArgumentException("FilterStrategy can not be null");
-            }
-            this.strategy = strategy;
+
+            this.strategy = strategy ?? throw new ArgumentException("FilterStrategy can not be null");
             this.query = query;
             this.filter = filter;
         }
@@ -91,7 +88,7 @@ namespace Lucene.Net.Search
         {
             private readonly FilteredQuery outerInstance;
 
-            private Lucene.Net.Search.Weight weight;
+            private readonly Lucene.Net.Search.Weight weight;
 
             public WeightAnonymousInnerClassHelper(FilteredQuery outerInstance, Lucene.Net.Search.Weight weight)
             {
@@ -139,7 +136,7 @@ namespace Lucene.Net.Search
             // return a filtering scorer
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.filter != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.filter is object);
 
                 DocIdSet filterDocIdSet = outerInstance.filter.GetDocIdSet(context, acceptDocs);
                 if (filterDocIdSet == null)
@@ -154,7 +151,7 @@ namespace Lucene.Net.Search
             // return a filtering top scorer
             public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.filter != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.filter is object);
 
                 DocIdSet filterDocIdSet = outerInstance.filter.GetDocIdSet(context, acceptDocs);
                 if (filterDocIdSet == null)
@@ -455,7 +452,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a hash code value for this object. </summary>
+        /// Returns a hash code value for th is object. </summary>
         public override int GetHashCode()
         {
             int hash = base.GetHashCode();
@@ -586,7 +583,7 @@ namespace Lucene.Net.Search
 
                 IBits filterAcceptDocs = docIdSet.Bits;
                 // force if RA is requested
-                bool useRandomAccess = filterAcceptDocs != null && UseRandomAccess(filterAcceptDocs, firstFilterDoc);
+                bool useRandomAccess = filterAcceptDocs is object && UseRandomAccess(filterAcceptDocs, firstFilterDoc);
                 if (useRandomAccess)
                 {
                     // if we are using random access, we return the inner scorer, just with other acceptDocs

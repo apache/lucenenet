@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Spans
             {
                 field = clause.Field;
             }
-            else if (clause.Field != null && !clause.Field.Equals(field, StringComparison.Ordinal))
+            else if (clause.Field is object && !clause.Field.Equals(field, StringComparison.Ordinal))
             {
                 throw new ArgumentException("Clauses must have same field.");
             }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Spans
                     clone.clauses[i] = query;
                 }
             }
-            if (clone != null)
+            if (clone is object)
             {
                 return clone; // some clauses rewrote
             }
@@ -221,9 +221,9 @@ namespace Lucene.Net.Search.Spans
         {
             private readonly SpanOrQuery outerInstance;
 
-            private AtomicReaderContext context;
-            private IBits acceptDocs;
-            private IDictionary<Term, TermContext> termContexts;
+            private readonly AtomicReaderContext context;
+            private readonly IBits acceptDocs;
+            private readonly IDictionary<Term, TermContext> termContexts;
 
             public SpansAnonymousInnerClassHelper(SpanOrQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
@@ -314,7 +314,7 @@ namespace Lucene.Net.Search.Spans
             {
                 List<byte[]> result = null;
                 Spans theTop = Top;
-                if (theTop != null && theTop.IsPayloadAvailable)
+                if (theTop is object && theTop.IsPayloadAvailable)
                 {
                     result = new List<byte[]>(theTop.GetPayload());
                 }
@@ -326,7 +326,7 @@ namespace Lucene.Net.Search.Spans
                 get
                 {
                     Spans top = Top;
-                    return top != null && top.IsPayloadAvailable;
+                    return top is object && top.IsPayloadAvailable;
                 }
             }
 

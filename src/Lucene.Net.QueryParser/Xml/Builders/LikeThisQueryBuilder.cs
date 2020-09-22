@@ -55,7 +55,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
         {
             string fieldsList = e.GetAttribute("fieldNames"); //a comma-delimited list of fields
             string[] fields = defaultFieldNames;
-            if ((fieldsList != null) && (fieldsList.Trim().Length > 0))
+            if ((fieldsList is object) && (fieldsList.Trim().Length > 0))
             {
                 fields = fieldsList.Trim().Split(',').TrimEnd();
                 //trim the fieldnames
@@ -70,7 +70,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             //I use all analyzers/fields to generate multi-field compatible stop list
             string stopWords = e.GetAttribute("stopWords");
             ISet<string> stopWordsSet = null;
-            if ((stopWords != null) && (fields != null))
+            if ((stopWords is object) && (fields is object))
             {
                 stopWordsSet = new JCG.HashSet<string>();
                 foreach (string field in fields)

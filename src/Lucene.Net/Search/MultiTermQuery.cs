@@ -269,11 +269,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public MultiTermQuery(string field)
         {
-            if (field == null)
-            {
-                throw new ArgumentException("field must not be null");
-            }
-            this.m_field = field;
+            this.m_field = field ?? throw new ArgumentException("field must not be null");
         }
 
         /// <summary>
@@ -335,7 +331,7 @@ namespace Lucene.Net.Search
             int result = 1;
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(Boost);
             result = prime * result + m_rewriteMethod.GetHashCode();
-            if (m_field != null)
+            if (m_field is object)
             {
                 result = prime * result + m_field.GetHashCode();
             }

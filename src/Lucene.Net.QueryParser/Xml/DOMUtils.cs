@@ -87,7 +87,7 @@ namespace Lucene.Net.QueryParsers.Xml
         /// <summary>Convenience method where there is only one child <see cref="XmlElement"/> of a given name</summary>
         public static XmlElement GetChildByTagName(XmlElement e, string name)
         {
-            for (XmlNode kid = e.FirstChild; kid != null; kid = kid.NextSibling)
+            for (XmlNode kid = e.FirstChild; kid is object; kid = kid.NextSibling)
             {
                 if ((kid.NodeType == XmlNodeType.Element) && (name.Equals(kid.Name, StringComparison.Ordinal)))
                 {
@@ -106,16 +106,15 @@ namespace Lucene.Net.QueryParsers.Xml
         public static string GetAttributeWithInheritance(XmlElement element, string attributeName)
         {
             string result = element.GetAttribute(attributeName);
-            if ((result == null) || ("".Equals(result, StringComparison.Ordinal)))
+            if ((result is null) || ("".Equals(result, StringComparison.Ordinal)))
             {
                 XmlNode n = element.ParentNode;
-                if ((n == element) || (n == null))
+                if ((n == element) || (n is null))
                 {
                     return null;
                 }
-                if (n is XmlElement)
+                if (n is XmlElement parent)
                 {
-                    XmlElement parent = (XmlElement)n;
                     return GetAttributeWithInheritance(parent, attributeName);
                 }
                 return null; //we reached the top level of the document without finding attribute
@@ -128,7 +127,7 @@ namespace Lucene.Net.QueryParsers.Xml
         public static string GetChildTextByTagName(XmlElement e, string tagName)
         {
             XmlElement child = GetChildByTagName(e, tagName);
-            return child != null ? GetText(child) : null;
+            return child is object ? GetText(child) : null;
         }
 
         /// <summary>Convenience method to append a new child with text</summary>
@@ -136,7 +135,7 @@ namespace Lucene.Net.QueryParsers.Xml
         {
             XmlElement child = parent.OwnerDocument.CreateElement(tagName);
             parent.AppendChild(child);
-            if (text != null)
+            if (text is object)
             {
                 child.AppendChild(child.OwnerDocument.CreateTextNode(text));
             }
@@ -146,26 +145,26 @@ namespace Lucene.Net.QueryParsers.Xml
         public static string GetAttribute(XmlElement element, string attributeName, string deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : result;
+            return (result is null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : result;
         }
 
         public static float GetAttribute(XmlElement element, string attributeName, float deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : Convert.ToSingle(result, CultureInfo.InvariantCulture);
+            return (result is null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : Convert.ToSingle(result, CultureInfo.InvariantCulture);
         }
 
         public static int GetAttribute(XmlElement element, string attributeName, int deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : Convert.ToInt32(result, CultureInfo.InvariantCulture);
+            return (result is null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : Convert.ToInt32(result, CultureInfo.InvariantCulture);
         }
 
         public static bool GetAttribute(XmlElement element, string attributeName,
                                            bool deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : Convert.ToBoolean(result, CultureInfo.InvariantCulture);
+            return (result is null) || ("".Equals(result, StringComparison.Ordinal)) ? deflt : Convert.ToBoolean(result, CultureInfo.InvariantCulture);
         }
 
         /* Returns text of node and all child nodes - without markup */
@@ -180,7 +179,7 @@ namespace Lucene.Net.QueryParsers.Xml
 
         public static XmlElement GetFirstChildElement(XmlElement element)
         {
-            for (XmlNode kid = element.FirstChild; kid != null; kid = kid.NextSibling)
+            for (XmlNode kid = element.FirstChild; kid is object; kid = kid.NextSibling)
             {
                 if (kid.NodeType == XmlNodeType.Element)
                 {
@@ -192,7 +191,7 @@ namespace Lucene.Net.QueryParsers.Xml
 
         private static void GetTextBuffer(XmlNode e, StringBuilder sb)
         {
-            for (XmlNode kid = e.FirstChild; kid != null; kid = kid.NextSibling)
+            for (XmlNode kid = e.FirstChild; kid is object; kid = kid.NextSibling)
             {
                 switch (kid.NodeType)
                 {

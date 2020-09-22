@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Spans
             SpanTermQuery other = (SpanTermQuery)obj;
             if (m_term == null)
             {
-                if (other.m_term != null)
+                if (other.m_term is object)
                 {
                     return false;
                 }
@@ -119,10 +119,10 @@ namespace Lucene.Net.Search.Spans
                 // this happens with span-not query, as it doesn't include the NOT side in extractTerms()
                 // so we seek to the term now in this segment..., this sucks because its ugly mostly!
                 Fields fields = context.AtomicReader.Fields;
-                if (fields != null)
+                if (fields is object)
                 {
                     Terms terms = fields.GetTerms(m_term.Field);
-                    if (terms != null)
+                    if (terms is object)
                     {
                         TermsEnum termsEnum = terms.GetEnumerator();
                         if (termsEnum.SeekExact(m_term.Bytes))
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search.Spans
 
             DocsAndPositionsEnum postings = termsEnum_.DocsAndPositions(acceptDocs, null, DocsAndPositionsFlags.PAYLOADS);
 
-            if (postings != null)
+            if (postings is object)
             {
                 return new TermSpans(postings, m_term);
             }

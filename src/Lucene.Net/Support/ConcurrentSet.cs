@@ -147,7 +147,7 @@ namespace Lucene.Net.Support
                 //throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
             T[]/*?*/ tarray = array as T[];
-            if (tarray != null)
+            if (tarray is object)
             {
                 CopyTo(tarray, index);
             }

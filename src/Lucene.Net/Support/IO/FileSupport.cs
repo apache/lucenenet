@@ -162,7 +162,7 @@ namespace Lucene.Net.Support.IO
             // Ensure the strings passed don't contain invalid characters
             if (prefix.ContainsAny(INVALID_FILENAME_CHARS))
                 throw new ArgumentException(string.Format("Prefix contains invalid characters. You may not use any of '{0}'", string.Join(", ", INVALID_FILENAME_CHARS)));
-            if (suffix != null && suffix.ContainsAny(INVALID_FILENAME_CHARS))
+            if (suffix is object && suffix.ContainsAny(INVALID_FILENAME_CHARS))
                 throw new ArgumentException(string.Format("Suffix contains invalid characters. You may not use any of '{0}'", string.Join(", ", INVALID_FILENAME_CHARS)));
 
             // If no directory supplied, create one.
@@ -234,7 +234,7 @@ namespace Lucene.Net.Support.IO
         {
             string randomFileName = Path.GetRandomFileName();
 
-            if (suffix != null)
+            if (suffix is object)
             {
                 randomFileName = string.Concat(
                     Path.GetFileNameWithoutExtension(randomFileName),
@@ -265,7 +265,7 @@ namespace Lucene.Net.Support.IO
             byte[] result = Encoding.UTF8.GetBytes(absPath);
 
             string canonPath;
-            if (fileCanonPathCache.TryGetValue(absPath, out canonPath) && canonPath != null)
+            if (fileCanonPathCache.TryGetValue(absPath, out canonPath) && canonPath is object)
             {
                 return canonPath;
             }

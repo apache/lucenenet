@@ -96,7 +96,7 @@ namespace Lucene.Net.Search
             }
 
             // Use this field's default sort ordering
-            if (upperBytesRef != null)
+            if (upperBytesRef is object)
             {
                 int cmp = termComp.Compare(upperBytesRef, term);
                 /*

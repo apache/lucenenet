@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
         public override SpanQuery GetSpanQuery(XmlElement e)
         {
             List<SpanQuery> clausesList = new List<SpanQuery>();
-            for (XmlNode kid = e.FirstChild; kid != null; kid = kid.NextSibling)
+            for (XmlNode kid = e.FirstChild; kid is object; kid = kid.NextSibling)
             {
                 if (kid.NodeType == XmlNodeType.Element)
                 {

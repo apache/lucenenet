@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs
             foreach (var docValuesFormatType in localDocValuesFormatTypes)
                 PutDocValuesFormatTypeImpl(docValuesFormatType);
             ScanForDocValuesFormats(this.CodecsAssembly);
-            if (CustomDocValuesFormatTypes != null)
+            if (CustomDocValuesFormatTypes is object)
             {
                 foreach (var docValuesFormatType in CustomDocValuesFormatTypes)
                     PutDocValuesFormatType(docValuesFormatType);

@@ -363,7 +363,7 @@ namespace Lucene.Net.Analysis
         {
             var t = (Token)base.Clone();
             // Do a deep clone
-            if (payload != null)
+            if (payload is object)
             {
                 t.payload = (BytesRef)payload.Clone();
             }
@@ -385,7 +385,7 @@ namespace Lucene.Net.Analysis
                 flags = flags,
                 type = type
             };
-            if (payload != null)
+            if (payload is object)
             {
                 t.payload = (BytesRef)payload.Clone();
             }
@@ -399,16 +399,15 @@ namespace Lucene.Net.Analysis
                 return true;
             }
 
-            
-            if (obj is Token)
+
+            if (obj is Token other)
             {
-                var other = (Token)obj;
-                return (startOffset == other.startOffset && 
-                    endOffset == other.endOffset && 
-                    flags == other.flags && 
-                    positionIncrement == other.positionIncrement && 
-                    (type == null ? other.type == null : type.Equals(other.type, StringComparison.Ordinal)) && 
-                    (payload == null ? other.payload == null : payload.Equals(other.payload)) && 
+                return (startOffset == other.startOffset &&
+                    endOffset == other.endOffset &&
+                    flags == other.flags &&
+                    positionIncrement == other.positionIncrement &&
+                    (type == null ? other.type == null : type.Equals(other.type, StringComparison.Ordinal)) &&
+                    (payload == null ? other.payload == null : payload.Equals(other.payload)) &&
                     base.Equals(obj)
                 );
             }
@@ -425,11 +424,11 @@ namespace Lucene.Net.Analysis
             code = code * 31 + endOffset;
             code = code * 31 + flags;
             code = code * 31 + positionIncrement;
-            if (type != null)
+            if (type is object)
             {
                 code = code * 31 + type.GetHashCode();
             }
-            if (payload != null)
+            if (payload is object)
             {
                 code = code * 31 + payload.GetHashCode();
             }
@@ -598,12 +597,11 @@ namespace Lucene.Net.Analysis
 
         public override void CopyTo(IAttribute target)
         {
-            var to = target as Token;
-            if (to != null)
+            if (target is Token to)
             {
                 to.Reinit(this);
                 // reinit shares the payload, so clone it:
-                if (payload != null)
+                if (payload is object)
                 {
                     to.payload = (BytesRef)payload.Clone();
                 }
@@ -677,8 +675,7 @@ namespace Lucene.Net.Analysis
                     return true;
                 }
 
-                var af = other as TokenAttributeFactory;
-                if (af != null)
+                if (other is TokenAttributeFactory af)
                 {
                     return this.@delegate.Equals(af.@delegate);
                 }

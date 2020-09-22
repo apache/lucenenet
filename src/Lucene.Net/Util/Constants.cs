@@ -173,7 +173,7 @@ namespace Lucene.Net.Util
             // or later, you can use:
             using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
             {
-                if (ndpKey != null && ndpKey.GetValue("Release") != null)
+                if (ndpKey is object && ndpKey.GetValue("Release") is object)
                 {
                     return CheckFor45PlusVersion((int)ndpKey.GetValue("Release"));
                 }

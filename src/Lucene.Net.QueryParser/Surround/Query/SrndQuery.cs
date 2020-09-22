@@ -115,7 +115,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         /// </summary>
         public override bool Equals(object obj)
         {
-            if (obj == null)
+            if (obj is null)
                 return false;
             if (!GetType().Equals(obj.GetType()))
                 return false;

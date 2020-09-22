@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         public override string ToString()
         {
             var children = GetChildren();
-            if (children == null || children.Count == 0)
+            if (children is null || children.Count == 0)
                 return "<multiPhrase/>";
             StringBuilder sb = new StringBuilder();
             sb.Append("<multiPhrase>");
@@ -53,7 +53,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
             var children = GetChildren();
-            if (children == null || children.Count == 0)
+            if (children is null || children.Count == 0)
                 return "";
 
             StringBuilder sb = new StringBuilder();
@@ -82,7 +82,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             {
                 IList<IQueryNode> children = GetChildren();
 
-                if (children == null || children.Count == 0)
+                if (children is null || children.Count == 0)
                 {
                     return null;
                 }
@@ -95,13 +95,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             {
                 IList<IQueryNode> children = GetChildren();
 
-                if (children != null)
+                if (children is object)
                 {
                     foreach (IQueryNode child in children)
                     {
-                        if (child is IFieldableNode)
+                        if (child is IFieldableNode fieldNode)
                         {
-                            ((IFieldableNode)child).Field = value;
+                            fieldNode.Field = value;
                         }
                     }
                 }

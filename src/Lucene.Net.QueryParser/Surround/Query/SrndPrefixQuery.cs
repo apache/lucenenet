@@ -60,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             /* inspired by PrefixQuery.rewrite(): */
             Terms terms = MultiFields.GetTerms(reader, fieldName);
-            if (terms != null)
+            if (terms is object)
             {
                 TermsEnum termsEnum = terms.GetEnumerator();
 

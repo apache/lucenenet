@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
                 }
 
                 TermState termState = termsEnum.GetTermState();
-                if (Debugging.AssertsEnabled) Debugging.Assert(termState != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termState is object);
                 if (pos < 0)
                 {
                     pos = (-pos) - 1;

@@ -94,8 +94,8 @@ namespace Lucene.Net.Search
         {
             private readonly TopTermsRewrite<Q> outerInstance;
 
-            private int maxSize;
-            private JCG.PriorityQueue<ScoreTerm> stQueue;
+            private readonly int maxSize;
+            private readonly JCG.PriorityQueue<ScoreTerm> stQueue;
 
             public TermCollectorAnonymousInnerClassHelper(TopTermsRewrite<Q> outerInstance, int maxSize, JCG.PriorityQueue<ScoreTerm> stQueue)
             {
@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
 
             private bool CompareToLastTerm(BytesRef t)
             {
-                if (lastTerm == null && t != null)
+                if (lastTerm == null && t is object)
                 {
                     lastTerm = BytesRef.DeepCopyOf(t);
                 }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
                     }
                 }
                 TermState state = termsEnum.GetTermState();
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(state is object);
                 if (visitedTerms.TryGetValue(bytes, out ScoreTerm t2))
                 {
                     // if the term is already in the PQ, only update docFreq of term in PQ

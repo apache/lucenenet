@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
                     SegmentCommitInfo info = infos2[infosIDX];
                     long segGen = info.BufferedDeletesGen;
 
-                    if (packet != null && segGen < packet.DelGen)
+                    if (packet is object && segGen < packet.DelGen)
                     {
                         //        System.out.println("  coalesce");
                         if (coalescedUpdates == null)
@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
 
                         delIDX--;
                     }
-                    else if (packet != null && segGen == packet.DelGen)
+                    else if (packet is object && segGen == packet.DelGen)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(packet.isSegmentPrivate, () => "Packet and Segments deletegen can only match on a segment private del packet gen=" + segGen);
                         //System.out.println("  eq");
@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
                         try
                         {
                             DocValuesFieldUpdates.Container dvUpdates = new DocValuesFieldUpdates.Container();
-                            if (coalescedUpdates != null)
+                            if (coalescedUpdates is object)
                             {
                                 //System.out.println("    del coalesced");
                                 delCount += (int)ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
@@ -312,7 +312,7 @@ namespace Lucene.Net.Index
                     {
                         //System.out.println("  gt");
 
-                        if (coalescedUpdates != null)
+                        if (coalescedUpdates is object)
                         {
                             // Lock order: IW -> BD -> RP
                             if (Debugging.AssertsEnabled) Debugging.Assert(readerPool.InfoIsLive(info));
@@ -480,7 +480,7 @@ namespace Lucene.Net.Index
                         if (Debugging.AssertsEnabled) Debugging.Assert(currentField == null || currentField.CompareToOrdinal(term.Field) < 0);
                         currentField = term.Field;
                         Terms terms = fields.GetTerms(currentField);
-                        if (terms != null)
+                        if (terms is object)
                         {
                             termsEnum = terms.GetEnumerator(termsEnum);
                         }
@@ -504,7 +504,7 @@ namespace Lucene.Net.Index
                         DocsEnum docsEnum = termsEnum.Docs(rld.LiveDocs, docs, DocsFlags.NONE);
                         //System.out.println("BDS: got docsEnum=" + docsEnum);
 
-                        if (docsEnum != null)
+                        if (docsEnum is object)
                         {
                             while (true)
                             {
@@ -585,7 +585,7 @@ namespace Lucene.Net.Index
                         //        assert currentField == null || currentField.CompareToOrdinal(term.Field) < 0;
                         currentField = term.Field;
                         Terms terms = fields.GetTerms(currentField);
-                        if (terms != null)
+                        if (terms is object)
                         {
                             termsEnum = terms.GetEnumerator(termsEnum);
                         }
@@ -652,10 +652,10 @@ namespace Lucene.Net.Index
                 Query query = ent.Query;
                 int limit = ent.Limit;
                 DocIdSet docs = (new QueryWrapperFilter(query)).GetDocIdSet(readerContext, reader.LiveDocs);
-                if (docs != null)
+                if (docs is object)
                 {
                     DocIdSetIterator it = docs.GetIterator();
-                    if (it != null)
+                    if (it is object)
                     {
                         while (true)
                         {
@@ -686,7 +686,7 @@ namespace Lucene.Net.Index
         // used only by assert
         private bool CheckDeleteTerm(Term term)
         {
-            if (term != null)
+            if (term is object)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(lastDeleteTerm == null || term.CompareTo(lastDeleteTerm) > 0, () => "lastTerm=" + lastDeleteTerm + " vs term=" + term);
             }

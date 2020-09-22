@@ -74,7 +74,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         public virtual void SetBuilder(string fieldName, IQueryBuilder<TQuery> builder)
         {
 
-            if (this.fieldNameBuilders == null)
+            if (this.fieldNameBuilders is null)
             {
                 this.fieldNameBuilders = new Dictionary<string, IQueryBuilder<TQuery>>();
             }
@@ -90,7 +90,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         public virtual void SetBuilder(Type queryNodeClass,
             IQueryBuilder<TQuery> builder)
         {
-            if (this.queryNodeBuilders == null)
+            if (this.queryNodeBuilders is null)
             {
                 this.queryNodeBuilders = new Dictionary<Type, IQueryBuilder<TQuery>>();
             }
@@ -100,7 +100,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
         private void Process(IQueryNode node)
         {
-            if (node != null)
+            if (node is object)
             {
                 IQueryBuilder<TQuery> builder = GetBuilder(node);
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
                 {
                     IList<IQueryNode> children = node.GetChildren();
 
-                    if (children != null)
+                    if (children is object)
                     {
 
                         foreach (IQueryNode child in children)
@@ -126,13 +126,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         {
             IQueryBuilder<TQuery> builder = null;
 
-            if (this.fieldNameBuilders != null && node is IFieldableNode)
+            if (this.fieldNameBuilders is object && node is IFieldableNode fieldNode)
             {
-                string field = ((IFieldableNode)node).Field;
+                string field = fieldNode.Field;
                 this.fieldNameBuilders.TryGetValue(field, out builder);
             }
 
-            if (builder == null && this.queryNodeBuilders != null)
+            if (builder is null && this.queryNodeBuilders is object)
             {
                 Type clazz = node.GetType();
 
@@ -140,7 +140,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
                 {
                     builder = GetQueryBuilder(clazz);
 
-                    if (builder == null)
+                    if (builder is null)
                     {
                         Type[] classes = clazz.GetInterfaces();
 
@@ -148,13 +148,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
                         {
                             builder = GetQueryBuilder(actualClass);
 
-                            if (builder != null)
+                            if (builder is object)
                             {
                                 break;
                             }
                         }
                     }
-                } while (builder == null && (clazz = clazz.BaseType) != null);
+                } while (builder is null && (clazz = clazz.BaseType) is object);
             }
 
             return builder;
@@ -162,7 +162,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
         private void ProcessNode(IQueryNode node, IQueryBuilder<TQuery> builder)
         {
-            if (builder == null)
+            if (builder is null)
             {
                 throw new QueryNodeException(new Message(
                     QueryParserMessages.LUCENE_QUERY_CONVERSION_ERROR, node
@@ -172,7 +172,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
 
             object obj = builder.Build(node);
 
-            if (obj != null)
+            if (obj is object)
             {
                 node.SetTag(QUERY_TREE_BUILDER_TAGID, obj);
             }

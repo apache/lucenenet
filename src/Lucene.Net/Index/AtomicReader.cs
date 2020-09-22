@@ -96,9 +96,9 @@ namespace Lucene.Net.Index
         public bool HasNorms(string field)
         {
             EnsureOpen();
-            // note: using normValues(field) != null would potentially cause i/o
+            // note: using normValues(field) is object would potentially cause i/o
             FieldInfo fi = FieldInfos.FieldInfo(field);
-            return fi != null && fi.HasNorms;
+            return fi is object && fi.HasNorms;
         }
 
         /// <summary>
@@ -213,14 +213,14 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(term.Field != null);
-                Debugging.Assert(term.Bytes != null);
+                Debugging.Assert(term.Field is object);
+                Debugging.Assert(term.Bytes is object);
             }
             Fields fields = Fields;
-            if (fields != null)
+            if (fields is object)
             {
                 Terms terms = fields.GetTerms(term.Field);
-                if (terms != null)
+                if (terms is object)
                 {
                     TermsEnum termsEnum = terms.GetEnumerator();
                     if (termsEnum.SeekExact(term.Bytes))
@@ -239,13 +239,13 @@ namespace Lucene.Net.Index
         /// <seealso cref="TermsEnum.DocsAndPositions(IBits, DocsAndPositionsEnum)"/>
         public DocsAndPositionsEnum GetTermPositionsEnum(Term term) // LUCENENET specific: Renamed from TermPositionsEnum()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(term.Field != null);
-            if (Debugging.AssertsEnabled) Debugging.Assert(term.Bytes != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(term.Field is object);
+            if (Debugging.AssertsEnabled) Debugging.Assert(term.Bytes is object);
             Fields fields = Fields;
-            if (fields != null)
+            if (fields is object)
             {
                 Terms terms = fields.GetTerms(term.Field);
-                if (terms != null)
+                if (terms is object)
                 {
                     TermsEnum termsEnum = terms.GetEnumerator();
                     if (termsEnum.SeekExact(term.Bytes))

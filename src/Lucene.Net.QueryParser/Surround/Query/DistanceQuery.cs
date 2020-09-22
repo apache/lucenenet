@@ -56,7 +56,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
                 {
                     var dsq = sqi.Current as IDistanceSubQuery;
                     string m = dsq.DistanceSubQueryNotAllowed();
-                    if (m != null)
+                    if (m is object)
                     {
                         return m;
                     }

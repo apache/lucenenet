@@ -36,7 +36,7 @@ namespace Lucene.Net.Util
         {
             this.arr = arr;
             this.comparer = comparer;
-            pivot = default(T);
+            pivot = default;
         }
 
         protected override int Compare(int i, int j)
@@ -51,7 +51,7 @@ namespace Lucene.Net.Util
 
         protected override void SetPivot(int i)
         {
-            pivot = (i < arr.Length) ? arr[i] : default(T);
+            pivot = (i < arr.Length) ? arr[i] : default;
         }
 
         protected override int ComparePivot(int i)

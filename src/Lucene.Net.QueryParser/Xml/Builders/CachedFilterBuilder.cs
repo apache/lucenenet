@@ -60,7 +60,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             {
                 XmlElement childElement = DOMUtils.GetFirstChildOrFail(e);
 
-                if (filterCache == null)
+                if (filterCache is null)
                 {
                     filterCache = new LurchTable<object, Filter>(LurchTableOrder.Access, cacheSize);
                 }
@@ -71,7 +71,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 object cacheKey = null;
                 Query q = null;
                 Filter f = null;
-                if (qb != null)
+                if (qb is object)
                 {
                     q = qb.GetQuery(childElement);
                     cacheKey = q;
@@ -82,13 +82,13 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                     cacheKey = f;
                 }
                 Filter cachedFilter;
-                if (filterCache.TryGetValue(cacheKey, out cachedFilter) && cachedFilter != null)
+                if (filterCache.TryGetValue(cacheKey, out cachedFilter) && cachedFilter is object)
                 {
                     return cachedFilter; // cache hit
                 }
 
                 //cache miss
-                if (qb != null)
+                if (qb is object)
                 {
                     cachedFilter = new QueryWrapperFilter(q);
                 }

@@ -56,7 +56,7 @@ namespace Lucene.Net.Search.Spans
                 i++;
             }
             string field = query.Field;
-            if (field != null)
+            if (field is object)
             {
                 m_stats = m_similarity.ComputeWeight(query.Boost, searcher.CollectionStatistics(query.Field), termStats);
             }
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Spans
 
         public override void Normalize(float queryNorm, float topLevelBoost)
         {
-            if (m_stats != null)
+            if (m_stats is object)
             {
                 m_stats.Normalize(queryNorm, topLevelBoost);
             }
@@ -92,7 +92,7 @@ namespace Lucene.Net.Search.Spans
         public override Explanation Explain(AtomicReaderContext context, int doc)
         {
             SpanScorer scorer = (SpanScorer)GetScorer(context, context.AtomicReader.LiveDocs);
-            if (scorer != null)
+            if (scorer is object)
             {
                 int newDoc = scorer.Advance(doc);
                 if (newDoc == doc)

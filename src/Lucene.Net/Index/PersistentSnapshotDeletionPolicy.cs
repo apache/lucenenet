@@ -353,7 +353,7 @@ namespace Lucene.Net.Index
                 if (genLoaded == -1)
                 {
                     // Nothing was loaded...
-                    if (ioe != null)
+                    if (ioe is object)
                     {
                         // ... not for lack of trying:
                         throw ioe;

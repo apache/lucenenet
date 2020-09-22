@@ -454,7 +454,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 DocumentsWriterPerThread poll;
-                if (flushQueue.Count > 0 && (poll = flushQueue.Dequeue()) != null)
+                if (flushQueue.Count > 0 && (poll = flushQueue.Dequeue()) is object)
                 {
                     UpdateStallState();
                     return poll;
@@ -473,7 +473,7 @@ namespace Lucene.Net.Index
                         try
                         {
                             DocumentsWriterPerThread dwpt = TryCheckoutForFlush(next);
-                            if (dwpt != null)
+                            if (dwpt is object)
                             {
                                 return dwpt;
                             }
@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
         {
             private readonly DocumentsWriterFlushControl outerInstance;
             private ThreadState current;
-            private int upto;
+            private readonly int upto;
             private int i;
 
             public IteratorAnonymousInnerClassHelper(DocumentsWriterFlushControl outerInstance, int upto)
@@ -728,7 +728,7 @@ namespace Lucene.Net.Index
                     DocumentsWriterPerThread flushingDWPT = InternalTryCheckOutForFlush(perThread);
                     if (Debugging.AssertsEnabled)
                     {
-                        Debugging.Assert(flushingDWPT != null, "DWPT must never be null here since we hold the lock and it holds documents");
+                        Debugging.Assert(flushingDWPT is object, "DWPT must never be null here since we hold the lock and it holds documents");
                         Debugging.Assert(dwpt == flushingDWPT, "flushControl returned different DWPT");
                     }
                     fullFlushBuffer.Add(flushingDWPT);
@@ -746,7 +746,7 @@ namespace Lucene.Net.Index
         private void PruneBlockedQueue(DocumentsWriterDeleteQueue flushingQueue)
         {
             var node = blockedFlushes.First;
-            while (node != null)
+            while (node is object)
             {
                 var nextNode = node.Next;
                 BlockedFlush blockedFlush = node.Value;

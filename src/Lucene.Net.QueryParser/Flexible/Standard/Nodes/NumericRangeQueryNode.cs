@@ -91,14 +91,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             bool lowerInclusive, bool upperInclusive, NumericConfig numericConfig)
         {
 
-            if (numericConfig == null)
+            if (numericConfig is null)
             {
                 throw new ArgumentException("numericConfig cannot be null!");
             }
 
             NumericType lowerNumberType, upperNumberType;
 
-            if (lower != null && lower.Value != null)
+            if (lower is object && lower.Value is object)
             {
                 lowerNumberType = GetNumericDataType(lower.Value);
             }
@@ -107,7 +107,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 lowerNumberType = NumericType.NONE;
             }
 
-            if (upper != null && upper.Value != null)
+            if (upper is object && upper.Value is object)
             {
                 upperNumberType = GetNumericDataType(upper.Value);
             }

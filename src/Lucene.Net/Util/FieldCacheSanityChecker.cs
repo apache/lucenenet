@@ -297,13 +297,12 @@ namespace Lucene.Net.Util
                 var obj = all[i];
                 // TODO: We don't check closed readers here (as getTopReaderContext
                 // throws ObjectDisposedException), what should we do? Reflection?
-                var reader = obj as IndexReader;
-                if (reader != null)
+                if (obj is IndexReader reader)
                 {
                     try
                     {
                         var childs = reader.Context.Children;
-                        if (childs != null) // it is composite reader
+                        if (childs is object) // it is composite reader
                         {
                             foreach (var ctx in childs)
                             {
@@ -372,21 +371,17 @@ namespace Lucene.Net.Util
 
             public Insanity(InsanityType type, string msg, params FieldCache.CacheEntry[] entries)
             {
-                if (null == type)
-                {
-                    throw new ArgumentException("Insanity requires non-null InsanityType");
-                }
                 if (null == entries || 0 == entries.Length)
                 {
                     throw new ArgumentException("Insanity requires non-null/non-empty CacheEntry[]");
                 }
-                this.type = type;
+                this.type = type ?? throw new ArgumentException("Insanity requires non-null InsanityType");
                 this.msg = msg;
                 this.entries = entries;
             }
 
             /// <summary>
-            /// Type of insane behavior this object represents
+            /// Type of insane behavior th is object represents
             /// </summary>
             public InsanityType Type => type;
 

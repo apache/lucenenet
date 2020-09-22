@@ -40,11 +40,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public QueryWrapperFilter(Query query)
         {
-            if (query == null)
-            {
-                throw new NullReferenceException("Query may not be null");
-            }
-            this.query = query;
+            this.query = query ?? throw new NullReferenceException("Query may not be null");
         }
 
         /// <summary>
@@ -63,9 +59,9 @@ namespace Lucene.Net.Search
         {
             private readonly QueryWrapperFilter outerInstance;
 
-            private IBits acceptDocs;
-            private AtomicReaderContext privateContext;
-            private Lucene.Net.Search.Weight weight;
+            private readonly IBits acceptDocs;
+            private readonly AtomicReaderContext privateContext;
+            private readonly Lucene.Net.Search.Weight weight;
 
             public DocIdSetAnonymousInnerClassHelper(QueryWrapperFilter outerInstance, IBits acceptDocs, AtomicReaderContext privateContext, Lucene.Net.Search.Weight weight)
             {

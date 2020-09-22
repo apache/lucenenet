@@ -31,7 +31,7 @@ namespace Lucene.Net.QueryParsers.Xml
         public virtual Filter GetFilter(XmlElement n)
         {
             IFilterBuilder builder;
-            if (!builders.TryGetValue(n.Name, out builder) || builder == null)
+            if (!builders.TryGetValue(n.Name, out builder) || builder is null)
             {
                 throw new ParserException("No FilterBuilder defined for node " + n.Name);
             }

@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
             {
                 // ignore any exception that occurs during rollback - we want to ensure
                 // all objects are rolled-back.
-                if (tpc != null)
+                if (tpc is object)
                 {
                     try
                     {
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < objects.Length; i++)
                 {
                     tpc = objects[i];
-                    if (tpc != null)
+                    if (tpc is object)
                     {
                         tpc.PrepareCommit();
                     }
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < objects.Length; i++)
                 {
                     tpc = objects[i];
-                    if (tpc != null)
+                    if (tpc is object)
                     {
                         tpc.Commit();
                     }

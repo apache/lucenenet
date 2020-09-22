@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     head = queue.Count <= 0 ? null : queue.Peek();
-                    canPublish = head != null && head.CanPublish; // do this synced
+                    canPublish = head is object && head.CanPublish; // do this synced
                 }
                 if (canPublish)
                 {
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
 
             protected FlushTicket(FrozenBufferedUpdates frozenUpdates)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(frozenUpdates != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(frozenUpdates is object);
                 this.m_frozenUpdates = frozenUpdates;
             }
 
@@ -246,8 +246,8 @@ namespace Lucene.Net.Index
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(newSegment != null);
-                    Debugging.Assert(newSegment.segmentInfo != null);
+                    Debugging.Assert(newSegment is object);
+                    Debugging.Assert(newSegment.segmentInfo is object);
                 }
                 FrozenBufferedUpdates segmentUpdates = newSegment.segmentUpdates;
                 //System.out.println("FLUSH: " + newSegment.segmentInfo.info.name);
@@ -256,7 +256,7 @@ namespace Lucene.Net.Index
                     indexWriter.infoStream.Message("DW", "publishFlushedSegment seg-private updates=" + segmentUpdates);
                 }
 
-                if (segmentUpdates != null && indexWriter.infoStream.IsEnabled("DW"))
+                if (segmentUpdates is object && indexWriter.infoStream.IsEnabled("DW"))
                 {
                     indexWriter.infoStream.Message("DW", "flush: push buffered seg private updates: " + segmentUpdates);
                 }
@@ -269,8 +269,8 @@ namespace Lucene.Net.Index
                 // Finish the flushed segment and publish it to IndexWriter
                 if (newSegment == null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(bufferedUpdates != null);
-                    if (bufferedUpdates != null && bufferedUpdates.Any())
+                    if (Debugging.AssertsEnabled) Debugging.Assert(bufferedUpdates is object);
+                    if (bufferedUpdates is object && bufferedUpdates.Any())
                     {
                         indexWriter.PublishFrozenUpdates(bufferedUpdates);
                         if (indexWriter.infoStream.IsEnabled("DW"))
@@ -333,7 +333,7 @@ namespace Lucene.Net.Index
                 failed = true;
             }
 
-            protected internal override bool CanPublish => segment != null || failed;
+            protected internal override bool CanPublish => segment is object || failed;
         }
     }
 }

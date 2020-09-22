@@ -326,7 +326,7 @@ namespace Lucene.Net.Support
             // The Volatile.Read ensures that the load of the fields of 'n' doesn't move before the load from buckets[i].
             var current = Volatile.Read(ref tables.Buckets[bucketNo]);
 
-            while (current != null)
+            while (current is object)
             {
                 if (hashcode == current.Hashcode && _comparer.Equals(current.Item, item))
                 {
@@ -362,7 +362,7 @@ namespace Lucene.Net.Support
                     }
 
                     Node previous = null;
-                    for (var current = tables.Buckets[bucketNo]; current != null; current = current.Next)
+                    for (var current = tables.Buckets[bucketNo]; current is object; current = current.Next)
                     {
                         Debug.Assert((previous == null && current == tables.Buckets[bucketNo]) || previous.Next == current);
 
@@ -408,7 +408,7 @@ namespace Lucene.Net.Support
                 // The Volatile.Read ensures that the load of the fields of 'current' doesn't move before the load from buckets[i].
                 var current = Volatile.Read(ref buckets[i]);
 
-                while (current != null)
+                while (current is object)
                 {
                     yield return current.Item;
                     current = current.Next;
@@ -489,7 +489,7 @@ namespace Lucene.Net.Support
 
                     // Try to find this item in the bucket
                     Node previous = null;
-                    for (var current = tables.Buckets[bucketNo]; current != null; current = current.Next)
+                    for (var current = tables.Buckets[bucketNo]; current is object; current = current.Next)
                     {
                         Debug.Assert(previous == null && current == tables.Buckets[bucketNo] || previous.Next == current);
                         if (hashcode == current.Hashcode && _comparer.Equals(current.Item, item))
@@ -659,7 +659,7 @@ namespace Lucene.Net.Support
                 for (var i = 0; i < tables.Buckets.Length; i++)
                 {
                     var current = tables.Buckets[i];
-                    while (current != null)
+                    while (current is object)
                     {
                         var next = current.Next;
                         GetBucketAndLockNo(current.Hashcode, out int newBucketNo, out int newLockNo, newBuckets.Length, newLocks.Length);
@@ -736,7 +736,7 @@ namespace Lucene.Net.Support
             var buckets = _tables.Buckets;
             for (var i = 0; i < buckets.Length; i++)
             {
-                for (var current = buckets[i]; current != null; current = current.Next)
+                for (var current = buckets[i]; current is object; current = current.Next)
                 {
                     array[index] = current.Item;
                     index++; //this should never flow, CopyToItems is only called when there's no overflow risk

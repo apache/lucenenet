@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
             foreach (SegmentCommitInfo si in segmentInfos.Segments)
             {
                 bool? v = segmentsToMerge[si];
-                if (v != null && ShouldUpgradeSegment(si))
+                if (v is object && ShouldUpgradeSegment(si))
                 {
                     oldSegments[si] = v;
                 }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
 
             MergeSpecification spec = m_base.FindForcedMerges(segmentInfos, maxSegmentCount, oldSegments);
 
-            if (spec != null)
+            if (spec is object)
             {
                 // remove all segments that are in merge specification from oldSegments,
                 // the resulting set contains all segments that are left over
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
         private bool Verbose()
         {
             IndexWriter w = m_writer.Get();
-            return w != null && w.infoStream.IsEnabled("UPGMP");
+            return w is object && w.infoStream.IsEnabled("UPGMP");
         }
 
         private void Message(string message)

@@ -44,11 +44,7 @@ namespace Lucene.Net.Analysis
         /// Construct a token stream processing the given input. </summary>
         protected internal Tokenizer(TextReader input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException("input", "input must not be null");
-            }
-            this.inputPending = input;
+            this.inputPending = input ?? throw new ArgumentNullException("input", "input must not be null");
         }
 
         /// <summary>
@@ -57,11 +53,7 @@ namespace Lucene.Net.Analysis
         protected internal Tokenizer(AttributeFactory factory, TextReader input)
             : base(factory)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException("input", "input must not be null");
-            }
-            this.inputPending = input;
+            this.inputPending = input ?? throw new ArgumentNullException("input", "input must not be null");
         }
 
         /// <summary>
@@ -96,7 +88,7 @@ namespace Lucene.Net.Analysis
         /// <seealso cref="CharFilter.CorrectOffset(int)"/>
         protected internal int CorrectOffset(int currentOff)
         {
-            return (m_input is CharFilter) ? ((CharFilter)m_input).CorrectOffset(currentOff) : currentOff;
+            return (m_input is CharFilter filter) ? filter.CorrectOffset(currentOff) : currentOff;
         }
 
         /// <summary>

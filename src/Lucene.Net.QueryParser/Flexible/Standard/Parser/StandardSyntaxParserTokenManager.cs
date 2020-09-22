@@ -847,7 +847,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             int beginColumn;
             int endColumn;
             string im = jjstrLiteralImages[jjmatchedKind];
-            curTokenImage = (im == null) ? m_input_stream.GetImage() : im;
+            curTokenImage = (im is null) ? m_input_stream.GetImage() : im;
             beginLine = m_input_stream.BeginLine;
             beginColumn = m_input_stream.BeginColumn;
             endLine = m_input_stream.EndLine;

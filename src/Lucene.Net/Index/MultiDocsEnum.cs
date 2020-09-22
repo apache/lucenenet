@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled) Debugging.Assert(target > doc);
             while (true)
             {
-                if (current != null)
+                if (current is object)
                 {
                     int doc;
                     if (target < currentBase)

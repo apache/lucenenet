@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 long count = 0;
                 foreach (long? nv in values)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(nv != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(nv is object);
                     long v = nv.Value;
 
                     if (gcd != 1)
@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     minValue = Math.Min(minValue, v);
                     maxValue = Math.Max(maxValue, v);
 
-                    if (uniqueValues != null)
+                    if (uniqueValues is object)
                     {
                         if (uniqueValues.Add(v))
                         {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 if (Debugging.AssertsEnabled) Debugging.Assert(count == maxDoc);
             }
 
-            if (uniqueValues != null)
+            if (uniqueValues is object)
             {
                 // small number of unique values
                 int bitsPerValue = PackedInt32s.BitsRequired(uniqueValues.Count - 1);
@@ -206,12 +206,12 @@ namespace Lucene.Net.Codecs.Lucene42
                 bool success = false;
                 try
                 {
-                    if (meta != null)
+                    if (meta is object)
                     {
                         meta.WriteVInt32(-1); // write EOF marker
                         CodecUtil.WriteFooter(meta); // write checksum
                     }
-                    if (data != null)
+                    if (data is object)
                     {
                         CodecUtil.WriteFooter(data); // write checksum
                     }

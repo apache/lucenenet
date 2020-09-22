@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Spans
             this.pre = (pre >= 0) ? pre : 0;
             this.post = (post >= 0) ? post : 0;
 
-            if (include.Field != null && exclude.Field != null && !include.Field.Equals(exclude.Field, StringComparison.Ordinal))
+            if (include.Field is object && exclude.Field is object && !include.Field.Equals(exclude.Field, StringComparison.Ordinal))
             {
                 throw new ArgumentException("Clauses must have same field.");
             }
@@ -127,9 +127,9 @@ namespace Lucene.Net.Search.Spans
         {
             private readonly SpanNotQuery outerInstance;
 
-            private AtomicReaderContext context;
-            private IBits acceptDocs;
-            private IDictionary<Term, TermContext> termContexts;
+            private readonly AtomicReaderContext context;
+            private readonly IBits acceptDocs;
+            private readonly IDictionary<Term, TermContext> termContexts;
 
             public SpansAnonymousInnerClassHelper(SpanNotQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {
@@ -143,10 +143,10 @@ namespace Lucene.Net.Search.Spans
                 moreExclude = excludeSpans.MoveNext();
             }
 
-            private Spans includeSpans;
+            private readonly Spans includeSpans;
             private bool moreInclude;
 
-            private Spans excludeSpans;
+            private readonly Spans excludeSpans;
             private bool moreExclude;
 
             public override bool MoveNext()
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search.Spans
                 clone.exclude = rewrittenExclude;
             }
 
-            if (clone != null)
+            if (clone is object)
             {
                 return clone; // some clauses rewrote
             }

@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
             var reader = context.AtomicReader;
             object key = reader.CoreCacheKey;
 
-            if (_cache.TryGetValue(key, out DocIdSet docIdSet) && docIdSet != null)
+            if (_cache.TryGetValue(key, out DocIdSet docIdSet) && docIdSet is object)
             {
                 hitCount++;
             }

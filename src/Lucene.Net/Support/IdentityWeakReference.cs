@@ -27,7 +27,7 @@ namespace Lucene.Net.Support
         private static readonly object NULL = new object();
 
         public IdentityWeakReference(T target)
-            : base(target == null ? NULL : target)
+            : base(target ?? NULL)
         {
             hash = RuntimeHelpers.GetHashCode(target);
         }
@@ -43,9 +43,8 @@ namespace Lucene.Net.Support
             {
                 return true;
             }
-            if (o is IdentityWeakReference<T>)
+            if (o is IdentityWeakReference<T> iwr)
             {
-                IdentityWeakReference<T> iwr = (IdentityWeakReference<T>)o;
                 if (ReferenceEquals(this.Target, iwr.Target))
                 {
                     return true;

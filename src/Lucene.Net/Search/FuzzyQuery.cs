@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
             }
             if (term == null)
             {
-                if (other.term != null)
+                if (other.term is object)
                 {
                     return false;
                 }

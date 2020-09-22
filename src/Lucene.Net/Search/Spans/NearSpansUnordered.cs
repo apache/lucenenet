@@ -37,18 +37,18 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class NearSpansUnordered : Spans
     {
-        private SpanNearQuery query;
+        private readonly SpanNearQuery query;
 
-        private IList<SpansCell> ordered = new List<SpansCell>(); // spans in query order
-        private Spans[] subSpans;
-        private int slop; // from query
+        private readonly IList<SpansCell> ordered = new List<SpansCell>(); // spans in query order
+        private readonly Spans[] subSpans;
+        private readonly int slop; // from query
 
         private SpansCell first; // linked list of spans
         private SpansCell last; // sorted by doc only
 
         private int totalLength; // sum of current lengths
 
-        private CellQueue queue; // sorted queue of spans
+        private readonly CellQueue queue; // sorted queue of spans
         private SpansCell max; // max element in queue
 
         private bool more = true; // true iff not done
@@ -86,7 +86,7 @@ namespace Lucene.Net.Search.Spans
             internal Spans spans;
             internal SpansCell next;
             private int length = -1;
-            private int index;
+            private readonly int index;
 
             public SpansCell(NearSpansUnordered outerInstance, Spans spans, int index)
             {
@@ -242,7 +242,7 @@ namespace Lucene.Net.Search.Spans
             if (firstTime) // initialize
             {
                 InitList(false);
-                for (SpansCell cell = first; more && cell != null; cell = cell.next)
+                for (SpansCell cell = first; more && cell is object; cell = cell.next)
                 {
                     more = cell.SkipTo(target); // skip all
                 }
@@ -285,7 +285,7 @@ namespace Lucene.Net.Search.Spans
         public override ICollection<byte[]> GetPayload()
         {
             var matchPayload = new JCG.HashSet<byte[]>();
-            for (var cell = first; cell != null; cell = cell.next)
+            for (var cell = first; cell is object; cell = cell.next)
             {
                 if (cell.IsPayloadAvailable)
                 {
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search.Spans
             get
             {
                 SpansCell pointer = Min;
-                while (pointer != null)
+                while (pointer is object)
                 {
                     if (pointer.IsPayloadAvailable)
                     {
@@ -347,7 +347,7 @@ namespace Lucene.Net.Search.Spans
 
         private void AddToList(SpansCell cell)
         {
-            if (last != null) // add next to end of list
+            if (last is object) // add next to end of list
             {
                 last.next = cell;
             }
@@ -370,7 +370,7 @@ namespace Lucene.Net.Search.Spans
         private void QueueToList()
         {
             last = first = null;
-            while (queue.Top != null)
+            while (queue.Top is object)
             {
                 AddToList(queue.Pop());
             }
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search.Spans
         private void ListToQueue()
         {
             queue.Clear(); // rebuild queue
-            for (SpansCell cell = first; cell != null; cell = cell.next)
+            for (SpansCell cell = first; cell is object; cell = cell.next)
             {
                 queue.Add(cell); // add to queue from list
             }

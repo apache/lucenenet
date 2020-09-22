@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
                 // tokenized.
                 if (fieldType.IsIndexed && doInvert)
                 {
-                    bool analyzed = fieldType.IsTokenized && docState.analyzer != null;
+                    bool analyzed = fieldType.IsTokenized && docState.analyzer is object;
 
                     // if the field omits norms, the boost cannot be indexed.
                     if (fieldType.OmitNorms && field.Boost != 1.0f)
@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
                         fieldState.Position += posIncrAttribute.PositionIncrement;
                         fieldState.Offset += offsetAttribute.EndOffset;
 
-                        if (docState.maxTermPrefix != null)
+                        if (docState.maxTermPrefix is object)
                         {
                             string msg = "Document contains at least one immense term in field=\"" + fieldInfo.Name + "\" (whose UTF8 encoding is longer than the max length " + DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8 + "), all of which were skipped.  Please correct the analyzer to not produce such terms.  The prefix of the first immense term is: '" + docState.maxTermPrefix + "...'";
                             if (docState.infoStream.IsEnabled("IW"))

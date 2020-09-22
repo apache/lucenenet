@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
             PrefixQuery other = (PrefixQuery)obj;
             if (_prefix == null)
             {
-                if (other._prefix != null)
+                if (other._prefix is object)
                 {
                     return false;
                 }

@@ -66,8 +66,8 @@ namespace Lucene.Net.Search
     public class PhraseQuery : Query, IEnumerable<Term> // LUCENENET specific - implemented IEnumerable<Term>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
-        private IList<Term> terms = new JCG.List<Term>(4);
-        private IList<int?> positions = new JCG.List<int?>(4);
+        private readonly IList<Term> terms = new JCG.List<Term>(4);
+        private readonly IList<int?> positions = new JCG.List<int?>(4);
         private int maxPosition = 0;
         private int slop = 0;
 
@@ -407,7 +407,7 @@ namespace Lucene.Net.Search
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
                 Scorer scorer = GetScorer(context, context.AtomicReader.LiveDocs);
-                if (scorer != null)
+                if (scorer is object)
                 {
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
@@ -444,7 +444,7 @@ namespace Lucene.Net.Search
         public override string ToString(string f)
         {
             StringBuilder buffer = new StringBuilder();
-            if (field != null && !field.Equals(f, StringComparison.Ordinal))
+            if (field is object && !field.Equals(f, StringComparison.Ordinal))
             {
                 buffer.Append(field);
                 buffer.Append(":");
@@ -511,7 +511,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a hash code value for this object. </summary>
+        /// Returns a hash code value for th is object. </summary>
         public override int GetHashCode()
         {
             return J2N.BitConversion.SingleToInt32Bits(Boost) 

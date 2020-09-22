@@ -348,11 +348,11 @@ namespace Lucene.Net.Store
             //System.out.println(Thread.currentThread().getName() + ": CACHE check merge=" + merge + " size=" + (merge==null ? 0 : merge.estimatedMergeBytes));
 
             long bytes = 0;
-            if (context.MergeInfo != null)
+            if (context.MergeInfo is object)
             {
                 bytes = context.MergeInfo.EstimatedMergeBytes;
             }
-            else if (context.FlushInfo != null)
+            else if (context.FlushInfo is object)
             {
                 bytes = context.FlushInfo.EstimatedSegmentSize;
             }

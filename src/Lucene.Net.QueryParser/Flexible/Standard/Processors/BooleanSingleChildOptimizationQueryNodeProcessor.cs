@@ -42,14 +42,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             {
                 IList<IQueryNode> children = node.GetChildren();
 
-                if (children != null && children.Count == 1)
+                if (children is object && children.Count == 1)
                 {
                     IQueryNode child = children[0];
 
-                    if (child is ModifierQueryNode)
+                    if (child is ModifierQueryNode modNode)
                     {
-                        ModifierQueryNode modNode = (ModifierQueryNode)child;
-
                         if (modNode is BooleanModifierNode
                             || modNode.Modifier == Modifier.MOD_NONE)
                         {

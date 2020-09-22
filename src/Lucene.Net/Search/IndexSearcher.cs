@@ -352,7 +352,7 @@ namespace Lucene.Net.Search
         ///         <seealso cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort)
         {
-            if (after != null && !(after is FieldDoc))
+            if (after is object && !(after is FieldDoc))
             {
                 // TODO: if we fix type safety of TopFieldDocs we can
                 // remove this
@@ -386,7 +386,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, int n, Sort sort)
         {
-            if (after != null && !(after is FieldDoc))
+            if (after is object && !(after is FieldDoc))
             {
                 // TODO: if we fix type safety of TopFieldDocs we can
                 // remove this
@@ -413,7 +413,7 @@ namespace Lucene.Net.Search
         ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
         {
-            if (after != null && !(after is FieldDoc))
+            if (after is object && !(after is FieldDoc))
             {
                 // TODO: if we fix type safety of TopFieldDocs we can
                 // remove this
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search
             {
                 limit = 1;
             }
-            if (after != null && after.Doc >= limit)
+            if (after is object && after.Doc >= limit)
             {
                 throw new ArgumentException("after.doc exceeds the number of documents in the reader: after.doc=" + after.Doc + " limit=" + limit);
             }
@@ -625,7 +625,7 @@ namespace Lucene.Net.Search
                     continue;
                 }
                 BulkScorer scorer = weight.GetBulkScorer(ctx, !collector.AcceptsDocsOutOfOrder, ctx.AtomicReader.LiveDocs);
-                if (scorer != null)
+                if (scorer is object)
                 {
                     try
                     {
@@ -966,7 +966,7 @@ namespace Lucene.Net.Search
             long sumTotalTermFreq;
             long sumDocFreq;
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(field is object);
 
             Terms terms = MultiFields.GetTerms(reader, field);
             if (terms == null)

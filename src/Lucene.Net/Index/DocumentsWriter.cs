@@ -199,7 +199,7 @@ namespace Lucene.Net.Index
         {
             if (flushControl.GetAndResetApplyAllDeletes())
             {
-                if (deleteQueue != null && !flushControl.IsFullFlush)
+                if (deleteQueue is object && !flushControl.IsFullFlush)
                 {
                     ticketQueue.AddDeletes(deleteQueue);
                 }
@@ -433,7 +433,7 @@ namespace Lucene.Net.Index
                 {
                     // Try pick up pending threads here if possible
                     DocumentsWriterPerThread flushingDWPT;
-                    while ((flushingDWPT = flushControl.NextPendingFlush()) != null)
+                    while ((flushingDWPT = flushControl.NextPendingFlush()) is object)
                     {
                         // Don't push the delete here since the update could fail!
                         hasEvents |= DoFlush(flushingDWPT);
@@ -461,14 +461,14 @@ namespace Lucene.Net.Index
         private bool PostUpdate(DocumentsWriterPerThread flushingDWPT, bool hasEvents)
         {
             hasEvents |= ApplyAllDeletes(deleteQueue);
-            if (flushingDWPT != null)
+            if (flushingDWPT is object)
             {
                 hasEvents |= DoFlush(flushingDWPT);
             }
             else
             {
                 DocumentsWriterPerThread nextPendingFlush = flushControl.NextPendingFlush();
-                if (nextPendingFlush != null)
+                if (nextPendingFlush is object)
                 {
                     hasEvents |= DoFlush(nextPendingFlush);
                 }
@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
                         flushControl.DoOnAbort(perThread);
                     }
                 }
-                bool isUpdate = delTerm != null;
+                bool isUpdate = delTerm is object;
                 flushingDWPT = flushControl.DoAfterDocument(perThread, isUpdate);
             }
             finally
@@ -567,7 +567,7 @@ namespace Lucene.Net.Index
                         flushControl.DoOnAbort(perThread);
                     }
                 }
-                bool isUpdate = delTerm != null;
+                bool isUpdate = delTerm is object;
                 flushingDWPT = flushControl.DoAfterDocument(perThread, isUpdate);
             }
             finally
@@ -581,7 +581,7 @@ namespace Lucene.Net.Index
         private bool DoFlush(DocumentsWriterPerThread flushingDWPT)
         {
             bool hasEvents = false;
-            while (flushingDWPT != null)
+            while (flushingDWPT is object)
             {
                 hasEvents = true;
                 bool success = false;
@@ -636,7 +636,7 @@ namespace Lucene.Net.Index
                     }
                     finally
                     {
-                        if (!success && ticket != null)
+                        if (!success && ticket is object)
                         {
                             // In the case of a failure make sure we are making progress and
                             // apply all the deletes since the segment flush failed since the flush
@@ -739,7 +739,7 @@ namespace Lucene.Net.Index
             }
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(currentFullFlushDelQueue != null);
+                Debugging.Assert(currentFullFlushDelQueue is object);
                 Debugging.Assert(currentFullFlushDelQueue != deleteQueue);
             }
 
@@ -748,7 +748,7 @@ namespace Lucene.Net.Index
             {
                 DocumentsWriterPerThread flushingDWPT;
                 // Help out with flushing:
-                while ((flushingDWPT = flushControl.NextPendingFlush()) != null)
+                while ((flushingDWPT = flushControl.NextPendingFlush()) is object)
                 {
                     anythingFlushed |= DoFlush(flushingDWPT);
                 }

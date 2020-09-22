@@ -783,7 +783,7 @@ namespace Lucene.Net.Search.Similarities
             fieldExpl.AddDetail(stats.Idf);
 
             Explanation fieldNormExpl = new Explanation();
-            float fieldNorm = norms != null ? DecodeNormValue(norms.Get(doc)) : 1.0f;
+            float fieldNorm = norms is object ? DecodeNormValue(norms.Get(doc)) : 1.0f;
             fieldNormExpl.Value = fieldNorm;
             fieldNormExpl.Description = "fieldNorm(doc=" + doc + ")";
             fieldExpl.AddDetail(fieldNormExpl);

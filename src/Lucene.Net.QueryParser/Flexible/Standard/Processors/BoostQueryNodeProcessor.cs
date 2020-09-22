@@ -36,22 +36,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     {
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is IFieldableNode &&
-                (node.Parent == null || !(node.Parent is IFieldableNode)))
+            if (node is IFieldableNode fieldNode &&
+                (node.Parent is null || !(node.Parent is IFieldableNode)))
             {
-                IFieldableNode fieldNode = (IFieldableNode)node;
                 QueryConfigHandler config = GetQueryConfigHandler();
 
-                if (config != null)
+                if (config is object)
                 {
                     string field = fieldNode.Field;
                     FieldConfig fieldConfig = config.GetFieldConfig(StringUtils.ToString(field));
 
-                    if (fieldConfig != null)
+                    if (fieldConfig is object)
                     {
                         float? boost = fieldConfig.Get(ConfigurationKeys.BOOST);
 
-                        if (boost != null)
+                        if (boost is object)
                         {
                             return new BoostQueryNode(node, boost.Value);
                         }

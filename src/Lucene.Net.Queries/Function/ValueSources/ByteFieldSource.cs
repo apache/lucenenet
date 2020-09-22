@@ -128,10 +128,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as ByteFieldSource;
-            if (other == null)
-                return false;
-            return base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
+            return !(o is ByteFieldSource other)
+                ? false
+                : base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
         }
 
         public override int GetHashCode()

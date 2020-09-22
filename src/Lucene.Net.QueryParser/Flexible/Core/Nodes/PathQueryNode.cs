@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             private string value = null;
 
             /// <summary>
-            /// != null The term's begin position.
+            /// is object The term's begin position.
             /// </summary>
             private int begin;
 
@@ -206,7 +206,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             PathQueryNode clone = (PathQueryNode)base.CloneTree();
 
             // copy children
-            if (this.values != null)
+            if (this.values is object)
             {
                 List<QueryText> localValues = new List<QueryText>();
                 foreach (QueryText value in this.values)

@@ -248,7 +248,7 @@ namespace Lucene.Net.Store
             {
             }
 
-            public virtual bool IsFDValid => m_file != null;
+            public virtual bool IsFDValid => m_file is object;
         }
     }
 }

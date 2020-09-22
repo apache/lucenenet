@@ -64,22 +64,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-            if (node is IFieldableNode)
+            if (node is IFieldableNode fieldNode)
             {
                 this.processChildren = false;
-                IFieldableNode fieldNode = (IFieldableNode)node;
-
-                if (fieldNode.Field == null)
+                
+                if (fieldNode.Field is null)
                 {
                     string[] fields = GetQueryConfigHandler().Get(ConfigurationKeys.MULTI_FIELDS);
 
-                    if (fields == null)
+                    if (fields is null)
                     {
                         throw new ArgumentException(
                             "StandardQueryConfigHandler.ConfigurationKeys.MULTI_FIELDS should be set on the QueryConfigHandler");
                     }
 
-                    if (fields != null && fields.Length > 0)
+                    if (fields is object && fields.Length > 0)
                     {
                         fieldNode.Field = fields[0];
 

@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
 
         public override Lock MakeLock(string lockName)
         {
-            if (m_lockPrefix != null)
+            if (m_lockPrefix is object)
             {
                 lockName = m_lockPrefix + "-" + lockName;
             }
@@ -83,7 +83,7 @@ namespace Lucene.Net.Store
         {
             if (m_lockDir.Exists)
             {
-                if (m_lockPrefix != null)
+                if (m_lockPrefix is object)
                 {
                     lockName = m_lockPrefix + "-" + lockName;
                 }

@@ -73,9 +73,9 @@ namespace Lucene.Net.Index
         {
             StringBuilder buffer = new StringBuilder();
             // walk up through class hierarchy to get a non-empty simple name (anonymous classes have no name):
-            for (Type clazz = this.GetType(); clazz != null; clazz = clazz.BaseType)
+            for (Type clazz = this.GetType(); clazz is object; clazz = clazz.BaseType)
             {
-                if (clazz.Name != null)
+                if (clazz.Name is object)
                 {
                     buffer.Append(clazz.Name);
                     break;
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
             }
             buffer.Append('(');
             var subReaders = GetSequentialSubReaders();
-            if (Debugging.AssertsEnabled) Debugging.Assert(subReaders != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(subReaders is object);
             if (subReaders.Count > 0)
             {
                 buffer.Append(subReaders[0]);
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
                 // lazy init without thread safety for perf reasons: Building the readerContext twice does not hurt!
                 if (readerContext == null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(GetSequentialSubReaders() != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(GetSequentialSubReaders() is object);
                     readerContext = CompositeReaderContext.Create(this);
                 }
                 return readerContext;

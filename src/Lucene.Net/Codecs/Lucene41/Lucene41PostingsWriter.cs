@@ -420,9 +420,9 @@ namespace Lucene.Net.Codecs.Lucene41
             if (docBufferUpto == Lucene41PostingsFormat.BLOCK_SIZE)
             {
                 lastBlockDocID = lastDocID;
-                if (posOut != null)
+                if (posOut is object)
                 {
-                    if (payOut != null)
+                    if (payOut is object)
                     {
                         lastBlockPayFP = payOut.GetFilePointer();
                     }
@@ -665,15 +665,15 @@ namespace Lucene.Net.Codecs.Lucene41
                 bool success = false;
                 try
                 {
-                    if (docOut != null)
+                    if (docOut is object)
                     {
                         CodecUtil.WriteFooter(docOut);
                     }
-                    if (posOut != null)
+                    if (posOut is object)
                     {
                         CodecUtil.WriteFooter(posOut);
                     }
-                    if (payOut != null)
+                    if (payOut is object)
                     {
                         CodecUtil.WriteFooter(payOut);
                     }

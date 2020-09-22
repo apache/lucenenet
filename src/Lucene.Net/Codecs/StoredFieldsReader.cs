@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs
         public abstract object Clone();
 
         /// <summary>
-        /// Disposes all resources used by this object.
+        /// Disposes all resources used by th is object.
         /// </summary>
         public void Dispose()
         {

@@ -215,11 +215,11 @@ namespace Lucene.Net.Codecs.PerField
                         {
                             string fieldName = fi.Name;
                             string formatName = fi.GetAttribute(PER_FIELD_FORMAT_KEY);
-                            if (formatName != null)
+                            if (formatName is object)
                             {
                                 // null formatName means the field is in fieldInfos, but has no postings!
                                 string suffix = fi.GetAttribute(PER_FIELD_SUFFIX_KEY);
-                                if (Debugging.AssertsEnabled) Debugging.Assert(suffix != null);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(suffix is object);
                                 PostingsFormat format = PostingsFormat.ForName(formatName);
                                 string segmentSuffix = GetSuffix(formatName, suffix);
                                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
@@ -250,7 +250,7 @@ namespace Lucene.Net.Codecs.PerField
             public override Terms GetTerms(string field)
             {
                 FieldsProducer fieldsProducer;
-                if (fields.TryGetValue(field, out fieldsProducer) && fieldsProducer != null)
+                if (fields.TryGetValue(field, out fieldsProducer) && fieldsProducer is object)
                 {
                     return fieldsProducer.GetTerms(field);
                 }

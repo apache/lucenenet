@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
         /// Reference count for all files in the index.
         /// Counts how many existing commits reference a file.
         /// </summary>
-        private IDictionary<string, RefCount> refCounts = new Dictionary<string, RefCount>();
+        private readonly IDictionary<string, RefCount> refCounts = new Dictionary<string, RefCount>();
 
         /// <summary>
         /// Holds all commits (segments_N) currently in the index.
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
         /// Other policies may leave commit points live for longer
         /// in which case this list would be longer than 1:
         /// </summary>
-        private IList<CommitPoint> commits = new List<CommitPoint>();
+        private readonly IList<CommitPoint> commits = new List<CommitPoint>();
 
         /// <summary>
         /// Holds files we had incref'd from the previous
@@ -98,14 +98,14 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Commits that the IndexDeletionPolicy have decided to delete:
         /// </summary>
-        private IList<CommitPoint> commitsToDelete = new List<CommitPoint>();
+        private readonly IList<CommitPoint> commitsToDelete = new List<CommitPoint>();
 
         private readonly InfoStream infoStream;
-        private Directory directory;
-        private IndexDeletionPolicy policy;
+        private readonly Directory directory;
+        private readonly IndexDeletionPolicy policy;
 
         internal readonly bool startingCommitDeleted;
-        private SegmentInfos lastSegmentInfos;
+        private readonly SegmentInfos lastSegmentInfos;
 
         /// <summary>
         /// Change to true to see details of reference counts when
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
                 files = Arrays.Empty<string>();
             }
 
-            if (currentSegmentsFile != null)
+            if (currentSegmentsFile is object)
             {
                 Regex r = IndexFileNames.CODEC_FILE_PATTERN;
                 foreach (string fileName in files)
@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
                                     sis = null;
                                 }
                             }
-                            if (sis != null)
+                            if (sis is object)
                             {
                                 CommitPoint commitPoint = new CommitPoint(commitsToDelete, directory, sis);
                                 if (sis.Generation == segmentInfos.Generation)
@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            if (currentCommitPoint == null && currentSegmentsFile != null && initialIndexExists)
+            if (currentCommitPoint == null && currentSegmentsFile is object && initialIndexExists)
             {
                 // We did not in fact see the segments_N file
                 // corresponding to the segmentInfos that was passed
@@ -410,7 +410,7 @@ namespace Lucene.Net.Index
             string[] files = directory.ListAll();
             string segmentPrefix1;
             string segmentPrefix2;
-            if (segmentName != null)
+            if (segmentName is object)
             {
                 segmentPrefix1 = segmentName + ".";
                 segmentPrefix2 = segmentName + "_";
@@ -492,7 +492,7 @@ namespace Lucene.Net.Index
         public void DeletePendingFiles()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
-            if (deletable != null)
+            if (deletable is object)
             {
                 IList<string> oldDeletable = deletable;
                 deletable = null;

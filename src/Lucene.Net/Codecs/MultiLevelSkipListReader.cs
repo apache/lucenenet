@@ -52,26 +52,26 @@ namespace Lucene.Net.Codecs
         // the skipInterval. The top level can not contain more than
         // skipLevel entries, the second top level can not contain more
         // than skipLevel^2 entries and so forth.
-        private int numberOfLevelsToBuffer = 1;
+        private readonly int numberOfLevelsToBuffer = 1;
 
         private int docCount;
         private bool haveSkipped;
 
         /// <summary>
         /// SkipStream for each level. </summary>
-        private IndexInput[] skipStream;
+        private readonly IndexInput[] skipStream;
 
         /// <summary>
         /// The start pointer of each skip level. </summary>
-        private long[] skipPointer;
+        private readonly long[] skipPointer;
 
         /// <summary>
         /// SkipInterval of each level. </summary>
-        private int[] skipInterval;
+        private readonly int[] skipInterval;
 
         /// <summary>
         /// Number of docs skipped per level. </summary>
-        private int[] numSkipped;
+        private readonly int[] numSkipped;
 
         /// <summary>
         /// Doc id of current skip entry per level. </summary>
@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Child pointer of current skip entry per level. </summary>
-        private long[] childPointer;
+        private readonly long[] childPointer;
 
         /// <summary>
         /// childPointer of last read skip entry with docId &lt;=
@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs
         /// </summary>
         private long lastChildPointer;
 
-        private bool inputIsBuffered;
+        private readonly bool inputIsBuffered;
         private readonly int skipMultiplier;
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Disposes all resources used by this object.
+        /// Disposes all resources used by th is object.
         /// </summary>
         public void Dispose()
         {
@@ -230,7 +230,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Disposes all resources used by this object. Subclasses may override
+        /// Disposes all resources used by th is object. Subclasses may override
         /// to dispose their own resources.
         /// </summary>
         protected virtual void Dispose(bool disposing)
@@ -239,7 +239,7 @@ namespace Lucene.Net.Codecs
             {
                 for (int i = 1; i < skipStream.Length; i++)
                 {
-                    if (skipStream[i] != null)
+                    if (skipStream[i] is object)
                     {
                         skipStream[i].Dispose();
                     }
@@ -338,7 +338,7 @@ namespace Lucene.Net.Codecs
         private sealed class SkipBuffer : IndexInput
         {
             private byte[] data;
-            private long pointer;
+            private readonly long pointer;
             private int pos;
 
             internal SkipBuffer(IndexInput input, int length)

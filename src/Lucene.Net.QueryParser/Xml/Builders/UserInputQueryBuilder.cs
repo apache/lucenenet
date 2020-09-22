@@ -62,7 +62,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             try
             {
                 Query q = null;
-                if (unSafeParser != null)
+                if (unSafeParser is object)
                 {
                     //synchronize on unsafe parser
                     lock (unSafeParser)

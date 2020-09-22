@@ -464,7 +464,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (best != null)
+                    if (best is object)
                     {
                         if (spec == null)
                         {
@@ -552,9 +552,9 @@ namespace Lucene.Net.Index
         {
             private readonly TieredMergePolicy outerInstance;
 
-            private double skew;
-            private double nonDelRatio;
-            private double finalMergeScore;
+            private readonly double skew;
+            private readonly double nonDelRatio;
+            private readonly double finalMergeScore;
 
             public MergeScoreAnonymousInnerClassHelper(TieredMergePolicy outerInstance, double skew, double nonDelRatio, double finalMergeScore)
             {
@@ -724,7 +724,7 @@ namespace Lucene.Net.Index
         private bool Verbose()
         {
             IndexWriter w = m_writer.Get();
-            return w != null && w.infoStream.IsEnabled("TMP");
+            return w is object && w.infoStream.IsEnabled("TMP");
         }
 
         private void Message(string message)

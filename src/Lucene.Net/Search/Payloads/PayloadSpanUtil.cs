@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Payloads
     /// </summary>
     public class PayloadSpanUtil
     {
-        private IndexReaderContext context;
+        private readonly IndexReaderContext context;
 
         /// <param name="context">
         ///          that contains doc with payloads to extract
@@ -120,9 +120,8 @@ namespace Lucene.Net.Search.Payloads
                     QueryToSpanQuery(q, payloads);
                 }
             }
-            else if (query is MultiPhraseQuery)
+            else if (query is MultiPhraseQuery mpq)
             {
-                MultiPhraseQuery mpq = (MultiPhraseQuery)query;
                 IList<Term[]> termArrays = mpq.GetTermArrays();
                 int[] positions = mpq.GetPositions();
                 if (positions.Length > 0)
@@ -162,7 +161,7 @@ namespace Lucene.Net.Search.Payloads
                     for (int i = 0; i < disjunctLists.Length; ++i)
                     {
                         IList<SpanQuery> disjuncts = disjunctLists[i]; // LUCENENET: Changed from Query to SpanQuery
-                        if (disjuncts != null)
+                        if (disjuncts is object)
                         {
                             clauses[position++] = new SpanOrQuery(disjuncts);
                         }

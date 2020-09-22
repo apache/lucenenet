@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
         {
             private readonly Terms outerInstance;
 
-            private BytesRef startTerm;
+            private readonly BytesRef startTerm;
 
             public AutomatonTermsEnumAnonymousInnerClassHelper(Terms outerInstance, Lucene.Net.Index.TermsEnum iterator, CompiledAutomaton compiled, BytesRef startTerm)
                 : base(iterator, compiled)

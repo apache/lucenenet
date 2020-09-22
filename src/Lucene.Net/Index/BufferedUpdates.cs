@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
 
         internal readonly AtomicInt64 bytesUsed;
 
-        private static bool VERBOSE_DELETES = false;
+        private static readonly bool VERBOSE_DELETES = false;
 
         internal long gen;
 
@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
         {
             int? current;
             terms.TryGetValue(term, out current);
-            if (current != null && docIDUpto < current)
+            if (current is object && docIDUpto < current)
             {
                 // Only record the new number if it's greater than the
                 // current one.  this is important because if multiple
@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
             }
 
             terms[term] = docIDUpto;
-            // note that if current != null then it means there's already a buffered
+            // note that if current is object then it means there's already a buffered
             // delete on that term, therefore we seem to over-count. this over-counting
             // is done to respect IndexWriterConfig.setMaxBufferedDeleteTerms.
             numTermDeletes.IncrementAndGet();
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
                 bytesUsed.AddAndGet(BYTES_PER_NUMERIC_FIELD_ENTRY);
             }
 
-            if (fieldUpdates.TryGetValue(update.term, out NumericDocValuesUpdate current) && current != null && docIDUpto < current.docIDUpto)
+            if (fieldUpdates.TryGetValue(update.term, out NumericDocValuesUpdate current) && current is object && docIDUpto < current.docIDUpto)
             {
                 // Only record the new number if it's greater than or equal to the current
                 // one. this is important because if multiple threads are replacing the
@@ -267,7 +267,7 @@ namespace Lucene.Net.Index
             update.docIDUpto = docIDUpto;
             // since it's an LinkedHashMap, we must first remove the Term entry so that
             // it's added last (we're interested in insertion-order).
-            if (current != null)
+            if (current is object)
             {
                 fieldUpdates.Remove(update.term);
             }
@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
                 bytesUsed.AddAndGet(BYTES_PER_BINARY_FIELD_ENTRY);
             }
 
-            if (fieldUpdates.TryGetValue(update.term, out BinaryDocValuesUpdate current) && current != null && docIDUpto < current.docIDUpto)
+            if (fieldUpdates.TryGetValue(update.term, out BinaryDocValuesUpdate current) && current is object && docIDUpto < current.docIDUpto)
             {
                 // Only record the new number if it's greater than or equal to the current
                 // one. this is important because if multiple threads are replacing the
@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
             update.docIDUpto = docIDUpto;
             // since it's an LinkedHashMap, we must first remove the Term entry so that
             // it's added last (we're interested in insertion-order).
-            if (current != null)
+            if (current is object)
             {
                 fieldUpdates.Remove(update.term);
             }

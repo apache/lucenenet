@@ -32,8 +32,8 @@ namespace Lucene.Net.Store
     {
         internal const int BUFFER_SIZE = RAMOutputStream.BUFFER_SIZE;
 
-        private RAMFile file;
-        private long length;
+        private readonly RAMFile file;
+        private readonly long length;
 
         private byte[] currentBuffer;
         private int currentBufferIndex;

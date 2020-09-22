@@ -106,7 +106,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
         //    return this.chars[index];
         //}
 
-        bool ICharSequence.HasValue => this.chars != null;
+        bool ICharSequence.HasValue => this.chars is object;
 
         public int Length => this.chars.Length;
 
@@ -187,19 +187,17 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
 
         public static bool WasEscaped(ICharSequence text, int index)
         {
-            if (text is UnescapedCharSequence)
-                return ((UnescapedCharSequence)text).wasEscaped[index];
-            else return false;
+            return text is UnescapedCharSequence sequence ? sequence.wasEscaped[index] : false;
         }
 
         public static ICharSequence ToLower(ICharSequence text, CultureInfo locale)
         {
             var lowercaseText = locale.TextInfo.ToLower(text.ToString());
 
-            if (text is UnescapedCharSequence)
+            if (text is UnescapedCharSequence sequence)
             {
                 char[] chars = lowercaseText.ToCharArray();
-                bool[] wasEscaped = ((UnescapedCharSequence)text).wasEscaped;
+                bool[] wasEscaped = sequence.wasEscaped;
                 return new UnescapedCharSequence(chars, wasEscaped, 0, chars.Length);
             }
             else

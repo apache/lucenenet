@@ -335,7 +335,7 @@ namespace Lucene.Net.Index
             /// </summary>
             internal Builder(FieldNumbers globalFieldNumbers)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(globalFieldNumbers != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(globalFieldNumbers is object);
                 this.globalFieldNumbers = globalFieldNumbers;
             }
 

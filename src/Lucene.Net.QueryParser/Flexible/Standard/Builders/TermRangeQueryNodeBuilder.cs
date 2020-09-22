@@ -59,7 +59,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             MultiTermQuery.RewriteMethod method = (MultiTermQuery.RewriteMethod)queryNode
                 .GetTag(MultiTermRewriteMethodProcessor.TAG_ID);
-            if (method != null)
+            if (method is object)
             {
                 rangeQuery.MultiTermRewriteMethod = method;
             }

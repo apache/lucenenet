@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
                     {
                         AtomicReader r = ctx.AtomicReader;
                         Fields f = r.Fields;
-                        if (f != null)
+                        if (f is object)
                         {
                             fields.Add(f);
                             slices.Add(new ReaderSlice(ctx.DocBase, r.MaxDoc, fields.Count - 1));
@@ -177,11 +177,11 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(field != null);
-                Debugging.Assert(term != null);
+                Debugging.Assert(field is object);
+                Debugging.Assert(term is object);
             }
             Terms terms = GetTerms(r, field);
-            if (terms != null)
+            if (terms is object)
             {
                 TermsEnum termsEnum = terms.GetEnumerator();
                 if (termsEnum.SeekExact(term))
@@ -215,11 +215,11 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(field != null);
-                Debugging.Assert(term != null);
+                Debugging.Assert(field is object);
+                Debugging.Assert(term is object);
             }
             Terms terms = GetTerms(r, field);
-            if (terms != null)
+            if (terms is object)
             {
                 TermsEnum termsEnum = terms.GetEnumerator();
                 if (termsEnum.SeekExact(term))
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
         public override Terms GetTerms(string field)
         {
             Terms result;
-            if (terms.TryGetValue(field, out result) && result != null)
+            if (terms.TryGetValue(field, out result) && result is object)
             {
                 return result;
             }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < subs.Length; i++)
             {
                 Terms terms = subs[i].GetTerms(field);
-                if (terms != null)
+                if (terms is object)
                 {
                     subs2.Add(terms);
                     slices2.Add(subSlices[i]);

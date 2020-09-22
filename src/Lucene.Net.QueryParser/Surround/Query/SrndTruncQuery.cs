@@ -97,7 +97,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             int prefixLength = prefix.Length;
             Terms terms = MultiFields.GetTerms(reader, fieldName);
-            if (terms != null)
+            if (terms is object)
             {
                 TermsEnum termsEnum = terms.GetEnumerator();
 
@@ -118,7 +118,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
                 while (true)
                 {
-                    if (text != null && StringHelper.StartsWith(text, prefixRef))
+                    if (text is object && StringHelper.StartsWith(text, prefixRef))
                     {
                         string textString = text.Utf8ToString();
                         Match matcher = pattern.Match(textString.Substring(prefixLength));

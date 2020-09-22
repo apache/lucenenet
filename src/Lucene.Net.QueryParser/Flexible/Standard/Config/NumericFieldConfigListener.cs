@@ -41,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         /// <param name="config">the <see cref="QueryConfigHandler"/> it will listen too</param>
         public NumericFieldConfigListener(QueryConfigHandler config)
         {
-            if (config == null)
+            if (config is null)
             {
                 throw new ArgumentException("config cannot be null!");
             }
@@ -54,10 +54,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             IDictionary<string, NumericConfig> numericConfigMap = config
                 .Get(ConfigurationKeys.NUMERIC_CONFIG_MAP);
 
-            if (numericConfigMap != null)
+            if (numericConfigMap is object)
             {
                 NumericConfig numericConfig;
-                if (numericConfigMap.TryGetValue(fieldConfig.Field, out numericConfig) && numericConfig != null)
+                if (numericConfigMap.TryGetValue(fieldConfig.Field, out numericConfig) && numericConfig is object)
                 {
                     fieldConfig.Set(ConfigurationKeys.NUMERIC_CONFIG, numericConfig);
                 }

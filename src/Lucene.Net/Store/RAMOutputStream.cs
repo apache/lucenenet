@@ -31,7 +31,7 @@ namespace Lucene.Net.Store
     {
         internal const int BUFFER_SIZE = 1024;
 
-        private RAMFile file;
+        private readonly RAMFile file;
 
         private byte[] currentBuffer;
         private int currentBufferIndex;
@@ -40,7 +40,7 @@ namespace Lucene.Net.Store
         private long bufferStart;
         private int bufferLength;
 
-        private BufferedChecksum crc = new BufferedChecksum(new CRC32());
+        private readonly BufferedChecksum crc = new BufferedChecksum(new CRC32());
 
         /// <summary>
         /// Construct an empty output buffer. </summary>
@@ -162,7 +162,7 @@ namespace Lucene.Net.Store
 
         public override void WriteBytes(byte[] b, int offset, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(b != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(b is object);
             crc.Update(b, offset, len);
             while (len > 0)
             {

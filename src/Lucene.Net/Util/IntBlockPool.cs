@@ -337,7 +337,7 @@ namespace Lucene.Net.Util
             public virtual void WriteInt32(int value)
             {
                 int[] ints = pool.buffers[offset >> INT32_BLOCK_SHIFT];
-                if (Debugging.AssertsEnabled) Debugging.Assert(ints != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(ints is object);
                 int relativeOffset = offset & INT32_BLOCK_MASK;
                 if (ints[relativeOffset] != 0)
                 {

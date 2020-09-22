@@ -326,7 +326,7 @@ namespace Lucene.Net.Index
                         sis = null;
                     }
 
-                    if (sis != null)
+                    if (sis is object)
                     {
                         commits.Add(new StandardDirectoryReader.ReaderCommit(sis, dir));
                     }
@@ -375,7 +375,7 @@ namespace Lucene.Net.Index
 
             // Defensive: maybe a Directory impl returns null
             // instead of throwing NoSuchDirectoryException:
-            if (files != null)
+            if (files is object)
             {
                 string prefix = IndexFileNames.SEGMENTS + "_";
                 foreach (string file in files)

@@ -55,9 +55,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is TermRangeQueryNode)
+            if (node is TermRangeQueryNode termRangeNode)
             {
-                TermRangeQueryNode termRangeNode = (TermRangeQueryNode)node;
                 FieldQueryNode upper = (FieldQueryNode)termRangeNode.UpperBound;
                 FieldQueryNode lower = (FieldQueryNode)termRangeNode.LowerBound;
 
@@ -66,14 +65,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 bool inclusive = false;
                 CultureInfo locale = GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
 
-                if (locale == null)
+                if (locale is null)
                 {
                     locale = CultureInfo.CurrentCulture; //Locale.getDefault();
                 }
 
                 TimeZoneInfo timeZone = GetQueryConfigHandler().Get(ConfigurationKeys.TIMEZONE);
 
-                if (timeZone == null)
+                if (timeZone is null)
                 {
                     timeZone = TimeZoneInfo.Local; //TimeZone.getDefault();
                 }
@@ -81,7 +80,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 string field = termRangeNode.Field;
                 string fieldStr = null;
 
-                if (field != null)
+                if (field is object)
                 {
                     fieldStr = field.ToString();
                 }
@@ -89,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 FieldConfig fieldConfig = GetQueryConfigHandler()
                     .GetFieldConfig(fieldStr);
 
-                if (fieldConfig != null)
+                if (fieldConfig is object)
                 {
                     dateRes = fieldConfig.Get(ConfigurationKeys.DATE_RESOLUTION);
                 }

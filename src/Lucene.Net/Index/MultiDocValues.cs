@@ -106,8 +106,8 @@ namespace Lucene.Net.Index
 
         private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
         {
-            private NumericDocValues[] values;
-            private int[] starts;
+            private readonly NumericDocValues[] values;
+            private readonly int[] starts;
 
             public NumericDocValuesAnonymousInnerClassHelper(NumericDocValues[] values, int[] starts)
             {
@@ -174,8 +174,8 @@ namespace Lucene.Net.Index
 
         private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
         {
-            private NumericDocValues[] values;
-            private int[] starts;
+            private readonly NumericDocValues[] values;
+            private readonly int[] starts;
 
             public NumericDocValuesAnonymousInnerClassHelper2(NumericDocValues[] values, int[] starts)
             {
@@ -303,8 +303,8 @@ namespace Lucene.Net.Index
 
         private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
         {
-            private BinaryDocValues[] values;
-            private int[] starts;
+            private readonly BinaryDocValues[] values;
+            private readonly int[] starts;
 
             public BinaryDocValuesAnonymousInnerClassHelper(BinaryDocValues[] values, int[] starts)
             {

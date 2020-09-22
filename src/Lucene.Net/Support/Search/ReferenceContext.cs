@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public void Dispose()
         {
-            if (this.reference != null)
+            if (this.reference is object)
             {
                 this.referenceManager.Release(this.reference);
                 this.reference = null;

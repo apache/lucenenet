@@ -206,10 +206,7 @@ namespace Lucene.Net.Search
 
             public AnonymousDocIdSet(Func<DocIdSetIterator> getIterator, Func<IBits> bits, Func<bool> isCacheable)
             {
-                if (getIterator == null)
-                    throw new ArgumentNullException("getIterator");
-
-                this.getIterator = getIterator;
+                this.getIterator = getIterator ?? throw new ArgumentNullException("getIterator");
                 this.bits = bits;
                 this.isCacheable = isCacheable;
             }
@@ -223,7 +220,7 @@ namespace Lucene.Net.Search
             {
                 get
                 {
-                    if (this.bits != null)
+                    if (this.bits is object)
                     {
                         return this.bits();
                     }
@@ -235,7 +232,7 @@ namespace Lucene.Net.Search
             {
                 get
                 {
-                    if (this.isCacheable != null)
+                    if (this.isCacheable is object)
                     {
                         return this.isCacheable();
                     }

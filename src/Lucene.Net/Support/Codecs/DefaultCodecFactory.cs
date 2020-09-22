@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs
             foreach (var codecType in localCodecTypes)
                 PutCodecTypeImpl(codecType);
             ScanForCodecs(this.CodecsAssembly);
-            if (CustomCodecTypes != null)
+            if (CustomCodecTypes is object)
             {
                 foreach (var codecType in CustomCodecTypes)
                     PutCodecType(codecType);

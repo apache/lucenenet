@@ -516,7 +516,7 @@ namespace Lucene.Net.Codecs
             internal BitsFilteredTermsEnum(TermsEnum @in, Int64BitSet liveTerms)
                 : base(@in, false)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(liveTerms != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(liveTerms is object);
                 this.liveTerms = liveTerms;
             }
 
@@ -527,7 +527,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Disposes all resources used by this object.
+        /// Disposes all resources used by th is object.
         /// </summary>
         public void Dispose()
         {

@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
     ///  not they are indexed. Each segment has a separate Field Info file. Objects
     ///  of this class are thread-safe for multiple readers, but only one thread can
     ///  be adding documents at a time, with no other reader or writer threads
-    ///  accessing this object.
+    ///  accessing th is object.
     /// </summary>
 
     public sealed class FieldInfo

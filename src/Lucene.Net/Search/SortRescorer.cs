@@ -69,7 +69,7 @@ namespace Lucene.Net.Search
                     endDoc = readerContext.DocBase + readerContext.Reader.MaxDoc;
                 }
 
-                if (readerContext != null)
+                if (readerContext is object)
                 {
                     // We advanced to another segment:
                     collector.SetNextReader(readerContext);

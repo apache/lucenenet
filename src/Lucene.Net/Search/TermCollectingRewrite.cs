@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
                 }
 
                 TermsEnum termsEnum = GetTermsEnum(query, terms, collector.Attributes);
-                if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum is object);
 
                 if (termsEnum == TermsEnum.EMPTY)
                 {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Search
 
                 // Check comparer compatibility:
                 IComparer<BytesRef> newTermComp = termsEnum.Comparer;
-                if (lastTermComp != null && newTermComp != null && newTermComp != lastTermComp)
+                if (lastTermComp is object && newTermComp is object && newTermComp != lastTermComp)
                 {
                     throw new Exception("term comparer should not change between segments: " + lastTermComp + " != " + newTermComp);
                 }

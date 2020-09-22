@@ -253,8 +253,8 @@ namespace Lucene.Net.Store
         {
             private readonly Directory outerInstance;
 
-            private string name;
-            private IOContext context;
+            private readonly string name;
+            private readonly IOContext context;
 
             public IndexInputSlicerAnonymousInnerClassHelper(Directory outerInstance, string name, IOContext context)
             {

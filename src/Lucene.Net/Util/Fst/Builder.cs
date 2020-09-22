@@ -191,7 +191,7 @@ namespace Lucene.Net.Util.Fst
         private CompiledNode CompileNode(UnCompiledNode<T> nodeIn, int tailLength)
         {
             long node;
-            if (dedupHash != null && (doShareNonSingletonNodes || nodeIn.NumArcs <= 1) && tailLength <= shareMaxTailLength)
+            if (dedupHash is object && (doShareNonSingletonNodes || nodeIn.NumArcs <= 1) && tailLength <= shareMaxTailLength)
             {
                 if (nodeIn.NumArcs == 0)
                 {
@@ -215,7 +215,7 @@ namespace Lucene.Net.Util.Fst
 
         private void DoFreezeTail(int prefixLenPlus1)
         {
-            if (freezeTail != null)
+            if (freezeTail is object)
             {
                 // Custom plugin:
                 freezeTail.Freeze(frontier, prefixLenPlus1, lastInput);

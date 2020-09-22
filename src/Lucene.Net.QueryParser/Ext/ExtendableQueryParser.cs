@@ -116,7 +116,7 @@ namespace Lucene.Net.QueryParsers.Ext
                 .SplitExtensionField(defaultField, field);
             ParserExtension extension = this.extensions
                 .GetExtension(splitExtensionField.Item2);
-            if (extension != null)
+            if (extension is object)
             {
                 return extension.Parse(new ExtensionQuery(this, splitExtensionField.Item1,
                     queryText));

@@ -156,7 +156,7 @@ namespace Lucene.Net.Util
             /// Returns approximate RAM bytes used. </summary>
             public long RamBytesUsed()
             {
-                return ((blocks != null) ? (blockSize * blocks.Length) : 0);
+                return ((blocks is object) ? (blockSize * blocks.Length) : 0);
             }
         }
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.Util
                 int left = blockSize - upto;
                 if (left == 0)
                 {
-                    if (currentBlock != null)
+                    if (currentBlock is object)
                     {
                         blocks.Add(currentBlock);
                         blockEnd.Add(upto);
@@ -217,7 +217,7 @@ namespace Lucene.Net.Util
             int left = blockSize - upto;
             if (bytes.Length > left || currentBlock == null)
             {
-                if (currentBlock != null)
+                if (currentBlock is object)
                 {
                     blocks.Add(currentBlock);
                     blockEnd.Add(upto);
@@ -283,7 +283,7 @@ namespace Lucene.Net.Util
         /// Return approx RAM usage in bytes. </summary>
         public long RamBytesUsed()
         {
-            return (blocks.Count + (currentBlock != null ? 1 : 0)) * bytesUsedPerBlock;
+            return (blocks.Count + (currentBlock is object ? 1 : 0)) * bytesUsedPerBlock;
         }
 
         /// <summary>
@@ -304,7 +304,7 @@ namespace Lucene.Net.Util
                 {
                     throw new ArgumentException("block size " + blockSize + " is too small to store length " + bytes.Length + " bytes");
                 }
-                if (currentBlock != null)
+                if (currentBlock is object)
                 {
                     blocks.Add(currentBlock);
                     blockEnd.Add(upto);
@@ -423,7 +423,7 @@ namespace Lucene.Net.Util
             {
                 if (outerInstance.upto == outerInstance.blockSize)
                 {
-                    if (outerInstance.currentBlock != null)
+                    if (outerInstance.currentBlock is object)
                     {
                         outerInstance.blocks.Add(outerInstance.currentBlock);
                         outerInstance.blockEnd.Add(outerInstance.upto);
@@ -444,7 +444,7 @@ namespace Lucene.Net.Util
 
                 if (outerInstance.upto == outerInstance.blockSize)
                 {
-                    if (outerInstance.currentBlock != null)
+                    if (outerInstance.currentBlock is object)
                     {
                         outerInstance.blocks.Add(outerInstance.currentBlock);
                         outerInstance.blockEnd.Add(outerInstance.upto);

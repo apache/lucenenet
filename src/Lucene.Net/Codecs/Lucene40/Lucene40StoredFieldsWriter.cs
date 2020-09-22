@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Sole constructor. </summary>
         public Lucene40StoredFieldsWriter(Directory directory, string segment, IOContext context)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(directory != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(directory is object);
             this.directory = directory;
             this.segment = segment;
 
@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.Lucene40
             else
             {
                 bytes = field.GetBinaryValue();
-                if (bytes != null)
+                if (bytes is object)
                 {
                     bits |= FIELD_IS_BINARY;
                     @string = null;
@@ -216,12 +216,12 @@ namespace Lucene.Net.Codecs.Lucene40
 
             fieldsStream.WriteByte((byte)(sbyte)bits);
 
-            if (bytes != null)
+            if (bytes is object)
             {
                 fieldsStream.WriteVInt32(bytes.Length);
                 fieldsStream.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
             }
-            else if (@string != null)
+            else if (@string is object)
             {
                 fieldsStream.WriteString(field.GetStringValue());
             }
@@ -294,17 +294,17 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 SegmentReader matchingSegmentReader = mergeState.MatchingSegmentReaders[idx++];
                 Lucene40StoredFieldsReader matchingFieldsReader = null;
-                if (matchingSegmentReader != null)
+                if (matchingSegmentReader is object)
                 {
                     StoredFieldsReader fieldsReader = matchingSegmentReader.FieldsReader;
                     // we can only bulk-copy if the matching reader is also a Lucene40FieldsReader
-                    if (fieldsReader != null && fieldsReader is Lucene40StoredFieldsReader)
+                    if (fieldsReader is object && fieldsReader is Lucene40StoredFieldsReader luc40FieldsReader)
                     {
-                        matchingFieldsReader = (Lucene40StoredFieldsReader)fieldsReader;
+                        matchingFieldsReader = luc40FieldsReader;
                     }
                 }
 
-                if (reader.LiveDocs != null)
+                if (reader.LiveDocs is object)
                 {
                     docCount += CopyFieldsWithDeletions(mergeState, reader, matchingFieldsReader, rawDocLengths);
                 }
@@ -328,8 +328,8 @@ namespace Lucene.Net.Codecs.Lucene40
             int docCount = 0;
             int maxDoc = reader.MaxDoc;
             IBits liveDocs = reader.LiveDocs;
-            if (Debugging.AssertsEnabled) Debugging.Assert(liveDocs != null);
-            if (matchingFieldsReader != null)
+            if (Debugging.AssertsEnabled) Debugging.Assert(liveDocs is object);
+            if (matchingFieldsReader is object)
             {
                 // We can bulk-copy because the fieldInfos are "congruent"
                 for (int j = 0; j < maxDoc; )
@@ -392,7 +392,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             int maxDoc = reader.MaxDoc;
             int docCount = 0;
-            if (matchingFieldsReader != null)
+            if (matchingFieldsReader is object)
             {
                 // We can bulk-copy because the fieldInfos are "congruent"
                 while (docCount < maxDoc)

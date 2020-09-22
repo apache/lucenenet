@@ -33,12 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
         /// <exception cref="ArgumentException">if the field name is null</exception>
         public FieldConfig(string fieldName)
         {
-            if (fieldName == null)
-            {
-                throw new ArgumentException("field name should not be null!");
-            }
-
-            this.fieldName = fieldName;
+            this.fieldName = fieldName ?? throw new ArgumentException("field name should not be null!");
         }
 
         /// <summary>

@@ -59,11 +59,7 @@ namespace Lucene.Net.Util
             get => ints;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("Ints should never be null");
-                }
-                ints = value;
+                ints = value ?? throw new ArgumentNullException("Ints should never be null");
             }
         }
         private int[] ints;
@@ -129,13 +125,13 @@ namespace Lucene.Net.Util
 
         public override bool Equals(object other)
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }
-            if (other is Int32sRef)
+            if (other is Int32sRef int32sRef)
             {
-                return this.Int32sEquals((Int32sRef)other);
+                return this.Int32sEquals(int32sRef);
             }
             return false;
         }

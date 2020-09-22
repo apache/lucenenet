@@ -583,7 +583,7 @@ namespace Lucene.Net.Util.Fst
         private void PushFirst()
         {
             FST.Arc<T> arc = m_arcs[m_upto];
-            if (Debugging.AssertsEnabled) Debugging.Assert(arc != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(arc is object);
 
             while (true)
             {
@@ -610,7 +610,7 @@ namespace Lucene.Net.Util.Fst
         private void PushLast()
         {
             FST.Arc<T> arc = m_arcs[m_upto];
-            if (Debugging.AssertsEnabled) Debugging.Assert(arc != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(arc is object);
 
             while (true)
             {

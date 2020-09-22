@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             {
                 IList<IQueryNode> children = node.GetChildren();
 
-                if (children != null && children.Count > 0)
+                if (children is object && children.Count > 0)
                 {
                     foreach (IQueryNode child in children)
                     {

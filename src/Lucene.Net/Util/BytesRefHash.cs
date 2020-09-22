@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
         private int lastCount = -1;
         private int[] ids;
         private readonly BytesStartArray bytesStartArray;
-        private Counter bytesUsed;
+        private readonly Counter bytesUsed;
 
         /// <summary>
         /// Creates a new <see cref="BytesRefHash"/> with a <see cref="ByteBlockPool"/> using a
@@ -93,7 +93,7 @@ namespace Lucene.Net.Util
             Arrays.Fill(ids, -1);
             this.bytesStartArray = bytesStartArray;
             bytesStart = bytesStartArray.Init();
-            bytesUsed = bytesStartArray.BytesUsed() == null ? Counter.NewCounter() : bytesStartArray.BytesUsed();
+            bytesUsed = bytesStartArray.BytesUsed() ?? Counter.NewCounter();
             bytesUsed.AddAndGet(hashSize * RamUsageEstimator.NUM_BYTES_INT32);
         }
 
@@ -123,7 +123,7 @@ namespace Lucene.Net.Util
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
+                Debugging.Assert(bytesStart is object, "bytesStart is null - not initialized");
                 Debugging.Assert(bytesID < bytesStart.Length, () => "bytesID exceeds byteStart len: " + bytesStart.Length);
             }
             pool.SetBytesRef(@ref, bytesStart[bytesID]);
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public int[] Compact()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
+            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart is object, "bytesStart is null - not initialized");
             int upto = 0;
             for (int i = 0; i < hashSize; i++)
             {
@@ -178,10 +178,10 @@ namespace Lucene.Net.Util
 
         private class IntroSorterAnonymousInnerClassHelper : IntroSorter
         {
-            private BytesRefHash outerInstance;
+            private readonly BytesRefHash outerInstance;
 
-            private IComparer<BytesRef> comp;
-            private int[] compact;
+            private readonly IComparer<BytesRef> comp;
+            private readonly int[] compact;
             private readonly BytesRef pivot = new BytesRef(), scratch1 = new BytesRef(), scratch2 = new BytesRef();
 
             public IntroSorterAnonymousInnerClassHelper(BytesRefHash outerInstance, IComparer<BytesRef> comp, int[] compact)
@@ -304,7 +304,7 @@ namespace Lucene.Net.Util
         ///           <see cref="ByteBlockPool.BYTE_BLOCK_SIZE"/> </exception>
         public int Add(BytesRef bytes)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
+            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart is object, "bytesStart is null - not initialized");
             int length = bytes.Length;
             // final position
             int hashPos = FindHash(bytes);
@@ -380,7 +380,7 @@ namespace Lucene.Net.Util
 
         private int FindHash(BytesRef bytes)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
+            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart is object, "bytesStart is null - not initialized");
 
             int code = DoHash(bytes.Bytes, bytes.Offset, bytes.Length);
 
@@ -412,7 +412,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public int AddByPoolOffset(int offset)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
+            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart is object, "bytesStart is null - not initialized");
             // final position
             int code = offset;
             int hashPos = offset & hashMask;
@@ -551,7 +551,7 @@ namespace Lucene.Net.Util
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
+                Debugging.Assert(bytesStart is object, "bytesStart is null - not initialized");
                 Debugging.Assert(bytesID >= 0 && bytesID < count, () => bytesID.ToString());
             }
             return bytesStart[bytesID];
@@ -651,7 +651,7 @@ namespace Lucene.Net.Util
 
             public override int[] Grow()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart is object);
                 return bytesStart = ArrayUtil.Grow(bytesStart, bytesStart.Length + 1);
             }
 

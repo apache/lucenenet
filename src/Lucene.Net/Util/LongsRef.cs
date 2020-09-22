@@ -59,11 +59,7 @@ namespace Lucene.Net.Util
             get => longs;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
-                longs = value;
+                longs = value ?? throw new ArgumentNullException("value");
             }
         }
         private long[] longs;
@@ -133,9 +129,9 @@ namespace Lucene.Net.Util
             {
                 return false;
             }
-            if (other is Int64sRef)
+            if (other is Int64sRef int64sRef)
             {
-                return this.Int64sEquals((Int64sRef)other);
+                return this.Int64sEquals(int64sRef);
             }
             return false;
         }

@@ -106,7 +106,7 @@ namespace Lucene.Net.Util
                 if (_disposed)
                     throw new ObjectDisposedException(nameof(DisposableThreadLocal<T>));
 
-                return _state != null && _values.ContainsKey(_state.selfReference);
+                return _state is object && _values.ContainsKey(_state.selfReference);
             }
         }
 
@@ -134,7 +134,7 @@ namespace Lucene.Net.Util
                     throw new ObjectDisposedException(nameof(DisposableThreadLocal<T>));
                 (_state ??= new CurrentThreadState()).Register(this);
                 if (_values.TryGetValue(_state.selfReference, out var v) == false &&
-                    _valueFactory != null)
+                    _valueFactory is object)
                 {
                     v = _valueFactory();
                     _values[_state.selfReference] = v;

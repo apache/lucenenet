@@ -49,8 +49,8 @@ namespace Lucene.Net.Codecs.Lucene40
         private readonly FieldInfos fieldInfos;
         private readonly IndexInput fieldsStream;
         private readonly IndexInput indexStream;
-        private int numTotalDocs;
-        private int size;
+        private readonly int numTotalDocs;
+        private readonly int size;
         private bool closed;
 
         /// <summary>

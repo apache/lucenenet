@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
             // LUCENENET specific - reformatted with :
             string prop = SystemProperties.GetProperty("tests:seed", null);
 
-            if (prop != null)
+            if (prop is object)
             {
                 // So if there is a test failure that relied on hash
                 // order, we remain reproducible based on the test seed:

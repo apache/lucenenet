@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
                     // Attempt to load the SimpleTextCodec type. If it loads it will not be null, 
                     // which means the assembly is referenced so we can load all of the named services from that assembly.
                     Type simpleTextType = Type.GetType("Lucene.Net.Codecs.SimpleText.SimpleTextCodec, Lucene.Net.Codecs");
-                    if (simpleTextType != null)
+                    if (simpleTextType is object)
                     {
                         codecsAssembly = simpleTextType.Assembly;
                     }
@@ -83,7 +83,7 @@ namespace Lucene.Net.Util
         protected virtual bool IsServiceType(Type type)
         {
             return
-                type != null &&
+                type is object &&
                 type.IsPublic &&
                 !type.IsAbstract &&
                 typeof(TService).IsAssignableFrom(type) &&
@@ -102,7 +102,7 @@ namespace Lucene.Net.Util
             if (nameAttributes.Length > 0)
             {
                 ServiceNameAttribute nameAttribute = nameAttributes[0] as ServiceNameAttribute;
-                if (nameAttribute != null)
+                if (nameAttribute is object)
                 {
                     string name = nameAttribute.Name;
                     CheckServiceName(name);

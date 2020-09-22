@@ -86,7 +86,7 @@ namespace Lucene.Net.QueryParsers.Ext
         /// <code>null</code> if no extension can be found for the key.</returns>
         public ParserExtension GetExtension(string key)
         {
-            if (key == null || !this.extensions.TryGetValue(key, out ParserExtension value)) return null;
+            if (key is null || !this.extensions.TryGetValue(key, out ParserExtension value)) return null;
             return value;
         }
 

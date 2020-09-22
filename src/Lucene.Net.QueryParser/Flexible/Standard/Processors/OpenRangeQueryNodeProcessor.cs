@@ -36,24 +36,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is TermRangeQueryNode)
+            if (node is TermRangeQueryNode rangeNode)
             {
-                TermRangeQueryNode rangeNode = (TermRangeQueryNode)node;
                 FieldQueryNode lowerNode = (FieldQueryNode)rangeNode.LowerBound;
                 FieldQueryNode upperNode = (FieldQueryNode)rangeNode.UpperBound;
                 ICharSequence lowerText = lowerNode.Text;
                 ICharSequence upperText = upperNode.Text;
 
                 if (OPEN_RANGE_TOKEN.Equals(upperNode.GetTextAsString(), StringComparison.Ordinal)
-                    && (!(upperText is UnescapedCharSequence) || !((UnescapedCharSequence)upperText)
-                        .WasEscaped(0)))
+                    && (!(upperText is UnescapedCharSequence sequence) || !sequence.WasEscaped(0)))
                 {
                     upperText = "".AsCharSequence();
                 }
 
                 if (OPEN_RANGE_TOKEN.Equals(lowerNode.GetTextAsString(), StringComparison.Ordinal)
-                    && (!(lowerText is UnescapedCharSequence) || !((UnescapedCharSequence)lowerText)
-                        .WasEscaped(0)))
+                    && (!(lowerText is UnescapedCharSequence sequence2) || !sequence2.WasEscaped(0)))
                 {
                     lowerText = "".AsCharSequence();
                 }

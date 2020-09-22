@@ -56,11 +56,7 @@ namespace Lucene.Net.Util
             get => chars;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("Chars cannot be null");
-                }
-                chars = value;
+                chars = value ?? throw new ArgumentNullException("Chars cannot be null");
             }
         }
         private char[] chars;
@@ -143,9 +139,9 @@ namespace Lucene.Net.Util
                 return false;
             }
 
-            if (other is CharsRef)
+            if (other is CharsRef charsRef)
             {
-                return this.CharsEquals(((CharsRef)other));
+                return this.CharsEquals(charsRef);
             }
             return false;
         }

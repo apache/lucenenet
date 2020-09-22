@@ -65,8 +65,8 @@ namespace Lucene.Net.Index
         {
             private readonly IndexInput input;
             private string field = "";
-            private BytesRef bytes = new BytesRef();
-            private Term term;
+            private readonly BytesRef bytes = new BytesRef();
+            private readonly Term term;
 
             internal PrefixCodedTermsIterator(RAMFile buffer)
             {
@@ -141,9 +141,9 @@ namespace Lucene.Net.Index
                 output = new RAMOutputStream(buffer);
             }
 
-            private RAMFile buffer = new RAMFile();
+            private readonly RAMFile buffer = new RAMFile();
             private RAMOutputStream output;
-            private Term lastTerm = new Term("");
+            private readonly Term lastTerm = new Term("");
 
             /// <summary>
             /// add a term </summary>

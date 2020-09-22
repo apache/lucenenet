@@ -44,7 +44,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
             IList<IQueryNode> children = phraseNode.GetChildren();
 
-            if (children != null)
+            if (children is object)
             {
                 IDictionary<int?, List<Term>> positionTermMap = new JCG.SortedDictionary<int?, List<Term>>();
 
@@ -55,7 +55,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                         .GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
 
                     List<Term> termList;
-                    if (!positionTermMap.TryGetValue(termNode.PositionIncrement, out termList) || termList == null)
+                    if (!positionTermMap.TryGetValue(termNode.PositionIncrement, out termList) || termList is null)
                     {
                         termList = new List<Term>();
                         positionTermMap[termNode.PositionIncrement] = termList;

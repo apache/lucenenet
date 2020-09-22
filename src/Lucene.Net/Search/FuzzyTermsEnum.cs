@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
             int oldMaxEdits = m_maxEdits;
 
             // true if the last term encountered is lexicographically equal or after the bottom term in the PQ
-            bool termAfter = bottomTerm == null || (lastTerm != null && termComparer.Compare(lastTerm, bottomTerm) >= 0);
+            bool termAfter = bottomTerm == null || (lastTerm is object && termComparer.Compare(lastTerm, bottomTerm) >= 0);
 
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search
         {
             TermsEnum newEnum = GetAutomatonEnum(maxEdits, lastTerm);
             // instead of assert, we do a hard check in case someone uses our enum directly
-            // assert newEnum != null;
+            // assert newEnum is object;
             if (newEnum == null)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search
 
         public override bool MoveNext()
         {
-            if (queuedBottom != null)
+            if (queuedBottom is object)
             {
                 BottomChanged(queuedBottom, false);
                 queuedBottom = null;

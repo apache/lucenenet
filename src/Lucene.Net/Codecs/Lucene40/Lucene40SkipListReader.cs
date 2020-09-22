@@ -32,10 +32,10 @@ namespace Lucene.Net.Codecs.Lucene40
     {
         private bool currentFieldStoresPayloads;
         private bool currentFieldStoresOffsets;
-        private long[] freqPointer;
-        private long[] proxPointer;
-        private int[] payloadLength;
-        private int[] offsetLength;
+        private readonly long[] freqPointer;
+        private readonly long[] proxPointer;
+        private readonly int[] payloadLength;
+        private readonly int[] offsetLength;
 
         private long lastFreqPointer;
         private long lastProxPointer;

@@ -58,7 +58,7 @@ namespace Lucene.Net.Store
 
         public override void ClearLock(string name)
         {
-            if (m_lockFactory != null)
+            if (m_lockFactory is object)
             {
                 m_lockFactory.ClearLock(name);
             }
@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
 
         public override void SetLockFactory(LockFactory lockFactory)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(lockFactory != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(lockFactory is object);
             this.m_lockFactory = lockFactory;
             lockFactory.LockPrefix = this.GetLockID();
         }

@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Payloads
     public class PayloadTermQuery : SpanTermQuery
     {
         protected PayloadFunction m_function;
-        private bool includeSpanScore;
+        private readonly bool includeSpanScore;
 
         public PayloadTermQuery(Term term, PayloadFunction function)
             : this(term, function, true)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Payloads
                     {
                         DocsAndPositionsEnum postings = termSpans.Postings;
                         m_payload = postings.GetPayload();
-                        if (m_payload != null)
+                        if (m_payload is object)
                         {
                             m_payloadScore = outerInstance.outerInstance.m_function.CurrentScore(m_doc, outerInstance.outerInstance.Term.Field, m_spans.Start, m_spans.End, m_payloadsSeen, m_payloadScore, m_docScorer.ComputePayloadFactor(m_doc, m_spans.Start, m_spans.End, m_payload));
                         }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Search.Payloads
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
                 PayloadTermSpanScorer scorer = (PayloadTermSpanScorer)GetScorer(context, (context.AtomicReader).LiveDocs);
-                if (scorer != null)
+                if (scorer is object)
                 {
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search.Payloads
             PayloadTermQuery other = (PayloadTermQuery)obj;
             if (m_function == null)
             {
-                if (other.m_function != null)
+                if (other.m_function is object)
                 {
                     return false;
                 }

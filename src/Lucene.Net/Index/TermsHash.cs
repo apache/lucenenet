@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             intPool = new Int32BlockPool(docWriter.intBlockAllocator);
             bytePool = new ByteBlockPool(docWriter.byteBlockAllocator);
 
-            if (nextTermsHash != null)
+            if (nextTermsHash is object)
             {
                 // We are primary
                 primary = true;
@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
             }
             finally
             {
-                if (nextTermsHash != null)
+                if (nextTermsHash is object)
                 {
                     nextTermsHash.Abort();
                 }
@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
             IDictionary<string, TermsHashConsumerPerField> childFields = new Dictionary<string, TermsHashConsumerPerField>();
             IDictionary<string, InvertedDocConsumerPerField> nextChildFields;
 
-            if (nextTermsHash != null)
+            if (nextTermsHash is object)
             {
                 nextChildFields = new Dictionary<string, InvertedDocConsumerPerField>();
             }
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             {
                 TermsHashPerField perField = (TermsHashPerField)entry.Value;
                 childFields[entry.Key] = perField.consumer;
-                if (nextTermsHash != null)
+                if (nextTermsHash is object)
                 {
                     nextChildFields[entry.Key] = perField.nextPerField;
                 }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
 
             consumer.Flush(childFields, state);
 
-            if (nextTermsHash != null)
+            if (nextTermsHash is object)
             {
                 nextTermsHash.Flush(nextChildFields, state);
             }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
         internal override void FinishDocument()
         {
             consumer.FinishDocument(this);
-            if (nextTermsHash != null)
+            if (nextTermsHash is object)
             {
                 nextTermsHash.consumer.FinishDocument(nextTermsHash);
             }
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
         internal override void StartDocument()
         {
             consumer.StartDocument();
-            if (nextTermsHash != null)
+            if (nextTermsHash is object)
             {
                 nextTermsHash.consumer.StartDocument();
             }

@@ -234,7 +234,7 @@ namespace Lucene.Net.Store
                 if (b == m_buffer && 0 == offset)
                 {
                     // Use our own pre-wrapped byteBuf:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(byteBuf != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(byteBuf is object);
                     byteBuf.Clear();
                     byteBuf.Limit = len;
                     bb = byteBuf;

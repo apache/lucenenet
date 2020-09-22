@@ -191,7 +191,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 // TopLevelQuery is a Query followed by the end-of-input (EOF)
                 Query res = TopLevelQuery(m_field);
-                return res != null ? res : NewBooleanQuery(false);
+                return res ?? NewBooleanQuery(false);
             }
             catch (ParseException tme)
             {
@@ -295,7 +295,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public virtual CultureInfo Locale // LUCENENET TODO: API - Rename Culture
         {
-            get => this.locale == null ? CultureInfo.CurrentCulture : this.locale;
+            get => this.locale ?? CultureInfo.CurrentCulture;
             set => this.locale = value;
         }
 
@@ -309,7 +309,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public virtual TimeZoneInfo TimeZone
         {
-            get => this.timeZone == null ? TimeZoneInfo.Local : this.timeZone;
+            get => this.timeZone ?? TimeZoneInfo.Local;
             set => this.timeZone = value;
         }
 
@@ -335,7 +335,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 throw new ArgumentNullException("fieldName cannot be null or empty string.");
             }
 
-            if (fieldToDateResolution == null)
+            if (fieldToDateResolution is null)
             {
                 // lazily initialize Dictionary
                 fieldToDateResolution = new Dictionary<string, DateTools.Resolution>();
@@ -356,7 +356,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 throw new ArgumentNullException("fieldName cannot be null or empty string.");
             }
 
-            if (fieldToDateResolution == null)
+            if (fieldToDateResolution is null)
             {
                 // no field specific date resolutions set; return default date resolution instead
                 return this.dateResolution;
@@ -408,7 +408,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
             // We might have been passed a null query; the term might have been
             // filtered away by the analyzer.
-            if (q == null)
+            if (q is null)
                 return;
 
             if (DefaultOperator == OR_OPERATOR)
@@ -462,13 +462,13 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             Query query = GetFieldQuery(field, queryText, true);
 
-            if (query is PhraseQuery)
+            if (query is PhraseQuery phraseQuery)
             {
-                ((PhraseQuery)query).Slop = slop;
+                phraseQuery.Slop = slop;
             }
-            if (query is MultiPhraseQuery)
+            if (query is MultiPhraseQuery multiPhraseQuery)
             {
-                ((MultiPhraseQuery)query).Slop = slop;
+                multiPhraseQuery.Slop = slop;
             }
 
             return query;
@@ -482,8 +482,8 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             if (LowercaseExpandedTerms)
             {
-                part1 = part1 == null ? null : Locale.TextInfo.ToLower(part1);
-                part2 = part2 == null ? null : Locale.TextInfo.ToLower(part2);
+                part1 = part1 is null ? null : Locale.TextInfo.ToLower(part1);
+                part2 = part2 is null ? null : Locale.TextInfo.ToLower(part2);
             }
 
             string shortDateFormat = Locale.DateTimeFormat.ShortDatePattern;
@@ -598,7 +598,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         protected internal virtual BytesRef AnalyzeMultitermTerm(string field, string part, Analyzer analyzerIn)
         {
-            if (analyzerIn == null) analyzerIn = Analyzer;
+            if (analyzerIn is null) analyzerIn = Analyzer;
 
             TokenStream source = null;
             try
@@ -641,7 +641,7 @@ namespace Lucene.Net.QueryParsers.Classic
             BytesRef start;
             BytesRef end;
 
-            if (part1 == null)
+            if (part1 is null)
             {
                 start = null;
             }
@@ -650,7 +650,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 start = analyzeRangeTerms ? AnalyzeMultitermTerm(field, part1) : new BytesRef(part1);
             }
 
-            if (part2 == null)
+            if (part2 is null)
             {
                 end = null;
             }
@@ -905,7 +905,7 @@ namespace Lucene.Net.QueryParsers.Classic
         internal virtual Query HandleQuotedTerm(string qfield, Token term, Token fuzzySlop)
         {
             int s = PhraseSlop;  // default
-            if (fuzzySlop != null)
+            if (fuzzySlop is object)
             {
                 try
                 {
@@ -927,7 +927,7 @@ namespace Lucene.Net.QueryParsers.Classic
         // extracted from the .jj grammar
         internal virtual Query HandleBoost(Query q, Token boost)
         {
-            if (boost != null)
+            if (boost is object)
             {
                 float f = (float)1.0;
                 try
@@ -950,7 +950,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 }
 
                 // avoid boosting null queries, such as those caused by stop words
-                if (q != null)
+                if (q is object)
                 {
                     q.Boost = f;
                 }

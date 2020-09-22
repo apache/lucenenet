@@ -24,7 +24,7 @@
     {
         public static string ToString(object obj)
         {
-            if (obj != null)
+            if (obj is object)
             {
                 return obj.ToString();
             }

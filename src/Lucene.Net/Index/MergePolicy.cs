@@ -367,7 +367,7 @@ namespace Lucene.Net.Index
                     }
                     b.Append(Segments[i].ToString(dir, 0));
                 }
-                if (info != null)
+                if (info is object)
                 {
                     b.Append(" into ").Append(info.Info.Name);
                 }
@@ -471,7 +471,7 @@ namespace Lucene.Net.Index
 #endif
         public class MergeException : Exception
         {
-            private Directory dir;
+            private readonly Directory dir;
 
             /// <summary>
             /// Create a <see cref="MergeException"/>. </summary>
@@ -733,7 +733,7 @@ namespace Lucene.Net.Index
         protected bool IsMerged(SegmentInfos infos, SegmentCommitInfo info)
         {
             IndexWriter w = m_writer.Get();
-            if (Debugging.AssertsEnabled) Debugging.Assert(w != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(w is object);
             bool hasDeletions = w.NumDeletedDocs(info) > 0;
             return !hasDeletions
 #pragma warning disable 612, 618

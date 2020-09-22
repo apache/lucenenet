@@ -50,7 +50,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             {
                 IList<IQueryNode> children = queryTree.GetChildren();
 
-                if (children == null || children.Count == 0)
+                if (children is null || children.Count == 0)
                 {
                     return new MatchNoDocsQueryNode();
                 }
@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     {
                         IList<IQueryNode> grandChildren = child.GetChildren();
 
-                        if (grandChildren != null && grandChildren.Count > 0)
+                        if (grandChildren is object && grandChildren.Count > 0)
                         {
                             this.childrenBuffer.Add(child);
                         }

@@ -174,7 +174,7 @@ namespace Lucene.Net.Store
                         FileEntry fileEntry = new FileEntry();
                         string id = entriesStream.ReadString();
                         FileEntry previous = mapping.Put(id, fileEntry);
-                        if (previous != null)
+                        if (previous is object)
                         {
                             throw new CorruptIndexException("Duplicate cfs entry id=" + id + " in CFS: " + entriesStream);
                         }
@@ -252,7 +252,7 @@ namespace Lucene.Net.Store
                     id = IndexFileNames.StripSegmentName(id);
                 }
 
-                if (entry != null)
+                if (entry is object)
                 {
                     // set length of the previous entry
                     entry.Length = offset - entry.Offset;
@@ -262,14 +262,14 @@ namespace Lucene.Net.Store
                 entry.Offset = offset;
 
                 FileEntry previous = entries.Put(id, entry);
-                if (previous != null)
+                if (previous is object)
                 {
                     throw new CorruptIndexException("Duplicate cfs entry id=" + id + " in CFS: " + stream);
                 }
             }
 
             // set the length of the final entry
-            if (entry != null)
+            if (entry is object)
             {
                 entry.Length = streamLength - entry.Offset;
             }
@@ -293,7 +293,7 @@ namespace Lucene.Net.Store
                         return; // already closed
                     }
                     IsOpen = false;
-                    if (writer != null)
+                    if (writer is object)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(openForWrite);
                         writer.Dispose();
@@ -329,7 +329,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             string[] res;
-            if (writer != null)
+            if (writer is object)
             {
                 res = writer.ListAll();
             }
@@ -352,7 +352,7 @@ namespace Lucene.Net.Store
         public override bool FileExists(string name)
         {
             EnsureOpen();
-            if (this.writer != null)
+            if (this.writer is object)
             {
                 return writer.FileExists(name);
             }
@@ -381,7 +381,7 @@ namespace Lucene.Net.Store
         public override long FileLength(string name)
         {
             EnsureOpen();
-            if (this.writer != null)
+            if (this.writer is object)
             {
                 return writer.FileLength(name);
             }
@@ -430,7 +430,7 @@ namespace Lucene.Net.Store
         {
             private readonly CompoundFileDirectory outerInstance;
 
-            private FileEntry entry;
+            private readonly FileEntry entry;
 
             public IndexInputSlicerAnonymousInnerClassHelper(CompoundFileDirectory outerInstance, FileEntry entry)
             {

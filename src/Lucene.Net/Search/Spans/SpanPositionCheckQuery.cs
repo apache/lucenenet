@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Spans
                 clone.m_match = rewritten;
             }
 
-            if (clone != null)
+            if (clone is object)
             {
                 return clone; // some clauses rewrote
             }
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search.Spans
         {
             private readonly SpanPositionCheckQuery outerInstance;
 
-            private Spans spans;
+            private readonly Spans spans;
 
             public PositionCheckSpan(SpanPositionCheckQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {

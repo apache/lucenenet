@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.Lucene42
             int fieldNumber = meta.ReadVInt32();
             while (fieldNumber != -1)
             {
-                // check should be: infos.fieldInfo(fieldNumber) != null, which incorporates negative check
+                // check should be: infos.fieldInfo(fieldNumber) is object, which incorporates negative check
                 // but docvalues updates are currently buggy here (loading extra stuff, etc): LUCENE-5616
                 if (fieldNumber < 0)
                 {

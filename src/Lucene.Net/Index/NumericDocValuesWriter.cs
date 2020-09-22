@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
     {
         private const long MISSING = 0L;
 
-        private AppendingDeltaPackedInt64Buffer pending;
+        private readonly AppendingDeltaPackedInt64Buffer pending;
         private readonly Counter iwBytesUsed;
         private long bytesUsed;
         private FixedBitSet docsWithField;
@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             }
 
             pending.Add(value);
-            if (docsWithField != null)
+            if (docsWithField is object)
             {
                 docsWithField = FixedBitSet.EnsureCapacity(docsWithField, docID);
                 docsWithField.Set(docID);
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    value = docsWithField != null ? (long?) null : MISSING;
+                    value = docsWithField is object ? (long?) null : MISSING;
                 }
                 upto++;
                 // TODO: make reusable Number

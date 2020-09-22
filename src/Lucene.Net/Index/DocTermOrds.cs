@@ -118,9 +118,9 @@ namespace Lucene.Net.Index
         /// Every 128th term is indexed, by default. </summary>
         public static readonly int DEFAULT_INDEX_INTERVAL_BITS = 7; // decrease to a low number like 2 for testing
 
-        private int indexIntervalBits;
-        private int indexIntervalMask;
-        private int indexInterval;
+        private readonly int indexIntervalBits;
+        private readonly int indexIntervalMask;
+        private readonly int indexInterval;
 
         /// <summary>
         /// Don't uninvert terms that exceed this count. </summary>
@@ -192,16 +192,16 @@ namespace Lucene.Net.Index
                 return memsz;
             }
             long sz = 8 * 8 + 32; // local fields
-            if (m_index != null)
+            if (m_index is object)
             {
                 sz += m_index.Length * 4;
             }
-            if (m_tnums != null)
+            if (m_tnums is object)
             {
                 for (int i = 0; i < m_tnums.Length; i++)
                 {
                     var arr = m_tnums[i];
-                    if (arr != null)
+                    if (arr is object)
                         sz += arr.Length;
                 }
             }
@@ -328,7 +328,7 @@ namespace Lucene.Net.Index
         protected virtual void Uninvert(AtomicReader reader, IBits liveDocs, BytesRef termPrefix)
         {
             FieldInfo info = reader.FieldInfos.FieldInfo(m_field);
-            if (info != null && info.HasDocValues)
+            if (info is object && info.HasDocValues)
             {
                 throw new InvalidOperationException("Type mismatch: " + m_field + " was indexed as " + info.DocValuesType);
             }
@@ -398,7 +398,7 @@ namespace Lucene.Net.Index
             for (; ; )
             {
                 BytesRef t = te.Term;
-                if (t == null || (termPrefix != null && !StringHelper.StartsWith(t, termPrefix)))
+                if (t == null || (termPrefix is object && !StringHelper.StartsWith(t, termPrefix)))
                 {
                     break;
                 }
@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
 
                 VisitTerm(te, termNum);
 
-                if (indexedTerms != null && (termNum & indexIntervalMask) == 0)
+                if (indexedTerms is object && (termNum & indexIntervalMask) == 0)
                 {
                     // Index this term
                     m_sizeOfIndexedStrings += t.Length;
@@ -578,7 +578,7 @@ namespace Lucene.Net.Index
                 {
                     var target = m_tnums[pass];
                     var pos = 0; // end in target;
-                    if (target != null)
+                    if (target is object)
                     {
                         pos = target.Length;
                     }
@@ -660,7 +660,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            if (indexedTerms != null)
+            if (indexedTerms is object)
             {
                 m_indexedTermsArray = new BytesRef[indexedTerms.Count];
                 indexedTerms.CopyTo(m_indexedTermsArray, 0);
@@ -752,7 +752,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
 
                 InitializeInstanceFields();
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.m_indexedTermsArray != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.m_indexedTermsArray is object);
                 termsEnum = reader.Fields.GetTerms(outerInstance.m_field).GetEnumerator();
             }
 
@@ -802,7 +802,7 @@ namespace Lucene.Net.Index
             public override SeekStatus SeekCeil(BytesRef target)
             {
                 // already here
-                if (term != null && term.Equals(target))
+                if (term is object && term.Equals(target))
                 {
                     return SeekStatus.FOUND;
                 }
@@ -816,7 +816,7 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled) Debugging.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
                     ord = startIdx << outerInstance.indexIntervalBits;
                     SetTerm();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(term is object);
                     return SeekStatus.FOUND;
                 }
 
@@ -830,14 +830,14 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled) Debugging.Assert(seekStatus == TermsEnum.SeekStatus.NOT_FOUND);
                     ord = 0;
                     SetTerm();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(term is object);
                     return SeekStatus.NOT_FOUND;
                 }
 
                 // back up to the start of the block
                 startIdx--;
 
-                if ((ord >> outerInstance.indexIntervalBits) == startIdx && term != null && term.CompareTo(target) <= 0)
+                if ((ord >> outerInstance.indexIntervalBits) == startIdx && term is object && term.CompareTo(target) <= 0)
                 {
                     // we are already in the right block and the current term is before the term we want,
                     // so we don't need to seek.
@@ -849,10 +849,10 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled) Debugging.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
                     ord = startIdx << outerInstance.indexIntervalBits;
                     SetTerm();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(term != null); // should be non-null since it's in the index
+                    if (Debugging.AssertsEnabled) Debugging.Assert(term is object); // should be non-null since it's in the index
                 }
 
-                while (term != null && term.CompareTo(target) < 0)
+                while (term is object && term.CompareTo(target) < 0)
                 {
                     MoveNext();
                 }
@@ -901,14 +901,14 @@ namespace Lucene.Net.Index
                 }
 
                 SetTerm();
-                if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(term is object);
             }
 
             private BytesRef SetTerm()
             {
                 term = termsEnum.Term;
                 //System.out.println("  setTerm() term=" + term.utf8ToString() + " vs prefix=" + (prefix == null ? "null" : prefix.utf8ToString()));
-                if (outerInstance.m_prefix != null && !StringHelper.StartsWith(term, outerInstance.m_prefix))
+                if (outerInstance.m_prefix is object && !StringHelper.StartsWith(term, outerInstance.m_prefix))
                 {
                     term = null;
                 }

@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs.Compressing
             // to walk backward, since we are only looking for the last element with
             // fields.
             var doc = pendingDocs.Last;
-            while (doc != null)
+            while (doc is object)
             {
                 if (!(doc.Value.fields.Count == 0))
                 {
@@ -245,7 +245,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// Sole constructor. </summary>
         public CompressingTermVectorsWriter(Directory directory, SegmentInfo si, string segmentSuffix, IOContext context, string formatName, CompressionMode compressionMode, int chunkSize)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(directory != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(directory is object);
             this.directory = directory;
             this.segment = si.Name;
             this.segmentSuffix = segmentSuffix;
@@ -372,7 +372,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(curField.flags != 0);
             curField.AddPosition(position, startOffset, endOffset - startOffset, payload == null ? 0 : payload.Length);
-            if (curField.hasPayloads && payload != null)
+            if (curField.hasPayloads && payload is object)
             {
                 payloadBytes.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
             }
@@ -802,8 +802,8 @@ namespace Lucene.Net.Codecs.Compressing
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert((curField.hasPositions) == (positions != null));
-                Debugging.Assert((curField.hasOffsets) == (offsets != null));
+                Debugging.Assert((curField.hasPositions) == (positions is object));
+                Debugging.Assert((curField.hasOffsets) == (offsets is object));
             }
 
             if (curField.hasPositions)
@@ -882,13 +882,13 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 SegmentReader matchingSegmentReader = mergeState.MatchingSegmentReaders[idx++];
                 CompressingTermVectorsReader matchingVectorsReader = null;
-                if (matchingSegmentReader != null)
+                if (matchingSegmentReader is object)
                 {
                     TermVectorsReader vectorsReader = matchingSegmentReader.TermVectorsReader;
                     // we can only bulk-copy if the matching reader is also a CompressingTermVectorsReader
-                    if (vectorsReader != null && vectorsReader is CompressingTermVectorsReader)
+                    if (vectorsReader is CompressingTermVectorsReader compressingTermVectorsReader)
                     {
-                        matchingVectorsReader = (CompressingTermVectorsReader)vectorsReader;
+                        matchingVectorsReader = compressingTermVectorsReader;
                     }
                 }
 

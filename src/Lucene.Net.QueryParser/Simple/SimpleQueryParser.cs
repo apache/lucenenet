@@ -186,7 +186,7 @@ namespace Lucene.Net.QueryParsers.Simple
                     // if a term (or phrase or subquery) has not been found yet the
                     // operation is also ignored since there is no previous
                     // term (or phrase or subquery) to and with
-                    if (!state.CurrentOperationIsSet && state.Top != null)
+                    if (!state.CurrentOperationIsSet && state.Top is object)
                     {
                         state.CurrentOperation = Occur.MUST;
                     }
@@ -200,7 +200,7 @@ namespace Lucene.Net.QueryParsers.Simple
                     // if a term (or phrase or subquery) has not been found yet the
                     // operation is also ignored since there is no previous
                     // term (or phrase or subquery) to or with
-                    if (!state.CurrentOperationIsSet && state.Top != null)
+                    if (!state.CurrentOperationIsSet && state.Top is object)
                     {
                         state.CurrentOperation = Occur.SHOULD;
                     }
@@ -493,7 +493,7 @@ namespace Lucene.Net.QueryParsers.Simple
         /// </summary>
         private void BuildQueryTree(State state, Query branch)
         {
-            if (branch != null)
+            if (branch is object)
             {
                 // modify our branch to a BooleanQuery wrapper for not
                 // this is necessary any time a term, phrase, or subquery is negated
@@ -506,7 +506,7 @@ namespace Lucene.Net.QueryParsers.Simple
                 }
 
                 // first term (or phrase or subquery) found and will begin our query tree
-                if (state.Top == null)
+                if (state.Top is null)
                 {
                     state.Top = branch;
                 }
@@ -609,7 +609,7 @@ namespace Lucene.Net.QueryParsers.Simple
             foreach (var entry in m_weights)
             {
                 Query q = CreateBooleanQuery(entry.Key, text, defaultOperator);
-                if (q != null)
+                if (q is object)
                 {
                     q.Boost = entry.Value;
                     bq.Add(q, Occur.SHOULD);
@@ -627,7 +627,7 @@ namespace Lucene.Net.QueryParsers.Simple
             foreach (var entry in m_weights)
             {
                 Query q = new FuzzyQuery(new Term(entry.Key, text), fuzziness);
-                if (q != null)
+                if (q is object)
                 {
                     q.Boost = entry.Value;
                     bq.Add(q, Occur.SHOULD);
@@ -645,7 +645,7 @@ namespace Lucene.Net.QueryParsers.Simple
             foreach (var entry in m_weights)
             {
                 Query q = CreatePhraseQuery(entry.Key, text, slop);
-                if (q != null)
+                if (q is object)
                 {
                     q.Boost = entry.Value;
                     bq.Add(q, Occur.SHOULD);

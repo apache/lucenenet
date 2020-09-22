@@ -62,8 +62,8 @@ namespace Lucene.Net.Search
     {
         private sealed class BooleanScorerCollector : ICollector
         {
-            private BucketTable bucketTable;
-            private int mask;
+            private readonly BucketTable bucketTable;
+            private readonly int mask;
             private Scorer scorer;
 
             public BooleanScorerCollector(int mask, BucketTable bucketTable)
@@ -185,8 +185,8 @@ namespace Lucene.Net.Search
             }
         }
 
-        private SubScorer scorers = null;
-        private BucketTable bucketTable = new BucketTable();
+        private readonly SubScorer scorers = null;
+        private readonly BucketTable bucketTable = new BucketTable();
         private readonly float[] coordFactors;
 
         // TODO: re-enable this if BQ ever sends us required clauses
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
             {
                 bucketTable.first = null;
 
-                while (current != null) // more queued
+                while (current is object) // more queued
                 {
                     // check prohibited & required
                     if ((current.Bits & PROHIBITED_MASK) == 0)
@@ -270,7 +270,7 @@ namespace Lucene.Net.Search
                     current = current.Next; // pop the queue
                 }
 
-                if (bucketTable.first != null)
+                if (bucketTable.first is object)
                 {
                     current = bucketTable.first;
                     bucketTable.first = current.Next;
@@ -280,7 +280,7 @@ namespace Lucene.Net.Search
                 // refill the queue
                 more = false;
                 end += BucketTable.SIZE;
-                for (SubScorer sub = scorers; sub != null; sub = sub.Next)
+                for (SubScorer sub = scorers; sub is object; sub = sub.Next)
                 {
                     if (sub.More)
                     {
@@ -289,7 +289,7 @@ namespace Lucene.Net.Search
                     }
                 }
                 current = bucketTable.first;
-            } while (current != null || more);
+            } while (current is object || more);
 
             return false;
         }
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("boolean(");
-            for (SubScorer sub = scorers; sub != null; sub = sub.Next)
+            for (SubScorer sub = scorers; sub is object; sub = sub.Next)
             {
                 buffer.Append(sub.Scorer.ToString());
                 buffer.Append(" ");

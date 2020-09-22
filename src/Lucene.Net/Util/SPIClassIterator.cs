@@ -54,7 +54,7 @@ namespace Lucene.Net.Util
             //// are examined and added to NamedSPILoader first before
             //// Lucene.Net.TestFramework.
             //var testFrameworkAssembly = assembliesToExamine.FirstOrDefault(x => string.Equals(x.GetName().Name, "Lucene.Net.TestFramework", StringComparison.Ordinal));
-            //if (testFrameworkAssembly != null)
+            //if (testFrameworkAssembly is object)
             //{
             //    //assembliesToExamine.Remove(testFrameworkAssembly);
             //    //assembliesToExamine.Insert(0, testFrameworkAssembly);
@@ -160,7 +160,7 @@ namespace Lucene.Net.Util
       /// </summary>
       public static bool IsParentClassLoader(ClassLoader parent, ClassLoader child)
       {
-        while (child != null)
+        while (child is object)
         {
           if (child == parent)
           {
@@ -192,7 +192,7 @@ namespace Lucene.Net.Util
         List<string> lines = null;
         while (ProfilesEnum.MoveNext())
         {
-          if (lines != null)
+          if (lines is object)
           {
             lines.Clear();
           }
@@ -209,7 +209,7 @@ namespace Lucene.Net.Util
             {
               BufferedReader reader = new BufferedReader(new InputStreamReader(@in, IOUtils.CHARSET_UTF_8));
               string line;
-              while ((line = reader.readLine()) != null)
+              while ((line = reader.readLine()) is object)
               {
                 int pos = line.IndexOf('#');
                 if (pos >= 0)

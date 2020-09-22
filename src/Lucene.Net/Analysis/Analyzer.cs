@@ -375,7 +375,7 @@ namespace Lucene.Net.Analysis
         {
             if (disposing)
             {
-                if (storedValue != null)
+                if (storedValue is object)
                 {
                     storedValue.Dispose();
                     storedValue = null;
@@ -445,7 +445,7 @@ namespace Lucene.Net.Analysis
             public override TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName)
             {
                 var componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
-                if (componentsPerField != null)
+                if (componentsPerField is object)
                 {
                     TokenStreamComponents ret;
                     componentsPerField.TryGetValue(fieldName, out ret);
@@ -482,9 +482,7 @@ namespace Lucene.Net.Analysis
             public AnonymousAnalyzer(Func<string, TextReader, TokenStreamComponents> createComponents, Func<string, TextReader, TextReader> initReader, ReuseStrategy reuseStrategy)
                 : base(reuseStrategy)
             {
-                if (createComponents == null)
-                    throw new ArgumentNullException("createComponents");
-                this.createComponents = createComponents;
+                this.createComponents = createComponents ?? throw new ArgumentNullException("createComponents");
                 this.initReader = initReader;
             }
 
@@ -495,7 +493,7 @@ namespace Lucene.Net.Analysis
 
             protected internal override TextReader InitReader(string fieldName, TextReader reader)
             {
-                if (this.initReader != null)
+                if (this.initReader is object)
                 {
                     return this.initReader(fieldName, reader);
                 }

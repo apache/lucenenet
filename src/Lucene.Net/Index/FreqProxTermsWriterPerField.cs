@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
                 payload = payloadAttribute.Payload;
             }
 
-            if (payload != null && payload.Length > 0)
+            if (payload is object && payload.Length > 0)
             {
                 termsHashPerField.WriteVInt32(1, (proxCode << 1) | 1);
                 termsHashPerField.WriteVInt32(1, payload.Length);
@@ -335,7 +335,7 @@ namespace Lucene.Net.Index
 
             internal override ParallelPostingsArray NewInstance(int size)
             {
-                return new FreqProxPostingsArray(size, termFreqs != null, lastPositions != null, lastOffsets != null);
+                return new FreqProxPostingsArray(size, termFreqs is object, lastPositions is object, lastOffsets is object);
             }
 
             internal override void CopyTo(ParallelPostingsArray toArray, int numToCopy)
@@ -347,19 +347,19 @@ namespace Lucene.Net.Index
 
                 Array.Copy(lastDocIDs, 0, to.lastDocIDs, 0, numToCopy);
                 Array.Copy(lastDocCodes, 0, to.lastDocCodes, 0, numToCopy);
-                if (lastPositions != null)
+                if (lastPositions is object)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(to.lastPositions != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(to.lastPositions is object);
                     Array.Copy(lastPositions, 0, to.lastPositions, 0, numToCopy);
                 }
-                if (lastOffsets != null)
+                if (lastOffsets is object)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(to.lastOffsets != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(to.lastOffsets is object);
                     Array.Copy(lastOffsets, 0, to.lastOffsets, 0, numToCopy);
                 }
-                if (termFreqs != null)
+                if (termFreqs is object)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(to.termFreqs != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(to.termFreqs is object);
                     Array.Copy(termFreqs, 0, to.termFreqs, 0, numToCopy);
                 }
             }
@@ -367,15 +367,15 @@ namespace Lucene.Net.Index
             internal override int BytesPerPosting()
             {
                 int bytes = ParallelPostingsArray.BYTES_PER_POSTING + 2 * RamUsageEstimator.NUM_BYTES_INT32;
-                if (lastPositions != null)
+                if (lastPositions is object)
                 {
                     bytes += RamUsageEstimator.NUM_BYTES_INT32;
                 }
-                if (lastOffsets != null)
+                if (lastOffsets is object)
                 {
                     bytes += RamUsageEstimator.NUM_BYTES_INT32;
                 }
-                if (termFreqs != null)
+                if (termFreqs is object)
                 {
                     bytes += RamUsageEstimator.NUM_BYTES_INT32;
                 }
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
             }
 
             IDictionary<Term, int?> segDeletes;
-            if (state.SegUpdates != null && state.SegUpdates.terms.Count > 0)
+            if (state.SegUpdates is object && state.SegUpdates.terms.Count > 0)
             {
                 segDeletes = state.SegUpdates.terms;
             }
@@ -482,12 +482,12 @@ namespace Lucene.Net.Index
                 PostingsConsumer postingsConsumer = termsConsumer.StartTerm(text);
 
                 int? delDocLimit;
-                if (segDeletes != null)
+                if (segDeletes is object)
                 {
                     protoTerm.Bytes = text;
                     int? docIDUpto;
                     segDeletes.TryGetValue(protoTerm, out docIDUpto);
-                    if (docIDUpto != null)
+                    if (docIDUpto is object)
                     {
                         delDocLimit = docIDUpto;
                     }

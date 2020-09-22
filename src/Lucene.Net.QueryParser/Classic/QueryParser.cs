@@ -253,7 +253,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         label_1:
 
-            if (clauses.Count == 1 && firstQuery != null)
+            if (clauses.Count == 1 && firstQuery is object)
             {
                 if (true) return firstQuery;
             }
@@ -686,7 +686,7 @@ namespace Lucene.Net.QueryParsers.Classic
         private Token Jj_consume_token(int kind)
         {
             Token oldToken;
-            if ((oldToken = Token).Next != null) Token = Token.Next;
+            if ((oldToken = Token).Next is object) Token = Token.Next;
             else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
             if (Token.Kind == kind)
@@ -698,7 +698,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     for (int i = 0; i < jj_2_rtns.Length; i++)
                     {
                         JJCalls c = jj_2_rtns[i];
-                        while (c != null)
+                        while (c is object)
                         {
                             if (c.gen < jj_gen) c.first = null;
                             c = c.next;
@@ -741,7 +741,7 @@ namespace Lucene.Net.QueryParsers.Classic
             if (jj_scanpos == jj_lastpos)
             {
                 jj_la--;
-                if (jj_scanpos.Next == null)
+                if (jj_scanpos.Next is null)
                 {
                     jj_lastpos = jj_scanpos = jj_scanpos.Next = TokenSource.GetNextToken();
                 }
@@ -758,12 +758,12 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 int i = 0;
                 Token tok = Token;
-                while (tok != null && tok != jj_scanpos)
+                while (tok is object && tok != jj_scanpos)
                 {
                     i++;
                     tok = tok.Next;
                 }
-                if (tok != null) Jj_add_error_token(kind, i);
+                if (tok is object) Jj_add_error_token(kind, i);
             }
             if (jj_scanpos.Kind != kind) return true;
             if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
@@ -773,7 +773,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>Get the next Token. </summary>
         public Token GetNextToken()
         {
-            if (Token.Next != null) Token = Token.Next;
+            if (Token.Next is object) Token = Token.Next;
             else Token = Token.Next = TokenSource.GetNextToken();
             jj_ntk = -1;
             jj_gen++;
@@ -786,7 +786,7 @@ namespace Lucene.Net.QueryParsers.Classic
             Token t = Token;
             for (int i = 0; i < index; i++)
             {
-                if (t.Next != null) t = t.Next;
+                if (t.Next is object) t = t.Next;
                 else t = t.Next = TokenSource.GetNextToken();
             }
             return t;
@@ -794,7 +794,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         private int Jj_ntk()
         {
-            if ((Jj_nt = Token.Next) == null)
+            if ((Jj_nt = Token.Next) is null)
                 return (jj_ntk = (Token.Next = TokenSource.GetNextToken()).Kind);
             else
                 return (jj_ntk = Jj_nt.Kind);
@@ -921,7 +921,7 @@ namespace Lucene.Net.QueryParsers.Classic
                             }
                         }
                         p = p.next;
-                    } while (p != null);
+                    } while (p is object);
                 }
                 catch (LookaheadSuccess)
                 {
@@ -935,7 +935,7 @@ namespace Lucene.Net.QueryParsers.Classic
             JJCalls p = jj_2_rtns[index];
             while (p.gen > jj_gen)
             {
-                if (p.next == null)
+                if (p.next is null)
                 {
                     p = p.next = new JJCalls();
                     break;

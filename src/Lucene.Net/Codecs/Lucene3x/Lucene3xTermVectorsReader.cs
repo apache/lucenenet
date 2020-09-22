@@ -80,15 +80,15 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private readonly FieldInfos fieldInfos;
 
-        private IndexInput tvx;
-        private IndexInput tvd;
-        private IndexInput tvf;
-        private int size;
-        private int numTotalDocs;
+        private readonly IndexInput tvx;
+        private readonly IndexInput tvd;
+        private readonly IndexInput tvf;
+        private readonly int size;
+        private readonly int numTotalDocs;
 
         // The docID offset where our docs begin in the index
         // file.  this will be 0 if we have our own private file.
-        private int docStoreOffset;
+        private readonly int docStoreOffset;
 
         // when we are inside a compound share doc store (CFX),
         // (lucene 3.0 indexes only), we privately open our own fd.
@@ -275,7 +275,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 private readonly TVFields outerInstance;
                 private string current;
-                private int i, upTo;
+                private int i;
+                private readonly int upTo;
 
                 public IteratorAnonymousInnerClassHelper(TVFields outerInstance)
                 {
@@ -286,7 +287,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 public bool MoveNext()
                 {
-                    if (outerInstance.fieldNumbers != null && i < upTo)
+                    if (outerInstance.fieldNumbers is object && i < upTo)
                     {
                         current = outerInstance.outerInstance.fieldInfos.FieldInfo(outerInstance.fieldNumbers[i++]).Name;
                         return true;
@@ -584,9 +585,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags) // ignored
             {
                 TVDocsEnum docsEnum;
-                if (reuse != null && reuse is TVDocsEnum)
+                if (reuse is object && reuse is TVDocsEnum docsReuse)
                 {
-                    docsEnum = (TVDocsEnum)reuse;
+                    docsEnum = docsReuse;
                 }
                 else
                 {
@@ -604,9 +605,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
 
                 TVDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse != null && reuse is TVDocsAndPositionsEnum)
+                if (reuse is object && reuse is TVDocsAndPositionsEnum docsAndPosReuse)
                 {
-                    docsAndPositionsEnum = (TVDocsAndPositionsEnum)reuse;
+                    docsAndPositionsEnum = docsAndPosReuse;
                 }
                 else
                 {
@@ -698,13 +699,13 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 get
                 {
-                    if (positions != null)
+                    if (positions is object)
                     {
                         return positions.Length;
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(startOffsets != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(startOffsets is object);
                         return startOffsets.Length;
                     }
                 }
@@ -755,7 +756,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int NextPosition()
             {
-                //if (Debugging.AssertsEnabled) Debugging.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
+                //if (Debugging.AssertsEnabled) Debugging.Assert((positions is object && nextPos < positions.Length) || startOffsets is object && nextPos < startOffsets.Length);
 
                 // LUCENENET: The above assertion was for control flow when testing. In Java, it would throw an AssertionError, which is
                 // caught by the BaseTermVectorsFormatTestCase.assertEquals(RandomTokenStream tk, FieldType ft, Terms terms) method in the
@@ -764,10 +765,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // In .NET it is more natural to throw an InvalidOperationException in this case, since we would potentially get an
                 // IndexOutOfRangeException if we didn't, which doesn't really provide good feedback as to what the cause is.
                 // This matches the behavior of Lucene 8.x. See #267.
-                if (((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length) == false)
+                if (((positions is object && nextPos < positions.Length) || startOffsets is object && nextPos < startOffsets.Length) == false)
                     throw new InvalidOperationException("Read past last position");
 
-                if (positions != null)
+                if (positions is object)
                 {
                     return positions[nextPos++];
                 }
@@ -782,7 +783,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 get
                 {
-                    if (startOffsets != null)
+                    if (startOffsets is object)
                     {
                         return startOffsets[nextPos - 1];
                     }
@@ -797,7 +798,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 get
                 {
-                    if (endOffsets != null)
+                    if (endOffsets is object)
                     {
                         return endOffsets[nextPos - 1];
                     }
@@ -816,7 +817,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override Fields Get(int docID)
         {
-            if (tvx != null)
+            if (tvx is object)
             {
                 Fields fields = new TVFields(this, docID);
                 if (fields.Count == 0)
@@ -845,7 +846,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             // These are null when a TermVectorsReader was created
             // on a segment that did not have term vectors saved
-            if (tvx != null && tvd != null && tvf != null)
+            if (tvx is object && tvd is object && tvf is object)
             {
                 cloneTvx = (IndexInput)tvx.Clone();
                 cloneTvd = (IndexInput)tvd.Clone();

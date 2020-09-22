@@ -48,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
             /* check term presence in index here for symmetry with other SimpleTerm's */
             Terms terms = MultiFields.GetTerms(reader, fieldName);
-            if (terms != null)
+            if (terms is object)
             {
                 TermsEnum termsEnum = terms.GetEnumerator();
 

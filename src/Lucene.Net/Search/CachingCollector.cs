@@ -380,7 +380,7 @@ namespace Lucene.Net.Search
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private bool acceptDocsOutOfOrder;
+            private readonly bool acceptDocsOutOfOrder;
 
             public CollectorAnonymousInnerClassHelper(bool acceptDocsOutOfOrder)
             {
@@ -467,12 +467,12 @@ namespace Lucene.Net.Search
 
         public virtual bool AcceptsDocsOutOfOrder => m_other.AcceptsDocsOutOfOrder;
 
-        public virtual bool IsCached => m_curDocs != null;
+        public virtual bool IsCached => m_curDocs is object;
 
         public virtual void SetNextReader(AtomicReaderContext context)
         {
             m_other.SetNextReader(context);
-            if (lastReaderContext != null)
+            if (lastReaderContext is object)
             {
                 m_cachedSegs.Add(new SegStart(lastReaderContext, m_base + m_upto));
             }
@@ -519,7 +519,7 @@ namespace Lucene.Net.Search
             }
 
             //System.out.println("CC: replay totHits=" + (upto + base));
-            if (lastReaderContext != null)
+            if (lastReaderContext is object)
             {
                 m_cachedSegs.Add(new SegStart(lastReaderContext, m_base + m_upto));
                 lastReaderContext = null;

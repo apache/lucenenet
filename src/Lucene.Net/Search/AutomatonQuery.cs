@@ -108,7 +108,7 @@ namespace Lucene.Net.Search
             }
             if (m_term == null)
             {
-                if (other.m_term != null)
+                if (other.m_term is object)
                 {
                     return false;
                 }

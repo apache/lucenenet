@@ -133,7 +133,7 @@ namespace Lucene.Net.Search.Payloads
             PayloadNearQuery other = (PayloadNearQuery)obj;
             if (m_fieldName == null)
             {
-                if (other.m_fieldName != null)
+                if (other.m_fieldName is object)
                 {
                     return false;
                 }
@@ -144,7 +144,7 @@ namespace Lucene.Net.Search.Payloads
             }
             if (m_function == null)
             {
-                if (other.m_function != null)
+                if (other.m_function is object)
                 {
                     return false;
                 }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search.Payloads
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
                 PayloadNearSpanScorer scorer = (PayloadNearSpanScorer)GetScorer(context, (context.AtomicReader).LiveDocs);
-                if (scorer != null)
+                if (scorer is object)
                 {
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search.Payloads
                 for (var i = 0; i < subSpans.Length; i++)
                 {
                     var span = subSpans[i] as NearSpansOrdered;
-                    if (span != null)
+                    if (span is object)
                     {
                         if (span.IsPayloadAvailable)
                         {
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Payloads
                     else
                     {
                         var unordered = subSpans[i] as NearSpansUnordered;
-                        if (unordered != null)
+                        if (unordered is object)
                         {
                             if (unordered.IsPayloadAvailable)
                             {

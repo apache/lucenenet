@@ -98,15 +98,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         private static void ClearFields(IList<IQueryNode> nodes, string field)
         {
-            if (nodes == null || nodes.Count == 0)
+            if (nodes is null || nodes.Count == 0)
                 return;
 
             foreach (IQueryNode clause in nodes)
             {
-                if (clause is FieldQueryNode)
+                if (clause is FieldQueryNode fqNode)
                 {
-                    ((FieldQueryNode)clause).m_toQueryStringIgnoreFields = true;
-                    ((FieldQueryNode)clause).Field = field;
+                    fqNode.m_toQueryStringIgnoreFields = true;
+                    fqNode.Field = field;
                 }
             }
         }
@@ -119,7 +119,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 : (" distance='" + this.distance) + "'");
 
             var children = GetChildren();
-            if (children == null || children.Count == 0)
+            if (children is null || children.Count == 0)
                 return "<proximity field='" + this.field + "' inorder='" + this.inorder
                     + "' type='" + this.proximityType.ToString() + "'" + distanceSTR
                     + "/>";
@@ -143,7 +143,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             StringBuilder sb = new StringBuilder();
             var children = GetChildren();
-            if (children == null || children.Count == 0)
+            if (children is null || children.Count == 0)
             {
                 // no children case
             }
@@ -199,7 +199,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <returns></returns>
         public virtual string GetFieldAsString()
         {
-            if (this.field == null)
+            if (this.field is null)
                 return null;
             else
                 return this.field.ToString();

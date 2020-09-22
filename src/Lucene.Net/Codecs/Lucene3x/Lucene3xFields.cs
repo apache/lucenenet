@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     [Obsolete("(4.0)")]
     internal class Lucene3xFields : FieldsProducer
     {
-        private static bool DEBUG_SURROGATES = false;
+        private static readonly bool DEBUG_SURROGATES = false;
 
         public TermInfosReader Tis { get; set; }
         public TermInfosReader TisNoIndex { get; private set; }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 lock (this)
                 {
-                    if (Tis != null)
+                    if (Tis is object)
                     {
                         return Tis;
                     }
@@ -490,7 +490,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     // We could hit EOF or different field since this
                     // was a seek "forward":
-                    if (t2 != null && t2.Field == internedFieldName)
+                    if (t2 is object && t2.Field == internedFieldName)
                     {
                         if (DEBUG_SURROGATES)
                         {
@@ -693,7 +693,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             }
                             else
                             {
-                                Console.WriteLine("      hit term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + (t2 == null ? null : t2.Bytes));
+                                Console.WriteLine("      hit term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + (t2?.Bytes));
                             }
                         }
 
@@ -701,7 +701,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         // EOF or a different field:
                         bool matches;
 
-                        if (t2 != null && t2.Field == internedFieldName)
+                        if (t2 is object && t2.Field == internedFieldName)
                         {
                             BytesRef b2 = t2.Bytes;
                             if (Debugging.AssertsEnabled) Debugging.Assert(b2.Offset == 0);
@@ -787,7 +787,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 unicodeSortOrder = outerInstance.SortTermsByUnicode;
 
                 Term t = termEnum.Term();
-                if (t != null && t.Field == internedFieldName)
+                if (t is object && t.Field == internedFieldName)
                 {
                     newSuffixStart = 0;
                     prevTerm.Length = 0;
@@ -829,13 +829,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                 TermInfosReader tis = outerInstance.TermsDict;
                 Term t0 = new Term(fieldInfo.Name, term);
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(termEnum != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termEnum is object);
 
                 tis.SeekEnum(termEnum, t0, false);
 
                 Term t = termEnum.Term();
 
-                if (t != null && t.Field == internedFieldName && term.BytesEquals(t.Bytes))
+                if (t is object && t.Field == internedFieldName && term.BytesEquals(t.Bytes))
                 {
                     // If we found an exact match, no need to do the
                     // surrogate dance
@@ -1057,17 +1057,17 @@ namespace Lucene.Net.Codecs.Lucene3x
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 PreDocsEnum docsEnum;
-                if (reuse == null || !(reuse is PreDocsEnum))
+                if (reuse is PreDocsEnum preDocsEnum)
                 {
-                    docsEnum = new PreDocsEnum(outerInstance);
-                }
-                else
-                {
-                    docsEnum = (PreDocsEnum)reuse;
+                    docsEnum = preDocsEnum;
                     if (docsEnum.FreqStream != outerInstance.FreqStream)
                     {
                         docsEnum = new PreDocsEnum(outerInstance);
                     }
+                }
+                else
+                {
+                    docsEnum = new PreDocsEnum(outerInstance);
                 }
                 return docsEnum.Reset(termEnum, liveDocs);
             }
@@ -1079,13 +1079,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     return null;
                 }
-                else if (reuse == null || !(reuse is PreDocsAndPositionsEnum))
+                else if (reuse is null || !(reuse is PreDocsAndPositionsEnum preDocsAndPositionEnum))
                 {
                     docsPosEnum = new PreDocsAndPositionsEnum(outerInstance);
                 }
                 else
                 {
-                    docsPosEnum = (PreDocsAndPositionsEnum)reuse;
+                    docsPosEnum = preDocsAndPositionEnum;
                     if (docsPosEnum.FreqStream != outerInstance.FreqStream)
                     {
                         docsPosEnum = new PreDocsAndPositionsEnum(outerInstance);
@@ -1227,7 +1227,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override long RamBytesUsed()
         {
-            if (Tis != null)
+            if (Tis is object)
             {
                 return Tis.RamBytesUsed();
             }

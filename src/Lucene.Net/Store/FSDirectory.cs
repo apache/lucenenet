@@ -210,9 +210,8 @@ namespace Lucene.Net.Store
 
             // for filesystem based LockFactory, delete the lockPrefix, if the locks are placed
             // in index dir. If no index dir is given, set ourselves
-            if (lockFactory is FSLockFactory)
+            if (lockFactory is FSLockFactory lf)
             {
-                FSLockFactory lf = (FSLockFactory)lockFactory;
                 DirectoryInfo dir = lf.LockDir;
                 // if the lock factory has no lockDir set, use the this directory as lockDir
                 if (dir == null)

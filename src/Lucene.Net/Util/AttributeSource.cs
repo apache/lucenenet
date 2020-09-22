@@ -178,7 +178,7 @@ namespace Lucene.Net.Util
                 State clone = new State();
                 clone.attribute = (Attribute)attribute.Clone();
 
-                if (next != null)
+                if (next is object)
                 {
                     clone.next = (State)next.Clone();
                 }
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util
         public IEnumerator<Attribute> GetAttributeImplsEnumerator()
         {
             State initState = GetCurrentState();
-            if (initState != null)
+            if (initState is object)
             {
                 return new IteratorAnonymousInnerClassHelper(initState);
             }
@@ -332,7 +332,7 @@ namespace Lucene.Net.Util
                         }
                     }
                     actClazz = actClazz.BaseType;
-                } while (actClazz != null);
+                } while (actClazz is object);
 
                 return foundInterfaces;
             });
@@ -361,7 +361,7 @@ namespace Lucene.Net.Util
             foreach (var curInterfaceRef in foundInterfaces)
             {
                 curInterfaceRef.TryGetTarget(out Type curInterface);
-                if (Debugging.AssertsEnabled) Debugging.Assert(curInterface != null, "We have a strong reference on the class holding the interfaces, so they should never get evicted");
+                if (Debugging.AssertsEnabled) Debugging.Assert(curInterface is object, "We have a strong reference on the class holding the interfaces, so they should never get evicted");
                 // Attribute is a superclass of this interface
                 if (!attributes.ContainsKey(curInterface))
                 {
@@ -438,7 +438,7 @@ namespace Lucene.Net.Util
         private State GetCurrentState()
         {
             State s = currentState[0];
-            if (s != null || !HasAttributes)
+            if (s is object || !HasAttributes)
             {
                 return s;
             }
@@ -463,7 +463,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void ClearAttributes()
         {
-            for (State state = GetCurrentState(); state != null; state = state.next)
+            for (State state = GetCurrentState(); state is object; state = state.next)
             {
                 state.attribute.Clear();
             }
@@ -509,13 +509,13 @@ namespace Lucene.Net.Util
                 }
                 state.attribute.CopyTo(attributeImpls[state.attribute.GetType()]);
                 state = state.next;
-            } while (state != null);
+            } while (state is object);
         }
 
         public override int GetHashCode()
         {
             int code = 0;
-            for (State state = GetCurrentState(); state != null; state = state.next)
+            for (State state = GetCurrentState(); state is object; state = state.next)
             {
                 code = code * 31 + state.attribute.GetHashCode();
             }
@@ -546,7 +546,7 @@ namespace Lucene.Net.Util
                     // it is only equal if all attribute impls are the same in the same order
                     State thisState = this.GetCurrentState();
                     State otherState = other.GetCurrentState();
-                    while (thisState != null && otherState != null)
+                    while (thisState is object && otherState is object)
                     {
                         if (otherState.attribute.GetType() != thisState.attribute.GetType() || !otherState.attribute.Equals(thisState.attribute))
                         {
@@ -589,8 +589,8 @@ namespace Lucene.Net.Util
         {
             private readonly AttributeSource outerInstance;
 
-            private bool prependAttClass;
-            private StringBuilder buffer;
+            private readonly bool prependAttClass;
+            private readonly StringBuilder buffer;
 
             public AttributeReflectorAnonymousInnerClassHelper(AttributeSource outerInstance, bool prependAttClass, StringBuilder buffer)
             {
@@ -629,7 +629,7 @@ namespace Lucene.Net.Util
         /// <seealso cref="Attribute.ReflectWith(IAttributeReflector)"/>
         public void ReflectWith(IAttributeReflector reflector)
         {
-            for (State state = GetCurrentState(); state != null; state = state.next)
+            for (State state = GetCurrentState(); state is object; state = state.next)
             {
                 state.attribute.ReflectWith(reflector);
             }
@@ -649,7 +649,7 @@ namespace Lucene.Net.Util
             if (HasAttributes)
             {
                 // first clone the impls
-                for (State state = GetCurrentState(); state != null; state = state.next)
+                for (State state = GetCurrentState(); state is object; state = state.next)
                 {
                     //clone.AttributeImpls[state.attribute.GetType()] = state.attribute.Clone();
                     var impl = (Attribute)state.attribute.Clone();
@@ -680,7 +680,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void CopyTo(AttributeSource target)
         {
-            for (State state = GetCurrentState(); state != null; state = state.next)
+            for (State state = GetCurrentState(); state is object; state = state.next)
             {
                 Attribute targetImpl = target.attributeImpls[state.attribute.GetType()];
                 if (targetImpl == null)

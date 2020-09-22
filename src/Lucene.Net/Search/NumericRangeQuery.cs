@@ -233,9 +233,8 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (o is NumericRangeQuery<T>)
+            if (o is NumericRangeQuery<T> q)
             {
-                var q = (NumericRangeQuery<T>)o;
                 return ((q.min == null ? min == null : q.min.Equals(min)) && (q.max == null ? max == null : q.max.Equals(max)) && minInclusive == q.minInclusive && maxInclusive == q.maxInclusive && precisionStep == q.precisionStep);
             }
             return false;
@@ -245,11 +244,11 @@ namespace Lucene.Net.Search
         {
             int hash = base.GetHashCode();
             hash += precisionStep ^ 0x64365465;
-            if (min != null)
+            if (min is object)
             {
                 hash += min.GetHashCode() ^ 0x14fa55fb;
             }
-            if (max != null)
+            if (max is object)
             {
                 hash += max.GetHashCode() ^ 0x733fa5fe;
             }
@@ -323,7 +322,7 @@ namespace Lucene.Net.Search
                                 if (Debugging.AssertsEnabled) Debugging.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
                                 minBound = (this.outerInstance.min == null) ? INT64_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.min.Value, CultureInfo.InvariantCulture));
                             }
-                            if (!this.outerInstance.minInclusive && this.outerInstance.min != null)
+                            if (!this.outerInstance.minInclusive && this.outerInstance.min is object)
                             {
                                 if (minBound == long.MaxValue)
                                 {
@@ -343,7 +342,7 @@ namespace Lucene.Net.Search
                                 if (Debugging.AssertsEnabled) Debugging.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
                                 maxBound = (this.outerInstance.max == null) ? INT64_POSITIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.max, CultureInfo.InvariantCulture));
                             }
-                            if (!this.outerInstance.maxInclusive && this.outerInstance.max != null)
+                            if (!this.outerInstance.maxInclusive && this.outerInstance.max is object)
                             {
                                 if (maxBound == long.MinValue)
                                 {
@@ -370,7 +369,7 @@ namespace Lucene.Net.Search
                                 if (Debugging.AssertsEnabled) Debugging.Assert(this.outerInstance.dataType == NumericType.SINGLE);
                                 minBound = (this.outerInstance.min == null) ? INT32_NEGATIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.min, CultureInfo.InvariantCulture));
                             }
-                            if (!this.outerInstance.minInclusive && this.outerInstance.min != null)
+                            if (!this.outerInstance.minInclusive && this.outerInstance.min is object)
                             {
                                 if (minBound == int.MaxValue)
                                 {
@@ -390,7 +389,7 @@ namespace Lucene.Net.Search
                                 if (Debugging.AssertsEnabled) Debugging.Assert(this.outerInstance.dataType == NumericType.SINGLE);
                                 maxBound = (this.outerInstance.max == null) ? INT32_POSITIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.max, CultureInfo.InvariantCulture));
                             }
-                            if (!this.outerInstance.maxInclusive && this.outerInstance.max != null)
+                            if (!this.outerInstance.maxInclusive && this.outerInstance.max is object)
                             {
                                 if (maxBound == int.MinValue)
                                 {
@@ -460,12 +459,12 @@ namespace Lucene.Net.Search
                     NextRange();
 
                     // if the new upper bound is before the term parameter, the sub-range is never a hit
-                    if (term != null && termComp.Compare(term, currentUpperBound) > 0)
+                    if (term is object && termComp.Compare(term, currentUpperBound) > 0)
                     {
                         continue;
                     }
                     // never seek backwards, so use current term if lower bound is smaller
-                    return (term != null && termComp.Compare(term, currentLowerBound) > 0) ? term : currentLowerBound;
+                    return (term is object && termComp.Compare(term, currentLowerBound) > 0) ? term : currentLowerBound;
                 }
 
                 // no more sub-range enums available

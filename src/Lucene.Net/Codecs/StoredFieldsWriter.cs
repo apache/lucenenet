@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs
                 IBits liveDocs = reader.LiveDocs;
                 for (int i = 0; i < maxDoc; i++)
                 {
-                    if (liveDocs != null && !liveDocs.Get(i))
+                    if (liveDocs is object && !liveDocs.Get(i))
                     {
                         // skip deleted docs
                         continue;
@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Disposes all resources used by this object.
+        /// Disposes all resources used by th is object.
         /// </summary>
         public void Dispose()
         {

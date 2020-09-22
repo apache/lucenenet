@@ -66,7 +66,7 @@ namespace Lucene.Net.Support
         {
             if (_hm.Count == 0) return;
             var newHm = new JCG.Dictionary<WeakKey<TKey>, TValue>(_hm.Count);
-            foreach (var entry in _hm.Where(x => x.Key != null && x.Key.IsAlive))
+            foreach (var entry in _hm.Where(x => x.Key is object && x.Key.IsAlive))
             {
                 newHm.Add(entry.Key, entry.Value);
             }
@@ -281,7 +281,7 @@ namespace Lucene.Net.Support
                 if (obj is WeakKey<T> other)
                 {
                     var referenceTarget = reference.Target; // Careful: can be null in the mean time...
-                    return referenceTarget != null && referenceTarget.Equals(other.Target);
+                    return referenceTarget is object && referenceTarget.Equals(other.Target);
                 }
 
                 return false;

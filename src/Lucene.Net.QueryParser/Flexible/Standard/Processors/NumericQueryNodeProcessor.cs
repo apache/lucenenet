@@ -61,23 +61,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is FieldQueryNode
+            if (node is FieldQueryNode fieldNode
                 && !(node.Parent is IRangeQueryNode))
             {
                 QueryConfigHandler config = GetQueryConfigHandler();
 
-                if (config != null)
+                if (config is object)
                 {
-                    FieldQueryNode fieldNode = (FieldQueryNode)node;
                     FieldConfig fieldConfig = config.GetFieldConfig(fieldNode
                         .GetFieldAsString());
 
-                    if (fieldConfig != null)
+                    if (fieldConfig is object)
                     {
                         NumericConfig numericConfig = fieldConfig
                             .Get(ConfigurationKeys.NUMERIC_CONFIG);
 
-                        if (numericConfig != null)
+                        if (numericConfig is object)
                         {
                             NumberFormat numberFormat = numericConfig.NumberFormat;
                             string text = fieldNode.GetTextAsString();

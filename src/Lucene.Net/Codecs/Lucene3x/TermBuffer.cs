@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfos.FieldInfo(currentFieldNumber) != null, currentFieldNumber.ToString);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfos.FieldInfo(currentFieldNumber) is object, currentFieldNumber.ToString);
                     
                     field = fieldInfos.FieldInfo(currentFieldNumber).Name.Intern();
                 }

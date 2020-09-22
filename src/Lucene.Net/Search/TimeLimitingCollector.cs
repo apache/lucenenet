@@ -45,9 +45,9 @@ namespace Lucene.Net.Search
 #endif
         public class TimeExceededException : Exception
         {
-            private long timeAllowed;
-            private long timeElapsed;
-            private int lastDocCollected;
+            private readonly long timeAllowed;
+            private readonly long timeElapsed;
+            private readonly int lastDocCollected;
 
             internal TimeExceededException(long timeAllowed, long timeElapsed, int lastDocCollected)
                 : base("Elapsed time: " + timeElapsed + "Exceeded allowed search time: " + timeAllowed + " ms.")
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search
             //   afford losing a tick or two.
             //
             // See section 17 of the Java Language Specification for details.
-            private long time = 0;
+            private readonly long time = 0;
 
             private volatile bool stop = false;
             private long resolution;

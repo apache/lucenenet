@@ -55,12 +55,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 T lower = (T)LowerBound;
                 T upper = (T)UpperBound;
 
-                if (lower != null)
+                if (lower is object)
                 {
                     field = lower.Field;
 
                 }
-                else if (upper != null)
+                else if (upper is object)
                 {
                     field = upper.Field;
                 }
@@ -72,12 +72,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 T lower = (T)LowerBound;
                 T upper = (T)UpperBound;
 
-                if (lower != null)
+                if (lower is object)
                 {
                     lower.Field = value;
                 }
 
-                if (upper != null)
+                if (upper is object)
                 {
                     upper.Field = value;
                 }
@@ -124,13 +124,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         public virtual void SetBounds(T lower, T upper, bool lowerInclusive,
             bool upperInclusive)
         {
-            if (lower != null && upper != null)
+            if (lower is object && upper is object)
             {
                 string lowerField = StringUtils.ToString(lower.Field);
                 string upperField = StringUtils.ToString(upper.Field);
 
-                if ((upperField != null || lowerField != null)
-                    && ((upperField != null && !upperField.Equals(lowerField, StringComparison.Ordinal)) || !lowerField
+                if ((upperField is object || lowerField is object)
+                    && ((upperField is object && !upperField.Equals(lowerField, StringComparison.Ordinal)) || !lowerField
                         .Equals(upperField, StringComparison.Ordinal)))
                 {
                     throw new ArgumentException(
@@ -164,7 +164,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 sb.Append('{');
             }
 
-            if (lower != null)
+            if (lower is object)
             {
                 sb.Append(lower.ToQueryString(escapeSyntaxParser));
             }
@@ -175,7 +175,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
 
             sb.Append(' ');
 
-            if (upper != null)
+            if (upper is object)
             {
                 sb.Append(upper.ToQueryString(escapeSyntaxParser));
             }

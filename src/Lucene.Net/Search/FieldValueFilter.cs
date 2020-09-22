@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
             FieldValueFilter other = (FieldValueFilter)obj;
             if (field == null)
             {
-                if (other.field != null)
+                if (other.field is object)
                 {
                     return false;
                 }

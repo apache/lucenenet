@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
                 Node tailNext = currentTail.next;
                 if (tail == currentTail)
                 {
-                    if (tailNext != null)
+                    if (tailNext is object)
                     {
                         /*
                          * we are in intermediate state here. the tails next pointer has been
@@ -202,7 +202,7 @@ namespace Lucene.Net.Index
                  * and if the global slice is up-to-date
                  * and if globalBufferedUpdates has changes
                  */
-                return globalBufferedUpdates.Any() || !globalSlice.IsEmpty || globalSlice.sliceTail != tail || tail.next != null;
+                return globalBufferedUpdates.Any() || !globalSlice.IsEmpty || globalSlice.sliceTail != tail || tail.next is object;
             }
             finally
             {
@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
             Node currentTail = tail; // take the current tail make this local any
             // Changes after this call are applied later
             // and not relevant here
-            if (callerSlice != null)
+            if (callerSlice is object)
             {
                 // Update the callers slices so we are on the same page
                 callerSlice.sliceTail = currentTail;
@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
 
             internal DeleteSlice(Node currentTail)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(currentTail != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(currentTail is object);
                 /*
                  * Initially this is a 0 length slice pointing to the 'current' tail of
                  * the queue. Once we update the slice we only need to assign the tail and
@@ -319,7 +319,7 @@ namespace Lucene.Net.Index
                 do
                 {
                     current = current.next;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(current != null, "slice property violated between the head on the tail must not be a null node");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(current is object, "slice property violated between the head on the tail must not be a null node");
                     current.Apply(del, docIDUpto);
                     //        System.out.println(Thread.currentThread().getName() + ": pull " + current + " docIDUpto=" + docIDUpto);
                 } while (current != sliceTail);

@@ -575,7 +575,7 @@ namespace Lucene.Net.Search
                     clone.clauses[i] = new BooleanClause(query, c.Occur);
                 }
             }
-            if (clone != null)
+            if (clone is object)
             {
                 return clone; // some clauses rewrote
             }
@@ -628,7 +628,7 @@ namespace Lucene.Net.Search
                 }
 
                 Query subQuery = c.Query;
-                if (subQuery != null)
+                if (subQuery is object)
                 {
                     if (subQuery is BooleanQuery) // wrap sub-bools in parens
                     {
@@ -687,7 +687,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a hash code value for this object. </summary>
+        /// Returns a hash code value for th is object. </summary>
         public override int GetHashCode()
         {
             return BitConversion.SingleToInt32Bits(Boost) ^ clauses.GetHashCode()

@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
             {
                 int e = terms.Add(bytes);
                 TermState state = termsEnum.GetTermState();
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(state is object);
                 if (e < 0)
                 {
                     // duplicate term: update docFreq

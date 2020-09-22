@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
 
             if (Bytes == null)
             {
-                if (other.Bytes != null)
+                if (other.Bytes is object)
                 {
                     return false;
                 }

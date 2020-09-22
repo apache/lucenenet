@@ -50,7 +50,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
         {
             Operator? op = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
 
-            if (op == null)
+            if (op is null)
             {
                 throw new ArgumentException(
                     "StandardQueryConfigHandler.ConfigurationKeys.DEFAULT_OPERATOR should be set on the QueryConfigHandler");
@@ -95,13 +95,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
         private IQueryNode ApplyModifier(IQueryNode node, Modifier mod)
         {
             // check if modifier is not already defined and is default
-            if (!(node is ModifierQueryNode))
+            if (!(node is ModifierQueryNode modQueryNode))
             {
                 return new ModifierQueryNode(node, mod);
             }
             else
             {
-                ModifierQueryNode modNode = (ModifierQueryNode)node;
+                ModifierQueryNode modNode = modQueryNode;
 
                 if (modNode.Modifier == Modifier.MOD_NONE)
                 {

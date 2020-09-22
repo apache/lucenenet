@@ -264,7 +264,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             // parse the normgen stuff and shove it into attributes
-            if (normGen != null)
+            if (normGen is object)
             {
                 attributes[Lucene3xSegmentInfoFormat.NORMGEN_KEY] = Convert.ToString(numNormGen, CultureInfo.InvariantCulture);
                 foreach (KeyValuePair<int, long> ent in normGen)

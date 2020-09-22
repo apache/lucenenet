@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
                 {
                     ScoreDoc[] shard = shardHits[shardIDX].ScoreDocs;
                     //System.out.println("  init shardIdx=" + shardIDX + " hits=" + shard);
-                    if (shard != null)
+                    if (shard is object)
                     {
                         this.shardHits[shardIDX] = shard;
                         // Fail gracefully if API is misused:
@@ -278,7 +278,7 @@ namespace Lucene.Net.Search
                 // totalHits can be non-zero even if no hits were
                 // collected, when searchAfter was used:
                 totalHitCount += shard.TotalHits;
-                if (shard.ScoreDocs != null && shard.ScoreDocs.Length > 0)
+                if (shard.ScoreDocs is object && shard.ScoreDocs.Length > 0)
                 {
                     availHitCount += shard.ScoreDocs.Length;
                     queue.Add(new ShardRef(shardIDX));

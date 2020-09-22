@@ -206,11 +206,11 @@ namespace Lucene.Net.Index
 
                 if (doVectorPositions || doVectorOffsets)
                 {
-                    if (posReader != null)
+                    if (posReader is object)
                     {
                         termsHashPerField.InitReader(posReader, termID, 0);
                     }
-                    if (offReader != null)
+                    if (offReader is object)
                     {
                         termsHashPerField.InitReader(offReader, termID, 1);
                     }
@@ -276,7 +276,7 @@ namespace Lucene.Net.Index
                 }
 
                 int pos = fieldState.Position - postings.lastPositions[termID];
-                if (payload != null && payload.Length > 0)
+                if (payload is object && payload.Length > 0)
                 {
                     termsHashPerField.WriteVInt32(0, (pos << 1) | 1);
                     termsHashPerField.WriteVInt32(0, payload.Length);

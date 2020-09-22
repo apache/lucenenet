@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
         public void Init(int address)
         {
             slice = pool.Buffers[address >> ByteBlockPool.BYTE_BLOCK_SHIFT];
-            if (Debugging.AssertsEnabled) Debugging.Assert(slice != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(slice is object);
             upto = address & ByteBlockPool.BYTE_BLOCK_MASK;
             offset0 = address;
             if (Debugging.AssertsEnabled) Debugging.Assert(upto < slice.Length);
@@ -57,13 +57,13 @@ namespace Lucene.Net.Index
         /// Write byte into byte slice stream </summary>
         public override void WriteByte(byte b)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(slice != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(slice is object);
             if (slice[upto] != 0)
             {
                 upto = pool.AllocSlice(slice, upto);
                 slice = pool.Buffer;
                 offset0 = pool.ByteOffset;
-                if (Debugging.AssertsEnabled) Debugging.Assert(slice != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(slice is object);
             }
             slice[upto++] = (byte)b;
             if (Debugging.AssertsEnabled) Debugging.Assert(upto != slice.Length);

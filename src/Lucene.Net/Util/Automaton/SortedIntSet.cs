@@ -318,9 +318,8 @@ namespace Lucene.Net.Util.Automaton
                 {
                     return false;
                 }
-                if (other is FrozenInt32Set)
+                if (other is FrozenInt32Set other2)
                 {
-                    FrozenInt32Set other2 = (FrozenInt32Set)other;
                     if (hashCode != other2.hashCode)
                     {
                         return false;
@@ -338,9 +337,8 @@ namespace Lucene.Net.Util.Automaton
                     }
                     return true;
                 }
-                else if (other is SortedInt32Set)
+                else if (other is SortedInt32Set other3)
                 {
-                    SortedInt32Set other3 = (SortedInt32Set)other;
                     if (hashCode != other3.hashCode)
                     {
                         return false;

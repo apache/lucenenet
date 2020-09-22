@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Similarities
         public override string ToString()
         {
             string coll = m_collectionModel.GetName();
-            if (coll != null)
+            if (coll is object)
             {
                 return string.Format("LM {0} - {1}", GetName(), coll);
             }

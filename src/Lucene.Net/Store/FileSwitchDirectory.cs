@@ -106,7 +106,7 @@ namespace Lucene.Net.Store
             {
                 // we got NoSuchDirectoryException from both dirs
                 // rethrow the first.
-                if (exc != null)
+                if (exc is object)
                 {
                     throw exc;
                 }
@@ -120,7 +120,7 @@ namespace Lucene.Net.Store
             // we got NoSuchDirectoryException from the primary,
             // and the secondary is empty.
 
-            if (exc != null && files.Count == 0)
+            if (exc is object && files.Count == 0)
             {
                 throw exc;
             }

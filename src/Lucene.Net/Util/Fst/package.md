@@ -73,7 +73,7 @@ Iterate over key-value pairs in sorted order:
 
         // Like TermsEnum, this also supports seeking (advance)
         BytesRefFSTEnum<Long> iterator = new BytesRefFSTEnum<Long>(fst);
-        while (iterator.next() != null) {
+        while (iterator.next() is object) {
           InputOutput<Long> mapEntry = iterator.current();
           System.out.println(mapEntry.input.utf8ToString());
           System.out.println(mapEntry.output);

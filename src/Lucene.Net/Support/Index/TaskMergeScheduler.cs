@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
         /// }
         /// </code>
         /// </summary>
-        protected bool Verbose => _writer != null && _writer.infoStream.IsEnabled(COMPONENT_NAME);
+        protected bool Verbose => _writer is object && _writer.infoStream.IsEnabled(COMPONENT_NAME);
 
         /// <summary>
         /// Outputs the given message - this method assumes <see cref="Verbose"/> was
@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
         /// </summary>
         private int MergeThreadCount
         {
-            get { return _mergeThreads.Count(x => x.IsAlive && x.CurrentMerge != null); }
+            get { return _mergeThreads.Count(x => x.IsAlive && x.CurrentMerge is object); }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -340,9 +340,7 @@ namespace Lucene.Net.Index
 
         private void OnMergeThreadCompleted(object sender, EventArgs e)
         {
-            var mergeThread = sender as MergeThread;
-
-            if (mergeThread == null)
+            if (!(sender is MergeThread mergeThread))
             {
                 return;
             }
@@ -529,7 +527,7 @@ namespace Lucene.Net.Index
 
                     using (_lock.Read())
                     {
-                        return _task != null
+                        return _task is object
                             && (_task.Status != TaskStatus.Canceled
                             || _task.Status != TaskStatus.Faulted
                             || _task.Status != TaskStatus.RanToCompletion);
@@ -604,7 +602,7 @@ namespace Lucene.Net.Index
                         // been pulled and possibly resume:
                         _resetEvent.Set();
 
-                        if (merge != null)
+                        if (merge is object)
                         {
                             if (_isLoggingEnabled)
                             {
@@ -636,10 +634,7 @@ namespace Lucene.Net.Index
                 {
                     _isDone = true;
 
-                    if (MergeThreadCompleted != null)
-                    {
-                        MergeThreadCompleted(this, EventArgs.Empty);
-                    }
+                    MergeThreadCompleted?.Invoke(this, EventArgs.Empty);
                 }
             }
 
@@ -664,11 +659,9 @@ namespace Lucene.Net.Index
 
             public override bool Equals(object obj)
             {
-                var compared = obj as MergeThread;
-
-                if (compared == null
-                    || (Instance == null && compared.Instance != null)
-                    || (Instance != null && compared.Instance == null))
+                if (!(obj is MergeThread compared)
+                    || (Instance == null && compared.Instance is object)
+                    || (Instance is object && compared.Instance == null))
                 {
                     return false;
                 }

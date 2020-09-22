@@ -338,7 +338,7 @@ namespace Lucene.Net.Search
 
             public override FieldComparer SetNextReader(AtomicReaderContext context)
             {
-                if (m_missingValue != null)
+                if (m_missingValue is object)
                 {
                     m_docsWithField = FieldCache.DEFAULT.GetDocsWithField((context.AtomicReader), m_field);
                     // optimization to remove unneeded checks on the bit interface:
@@ -386,7 +386,7 @@ namespace Lucene.Net.Search
                 sbyte v2 = (sbyte)currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -399,7 +399,7 @@ namespace Lucene.Net.Search
                 sbyte v2 = (sbyte)currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -410,7 +410,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                currentReaderValues = FieldCache.DEFAULT.GetBytes((context.AtomicReader), m_field, parser, m_missingValue != null);
+                currentReaderValues = FieldCache.DEFAULT.GetBytes((context.AtomicReader), m_field, parser, m_missingValue is object);
                 return base.SetNextReader(context);
             }
 
@@ -431,7 +431,7 @@ namespace Lucene.Net.Search
                 sbyte docValue = (sbyte)currentReaderValues.Get(doc);
                 // Test for docValue == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && docValue == 0 && !m_docsWithField.Get(doc))
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search
                 double v2 = currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0.0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0.0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -491,7 +491,7 @@ namespace Lucene.Net.Search
                 double v2 = currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0.0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0.0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -503,7 +503,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                currentReaderValues = FieldCache.DEFAULT.GetDoubles((context.AtomicReader), m_field, parser, m_missingValue != null);
+                currentReaderValues = FieldCache.DEFAULT.GetDoubles((context.AtomicReader), m_field, parser, m_missingValue is object);
                 return base.SetNextReader(context);
             }
 
@@ -524,7 +524,7 @@ namespace Lucene.Net.Search
                 double docValue = currentReaderValues.Get(doc);
                 // Test for docValue == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && docValue == 0 && !m_docsWithField.Get(doc))
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search
                 float v2 = currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -590,7 +590,7 @@ namespace Lucene.Net.Search
                 float v2 = currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -602,7 +602,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                currentReaderValues = FieldCache.DEFAULT.GetSingles((context.AtomicReader), m_field, parser, m_missingValue != null);
+                currentReaderValues = FieldCache.DEFAULT.GetSingles((context.AtomicReader), m_field, parser, m_missingValue is object);
                 return base.SetNextReader(context);
             }
 
@@ -623,7 +623,7 @@ namespace Lucene.Net.Search
                 float docValue = currentReaderValues.Get(doc);
                 // Test for docValue == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && docValue == 0 && !m_docsWithField.Get(doc))
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
@@ -668,7 +668,7 @@ namespace Lucene.Net.Search
                 short v2 = currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -682,7 +682,7 @@ namespace Lucene.Net.Search
                 short v2 = currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -694,7 +694,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                currentReaderValues = FieldCache.DEFAULT.GetInt16s((context.AtomicReader), m_field, parser, m_missingValue != null);
+                currentReaderValues = FieldCache.DEFAULT.GetInt16s((context.AtomicReader), m_field, parser, m_missingValue is object);
                 return base.SetNextReader(context);
             }
 
@@ -715,7 +715,7 @@ namespace Lucene.Net.Search
                 short docValue = currentReaderValues.Get(doc);
                 // Test for docValue == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && docValue == 0 && !m_docsWithField.Get(doc))
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
@@ -754,7 +754,7 @@ namespace Lucene.Net.Search
                 int v2 = currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -766,7 +766,7 @@ namespace Lucene.Net.Search
                 int v2 = currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -778,7 +778,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                currentReaderValues = FieldCache.DEFAULT.GetInt32s((context.AtomicReader), m_field, parser, m_missingValue != null);
+                currentReaderValues = FieldCache.DEFAULT.GetInt32s((context.AtomicReader), m_field, parser, m_missingValue is object);
                 return base.SetNextReader(context);
             }
 
@@ -799,7 +799,7 @@ namespace Lucene.Net.Search
                 int docValue = currentReaderValues.Get(doc);
                 // Test for docValue == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && docValue == 0 && !m_docsWithField.Get(doc))
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
@@ -841,7 +841,7 @@ namespace Lucene.Net.Search
                 long v2 = currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -855,7 +855,7 @@ namespace Lucene.Net.Search
                 long v2 = currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && v2 == 0 && !m_docsWithField.Get(doc))
                 {
                     v2 = m_missingValue.GetValueOrDefault();
                 }
@@ -867,7 +867,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                currentReaderValues = FieldCache.DEFAULT.GetInt64s((context.AtomicReader), m_field, parser, m_missingValue != null);
+                currentReaderValues = FieldCache.DEFAULT.GetInt64s((context.AtomicReader), m_field, parser, m_missingValue is object);
                 return base.SetNextReader(context);
             }
 
@@ -888,7 +888,7 @@ namespace Lucene.Net.Search
                 long docValue = currentReaderValues.Get(doc);
                 // Test for docValue == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
-                if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))
+                if (m_docsWithField is object && docValue == 0 && !m_docsWithField.Get(doc))
                 {
                     docValue = m_missingValue.GetValueOrDefault();
                 }
@@ -1273,7 +1273,7 @@ namespace Lucene.Net.Search
                 termsIndex = GetSortedDocValues(context, field);
                 currentReaderGen++;
 
-                if (topValue != null)
+                if (topValue is object)
                 {
                     // Recompute topOrd/SameReader
                     int ord = termsIndex.LookupTerm(topValue);
@@ -1413,7 +1413,7 @@ namespace Lucene.Net.Search
 
             private static readonly byte[] NON_MISSING_BYTES = Arrays.Empty<byte>();
 
-            private BytesRef[] values;
+            private readonly BytesRef[] values;
             private BinaryDocValues docTerms;
             private IBits docsWithField;
             private readonly string field;

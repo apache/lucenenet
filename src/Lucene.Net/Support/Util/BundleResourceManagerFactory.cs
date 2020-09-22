@@ -57,7 +57,7 @@ namespace Lucene.Net.Util
         public virtual void Release(ResourceManager manager)
         {
             var disposable = manager as IDisposable;
-            if (disposable != null)
+            if (disposable is object)
             {
                 disposable.Dispose();
             }

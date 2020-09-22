@@ -221,7 +221,7 @@ namespace Lucene.Net.Util
         //    {
         //        Type beanClazz = Type.GetType("com.sun.management.HotSpotDiagnosticMXBean").asSubclass(typeof(PlatformManagedObject));
         //        object hotSpotBean = ManagementFactory.getPlatformMXBean(beanClazz);
-        //        if (hotSpotBean != null)
+        //        if (hotSpotBean is object)
         //        {
         //            Method getVMOptionMethod = beanClazz.GetMethod("getVMOption", typeof(string));
         //            object vmOption = getVMOptionMethod.invoke(hotSpotBean, "ObjectAlignmentInBytes");
@@ -437,7 +437,7 @@ namespace Lucene.Net.Util
             long size = NUM_BYTES_OBJECT_HEADER;
 
             // Walk type hierarchy
-            for (; clazz != null; clazz = clazz.BaseType)
+            for (; clazz is object; clazz = clazz.BaseType)
             {
                 FieldInfo[] fields = clazz.GetFields(
                     BindingFlags.Instance | 
@@ -539,7 +539,7 @@ namespace Lucene.Net.Util
                             for (int i = len; --i >= 0; )
                             {
                                 object o = array.GetValue(i);
-                                if (o != null && !seen.Contains(o))
+                                if (o is object && !seen.Contains(o))
                                 {
                                     stack.Push(o);
                                 }
@@ -552,7 +552,7 @@ namespace Lucene.Net.Util
                 {
                     /*
                      * Consider an object. Push any references it has to the processing stack
-                     * and accumulate this object's shallow size.
+                     * and accumulate th is object's shallow size.
                      */
                     try
                     {
@@ -565,7 +565,7 @@ namespace Lucene.Net.Util
                         {
                             // Fast path to eliminate redundancies.
                             object o = f.GetValue(ob);
-                            if (o != null && !seen.Contains(o))
+                            if (o is object && !seen.Contains(o))
                             {
                                 stack.Push(o);
                             }
@@ -598,7 +598,7 @@ namespace Lucene.Net.Util
             ClassCache cachedInfo;
             long shallowInstanceSize = NUM_BYTES_OBJECT_HEADER;
             List<FieldInfo> referenceFields = new List<FieldInfo>(32);
-            for (Type c = clazz; c != null; c = c.BaseType)
+            for (Type c = clazz; c is object; c = c.BaseType)
             {
                 FieldInfo[] fields = c.GetFields(
                     BindingFlags.Instance | 
@@ -640,7 +640,7 @@ namespace Lucene.Net.Util
                 fsize = type.IsPrimitive ? primitiveSizes[type] : NUM_BYTES_OBJECT_REF;
 
             // LUCENENET NOTE: I dont think this will ever not be null
-            //if (ObjectFieldOffsetMethod != null)
+            //if (ObjectFieldOffsetMethod is object)
             //{
             //  try
             //  {
@@ -793,7 +793,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public bool Add(KType e)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(e != null, "Null keys not allowed.");
+                if (Debugging.AssertsEnabled) Debugging.Assert(e is object, "Null keys not allowed.");
 
                 if (Assigned >= resizeThreshold)
                 {
@@ -803,7 +803,7 @@ namespace Lucene.Net.Util
                 int mask = keys.Length - 1;
                 int slot = Rehash(e) & mask;
                 object existing;
-                while ((existing = keys[slot]) != null)
+                while ((existing = keys[slot]) is object)
                 {
                     if (object.ReferenceEquals(e, existing))
                     {
@@ -824,7 +824,7 @@ namespace Lucene.Net.Util
                 int mask = keys.Length - 1;
                 int slot = Rehash(e) & mask;
                 object existing;
-                while ((existing = keys[slot]) != null)
+                while ((existing = keys[slot]) is object)
                 {
                     if (object.ReferenceEquals(e, existing))
                     {
@@ -877,10 +877,10 @@ namespace Lucene.Net.Util
                 for (int i = 0; i < oldKeys.Length; i++)
                 {
                     object key = oldKeys[i];
-                    if (key != null)
+                    if (key is object)
                     {
                         int slot = Rehash(key) & mask;
-                        while (keys[slot] != null)
+                        while (keys[slot] is object)
                         {
                             slot = (slot + 1) & mask;
                         }

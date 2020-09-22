@@ -384,7 +384,7 @@ namespace Lucene.Net.Util.Fst
 
         public virtual void Finish()
         {
-            if (current != null)
+            if (current is object)
             {
                 byte[] lastBuffer = new byte[nextWrite];
                 Array.Copy(current, 0, lastBuffer, 0, nextWrite);

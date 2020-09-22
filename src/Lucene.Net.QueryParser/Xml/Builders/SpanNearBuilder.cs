@@ -40,7 +40,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             int slop = int.Parse(slopString, CultureInfo.InvariantCulture);
             bool inOrder = DOMUtils.GetAttribute(e, "inOrder", false);
             List<SpanQuery> spans = new List<SpanQuery>();
-            for (XmlNode kid = e.FirstChild; kid != null; kid = kid.NextSibling)
+            for (XmlNode kid = e.FirstChild; kid is object; kid = kid.NextSibling)
             {
                 if (kid.NodeType == XmlNodeType.Element)
                 {

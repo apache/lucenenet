@@ -56,22 +56,21 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is TermRangeQueryNode)
+            if (node is TermRangeQueryNode termRangeNode)
             {
                 QueryConfigHandler config = GetQueryConfigHandler();
 
-                if (config != null)
+                if (config is object)
                 {
-                    TermRangeQueryNode termRangeNode = (TermRangeQueryNode)node;
                     FieldConfig fieldConfig = config.GetFieldConfig(StringUtils
                         .ToString(termRangeNode.Field));
 
-                    if (fieldConfig != null)
+                    if (fieldConfig is object)
                     {
                         NumericConfig numericConfig = fieldConfig
                             .Get(ConfigurationKeys.NUMERIC_CONFIG);
 
-                        if (numericConfig != null)
+                        if (numericConfig is object)
                         {
                             FieldQueryNode lower = (FieldQueryNode)termRangeNode.LowerBound;
                             FieldQueryNode upper = (FieldQueryNode)termRangeNode.UpperBound;
@@ -113,20 +112,20 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             switch (numericConfig.Type)
                             {
                                 case NumericType.INT64:
-                                    if (upperNumber != null) upperNumber = Convert.ToInt64(upperNumber); // LUCENENET TODO: Find a way to pass culture
-                                    if (lowerNumber != null) lowerNumber = Convert.ToInt64(lowerNumber);
+                                    if (upperNumber is object) upperNumber = Convert.ToInt64(upperNumber); // LUCENENET TODO: Find a way to pass culture
+                                    if (lowerNumber is object) lowerNumber = Convert.ToInt64(lowerNumber);
                                     break;
                                 case NumericType.INT32:
-                                    if (upperNumber != null) upperNumber = Convert.ToInt32(upperNumber); // LUCENENET TODO: Find a way to pass culture
-                                    if (lowerNumber != null) lowerNumber = Convert.ToInt32(lowerNumber);
+                                    if (upperNumber is object) upperNumber = Convert.ToInt32(upperNumber); // LUCENENET TODO: Find a way to pass culture
+                                    if (lowerNumber is object) lowerNumber = Convert.ToInt32(lowerNumber);
                                     break;
                                 case NumericType.DOUBLE:
-                                    if (upperNumber != null) upperNumber = Convert.ToDouble(upperNumber); // LUCENENET TODO: Find a way to pass culture
-                                    if (lowerNumber != null) lowerNumber = Convert.ToDouble(lowerNumber);
+                                    if (upperNumber is object) upperNumber = Convert.ToDouble(upperNumber); // LUCENENET TODO: Find a way to pass culture
+                                    if (lowerNumber is object) lowerNumber = Convert.ToDouble(lowerNumber);
                                     break;
                                 case NumericType.SINGLE:
-                                    if (upperNumber != null) upperNumber = Convert.ToSingle(upperNumber); // LUCENENET TODO: Find a way to pass culture
-                                    if (lowerNumber != null) lowerNumber = Convert.ToSingle(lowerNumber);
+                                    if (upperNumber is object) upperNumber = Convert.ToSingle(upperNumber); // LUCENENET TODO: Find a way to pass culture
+                                    if (lowerNumber is object) lowerNumber = Convert.ToSingle(lowerNumber);
                                     break;
                             }
 

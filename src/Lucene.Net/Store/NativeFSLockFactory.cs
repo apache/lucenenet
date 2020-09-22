@@ -190,7 +190,7 @@ namespace Lucene.Net.Store
         /// <returns></returns>
         private string GetCanonicalPathOfLockFile(string lockName)
         {
-            if (m_lockPrefix != null)
+            if (m_lockPrefix is object)
             {
                 lockName = m_lockPrefix + "-" + lockName;
             }
@@ -263,7 +263,7 @@ namespace Lucene.Net.Store
             {
                 FailureReason = null;
 
-                if (channel != null)
+                if (channel is object)
                 {
                     // Our instance is already locked:
                     return false;
@@ -319,7 +319,7 @@ namespace Lucene.Net.Store
                     }
                 }
 
-                return channel != null;
+                return channel is object;
             }
         }
 
@@ -338,7 +338,7 @@ namespace Lucene.Net.Store
                     }
                     finally
                     {
-                        if (channel != null)
+                        if (channel is object)
                         {
                             IOUtils.DisposeWhileHandlingException(channel);
                             channel = null;
@@ -375,7 +375,7 @@ namespace Lucene.Net.Store
                 // The test for is isLocked is not directly possible with native file locks:
 
                 // First a shortcut, if a lock reference in this instance is available
-                if (channel != null)
+                if (channel is object)
                 {
                     return true;
                 }
@@ -463,7 +463,7 @@ namespace Lucene.Net.Store
             {
                 FailureReason = null;
 
-                if (channel != null)
+                if (channel is object)
                 {
                     // Our instance is already locked:
                     return false;
@@ -494,7 +494,7 @@ namespace Lucene.Net.Store
                     // if it fails to get the lock.
                     FailureReason = e;
                 }
-                return channel != null;
+                return channel is object;
             }
         }
 
@@ -513,7 +513,7 @@ namespace Lucene.Net.Store
                     }
                     finally
                     {
-                        if (channel != null)
+                        if (channel is object)
                         {
                             try
                             {
@@ -534,7 +534,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 // First a shortcut, if a lock reference in this instance is available
-                if (channel != null)
+                if (channel is object)
                 {
                     return true;
                 }
@@ -615,7 +615,7 @@ namespace Lucene.Net.Store
             {
                 FailureReason = null;
 
-                if (channel != null)
+                if (channel is object)
                 {
                     // Our instance is already locked:
                     return false;
@@ -645,7 +645,7 @@ namespace Lucene.Net.Store
                     FailureReason = e;
                 }
 
-                if (stream != null)
+                if (stream is object)
                 {
                     try
                     {
@@ -659,7 +659,7 @@ namespace Lucene.Net.Store
                         IOUtils.DisposeWhileHandlingException(stream);
                     }
                 }
-                return channel != null;
+                return channel is object;
             }
         }
 
@@ -678,7 +678,7 @@ namespace Lucene.Net.Store
                     }
                     finally
                     {
-                        if (channel != null)
+                        if (channel is object)
                         {
                             try
                             {
@@ -707,7 +707,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 // First a shortcut, if a lock reference in this instance is available
-                if (channel != null)
+                if (channel is object)
                 {
                     return true;
                 }

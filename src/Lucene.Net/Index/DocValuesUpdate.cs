@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
             internal static readonly BytesRef MISSING = new BytesRef();
 
             internal BinaryDocValuesUpdate(Term term, string field, BytesRef value)
-                : base(DocValuesFieldUpdatesType.BINARY, term, field, value == null ? MISSING : value)
+                : base(DocValuesFieldUpdatesType.BINARY, term, field, value ?? MISSING)
             {
             }
 

@@ -474,7 +474,7 @@ namespace Lucene.Net.Index
                 {
                     ReadersAndUpdates rld;
                     readerMap.TryGetValue(info, out rld);
-                    if (rld != null)
+                    if (rld is object)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(info == rld.Info);
                         //        System.out.println("[" + Thread.currentThread().getName() + "] ReaderPool.drop: " + info);
@@ -749,7 +749,7 @@ namespace Lucene.Net.Index
             int delCount = info.DelCount;
 
             ReadersAndUpdates rld = readerPool.Get(info, false);
-            if (rld != null)
+            if (rld is object)
             {
                 delCount += rld.PendingDeleteCount;
             }
@@ -885,7 +885,7 @@ namespace Lucene.Net.Index
                     segmentInfos.Read(directory);
 
                     IndexCommit commit = config.IndexCommit;
-                    if (commit != null)
+                    if (commit is object)
                     {
                         // Swap out all segments, but, keep metadata in
                         // SegmentInfos, like version & generation, to
@@ -1153,7 +1153,7 @@ namespace Lucene.Net.Index
             bool interrupted = false;
             try
             {
-                if (pendingCommit != null)
+                if (pendingCommit is object)
                 {
                     throw new InvalidOperationException("cannot close: prepareCommit was already called with no corresponding call to commit");
                 }
@@ -1267,7 +1267,7 @@ namespace Lucene.Net.Index
                     infoStream.Message("IW", "at close: " + SegString());
                 }
 
-                if (writeLock != null)
+                if (writeLock is object)
                 {
                     writeLock.Dispose(); // release write lock
                     writeLock = null;
@@ -1664,7 +1664,7 @@ namespace Lucene.Net.Index
                 if (segmentInfos.IndexOf(info) != -1)
                 {
                     ReadersAndUpdates rld = readerPool.Get(info, false);
-                    if (rld != null)
+                    if (rld is object)
                     {
                         lock (bufferedUpdatesStream)
                         {
@@ -2130,7 +2130,7 @@ namespace Lucene.Net.Index
                 segmentsToMerge.Clear();
                 foreach (SegmentCommitInfo info in segmentInfos.Segments)
                 {
-                    if (info != null) segmentsToMerge[info] = true;
+                    if (info is object) segmentsToMerge[info] = true;
                 }
                 mergeMaxNumSegments = maxNumSegments;
 
@@ -2139,13 +2139,13 @@ namespace Lucene.Net.Index
                 foreach (MergePolicy.OneMerge merge in pendingMerges)
                 {
                     merge.MaxNumSegments = maxNumSegments;
-                    if (merge.Info != null) segmentsToMerge[merge.Info] = true;
+                    if (merge.Info is object) segmentsToMerge[merge.Info] = true;
                 }
 
                 foreach (MergePolicy.OneMerge merge in runningMerges)
                 {
                     merge.MaxNumSegments = maxNumSegments;
-                    if (merge.Info != null) segmentsToMerge[merge.Info] = true;
+                    if (merge.Info is object) segmentsToMerge[merge.Info] = true;
                 }
             }
 
@@ -2174,7 +2174,7 @@ namespace Lucene.Net.Index
                                 {
                                     string message = "background merge hit exception: " + merge.SegString(directory);
                                     Exception t = merge.Exception;
-                                    if (t != null)
+                                    if (t is object)
                                     {
                                         //err.initCause(t);
                                         throw new IOException(message + t.ToString(), t);
@@ -2267,7 +2267,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 spec = mergePolicy.FindForcedDeletesMerges(segmentInfos);
-                newMergesFound = spec != null;
+                newMergesFound = spec is object;
                 if (newMergesFound)
                 {
                     int numMerges = spec.Merges.Count;
@@ -2280,7 +2280,7 @@ namespace Lucene.Net.Index
 
             mergeScheduler.Merge(this, MergeTrigger.EXPLICIT, newMergesFound);
 
-            if (spec != null && doWait)
+            if (spec is object && doWait)
             {
                 int numMerges = spec.Merges.Count;
                 lock (this)
@@ -2305,7 +2305,7 @@ namespace Lucene.Net.Index
                                 running = true;
                             }
                             Exception t = merge.Exception;
-                            if (t != null)
+                            if (t is object)
                             {
                                 throw new IOException("background merge hit exception: " + merge.SegString(directory), t);
                             }
@@ -2387,7 +2387,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(maxNumSegments == -1 || maxNumSegments > 0);
-                //if (Debugging.AssertsEnabled) Debugging.Assert(trigger != null); // LUCENENET NOTE: Enum cannot be null in .NET
+                //if (Debugging.AssertsEnabled) Debugging.Assert(trigger is object); // LUCENENET NOTE: Enum cannot be null in .NET
                 if (stopMerges)
                 {
                     return false;
@@ -2404,7 +2404,7 @@ namespace Lucene.Net.Index
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED, () => "Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: " + trigger.ToString());
                     spec = mergePolicy.FindForcedMerges(segmentInfos, maxNumSegments, segmentsToMerge);
-                    newMergesFound = spec != null;
+                    newMergesFound = spec is object;
                     if (newMergesFound)
                     {
                         int numMerges = spec.Merges.Count;
@@ -2419,7 +2419,7 @@ namespace Lucene.Net.Index
                 {
                     spec = mergePolicy.FindMerges(trigger, segmentInfos);
                 }
-                newMergesFound = spec != null;
+                newMergesFound = spec is object;
                 if (newMergesFound)
                 {
                     int numMerges = spec.Merges.Count;
@@ -2550,7 +2550,7 @@ namespace Lucene.Net.Index
                 docWriter.Abort(this); // don't sync on IW here
                 lock (this)
                 {
-                    if (pendingCommit != null)
+                    if (pendingCommit is object)
                     {
                         pendingCommit.RollbackCommit(directory);
                         deleter.DecRef(pendingCommit);
@@ -2612,7 +2612,7 @@ namespace Lucene.Net.Index
                         // we tried to be nice about it: do the minimum
 
                         // don't leak a segments_N file if there is a pending commit
-                        if (pendingCommit != null)
+                        if (pendingCommit is object)
                         {
                             try
                             {
@@ -2865,7 +2865,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(packet != null && packet.Any());
+                if (Debugging.AssertsEnabled) Debugging.Assert(packet is object && packet.Any());
                 lock (bufferedUpdatesStream)
                 {
                     bufferedUpdatesStream.Push(packet);
@@ -2891,14 +2891,14 @@ namespace Lucene.Net.Index
                             infoStream.Message("IW", "publishFlushedSegment");
                         }
 
-                        if (globalPacket != null && globalPacket.Any())
+                        if (globalPacket is object && globalPacket.Any())
                         {
                             bufferedUpdatesStream.Push(globalPacket);
                         }
                         // Publishing the segment must be synched on IW -> BDS to make the sure
                         // that no merge prunes away the seg. private delete packet
                         long nextGen;
-                        if (packet != null && packet.Any())
+                        if (packet is object && packet.Any())
                         {
                             nextGen = bufferedUpdatesStream.Push(packet);
                         }
@@ -3336,7 +3336,7 @@ namespace Lucene.Net.Index
             // because the DS might have been copied already, in which case we
             // just want to update the DS name of this SegmentInfo.
             string dsName = Lucene3xSegmentInfoFormat.GetDocStoreSegment(info.Info);
-            if (Debugging.AssertsEnabled) Debugging.Assert(dsName != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(dsName is object);
             // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
             if (!dsNames.TryGetValue(dsName, out string newDsName))
             {
@@ -3363,7 +3363,7 @@ namespace Lucene.Net.Index
                 attributes = new Dictionary<string, string>(info.Info.Attributes);
             }
 #pragma warning restore 612, 618
-            if (docStoreFiles3xOnly != null)
+            if (docStoreFiles3xOnly is object)
             {
                 // only violate the codec this way if it's preflex &
                 // shares doc stores
@@ -3383,7 +3383,7 @@ namespace Lucene.Net.Index
             foreach (string file in info.GetFiles())
             {
                 string newFileName;
-                if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file))
+                if (docStoreFiles3xOnly is object && docStoreFiles3xOnly.Contains(file))
                 {
                     newFileName = newDsName + Lucene.Net.Index.IndexFileNames.StripSegmentName(file);
                 }
@@ -3428,7 +3428,7 @@ namespace Lucene.Net.Index
                 foreach (string file in info.GetFiles())
                 {
                     string newFileName;
-                    if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file))
+                    if (docStoreFiles3xOnly is object && docStoreFiles3xOnly.Contains(file))
                     {
                         newFileName = newDsName + Lucene.Net.Index.IndexFileNames.StripSegmentName(file);
                         if (dsFilesCopied.Contains(newFileName))
@@ -3536,7 +3536,7 @@ namespace Lucene.Net.Index
                     throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot commit");
                 }
 
-                if (pendingCommit != null)
+                if (pendingCommit is object)
                 {
                     throw new InvalidOperationException("prepareCommit was already called with no corresponding call to commit");
                 }
@@ -3630,7 +3630,7 @@ namespace Lucene.Net.Index
                     {
                         lock (this)
                         {
-                            if (filesToCommit != null)
+                            if (filesToCommit is object)
                             {
                                 deleter.DecRef(filesToCommit);
                                 filesToCommit = null;
@@ -3770,13 +3770,13 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (pendingCommit != null)
+                if (pendingCommit is object)
                 {
                     try
                     {
                         if (infoStream.IsEnabled("IW"))
                         {
-                            infoStream.Message("IW", "commit: pendingCommit != null");
+                            infoStream.Message("IW", "commit: pendingCommit is object");
                         }
                         pendingCommit.FinishCommit(directory);
                         if (infoStream.IsEnabled("IW"))
@@ -3942,7 +3942,7 @@ namespace Lucene.Net.Index
                 {
                     Checkpoint();
                 }
-                if (!keepFullyDeletedSegments && result.AllDeleted != null)
+                if (!keepFullyDeletedSegments && result.AllDeleted is object)
                 {
                     if (infoStream.IsEnabled("IW"))
                     {
@@ -4115,7 +4115,7 @@ namespace Lucene.Net.Index
                     IBits prevLiveDocs = merge.readers[i].LiveDocs;
                     ReadersAndUpdates rld = readerPool.Get(info, false);
                     // We hold a ref so it should still be in the pool:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(rld != null, () => "seg=" + info.Info.Name);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(rld is object, () => "seg=" + info.Info.Name);
                     IBits currentLiveDocs = rld.LiveDocs;
                     IDictionary<string, DocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
                     string[] mergingFields;
@@ -4150,13 +4150,13 @@ namespace Lucene.Net.Index
                     }
                     //      System.out.println("[" + Thread.currentThread().getName() + "] IW.commitMergedDeletes: info=" + info + ", mergingUpdates=" + mergingUpdates);
 
-                    if (prevLiveDocs != null)
+                    if (prevLiveDocs is object)
                     {
                         // If we had deletions on starting the merge we must
                         // still have deletions now:
                         if (Debugging.AssertsEnabled)
                         {
-                            Debugging.Assert(currentLiveDocs != null);
+                            Debugging.Assert(currentLiveDocs is object);
                             Debugging.Assert(prevLiveDocs.Length == docCount);
                             Debugging.Assert(currentLiveDocs.Length == docCount);
                         }
@@ -4193,12 +4193,12 @@ namespace Lucene.Net.Index
                                             holder.Init(readerPool, merge, mergeState, true);
                                         }
                                         holder.mergedDeletesAndUpdates.Delete(holder.docMap.Map(docUpto));
-                                        if (mergingFields != null) // advance all iters beyond the deleted document
+                                        if (mergingFields is object) // advance all iters beyond the deleted document
                                         {
                                             SkipDeletedDoc(updatesIters, j);
                                         }
                                     }
-                                    else if (mergingFields != null)
+                                    else if (mergingFields is object)
                                     {
                                         MaybeApplyMergedDVUpdates(merge, mergeState, docUpto, holder, mergingFields, dvFieldUpdates, updatesIters, j);
                                     }
@@ -4206,7 +4206,7 @@ namespace Lucene.Net.Index
                                 }
                             }
                         }
-                        else if (mergingFields != null)
+                        else if (mergingFields is object)
                         {
                             // need to check each non-deleted document if it has any updates
                             for (int j = 0; j < docCount; j++)
@@ -4230,7 +4230,7 @@ namespace Lucene.Net.Index
                             docUpto += info.Info.DocCount - info.DelCount - rld.PendingDeleteCount;
                         }
                     }
-                    else if (currentLiveDocs != null)
+                    else if (currentLiveDocs is object)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(currentLiveDocs.Length == docCount);
                         // this segment had no deletes before but now it
@@ -4244,19 +4244,19 @@ namespace Lucene.Net.Index
                                     holder.Init(readerPool, merge, mergeState, true);
                                 }
                                 holder.mergedDeletesAndUpdates.Delete(holder.docMap.Map(docUpto));
-                                if (mergingFields != null) // advance all iters beyond the deleted document
+                                if (mergingFields is object) // advance all iters beyond the deleted document
                                 {
                                     SkipDeletedDoc(updatesIters, j);
                                 }
                             }
-                            else if (mergingFields != null)
+                            else if (mergingFields is object)
                             {
                                 MaybeApplyMergedDVUpdates(merge, mergeState, docUpto, holder, mergingFields, dvFieldUpdates, updatesIters, j);
                             }
                             docUpto++;
                         }
                     }
-                    else if (mergingFields != null)
+                    else if (mergingFields is object)
                     {
                         // no deletions before or after, but there were updates
                         for (int j = 0; j < docCount; j++)
@@ -4378,7 +4378,7 @@ namespace Lucene.Net.Index
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(!segmentInfos.Contains(merge.info));
 
-                bool allDeleted = merge.Segments.Count == 0 || merge.info.Info.DocCount == 0 || (mergedUpdates != null && mergedUpdates.PendingDeleteCount == merge.info.Info.DocCount);
+                bool allDeleted = merge.Segments.Count == 0 || merge.info.Info.DocCount == 0 || (mergedUpdates is object && mergedUpdates.PendingDeleteCount == merge.info.Info.DocCount);
 
                 if (infoStream.IsEnabled("IW"))
                 {
@@ -4396,7 +4396,7 @@ namespace Lucene.Net.Index
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(merge.info.Info.DocCount != 0 || keepFullyDeletedSegments || dropSegment);
 
-                if (mergedUpdates != null)
+                if (mergedUpdates is object)
                 {
                     bool success = false;
                     try
@@ -4498,7 +4498,7 @@ namespace Lucene.Net.Index
             merge.Exception = t;
             AddMergeException(merge);
 
-            if ((t as MergePolicy.MergeAbortedException) != null)
+            if ((t as MergePolicy.MergeAbortedException) is object)
             {
                 // We can ignore this exception (it happens when
                 // close(false) or rollback is called), unless the
@@ -4537,7 +4537,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         MergeInit(merge);
-                        //if (merge.info != null) {
+                        //if (merge.info is object) {
                         //System.out.println("MERGE: " + merge.info.info.name);
                         //}
 
@@ -4567,7 +4567,7 @@ namespace Lucene.Net.Index
                             {
                                 infoStream.Message("IW", "hit exception during merge");
                             }
-                            if (merge.info != null && !segmentInfos.Contains(merge.info))
+                            if (merge.info is object && !segmentInfos.Contains(merge.info))
                             {
                                 deleter.Refresh(merge.info.Info.Name);
                             }
@@ -4587,7 +4587,7 @@ namespace Lucene.Net.Index
             {
                 HandleOOM(oom, "merge");
             }
-            if (merge.info != null && !merge.IsAborted)
+            if (merge.info is object && !merge.IsAborted)
             {
                 if (infoStream.IsEnabled("IW"))
                 {
@@ -4764,7 +4764,7 @@ namespace Lucene.Net.Index
                     throw new InvalidOperationException("this writer hit an OutOfMemoryError; cannot merge");
                 }
 
-                if (merge.info != null)
+                if (merge.info is object)
                 {
                     // mergeInit already done
                     return;
@@ -4788,7 +4788,7 @@ namespace Lucene.Net.Index
                     Checkpoint();
                 }
 
-                if (!keepFullyDeletedSegments && result.AllDeleted != null)
+                if (!keepFullyDeletedSegments && result.AllDeleted is object)
                 {
                     if (infoStream.IsEnabled("IW"))
                     {
@@ -4846,7 +4846,7 @@ namespace Lucene.Net.Index
             diagnostics["java.version"] = Constants.RUNTIME_VERSION;
             diagnostics["java.vendor"] = Constants.RUNTIME_VENDOR;
             diagnostics["timestamp"] = Convert.ToString((DateTime.Now));
-            if (details != null)
+            if (details is object)
             {
                 diagnostics.PutAll(details);
             }
@@ -4893,13 +4893,13 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < numSegments; i++)
                 {
                     SegmentReader sr = merge.readers[i];
-                    if (sr != null)
+                    if (sr is object)
                     {
                         try
                         {
                             ReadersAndUpdates rld = readerPool.Get(sr.SegmentInfo, false);
                             // We still hold a ref so it should not have been removed:
-                            if (Debugging.AssertsEnabled) Debugging.Assert(rld != null);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(rld is object);
                             if (drop)
                             {
                                 rld.DropChanges();
@@ -4988,7 +4988,7 @@ namespace Lucene.Net.Index
 
                         if (Debugging.AssertsEnabled)
                         {
-                            Debugging.Assert(reader != null);
+                            Debugging.Assert(reader is object);
                             Debugging.Assert(rld.VerifyDocCounts());
                         }
 
@@ -5215,7 +5215,7 @@ namespace Lucene.Net.Index
                 }
 
                 IndexReaderWarmer mergedSegmentWarmer = config.MergedSegmentWarmer;
-                if (poolReaders && mergedSegmentWarmer != null && merge.info.Info.DocCount != 0)
+                if (poolReaders && mergedSegmentWarmer is object && merge.info.Info.DocCount != 0)
                 {
                     ReadersAndUpdates rld = readerPool.Get(merge.info, true);
                     SegmentReader sr = rld.GetReader(IOContext.READ);
@@ -5261,7 +5261,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(merge.Exception != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(merge.Exception is object);
                 if (!mergeExceptions.Contains(merge) && mergeGen == merge.mergeGen)
                 {
                     mergeExceptions.Add(merge);

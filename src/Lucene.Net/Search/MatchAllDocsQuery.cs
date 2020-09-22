@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
             public override int NextDoc()
             {
                 doc++;
-                while (liveDocs != null && doc < maxDoc && !liveDocs.Get(doc))
+                while (liveDocs is object && doc < maxDoc && !liveDocs.Get(doc))
                 {
                     doc++;
                 }

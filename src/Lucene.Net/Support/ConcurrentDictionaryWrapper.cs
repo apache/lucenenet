@@ -125,7 +125,7 @@ namespace Lucene.Net.Support
                 {
                     TValue result;
                     if (!_dict.TryGetValue(key, out result))
-                        return default(TValue);
+                        return default;
                     return result;
                 }
                 finally

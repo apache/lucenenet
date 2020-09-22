@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
         {
             private readonly BooleanScorer2 outerInstance;
 
-            private int requiredNrMatchers;
+            private readonly int requiredNrMatchers;
 
             public ConjunctionScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Weight weight, Scorer[] scorers, int requiredNrMatchers)
                 : base(weight, scorers)

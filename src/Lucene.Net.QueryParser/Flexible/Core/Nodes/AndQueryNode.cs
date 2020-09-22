@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public AndQueryNode(IList<IQueryNode> clauses)
             : base(clauses)
         {
-            if ((clauses == null) || (clauses.Count == 0))
+            if ((clauses is null) || (clauses.Count == 0))
             {
                 throw new ArgumentException(
                     "AND query must have at least one clause");
@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public override string ToString()
         {
             var children = GetChildren();
-            if (children == null || children.Count == 0)
+            if (children is null || children.Count == 0)
                 return "<boolean operation='and'/>";
             StringBuilder sb = new StringBuilder();
             sb.Append("<boolean operation='and'>");
@@ -62,7 +62,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
             var children = GetChildren();
-            if (children == null || children.Count == 0)
+            if (children is null || children.Count == 0)
                 return "";
 
             StringBuilder sb = new StringBuilder();
@@ -74,7 +74,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             }
 
             // in case is root or the parent is a group node avoid parenthesis
-            if ((Parent != null && Parent is GroupQueryNode)
+            if ((Parent is object && Parent is GroupQueryNode)
                 || IsRoot)
                 return sb.ToString();
             else

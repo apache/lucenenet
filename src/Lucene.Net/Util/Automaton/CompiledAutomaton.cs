@@ -164,7 +164,7 @@ namespace Lucene.Net.Util.Automaton
                         singleton = automaton.Singleton;
                     }
 
-                    if (singleton != null)
+                    if (singleton is object)
                     {
                         // matches a fixed string in singleton or expanded
                         // representation
@@ -228,7 +228,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(maxTransition != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(maxTransition is object);
 
             // Append floorLabel
             int floorLabel;

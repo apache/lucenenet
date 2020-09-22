@@ -50,11 +50,7 @@ namespace Lucene.Net.Search
         public BitsFilteredDocIdSet(DocIdSet innerSet, IBits acceptDocs)
             : base(innerSet)
         {
-            if (acceptDocs == null)
-            {
-                throw new ArgumentNullException("acceptDocs is null");
-            }
-            this.acceptDocs = acceptDocs;
+            this.acceptDocs = acceptDocs ?? throw new ArgumentNullException("acceptDocs is null");
         }
 
         protected override bool Match(int docid)

@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Spans
             var payload = m_postings.GetPayload();
             m_readPayload = true;
             byte[] bytes;
-            if (payload != null)
+            if (payload is object)
             {
                 bytes = new byte[payload.Length];
                 Array.Copy(payload.Bytes, payload.Offset, bytes, 0, payload.Length);
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         // TODO: Remove warning after API has been finalized
-        public override bool IsPayloadAvailable => m_readPayload == false && m_postings.GetPayload() != null;
+        public override bool IsPayloadAvailable => m_readPayload == false && m_postings.GetPayload() is object;
 
         public override string ToString()
         {

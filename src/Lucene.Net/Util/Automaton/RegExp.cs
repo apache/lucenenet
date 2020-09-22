@@ -601,11 +601,11 @@ namespace Lucene.Net.Util.Automaton
 
                 case Kind.REGEXP_AUTOMATON:
                     Automaton aa = null;
-                    if (automata != null)
+                    if (automata is object)
                     {
                         aa = automata[s];
                     }
-                    if (aa == null && automaton_provider != null)
+                    if (aa == null && automaton_provider is object)
                     {
                         try
                         {

@@ -45,7 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <param name="mod">Modifier Value</param>
         public ModifierQueryNode(IQueryNode query, Modifier mod)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new QueryNodeError(new Message(
                     QueryParserMessages.PARAMETER_VALUE_NOT_SUPPORTED, "query", "null"));
@@ -72,13 +72,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            if (GetChild() == null)
+            if (GetChild() is null)
                 return "";
 
             string leftParenthensis = "";
             string rightParenthensis = "";
 
-            if (GetChild() != null && GetChild() is ModifierQueryNode)
+            if (GetChild() is object && GetChild() is ModifierQueryNode)
             {
                 leftParenthensis = "(";
                 rightParenthensis = ")";

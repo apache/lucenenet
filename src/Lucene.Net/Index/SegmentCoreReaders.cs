@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
                 SegmentReadState segmentReadState = new SegmentReadState(cfsDir, si.Info, fieldInfos, context, termsIndexDivisor);
                 // Ask codec for its Fields
                 fields = format.FieldsProducer(segmentReadState);
-                if (Debugging.AssertsEnabled) Debugging.Assert(fields != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fields is object);
                 // ask codec for its Norms:
                 // TODO: since we don't write any norms file if there are no norms,
                 // kinda jaky to assume the codec handles the case of no norms file at all gracefully?!
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
                 if (fieldInfos.HasNorms)
                 {
                     normsProducer = codec.NormsFormat.NormsProducer(segmentReadState);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(normsProducer != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(normsProducer is object);
                 }
                 else
                 {
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
 
         internal NumericDocValues GetNormValues(FieldInfo fi)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(normsProducer != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(normsProducer is object);
 
             IDictionary<string, object> normFields = normsLocal.Value;
 
@@ -239,10 +239,10 @@ namespace Lucene.Net.Index
         /// Returns approximate RAM bytes used </summary>
         public long RamBytesUsed()
         {
-            return ((normsProducer != null) ? normsProducer.RamBytesUsed() : 0) + 
-                ((fields != null) ? fields.RamBytesUsed() : 0) + 
-                ((fieldsReaderOrig != null) ? fieldsReaderOrig.RamBytesUsed() : 0) + 
-                ((termVectorsReaderOrig != null) ? termVectorsReaderOrig.RamBytesUsed() : 0);
+            return ((normsProducer is object) ? normsProducer.RamBytesUsed() : 0) + 
+                ((fields is object) ? fields.RamBytesUsed() : 0) + 
+                ((fieldsReaderOrig is object) ? fieldsReaderOrig.RamBytesUsed() : 0) + 
+                ((termVectorsReaderOrig is object) ? termVectorsReaderOrig.RamBytesUsed() : 0);
         }
     }
 }

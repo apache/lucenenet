@@ -138,7 +138,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 int count;
-                if (liveDocs != null)
+                if (liveDocs is object)
                 {
                     count = 0;
                     for (int docID = 0; docID < Info.Info.DocCount; docID++)
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
 
                 if (mergeReader == null)
                 {
-                    if (reader != null)
+                    if (reader is object)
                     {
                         // Just use the already opened non-merge reader
                         // for merging.  In the NRT case this saves us
@@ -232,7 +232,7 @@ namespace Lucene.Net.Index
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(liveDocs != null);
+                    Debugging.Assert(liveDocs is object);
                     Debugging.Assert(Monitor.IsEntered(writer));
                     Debugging.Assert(docID >= 0 && docID < liveDocs.Length, () => "out of bounds: docid=" + docID + " liveDocsLength=" + liveDocs.Length + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
                     Debugging.Assert(!liveDocsShared);
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                 // we are calling .decRef not .close)...
                 try
                 {
-                    if (reader != null)
+                    if (reader is object)
                     {
                         //System.out.println("  pool.drop info=" + info + " rc=" + reader.getRefCount());
                         try
@@ -272,7 +272,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    if (mergeReader != null)
+                    if (mergeReader is object)
                     {
                         //System.out.println("  pool.drop info=" + info + " merge rc=" + mergeReader.getRefCount());
                         try
@@ -302,10 +302,10 @@ namespace Lucene.Net.Index
                 if (reader == null)
                 {
                     GetReader(context).DecRef();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(reader != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(reader is object);
                 }
                 liveDocsShared = true;
-                if (liveDocs != null)
+                if (liveDocs is object)
                 {
                     return new SegmentReader(reader.SegmentInfo, reader, liveDocs, Info.Info.DocCount - Info.DelCount - pendingDeleteCount);
                 }
@@ -368,7 +368,7 @@ namespace Lucene.Net.Index
                 //System.out.println("getROLiveDocs seg=" + info);
                 if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
                 liveDocsShared = true;
-                //if (liveDocs != null) {
+                //if (liveDocs is object) {
                 //System.out.println("  liveCount=" + liveDocs.count());
                 //}
                 return liveDocs;
@@ -483,7 +483,7 @@ namespace Lucene.Net.Index
 
                     // reader could be null e.g. for a just merged segment (from
                     // IndexWriter.commitMergedDeletes).
-                    SegmentReader reader = this.reader == null ? new SegmentReader(Info, writer.Config.ReaderTermsIndexDivisor, IOContext.READ_ONCE) : this.reader;
+                    SegmentReader reader = this.reader ?? new SegmentReader(Info, writer.Config.ReaderTermsIndexDivisor, IOContext.READ_ONCE);
                     try
                     {
                         // clone FieldInfos so that we can update their dvGen separately from
@@ -495,7 +495,7 @@ namespace Lucene.Net.Index
                         {
                             FieldInfo clone = builder.Add(fi);
                             // copy the stuff FieldInfos.Builder doesn't copy
-                            if (fi.Attributes != null)
+                            if (fi.Attributes is object)
                             {
                                 foreach (KeyValuePair<string, string> e in fi.Attributes)
                                 {
@@ -530,7 +530,7 @@ namespace Lucene.Net.Index
                                 string field = e.Key;
                                 NumericDocValuesFieldUpdates fieldUpdates = e.Value;
                                 FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                                if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfo != null);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfo is object);
 
                                 fieldInfo.DocValuesGen = nextFieldInfosGen;
                                 // write the numeric updates to a new gen'd docvalues file
@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
                                 string field = e.Key;
                                 BinaryDocValuesFieldUpdates dvFieldUpdates = e.Value;
                                 FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                                if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfo != null);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfo is object);
 
                                 //          System.out.println("[" + Thread.currentThread().getName() + "] RAU.writeFieldUpdates: applying binary updates; seg=" + info + " f=" + dvFieldUpdates + ", updates=" + dvFieldUpdates);
 
@@ -657,7 +657,7 @@ namespace Lucene.Net.Index
                 writer.Checkpoint();
 
                 // if there is a reader open, reopen it to reflect the updates
-                if (reader != null)
+                if (reader is object)
                 {
                     SegmentReader newReader = new SegmentReader(Info, reader, liveDocs, Info.Info.DocCount - Info.DelCount - pendingDeleteCount);
                     bool reopened = false;
@@ -700,7 +700,7 @@ namespace Lucene.Net.Index
                 else
                 {   // no update for this document
                     if (Debugging.AssertsEnabled) Debugging.Assert(curDoc < updateDoc);
-                    if (currentValues != null && DocsWithField.Get(curDoc))
+                    if (currentValues is object && DocsWithField.Get(curDoc))
                     {
                         // only read the current value if the document had a value before
                         yield return currentValues.Get(curDoc);
@@ -733,7 +733,7 @@ namespace Lucene.Net.Index
                 else
                 {   // no update for this document
                     if (Debugging.AssertsEnabled) Debugging.Assert(curDoc < updateDoc);
-                    if (currentValues != null && DocsWithField.Get(curDoc))
+                    if (currentValues is object && DocsWithField.Get(curDoc))
                     {
                         // only read the current value if the document had a value before
                         currentValues.Get(curDoc, scratch);

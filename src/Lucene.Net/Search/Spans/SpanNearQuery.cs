@@ -45,7 +45,7 @@ namespace Lucene.Net.Search.Spans
         protected bool m_inOrder;
 
         protected string m_field;
-        private bool collectPayloads;
+        private readonly bool collectPayloads;
 
         /// <summary>
         /// Construct a <see cref="SpanNearQuery"/>.  Matches spans matching a span from each
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Spans
                 {
                     m_field = clause.Field;
                 }
-                else if (clause.Field != null && !clause.Field.Equals(m_field, StringComparison.Ordinal))
+                else if (clause.Field is object && !clause.Field.Equals(m_field, StringComparison.Ordinal))
                 {
                     throw new ArgumentException("Clauses must have same field.");
                 }
@@ -161,7 +161,7 @@ namespace Lucene.Net.Search.Spans
                     clone.m_clauses[i] = query;
                 }
             }
-            if (clone != null)
+            if (clone is object)
             {
                 return clone; // some clauses rewrote
             }

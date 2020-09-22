@@ -168,7 +168,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Returns a string representation of this object.
+            /// Returns a string representation of th is object.
             /// </summary>
             public override string ToString()
             {
@@ -395,7 +395,7 @@ namespace Lucene.Net.Util
                 {
                     streams[i] = new ByteSequencesReader(merges[i]);
                     byte[] line = streams[i].Read();
-                    if (line != null)
+                    if (line is object)
                     {
                         queue.InsertWithOverflow(new FileAndTop(i, line));
                     }
@@ -406,7 +406,7 @@ namespace Lucene.Net.Util
                 // a nicer theoretical complexity bound :) The entire sorting process is I/O bound anyway
                 // so it shouldn't make much of a difference (didn't check).
                 FileAndTop top;
-                while ((top = queue.Top) != null)
+                while ((top = queue.Top) is object)
                 {
                     @out.Write(top.Current);
                     if (!streams[top.Fd].Read(top.Current))
@@ -459,7 +459,7 @@ namespace Lucene.Net.Util
         {
             long start = Environment.TickCount;
             var scratch = new BytesRef();
-            while ((scratch.Bytes = reader.Read()) != null)
+            while ((scratch.Bytes = reader.Read()) is object)
             {
                 scratch.Length = scratch.Bytes.Length;
                 buffer.Append(scratch);
@@ -532,7 +532,7 @@ namespace Lucene.Net.Util
             /// <seealso cref="Write(byte[], int, int)"/>
             public virtual void Write(BytesRef @ref)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(@ref != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(@ref is object);
                 Write(@ref.Bytes, @ref.Offset, @ref.Length);
             }
 
@@ -554,7 +554,7 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(bytes != null);
+                    Debugging.Assert(bytes is object);
                     Debugging.Assert(off >= 0 && off + len <= bytes.Length);
                     Debugging.Assert(len >= 0);
                 }

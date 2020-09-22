@@ -172,11 +172,11 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (this.lowerVal != null ? !this.lowerVal.Equals(other.lowerVal) : other.lowerVal != null)
+            if (this.lowerVal is object ? !this.lowerVal.Equals(other.lowerVal) : other.lowerVal is object)
             {
                 return false;
             }
-            if (this.upperVal != null ? !this.upperVal.Equals(other.upperVal) : other.upperVal != null)
+            if (this.upperVal is object ? !this.upperVal.Equals(other.upperVal) : other.upperVal is object)
             {
                 return false;
             }
@@ -186,9 +186,9 @@ namespace Lucene.Net.Search
         public override sealed int GetHashCode()
         {
             int h = field.GetHashCode();
-            h ^= (lowerVal != null) ? lowerVal.GetHashCode() : 550356204;
+            h ^= (lowerVal is object) ? lowerVal.GetHashCode() : 550356204;
             h = (h << 1) | ((int)((uint)h >> 31)); // rotate to distinguish lower from upper
-            h ^= (upperVal != null) ? upperVal.GetHashCode() : -1674416163;
+            h ^= (upperVal is object) ? upperVal.GetHashCode() : -1674416163;
             h ^= (includeLower ? 1549299360 : -365038026) ^ (includeUpper ? 1721088258 : 1948649653);
             return h;
         }

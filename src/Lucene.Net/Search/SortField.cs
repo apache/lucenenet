@@ -49,10 +49,10 @@ namespace Lucene.Net.Search
         private string field;
         private SortFieldType type; // defaults to determining type dynamically
         internal bool reverse = false; // defaults to natural order
-        private FieldCache.IParser parser;
+        private readonly FieldCache.IParser parser;
 
         // Used for CUSTOM sort
-        private FieldComparerSource comparerSource;
+        private readonly FieldComparerSource comparerSource;
 
         // Used for 'sortMissingFirst/Last'
         public virtual object MissingValue
@@ -352,7 +352,7 @@ namespace Lucene.Net.Search
             {
                 buffer.Append('!');
             }
-            if (m_missingValue != null)
+            if (m_missingValue is object)
             {
                 buffer.Append(" missingValue=");
                 buffer.Append(m_missingValue);
@@ -373,19 +373,18 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (!(o is SortField))
+            if (o is SortField other)
             {
-                return false;
+                return (StringHelper.Equals(other.field, this.field)
+                    && other.type == this.type
+                    && other.reverse == this.reverse
+                    && (other.comparerSource == null ? this.comparerSource == null : other.comparerSource.Equals(this.comparerSource)));
             }
-            SortField other = (SortField)o;
-            return (StringHelper.Equals(other.field, this.field) 
-                && other.type == this.type 
-                && other.reverse == this.reverse 
-                && (other.comparerSource == null ? this.comparerSource == null : other.comparerSource.Equals(this.comparerSource)));
+            return false;
         }
 
         /// <summary>
-        /// Returns a hash code value for this object.  If a
+        /// Returns a hash code value for th is object.  If a
         /// <see cref="FieldComparerSource"/> or
         /// <see cref="FieldCache.IParser"/> was provided, it must properly
         /// implement GetHashCode() (unless a singleton is always
@@ -394,11 +393,11 @@ namespace Lucene.Net.Search
         public override int GetHashCode()
         {
             int hash = (int)(type.GetHashCode() ^ 0x346565dd + reverse.GetHashCode() ^ 0xaf5998bb);
-            if (field != null)
+            if (field is object)
             {
                 hash += (int)(field.GetHashCode() ^ 0xff5685dd);
             }
-            if (comparerSource != null)
+            if (comparerSource is object)
             {
                 hash += comparerSource.GetHashCode();
             }
@@ -456,7 +455,7 @@ namespace Lucene.Net.Search
 #pragma warning restore 612, 618
 
                 case SortFieldType.CUSTOM:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(comparerSource != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(comparerSource is object);
                     return comparerSource.NewComparer(field, numHits, sortPos, reverse);
 
                 case SortFieldType.STRING:

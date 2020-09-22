@@ -42,7 +42,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             PrefixQuery q = new PrefixQuery(new Term(wildcardNode.GetFieldAsString(), text));
 
             MultiTermQuery.RewriteMethod method = (MultiTermQuery.RewriteMethod)queryNode.GetTag(MultiTermRewriteMethodProcessor.TAG_ID);
-            if (method != null)
+            if (method is object)
             {
                 q.MultiTermRewriteMethod = method;
             }

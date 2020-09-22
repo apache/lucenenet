@@ -69,7 +69,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             Operator? op = GetQueryConfigHandler().Get(
                 ConfigurationKeys.DEFAULT_OPERATOR);
 
-            if (op == null)
+            if (op is null)
             {
                 throw new ArgumentException(
                     "StandardQueryConfigHandler.ConfigurationKeys.DEFAULT_OPERATOR should be set on the QueryConfigHandler");
@@ -84,7 +84,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         protected virtual void ProcessChildren(IQueryNode queryTree)
         {
             IList<IQueryNode> children = queryTree.GetChildren();
-            if (children != null && children.Count > 0)
+            if (children is object && children.Count > 0)
             {
                 foreach (IQueryNode child in children)
                 {
@@ -163,24 +163,22 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected virtual bool IsDefaultBooleanQueryNode(IQueryNode toTest)
         {
-            return toTest != null && typeof(BooleanQueryNode).Equals(toTest.GetType());
+            return toTest is object && typeof(BooleanQueryNode).Equals(toTest.GetType());
         }
 
         private IQueryNode ApplyModifier(IQueryNode node, Modifier mod)
         {
-            // check if modifier is not already defined and is default
-            if (!(node is ModifierQueryNode))
+            // check if modifier is already defined
+            if (node is ModifierQueryNode modNode)
             {
-                return new BooleanModifierNode(node, mod);
-            }
-            else
-            {
-                ModifierQueryNode modNode = (ModifierQueryNode)node;
-
                 if (modNode.Modifier == Modifier.MOD_NONE)
                 {
                     return new ModifierQueryNode(modNode.GetChild(), mod);
                 }
+            }
+            else
+            {
+                return new BooleanModifierNode(node, mod);
             }
 
             return node;
@@ -188,9 +186,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected virtual void TagModifierButDoNotOverride(IQueryNode node, Modifier mod)
         {
-            if (node is ModifierQueryNode)
+            if (node is ModifierQueryNode modNode)
             {
-                ModifierQueryNode modNode = (ModifierQueryNode)node;
                 if (modNode.Modifier == Modifier.MOD_NONE)
                 {
                     node.SetTag(TAG_MODIFIER, mod);

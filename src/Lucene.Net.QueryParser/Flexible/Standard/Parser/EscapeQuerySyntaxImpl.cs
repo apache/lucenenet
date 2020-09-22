@@ -48,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         private static ICharSequence EscapeChar(ICharSequence str, CultureInfo locale)
         {
-            if (str == null || str.Length == 0)
+            if (str is null || str.Length == 0)
                 return str;
 
             ICharSequence buffer = str;
@@ -76,7 +76,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         private ICharSequence EscapeQuoted(ICharSequence str, CultureInfo locale)
         {
-            if (str == null || str.Length == 0)
+            if (str is null || str.Length == 0)
                 return str;
 
             ICharSequence buffer = str;
@@ -91,7 +91,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         private static ICharSequence EscapeTerm(ICharSequence term, CultureInfo locale)
         {
-            if (term == null)
+            if (term is null)
                 return term;
 
             // Escape single Chars
@@ -118,7 +118,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private static ICharSequence ReplaceIgnoreCase(ICharSequence @string,
             string sequence1, string escapeChar, CultureInfo locale)
         {
-            if (escapeChar == null || sequence1 == null || @string == null)
+            if (escapeChar is null || sequence1 is null || @string is null)
                 throw new NullReferenceException(); // LUCNENET TODO: ArgumentException...
 
             // empty string case
@@ -189,7 +189,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         private static ICharSequence EscapeWhiteChar(ICharSequence str,
             CultureInfo locale)
         {
-            if (str == null || str.Length == 0)
+            if (str is null || str.Length == 0)
                 return str;
 
             ICharSequence buffer = str;
@@ -205,7 +205,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         // LUCENENET specific overload for text as string
         public virtual string Escape(string text, CultureInfo locale, EscapeQuerySyntaxType type)
         {
-            if (text == null || text.Length == 0)
+            if (text is null || text.Length == 0)
                 return text;
 
             return Escape(text.AsCharSequence(), locale, type).ToString();
@@ -213,16 +213,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         public virtual ICharSequence Escape(ICharSequence text, CultureInfo locale, EscapeQuerySyntaxType type)  
         {
-            if (text == null || text.Length == 0)
+            if (text is null || text.Length == 0)
                 return text;
 
             // escape wildcards and the escape char (this has to be perform before
             // anything else)
             // since we need to preserve the UnescapedCharSequence and escape the
             // original escape chars
-            if (text is UnescapedCharSequence)
+            if (text is UnescapedCharSequence sequence)
             {
-                text = ((UnescapedCharSequence)text).ToStringEscaped(wildcardChars);
+                text = sequence.ToStringEscaped(wildcardChars);
             }
             else
             {

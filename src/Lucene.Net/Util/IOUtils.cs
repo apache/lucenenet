@@ -172,7 +172,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (@object != null)
+                    if (@object is object)
                     {
                         @object.Dispose();
                     }
@@ -187,7 +187,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            if (priorException != null)
+            if (priorException is object)
             {
                 throw priorException;
             }
@@ -208,7 +208,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (@object != null)
+                    if (@object is object)
                     {
                         @object.Dispose();
                     }
@@ -223,7 +223,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            if (priorException != null)
+            if (priorException is object)
             {
                 throw priorException;
             }
@@ -250,7 +250,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (@object != null)
+                    if (@object is object)
                     {
                         @object.Dispose();
                     }
@@ -279,7 +279,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (@object != null)
+                    if (@object is object)
                     {
                         @object.Dispose();
                     }
@@ -309,7 +309,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (o != null)
+                    if (o is object)
                     {
                         o.Dispose();
                     }
@@ -330,7 +330,7 @@ namespace Lucene.Net.Util
             {
                 try
                 {
-                    if (@object != null)
+                    if (@object is object)
                     {
                         @object.Dispose();
                     }
@@ -354,7 +354,7 @@ namespace Lucene.Net.Util
         /// <param name="suppressed"> the suppressed exception </param>
         private static void AddSuppressed(Exception exception, Exception suppressed)
         {
-            if (exception != null && suppressed != null)
+            if (exception is object && suppressed is object)
             {
                 exception.AddSuppressed(suppressed);
             }
@@ -494,7 +494,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static void ReThrow(Exception th)
         {
-            if (th != null)
+            if (th is object)
             {
                 if (th is IOException)
                 {
@@ -511,7 +511,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static void ReThrowUnchecked(Exception th)
         {
-            if (th != null)
+            if (th is object)
             {
                 throw th;
             }
@@ -581,7 +581,7 @@ namespace Lucene.Net.Util
         //                }
         //                finally
         //                {
-        //                    if (file != null)
+        //                    if (file is object)
         //                    {
         //                        file.Dispose();
         //                    }

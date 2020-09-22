@@ -66,8 +66,8 @@ namespace Lucene.Net.Search
         /// Advance to non excluded doc.
         /// <para/>On entry:
         /// <list type="bullet">
-        /// <item><description>reqScorer != null,</description></item>
-        /// <item><description>exclScorer != null,</description></item>
+        /// <item><description>reqScorer is object,</description></item>
+        /// <item><description>exclScorer is object,</description></item>
         /// <item><description>reqScorer was advanced once via Next() or SkipTo()
         ///      and reqScorer.Doc may still be excluded.</description></item>
         /// </list>

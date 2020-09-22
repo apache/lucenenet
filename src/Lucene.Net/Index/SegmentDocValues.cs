@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
         private class RefCountHelper : RefCount<DocValuesProducer>
         {
             private readonly SegmentDocValues outerInstance;
-            private long? gen;
+            private readonly long? gen;
 
             public RefCountHelper(SegmentDocValues outerInstance, DocValuesProducer fieldsProducer, long? gen)
                 : base(fieldsProducer)
@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
                 if (!(genDVProducers.TryGetValue(gen, out dvp)))
                 {
                     dvp = NewDocValuesProducer(si, context, dir, dvFormat, gen, infos, termsIndexDivisor);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(dvp != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(dvp is object);
                     genDVProducers[gen] = dvp;
                 }
                 else
@@ -108,20 +108,20 @@ namespace Lucene.Net.Index
                 foreach (long? gen in dvProducersGens)
                 {
                     RefCount<DocValuesProducer> dvp = genDVProducers[gen];
-                    if (Debugging.AssertsEnabled) Debugging.Assert(dvp != null, () => "gen=" + gen);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(dvp is object, () => "gen=" + gen);
                     try
                     {
                         dvp.DecRef();
                     }
                     catch (Exception th)
                     {
-                        if (t != null)
+                        if (t is object)
                         {
                             t = th;
                         }
                     }
                 }
-                if (t != null)
+                if (t is object)
                 {
                     IOUtils.ReThrow(t);
                 }

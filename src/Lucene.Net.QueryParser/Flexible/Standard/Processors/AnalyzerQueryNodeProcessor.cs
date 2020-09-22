@@ -71,7 +71,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         {
             Analyzer analyzer = GetQueryConfigHandler().Get(ConfigurationKeys.ANALYZER);
 
-            if (analyzer != null)
+            if (analyzer is object)
             {
                 this.analyzer = analyzer;
                 this.positionIncrementsEnabled = false;
@@ -80,15 +80,15 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 // LUCENENET specific - rather than using null, we are relying on the behavior that the default
                 // value for an enum is 0 (OR in this case).
                 //var defaultOperator = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
-                //this.defaultOperator = defaultOperator != null ? defaultOperator.Value : Operator.OR;
+                //this.defaultOperator = defaultOperator is object ? defaultOperator.Value : Operator.OR;
                 this.defaultOperator = GetQueryConfigHandler().Get(ConfigurationKeys.DEFAULT_OPERATOR);
 
-                if (positionIncrementsEnabled != null)
+                if (positionIncrementsEnabled is object)
                 {
                     this.positionIncrementsEnabled = positionIncrementsEnabled.Value;
                 }
 
-                if (this.analyzer != null)
+                if (this.analyzer is object)
                 {
                     return base.Process(queryTree);
                 }
@@ -132,7 +132,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         while (buffer.IncrementToken())
                         {
                             numTokens++;
-                            int positionIncrement = (posIncrAtt != null) ? posIncrAtt
+                            int positionIncrement = (posIncrAtt is object) ? posIncrAtt
                                 .PositionIncrement : 1;
                             if (positionIncrement != 0)
                             {
@@ -249,7 +249,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 {
                                     // safe to ignore, because we know the number of tokens
                                 }
-                                if (posIncrAtt != null && posIncrAtt.PositionIncrement == 0)
+                                if (posIncrAtt is object && posIncrAtt.PositionIncrement == 0)
                                 {
                                     if (!(currentQuery is BooleanQueryNode))
                                     {
@@ -261,7 +261,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 }
                                 else
                                 {
-                                    if (currentQuery != null)
+                                    if (currentQuery is object)
                                     {
                                         if (this.defaultOperator == Operator.OR)
                                         {
@@ -309,7 +309,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 bool hasNext = buffer.IncrementToken();
                                 if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
                                 term = termAtt.ToString();
-                                if (posIncrAtt != null)
+                                if (posIncrAtt is object)
                                 {
                                     positionIncrement = posIncrAtt.PositionIncrement;
                                 }
@@ -382,7 +382,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
                             term = termAtt.ToString();
 
-                            if (posIncrAtt != null)
+                            if (posIncrAtt is object)
                             {
                                 positionIncrement = posIncrAtt.PositionIncrement;
                             }

@@ -332,7 +332,7 @@ namespace Lucene.Net.Util.Fst
             {
                 size += nodeRefToAddress.RamBytesUsed();
             }
-            else if (nodeAddress != null)
+            else if (nodeAddress is object)
             {
                 size += nodeAddress.RamBytesUsed();
                 size += inCounts.RamBytesUsed();
@@ -358,7 +358,7 @@ namespace Lucene.Net.Util.Fst
 
         private long GetNodeAddress(long node)
         {
-            if (nodeAddress != null)
+            if (nodeAddress is object)
             {
                 // Deref
                 return nodeAddress.Get((int)node);
@@ -420,13 +420,13 @@ namespace Lucene.Net.Util.Fst
 
         private bool AssertRootArcs()
         {
-            Debugging.Assert(cachedRootArcs != null);
-            Debugging.Assert(assertingCachedRootArcs != null);
+            Debugging.Assert(cachedRootArcs is object);
+            Debugging.Assert(assertingCachedRootArcs is object);
             for (int i = 0; i < cachedRootArcs.Length; i++)
             {
                 FST.Arc<T> root = cachedRootArcs[i];
                 FST.Arc<T> asserting = assertingCachedRootArcs[i];
-                if (root != null)
+                if (root is object)
                 {
                     Debugging.Assert(root.ArcIdx == asserting.ArcIdx);
                     Debugging.Assert(root.BytesPerArc == asserting.BytesPerArc);
@@ -461,7 +461,7 @@ namespace Lucene.Net.Util.Fst
             get => emptyOutput;
             set
             {
-                if (emptyOutput != null)
+                if (emptyOutput is object)
                 {
                     emptyOutput = Outputs.Merge(emptyOutput, value);
                 }
@@ -478,7 +478,7 @@ namespace Lucene.Net.Util.Fst
             {
                 throw new InvalidOperationException("call finish first");
             }
-            if (nodeAddress != null)
+            if (nodeAddress is object)
             {
                 throw new InvalidOperationException("cannot save an FST pre-packed FST; it must first be packed");
             }
@@ -705,7 +705,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     flags += FST.BIT_STOP_NODE;
                 }
-                else if (inCounts != null)
+                else if (inCounts is object)
                 {
                     inCounts.Set((int)target.Node, inCounts.Get((int)target.Node) + 1);
                 }
@@ -823,14 +823,14 @@ namespace Lucene.Net.Util.Fst
 
             // PackedInts uses int as the index, so we cannot handle
             // > 2.1B nodes when packing:
-            if (nodeAddress != null && nodeCount == int.MaxValue)
+            if (nodeAddress is object && nodeCount == int.MaxValue)
             {
                 throw new InvalidOperationException("cannot create a packed FST with more than 2.1 billion nodes");
             }
 
             nodeCount++;
             long node;
-            if (nodeAddress != null)
+            if (nodeAddress is object)
             {
                 // Nodes are addressed by 1+ord:
                 if ((int)nodeCount == nodeAddress.Count)
@@ -1912,7 +1912,7 @@ namespace Lucene.Net.Util.Fst
                                 else
                                 {
                                     /*
-                                    if (ptr != null) {
+                                    if (ptr is object) {
                                       System.out.println("        deref");
                                     } else {
                                       System.out.println("        abs");

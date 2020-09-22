@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
         // initialize the per-field DocValuesProducer
         private void InitDocValuesProducers(Codec codec)
         {
-            Directory dir = core.cfsReader != null ? core.cfsReader : si.Info.Dir;
+            Directory dir = core.cfsReader ?? si.Info.Dir;
             DocValuesFormat dvFormat = codec.DocValuesFormat;
             IDictionary<long?, IList<FieldInfo>> genInfos = GetGenInfos();
 
@@ -464,7 +464,7 @@ namespace Lucene.Net.Index
             {
                 DocValuesProducer dvProducer;
                 dvProducersByField.TryGetValue(field, out dvProducer);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer is object);
                 dvs = dvProducer.GetNumeric(fi);
                 dvFields[field] = dvs;
             }
@@ -494,7 +494,7 @@ namespace Lucene.Net.Index
             {
                 DocValuesProducer dvProducer;
                 dvProducersByField.TryGetValue(field, out dvProducer);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer is object);
                 dvs = dvProducer.GetDocsWithField(fi);
                 dvFields[field] = dvs;
             }
@@ -520,7 +520,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer is object);
                 dvs = dvProducer.GetBinary(fi);
                 dvFields[field] = dvs;
             }
@@ -546,7 +546,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer is object);
                 dvs = dvProducer.GetSorted(fi);
                 dvFields[field] = dvs;
             }
@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer is object);
                 dvs = dvProducer.GetSortedSet(fi);
                 dvFields[field] = dvs;
             }
@@ -638,14 +638,14 @@ namespace Lucene.Net.Index
         {
             EnsureOpen();
             long ramBytesUsed = 0;
-            if (dvProducers != null)
+            if (dvProducers is object)
             {
                 foreach (DocValuesProducer producer in dvProducers)
                 {
                     ramBytesUsed += producer.RamBytesUsed();
                 }
             }
-            if (core != null)
+            if (core is object)
             {
                 ramBytesUsed += core.RamBytesUsed();
             }
@@ -661,25 +661,25 @@ namespace Lucene.Net.Index
 
             // term vectors
             TermVectorsReader termVectorsReader = TermVectorsReader;
-            if (termVectorsReader != null)
+            if (termVectorsReader is object)
             {
                 termVectorsReader.CheckIntegrity();
             }
 
             // terms/postings
-            if (core.fields != null)
+            if (core.fields is object)
             {
                 core.fields.CheckIntegrity();
             }
 
             // norms
-            if (core.normsProducer != null)
+            if (core.normsProducer is object)
             {
                 core.normsProducer.CheckIntegrity();
             }
 
             // docvalues
-            if (dvProducers != null)
+            if (dvProducers is object)
             {
                 foreach (DocValuesProducer producer in dvProducers)
                 {

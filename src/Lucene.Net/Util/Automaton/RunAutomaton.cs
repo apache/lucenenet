@@ -163,7 +163,7 @@ namespace Lucene.Net.Util.Automaton
                 for (int c = 0; c < _points.Length; c++)
                 {
                     State q = s.Step(_points[c]);
-                    if (q != null)
+                    if (q is object)
                     {
                         m_transitions[n * _points.Length + c] = q.number;
                     }

@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
                         m_mergeThreads.RemoveAt(threadIdx);
                         continue;
                     }
-                    if (mergeThread.CurrentMerge != null)
+                    if (mergeThread.CurrentMerge is object)
                     {
                         activeMerges.Add(mergeThread);
                     }
@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
         /// }
         /// </code>
         /// </summary>
-        protected virtual bool IsVerbose => m_writer != null && m_writer.infoStream.IsEnabled("CMS");
+        protected virtual bool IsVerbose => m_writer is object && m_writer.infoStream.IsEnabled("CMS");
 
         /// <summary>
         /// Outputs the given message - this method assumes <see cref="IsVerbose"/> was
@@ -330,14 +330,14 @@ namespace Lucene.Net.Index
                     {
                         foreach (MergeThread t in m_mergeThreads)
                         {
-                            if (t != null && t.IsAlive)
+                            if (t is object && t.IsAlive)
                             {
                                 toSync = t;
                                 break;
                             }
                         }
                     }
-                    if (toSync != null)
+                    if (toSync is object)
                     {
                         try
                         {
@@ -380,7 +380,7 @@ namespace Lucene.Net.Index
                     int count = 0;
                     foreach (MergeThread mt in m_mergeThreads)
                     {
-                        if (mt.IsAlive && mt.CurrentMerge != null)
+                        if (mt.IsAlive && mt.CurrentMerge is object)
                         {
                             count++;
                         }
@@ -580,7 +580,7 @@ namespace Lucene.Net.Index
                         {
                             return null;
                         }
-                        else if (runningMerge != null)
+                        else if (runningMerge is object)
                         {
                             return runningMerge;
                         }
@@ -644,7 +644,7 @@ namespace Lucene.Net.Index
                             Monitor.PulseAll(outerInstance);
                         }
 
-                        if (merge != null)
+                        if (merge is object)
                         {
                             outerInstance.UpdateMergeThreads();
                             if (outerInstance.IsVerbose)

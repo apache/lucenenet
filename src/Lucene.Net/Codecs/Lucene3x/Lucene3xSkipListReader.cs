@@ -26,9 +26,9 @@ namespace Lucene.Net.Codecs.Lucene3x
     internal sealed class Lucene3xSkipListReader : MultiLevelSkipListReader
     {
         private bool currentFieldStoresPayloads;
-        private long[] freqPointer;
-        private long[] proxPointer;
-        private int[] payloadLength;
+        private readonly long[] freqPointer;
+        private readonly long[] proxPointer;
+        private readonly int[] payloadLength;
 
         private long lastFreqPointer;
         private long lastProxPointer;

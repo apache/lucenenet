@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
     public class MultiPhraseQuery : Query, IEnumerable<Term[]> // LUCENENET specific - implemented IEnumerable<Term[]>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
-        private IList<Term[]> termArrays = new JCG.List<Term[]>();
+        private readonly IList<Term[]> termArrays = new JCG.List<Term[]>();
         private readonly IList<int> positions = new JCG.List<int>();
 
         private int slop = 0;
@@ -286,7 +286,7 @@ namespace Lucene.Net.Search
                         if (postingsEnum == null)
                         {
                             // term does exist, but has no positions
-                            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum.Docs(liveDocs, null, DocsFlags.NONE) != null, "termstate found but no term exists in reader");
+                            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum.Docs(liveDocs, null, DocsFlags.NONE) is object, "termstate found but no term exists in reader");
                             throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
                         }
 
@@ -323,7 +323,7 @@ namespace Lucene.Net.Search
             public override Explanation Explain(AtomicReaderContext context, int doc)
             {
                 Scorer scorer = GetScorer(context, (context.AtomicReader).LiveDocs);
-                if (scorer != null)
+                if (scorer is object)
                 {
                     int newDoc = scorer.Advance(doc);
                     if (newDoc == doc)
@@ -453,7 +453,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a hash code value for this object. </summary>
+        /// Returns a hash code value for th is object. </summary>
         public override int GetHashCode()
         {
             //If this doesn't work hash all elements of positions. This was used to reduce time overhead
@@ -697,7 +697,7 @@ namespace Lucene.Net.Search
 
         public override sealed int Advance(int target)
         {
-            while (_queue.Top != null && target > _queue.Top.DocID)
+            while (_queue.Top is object && target > _queue.Top.DocID)
             {
                 DocsAndPositionsEnum postings = _queue.Pop();
                 if (postings.Advance(target) != NO_MORE_DOCS)

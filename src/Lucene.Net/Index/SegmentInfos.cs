@@ -638,7 +638,7 @@ namespace Lucene.Net.Index
             }
             finally
             {
-                if (@in != null)
+                if (@in is object)
                 {
                     IOUtils.DisposeWhileHandlingException(@in);
                 }
@@ -710,7 +710,7 @@ namespace Lucene.Net.Index
             sis.segments = new List<SegmentCommitInfo>(Count);
             foreach (SegmentCommitInfo info in segments)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Codec != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Codec is object);
                 // dont directly access segments, use add method!!!
                 sis.Add((SegmentCommitInfo)(info.Clone()));
             }
@@ -817,7 +817,7 @@ namespace Lucene.Net.Index
             /// Run <see cref="DoBody(string)"/> on the provided commit. </summary>
             public virtual object Run(IndexCommit commit)
             {
-                if (commit != null)
+                if (commit is object)
                 {
                     if (directory != commit.Directory)
                     {
@@ -866,12 +866,12 @@ namespace Lucene.Net.Index
 
                         files = directory.ListAll();
 
-                        if (files != null)
+                        if (files is object)
                         {
                             genA = GetLastCommitGeneration(files);
                         }
 
-                        if (infoStream != null)
+                        if (infoStream is object)
                         {
                             Message("directory listing genA=" + genA);
                         }
@@ -889,13 +889,13 @@ namespace Lucene.Net.Index
                         }
                         catch (IOException e)
                         {
-                            if (infoStream != null)
+                            if (infoStream is object)
                             {
                                 Message("segments.gen open: IOException " + e);
                             }
                         }
 
-                        if (genInput != null)
+                        if (genInput is object)
                         {
                             try
                             {
@@ -904,7 +904,7 @@ namespace Lucene.Net.Index
                                 {
                                     long gen0 = genInput.ReadInt64();
                                     long gen1 = genInput.ReadInt64();
-                                    if (infoStream != null)
+                                    if (infoStream is object)
                                     {
                                         Message("fallback check: " + gen0 + "; " + gen1);
                                     }
@@ -943,7 +943,7 @@ namespace Lucene.Net.Index
                             }
                         }
 
-                        if (infoStream != null)
+                        if (infoStream is object)
                         {
                             Message(IndexFileNames.SEGMENTS_GEN + " check: genB=" + genB);
                         }
@@ -975,7 +975,7 @@ namespace Lucene.Net.Index
                         {
                             gen++;
                             genLookaheadCount++;
-                            if (infoStream != null)
+                            if (infoStream is object)
                             {
                                 Message("look ahead increment gen to " + gen);
                             }
@@ -1006,7 +1006,7 @@ namespace Lucene.Net.Index
                     try
                     {
                         object v = DoBody(segmentFileName);
-                        if (infoStream != null)
+                        if (infoStream is object)
                         {
                             Message("success on " + segmentFileName);
                         }
@@ -1020,7 +1020,7 @@ namespace Lucene.Net.Index
                             exc = err;
                         }
 
-                        if (infoStream != null)
+                        if (infoStream is object)
                         {
                             Message("primary Exception on '" + segmentFileName + "': " + err + "'; will retry: retryCount=" + retryCount + "; gen = " + gen);
                         }
@@ -1050,14 +1050,14 @@ namespace Lucene.Net.Index
 
                             if (prevExists)
                             {
-                                if (infoStream != null)
+                                if (infoStream is object)
                                 {
                                     Message("fallback to prior segment file '" + prevSegmentFileName + "'");
                                 }
                                 try
                                 {
                                     object v = DoBody(prevSegmentFileName);
-                                    if (infoStream != null)
+                                    if (infoStream is object)
                                     {
                                         Message("success on fallback " + prevSegmentFileName);
                                     }
@@ -1065,7 +1065,7 @@ namespace Lucene.Net.Index
                                 }
                                 catch (IOException err2)
                                 {
-                                    if (infoStream != null)
+                                    if (infoStream is object)
                                     {
                                         Message("secondary Exception on '" + prevSegmentFileName + "': " + err2 + "'; will retry");
                                     }
@@ -1094,7 +1094,7 @@ namespace Lucene.Net.Index
 
         internal void RollbackCommit(Directory dir)
         {
-            if (pendingSegnOutput != null)
+            if (pendingSegnOutput is object)
             {
                 // Suppress so we keep throwing the original exception
                 // in our caller
@@ -1124,7 +1124,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal void PrepareCommit(Directory dir)
         {
-            if (pendingSegnOutput != null)
+            if (pendingSegnOutput is object)
             {
                 throw new InvalidOperationException("prepareCommit was already called");
             }
@@ -1144,7 +1144,7 @@ namespace Lucene.Net.Index
             if (includeSegmentsFile)
             {
                 string segmentFileName = GetSegmentsFileName();
-                if (segmentFileName != null)
+                if (segmentFileName is object)
                 {
                     files.Add(segmentFileName);
                 }
@@ -1378,7 +1378,7 @@ namespace Lucene.Net.Index
             var list = new List<SegmentCommitInfo>(Count);
             foreach (var info in segments)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Codec != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Codec is object);
                 list.Add((SegmentCommitInfo)(info.Clone()));
             }
             return list;

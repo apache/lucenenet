@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// <exception cref="QueryNodeError">throw in overridden method to disallow</exception>
         public PhraseSlopQueryNode(IQueryNode query, int value)
         {
-            if (query == null)
+            if (query is null)
             {
                 throw new QueryNodeError(new Message(
                     QueryParserMessages.NODE_ACTION_NOT_SUPPORTED, "query", "null"));
@@ -72,7 +72,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public override string ToQueryString(IEscapeQuerySyntax escapeSyntaxParser)
         {
-            if (GetChild() == null)
+            if (GetChild() is null)
                 return "";
             return GetChild().ToQueryString(escapeSyntaxParser) + "~"
                 + GetValueString();
@@ -93,9 +93,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             {
                 IQueryNode child = GetChild();
 
-                if (child is IFieldableNode)
+                if (child is IFieldableNode fieldNode)
                 {
-                    return ((IFieldableNode)child).Field;
+                    return fieldNode.Field;
                 }
 
                 return null;
@@ -104,9 +104,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             {
                 IQueryNode child = GetChild();
 
-                if (child is IFieldableNode)
+                if (child is IFieldableNode fieldNode)
                 {
-                    ((IFieldableNode)child).Field = value;
+                    fieldNode.Field = value;
                 }
             }
         }

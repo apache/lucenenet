@@ -49,7 +49,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         protected virtual void Allocate()
         {
-            if (this.clauses == null)
+            if (this.clauses is null)
             {
                 this.clauses = new List<IQueryNode>();
             }
@@ -61,7 +61,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public void Add(IQueryNode child)
         {
-            if (IsLeaf || this.clauses == null || child == null)
+            if (IsLeaf || this.clauses is null || child is null)
             {
                 throw new ArgumentException(NLS
                     .GetLocalizedMessage(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED));
@@ -73,7 +73,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public void Add(IList<IQueryNode> children)
         {
-            if (IsLeaf || this.clauses == null)
+            if (IsLeaf || this.clauses is null)
             {
                 throw new ArgumentException(NLS
                     .GetLocalizedMessage(QueryParserMessages.NODE_ACTION_NOT_SUPPORTED));
@@ -93,7 +93,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public void Set(IList<IQueryNode> children)
         {
-            if (IsLeaf || this.clauses == null)
+            if (IsLeaf || this.clauses is null)
             {
                 var factory = NLS.GetResourceManagerFactory();
                 ResourceManager bundle = factory.Create(typeof(QueryParserMessages));
@@ -140,7 +140,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             clone.tags = new Dictionary<string, object>();
 
             // copy children
-            if (this.clauses != null)
+            if (this.clauses is object)
             {
                 List<IQueryNode> localClauses = new List<IQueryNode>();
                 foreach (IQueryNode clause in this.clauses)
@@ -164,7 +164,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         public IList<IQueryNode> GetChildren()
         {
-            if (IsLeaf || this.clauses == null)
+            if (IsLeaf || this.clauses is null)
             {
                 return null;
             }
@@ -209,7 +209,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public virtual IQueryNode Parent => this.parent;
 
-        protected virtual bool IsRoot => Parent == null;
+        protected virtual bool IsRoot => Parent is null;
 
         /// <summary>
         /// If set to true the the method toQueryString will not write field names
@@ -230,7 +230,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         {
             if (this.m_toQueryStringIgnoreFields)
                 return true;
-            if (fld == null)
+            if (fld is null)
                 return true;
             if (QueryNode.PLAINTEXT_FIELD_NAME.Equals(StringUtils.ToString(fld), StringComparison.Ordinal))
                 return true;
@@ -255,7 +255,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         public virtual void RemoveFromParent()
         {
-            if (this.parent != null)
+            if (this.parent is object)
             {
                 IList<IQueryNode> parentChildren = this.parent.GetChildren();
 

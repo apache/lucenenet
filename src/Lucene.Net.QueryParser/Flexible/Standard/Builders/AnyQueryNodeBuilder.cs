@@ -43,13 +43,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             BooleanQuery bQuery = new BooleanQuery();
             IList<IQueryNode> children = andNode.GetChildren();
 
-            if (children != null)
+            if (children is object)
             {
                 foreach (IQueryNode child in children)
                 {
                     object obj = child.GetTag(QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
 
-                    if (obj != null)
+                    if (obj is object)
                     {
                         Query query = (Query)obj;
 

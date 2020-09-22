@@ -230,7 +230,7 @@ namespace Lucene.Net.Util.Packed
         public virtual long RamBytesUsed()
         {
             // TODO: this is called per-doc-per-norms/dv-field, can we optimize this?
-            long bytesUsed = RamUsageEstimator.AlignObjectSize(BaseRamBytesUsed()) + (pending != null ? RamUsageEstimator.SizeOf(pending) : 0L) + RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + (long)RamUsageEstimator.NUM_BYTES_OBJECT_REF * values.Length); // values
+            long bytesUsed = RamUsageEstimator.AlignObjectSize(BaseRamBytesUsed()) + (pending is object ? RamUsageEstimator.SizeOf(pending) : 0L) + RamUsageEstimator.AlignObjectSize(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + (long)RamUsageEstimator.NUM_BYTES_OBJECT_REF * values.Length); // values
 
             return bytesUsed + valuesBytes;
         }

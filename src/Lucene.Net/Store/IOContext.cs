@@ -67,7 +67,7 @@ namespace Lucene.Net.Store
 
         public IOContext(FlushInfo flushInfo)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(flushInfo != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(flushInfo is object);
             this.Context = UsageContext.FLUSH;
             this.MergeInfo = null;
             this.ReadOnce = false;
@@ -96,7 +96,7 @@ namespace Lucene.Net.Store
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(context != UsageContext.MERGE || mergeInfo != null, "MergeInfo must not be null if context is MERGE");
+                Debugging.Assert(context != UsageContext.MERGE || mergeInfo is object, "MergeInfo must not be null if context is MERGE");
                 Debugging.Assert(context != UsageContext.FLUSH, "Use IOContext(FlushInfo) to create a FLUSH IOContext");
             }
             this.Context = context;
@@ -149,7 +149,7 @@ namespace Lucene.Net.Store
             }
             if (FlushInfo == null)
             {
-                if (other.FlushInfo != null)
+                if (other.FlushInfo is object)
                 {
                     return false;
                 }
@@ -160,7 +160,7 @@ namespace Lucene.Net.Store
             }
             if (MergeInfo == null)
             {
-                if (other.MergeInfo != null)
+                if (other.MergeInfo is object)
                 {
                     return false;
                 }

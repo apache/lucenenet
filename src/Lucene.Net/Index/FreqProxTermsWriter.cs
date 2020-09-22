@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
                     fieldWriter.Reset();
                 }
 
-                if (termsHash != null)
+                if (termsHash is object)
                 {
                     termsHash.Reset();
                 }

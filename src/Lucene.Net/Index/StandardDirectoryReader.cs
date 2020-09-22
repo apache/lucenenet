@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
             // to lookup a reader using its segment name
             IDictionary<string, int?> segmentReaders = new Dictionary<string, int?>();
 
-            if (oldReaders != null)
+            if (oldReaders is object)
             {
                 // create a Map SegmentName->SegmentReader
                 for (int i = 0, c = oldReaders.Count; i < c; i++)
@@ -264,7 +264,7 @@ namespace Lucene.Net.Index
                     {
                         for (i++; i < infos.Count; i++)
                         {
-                            if (newReaders[i] != null)
+                            if (newReaders[i] is object)
                             {
                                 try
                                 {
@@ -304,11 +304,11 @@ namespace Lucene.Net.Index
             buffer.Append(this.GetType().Name);
             buffer.Append('(');
             string segmentsFile = segmentInfos.GetSegmentsFileName();
-            if (segmentsFile != null)
+            if (segmentsFile is object)
             {
                 buffer.Append(segmentsFile).Append(":").Append(segmentInfos.Version);
             }
-            if (writer != null)
+            if (writer is object)
             {
                 buffer.Append(":nrt");
             }
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
 
             // If we were obtained by writer.getReader(), re-ask the
             // writer to get a new reader.
-            if (writer != null)
+            if (writer is object)
             {
                 return DoOpenFromWriter(commit);
             }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Index
 
         private DirectoryReader DoOpenFromWriter(IndexCommit commit)
         {
-            if (commit != null)
+            if (commit is object)
             {
                 return DoOpenFromCommit(commit);
             }
@@ -394,7 +394,7 @@ namespace Lucene.Net.Index
                 {
                     throw new IOException("the specified commit does not match the specified Directory");
                 }
-                if (segmentInfos != null && commit.SegmentsFileName.Equals(segmentInfos.GetSegmentsFileName(), StringComparison.Ordinal))
+                if (segmentInfos is object && commit.SegmentsFileName.Equals(segmentInfos.GetSegmentsFileName(), StringComparison.Ordinal))
                 {
                     return null;
                 }
@@ -481,7 +481,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            if (writer != null)
+            if (writer is object)
             {
                 try
                 {

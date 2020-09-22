@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis
         public int CorrectOffset(int currentOff)
         {
             int corrected = Correct(currentOff);
-            return (m_input is CharFilter) ? ((CharFilter)m_input).CorrectOffset(corrected) : corrected;
+            return (m_input is CharFilter filter) ? filter.CorrectOffset(corrected) : corrected;
         }
 
         // LUCENENET specific - force subclasses to implement Read(char[] buffer, int index, int count),

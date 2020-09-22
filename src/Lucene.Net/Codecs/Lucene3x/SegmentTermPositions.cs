@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     internal sealed class SegmentTermPositions : SegmentTermDocs
     {
         private IndexInput proxStream;
-        private IndexInput proxStreamOrig;
+        private readonly IndexInput proxStreamOrig;
         private int proxCount;
         private int position;
 
@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         internal override void Seek(TermInfo ti, Term term)
         {
             base.Seek(ti, term);
-            if (ti != null)
+            if (ti is object)
             {
                 lazySkipPointer = ti.ProxPointer;
             }
@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             if (disposing)
             {
-                if (proxStream != null)
+                if (proxStream is object)
                 {
                     proxStream.Dispose();
                 }

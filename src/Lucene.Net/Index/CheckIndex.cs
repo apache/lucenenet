@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
     public class CheckIndex
     {
         private TextWriter infoStream;
-        private Directory dir;
+        private readonly Directory dir;
 
         /// <summary>
         /// Returned from <see cref="CheckIndex.DoCheckIndex()"/> detailing the health and status of the index.
@@ -473,7 +473,7 @@ namespace Lucene.Net.Index
 
         private static void Msg(TextWriter @out, string msg)
         {
-            if (@out != null)
+            if (@out is object)
             {
                 @out.WriteLine(msg);
             }
@@ -522,7 +522,7 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR: could not read any segments file in directory");
                 result.MissingSegments = true;
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     // LUCENENET NOTE: Some tests rely on the error type being in
                     // the message. We can't get the error type with StackTrace, we
@@ -571,7 +571,7 @@ namespace Lucene.Net.Index
             catch (Exception t)
             {
                 Msg(infoStream, "ERROR: could not open segments file in directory");
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     // LUCENENET NOTE: Some tests rely on the error type being in
                     // the message. We can't get the error type with StackTrace, we
@@ -590,7 +590,7 @@ namespace Lucene.Net.Index
             catch (Exception t)
             {
                 Msg(infoStream, "ERROR: could not read segment file version in directory");
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     // LUCENENET NOTE: Some tests rely on the error type being in
                     // the message. We can't get the error type with StackTrace, we
@@ -603,7 +603,7 @@ namespace Lucene.Net.Index
             }
             finally
             {
-                if (input != null)
+                if (input is object)
                 {
                     input.Dispose();
                 }
@@ -626,7 +626,7 @@ namespace Lucene.Net.Index
             }
 
             string versionString = null;
-            if (oldSegs != null)
+            if (oldSegs is object)
             {
                 if (foundNonNullVersion)
                 {
@@ -644,10 +644,10 @@ namespace Lucene.Net.Index
 
             Msg(infoStream, "Segments file=" + segmentsFileName + " numSegments=" + numSegments + " " + versionString + " format=" + sFormat + userDataString);
 
-            if (onlySegments != null)
+            if (onlySegments is object)
             {
                 result.Partial = true;
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     infoStream.Write("\nChecking only these segments:");
                     foreach (string s in onlySegments)
@@ -685,7 +685,7 @@ namespace Lucene.Net.Index
                 {
                     result.MaxSegmentName = segmentName;
                 }
-                if (onlySegments != null && !onlySegments.Contains(info.Info.Name))
+                if (onlySegments is object && !onlySegments.Contains(info.Info.Name))
                 {
                     continue;
                 }
@@ -696,7 +696,7 @@ namespace Lucene.Net.Index
                 segInfoStat.DocCount = info.Info.DocCount;
 
                 string version = info.Info.Version;
-                if (info.Info.DocCount <= 0 && version != null && versionComparer.Compare(version, "4.5") >= 0)
+                if (info.Info.DocCount <= 0 && version is object && versionComparer.Compare(version, "4.5") >= 0)
                 {
                     throw new Exception("illegal number of documents: maxDoc=" + info.Info.DocCount);
                 }
@@ -740,7 +740,7 @@ namespace Lucene.Net.Index
                         segInfoStat.HasDeletions = true;
                         segInfoStat.DeletionsGen = info.DelGen;
                     }
-                    if (infoStream != null)
+                    if (infoStream is object)
                     {
                         infoStream.Write("    test: open reader.........");
                     }
@@ -749,14 +749,14 @@ namespace Lucene.Net.Index
 
                     segInfoStat.OpenReaderPassed = true;
 
-                    if (infoStream != null)
+                    if (infoStream is object)
                     {
                         infoStream.Write("    test: check integrity.....");
                     }
                     reader.CheckIntegrity();
                     Msg(infoStream, "OK");
 
-                    if (infoStream != null)
+                    if (infoStream is object)
                     {
                         infoStream.Write("    test: check live docs.....");
                     }
@@ -807,7 +807,7 @@ namespace Lucene.Net.Index
                             throw new Exception("delete count mismatch: info=" + info.DelCount + " vs reader=" + (info.Info.DocCount - numDocs));
                         }
                         IBits liveDocs = reader.LiveDocs;
-                        if (liveDocs != null)
+                        if (liveDocs is object)
                         {
                             // its ok for it to be non-null here, as long as none are set right?
                             for (int j = 0; j < liveDocs.Length; j++)
@@ -826,7 +826,7 @@ namespace Lucene.Net.Index
                     }
 
                     // Test getFieldInfos()
-                    if (infoStream != null)
+                    if (infoStream is object)
                     {
                         infoStream.Write("    test: fields..............");
                     }
@@ -850,23 +850,23 @@ namespace Lucene.Net.Index
 
                     // Rethrow the first exception we encountered
                     //  this will cause stats for failed segments to be incremented properly
-                    if (segInfoStat.FieldNormStatus.Error != null)
+                    if (segInfoStat.FieldNormStatus.Error is object)
                     {
                         throw new Exception("Field Norm test failed");
                     }
-                    else if (segInfoStat.TermIndexStatus.Error != null)
+                    else if (segInfoStat.TermIndexStatus.Error is object)
                     {
                         throw new Exception("Term Index test failed");
                     }
-                    else if (segInfoStat.StoredFieldStatus.Error != null)
+                    else if (segInfoStat.StoredFieldStatus.Error is object)
                     {
                         throw new Exception("Stored Field test failed");
                     }
-                    else if (segInfoStat.TermVectorStatus.Error != null)
+                    else if (segInfoStat.TermVectorStatus.Error is object)
                     {
                         throw new Exception("Term Vector test failed");
                     }
-                    else if (segInfoStat.DocValuesStatus.Error != null)
+                    else if (segInfoStat.DocValuesStatus.Error is object)
                     {
                         throw new Exception("DocValues test failed");
                     }
@@ -879,7 +879,7 @@ namespace Lucene.Net.Index
                     string comment;
                     comment = "fixIndex() would remove reference to this segment";
                     Msg(infoStream, "    WARNING: " + comment + "; full exception:");
-                    if (infoStream != null)
+                    if (infoStream is object)
                     {
                         // LUCENENET NOTE: Some tests rely on the error type being in
                         // the message. We can't get the error type with StackTrace, we
@@ -894,7 +894,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    if (reader != null)
+                    if (reader is object)
                     {
                         reader.Dispose();
                     }
@@ -940,7 +940,7 @@ namespace Lucene.Net.Index
             try
             {
                 // Test Field Norms
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     infoStream.Write("    test: field norms.........");
                 }
@@ -959,7 +959,7 @@ namespace Lucene.Net.Index
 #pragma warning disable 612, 618
                         if (Debugging.AssertsEnabled) Debugging.Assert(!reader.HasNorms(info.Name)); // deprecated path
 #pragma warning restore 612, 618
-                        if (reader.GetNormValues(info.Name) != null)
+                        if (reader.GetNormValues(info.Name) is object)
                         {
                             throw new Exception("field: " + info.Name + " should omit norms but has them!");
                         }
@@ -972,7 +972,7 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     // LUCENENET NOTE: Some tests rely on the error type being in
                     // the message. We can't get the error type with StackTrace, we
@@ -1010,7 +1010,7 @@ namespace Lucene.Net.Index
             foreach (string field in fields)
             {
                 // MultiFieldsEnum relies upon this order...
-                if (lastField != null && field.CompareToOrdinal(lastField) <= 0)
+                if (lastField is object && field.CompareToOrdinal(lastField) <= 0)
                 {
                     throw new Exception("fields out of order: lastField=" + lastField + " field=" + field);
                 }
@@ -1031,7 +1031,7 @@ namespace Lucene.Net.Index
                 // TODO: really the codec should not return a field
                 // from FieldsEnum if it has no Terms... but we do
                 // this today:
-                // assert fields.terms(field) != null;
+                // assert fields.terms(field) is object;
                 computedFieldCount++;
 
                 Terms terms = fields.GetTerms(field);
@@ -1158,7 +1158,7 @@ namespace Lucene.Net.Index
                     }
 
                     DocsEnum docs2;
-                    if (postings != null)
+                    if (postings is object)
                     {
                         docs2 = postings;
                     }
@@ -1284,7 +1284,7 @@ namespace Lucene.Net.Index
                     bool hasTotalTermFreq = hasFreqs && totalTermFreq2 != -1;
 
                     // Re-count if there are deleted docs:
-                    if (liveDocs != null)
+                    if (liveDocs is object)
                     {
                         if (hasFreqs)
                         {
@@ -1452,7 +1452,7 @@ namespace Lucene.Net.Index
                     if (fieldTerms is BlockTreeTermsReader.FieldReader)
                     {
                         BlockTreeTermsReader.Stats stats = ((BlockTreeTermsReader.FieldReader)fieldTerms).ComputeStats();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(stats != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(stats is object);
                         if (status.BlockTreeStats == null)
                         {
                             status.BlockTreeStats = new Dictionary<string, BlockTreeTermsReader.Stats>();
@@ -1478,7 +1478,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (fieldTerms != null)
+                    if (fieldTerms is object)
                     {
                         int v = fieldTerms.DocCount;
                         if (v != -1 && visitedDocs.Cardinality() != v)
@@ -1488,7 +1488,7 @@ namespace Lucene.Net.Index
                     }
 
                     // Test seek to last term:
-                    if (lastTerm != null)
+                    if (lastTerm is object)
                     {
                         if (termsEnum.SeekCeil(lastTerm) != TermsEnum.SeekStatus.FOUND)
                         {
@@ -1625,7 +1625,7 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "OK [" + status.TermCount + " terms; " + status.TotFreq + " terms/docs pairs; " + status.TotPos + " tokens]");
             }
 
-            if (verbose && status.BlockTreeStats != null && infoStream != null && status.TermCount > 0)
+            if (verbose && status.BlockTreeStats is object && infoStream is object && status.TermCount > 0)
             {
                 foreach (KeyValuePair<string, BlockTreeTermsReader.Stats> ent in status.BlockTreeStats)
                 {
@@ -1663,7 +1663,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     infoStream.Write("    test: terms, freq, prox...");
                 }
@@ -1671,9 +1671,9 @@ namespace Lucene.Net.Index
                 Fields fields = reader.Fields;
                 FieldInfos fieldInfos = reader.FieldInfos;
                 status = CheckFields(fields, liveDocs, maxDoc, fieldInfos, true, false, infoStream, verbose);
-                if (liveDocs != null)
+                if (liveDocs is object)
                 {
-                    if (infoStream != null)
+                    if (infoStream is object)
                     {
                         infoStream.Write("    test (ignoring deletes): terms, freq, prox...");
                     }
@@ -1685,7 +1685,7 @@ namespace Lucene.Net.Index
                 Msg(infoStream, "ERROR: " + e);
                 status = new Status.TermIndexStatus();
                 status.Error = e;
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     // LUCENENET NOTE: Some tests rely on the error type being in
                     // the message. We can't get the error type with StackTrace, we
@@ -1709,7 +1709,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     infoStream.Write("    test: stored fields.......");
                 }
@@ -1740,7 +1740,7 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     // LUCENENET NOTE: Some tests rely on the error type being in
                     // the message. We can't get the error type with StackTrace, we
@@ -1763,7 +1763,7 @@ namespace Lucene.Net.Index
             Status.DocValuesStatus status = new Status.DocValuesStatus();
             try
             {
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     infoStream.Write("    test: docvalues...........");
                 }
@@ -1776,7 +1776,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        if (reader.GetBinaryDocValues(fieldInfo.Name) != null || reader.GetNumericDocValues(fieldInfo.Name) != null || reader.GetSortedDocValues(fieldInfo.Name) != null || reader.GetSortedSetDocValues(fieldInfo.Name) != null || reader.GetDocsWithField(fieldInfo.Name) != null)
+                        if (reader.GetBinaryDocValues(fieldInfo.Name) is object || reader.GetNumericDocValues(fieldInfo.Name) is object || reader.GetSortedDocValues(fieldInfo.Name) is object || reader.GetSortedSetDocValues(fieldInfo.Name) is object || reader.GetDocsWithField(fieldInfo.Name) is object)
                         {
                             throw new Exception("field: " + fieldInfo.Name + " has docvalues but should omit them!");
                         }
@@ -1789,7 +1789,7 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     // LUCENENET NOTE: Some tests rely on the error type being in
                     // the message. We can't get the error type with StackTrace, we
@@ -1859,7 +1859,7 @@ namespace Lucene.Net.Index
             {
                 dv.LookupOrd(i, scratch);
                 if (Debugging.AssertsEnabled) Debugging.Assert(scratch.IsValid());
-                if (lastValue != null)
+                if (lastValue is object)
                 {
                     if (scratch.CompareTo(lastValue) <= 0)
                     {
@@ -1951,7 +1951,7 @@ namespace Lucene.Net.Index
             {
                 dv.LookupOrd(i, scratch);
                 if (Debugging.AssertsEnabled) Debugging.Assert(scratch.IsValid());
-                if (lastValue != null)
+                if (lastValue is object)
                 {
                     if (scratch.CompareTo(lastValue) <= 0)
                     {
@@ -1990,7 +1990,7 @@ namespace Lucene.Net.Index
                 case DocValuesType.SORTED:
                     status.TotalSortedFields++;
                     CheckSortedDocValues(fi.Name, reader, reader.GetSortedDocValues(fi.Name), docsWithField);
-                    if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
+                    if (reader.GetBinaryDocValues(fi.Name) is object || reader.GetNumericDocValues(fi.Name) is object || reader.GetSortedSetDocValues(fi.Name) is object)
                     {
                         throw new Exception(fi.Name + " returns multiple docvalues types!");
                     }
@@ -1999,7 +1999,7 @@ namespace Lucene.Net.Index
                 case DocValuesType.SORTED_SET:
                     status.TotalSortedSetFields++;
                     CheckSortedSetDocValues(fi.Name, reader, reader.GetSortedSetDocValues(fi.Name), docsWithField);
-                    if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null)
+                    if (reader.GetBinaryDocValues(fi.Name) is object || reader.GetNumericDocValues(fi.Name) is object || reader.GetSortedDocValues(fi.Name) is object)
                     {
                         throw new Exception(fi.Name + " returns multiple docvalues types!");
                     }
@@ -2008,7 +2008,7 @@ namespace Lucene.Net.Index
                 case DocValuesType.BINARY:
                     status.TotalBinaryFields++;
                     CheckBinaryDocValues(fi.Name, reader, reader.GetBinaryDocValues(fi.Name), docsWithField);
-                    if (reader.GetNumericDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
+                    if (reader.GetNumericDocValues(fi.Name) is object || reader.GetSortedDocValues(fi.Name) is object || reader.GetSortedSetDocValues(fi.Name) is object)
                     {
                         throw new Exception(fi.Name + " returns multiple docvalues types!");
                     }
@@ -2017,7 +2017,7 @@ namespace Lucene.Net.Index
                 case DocValuesType.NUMERIC:
                     status.TotalNumericFields++;
                     CheckNumericDocValues(fi.Name, reader, reader.GetNumericDocValues(fi.Name), docsWithField);
-                    if (reader.GetBinaryDocValues(fi.Name) != null || reader.GetSortedDocValues(fi.Name) != null || reader.GetSortedSetDocValues(fi.Name) != null)
+                    if (reader.GetBinaryDocValues(fi.Name) is object || reader.GetSortedDocValues(fi.Name) is object || reader.GetSortedSetDocValues(fi.Name) is object)
                     {
                         throw new Exception(fi.Name + " returns multiple docvalues types!");
                     }
@@ -2064,7 +2064,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     infoStream.Write("    test: term vectors........");
                 }
@@ -2102,7 +2102,7 @@ namespace Lucene.Net.Index
                     // TODO: can we make a IS(FIR) that searches just
                     // this term vector... to pass for searcher?
 
-                    if (tfv != null)
+                    if (tfv is object)
                     {
                         // First run with no deletions:
                         CheckFields(tfv, null, 1, fieldInfos, false, true, infoStream, verbose);
@@ -2154,25 +2154,25 @@ namespace Lucene.Net.Index
                                     if (hasProx)
                                     {
                                         postings = termsEnum.DocsAndPositions(null, postings);
-                                        if (Debugging.AssertsEnabled) Debugging.Assert(postings != null);
+                                        if (Debugging.AssertsEnabled) Debugging.Assert(postings is object);
                                         docs = null;
                                     }
                                     else
                                     {
                                         docs = termsEnum.Docs(null, docs);
-                                        if (Debugging.AssertsEnabled) Debugging.Assert(docs != null);
+                                        if (Debugging.AssertsEnabled) Debugging.Assert(docs is object);
                                         postings = null;
                                     }
 
                                     DocsEnum docs2;
                                     if (hasProx)
                                     {
-                                        if (Debugging.AssertsEnabled) Debugging.Assert(postings != null);
+                                        if (Debugging.AssertsEnabled) Debugging.Assert(postings is object);
                                         docs2 = postings;
                                     }
                                     else
                                     {
-                                        if (Debugging.AssertsEnabled) Debugging.Assert(docs != null);
+                                        if (Debugging.AssertsEnabled) Debugging.Assert(docs is object);
                                         docs2 = docs;
                                     }
 
@@ -2192,7 +2192,7 @@ namespace Lucene.Net.Index
                                         }
                                     }
 
-                                    if (postingsPostings != null)
+                                    if (postingsPostings is object)
                                     {
                                         postingsDocs2 = postingsPostings;
                                     }
@@ -2227,7 +2227,7 @@ namespace Lucene.Net.Index
                                             for (int i = 0; i < tf; i++)
                                             {
                                                 int pos = postings.NextPosition();
-                                                if (postingsPostings != null)
+                                                if (postingsPostings is object)
                                                 {
                                                     int postingsPos = postingsPostings.NextPosition();
                                                     if (terms.HasPositions && pos != postingsPos)
@@ -2251,7 +2251,7 @@ namespace Lucene.Net.Index
                                                   lastStartOffset = startOffset;
                                                 */
 
-                                                if (postingsPostings != null)
+                                                if (postingsPostings is object)
                                                 {
                                                     int postingsStartOffset = postingsPostings.StartOffset;
 
@@ -2268,20 +2268,20 @@ namespace Lucene.Net.Index
 
                                                 BytesRef payload = postings.GetPayload();
 
-                                                if (payload != null)
+                                                if (payload is object)
                                                 {
                                                     if (Debugging.AssertsEnabled) Debugging.Assert(vectorsHasPayload);
                                                 }
 
                                                 if (postingsHasPayload && vectorsHasPayload)
                                                 {
-                                                    if (Debugging.AssertsEnabled) Debugging.Assert(postingsPostings != null);
+                                                    if (Debugging.AssertsEnabled) Debugging.Assert(postingsPostings is object);
 
                                                     if (payload == null)
                                                     {
                                                         // we have payloads, but not at this position.
                                                         // postings has payloads too, it should not have one at this position
-                                                        if (postingsPostings.GetPayload() != null)
+                                                        if (postingsPostings.GetPayload() is object)
                                                         {
                                                             throw new Exception("vector term=" + term + " field=" + field + " doc=" + j + " has no payload but postings does: " + postingsPostings.GetPayload());
                                                         }
@@ -2316,7 +2316,7 @@ namespace Lucene.Net.Index
             {
                 Msg(infoStream, "ERROR [" + e.Message + "]");
                 status.Error = e;
-                if (infoStream != null)
+                if (infoStream is object)
                 {
                     // LUCENENET NOTE: Some tests rely on the error type being in
                     // the message. We can't get the error type with StackTrace, we
@@ -2451,7 +2451,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (indexPath != null)
+                    if (indexPath is object)
                     {
                         // LUCENENET specific - we only output from our CLI wrapper
                         throw new ArgumentException("ERROR: unexpected extra argument '" + args[i] + "'");

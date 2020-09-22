@@ -50,7 +50,7 @@ namespace Lucene.Net.Store
         protected internal override void FlushBuffer(byte[] b, int offset, int len)
         {
             rateLimiter.Pause(len);
-            if (bufferedDelegate != null)
+            if (bufferedDelegate is object)
             {
                 bufferedDelegate.FlushBuffer(b, offset, len);
             }

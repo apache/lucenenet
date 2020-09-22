@@ -167,8 +167,8 @@ namespace Lucene.Net.Index
 
         private class BitsAnonymousInnerClassHelper : IBits
         {
-            private Lucene.Net.Index.SortedDocValues dv;
-            private int maxDoc;
+            private readonly Lucene.Net.Index.SortedDocValues dv;
+            private readonly int maxDoc;
 
             public BitsAnonymousInnerClassHelper(Lucene.Net.Index.SortedDocValues dv, int maxDoc)
             {
@@ -194,8 +194,8 @@ namespace Lucene.Net.Index
 
         private class BitsAnonymousInnerClassHelper2 : IBits
         {
-            private Lucene.Net.Index.SortedSetDocValues dv;
-            private int maxDoc;
+            private readonly Lucene.Net.Index.SortedSetDocValues dv;
+            private readonly int maxDoc;
 
             public BitsAnonymousInnerClassHelper2(Lucene.Net.Index.SortedSetDocValues dv, int maxDoc)
             {

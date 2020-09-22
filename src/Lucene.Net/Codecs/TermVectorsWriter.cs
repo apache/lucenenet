@@ -232,7 +232,7 @@ namespace Lucene.Net.Codecs
 
                 for (int docID = 0; docID < maxDoc; docID++)
                 {
-                    if (liveDocs != null && !liveDocs.Get(docID))
+                    if (liveDocs is object && !liveDocs.Get(docID))
                     {
                         // skip deleted docs
                         continue;
@@ -328,7 +328,7 @@ namespace Lucene.Net.Codecs
                     if (hasPositions || hasOffsets)
                     {
                         docsAndPositionsEnum = termsEnum.DocsAndPositions(null, docsAndPositionsEnum);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(docsAndPositionsEnum != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(docsAndPositionsEnum is object);
 
                         int docID = docsAndPositionsEnum.NextDoc();
                         if (Debugging.AssertsEnabled)
@@ -365,7 +365,7 @@ namespace Lucene.Net.Codecs
         public abstract IComparer<BytesRef> Comparer { get; }
 
         /// <summary>
-        /// Disposes all resources used by this object.
+        /// Disposes all resources used by th is object.
         /// </summary>
         public void Dispose()
         {

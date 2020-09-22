@@ -89,15 +89,11 @@ namespace Lucene.Net.Store
         ///           if <paramref name="dir"/> or <paramref name="name"/> is <c>null</c> </exception>
         internal CompoundFileWriter(Directory dir, string name)
         {
-            if (dir == null)
-            {
-                throw new ArgumentNullException("directory cannot be null"); 
-            }
-            if (name == null)
+            if (name is null)
             {
                 throw new ArgumentNullException("name cannot be null"); 
             }
-            directory = dir;
+            directory = dir ?? throw new ArgumentNullException("directory cannot be null");
             entryTableName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
             dataFileName = name;
         }
@@ -106,7 +102,7 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                if (dataOut == null)
+                if (dataOut is null)
                 {
                     bool success = false;
                     try
@@ -140,7 +136,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <exception cref="InvalidOperationException">
         ///           if <see cref="Dispose"/> had been called before or if no file has been added to
-        ///           this object </exception>
+        ///           th is object </exception>
         public void Dispose()
         {
             if (closed)
@@ -160,7 +156,7 @@ namespace Lucene.Net.Store
                 closed = true;
                 // open the compound stream
                 GetOutput();
-                if (Debugging.AssertsEnabled) Debugging.Assert(dataOut != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(dataOut is object);
                 CodecUtil.WriteFooter(dataOut);
             }
             catch (IOException e)
@@ -253,7 +249,7 @@ namespace Lucene.Net.Store
             bool outputLocked = false;
             try
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(name != null, "name must not be null");
+                if (Debugging.AssertsEnabled) Debugging.Assert(name is object, "name must not be null");
                 if (entries.ContainsKey(name))
                 {
                     throw new ArgumentException("File " + name + " already exists");
@@ -347,7 +343,7 @@ namespace Lucene.Net.Store
             private readonly IndexOutput @delegate;
             private readonly long offset;
             private bool closed;
-            private FileEntry entry;
+            private readonly FileEntry entry;
             private long writtenBytes;
             private readonly bool isSeparate;
 

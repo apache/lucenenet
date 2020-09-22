@@ -126,12 +126,12 @@ namespace Lucene.Net.Store
                 if (lockWaitTimeout != LOCK_OBTAIN_WAIT_FOREVER && sleepCount++ >= maxSleepCount)
                 {
                     string reason = "Lock obtain timed out: " + this.ToString();
-                    if (FailureReason != null)
+                    if (FailureReason is object)
                     {
                         reason += ": " + FailureReason;
                     }
                     LockObtainFailedException e = new LockObtainFailedException(reason);
-                    e = FailureReason != null
+                    e = FailureReason is object
                                         ? new LockObtainFailedException(reason, FailureReason)
                                         : new LockObtainFailedException(reason);
                     throw e;
@@ -178,8 +178,8 @@ namespace Lucene.Net.Store
         /// Utility class for executing code with exclusive access. </summary>
         public abstract class With<T> // LUCENENET specific - made generic so we don't need to deal with casting
         {
-            private Lock @lock;
-            private long lockWaitTimeout;
+            private readonly Lock @lock;
+            private readonly long lockWaitTimeout;
 
             /// <summary>
             /// Constructs an executor that will grab the named <paramref name="lock"/>. </summary>
@@ -233,10 +233,7 @@ namespace Lucene.Net.Store
             public AnonymousWith(Lock @lock, int lockWaitTimeout, Func<T> doBody)
                 : base(@lock, lockWaitTimeout)
             {
-                if (doBody == null)
-                    throw new ArgumentNullException("doBody");
-
-                this.doBody = doBody;
+                this.doBody = doBody ?? throw new ArgumentNullException("doBody");
             }
 
             protected override T DoBody()
