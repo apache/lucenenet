@@ -579,11 +579,17 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// Interface used to identify a <see cref="CreationPlaceholder{TValue}"/> without
+        /// referencing its generic closing type.
+        /// </summary>
+        public interface ICreationPlaceholder { }
+
+        /// <summary>
         /// Placeholder indicating creation of this cache is currently in-progress.
         /// </summary>
-        public sealed class CreationPlaceholder
+        public sealed class CreationPlaceholder<TValue> : ICreationPlaceholder
         {
-            internal object Value { get; set; }
+            internal TValue Value { get; set; }
         }
 
         /// <summary>
