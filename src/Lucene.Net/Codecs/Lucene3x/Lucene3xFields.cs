@@ -1057,7 +1057,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 PreDocsEnum docsEnum;
-                if (reuse is PreDocsEnum preDocsEnum)
+                if ((!(reuse is null) && reuse is PreDocsEnum preDocsEnum))
                 {
                     docsEnum = preDocsEnum;
                     if (docsEnum.FreqStream != outerInstance.FreqStream)
@@ -1079,7 +1079,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     return null;
                 }
-                else if (reuse is null || !(reuse is PreDocsAndPositionsEnum preDocsAndPositionEnum))
+                else if (reuse is null || !(!(reuse is null) && reuse is PreDocsAndPositionsEnum preDocsAndPositionEnum))
                 {
                     docsPosEnum = new PreDocsAndPositionsEnum(outerInstance);
                 }

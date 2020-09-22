@@ -330,7 +330,7 @@ namespace Lucene.Net.Documents
             {
                 return str;
             }
-            else if (FieldsData is Number number)
+            else if ((!(FieldsData is null) && FieldsData is Number number))
             {
                 return number.ToString(provider);
             }
@@ -354,7 +354,7 @@ namespace Lucene.Net.Documents
             {
                 return str;
             }
-            else if (FieldsData is Number number)
+            else if ((!(FieldsData is null) && FieldsData is Number number))
             {
                 return number.ToString(format);
             }
@@ -379,7 +379,7 @@ namespace Lucene.Net.Documents
             {
                 return FieldsData.ToString();
             }
-            else if (FieldsData is Number number)
+            else if ((!(FieldsData is null) && FieldsData is Number number))
             {
                 return number.ToString(format, provider);
             }
@@ -396,7 +396,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual TextReader GetReaderValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            return FieldsData is TextReader reader ? reader : null;
+            return (!(FieldsData is null) && FieldsData is TextReader reader) ? reader : null;
         }
 
         /// <summary>
@@ -619,11 +619,11 @@ namespace Lucene.Net.Documents
             {
                 return int64.GetInt64Value();
             }
-            else if (FieldsData is Single single)
+            else if ((!(FieldsData is null) && FieldsData is Single single))
             {
                 return single.GetSingleValue();
             }
-            else if (FieldsData is Double dbl)
+            else if ((!(FieldsData is null) && FieldsData is Double dbl))
             {
                 return dbl.GetDoubleValue();
             }
@@ -667,7 +667,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
         public virtual byte? GetByteValue()
         {
-            return FieldsData is Number number ? number.GetByteValue() : (byte?)null;
+            return (!(FieldsData is null) && FieldsData is Number number) ? number.GetByteValue() : (byte?)null;
         }
 
         /// <summary>
@@ -678,7 +678,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Short, since we have no Number class in .NET
         public virtual short? GetInt16Value()
         {
-            return FieldsData is Number number ? number.GetInt16Value() : (short?)null;
+            return (!(FieldsData is null) && FieldsData is Number number) ? number.GetInt16Value() : (short?)null;
         }
 
         /// <summary>
@@ -689,7 +689,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Int32, since we have no Number class in .NET
         public virtual int? GetInt32Value()
         {
-            return FieldsData is Number number ? number.GetInt32Value() : (int?)null;
+            return (!(FieldsData is null) && FieldsData is Number number) ? number.GetInt32Value() : (int?)null;
         }
 
         /// <summary>
@@ -700,7 +700,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Int64, since we have no Number class in .NET
         public virtual long? GetInt64Value()
         {
-            if (FieldsData is Number number)
+            if ((!(FieldsData is null) && FieldsData is Number number))
             {
                 return number.GetInt64Value();
             }
@@ -718,7 +718,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Single, since we have no Number class in .NET
         public virtual float? GetSingleValue()
         {
-            if (FieldsData is Number number)
+            if ((!(FieldsData is null) && FieldsData is Number number))
             {
                 return number.GetSingleValue();
             }
@@ -736,14 +736,14 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Double, since we have no Number class in .NET
         public virtual double? GetDoubleValue()
         {
-            return FieldsData is Number number ? number.GetDoubleValue() : (double?)null;
+            return (!(FieldsData is null) && FieldsData is Number number) ? number.GetDoubleValue() : (double?)null;
         }
 
         /// <summary>
         /// Non-null if this field has a binary value. </summary>
         public virtual BytesRef GetBinaryValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            return FieldsData is BytesRef bytesRef ? bytesRef : null;
+            return (!(FieldsData is null) && FieldsData is BytesRef bytesRef) ? bytesRef : null;
         }
 
         /// <summary>

@@ -188,7 +188,7 @@ namespace Lucene.Net.Util.Packed
 
         private void SkipBytes(long count)
         {
-            if (@in is IndexInput input)
+            if ((!(@in is null) && @in is IndexInput input))
             {
                 input.Seek(input.GetFilePointer() + count);
             }

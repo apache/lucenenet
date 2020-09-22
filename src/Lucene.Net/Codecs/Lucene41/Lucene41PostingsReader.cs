@@ -236,7 +236,7 @@ namespace Lucene.Net.Codecs.Lucene41
         public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             BlockDocsEnum docsEnum;
-            if (reuse is BlockDocsEnum blocsReuse)
+            if ((!(reuse is null) && reuse is BlockDocsEnum blocsReuse))
             {
                 docsEnum = blocsReuse;
                 if (!docsEnum.CanReuse(docIn, fieldInfo))
@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs.Lucene41
             if ((!indexHasOffsets || (flags & DocsAndPositionsFlags.OFFSETS) == 0) && (!indexHasPayloads || (flags & DocsAndPositionsFlags.PAYLOADS) == 0))
             {
                 BlockDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse is BlockDocsAndPositionsEnum docsAndPosReuse)
+                if ((!(reuse is null) && reuse is BlockDocsAndPositionsEnum docsAndPosReuse))
                 {
                     docsAndPositionsEnum = docsAndPosReuse;
                     if (!docsAndPositionsEnum.CanReuse(docIn, fieldInfo))
@@ -278,7 +278,7 @@ namespace Lucene.Net.Codecs.Lucene41
             else
             {
                 EverythingEnum everythingEnum;
-                if (reuse is EverythingEnum eeReuse)
+                if ((!(reuse is null) && reuse is EverythingEnum eeReuse))
                 {
                     everythingEnum = eeReuse;
                     if (!everythingEnum.CanReuse(docIn, fieldInfo))

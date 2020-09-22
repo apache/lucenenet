@@ -118,12 +118,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is RangeMapSingleFunction other))
-                return false;
-            return this.m_min == other.m_min 
-                && this.m_max == other.m_max 
-                && this.m_target.Equals(other.m_target) 
-                && this.m_source.Equals(other.m_source) 
+            return !(o is null) && o is RangeMapSingleFunction other
+                && this.m_min == other.m_min
+                && this.m_max == other.m_max
+                && this.m_target.Equals(other.m_target)
+                && this.m_source.Equals(other.m_source)
                 && (this.m_defaultVal == other.m_defaultVal || (this.m_defaultVal != null && this.m_defaultVal.Equals(other.m_defaultVal)));
         }
     }

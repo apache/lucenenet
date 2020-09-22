@@ -41,7 +41,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             Query query = (Query)phraseSlopNode.GetChild().GetTag(
                 QueryTreeBuilder.QUERY_TREE_BUILDER_TAGID);
 
-            if (query is PhraseQuery phraseQuery)
+            if ((!(query is null) && query is PhraseQuery phraseQuery))
             {
                 phraseQuery.Slop = phraseSlopNode.Value;
             }

@@ -100,9 +100,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is ReverseOrdFieldSource other))
-                return false;
-            return this.field.Equals(other.field, StringComparison.Ordinal);
+            return !(o is null) && o is ReverseOrdFieldSource other && this.field.Equals(other.field, StringComparison.Ordinal);
         }
 
         private static readonly int hcode = typeof(ReverseOrdFieldSource).GetHashCode();

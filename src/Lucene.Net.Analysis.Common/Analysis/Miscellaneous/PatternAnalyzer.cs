@@ -251,7 +251,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 return false;
             }
 
-            if (other is PatternAnalyzer p2)
+            if ((!(other is null) && other is PatternAnalyzer p2))
             {
                 return toLowerCase == p2.toLowerCase && EqPattern(pattern, p2.pattern) && Eq(stopWords, p2.stopWords);
             }
@@ -302,7 +302,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <exception cref="IOException"> if an I/O error occurs while reading the stream </exception>
         private static string ToString(TextReader input)
         {
-            if (input is FastStringReader fsr) // fast path
+            if ((!(input is null) && input is FastStringReader fsr)) // fast path
             {
                 return fsr.String;
             }

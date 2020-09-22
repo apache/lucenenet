@@ -103,11 +103,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is ConstValueSource other))
+            if (!(o is null) && o is ConstValueSource other)
             {
-                return false;
+                return this.constant == other.constant;
             }
-            return this.constant == other.constant;
+            return false;
         }
 
         /// <summary>

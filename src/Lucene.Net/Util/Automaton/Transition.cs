@@ -112,7 +112,7 @@ namespace Lucene.Net.Util.Automaton
         ///         and destination state as this transition. </returns>
         public override bool Equals(object obj)
         {
-            if (obj is Transition t)
+            if ((!(obj is null) && obj is Transition t))
             {
                 return t.min == min && t.max == max && t.to == to;
             }

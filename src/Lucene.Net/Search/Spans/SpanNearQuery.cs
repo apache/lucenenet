@@ -193,25 +193,24 @@ namespace Lucene.Net.Search.Spans
             {
                 return true;
             }
-            if (!(o is SpanNearQuery spanNearQuery))
+            if (!(o is null) && o is SpanNearQuery spanNearQuery)
             {
-                return false;
-            }
+                if (m_inOrder != spanNearQuery.m_inOrder)
+                {
+                    return false;
+                }
+                if (m_slop != spanNearQuery.m_slop)
+                {
+                    return false;
+                }
+                if (!JCG.ListEqualityComparer<SpanQuery>.Default.Equals(m_clauses, spanNearQuery.m_clauses))
+                {
+                    return false;
+                }
 
-            if (m_inOrder != spanNearQuery.m_inOrder)
-            {
-                return false;
+                return Boost == spanNearQuery.Boost;
             }
-            if (m_slop != spanNearQuery.m_slop)
-            {
-                return false;
-            }
-            if (!JCG.ListEqualityComparer<SpanQuery>.Default.Equals(m_clauses, spanNearQuery.m_clauses))
-            {
-                return false;
-            }
-
-            return Boost == spanNearQuery.Boost;
+            return false;
         }
 
         public override int GetHashCode()

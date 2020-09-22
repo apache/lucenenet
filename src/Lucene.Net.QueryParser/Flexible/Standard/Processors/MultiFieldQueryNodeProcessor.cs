@@ -64,7 +64,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-            if (node is IFieldableNode fieldNode)
+            if ((!(node is null) && node is IFieldableNode fieldNode))
             {
                 this.processChildren = false;
                 

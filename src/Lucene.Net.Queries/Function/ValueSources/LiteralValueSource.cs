@@ -85,10 +85,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return true;
             }
-            if (!(o is LiteralValueSource that))
-                return false;
-            return m_str.Equals(that.m_str, StringComparison.Ordinal);
-
+            return !(o is null) && o is LiteralValueSource that && m_str.Equals(that.m_str, StringComparison.Ordinal);
         }
 
         public static readonly int hash = typeof(LiteralValueSource).GetHashCode();

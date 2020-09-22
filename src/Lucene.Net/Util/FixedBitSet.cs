@@ -370,14 +370,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Or(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator obs && iter.DocID == -1)
+            if ((!(iter is null) && iter is OpenBitSetIterator obs) && iter.DocID == -1)
             {
                 Or(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
             }
-            else if (iter is FixedBitSetIterator fbs && iter.DocID == -1)
+            else if ((!(iter is null) && iter is FixedBitSetIterator fbs) && iter.DocID == -1)
             {
                 Or(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
@@ -443,14 +443,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public void And(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator obs && iter.DocID == -1)
+            if ((!(iter is null) && iter is OpenBitSetIterator obs) && iter.DocID == -1)
             {
                 And(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
             }
-            else if (iter is FixedBitSetIterator fbs && iter.DocID == -1)
+            else if ((!(iter is null) && iter is FixedBitSetIterator fbs) && iter.DocID == -1)
             {
                 And(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
@@ -519,14 +519,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AndNot(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator obs && iter.DocID == -1)
+            if ((!(iter is null) && iter is OpenBitSetIterator obs) && iter.DocID == -1)
             {
                 AndNot(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
             }
-            else if (iter is FixedBitSetIterator fbs && iter.DocID == -1)
+            else if ((!(iter is null) && iter is FixedBitSetIterator fbs) && iter.DocID == -1)
             {
                 AndNot(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard

@@ -56,7 +56,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is TermRangeQueryNode termRangeNode)
+            if ((!(node is null) && node is TermRangeQueryNode termRangeNode))
             {
                 QueryConfigHandler config = GetQueryConfigHandler();
 

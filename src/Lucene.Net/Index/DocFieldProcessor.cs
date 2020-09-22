@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
             // If any errors occured, throw it.
             if (th is object)
             {
-                if (th is Exception exp)
+                if ((!(th is null) && th is Exception exp))
                 {
                     throw exp;
                 }

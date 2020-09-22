@@ -675,7 +675,7 @@ namespace Lucene.Net.Analysis
                     return true;
                 }
 
-                if (other is TokenAttributeFactory af)
+                if ((!(other is null) && other is TokenAttributeFactory af))
                 {
                     return this.@delegate.Equals(af.@delegate);
                 }

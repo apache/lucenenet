@@ -99,13 +99,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             {
                 IQueryNode child = GetChild();
 
-                return child is IFieldableNode fieldNode ? fieldNode.Field : null;
+                return (!(child is null) && child is IFieldableNode fieldNode) ? fieldNode.Field : null;
             }
             set
             {
                 IQueryNode child = GetChild();
 
-                if (child is IFieldableNode fieldNode)
+                if ((!(child is null) && child is IFieldableNode fieldNode))
                 {
                     fieldNode.Field = value;
                 }

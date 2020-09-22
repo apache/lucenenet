@@ -389,7 +389,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     TermVectorsReader vectorsReader = matchingSegmentReader.TermVectorsReader;
 
-                    if (vectorsReader is Lucene40TermVectorsReader luc40termReader)
+                    if ((!(vectorsReader is null) && vectorsReader is Lucene40TermVectorsReader luc40termReader))
                     {
                         matchingVectorsReader = luc40termReader;
                     }

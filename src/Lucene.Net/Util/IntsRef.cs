@@ -129,7 +129,7 @@ namespace Lucene.Net.Util
             {
                 return false;
             }
-            if (other is Int32sRef int32sRef)
+            if ((!(other is null) && other is Int32sRef int32sRef))
             {
                 return this.Int32sEquals(int32sRef);
             }

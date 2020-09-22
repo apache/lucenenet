@@ -137,9 +137,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            if (!(o is MultiSingleFunction other))
-                return false;
-            return Name.Equals(other.Name, StringComparison.Ordinal) && Arrays.Equals(this.m_sources, other.m_sources);
+            return !(o is null) && o is MultiSingleFunction other
+                    && Name.Equals(other.Name, StringComparison.Ordinal) && Arrays.Equals(this.m_sources, other.m_sources);
         }
     }
 }

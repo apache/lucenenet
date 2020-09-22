@@ -83,7 +83,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         {
             if (obj == this) return true;
 
-            if (obj is NumericConfig other)
+            if ((!(obj is null) && obj is NumericConfig other))
             {
                 if (this.precisionStep == other.precisionStep
                     && this.type == other.type

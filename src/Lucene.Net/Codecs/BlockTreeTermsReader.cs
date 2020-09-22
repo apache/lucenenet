@@ -277,7 +277,7 @@ namespace Lucene.Net.Codecs
                 }
                 finally
                 {
-                    // Clear so refs to terms index is GCable even if
+                    // Clear so refs to terms (!(index is null) && index is GCable even) if
                     // app hangs onto us:
                     fields.Clear();
                 }

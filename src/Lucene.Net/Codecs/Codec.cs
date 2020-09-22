@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs
         {
             get
             {
-                if (codecFactory is IServiceListable listable)
+                if ((!(codecFactory is null) && codecFactory is IServiceListable listable))
                 {
                     return listable.AvailableServices;
                 }

@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
 
             public override bool Equals(object obj)
             {
-                if (obj is Int32Ref other)
+                if ((!(obj is null) && obj is Int32Ref other))
                     return Equals(other);
                 if (obj is int otherInt)
                     return value.Equals(otherInt);

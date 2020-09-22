@@ -101,13 +101,16 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is JoinDocFreqValueSource other))
-                return false;
-            if (!m_qfield.Equals(other.m_qfield, StringComparison.Ordinal))
+            if (!(o is null) && o is JoinDocFreqValueSource other)
             {
-                return false;
+                if (!m_qfield.Equals(other.m_qfield, StringComparison.Ordinal))
+                {
+                    return false;
+                }
+                return base.Equals(other);
             }
-            return base.Equals(other);
+
+            return false;
         }
 
         public override int GetHashCode()

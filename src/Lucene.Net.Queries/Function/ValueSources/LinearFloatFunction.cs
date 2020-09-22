@@ -101,9 +101,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is LinearSingleFunction other))
-                return false;
-            return this.m_slope == other.m_slope && this.m_intercept == other.m_intercept && this.m_source.Equals(other.m_source);
+            return !(o is null) && o is LinearSingleFunction other
+                    && this.m_slope == other.m_slope && this.m_intercept == other.m_intercept && this.m_source.Equals(other.m_source);
         }
     }
 }

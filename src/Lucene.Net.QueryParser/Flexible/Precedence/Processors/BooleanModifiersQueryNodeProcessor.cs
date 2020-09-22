@@ -95,11 +95,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
         private IQueryNode ApplyModifier(IQueryNode node, Modifier mod)
         {
             // check if modifier is not already defined and is default
-            if (!(node is ModifierQueryNode modQueryNode))
-            {
-                return new ModifierQueryNode(node, mod);
-            }
-            else
+            if (!(node is null) && node is ModifierQueryNode modQueryNode)
             {
                 ModifierQueryNode modNode = modQueryNode;
 
@@ -107,6 +103,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
                 {
                     return new ModifierQueryNode(modNode.GetChild(), mod);
                 }
+            }
+            else
+            {
+                return new ModifierQueryNode(node, mod);
             }
 
             return node;

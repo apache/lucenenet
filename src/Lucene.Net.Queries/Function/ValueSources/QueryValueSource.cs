@@ -62,9 +62,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is QueryValueSource other))
-                return false;
-            return this.q.Equals(other.q) && this.defVal == other.defVal;
+            return !(o is null) && o is QueryValueSource other && this.q.Equals(other.q) && this.defVal == other.defVal;
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)

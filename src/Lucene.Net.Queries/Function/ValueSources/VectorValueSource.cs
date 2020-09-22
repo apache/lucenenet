@@ -272,11 +272,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
             if (this == o)
                 return true;
 
-            if (!(o is VectorValueSource that))
-                return false;
+            if (!(o is null) && o is VectorValueSource that)
+            {
+                // LUCENENET specific: use structural equality comparison
+                return JCG.ListEqualityComparer<ValueSource>.Default.Equals(m_sources, that.m_sources);
+            }
 
-            // LUCENENET specific: use structural equality comparison
-            return JCG.ListEqualityComparer<ValueSource>.Default.Equals(m_sources, that.m_sources);
+            return false;
         }
 
         public override int GetHashCode()

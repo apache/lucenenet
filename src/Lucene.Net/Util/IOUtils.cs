@@ -529,7 +529,7 @@ namespace Lucene.Net.Util
         //        {
         //            // Fsync does not appear to function properly for Windows and Linux platforms. In Lucene version
         //            // they catch this in IOException branch and return if the call is for the directory. 
-        //            // In Lucene.Net the exception is UnauthorizedAccessException and is not handled by
+        //            // In Lucene.Net the (!(exception is null) && exception is UnauthorizedAccessException and) is not handled by
         //            // IOException block. No need to even attempt to fsync, just return if the call is for directory
         //            if (isDir)
         //            {

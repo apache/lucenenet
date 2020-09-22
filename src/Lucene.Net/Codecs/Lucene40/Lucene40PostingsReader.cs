@@ -225,7 +225,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private bool CanReuse(DocsEnum reuse, IBits liveDocs)
         {
-            if (reuse is SegmentDocsEnumBase docsEnum)
+            if ((!(reuse is null) && reuse is SegmentDocsEnumBase docsEnum))
             {
                 // If you are using ParellelReader, and pass in a
                 // reused DocsEnum, it could have come from another
@@ -262,7 +262,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (fieldInfo.HasPayloads || hasOffsets)
             {
                 SegmentFullPositionsEnum docsEnum;
-                if (reuse is SegmentFullPositionsEnum segmentFullPositionsReuse)
+                if ((!(reuse is null) && reuse is SegmentFullPositionsEnum segmentFullPositionsReuse))
                 {
                     docsEnum = segmentFullPositionsReuse;
                     if (docsEnum.startFreqIn != freqIn)
@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Lucene40
             else
             {
                 SegmentDocsAndPositionsEnum docsEnum;
-                if (reuse is SegmentDocsAndPositionsEnum segDocsAndPosReuse)
+                if ((!(reuse is null) && reuse is SegmentDocsAndPositionsEnum segDocsAndPosReuse))
                 {
                     docsEnum = segDocsAndPosReuse;
                     if (docsEnum.startFreqIn != freqIn)

@@ -585,7 +585,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags) // ignored
             {
                 TVDocsEnum docsEnum;
-                if (reuse is object && reuse is TVDocsEnum docsReuse)
+                if (reuse is object && (!(reuse is null) && reuse is TVDocsEnum docsReuse))
                 {
                     docsEnum = docsReuse;
                 }
@@ -605,7 +605,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
 
                 TVDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse is object && reuse is TVDocsAndPositionsEnum docsAndPosReuse)
+                if (reuse is object && (!(reuse is null) && reuse is TVDocsAndPositionsEnum docsAndPosReuse))
                 {
                     docsAndPositionsEnum = docsAndPosReuse;
                 }

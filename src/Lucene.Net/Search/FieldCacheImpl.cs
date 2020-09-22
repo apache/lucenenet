@@ -206,7 +206,7 @@ namespace Lucene.Net.Search
 
         private void InitReader(AtomicReader reader)
         {
-            if (reader is SegmentReader segmentReader)
+            if ((!(reader is null) && reader is SegmentReader segmentReader))
             {
                 segmentReader.AddCoreDisposedListener(purgeCore);
             }
@@ -215,7 +215,7 @@ namespace Lucene.Net.Search
                 // we have a slow reader of some sort, try to register a purge event
                 // rather than relying on gc:
                 object key = reader.CoreCacheKey;
-                if (key is AtomicReader atomicReader)
+                if ((!(key is null) && key is AtomicReader atomicReader))
                 {
                     atomicReader.AddReaderClosedListener(purgeReader);
                 }
@@ -393,7 +393,7 @@ namespace Lucene.Net.Search
             /// Two of these are equal if they reference the same field and type. </summary>
             public override bool Equals(object o)
             {
-                if (o is CacheKey other)
+                if ((!(o is null) && o is CacheKey other))
                 {
                     if (other.field.Equals(field, StringComparison.Ordinal))
                     {
@@ -489,7 +489,7 @@ namespace Lucene.Net.Search
             {
                 bits = new Lucene.Net.Util.Bits.MatchNoBits(maxDoc);
             }
-            else if (docsWithField is FixedBitSet set)
+            else if ((!(docsWithField is null) && docsWithField is FixedBitSet set))
             {
                 int numSet = set.Cardinality();
                 if (numSet >= maxDoc)

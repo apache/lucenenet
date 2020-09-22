@@ -156,7 +156,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 Query q = qp.Parse(queries[i], fields[i]);
 
                 if (q is object && // q never null, just being defensive
-                    (!(q is BooleanQuery boolQuery) || boolQuery.Clauses.Count > 0))
+                    (!((q is BooleanQuery boolQuery)) || boolQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, flags[i]);
                 }

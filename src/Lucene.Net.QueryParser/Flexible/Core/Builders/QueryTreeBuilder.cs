@@ -126,7 +126,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         {
             IQueryBuilder<TQuery> builder = null;
 
-            if (this.fieldNameBuilders is object && node is IFieldableNode fieldNode)
+            if (this.fieldNameBuilders is object && (!(node is null) && node is IFieldableNode fieldNode))
             {
                 string field = fieldNode.Field;
                 this.fieldNameBuilders.TryGetValue(field, out builder);

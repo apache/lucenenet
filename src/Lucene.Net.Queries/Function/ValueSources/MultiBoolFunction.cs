@@ -125,11 +125,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            if (!(o is MultiBoolFunction other))
-                return false;
-
-            // LUCENENET specific: use structural equality comparison
-            return JCG.ListEqualityComparer<ValueSource>.Default.Equals(this.m_sources, other.m_sources);
+            if (!(o is null) && o is MultiBoolFunction other)
+                // LUCENENET specific: use structural equality comparison
+                return JCG.ListEqualityComparer<ValueSource>.Default.Equals(this.m_sources, other.m_sources);
+            return false;
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)

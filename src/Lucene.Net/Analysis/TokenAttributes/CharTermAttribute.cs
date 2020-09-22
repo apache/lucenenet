@@ -402,7 +402,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return true;
             }
 
-            if (other is CharTermAttribute o)
+            if ((!(other is null) && other is CharTermAttribute o))
             {
                 if (termLength != o.termLength)
                 {

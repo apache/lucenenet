@@ -78,7 +78,7 @@ namespace Lucene.Net.Util.Automaton
         ///         pair. </returns>
         public override bool Equals(object obj)
         {
-            if (obj is StatePair p)
+            if ((!(obj is null) && obj is StatePair p))
             {
                 return p.s1 == s1 && p.s2 == s2;
             }

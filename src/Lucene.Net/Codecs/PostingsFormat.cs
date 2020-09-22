@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs
         {
             get
             {
-                if (postingsFormatFactory is IServiceListable listable)
+                if ((!(postingsFormatFactory is null) && postingsFormatFactory is IServiceListable listable))
                 {
                     return listable.AvailableServices;
                 }

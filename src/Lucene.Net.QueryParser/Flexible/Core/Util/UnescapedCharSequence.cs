@@ -187,14 +187,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
 
         public static bool WasEscaped(ICharSequence text, int index)
         {
-            return text is UnescapedCharSequence sequence ? sequence.wasEscaped[index] : false;
+            return (!(text is null) && text is UnescapedCharSequence sequence) ? sequence.wasEscaped[index] : false;
         }
 
         public static ICharSequence ToLower(ICharSequence text, CultureInfo locale)
         {
             var lowercaseText = locale.TextInfo.ToLower(text.ToString());
 
-            if (text is UnescapedCharSequence sequence)
+            if ((!(text is null) && text is UnescapedCharSequence sequence))
             {
                 char[] chars = lowercaseText.ToCharArray();
                 bool[] wasEscaped = sequence.wasEscaped;

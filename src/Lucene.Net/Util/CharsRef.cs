@@ -139,7 +139,7 @@ namespace Lucene.Net.Util
                 return false;
             }
 
-            if (other is CharsRef charsRef)
+            if ((!(other is null) && other is CharsRef charsRef))
             {
                 return this.CharsEquals(charsRef);
             }

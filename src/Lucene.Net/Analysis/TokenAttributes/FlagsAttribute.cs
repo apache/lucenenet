@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return true;
             }
 
-            if (other is FlagsAttribute attribute)
+            if ((!(other is null) && other is FlagsAttribute attribute))
             {
                 return attribute.flags == flags;
             }

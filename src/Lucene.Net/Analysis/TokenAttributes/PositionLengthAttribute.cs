@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return true;
             }
 
-            if (other is PositionLengthAttribute _other)
+            if ((!(other is null) && other is PositionLengthAttribute _other))
             {
                 return positionLength == _other.positionLength;
             }

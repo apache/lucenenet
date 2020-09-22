@@ -529,7 +529,7 @@ namespace Lucene.Net.Util
                 return true;
             }
 
-            if (obj is AttributeSource other)
+            if ((!(obj is null) && obj is AttributeSource other))
             {
                 if (HasAttributes)
                 {

@@ -59,11 +59,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
         // tries extra hard to cast the sim to TFIDFSimilarity
         internal static TFIDFSimilarity AsTFIDF(Similarity sim, string field)
         {
-            while (sim is PerFieldSimilarityWrapper wrapper)
+            while ((!(sim is null) && sim is PerFieldSimilarityWrapper wrapper))
             {
                 sim = wrapper.Get(field);
             }
-            if (sim is TFIDFSimilarity similarity)
+            if ((!(sim is null) && sim is TFIDFSimilarity similarity))
             {
                 return similarity;
             }

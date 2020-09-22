@@ -576,7 +576,7 @@ namespace Lucene.Net.Util
             /// </summary>
             protected virtual void Dispose(bool disposing) // LUCENENET specific - implemented proper dispose pattern
             {
-                if (disposing && this.os is IDisposable disposable)
+                if (disposing && (!(this.os is null) && this.os is IDisposable disposable))
                     disposable.Dispose();
             }
         }
@@ -671,7 +671,7 @@ namespace Lucene.Net.Util
             {
                 if (disposing)
                 {
-                    if (inputStream is IDisposable disposable)
+                    if ((!(inputStream is null) && inputStream is IDisposable disposable))
                     {
                         disposable.Dispose();
                     }

@@ -112,11 +112,11 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is DoubleConstValueSource other))
+            if (!(o is null) && o is DoubleConstValueSource other)
             {
-                return false;
+                return this.constant == other.constant;
             }
-            return this.constant == other.constant;
+            return false;
         }
 
         /// <summary>

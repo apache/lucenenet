@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
         /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
-            if (o is BooleanClause other)
+            if ((!(o is null) && o is BooleanClause other))
                 return this.Equals(other);
             return false;
         }

@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return true;
             }
 
-            if (other is PayloadAttribute o)
+            if ((!(other is null) && (!(other is null) && other is PayloadAttribute o)))
             {
                 if (o.payload is null || payload is null)
                 {

@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz, new object[] { tokArgs });
 
-                if (tokFactory is IResourceLoaderAware resLoader)
+                if ((!(tokFactory is null) && tokFactory is IResourceLoaderAware resLoader))
                 {
                     resLoader.Inform(loader);
                 }

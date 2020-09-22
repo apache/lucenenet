@@ -213,7 +213,7 @@ namespace Lucene.Net.Util
             if (other is null)
                 return false;
 
-            if (other is BytesRef otherBytes)
+            if ((!(other is null) && other is BytesRef otherBytes))
                 return this.BytesEquals(otherBytes);
 
             return false;

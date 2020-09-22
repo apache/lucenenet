@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
             this.usingAnd = Operator.AND == defaultOperator;
 
-            if (queryTree is GroupQueryNode groupQUeryNode)
+            if ((!(queryTree is null) && queryTree is GroupQueryNode groupQUeryNode))
             {
                 queryTree = groupQUeryNode.GetChild();
             }
@@ -108,7 +108,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             {
                 if (parent is OrQueryNode)
                 {
-                    if (node is ModifierQueryNode modNode)
+                    if ((!(node is null) && node is ModifierQueryNode modNode))
                     {
                         if (modNode.Modifier == Modifier.MOD_REQ)
                         {
@@ -118,7 +118,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 }
                 else
                 {
-                    if (node is ModifierQueryNode modNode)
+                    if ((!(node is null) && node is ModifierQueryNode modNode))
                     {
                         if (modNode.Modifier == Modifier.MOD_NONE)
                         {
@@ -135,7 +135,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             {
                 if (node.Parent is AndQueryNode)
                 {
-                    if (node is ModifierQueryNode modNode)
+                    if ((!(node is null) && node is ModifierQueryNode modNode))
                     {
                         if (modNode.Modifier == Modifier.MOD_NONE)
                         {

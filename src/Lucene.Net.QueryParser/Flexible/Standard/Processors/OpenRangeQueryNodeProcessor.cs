@@ -36,7 +36,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is TermRangeQueryNode rangeNode)
+            if ((!(node is null) && node is TermRangeQueryNode rangeNode))
             {
                 FieldQueryNode lowerNode = (FieldQueryNode)rangeNode.LowerBound;
                 FieldQueryNode upperNode = (FieldQueryNode)rangeNode.UpperBound;
@@ -44,13 +44,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 ICharSequence upperText = upperNode.Text;
 
                 if (OPEN_RANGE_TOKEN.Equals(upperNode.GetTextAsString(), StringComparison.Ordinal)
-                    && (!(upperText is UnescapedCharSequence sequence) || !sequence.WasEscaped(0)))
+                    && (!(!(upperText is null) && upperText is UnescapedCharSequence sequence) || !sequence.WasEscaped(0)))
                 {
                     upperText = "".AsCharSequence();
                 }
 
                 if (OPEN_RANGE_TOKEN.Equals(lowerNode.GetTextAsString(), StringComparison.Ordinal)
-                    && (!(lowerText is UnescapedCharSequence sequence2) || !sequence2.WasEscaped(0)))
+                    && (!(!(lowerText is null) && lowerText is UnescapedCharSequence sequence2) || !sequence2.WasEscaped(0)))
                 {
                     lowerText = "".AsCharSequence();
                 }

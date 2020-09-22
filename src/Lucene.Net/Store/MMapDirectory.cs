@@ -276,7 +276,7 @@ namespace Lucene.Net.Store
             protected override void FreeBuffer(ByteBuffer buffer)
             {
                 // LUCENENET specific: this should free the memory mapped view accessor
-                if (buffer is IDisposable disposable)
+                if ((!(buffer is null) && buffer is IDisposable disposable))
                     disposable.Dispose();
 
                 // LUCENENET specific: no need for UnmapHack

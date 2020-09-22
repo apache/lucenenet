@@ -169,7 +169,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         private IQueryNode ApplyModifier(IQueryNode node, Modifier mod)
         {
             // check if modifier is already defined
-            if (node is ModifierQueryNode modNode)
+            if ((!(node is null) && node is ModifierQueryNode modNode))
             {
                 if (modNode.Modifier == Modifier.MOD_NONE)
                 {
@@ -186,7 +186,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected virtual void TagModifierButDoNotOverride(IQueryNode node, Modifier mod)
         {
-            if (node is ModifierQueryNode modNode)
+            if ((!(node is null) && node is ModifierQueryNode modNode))
             {
                 if (modNode.Modifier == Modifier.MOD_NONE)
                 {

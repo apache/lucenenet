@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
                 // Fix outdated usage pattern from Lucene 2.x/early-3.x:
                 // because ConstantScoreQuery only accepted filters,
                 // QueryWrapperFilter was used to wrap queries.
-                if (m_filter is QueryWrapperFilter qwf)
+                if ((!(m_filter is null) && m_filter is QueryWrapperFilter qwf))
                 {
                     Query rewritten = new ConstantScoreQuery(qwf.Query.Rewrite(reader));
                     rewritten.Boost = this.Boost;
@@ -358,7 +358,7 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (o is ConstantScoreQuery other)
+            if ((!(o is null) && o is ConstantScoreQuery other))
             {
                 return ((this.m_filter is null) ? other.m_filter is null : this.m_filter.Equals(other.m_filter)) && ((this.m_query is null) ? other.m_query is null : this.m_query.Equals(other.m_query));
             }

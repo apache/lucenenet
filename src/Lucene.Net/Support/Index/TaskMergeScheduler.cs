@@ -340,16 +340,14 @@ namespace Lucene.Net.Index
 
         private void OnMergeThreadCompleted(object sender, EventArgs e)
         {
-            if (!(sender is MergeThread mergeThread))
+            if (!(sender is null) && sender is MergeThread mergeThread)
             {
-                return;
-            }
+                mergeThread.MergeThreadCompleted -= OnMergeThreadCompleted;
 
-            mergeThread.MergeThreadCompleted -= OnMergeThreadCompleted;
-
-            using (_lock.Write())
-            {
-                UpdateMergeThreads();
+                using (_lock.Write())
+                {
+                    UpdateMergeThreads();
+                }
             }
         }
 
@@ -659,14 +657,10 @@ namespace Lucene.Net.Index
 
             public override bool Equals(object obj)
             {
-                if (!(obj is MergeThread compared)
-                    || (Instance is null && compared.Instance is object)
-                    || (Instance is object && compared.Instance is null))
-                {
-                    return false;
-                }
-
-                return Instance.Id == compared.Instance.Id;
+                return !(obj is null) && obj is MergeThread compared
+                    && (!(Instance is null) || !(compared.Instance is object))
+                    && (!(Instance is object) || !(compared.Instance is null))
+                    && Instance.Id == compared.Instance.Id;
             }
 
             public override int GetHashCode()

@@ -373,7 +373,7 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (o is SortField other)
+            if ((!(o is null) && o is SortField other))
             {
                 return (StringHelper.Equals(other.field, this.field)
                     && other.type == this.type

@@ -116,9 +116,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is ReciprocalSingleFunction other))
-                return false;
-            return this.m_m == other.m_m && this.m_a == other.m_a && this.m_b == other.m_b && this.m_source.Equals(other.m_source);
+            return !(o is null) && o is ReciprocalSingleFunction other
+                    && this.m_m == other.m_m && this.m_a == other.m_a && this.m_b == other.m_b && this.m_source.Equals(other.m_source);
         }
     }
 }

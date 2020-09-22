@@ -45,7 +45,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            return !(o is FieldCacheSource other) ? false : m_field.Equals(other.m_field, StringComparison.Ordinal) && m_cache == other.m_cache;
+            return (!(o is null) && o is FieldCacheSource other) && m_field.Equals(other.m_field, StringComparison.Ordinal) && m_cache == other.m_cache;
         }
 
         public override int GetHashCode()

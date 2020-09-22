@@ -130,7 +130,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
         public virtual bool Contains(object o)
         {
             // LUCENENET specific - cast required to get from object to IQueryNodeProcessor
-            if (o is IQueryNodeProcessor other)
+            if ((!(o is null) && o is IQueryNodeProcessor other))
                 return this.Contains(other);
             return false;
         }

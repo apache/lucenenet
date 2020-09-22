@@ -206,7 +206,7 @@ namespace Lucene.Net.Queries
         /// <exception cref="IOException"/>
         private void DoChain(FixedBitSet result, int logic, DocIdSet dis)
         {
-            if (dis is FixedBitSet set)
+            if ((!(dis is null) && dis is FixedBitSet set))
             {
                 // optimized case for FixedBitSets
                 switch (logic)

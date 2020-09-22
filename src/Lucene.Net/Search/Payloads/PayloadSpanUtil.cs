@@ -66,9 +66,9 @@ namespace Lucene.Net.Search.Payloads
 
         private void QueryToSpanQuery(Query query, ICollection<byte[]> payloads)
         {
-            if (query is BooleanQuery)
+            if (query is BooleanQuery boolQuery)
             {
-                BooleanClause[] queryClauses = ((BooleanQuery)query).GetClauses();
+                BooleanClause[] queryClauses = boolQuery.GetClauses();
 
                 for (int i = 0; i < queryClauses.Length; i++)
                 {
@@ -78,16 +78,16 @@ namespace Lucene.Net.Search.Payloads
                     }
                 }
             }
-            else if (query is PhraseQuery)
+            else if (query is PhraseQuery phraseQuery)
             {
-                Term[] phraseQueryTerms = ((PhraseQuery)query).GetTerms();
+                Term[] phraseQueryTerms = phraseQuery.GetTerms();
                 SpanQuery[] clauses = new SpanQuery[phraseQueryTerms.Length];
                 for (int i = 0; i < phraseQueryTerms.Length; i++)
                 {
                     clauses[i] = new SpanTermQuery(phraseQueryTerms[i]);
                 }
 
-                int slop = ((PhraseQuery)query).Slop;
+                int slop = phraseQuery.Slop;
                 bool inorder = false;
 
                 if (slop == 0)
@@ -99,23 +99,23 @@ namespace Lucene.Net.Search.Payloads
                 sp.Boost = query.Boost;
                 GetPayloads(payloads, sp);
             }
-            else if (query is TermQuery)
+            else if (query is TermQuery termQuery)
             {
-                SpanTermQuery stq = new SpanTermQuery(((TermQuery)query).Term);
+                SpanTermQuery stq = new SpanTermQuery(termQuery.Term);
                 stq.Boost = query.Boost;
                 GetPayloads(payloads, stq);
             }
-            else if (query is SpanQuery)
+            else if (query is SpanQuery spanQuery)
             {
-                GetPayloads(payloads, (SpanQuery)query);
+                GetPayloads(payloads, spanQuery);
             }
-            else if (query is FilteredQuery)
+            else if (query is FilteredQuery filteredQuery)
             {
-                QueryToSpanQuery(((FilteredQuery)query).Query, payloads);
+                QueryToSpanQuery(filteredQuery.Query, payloads);
             }
-            else if (query is DisjunctionMaxQuery)
+            else if (query is DisjunctionMaxQuery disMaxQuery)
             {
-                foreach (var q in ((DisjunctionMaxQuery)query))
+                foreach (var q in disMaxQuery)
                 {
                     QueryToSpanQuery(q, payloads);
                 }

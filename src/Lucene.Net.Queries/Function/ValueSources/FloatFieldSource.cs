@@ -99,9 +99,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is SingleFieldSource other))
-                return false;
-            return base.Equals(other) && (this.m_parser is null ? other.m_parser is null : this.m_parser.GetType() == other.m_parser.GetType());
+            if (!(o is null) && o is SingleFieldSource other)
+                return base.Equals(other) && (this.m_parser is null ? other.m_parser is null : this.m_parser.GetType() == other.m_parser.GetType());
+            return false;
         }
 
         public override int GetHashCode()

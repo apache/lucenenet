@@ -146,15 +146,13 @@ namespace Lucene.Net.Support
                 throw new ArgumentException("Destination array is not long enough to copy all the items in the collection. Check array index and length.");
                 //throw new ArgumentException(SR.Arg_ArrayPlusOffTooSmall);
 
-            T[]/*?*/ tarray = array as T[];
-            if (tarray is object)
+            if (array is T[]/*?*/ tarray) 
             {
                 CopyTo(tarray, index);
             }
             else
             {
-                object/*?*/[]/*?*/ objects = array as object[];
-                if (objects is null)
+                if (!(array is object[] objects))
                 {
                     throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
                     //throw new ArgumentException(SR.Argument_InvalidArrayType, nameof(array));
@@ -195,7 +193,7 @@ namespace Lucene.Net.Support
             {
                 if (syncRoot is null)
                 {
-                    if (set is ICollection col)
+                    if ((!(set is null) && set is ICollection col))
                         syncRoot = col.SyncRoot;
                     System.Threading.Interlocked.CompareExchange<object/*?*/>(ref syncRoot, new object(), null);
                 }
@@ -298,7 +296,7 @@ namespace Lucene.Net.Support
         {
             lock (SyncRoot)
             {
-                if (set is IFormattable formattable)
+                if ((!(set is null) && set is IFormattable formattable))
                     return formattable.ToString(format, formatProvider);
 
                 return string.Format(formatProvider, format, set);

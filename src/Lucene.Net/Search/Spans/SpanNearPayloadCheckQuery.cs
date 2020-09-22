@@ -123,15 +123,14 @@ namespace Lucene.Net.Search.Spans
             {
                 return true;
             }
-            if (!(o is SpanNearPayloadCheckQuery other))
+            if (!(o is null) && o is SpanNearPayloadCheckQuery other)
             {
-                return false;
+                // LUCENENET NOTE: Need to use the structural equality comparer to compare equality of all contained values
+                return payloadEqualityComparer.Equals(this.m_payloadToMatch, other.m_payloadToMatch)
+                    && this.m_match.Equals(other.m_match)
+                    && this.Boost == other.Boost;
             }
-
-            // LUCENENET NOTE: Need to use the structural equality comparer to compare equality of all contained values
-            return payloadEqualityComparer.Equals(this.m_payloadToMatch, other.m_payloadToMatch) 
-                && this.m_match.Equals(other.m_match) 
-                && this.Boost == other.Boost;
+            return false;
         }
 
         public override int GetHashCode()

@@ -279,7 +279,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         numNegatives++;
                     }
 
-                    if (qc is BooleanQuery boolQuery)
+                    if ((!(qc is null) && qc is BooleanQuery boolQuery))
                     {
                         List<SpanQuery> sc = new List<SpanQuery>();
                         AddComplexPhraseClause(sc, boolQuery);
@@ -298,7 +298,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                     }
                     else
                     {
-                        if (qc is TermQuery tq)
+                        if ((!(qc is null) && qc is TermQuery tq))
                         {
                             allSpanClauses[i] = new SpanTermQuery(tq.Term);
                         }
@@ -369,13 +369,13 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         chosenList = nots;
                     }
 
-                    if (childQuery is TermQuery tq)
+                    if ((!(childQuery is null) && childQuery is TermQuery tq))
                     {
                         SpanTermQuery stq = new SpanTermQuery(tq.Term);
                         stq.Boost = tq.Boost;
                         chosenList.Add(stq);
                     }
-                    else if (childQuery is BooleanQuery cbq)
+                    else if ((!(childQuery is null) && childQuery is BooleanQuery cbq))
                     {
                         AddComplexPhraseClause(chosenList, cbq);
                     }

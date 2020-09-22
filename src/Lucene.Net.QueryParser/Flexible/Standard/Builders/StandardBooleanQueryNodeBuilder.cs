@@ -79,7 +79,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
 
         private static Occur GetModifierValue(IQueryNode node)
         {
-            if (node is ModifierQueryNode mNode)
+            if ((!(node is null) && node is ModifierQueryNode mNode))
             {
                 Modifier modifier = mNode.Modifier;
 

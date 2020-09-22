@@ -57,12 +57,12 @@ namespace Lucene.Net.Queries
                 return true;
             }
 
-            if (!(o is FilterClause other))
+            if (!(o is null) && o is FilterClause other)
             {
-                return false;
+                return this.filter.Equals(other.filter)
+                    && this.occur == other.occur;
             }
-            return this.filter.Equals(other.filter) 
-                && this.occur == other.occur;
+            return false;
         }
 
         public override int GetHashCode()

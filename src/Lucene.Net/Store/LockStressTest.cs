@@ -114,7 +114,7 @@ namespace Lucene.Net.Store
 
             DirectoryInfo lockDir = new DirectoryInfo(lockDirName);
 
-            if (lockFactory is FSLockFactory factory)
+            if ((!(lockFactory is null) && lockFactory is FSLockFactory factory))
             {
                 factory.SetLockDir(lockDir);
             }

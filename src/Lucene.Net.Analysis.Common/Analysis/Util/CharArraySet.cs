@@ -393,13 +393,12 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the current set is equal to other; otherwise, <c>false</c>.</returns>
         public virtual bool SetEquals(IEnumerable<string> other)
         {
-            if (!(other is CharArraySet otherSet))
-                return false;
-
-            // Invoke the implementation on CharArrayMap that
-            // tests the dictionaries to ensure they contain
-            // the same keys and values.
-            return this.map.Equals(otherSet.map);
+            if (!(other is null) && other is CharArraySet otherSet)
+                // Invoke the implementation on CharArrayMap that
+                // tests the dictionaries to ensure they contain
+                // the same keys and values.
+                return this.map.Equals(otherSet.map);
+            return false;
         }
 
         /// <summary>
@@ -565,7 +564,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return true;
             }
-            if (other is CharArraySet set )
+            if ((!(other is null) && other is CharArraySet set) )
             {
                 if (this.Count > set.Count)
                 {
@@ -621,7 +620,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     return true;
                 }
-                if ((other is CharArraySet set) && (set.Count > this.Count))
+                if (((!(other is null) && other is CharArraySet set)) && (set.Count > this.Count))
                 {
                     return false;
                 }
@@ -664,7 +663,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     return (is2.Count > 0);
                 }
-                if (other is CharArraySet set)
+                if ((!(other is null) && other is CharArraySet set))
                 {
                     if (this.Count >= set.Count)
                     {
@@ -725,7 +724,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     return true;
                 }
-                if (other is CharArraySet set)
+                if ((!(other is null) && other is CharArraySet set))
                 {
                     if (set.Count >= this.Count)
                     {

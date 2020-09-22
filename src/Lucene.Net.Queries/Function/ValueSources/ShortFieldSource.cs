@@ -123,10 +123,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is Int16FieldSource other))
-                return false;
-            return base.Equals(other) 
-                && (parser is null ? other.parser is null : 
+            return !(o is null) && o is Int16FieldSource other
+                && base.Equals(other)
+                && (parser is null ? other.parser is null :
                 parser.GetType() == other.parser.GetType());
         }
 

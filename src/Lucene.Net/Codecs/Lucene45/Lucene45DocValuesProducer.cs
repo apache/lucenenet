@@ -654,7 +654,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override int LookupTerm(BytesRef key)
             {
-                if (binary is CompressedBinaryDocValues compressedBinaryDoc)
+                if ((!(binary is null) && binary is CompressedBinaryDocValues compressedBinaryDoc))
                 {
                     return (int)compressedBinaryDoc.LookupTerm(key);
                 }
@@ -666,7 +666,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override TermsEnum GetTermsEnum()
             {
-                if (binary is CompressedBinaryDocValues compressedBinaryDoc)
+                if ((!(binary is null) && binary is CompressedBinaryDocValues compressedBinaryDoc))
                 {
                     return compressedBinaryDoc.GetTermsEnum();
                 }
@@ -775,7 +775,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override long LookupTerm(BytesRef key)
             {
-                if (binary is CompressedBinaryDocValues compressedBinaryDoc)
+                if ((!(binary is null) && binary is CompressedBinaryDocValues compressedBinaryDoc))
                 {
                     return compressedBinaryDoc.LookupTerm(key);
                 }
@@ -787,7 +787,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override TermsEnum GetTermsEnum()
             {
-                if (binary is CompressedBinaryDocValues compressedBinaryDoc)
+                if ((!(binary is null) && binary is CompressedBinaryDocValues compressedBinaryDoc))
                 {
                     return compressedBinaryDoc.GetTermsEnum();
                 }

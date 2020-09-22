@@ -153,9 +153,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
             {
                 return false;
             }
-            if (!(o is Int64FieldSource other))
-                return false;
-            return base.Equals(other) && (this.m_parser is null ? other.m_parser is null : this.m_parser.GetType() == other.m_parser.GetType());
+            return !(o is null) && o is Int64FieldSource other
+                    && base.Equals(other) && (this.m_parser is null ? other.m_parser is null : this.m_parser.GetType() == other.m_parser.GetType());
         }
 
         public override int GetHashCode()

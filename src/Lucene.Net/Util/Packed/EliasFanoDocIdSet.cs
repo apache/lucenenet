@@ -122,7 +122,7 @@ namespace Lucene.Net.Util.Packed
 
         public override bool Equals(object other)
         {
-            return (other is EliasFanoDocIdSet otherEncoder) && efEncoder.Equals(otherEncoder.efEncoder);
+            return ((!(other is null) && other is EliasFanoDocIdSet otherEncoder)) && efEncoder.Equals(otherEncoder.efEncoder);
         }
 
         public override int GetHashCode()

@@ -1893,7 +1893,7 @@ namespace Lucene.Net.Index
                         {
                             throw new Exception("ord out of bounds: " + ord);
                         }
-                        if (dv is RandomAccessOrds ords2)
+                        if ((!(dv is null) && dv is RandomAccessOrds ords2))
                         {
                             long ord2 = ords2.OrdAt(ordCount);
                             if (ord != ord2)
@@ -1910,7 +1910,7 @@ namespace Lucene.Net.Index
                     {
                         throw new Exception("dv for field: " + fieldName + " has no ordinals but is not marked missing for doc: " + i);
                     }
-                    if (dv is RandomAccessOrds ords)
+                    if ((!(dv is null) && dv is RandomAccessOrds ords))
                     {
                         long ordCount2 = ords.Cardinality();
                         if (ordCount != ordCount2)
@@ -1926,7 +1926,7 @@ namespace Lucene.Net.Index
                     {
                         throw new Exception("dv for field: " + fieldName + " is marked missing but has ord=" + o + " for doc: " + i);
                     }
-                    if (dv is RandomAccessOrds ords)
+                    if ((!(dv is null) && dv is RandomAccessOrds ords))
                     {
                         long ordCount2 = ords.Cardinality();
                         if (ordCount2 != 0)

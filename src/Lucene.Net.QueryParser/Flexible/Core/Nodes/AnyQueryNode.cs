@@ -49,12 +49,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                 {
                     if (clause is FieldQueryNode)
                     {
-                        if (clause is QueryNode node)
+                        if ((!(clause is null) && clause is QueryNode node))
                         {
                             node.m_toQueryStringIgnoreFields = true;
                         }
 
-                        if (clause is IFieldableNode fieldNode)
+                        if ((!(clause is null) && clause is IFieldableNode fieldNode))
                         {
                             fieldNode.Field = field;
                         }

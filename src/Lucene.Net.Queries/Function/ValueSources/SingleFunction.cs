@@ -49,10 +49,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            if (!(o is SingularFunction other))
-                return false;
-            return Name.Equals(other.Name, StringComparison.Ordinal) 
-                && m_source.Equals(other.m_source);
+            if (!(o is null) && o is SingularFunction other)
+                return Name.Equals(other.Name, StringComparison.Ordinal)
+                    && m_source.Equals(other.m_source);
+            return false;
         }
 
         public override void CreateWeight(IDictionary context, IndexSearcher searcher)

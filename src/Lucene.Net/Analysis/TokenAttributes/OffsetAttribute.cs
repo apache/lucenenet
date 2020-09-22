@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return true;
             }
 
-            if (other is OffsetAttribute o)
+            if ((!(other is null) && other is OffsetAttribute o))
             {
                 return o.startOffset == startOffset && o.endOffset == endOffset;
             }
