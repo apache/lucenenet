@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
             return result.ToArray();
         }
 
-        private void AddCacheEntries<TCacheKey>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TCacheKey> cache) where TCacheKey : CacheKey
+        private void AddCacheEntries<TKey, TValue>(IList<FieldCache.CacheEntry> result, Type cacheType, Cache<TKey, TValue> cache) where TKey : CacheKey
         {
 #if !FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
             lock (cache.readerCache)
@@ -155,10 +155,10 @@ namespace Lucene.Net.Search
                     {
                         continue;
                     }
-                    IDictionary<TCacheKey, object> innerCache = readerCacheEntry.Value;
-                    foreach (KeyValuePair<TCacheKey, object> mapEntry in innerCache)
+                    IDictionary<TKey, object> innerCache = readerCacheEntry.Value;
+                    foreach (KeyValuePair<TKey, object> mapEntry in innerCache)
                     {
-                        TCacheKey entry = mapEntry.Key;
+                        TKey entry = mapEntry.Key;
                         result.Add(new FieldCache.CacheEntry(readerKey, entry.field, cacheType, entry.Custom, mapEntry.Value));
                     }
                 }
@@ -204,7 +204,9 @@ namespace Lucene.Net.Search
 
         private void InitReader(AtomicReader reader)
         {
+#pragma warning disable IDE0038 // Use pattern matching
             if (reader is SegmentReader)
+#pragma warning restore IDE0038 // Use pattern matching
             {
                 ((SegmentReader)reader).AddCoreDisposedListener(purgeCore);
             }
@@ -213,7 +215,9 @@ namespace Lucene.Net.Search
                 // we have a slow reader of some sort, try to register a purge event
                 // rather than relying on gc:
                 object key = reader.CoreCacheKey;
+#pragma warning disable IDE0038 // Use pattern matching
                 if (key is AtomicReader)
+#pragma warning restore IDE0038 // Use pattern matching
                 {
                     ((AtomicReader)key).AddReaderClosedListener(purgeReader);
                 }
@@ -227,7 +231,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Internal cache. </summary>
-        internal abstract class Cache<TCacheKey> where TCacheKey : CacheKey
+        internal abstract class Cache<TKey, TValue> where TKey : CacheKey
         {
             internal Cache(FieldCacheImpl wrapper)
             {
@@ -237,12 +241,12 @@ namespace Lucene.Net.Search
             internal readonly FieldCacheImpl wrapper;
 
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
-            internal ConditionalWeakTable<object, ConcurrentDictionary<TCacheKey, object>> readerCache = new ConditionalWeakTable<object, ConcurrentDictionary<TCacheKey, object>>();
+            internal ConditionalWeakTable<object, ConcurrentDictionary<TKey, object>> readerCache = new ConditionalWeakTable<object, ConcurrentDictionary<TKey, object>>();
 #else
-            internal WeakDictionary<object, ConcurrentDictionary<TCacheKey, object>> readerCache = new WeakDictionary<object, ConcurrentDictionary<TCacheKey, object>>();
+            internal WeakDictionary<object, ConcurrentDictionary<TKey, object>> readerCache = new WeakDictionary<object, ConcurrentDictionary<TKey, object>>();
 #endif
 
-            protected abstract object CreateValue(AtomicReader reader, TCacheKey key, bool setDocsWithField);
+            protected abstract TValue CreateValue(AtomicReader reader, TKey key, bool setDocsWithField);
 
             /// <summary>
             /// Remove this reader from the cache, if present. </summary>
@@ -258,16 +262,16 @@ namespace Lucene.Net.Search
             /// Sets the key to the value for the provided reader;
             /// if the key is already set then this doesn't change it.
             /// </summary>
-            public virtual void Put(AtomicReader reader, TCacheKey key, object value)
+            public virtual void Put(AtomicReader reader, TKey key, TValue value)
             {
-                ConcurrentDictionary<TCacheKey, object> innerCache;
+                ConcurrentDictionary<TKey, object> innerCache;
                 object readerKey = reader.CoreCacheKey;
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 innerCache = readerCache.GetValue(readerKey, (readerKey) =>
                 {
                     // First time this reader is using FieldCache
                     wrapper.InitReader(reader);
-                    return new ConcurrentDictionary<TCacheKey, object>
+                    return new ConcurrentDictionary<TKey, object>
                     {
                         [key] = value
                     };
@@ -278,7 +282,7 @@ namespace Lucene.Net.Search
                     if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache == null)
                     {
                         // First time this reader is using FieldCache
-                        innerCache = new ConcurrentDictionary<TCacheKey, object>
+                        innerCache = new ConcurrentDictionary<TKey, object>
                         {
                             [key] = value
                         };
@@ -291,18 +295,18 @@ namespace Lucene.Net.Search
                 innerCache.TryAdd(key, value);
             }
 
-            public virtual object Get(AtomicReader reader, TCacheKey key, bool setDocsWithField)
+            public virtual TValue Get(AtomicReader reader, TKey key, bool setDocsWithField)
             {
-                ConcurrentDictionary<TCacheKey, object> innerCache;
+                ConcurrentDictionary<TKey, object> innerCache;
                 object readerKey = reader.CoreCacheKey;
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                 innerCache = readerCache.GetValue(readerKey, (readerKey) =>
                 {
                     // First time this reader is using FieldCache
                     wrapper.InitReader(reader);
-                    return new ConcurrentDictionary<TCacheKey, object>
+                    return new ConcurrentDictionary<TKey, object>
                     {
-                        [key] = new FieldCache.CreationPlaceholder()
+                        [key] = new FieldCache.CreationPlaceholder<TValue>()
                     };
                 });
 
@@ -312,21 +316,24 @@ namespace Lucene.Net.Search
                     if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache == null)
                     {
                         // First time this reader is using FieldCache
-                        innerCache = new ConcurrentDictionary<TCacheKey, object>
+                        innerCache = new ConcurrentDictionary<TKey, object>
                         {
-                            [key] = new FieldCache.CreationPlaceholder()
+                            [key] = new FieldCache.CreationPlaceholder<TValue>()
                         };
                         readerCache[readerKey] = innerCache;
                         wrapper.InitReader(reader);
                     }
                 }
 #endif
-                object value = innerCache.GetOrAdd(key, (cacheKey) => new FieldCache.CreationPlaceholder());
-                if (value is FieldCache.CreationPlaceholder progress)
+                object value = innerCache.GetOrAdd(key, (cacheKey) => new FieldCache.CreationPlaceholder<TValue>());
+#pragma warning disable IDE0038 // Use pattern matching
+                if (value is FieldCache.CreationPlaceholder<TValue>)
+#pragma warning restore IDE0038 // Use pattern matching
                 {
                     lock (value)
                     {
-                        if (progress.Value == null)
+                        var progress = (FieldCache.CreationPlaceholder<TValue>)value;
+                        if (progress.Value is null)
                         {
                             progress.Value = CreateValue(reader, key, setDocsWithField);
                             if (innerCache.TryUpdate(key, progress.Value, value))
@@ -334,7 +341,7 @@ namespace Lucene.Net.Search
                                 // Only check if key.custom (the parser) is
                                 // non-null; else, we check twice for a single
                                 // call to FieldCache.getXXX
-                                if (!(key.Custom is null) && wrapper != null)
+                                if (!(key.Custom is null) && !(wrapper is null))
                                 {
                                     TextWriter infoStream = wrapper.InfoStream;
                                     if (infoStream != null)
@@ -347,7 +354,7 @@ namespace Lucene.Net.Search
                         return progress.Value;
                     }
                 }
-                return value;
+                return (TValue)value;
             }
 
             private void PrintNewInsanity(TextWriter infoStream, object value)
@@ -608,7 +615,7 @@ namespace Lucene.Net.Search
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
 #pragma warning disable CS0612 // Type or member is obsolete
-                return (FieldCache.Bytes)caches_typeof_sbyte.Get(reader, new CacheKey<FieldCache.IByteParser>(field, parser), setDocsWithField);
+                return caches_typeof_sbyte.Get(reader, new CacheKey<FieldCache.IByteParser>(field, parser), setDocsWithField);
 #pragma warning restore CS0612 // Type or member is obsolete
             }
         }
@@ -629,7 +636,7 @@ namespace Lucene.Net.Search
         }
 
 #pragma warning disable CS0612 // Type or member is obsolete
-        internal sealed class ByteCache : Cache<CacheKey<FieldCache.IByteParser>>
+        internal sealed class ByteCache : Cache<CacheKey<FieldCache.IByteParser>, FieldCache.Bytes>
 #pragma warning restore CS0612 // Type or member is obsolete
         {
             internal ByteCache(FieldCacheImpl wrapper)
@@ -638,7 +645,7 @@ namespace Lucene.Net.Search
             }
 
 #pragma warning disable CS0612 // Type or member is obsolete
-            protected override object CreateValue(AtomicReader reader, CacheKey<FieldCache.IByteParser> key, bool setDocsWithField)
+            protected override FieldCache.Bytes CreateValue(AtomicReader reader, CacheKey<FieldCache.IByteParser> key, bool setDocsWithField)
 #pragma warning restore CS0612 // Type or member is obsolete
             {
                 int maxDoc = reader.MaxDoc;
@@ -765,7 +772,7 @@ namespace Lucene.Net.Search
                     return FieldCache.Int16s.EMPTY;
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
-                return (FieldCache.Int16s)caches_typeof_short.Get(reader, new CacheKey<FieldCache.IInt16Parser>(field, parser), setDocsWithField);
+                return caches_typeof_short.Get(reader, new CacheKey<FieldCache.IInt16Parser>(field, parser), setDocsWithField);
             }
         }
 
@@ -791,7 +798,7 @@ namespace Lucene.Net.Search
         /// NOTE: This was ShortCache in Lucene
         /// </summary>
 #pragma warning disable CS0612 // Type or member is obsolete
-        internal sealed class Int16Cache : Cache<CacheKey<FieldCache.IInt16Parser>>
+        internal sealed class Int16Cache : Cache<CacheKey<FieldCache.IInt16Parser>, FieldCache.Int16s>
 #pragma warning restore CS0612 // Type or member is obsolete
         {
             internal Int16Cache(FieldCacheImpl wrapper)
@@ -800,7 +807,7 @@ namespace Lucene.Net.Search
             }
 
 #pragma warning disable CS0612 // Type or member is obsolete
-            protected override object CreateValue(AtomicReader reader, CacheKey<FieldCache.IInt16Parser> key, bool setDocsWithField)
+            protected override FieldCache.Int16s CreateValue(AtomicReader reader, CacheKey<FieldCache.IInt16Parser> key, bool setDocsWithField)
 #pragma warning restore CS0612 // Type or member is obsolete
             {
                 int maxDoc = reader.MaxDoc;
@@ -925,7 +932,7 @@ namespace Lucene.Net.Search
                     return FieldCache.Int32s.EMPTY;
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
-                return (FieldCache.Int32s)caches_typeof_int.Get(reader, new CacheKey<FieldCache.IInt32Parser>(field, parser), setDocsWithField);
+                return caches_typeof_int.Get(reader, new CacheKey<FieldCache.IInt32Parser>(field, parser), setDocsWithField);
             }
         }
 
@@ -981,14 +988,14 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was IntCache in Lucene
         /// </summary>
-        internal sealed class Int32Cache : Cache<CacheKey<FieldCache.IInt32Parser>>
+        internal sealed class Int32Cache : Cache<CacheKey<FieldCache.IInt32Parser>, FieldCache.Int32s>
         {
             internal Int32Cache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
-            protected override object CreateValue(AtomicReader reader, CacheKey<FieldCache.IInt32Parser> key, bool setDocsWithField)
+            protected override FieldCache.Int32s CreateValue(AtomicReader reader, CacheKey<FieldCache.IInt32Parser> key, bool setDocsWithField)
             {
                 FieldCache.IInt32Parser parser = key.custom;
                 if (parser == null)
@@ -1107,17 +1114,17 @@ namespace Lucene.Net.Search
                 return new Lucene.Net.Util.Bits.MatchNoBits(reader.MaxDoc);
             }
             // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
-            return (IBits)caches_typeof_DocsWithFieldCache.Get(reader, new CacheKey(field), false);
+            return caches_typeof_DocsWithFieldCache.Get(reader, new CacheKey(field), false);
         }
 
-        internal sealed class DocsWithFieldCache : Cache<CacheKey>
+        internal sealed class DocsWithFieldCache : Cache<CacheKey, IBits>
         {
             internal DocsWithFieldCache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
-            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
+            protected override IBits CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
             {
                 string field = key.field;
                 int maxDoc = reader.MaxDoc;
@@ -1208,7 +1215,7 @@ namespace Lucene.Net.Search
                     return FieldCache.Singles.EMPTY;
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
-                return (FieldCache.Singles)caches_typeof_float.Get(reader, new CacheKey<FieldCache.ISingleParser>(field, parser), setDocsWithField);
+                return caches_typeof_float.Get(reader, new CacheKey<FieldCache.ISingleParser>(field, parser), setDocsWithField);
             }
         }
 
@@ -1233,14 +1240,14 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was FloatCache in Lucene
         /// </summary>
-        internal sealed class SingleCache : Cache<CacheKey<FieldCache.ISingleParser>>
+        internal sealed class SingleCache : Cache<CacheKey<FieldCache.ISingleParser>, FieldCache.Singles>
         {
             internal SingleCache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
-            protected override object CreateValue(AtomicReader reader, CacheKey<FieldCache.ISingleParser> key, bool setDocsWithField)
+            protected override FieldCache.Singles CreateValue(AtomicReader reader, CacheKey<FieldCache.ISingleParser> key, bool setDocsWithField)
             {
                 FieldCache.ISingleParser parser = key.custom;
                 if (parser == null)
@@ -1362,7 +1369,7 @@ namespace Lucene.Net.Search
                     return FieldCache.Int64s.EMPTY;
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
-                return (FieldCache.Int64s)caches_typeof_long.Get(reader, new CacheKey<FieldCache.IInt64Parser>(field, parser), setDocsWithField);
+                return caches_typeof_long.Get(reader, new CacheKey<FieldCache.IInt64Parser>(field, parser), setDocsWithField);
             }
         }
 
@@ -1389,14 +1396,14 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was LongCache in Lucene
         /// </summary>
-        internal sealed class Int64Cache : Cache<CacheKey<FieldCache.IInt64Parser>>
+        internal sealed class Int64Cache : Cache<CacheKey<FieldCache.IInt64Parser>, FieldCache.Int64s>
         {
             internal Int64Cache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
-            protected override object CreateValue(AtomicReader reader, CacheKey<FieldCache.IInt64Parser> key, bool setDocsWithField)
+            protected override FieldCache.Int64s CreateValue(AtomicReader reader, CacheKey<FieldCache.IInt64Parser> key, bool setDocsWithField)
             {
                 FieldCache.IInt64Parser parser = key.custom;
                 if (parser == null)
@@ -1528,7 +1535,7 @@ namespace Lucene.Net.Search
                     return FieldCache.Doubles.EMPTY;
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
-                return (FieldCache.Doubles)caches_typeof_double.Get(reader, new CacheKey<FieldCache.IDoubleParser>(field, parser), setDocsWithField);
+                return caches_typeof_double.Get(reader, new CacheKey<FieldCache.IDoubleParser>(field, parser), setDocsWithField);
             }
         }
 
@@ -1547,14 +1554,14 @@ namespace Lucene.Net.Search
             }
         }
 
-        internal sealed class DoubleCache : Cache<CacheKey<FieldCache.IDoubleParser>>
+        internal sealed class DoubleCache : Cache<CacheKey<FieldCache.IDoubleParser>, FieldCache.Doubles>
         {
             internal DoubleCache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
-            protected override object CreateValue(AtomicReader reader, CacheKey<FieldCache.IDoubleParser> key, bool setDocsWithField)
+            protected override FieldCache.Doubles CreateValue(AtomicReader reader, CacheKey<FieldCache.IDoubleParser> key, bool setDocsWithField)
             {
                 FieldCache.IDoubleParser parser = key.custom;
                 if (parser == null)
@@ -1706,18 +1713,18 @@ namespace Lucene.Net.Search
                     return DocValues.EMPTY_SORTED;
                 }
                 // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
-                return (SortedDocValues)caches_typeof_SortedDocValues.Get(reader, new CacheKey<FieldCache.AcceptableOverheadRatio>(field, new FieldCache.AcceptableOverheadRatio(acceptableOverheadRatio)), false);
+                return caches_typeof_SortedDocValues.Get(reader, new CacheKey<FieldCache.AcceptableOverheadRatio>(field, new FieldCache.AcceptableOverheadRatio(acceptableOverheadRatio)), false);
             }
         }
 
-        internal class SortedDocValuesCache : Cache<CacheKey<FieldCache.AcceptableOverheadRatio>>
+        internal class SortedDocValuesCache : Cache<CacheKey<FieldCache.AcceptableOverheadRatio>, SortedDocValues>
         {
             internal SortedDocValuesCache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
-            protected override object CreateValue(AtomicReader reader, CacheKey<FieldCache.AcceptableOverheadRatio> key, bool setDocsWithField) // ignored
+            protected override SortedDocValues CreateValue(AtomicReader reader, CacheKey<FieldCache.AcceptableOverheadRatio> key, bool setDocsWithField) // ignored
             {
                 int maxDoc = reader.MaxDoc;
 
@@ -1873,17 +1880,17 @@ namespace Lucene.Net.Search
             }
 
             // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
-            return (BinaryDocValues)caches_typeof_BinaryDocValues.Get(reader, new CacheKey<FieldCache.AcceptableOverheadRatio>(field, new FieldCache.AcceptableOverheadRatio(acceptableOverheadRatio)), setDocsWithField);
+            return caches_typeof_BinaryDocValues.Get(reader, new CacheKey<FieldCache.AcceptableOverheadRatio>(field, new FieldCache.AcceptableOverheadRatio(acceptableOverheadRatio)), setDocsWithField);
         }
 
-        internal sealed class BinaryDocValuesCache : Cache<CacheKey<FieldCache.AcceptableOverheadRatio>>
+        internal sealed class BinaryDocValuesCache : Cache<CacheKey<FieldCache.AcceptableOverheadRatio>, BinaryDocValues>
         {
             internal BinaryDocValuesCache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
-            protected override object CreateValue(AtomicReader reader, CacheKey<FieldCache.AcceptableOverheadRatio> key, bool setDocsWithField)
+            protected override BinaryDocValues CreateValue(AtomicReader reader, CacheKey<FieldCache.AcceptableOverheadRatio> key, bool setDocsWithField)
             {
                 // TODO: would be nice to first check if DocTermsIndex
                 // was already cached for this field and then return
@@ -2026,18 +2033,18 @@ namespace Lucene.Net.Search
             }
 
             // LUCENENET specific - eliminated unnecessary Dictionary lookup by declaring each cache as a member variable
-            DocTermOrds dto = (DocTermOrds)caches_typeof_DocTermOrds.Get(reader, new CacheKey(field), false);
+            DocTermOrds dto = caches_typeof_DocTermOrds.Get(reader, new CacheKey(field), false);
             return dto.GetIterator(reader);
         }
 
-        internal sealed class DocTermOrdsCache : Cache<CacheKey>
+        internal sealed class DocTermOrdsCache : Cache<CacheKey, DocTermOrds>
         {
             internal DocTermOrdsCache(FieldCacheImpl wrapper)
                 : base(wrapper)
             {
             }
 
-            protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
+            protected override DocTermOrds CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
             {
                 return new DocTermOrds(reader, null, key.field);
             }
