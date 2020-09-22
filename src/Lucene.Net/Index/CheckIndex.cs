@@ -1893,9 +1893,9 @@ namespace Lucene.Net.Index
                         {
                             throw new Exception("ord out of bounds: " + ord);
                         }
-                        if (dv is RandomAccessOrds ords)
+                        if (dv is RandomAccessOrds ords2)
                         {
-                            long ord2 = ords.OrdAt(ordCount);
+                            long ord2 = ords2.OrdAt(ordCount);
                             if (ord != ord2)
                             {
                                 throw new Exception("ordAt(" + ordCount + ") inconsistent, expected=" + ord + ",got=" + ord2 + " for doc: " + i);
@@ -2472,8 +2472,12 @@ namespace Lucene.Net.Index
                 //Environment.Exit(1);
             }
 
+#if DEBUG
             // LUCENENET specific - rather than having the user specify whether to enable asserts, we always run with them enabled.
             Debugging.AssertsEnabled = true;
+#else
+            Console.WriteLine("\nNOTE: testing will be more thorough if you compile in debug, so assertions are enabled");
+#endif
             //if (!AssertsOn())
             //{
             //    Console.WriteLine("\nNOTE: testing will be more thorough if you run java with '-ea:org.apache.lucene...', so assertions are enabled");

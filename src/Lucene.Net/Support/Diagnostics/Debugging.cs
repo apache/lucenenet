@@ -36,6 +36,7 @@ namespace Lucene.Net.Diagnostics
         /// </summary>
         /// 
 
+#if DEBUG
         private static Lazy<bool> _assertsEnabled = new Lazy<bool>(() => SystemProperties.GetPropertyAsBoolean("assert", false));
 
         public static bool AssertsEnabled
@@ -50,6 +51,9 @@ namespace Lucene.Net.Diagnostics
                 _assertsEnabled = new Lazy<bool>(() => value);
             }
         }
+#else
+        public const bool AssertsEnabled = false;
+#endif
 
         /// <summary>
         /// Checks for a condition; if the condition is <c>false</c>, throws an <see cref="AssertionException"/>.
