@@ -49,7 +49,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             var terms = fields.GetTerms(m_indexedField);
             var searcher = (IndexSearcher)context["searcher"];
             var similarity = IDFValueSource.AsTFIDF(searcher.Similarity, m_indexedField);
-            if (similarity == null)
+            if (similarity is null)
             {
                 throw new NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }
@@ -99,7 +99,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     docs = null;
                 }
 
-                if (docs == null)
+                if (docs is null)
                 {
                     docs = new DocsEnumAnonymousInnerClassHelper(this);
                 }

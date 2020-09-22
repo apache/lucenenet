@@ -320,7 +320,7 @@ namespace Lucene.Net.Store
             {
                 throw new ArgumentException("numBytes must be >= 0, got " + numBytes);
             }
-            if (skipBuffer == null)
+            if (skipBuffer is null)
             {
                 skipBuffer = new byte[SKIP_BUFFER_SIZE];
             }

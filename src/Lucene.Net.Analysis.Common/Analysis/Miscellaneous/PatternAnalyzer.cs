@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///            lists </a>. </param>
         public PatternAnalyzer(LuceneVersion matchVersion, Regex pattern, bool toLowerCase, CharArraySet stopWords)
         {
-            if (pattern == null)
+            if (pattern is null)
             {
                 throw new ArgumentException("pattern must not be null");
             }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             // Ideally the Analyzer superclass should have a method with the same signature, 
             // with a default impl that simply delegates to the StringReader flavour. 
-            if (reader == null)
+            if (reader is null)
             {
                 reader = new FastStringReader(text);
             }
@@ -303,10 +303,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <exception cref="IOException"> if an I/O error occurs while reading the stream </exception>
         private static string ToString(TextReader input)
         {
-            var reader = input as FastStringReader;
-            if (reader != null) // fast path
+            if (input is FastStringReader fsr) // fast path
             {
-                return reader.String;
+                return fsr.String;
             }
 
             try
@@ -378,7 +377,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 {
                     throw new InvalidOperationException("Consumer did not call reset().");
                 }
-                if (matcher == null)
+                if (matcher is null)
                 {
                     return false;
                 }
@@ -491,7 +490,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             public override bool IncrementToken()
             {
-                if (str == null)
+                if (str is null)
                 {
                     throw new InvalidOperationException("Consumer did not call reset().");
                 }
@@ -540,7 +539,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 } while (text != null && IsStopWord(text));
 
                 pos = i;
-                if (text == null)
+                if (text is null)
                 {
                     return false;
                 }

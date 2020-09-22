@@ -72,7 +72,7 @@ namespace Lucene.Net.Support
             {
                 var current = list[i];
 
-                if (current == null && item == null)
+                if (current is null && item is null)
                     return fakeIndex;
 
                 if (current.Equals(item))

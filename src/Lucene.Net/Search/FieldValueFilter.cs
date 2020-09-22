@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + ((field == null) ? 0 : field.GetHashCode());
+            result = prime * result + ((field is null) ? 0 : field.GetHashCode());
             result = prime * result + (negate ? 1231 : 1237);
             return result;
         }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
                 return false;
             }
             FieldValueFilter other = (FieldValueFilter)obj;
-            if (field == null)
+            if (field is null)
             {
                 if (other.field is object)
                 {

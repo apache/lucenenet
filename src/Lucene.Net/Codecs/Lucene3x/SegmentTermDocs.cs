@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             FieldInfo fi = fieldInfos.FieldInfo(term.Field);
             this.m_indexOptions = (fi is object) ? fi.IndexOptions : IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
             m_currentFieldStoresPayloads = (fi is object) && fi.HasPayloads;
-            if (ti == null)
+            if (ti is null)
             {
                 m_df = 0;
             }
@@ -177,7 +177,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 m_count++;
 
-                if (m_liveDocs == null || m_liveDocs.Get(doc))
+                if (m_liveDocs is null || m_liveDocs.Get(doc))
                 {
                     break;
                 }
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     m_count++;
 
-                    if (m_liveDocs == null || m_liveDocs.Get(doc))
+                    if (m_liveDocs is null || m_liveDocs.Get(doc))
                     {
                         docs[i] = doc;
                         freqs[i] = freq;
@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 doc += m_freqStream.ReadVInt32();
                 m_count++;
 
-                if (m_liveDocs == null || m_liveDocs.Get(doc))
+                if (m_liveDocs is null || m_liveDocs.Get(doc))
                 {
                     docs[i] = doc;
                     // Hardware freq to 1 when term freqs were not
@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // don't skip if the target is close (within skipInterval docs away)
             if ((target - skipInterval) >= doc && m_df >= skipInterval) // optimized case
             {
-                if (skipListReader == null)
+                if (skipListReader is null)
                 {
                     skipListReader = new Lucene3xSkipListReader((IndexInput)m_freqStream.Clone(), maxSkipLevels, skipInterval); // lazily clone
                 }

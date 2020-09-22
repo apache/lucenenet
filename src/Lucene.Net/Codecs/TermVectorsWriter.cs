@@ -161,7 +161,7 @@ namespace Lucene.Net.Codecs
                 int endOffset;
                 BytesRef thisPayload;
 
-                if (positions == null)
+                if (positions is null)
                 {
                     position = -1;
                     thisPayload = null;
@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs
                         // this position has a payload
                         int payloadLength = positions.ReadVInt32();
 
-                        if (payload == null)
+                        if (payload is null)
                         {
                             payload = new BytesRef();
                             payload.Bytes = new byte[payloadLength];
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
-                if (offsets == null)
+                if (offsets is null)
                 {
                     startOffset = endOffset = -1;
                 }
@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs
         /// </summary>
         protected void AddAllDocVectors(Fields vectors, MergeState mergeState)
         {
-            if (vectors == null)
+            if (vectors is null)
             {
                 StartDocument(0);
                 FinishDocument();
@@ -286,11 +286,11 @@ namespace Lucene.Net.Codecs
                 fieldCount++;
                 FieldInfo fieldInfo = mergeState.FieldInfos.FieldInfo(fieldName);
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(lastFieldName == null || fieldName.CompareToOrdinal(lastFieldName) > 0, () => "lastFieldName=" + lastFieldName + " fieldName=" + fieldName);
+                if (Debugging.AssertsEnabled) Debugging.Assert(lastFieldName is null || fieldName.CompareToOrdinal(lastFieldName) > 0, () => "lastFieldName=" + lastFieldName + " fieldName=" + fieldName);
                 lastFieldName = fieldName;
 
                 Terms terms = vectors.GetTerms(fieldName);
-                if (terms == null)
+                if (terms is null)
                 {
                     // FieldsEnum shouldn't lie...
                     continue;

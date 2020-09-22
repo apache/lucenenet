@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
         public override string ToString()
         {
-            if (NoBreak == null && PostBreak == null && PreBreak != null && PreBreak.Equals("-", StringComparison.Ordinal))
+            if (NoBreak is null && PostBreak is null && PreBreak != null && PreBreak.Equals("-", StringComparison.Ordinal))
             {
                 return "-";
             }

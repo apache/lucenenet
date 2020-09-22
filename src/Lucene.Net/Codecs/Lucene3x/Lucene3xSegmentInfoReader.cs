@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 SegmentCommitInfo siPerCommit = reader.ReadLegacySegmentInfo(directory, format, input);
                 SegmentInfo si = siPerCommit.Info;
 
-                if (si.Version == null)
+                if (si.Version is null)
                 {
                     // Could be a 3.0 - try to open the doc stores - if it fails, it's a
                     // 2.x segment, and an IndexFormatTooOldException will be thrown,

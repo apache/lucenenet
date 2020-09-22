@@ -141,7 +141,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             RAMFile file;
-            if (!m_fileMap.TryGetValue(name, out file) || file == null)
+            if (!m_fileMap.TryGetValue(name, out file) || file is null)
             {
                 throw new FileNotFoundException(name);
             }
@@ -212,7 +212,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             RAMFile file;
-            if (!m_fileMap.TryGetValue(name, out file) || file == null)
+            if (!m_fileMap.TryGetValue(name, out file) || file is null)
             {
                 throw new FileNotFoundException(name);
             }

@@ -36,9 +36,9 @@ namespace Lucene.Net.Util
         /// <exception cref="ArgumentNullException"><paramref name="list"/> or <paramref name="collection"/> is <c>null</c>.</exception>
         public static void AddRange<T>(this IList<T> list, IEnumerable<T> collection)
         {
-            if (list == null)
+            if (list is null)
                 throw new ArgumentNullException(nameof(list));
-            if (collection == null)
+            if (collection is null)
                 throw new ArgumentNullException(nameof(collection));
 
             if (list is List<T> thisList)

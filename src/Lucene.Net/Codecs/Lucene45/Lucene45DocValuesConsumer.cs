@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 foreach (long? nv in values)
                 {
                     long v;
-                    if (nv == null)
+                    if (nv is null)
                     {
                         v = 0;
                         missing = true;
@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs.Lucene45
             foreach (BytesRef v in values)
             {
                 int length;
-                if (v == null)
+                if (v is null)
                 {
                     length = 0;
                     missing = true;

@@ -43,12 +43,7 @@ namespace Lucene.Net.Analysis.Synonym
         public SlowSynonymFilter(TokenStream @in, SlowSynonymMap map) 
             : base(@in)
         {
-            if (map == null)
-            {
-                throw new ArgumentException("map is required", "map");
-            }
-
-            this.map = map;
+            this.map = map ?? throw new ArgumentException("map is required", "map");
             // just ensuring these attributes exist...
             AddAttribute<ICharTermAttribute>();
             AddAttribute<IPositionIncrementAttribute>();
@@ -88,13 +83,13 @@ namespace Lucene.Net.Analysis.Synonym
 
                 // common case fast-path of first token not matching anything
                 AttributeSource firstTok = NextTok();
-                if (firstTok == null)
+                if (firstTok is null)
                 {
                     return false;
                 }
                 var termAtt = firstTok.AddAttribute<ICharTermAttribute>();
-                SlowSynonymMap result = map.Submap != null ? map.Submap.Get(termAtt.Buffer, 0, termAtt.Length) : null;
-                if (result == null)
+                SlowSynonymMap result = map.Submap?.Get(termAtt.Buffer, 0, termAtt.Length);
+                if (result is null)
                 {
                     Copy(this, firstTok);
                     return true;
@@ -111,7 +106,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                 result = Match(result);
 
-                if (result == null)
+                if (result is null)
                 {
                     // no match, simply return the first token read.
                     Copy(this, firstTok);
@@ -249,7 +244,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private void PushTok(AttributeSource t)
         {
-            if (buffer == null)
+            if (buffer is null)
             {
                 buffer = new LinkedList<AttributeSource>();
             }
@@ -293,7 +288,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
 
             // if no longer sequence matched, so if this node has synonyms, it's the match.
-            if (result == null && map.Synonyms != null)
+            if (result is null && map.Synonyms != null)
             {
                 result = map;
             }

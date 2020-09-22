@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.Synonym
                     Array.Copy(posLengths, 0, next, 0, count);
                     posLengths = next;
                 }
-                if (outputs[count] == null)
+                if (outputs[count] is null)
                 {
                     outputs[count] = new CharsRef();
                 }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Analysis.Synonym
             this.synonyms = synonyms;
             this.ignoreCase = ignoreCase;
             this.fst = synonyms.Fst;
-            if (fst == null)
+            if (fst is null)
             {
                 throw new ArgumentException("fst must be non-null");
             }
@@ -413,7 +413,7 @@ namespace Lucene.Net.Analysis.Synonym
                 while (bufUpto < bufferLen)
                 {
                     int codePoint = Character.CodePointAt(buffer, bufUpto, bufferLen);
-                    if (fst.FindTargetArc(ignoreCase ? Character.ToLower(codePoint, CultureInfo.InvariantCulture) : codePoint, scratchArc, scratchArc, fstReader) == null)
+                    if (fst.FindTargetArc(ignoreCase ? Character.ToLower(codePoint, CultureInfo.InvariantCulture) : codePoint, scratchArc, scratchArc, fstReader) is null)
                     {
                         //System.out.println("    stop");
                         goto byTokenBreak;
@@ -437,7 +437,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                 // See if the FST wants to continue matching (ie, needs to
                 // see the next input token):
-                if (fst.FindTargetArc(SynonymMap.WORD_SEPARATOR, scratchArc, scratchArc, fstReader) == null)
+                if (fst.FindTargetArc(SynonymMap.WORD_SEPARATOR, scratchArc, scratchArc, fstReader) is null)
                 {
                     // No further rules can match here; we're done
                     // searching for matching rules starting at the

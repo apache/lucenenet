@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual ICharSequence Subsequence(int startIndex, int length)
         {
             // From Apache Harmony String class
-            if (m_buf == null || (startIndex == 0 && length == m_buf.Length))
+            if (m_buf is null || (startIndex == 0 && length == m_buf.Length))
             {
                 return new CharArrayCharSequence(m_buf);
             }

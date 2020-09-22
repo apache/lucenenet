@@ -480,9 +480,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                     object o = hw[i];
                     // j = index(sw) = letterindex(word)?
                     // result[k] = corresponding index(w)
-                    if (o is string)
+                    if (o is string str)
                     {
-                        j += ((string)o).Length;
+                        j += str.Length;
                         if (j >= remainCharCount && j < (len - pushCharCount))
                         {
                             result[k++] = j + iIgnoreAtBeginning;

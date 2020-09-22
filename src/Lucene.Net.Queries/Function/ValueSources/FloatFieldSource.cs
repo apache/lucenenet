@@ -101,12 +101,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             if (!(o is SingleFieldSource other))
                 return false;
-            return base.Equals(other) && (this.m_parser == null ? other.m_parser == null : this.m_parser.GetType() == other.m_parser.GetType());
+            return base.Equals(other) && (this.m_parser is null ? other.m_parser is null : this.m_parser.GetType() == other.m_parser.GetType());
         }
 
         public override int GetHashCode()
         {
-            int h = m_parser == null ? typeof(float?).GetHashCode() : m_parser.GetType().GetHashCode();
+            int h = m_parser is null ? typeof(float?).GetHashCode() : m_parser.GetType().GetHashCode();
             h += base.GetHashCode();
             return h;
         }

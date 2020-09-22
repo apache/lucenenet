@@ -107,7 +107,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
 
             var scaleInfo = (ScaleInfo)context[this];
-            if (scaleInfo == null)
+            if (scaleInfo is null)
             {
                 scaleInfo = CreateScaleInfo(context, readerContext);
             }

@@ -313,7 +313,7 @@ namespace Lucene.Net.Store
                 EnsureOpen();
                 if (Debugging.AssertsEnabled) Debugging.Assert(!openForWrite);
                 string id = IndexFileNames.StripSegmentName(name);
-                if (!entries.TryGetValue(id, out FileEntry entry) || entry == null)
+                if (!entries.TryGetValue(id, out FileEntry entry) || entry is null)
                 {
                     throw new FileNotFoundException("No sub-file with id " + id +
                         " found (fileName=" + name + " files: " +
@@ -386,7 +386,7 @@ namespace Lucene.Net.Store
                 return writer.FileLength(name);
             }
             FileEntry e = entries[IndexFileNames.StripSegmentName(name)];
-            if (e == null)
+            if (e is null)
             {
                 throw new FileNotFoundException(name);
             }
@@ -417,7 +417,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             if (Debugging.AssertsEnabled) Debugging.Assert(!openForWrite);
             string id = IndexFileNames.StripSegmentName(name);
-            if (!entries.TryGetValue(id, out FileEntry entry) || entry == null)
+            if (!entries.TryGetValue(id, out FileEntry entry) || entry is null)
             {
                 throw new FileNotFoundException("No sub-file with id " + id + 
                     " found (fileName=" + name + " files: " + 

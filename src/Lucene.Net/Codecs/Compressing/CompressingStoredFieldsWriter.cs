@@ -319,7 +319,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     bits = STRING;
                     @string = field.GetStringValue();
-                    if (@string == null)
+                    if (@string is null)
                     {
                         throw new ArgumentException("field " + field.Name + " is stored but does not have BinaryValue, StringValue nor NumericValue");
                     }
@@ -411,7 +411,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int maxDoc = reader.MaxDoc;
                 IBits liveDocs = reader.LiveDocs;
 
-                if (matchingFieldsReader == null || matchingFieldsReader.Version != VERSION_CURRENT || matchingFieldsReader.CompressionMode != compressionMode || matchingFieldsReader.ChunkSize != chunkSize) // the way data is decompressed depends on the chunk size -  means reader version is not the same as the writer version
+                if (matchingFieldsReader is null || matchingFieldsReader.Version != VERSION_CURRENT || matchingFieldsReader.CompressionMode != compressionMode || matchingFieldsReader.ChunkSize != chunkSize) // the way data is decompressed depends on the chunk size -  means reader version is not the same as the writer version
                 {
                     // naive merge...
                     for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; i = NextLiveDoc(i + 1, liveDocs, maxDoc))
@@ -488,7 +488,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private static int NextLiveDoc(int doc, IBits liveDocs, int maxDoc)
         {
-            if (liveDocs == null)
+            if (liveDocs is null)
             {
                 return doc;
             }
@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private static int NextDeletedDoc(int doc, IBits liveDocs, int maxDoc)
         {
-            if (liveDocs == null)
+            if (liveDocs is null)
             {
                 return maxDoc;
             }

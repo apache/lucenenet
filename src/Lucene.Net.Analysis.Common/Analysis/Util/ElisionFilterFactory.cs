@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.Util
 
         public virtual void Inform(IResourceLoader loader)
         {
-            if (articlesFile == null)
+            if (articlesFile is null)
             {
                 articles = FrenchAnalyzer.DEFAULT_ARTICLES;
             }

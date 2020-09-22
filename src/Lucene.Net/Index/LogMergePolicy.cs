@@ -684,7 +684,7 @@ namespace Lucene.Net.Index
                     }
                     else if (!anyTooLarge)
                     {
-                        if (spec == null)
+                        if (spec is null)
                         {
                             spec = new MergeSpecification();
                         }

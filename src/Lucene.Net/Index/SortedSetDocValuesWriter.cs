@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
 
         public virtual void AddValue(int docID, BytesRef value)
         {
-            if (value == null)
+            if (value is null)
             {
                 throw new ArgumentException("field \"" + fieldInfo.Name + "\": null value not allowed");
             }

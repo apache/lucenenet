@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
             if (other is TypeAttribute o)
             {
-                return (this.type == null ? o.type == null : this.type.Equals(o.type, StringComparison.Ordinal));
+                return (this.type is null ? o.type is null : this.type.Equals(o.type, StringComparison.Ordinal));
             }
 
             return false;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public override int GetHashCode()
         {
-            return (type == null) ? 0 : type.GetHashCode();
+            return (type is null) ? 0 : type.GetHashCode();
         }
 
         public override void CopyTo(IAttribute target)

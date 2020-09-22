@@ -127,7 +127,7 @@ namespace Lucene.Net.Store
 
         public override void Seek(long pos)
         {
-            if (currentBuffer == null || pos < bufferStart || pos >= bufferStart + BUFFER_SIZE)
+            if (currentBuffer is null || pos < bufferStart || pos >= bufferStart + BUFFER_SIZE)
             {
                 currentBufferIndex = (int)(pos / BUFFER_SIZE);
                 SwitchCurrentBuffer(false);

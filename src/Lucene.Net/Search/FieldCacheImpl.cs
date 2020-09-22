@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
                         foreach (var readerCacheEntry in cache.readerCache)
                         {
                             object readerKey = readerCacheEntry.Key;
-                            if (readerKey == null)
+                            if (readerKey is null)
                             {
                                 continue;
                             }
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search
 #else
                 lock (readerCache)
                 {
-                    if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache == null)
+                    if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache is null)
                     {
                         // First time this reader is using FieldCache
                         innerCache = new ConcurrentDictionary<CacheKey, object>
@@ -311,7 +311,7 @@ namespace Lucene.Net.Search
 #else
                 lock (readerCache)
                 {
-                    if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache == null)
+                    if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache is null)
                     {
                         // First time this reader is using FieldCache
                         innerCache = new ConcurrentDictionary<CacheKey, object>
@@ -328,7 +328,7 @@ namespace Lucene.Net.Search
                 {
                     lock (value)
                     {
-                        if (progress.Value == null)
+                        if (progress.Value is null)
                         {
                             progress.Value = CreateValue(reader, key, setDocsWithField);
                             if (innerCache.TryUpdate(key, progress.Value, value))
@@ -397,9 +397,9 @@ namespace Lucene.Net.Search
                 {
                     if (other.field.Equals(field, StringComparison.Ordinal))
                     {
-                        if (other.custom == null)
+                        if (other.custom is null)
                         {
-                            if (custom == null)
+                            if (custom is null)
                             {
                                 return true;
                             }
@@ -417,7 +417,7 @@ namespace Lucene.Net.Search
             /// Composes a hashcode based on the field and type. </summary>
             public override int GetHashCode()
             {
-                return field.GetHashCode() ^ (custom == null ? 0 : custom.GetHashCode());
+                return field.GetHashCode() ^ (custom is null ? 0 : custom.GetHashCode());
             }
         }
 
@@ -461,7 +461,7 @@ namespace Lucene.Net.Search
                             VisitDoc(docID);
                             if (setDocsWithField)
                             {
-                                if (docsWithField == null)
+                                if (docsWithField is null)
                                 {
                                     // Lazy init
                                     this.docsWithField = docsWithField = new FixedBitSet(maxDoc);
@@ -485,7 +485,7 @@ namespace Lucene.Net.Search
         {
             int maxDoc = reader.MaxDoc;
             IBits bits;
-            if (docsWithField == null)
+            if (docsWithField is null)
             {
                 bits = new Lucene.Net.Util.Bits.MatchNoBits(maxDoc);
             }
@@ -542,7 +542,7 @@ namespace Lucene.Net.Search
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
-                if (info == null)
+                if (info is null)
                 {
                     return FieldCache.Bytes.EMPTY;
                 }
@@ -606,7 +606,7 @@ namespace Lucene.Net.Search
 #pragma warning disable 612, 618
                 FieldCache.IByteParser parser = (FieldCache.IByteParser)key.custom;
 #pragma warning restore 612, 618
-                if (parser == null)
+                if (parser is null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser = DEFAULT_INT16_PARSER) so cache
@@ -712,7 +712,7 @@ namespace Lucene.Net.Search
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
-                if (info == null)
+                if (info is null)
                 {
                     return FieldCache.Int16s.EMPTY;
                 }
@@ -781,7 +781,7 @@ namespace Lucene.Net.Search
                 short[] values;
 #pragma warning disable 612, 618
                 FieldCache.IInt16Parser parser = (FieldCache.IInt16Parser)key.custom;
-                if (parser == null)
+                if (parser is null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser = DEFAULT_INT16_PARSER) so cache
@@ -886,7 +886,7 @@ namespace Lucene.Net.Search
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
-                if (info == null)
+                if (info is null)
                 {
                     return FieldCache.Int32s.EMPTY;
                 }
@@ -983,7 +983,7 @@ namespace Lucene.Net.Search
             protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 FieldCache.IInt32Parser parser = (FieldCache.IInt32Parser)key.custom;
-                if (parser == null)
+                if (parser is null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser =
@@ -1013,7 +1013,7 @@ namespace Lucene.Net.Search
                     wrapper.SetDocsWithField(reader, key.field, u.docsWithField);
                 }
                 GrowableWriterAndMinValue values = valuesRef.Get();
-                if (values == null)
+                if (values is null)
                 {
                     return new Int32sFromArray(new PackedInt32s.NullReader(reader.MaxDoc), 0);
                 }
@@ -1043,7 +1043,7 @@ namespace Lucene.Net.Search
                 protected override void VisitTerm(BytesRef term)
                 {
                     currentValue = parser.ParseInt32(term);
-                    if (values == null)
+                    if (values is null)
                     {
                         // Lazy alloc so for the numeric field case
                         // (which will hit a FormatException
@@ -1085,7 +1085,7 @@ namespace Lucene.Net.Search
         public virtual IBits GetDocsWithField(AtomicReader reader, string field)
         {
             FieldInfo fieldInfo = reader.FieldInfos.FieldInfo(field);
-            if (fieldInfo == null)
+            if (fieldInfo is null)
             {
                 // field does not exist or has no value
                 return new Lucene.Net.Util.Bits.MatchNoBits(reader.MaxDoc);
@@ -1130,7 +1130,7 @@ namespace Lucene.Net.Search
                     DocsEnum docs = null;
                     while (termsEnum.MoveNext())
                     {
-                        if (res == null)
+                        if (res is null)
                         {
                             // lazy init
                             res = new FixedBitSet(maxDoc);
@@ -1149,7 +1149,7 @@ namespace Lucene.Net.Search
                         }
                     }
                 }
-                if (res == null)
+                if (res is null)
                 {
                     return new Lucene.Net.Util.Bits.MatchNoBits(maxDoc);
                 }
@@ -1187,7 +1187,7 @@ namespace Lucene.Net.Search
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
-                if (info == null)
+                if (info is null)
                 {
                     return FieldCache.Singles.EMPTY;
                 }
@@ -1253,7 +1253,7 @@ namespace Lucene.Net.Search
             protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 FieldCache.ISingleParser parser = (FieldCache.ISingleParser)key.custom;
-                if (parser == null)
+                if (parser is null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser =
@@ -1284,7 +1284,7 @@ namespace Lucene.Net.Search
                 }
 
                 float[] values = valuesRef.Get();
-                if (values == null)
+                if (values is null)
                 {
                     values = new float[reader.MaxDoc];
                 }
@@ -1313,7 +1313,7 @@ namespace Lucene.Net.Search
                 protected override void VisitTerm(BytesRef term)
                 {
                     currentValue = parser.ParseSingle(term);
-                    if (values == null)
+                    if (values is null)
                     {
                         // Lazy alloc so for the numeric field case
                         // (which will hit a FormatException
@@ -1359,7 +1359,7 @@ namespace Lucene.Net.Search
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
-                if (info == null)
+                if (info is null)
                 {
                     return FieldCache.Int64s.EMPTY;
                 }
@@ -1427,7 +1427,7 @@ namespace Lucene.Net.Search
             protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 FieldCache.IInt64Parser parser = (FieldCache.IInt64Parser)key.custom;
-                if (parser == null)
+                if (parser is null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser =
@@ -1457,7 +1457,7 @@ namespace Lucene.Net.Search
                     wrapper.SetDocsWithField(reader, key.field, u.docsWithField);
                 }
                 GrowableWriterAndMinValue values = valuesRef.Get();
-                if (values == null)
+                if (values is null)
                 {
                     return new Int64sFromArray(new PackedInt32s.NullReader(reader.MaxDoc), 0L);
                 }
@@ -1487,7 +1487,7 @@ namespace Lucene.Net.Search
                 protected override void VisitTerm(BytesRef term)
                 {
                     currentValue = parser.ParseInt64(term);
-                    if (values == null)
+                    if (values is null)
                     {
                         // Lazy alloc so for the numeric field case
                         // (which will hit a FormatException
@@ -1543,7 +1543,7 @@ namespace Lucene.Net.Search
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
-                if (info == null)
+                if (info is null)
                 {
                     return FieldCache.Doubles.EMPTY;
                 }
@@ -1603,7 +1603,7 @@ namespace Lucene.Net.Search
             protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField)
             {
                 FieldCache.IDoubleParser parser = (FieldCache.IDoubleParser)key.custom;
-                if (parser == null)
+                if (parser is null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser =
@@ -1633,7 +1633,7 @@ namespace Lucene.Net.Search
                     wrapper.SetDocsWithField(reader, key.field, u.docsWithField);
                 }
                 double[] values = valuesRef.Get();
-                if (values == null)
+                if (values is null)
                 {
                     values = new double[reader.MaxDoc];
                 }
@@ -1662,7 +1662,7 @@ namespace Lucene.Net.Search
                 protected override void VisitTerm(BytesRef term)
                 {
                     currentValue = parser.ParseDouble(term);
-                    if (values == null)
+                    if (values is null)
                     {
                         // Lazy alloc so for the numeric field case
                         // (which will hit a FormatException
@@ -1737,7 +1737,7 @@ namespace Lucene.Net.Search
             else
             {
                 FieldInfo info = reader.FieldInfos.FieldInfo(field);
-                if (info == null)
+                if (info is null)
                 {
                     return DocValues.EMPTY_SORTED;
                 }
@@ -1892,7 +1892,7 @@ namespace Lucene.Net.Search
         public virtual BinaryDocValues GetTerms(AtomicReader reader, string field, bool setDocsWithField, float acceptableOverheadRatio)
         {
             BinaryDocValues valuesIn = reader.GetBinaryDocValues(field);
-            if (valuesIn == null)
+            if (valuesIn is null)
             {
                 valuesIn = reader.GetSortedDocValues(field);
             }
@@ -1905,7 +1905,7 @@ namespace Lucene.Net.Search
             }
 
             FieldInfo info = reader.FieldInfos.FieldInfo(field);
-            if (info == null)
+            if (info is null)
             {
                 return DocValues.EMPTY_BINARY;
             }
@@ -2058,7 +2058,7 @@ namespace Lucene.Net.Search
             }
 
             FieldInfo info = reader.FieldInfos.FieldInfo(field);
-            if (info == null)
+            if (info is null)
             {
                 return DocValues.EMPTY_SORTED_SET;
             }
@@ -2097,7 +2097,7 @@ namespace Lucene.Net.Search
             set =>
                 // LUCENENET specific - use a SafeTextWriterWrapper to ensure that if the TextWriter
                 // is disposed by the caller (using block) we don't get any exceptions if we keep using it.
-                infoStream = value == null
+                infoStream = value is null
                     ? null
                     : (value is SafeTextWriterWrapper ? value : new SafeTextWriterWrapper(value));
         }

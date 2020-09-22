@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
             internal static readonly long? MISSING = new long?(0);
 
             public NumericDocValuesUpdate(Term term, string field, long? value)
-                : base(DocValuesFieldUpdatesType.NUMERIC, term, field, value == null ? MISSING : value)
+                : base(DocValuesFieldUpdatesType.NUMERIC, term, field, value is null ? MISSING : value)
             {
             }
 

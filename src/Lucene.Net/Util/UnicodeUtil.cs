@@ -615,7 +615,7 @@ namespace Lucene.Net.Util
             // TODO: broken if incoming result.offset != 0
             // pre-alloc for worst case
             // TODO: ints cannot be null, should be an assert
-            if (utf32.Int32s == null || utf32.Int32s.Length < utf8.Length)
+            if (utf32.Int32s is null || utf32.Int32s.Length < utf8.Length)
             {
                 utf32.Int32s = new int[utf8.Length];
             }

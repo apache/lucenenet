@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
 
         private void EnsureOpen()
         {
-            if (current == null)
+            if (current is null)
             {
                 throw new ObjectDisposedException(this.GetType().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
             }
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
 
             do
             {
-                if ((@ref = current) == null)
+                if ((@ref = current) is null)
                 {
                     throw new ObjectDisposedException(this.GetType().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
                 }
@@ -336,7 +336,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void AddListener(ReferenceManager.IRefreshListener listener)
         {
-            if (listener == null)
+            if (listener is null)
             {
                 throw new ArgumentNullException("Listener cannot be null");
             }
@@ -348,7 +348,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual void RemoveListener(ReferenceManager.IRefreshListener listener)
         {
-            if (listener == null)
+            if (listener is null)
             {
                 throw new ArgumentNullException("Listener cannot be null");
             }

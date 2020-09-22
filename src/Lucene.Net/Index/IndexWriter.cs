@@ -597,7 +597,7 @@ namespace Lucene.Net.Index
                                 //IOUtils.ReThrow(t);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
-                            else if (priorE == null)
+                            else if (priorE is null)
                             {
                                 priorE = t;
                             }
@@ -633,7 +633,7 @@ namespace Lucene.Net.Index
                                 //IOUtils.ReThrow(t);
                                 throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                             }
-                            else if (priorE == null)
+                            else if (priorE is null)
                             {
                                 priorE = t;
                             }
@@ -695,7 +695,7 @@ namespace Lucene.Net.Index
 
                     ReadersAndUpdates rld;
                     readerMap.TryGetValue(info, out rld);
-                    if (rld == null)
+                    if (rld is null)
                     {
                         if (!create)
                         {
@@ -3354,7 +3354,7 @@ namespace Lucene.Net.Index
             // copy the attributes map, we might modify it below.
             // also we need to ensure its read-write, since we will invoke the SIwriter (which might want to set something).
 #pragma warning disable 612, 618
-            if (info.Info.Attributes == null)
+            if (info.Info.Attributes is null)
             {
                 attributes = new Dictionary<string, string>();
             }
@@ -3746,7 +3746,7 @@ namespace Lucene.Net.Index
                     infoStream.Message("IW", "commit: enter lock");
                 }
 
-                if (pendingCommit == null)
+                if (pendingCommit is null)
                 {
                     if (infoStream.IsEnabled("IW"))
                     {
@@ -3803,7 +3803,7 @@ namespace Lucene.Net.Index
                 {
                     if (infoStream.IsEnabled("IW"))
                     {
-                        infoStream.Message("IW", "commit: pendingCommit == null; skip");
+                        infoStream.Message("IW", "commit: pendingCommit is null; skip");
                     }
                 }
 
@@ -4034,7 +4034,7 @@ namespace Lucene.Net.Index
 
             internal void Init(ReaderPool readerPool, MergePolicy.OneMerge merge, MergeState mergeState, bool initWritableLiveDocs)
             {
-                if (mergedDeletesAndUpdates == null)
+                if (mergedDeletesAndUpdates is null)
                 {
                     mergedDeletesAndUpdates = readerPool.Get(merge.info, true);
                     docMap = merge.GetDocMap(mergeState);
@@ -4056,7 +4056,7 @@ namespace Lucene.Net.Index
                 DocValuesFieldUpdates.Iterator updatesIter = updatesIters[idx];
                 if (updatesIter.Doc == curDoc) // document has an update
                 {
-                    if (holder.mergedDeletesAndUpdates == null)
+                    if (holder.mergedDeletesAndUpdates is null)
                     {
                         holder.Init(readerPool, merge, mergeState, false);
                     }
@@ -4139,7 +4139,7 @@ namespace Lucene.Net.Index
                             DocValuesFieldUpdates updates = e.Value;
                             mergingFields[idx] = field;
                             dvFieldUpdates[idx] = mergedDVUpdates.GetUpdates(field, updates.type);
-                            if (dvFieldUpdates[idx] == null)
+                            if (dvFieldUpdates[idx] is null)
                             {
                                 dvFieldUpdates[idx] = mergedDVUpdates.NewUpdates(field, updates.type, mergeState.SegmentInfo.DocCount);
                             }
@@ -4188,7 +4188,7 @@ namespace Lucene.Net.Index
                                 {
                                     if (!currentLiveDocs.Get(j))
                                     {
-                                        if (holder.mergedDeletesAndUpdates == null || !holder.initializedWritableLiveDocs)
+                                        if (holder.mergedDeletesAndUpdates is null || !holder.initializedWritableLiveDocs)
                                         {
                                             holder.Init(readerPool, merge, mergeState, true);
                                         }
@@ -4239,7 +4239,7 @@ namespace Lucene.Net.Index
                         {
                             if (!currentLiveDocs.Get(j))
                             {
-                                if (holder.mergedDeletesAndUpdates == null || !holder.initializedWritableLiveDocs)
+                                if (holder.mergedDeletesAndUpdates is null || !holder.initializedWritableLiveDocs)
                                 {
                                     holder.Init(readerPool, merge, mergeState, true);
                                 }
@@ -4302,7 +4302,7 @@ namespace Lucene.Net.Index
 
                 if (infoStream.IsEnabled("IW"))
                 {
-                    if (holder.mergedDeletesAndUpdates == null)
+                    if (holder.mergedDeletesAndUpdates is null)
                     {
                         infoStream.Message("IW", "no new deletes or field updates since merge started");
                     }
@@ -4917,7 +4917,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception t)
                         {
-                            if (th == null)
+                            if (th is null)
                             {
                                 th = t;
                             }
@@ -5428,7 +5428,7 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(TestPoint("startStartCommit"));
-                Debugging.Assert(pendingCommit == null);
+                Debugging.Assert(pendingCommit is null);
             }
 
             if (hitOOM)
@@ -5476,7 +5476,7 @@ namespace Lucene.Net.Index
 
                     lock (this)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(pendingCommit == null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(pendingCommit is null);
 
                         if (Debugging.AssertsEnabled) Debugging.Assert(segmentInfos.Generation == toSync.Generation);
 

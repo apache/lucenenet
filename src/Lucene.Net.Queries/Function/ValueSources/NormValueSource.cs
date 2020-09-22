@@ -57,13 +57,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             var searcher = (IndexSearcher)context["searcher"];
             TFIDFSimilarity similarity = IDFValueSource.AsTFIDF(searcher.Similarity, m_field);
-            if (similarity == null)
+            if (similarity is null)
             {
                 throw new NotSupportedException("requires a TFIDFSimilarity (such as DefaultSimilarity)");
             }
 
             NumericDocValues norms = readerContext.AtomicReader.GetNormValues(m_field);
-            if (norms == null)
+            if (norms is null)
             {
                 return new ConstDoubleDocValues(0.0, this);
             }

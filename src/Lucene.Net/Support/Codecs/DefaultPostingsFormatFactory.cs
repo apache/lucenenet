@@ -181,7 +181,7 @@ namespace Lucene.Net.Codecs
         /// <param name="assembly">The assembly to scan.</param>
         protected virtual void ScanForPostingsFormats(Assembly assembly)
         {
-            if (assembly == null) return;
+            if (assembly is null) return;
 
             foreach (var c in assembly.GetTypes())
             {
@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs
         /// <param name="postingsFormat">A type that subclasses <see cref="PostingsFormat"/>.</param>
         protected virtual void PutPostingsFormatType(Type postingsFormat)
         {
-            if (postingsFormat == null)
+            if (postingsFormat is null)
                 throw new ArgumentNullException(nameof(postingsFormat));
             if (!typeof(PostingsFormat).IsAssignableFrom(postingsFormat))
                 throw new ArgumentException($"The supplied type {postingsFormat.AssemblyQualifiedName} does not subclass {nameof(PostingsFormat)}.");
@@ -242,7 +242,7 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="PostingsFormat"/> instance.</returns>
         protected virtual PostingsFormat GetPostingsFormat(Type type)
         {
-            if (type == null)
+            if (type is null)
                 throw new ArgumentNullException(nameof(type));
             if (!postingsFormatInstanceCache.TryGetValue(type, out PostingsFormat instance))
             {
@@ -276,10 +276,10 @@ namespace Lucene.Net.Codecs
         /// <returns>The <see cref="PostingsFormat"/> <see cref="Type"/>.</returns>
         protected virtual Type GetPostingsFormatType(string name)
         {
-            if (name == null)
+            if (name is null)
                 throw new ArgumentNullException(nameof(name));
             EnsureInitialized();
-            if (!postingsFormatNameToTypeMap.TryGetValue(name, out Type codecType) || codecType == null)
+            if (!postingsFormatNameToTypeMap.TryGetValue(name, out Type codecType) || codecType is null)
             {
                 throw new ArgumentException($"PostingsFormat '{name}' cannot be loaded. If the format is not " +
                     $"in a Lucene.Net assembly, you must subclass {typeof(DefaultPostingsFormatFactory).FullName}, " +

@@ -1883,7 +1883,7 @@ namespace Lucene.Net.Analysis.En
             }
 
             //*
-            // caching off is normally faster if (cache == null) initializeStemHash();
+            // caching off is normally faster if (cache is null) initializeStemHash();
             // 
             // // now check the cache, before we copy chars to "word" if (cache != null)
             // { String val = cache.get(term, 0, len); if (val != null) { if (val !=
@@ -2025,7 +2025,7 @@ namespace Lucene.Net.Analysis.En
             // **
 
             //*
-            // if (entry == null) { if (!word.toString().equals(new String(term,0,len), StringComparison.Ordinal))
+            // if (entry is null) { if (!word.toString().equals(new String(term,0,len), StringComparison.Ordinal))
             // { System.out.println("CASE:" + word.toString() + "," + new
             // String(term,0,len));
             // 

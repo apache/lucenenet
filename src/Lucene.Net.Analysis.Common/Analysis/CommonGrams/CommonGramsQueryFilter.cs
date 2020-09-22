@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.CommonGrams
 
             exhausted = true;
 
-            if (previous == null || CommonGramsFilter.GRAM_TYPE.Equals(previousType, StringComparison.Ordinal))
+            if (previous is null || CommonGramsFilter.GRAM_TYPE.Equals(previousType, StringComparison.Ordinal))
             {
                 return false;
             }

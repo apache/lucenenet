@@ -124,7 +124,7 @@ namespace Lucene.Net.Analysis.Th
             hasIllegalOffsets = offsetAtt.EndOffset - offsetAtt.StartOffset != termAtt.Length;
 
             // we lazy init the cloned token, as in ctor not all attributes may be added
-            if (clonedToken == null)
+            if (clonedToken is null)
             {
                 clonedToken = CloneAttributes();
                 clonedTermAtt = clonedToken.GetAttribute<ICharTermAttribute>();

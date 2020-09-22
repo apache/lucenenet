@@ -700,7 +700,7 @@ namespace Lucene.Net.Codecs.Compressing
             public override Terms GetTerms(string field)
             {
                 Index.FieldInfo fieldInfo = outerInstance.fieldInfos.FieldInfo(field);
-                if (fieldInfo == null)
+                if (fieldInfo is null)
                 {
                     return null;
                 }
@@ -922,7 +922,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-                if (positions == null && startOffsets == null)
+                if (positions is null && startOffsets is null)
                 {
                     return null;
                 }
@@ -1010,7 +1010,7 @@ namespace Lucene.Net.Codecs.Compressing
                     payload.Length = payloadIndex[positionIndex + i + 1] - payloadIndex[positionIndex + i];
                 }
 
-                if (positions == null)
+                if (positions is null)
                 {
                     return -1;
                 }
@@ -1025,7 +1025,7 @@ namespace Lucene.Net.Codecs.Compressing
                 get
                 {
                     CheckPosition();
-                    if (startOffsets == null)
+                    if (startOffsets is null)
                     {
                         return -1;
                     }
@@ -1041,7 +1041,7 @@ namespace Lucene.Net.Codecs.Compressing
                 get
                 {
                     CheckPosition();
-                    if (startOffsets == null)
+                    if (startOffsets is null)
                     {
                         return -1;
                     }
@@ -1055,7 +1055,7 @@ namespace Lucene.Net.Codecs.Compressing
             public override BytesRef GetPayload()
             {
                 CheckPosition();
-                if (payloadIndex == null || payload.Length == 0)
+                if (payloadIndex is null || payload.Length == 0)
                 {
                     return null;
                 }
@@ -1078,7 +1078,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override int NextDoc()
             {
-                if (doc == -1 && (liveDocs == null || liveDocs.Get(0)))
+                if (doc == -1 && (liveDocs is null || liveDocs.Get(0)))
                 {
                     return (doc = 0);
                 }

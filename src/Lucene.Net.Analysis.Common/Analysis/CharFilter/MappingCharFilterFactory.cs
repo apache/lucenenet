@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.CharFilters
                 NormalizeCharMap.Builder builder = new NormalizeCharMap.Builder();
                 ParseRules(wlist, builder);
                 m_normMap = builder.Build();
-                if (m_normMap.map == null)
+                if (m_normMap.map is null)
                 {
                     // if the inner FST is null, it means it accepts nothing (e.g. the file is empty)
                     // so just set the whole map to null
@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             // if the map is null, it means there's actually no mappings... just return the original stream
             // as there is nothing to do here.
-            return m_normMap == null ? input : new MappingCharFilter(m_normMap, input);
+            return m_normMap is null ? input : new MappingCharFilter(m_normMap, input);
         }
 
         // "source" => "target"

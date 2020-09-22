@@ -158,7 +158,7 @@ namespace Lucene.Net.Analysis.NGram
 
         private void Init(LuceneVersion version, Side side, int minGram, int maxGram)
         {
-            //if (version == null)
+            //if (version is null)
             //{
             //    throw new ArgumentException("version must not be null");
             //}

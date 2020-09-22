@@ -144,7 +144,7 @@ namespace Lucene.Net.Util.Packed
             PackedInt32s.IEncoder encoder = PackedInt32s.GetEncoder(PackedInt32s.Format.PACKED, PackedInt32s.VERSION_CURRENT, bitsRequired);
             int iterations = m_values.Length / encoder.ByteValueCount;
             int blockSize = encoder.ByteBlockCount * iterations;
-            if (m_blocks == null || m_blocks.Length < blockSize)
+            if (m_blocks is null || m_blocks.Length < blockSize)
             {
                 m_blocks = new byte[blockSize];
             }

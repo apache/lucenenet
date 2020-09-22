@@ -184,7 +184,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private ThreadResources GetThreadResources()
         {
             ThreadResources resources = threadResources.Value;
-            if (resources == null)
+            if (resources is null)
             {
                 resources = new ThreadResources();
                 resources.termEnum = Terms();
@@ -284,7 +284,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             // this prevents RangeQueries or WildcardQueries to
                             // wipe out the cache when they iterate over a large numbers
                             // of terms in order
-                            if (tiOrd == null)
+                            if (tiOrd is null)
                             {
                                 if (useCache)
                                 {
@@ -326,7 +326,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (enumerator.Term() is object && CompareAsUTF16(term, enumerator.Term()) == 0)
             {
                 ti_ = enumerator.termInfo;
-                if (tiOrd == null)
+                if (tiOrd is null)
                 {
                     if (useCache)
                     {
@@ -371,7 +371,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private void EnsureIndexIsRead()
         {
-            if (index == null)
+            if (index is null)
             {
                 throw new InvalidOperationException("terms index was not loaded when this reader was created");
             }
@@ -423,7 +423,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal long RamBytesUsed()
         {
-            return index == null ? 0 : index.RamBytesUsed();
+            return index is null ? 0 : index.RamBytesUsed();
         }
     }
 }

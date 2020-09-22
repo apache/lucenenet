@@ -308,9 +308,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             for (int i = 0; i < ex.Count; i++)
             {
                 object item = ex[i];
-                if (item is string)
+                if (item is string str)
                 {
-                    string str = (string)item;
                     StringBuilder buf = new StringBuilder();
                     for (int j = 0; j < str.Length; j++)
                     {
@@ -349,9 +348,9 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             for (int i = 0; i < ex.Count; i++)
             {
                 object item = ex[i];
-                if (item is string)
+                if (item is string str)
                 {
-                    res.Append((string)item);
+                    res.Append(str);
                 }
                 else
                 {

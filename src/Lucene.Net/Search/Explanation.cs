@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
         /// The sub-nodes of this explanation node. </summary>
         public virtual Explanation[] GetDetails()
         {
-            if (details == null)
+            if (details is null)
             {
                 return null;
             }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
         /// Adds a sub-node to this explanation node. </summary>
         public virtual void AddDetail(Explanation detail)
         {
-            if (details == null)
+            if (details is null)
             {
                 details = new List<Explanation>();
             }

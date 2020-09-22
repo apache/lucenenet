@@ -320,7 +320,7 @@ namespace Lucene.Net.Tartarus.Snowball
                 if (common_i >= w.Length)
                 {
                     m_cursor = c + w.Length;
-                    if (w.Method == null) return w.Result;
+                    if (w.Method is null) return w.Result;
                     bool res;
                     try
                     {
@@ -402,7 +402,7 @@ namespace Lucene.Net.Tartarus.Snowball
                 if (common_i >= w.Length)
                 {
                     m_cursor = c - w.Length;
-                    if (w.Method == null) return w.Result;
+                    if (w.Method is null) return w.Result;
 
                     bool res;
                     try

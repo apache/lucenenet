@@ -56,18 +56,18 @@ namespace Lucene.Net.Queries
                 {
                     hasShouldClauses = true;
                     DocIdSetIterator disi = GetDISI(fc.Filter, context);
-                    if (disi == null)
+                    if (disi is null)
                     {
                         continue;
                     }
-                    if (res == null)
+                    if (res is null)
                     {
                         res = new FixedBitSet(reader.MaxDoc);
                     }
                     res.Or(disi);
                 }
             }
-            if (hasShouldClauses && res == null)
+            if (hasShouldClauses && res is null)
             {
                 return null;
             }
@@ -76,7 +76,7 @@ namespace Lucene.Net.Queries
             {
                 if (fc.Occur == Occur.MUST_NOT)
                 {
-                    if (res == null)
+                    if (res is null)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(!hasShouldClauses);
                         res = new FixedBitSet(reader.MaxDoc);
@@ -96,11 +96,11 @@ namespace Lucene.Net.Queries
                 if (fc.Occur == Occur.MUST)
                 {
                     DocIdSetIterator disi = GetDISI(fc.Filter, context);
-                    if (disi == null)
+                    if (disi is null)
                     {
                         return null; // no documents can match
                     }
-                    if (res == null)
+                    if (res is null)
                     {
                         res = new FixedBitSet(reader.MaxDoc);
                         res.Or(disi);
@@ -157,7 +157,7 @@ namespace Lucene.Net.Queries
                 return true;
             }
 
-            if ((obj == null) || (obj.GetType() != this.GetType()))
+            if ((obj is null) || (obj.GetType() != this.GetType()))
             {
                 return false;
             }

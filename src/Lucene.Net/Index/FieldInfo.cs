@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public string GetAttribute(string key)
         {
-            if (attributes == null)
+            if (attributes is null)
             {
                 return null;
             }
@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public string PutAttribute(string key, string value)
         {
-            if (attributes == null)
+            if (attributes is null)
             {
                 attributes = new Dictionary<string, string>();
             }

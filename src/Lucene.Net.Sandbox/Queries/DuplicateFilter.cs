@@ -75,7 +75,7 @@ namespace Lucene.Net.Sandbox.Queries
             FixedBitSet bits = new FixedBitSet(reader.MaxDoc); //assume all are INvalid
             Terms terms = reader.Fields.GetTerms(fieldName);
 
-            if (terms == null)
+            if (terms is null)
             {
                 return bits;
             }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Sandbox.Queries
             bits.Set(0, reader.MaxDoc); //assume all are valid
             Terms terms = reader.Fields.GetTerms(fieldName);
 
-            if (terms == null)
+            if (terms is null)
             {
                 return bits;
             }
@@ -181,7 +181,7 @@ namespace Lucene.Net.Sandbox.Queries
             {
                 return true;
             }
-            if ((obj == null) || (obj.GetType() != this.GetType()))
+            if ((obj is null) || (obj.GetType() != this.GetType()))
             {
                 return false;
             }

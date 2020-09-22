@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
             get => codec;
             set
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(this.codec == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(this.codec is null);
                 this.codec = value ?? throw new ArgumentException("codec must be non-null");
             }
         }
@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
         /// Return all files referenced by this <see cref="SegmentInfo"/>. </summary>
         public ISet<string> GetFiles()
         {
-            if (setFiles == null)
+            if (setFiles is null)
             {
                 throw new InvalidOperationException("files were not computed yet");
             }
@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
         [Obsolete("no longer supported")]
         public string GetAttribute(string key)
         {
-            if (attributes == null)
+            if (attributes is null)
             {
                 return null;
             }
@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
         [Obsolete("no longer supported")]
         public string PutAttribute(string key, string value)
         {
-            if (attributes == null)
+            if (attributes is null)
             {
                 attributes = new Dictionary<string, string>();
             }

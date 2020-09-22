@@ -144,23 +144,23 @@ namespace Lucene.Net.Codecs.PerField
                         format = DocValuesFormat.ForName(formatName);
                     }
                 }
-                if (format == null)
+                if (format is null)
                 {
                     format = outerInstance.GetDocValuesFormatForField(field.Name);
                 }
-                if (format == null)
+                if (format is null)
                 {
                     throw new InvalidOperationException("invalid null DocValuesFormat for field=\"" + field.Name + "\"");
                 }
                 string formatName_ = format.Name;
 
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName_);
-                if (Debugging.AssertsEnabled) Debugging.Assert(field.DocValuesGen != -1 || previousValue == null, () => "formatName=" + formatName_ + " prevValue=" + previousValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(field.DocValuesGen != -1 || previousValue is null, () => "formatName=" + formatName_ + " prevValue=" + previousValue);
 
                 int? suffix = null;
 
                 ConsumerAndSuffix consumer;
-                if (!formats.TryGetValue(format, out consumer) || consumer == null)
+                if (!formats.TryGetValue(format, out consumer) || consumer is null)
                 {
                     // First time we are seeing this format; create a new instance
 
@@ -176,10 +176,10 @@ namespace Lucene.Net.Codecs.PerField
                         }
                     }
 
-                    if (suffix == null)
+                    if (suffix is null)
                     {
                         // bump the suffix
-                        if (!suffixes.TryGetValue(formatName_, out suffix) || suffix == null)
+                        if (!suffixes.TryGetValue(formatName_, out suffix) || suffix is null)
                         {
                             suffix = 0;
                         }
@@ -204,7 +204,7 @@ namespace Lucene.Net.Codecs.PerField
                 }
 
                 previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix, CultureInfo.InvariantCulture));
-                if (Debugging.AssertsEnabled) Debugging.Assert(field.DocValuesGen != -1 || previousValue == null, () => "suffix=" + Convert.ToString(suffix, CultureInfo.InvariantCulture) + " prevValue=" + previousValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(field.DocValuesGen != -1 || previousValue is null, () => "suffix=" + Convert.ToString(suffix, CultureInfo.InvariantCulture) + " prevValue=" + previousValue);
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this DVF actually sees ...

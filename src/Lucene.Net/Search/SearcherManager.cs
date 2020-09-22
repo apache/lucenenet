@@ -86,7 +86,7 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public SearcherManager(IndexWriter writer, bool applyAllDeletes, SearcherFactory searcherFactory)
         {
-            if (searcherFactory == null)
+            if (searcherFactory is null)
             {
                 searcherFactory = new SearcherFactory();
             }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
         public SearcherManager(Directory dir, SearcherFactory searcherFactory)
         {
-            if (searcherFactory == null)
+            if (searcherFactory is null)
             {
                 searcherFactory = new SearcherFactory();
             }
@@ -122,7 +122,7 @@ namespace Lucene.Net.Search
             IndexReader r = referenceToRefresh.IndexReader;
             if (Debugging.AssertsEnabled) Debugging.Assert(r is DirectoryReader, () => "searcher's IndexReader should be a DirectoryReader, but got " + r);
             IndexReader newReader = DirectoryReader.OpenIfChanged((DirectoryReader)r);
-            if (newReader == null)
+            if (newReader is null)
             {
                 return null;
             }

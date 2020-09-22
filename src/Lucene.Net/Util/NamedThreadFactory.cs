@@ -48,7 +48,7 @@
 
 //        private static string CheckPrefix(string prefix)
 //        {
-//            return prefix == null || prefix.Length == 0 ? "Lucene" : prefix;
+//            return prefix is null || prefix.Length == 0 ? "Lucene" : prefix;
 //        }
 
 //        /// <summary>

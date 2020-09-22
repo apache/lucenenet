@@ -80,7 +80,7 @@ namespace Lucene.Net.Util.Packed
         /// Append a value to this buffer. </summary>
         public void Add(long l)
         {
-            if (pending == null)
+            if (pending is null)
             {
                 throw new Exception("this buffer is frozen");
             }

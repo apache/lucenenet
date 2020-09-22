@@ -84,8 +84,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public static TermRangeQuery NewStringRange(string field, string lowerTerm, string upperTerm, bool includeLower, bool includeUpper)
         {
-            BytesRef lower = lowerTerm == null ? null : new BytesRef(lowerTerm);
-            BytesRef upper = upperTerm == null ? null : new BytesRef(upperTerm);
+            BytesRef lower = lowerTerm is null ? null : new BytesRef(lowerTerm);
+            BytesRef upper = upperTerm is null ? null : new BytesRef(upperTerm);
             return new TermRangeQuery(field, lower, upper, includeLower, includeUpper);
         }
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
 
             TermsEnum tenum = terms.GetEnumerator();
 
-            if ((lowerTerm == null || (includeLower && lowerTerm.Length == 0)) && upperTerm == null)
+            if ((lowerTerm is null || (includeLower && lowerTerm.Length == 0)) && upperTerm is null)
             {
                 return tenum;
             }
@@ -147,8 +147,8 @@ namespace Lucene.Net.Search
             int result = base.GetHashCode();
             result = prime * result + (includeLower ? 1231 : 1237);
             result = prime * result + (includeUpper ? 1231 : 1237);
-            result = prime * result + ((lowerTerm == null) ? 0 : lowerTerm.GetHashCode());
-            result = prime * result + ((upperTerm == null) ? 0 : upperTerm.GetHashCode());
+            result = prime * result + ((lowerTerm is null) ? 0 : lowerTerm.GetHashCode());
+            result = prime * result + ((upperTerm is null) ? 0 : upperTerm.GetHashCode());
             return result;
         }
 
@@ -175,7 +175,7 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (lowerTerm == null)
+            if (lowerTerm is null)
             {
                 if (other.lowerTerm is object)
                 {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (upperTerm == null)
+            if (upperTerm is null)
             {
                 if (other.upperTerm is object)
                 {

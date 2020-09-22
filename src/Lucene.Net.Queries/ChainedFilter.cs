@@ -113,14 +113,14 @@ namespace Lucene.Net.Queries
         {
             // we dont pass acceptDocs, we will filter at the end using an additional filter
             DocIdSet docIdSet = filter.GetDocIdSet(context, null);
-            if (docIdSet == null)
+            if (docIdSet is null)
             {
                 return DocIdSetIterator.GetEmpty();
             }
             else
             {
                 DocIdSetIterator iter = docIdSet.GetIterator();
-                if (iter == null)
+                if (iter is null)
                 {
                     return DocIdSetIterator.GetEmpty();
                 }
@@ -231,7 +231,7 @@ namespace Lucene.Net.Queries
             else
             {
                 DocIdSetIterator disi;
-                if (dis == null)
+                if (dis is null)
                 {
                     disi = DocIdSetIterator.GetEmpty();
                 }

@@ -159,7 +159,7 @@ namespace Lucene.Net.Util
 #endif
         public static void Write(string format, params object[] arg)
         {
-            if (arg == null)
+            if (arg is null)
             {
                 Out.Write(format, null, null);
             }
@@ -350,7 +350,7 @@ namespace Lucene.Net.Util
 #endif
         public static void WriteLine(string format, params object[] arg)
         {
-            if (arg == null)
+            if (arg is null)
             {
                 Out.WriteLine(format, null, null);
             }

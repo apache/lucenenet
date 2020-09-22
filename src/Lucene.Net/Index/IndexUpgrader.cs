@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
                     i++;
                     dirImpl = args[i];
                 }
-                else if (path == null)
+                else if (path is null)
                 {
                     path = arg;
                 }
@@ -118,13 +118,13 @@ namespace Lucene.Net.Index
                 }
                 i++;
             }
-            if (path == null)
+            if (path is null)
             {
                 PrintUsage();
             }
 
             Directory dir = null;
-            if (dirImpl == null)
+            if (dirImpl is null)
             {
                 dir = FSDirectory.Open(new DirectoryInfo(path));
             }

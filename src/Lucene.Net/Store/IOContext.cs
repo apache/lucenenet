@@ -121,9 +121,9 @@ namespace Lucene.Net.Store
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + /*((Context == null) ? 0 :*/ Context.GetHashCode()/*)*/; // LUCENENET NOTE: Enum can never be null in .NET
-            result = prime * result + ((FlushInfo == null) ? 0 : FlushInfo.GetHashCode());
-            result = prime * result + ((MergeInfo == null) ? 0 : MergeInfo.GetHashCode());
+            result = prime * result + /*((Context is null) ? 0 :*/ Context.GetHashCode()/*)*/; // LUCENENET NOTE: Enum can never be null in .NET
+            result = prime * result + ((FlushInfo is null) ? 0 : FlushInfo.GetHashCode());
+            result = prime * result + ((MergeInfo is null) ? 0 : MergeInfo.GetHashCode());
             result = prime * result + (ReadOnce ? 1231 : 1237);
             return result;
         }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Store
             {
                 return true;
             }
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }
@@ -147,7 +147,7 @@ namespace Lucene.Net.Store
             {
                 return false;
             }
-            if (FlushInfo == null)
+            if (FlushInfo is null)
             {
                 if (other.FlushInfo is object)
                 {
@@ -158,7 +158,7 @@ namespace Lucene.Net.Store
             {
                 return false;
             }
-            if (MergeInfo == null)
+            if (MergeInfo is null)
             {
                 if (other.MergeInfo is object)
                 {

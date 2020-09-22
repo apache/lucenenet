@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         if (singleNormFile)
                         {
                             normSeek = nextNormSeek;
-                            if (singleNormStream == null)
+                            if (singleNormStream is null)
                             {
                                 singleNormStream = d.OpenInput(fileName, context);
                                 openFiles.Add(singleNormStream);
@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             // if the size is exactly equal to maxDoc to detect a headerless file.
                             // NOTE: remove this check in Lucene 5.0!
                             string version = info.Version;
-                            bool isUnversioned = (version == null || StringHelper.VersionComparer.Compare(version, "3.2") < 0) && normInput.Length == maxdoc;
+                            bool isUnversioned = (version is null || StringHelper.VersionComparer.Compare(version, "3.2") < 0) && normInput.Length == maxdoc;
                             if (isUnversioned)
                             {
                                 normSeek = 0;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                 }
                 // TODO: change to a real check? see LUCENE-3619
-                if (Debugging.AssertsEnabled) Debugging.Assert(singleNormStream == null || nextNormSeek == singleNormStream.Length, () => singleNormStream is object ? "len: " + singleNormStream.Length + " expected: " + nextNormSeek : "null");
+                if (Debugging.AssertsEnabled) Debugging.Assert(singleNormStream is null || nextNormSeek == singleNormStream.Length, () => singleNormStream is object ? "len: " + singleNormStream.Length + " expected: " + nextNormSeek : "null");
                 success = true;
             }
             finally
@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private static bool HasSeparateNorms(SegmentInfo info, int number)
         {
             string v = info.GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_PREFIX + number);
-            if (v == null)
+            if (v is null)
             {
                 return false;
             }
@@ -216,7 +216,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     lock (this)
                     {
-                        if (instance == null)
+                        if (instance is null)
                         {
                             var bytes = new byte[outerInstance.maxdoc];
                             // some norms share fds

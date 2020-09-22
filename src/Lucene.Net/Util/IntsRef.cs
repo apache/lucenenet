@@ -262,7 +262,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public bool IsValid()
         {
-            if (ints == null)
+            if (ints is null)
             {
                 throw new InvalidOperationException("ints is null");
             }

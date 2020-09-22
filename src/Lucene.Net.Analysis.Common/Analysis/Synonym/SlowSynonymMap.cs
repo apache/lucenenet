@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis.Synonym
             var currMap = this;
             foreach (string str in singleMatch)
             {
-                if (currMap.submap == null)
+                if (currMap.submap is null)
                 {
                     // for now hardcode at 4.0, as its what the old code did.
                     // would be nice to fix, but shouldn't store a version in each submap!!!
@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis.Synonym
                 }
 
                 var map = currMap.submap.Get(str);
-                if (map == null)
+                if (map is null)
                 {
                     map = new SlowSynonymMap();
                     map.flags |= flags & IGNORE_CASE;
@@ -104,7 +104,7 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 throw new ArgumentException("SynonymFilter: there is already a mapping for " + singleMatch);
             }
-            IList<Token> superset = currMap.synonyms == null ? replacement : MergeTokens(currMap.synonyms, replacement);
+            IList<Token> superset = currMap.synonyms is null ? replacement : MergeTokens(currMap.synonyms, replacement);
             currMap.synonyms = superset.ToArray();
             if (includeOrig)
             {
@@ -163,7 +163,7 @@ namespace Lucene.Net.Analysis.Synonym
         public static IList<Token> MergeTokens(IList<Token> lst1, IList<Token> lst2)
         {
             var result = new List<Token>();
-            if (lst1 == null || lst2 == null)
+            if (lst1 is null || lst2 is null)
             {
                 if (lst2 != null)
                 {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Analysis.Synonym
                 int pos2 = tok2 != null ? tok2.PositionIncrement : 0;
                 while (tok1 != null || tok2 != null)
                 {
-                    while (tok1 != null && (pos1 <= pos2 || tok2 == null))
+                    while (tok1 != null && (pos1 <= pos2 || tok2 is null))
                     {
                         var tok = new Token(tok1.StartOffset, tok1.EndOffset, tok1.Type);
                         tok.CopyBuffer(tok1.Buffer, 0, tok1.Length);
@@ -196,7 +196,7 @@ namespace Lucene.Net.Analysis.Synonym
                         tok1 = iter1.MoveNext() ? iter1.Current : null;
                         pos1 += tok1 != null ? tok1.PositionIncrement : 0;
                     }
-                    while (tok2 != null && (pos2 <= pos1 || tok1 == null))
+                    while (tok2 != null && (pos2 <= pos1 || tok1 is null))
                     {
                         var tok = new Token(tok2.StartOffset, tok2.EndOffset, tok2.Type);
                         tok.CopyBuffer(tok2.Buffer, 0, tok2.Length);

@@ -39,7 +39,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         protected readonly ValueSource m_defaultVal;
 
         public RangeMapSingleFunction(ValueSource source, float min, float max, float target, float? def)
-            : this(source, min, max, new ConstValueSource(target), def == null ? null : new ConstValueSource(def.Value))
+            : this(source, min, max, new ConstValueSource(target), def is null ? null : new ConstValueSource(def.Value))
         {
         }
 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             FunctionValues vals = m_source.GetValues(context, readerContext);
             FunctionValues targets = m_target.GetValues(context, readerContext);
-            FunctionValues defaults = (this.m_defaultVal == null) ? null : m_defaultVal.GetValues(context, readerContext);
+            FunctionValues defaults = (this.m_defaultVal is null) ? null : m_defaultVal.GetValues(context, readerContext);
             return new SingleDocValuesAnonymousInnerClassHelper(this, this, vals, targets, defaults);
         }
 
@@ -88,7 +88,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             public override float SingleVal(int doc)
             {
                 float val = vals.SingleVal(doc);
-                return (val >= outerInstance.m_min && val <= outerInstance.m_max) ? targets.SingleVal(doc) : (outerInstance.m_defaultVal == null ? val : defaults.SingleVal(doc));
+                return (val >= outerInstance.m_min && val <= outerInstance.m_max) ? targets.SingleVal(doc) : (outerInstance.m_defaultVal is null ? val : defaults.SingleVal(doc));
             }
             public override string ToString(int doc)
             {

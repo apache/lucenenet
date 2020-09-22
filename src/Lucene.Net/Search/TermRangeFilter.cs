@@ -55,8 +55,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public static TermRangeFilter NewStringRange(string field, string lowerTerm, string upperTerm, bool includeLower, bool includeUpper)
         {
-            BytesRef lower = lowerTerm == null ? null : new BytesRef(lowerTerm);
-            BytesRef upper = upperTerm == null ? null : new BytesRef(upperTerm);
+            BytesRef lower = lowerTerm is null ? null : new BytesRef(lowerTerm);
+            BytesRef upper = upperTerm is null ? null : new BytesRef(upperTerm);
             return new TermRangeFilter(field, lower, upper, includeLower, includeUpper);
         }
 

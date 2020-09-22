@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
             bool _hasPayloads = false;
             for (int i = 0; i < subs.Length; i++)
             {
-                if (_termComp == null)
+                if (_termComp is null)
                 {
                     _termComp = subs[i].Comparer;
                 }

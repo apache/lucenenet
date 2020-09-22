@@ -134,7 +134,7 @@ namespace Lucene.Net.Util
 
         public override bool Equals(object other)
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }
@@ -404,7 +404,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public bool IsValid()
         {
-            if (Chars == null)
+            if (Chars is null)
             {
                 throw new InvalidOperationException("chars is null");
             }

@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
             queries.TryGetValue(query, out prev);
             queries[query] = docIDUpto;
             // increment bytes used only if the query wasn't added so far.
-            if (prev == null)
+            if (prev is null)
             {
                 bytesUsed.AddAndGet(BYTES_PER_DEL_QUERY);
             }
@@ -240,7 +240,7 @@ namespace Lucene.Net.Index
             // delete on that term, therefore we seem to over-count. this over-counting
             // is done to respect IndexWriterConfig.setMaxBufferedDeleteTerms.
             numTermDeletes.IncrementAndGet();
-            if (current == null)
+            if (current is null)
             {
                 bytesUsed.AddAndGet(BYTES_PER_DEL_TERM + term.Bytes.Length + (RamUsageEstimator.NUM_BYTES_CHAR * term.Field.Length));
             }
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
             }
             fieldUpdates[update.term] = update;
             numNumericUpdates.IncrementAndGet();
-            if (current == null)
+            if (current is null)
             {
                 bytesUsed.AddAndGet(BYTES_PER_NUMERIC_UPDATE_ENTRY + update.GetSizeInBytes());
             }
@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
             }
             fieldUpdates[update.term] = update;
             numBinaryUpdates.IncrementAndGet();
-            if (current == null)
+            if (current is null)
             {
                 bytesUsed.AddAndGet(BYTES_PER_BINARY_UPDATE_ENTRY + update.GetSizeInBytes());
             }

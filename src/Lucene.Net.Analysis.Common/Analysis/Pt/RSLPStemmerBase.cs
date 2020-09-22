@@ -221,7 +221,7 @@ namespace Lucene.Net.Analysis.Pt
                 }
                 this.m_min = min;
 
-                if (suffixes == null || suffixes.Length == 0)
+                if (suffixes is null || suffixes.Length == 0)
                 {
                     this.m_suffixes = null;
                 }

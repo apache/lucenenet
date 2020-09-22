@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
                 throw new InvalidOperationException("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.getConfig().getIndexDeletionPolicy()");
             }
             int? refCount = m_refCounts[gen];
-            if (refCount == null)
+            if (refCount is null)
             {
                 throw new ArgumentException("commit gen=" + gen + " is not currently snapshotted");
             }
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
                 {
                     throw new InvalidOperationException("this instance is not being used by IndexWriter; be sure to use the instance returned from writer.getConfig().getIndexDeletionPolicy()");
                 }
-                if (m_lastCommit == null)
+                if (m_lastCommit is null)
                 {
                     // No commit yet, eg this is a new IndexWriter:
                     throw new InvalidOperationException("No index commit to snapshot");

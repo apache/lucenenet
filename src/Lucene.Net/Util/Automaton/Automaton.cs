@@ -248,7 +248,7 @@ namespace Lucene.Net.Util.Automaton
 
         public virtual State[] GetNumberedStates()
         {
-            if (numberedStates == null)
+            if (numberedStates is null)
             {
                 ExpandSingleton();
                 JCG.HashSet<State> visited = new JCG.HashSet<State>();

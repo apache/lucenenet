@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
                     if (packet is object && segGen < packet.DelGen)
                     {
                         //        System.out.println("  coalesce");
-                        if (coalescedUpdates == null)
+                        if (coalescedUpdates is null)
                         {
                             coalescedUpdates = new CoalescedUpdates();
                         }
@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
 
                         if (segAllDeletes)
                         {
-                            if (allDeleted == null)
+                            if (allDeleted is null)
                             {
                                 allDeleted = new List<SegmentCommitInfo>();
                             }
@@ -291,10 +291,10 @@ namespace Lucene.Net.Index
 
                         if (infoStream.IsEnabled("BD"))
                         {
-                            infoStream.Message("BD", "seg=" + info + " segGen=" + segGen + " segDeletes=[" + packet + "]; coalesced deletes=[" + (coalescedUpdates == null ? "null" : coalescedUpdates.ToString()) + "] newDelCount=" + delCount + (segAllDeletes ? " 100% deleted" : ""));
+                            infoStream.Message("BD", "seg=" + info + " segGen=" + segGen + " segDeletes=[" + packet + "]; coalesced deletes=[" + (coalescedUpdates is null ? "null" : coalescedUpdates.ToString()) + "] newDelCount=" + delCount + (segAllDeletes ? " 100% deleted" : ""));
                         }
 
-                        if (coalescedUpdates == null)
+                        if (coalescedUpdates is null)
                         {
                             coalescedUpdates = new CoalescedUpdates();
                         }
@@ -344,7 +344,7 @@ namespace Lucene.Net.Index
 
                             if (segAllDeletes)
                             {
-                                if (allDeleted == null)
+                                if (allDeleted is null)
                                 {
                                     allDeleted = new List<SegmentCommitInfo>();
                                 }
@@ -454,7 +454,7 @@ namespace Lucene.Net.Index
             {
                 long delCount = 0;
                 Fields fields = reader.Fields;
-                if (fields == null)
+                if (fields is null)
                 {
                     // this reader has no postings
                     return 0;
@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
                     // forwards
                     if (!string.Equals(term.Field, currentField, StringComparison.Ordinal))
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(currentField == null || currentField.CompareToOrdinal(term.Field) < 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(currentField is null || currentField.CompareToOrdinal(term.Field) < 0);
                         currentField = term.Field;
                         Terms terms = fields.GetTerms(currentField);
                         if (terms is object)
@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (termsEnum == null)
+                    if (termsEnum is null)
                     {
                         continue;
                     }
@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
             lock (this)
             {
                 Fields fields = reader.Fields;
-                if (fields == null)
+                if (fields is null)
                 {
                     // this reader has no postings
                     return;
@@ -582,7 +582,7 @@ namespace Lucene.Net.Index
                     if (!string.Equals(term.Field, currentField, StringComparison.Ordinal))
                     {
                         // if we change the code to process updates in terms order, enable this assert
-                        //        assert currentField == null || currentField.CompareToOrdinal(term.Field) < 0;
+                        //        assert currentField is null || currentField.CompareToOrdinal(term.Field) < 0;
                         currentField = term.Field;
                         Terms terms = fields.GetTerms(currentField);
                         if (terms is object)
@@ -596,7 +596,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (termsEnum == null)
+                    if (termsEnum is null)
                     {
                         continue;
                     }
@@ -610,7 +610,7 @@ namespace Lucene.Net.Index
                         //System.out.println("BDS: got docsEnum=" + docsEnum);
 
                         DocValuesFieldUpdates dvUpdates = dvUpdatesContainer.GetUpdates(update.field, update.type);
-                        if (dvUpdates == null)
+                        if (dvUpdates is null)
                         {
                             dvUpdates = dvUpdatesContainer.NewUpdates(update.field, update.type, reader.MaxDoc);
                         }
@@ -688,10 +688,10 @@ namespace Lucene.Net.Index
         {
             if (term is object)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(lastDeleteTerm == null || term.CompareTo(lastDeleteTerm) > 0, () => "lastTerm=" + lastDeleteTerm + " vs term=" + term);
+                if (Debugging.AssertsEnabled) Debugging.Assert(lastDeleteTerm is null || term.CompareTo(lastDeleteTerm) > 0, () => "lastTerm=" + lastDeleteTerm + " vs term=" + term);
             }
             // TODO: we re-use term now in our merged iterable, but we shouldn't clone, instead copy for this assert
-            lastDeleteTerm = term == null ? null : new Term(term.Field, BytesRef.DeepCopyOf(term.Bytes));
+            lastDeleteTerm = term is null ? null : new Term(term.Field, BytesRef.DeepCopyOf(term.Bytes));
             return true;
         }
 

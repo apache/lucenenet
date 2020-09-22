@@ -527,12 +527,12 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Reinit()
         {
-            if (bytesStart == null)
+            if (bytesStart is null)
             {
                 bytesStart = bytesStartArray.Init();
             }
 
-            if (ids == null)
+            if (ids is null)
             {
                 ids = new int[hashSize];
                 bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT32 * hashSize);

@@ -155,7 +155,7 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>, or if the reader is <c>null</c> </exception>
         public Field(string name, TextReader reader, FieldType type)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException("type", "type cannot be null");
             }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>, or if the <paramref name="tokenStream"/> is <c>null</c> </exception>
         public Field(string name, TokenStream tokenStream, FieldType type)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException("type", "type cannot be null");
             }
@@ -254,7 +254,7 @@ namespace Lucene.Net.Documents
         ///         or the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, BytesRef bytes, FieldType type)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException("type", "type cannot be null");
             }
@@ -280,7 +280,7 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>, or if the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, string value, FieldType type)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException("type", "type cannot be null");
             }
@@ -824,7 +824,7 @@ namespace Lucene.Net.Documents
 
             if (!IndexableFieldType.IsTokenized)
             {
-                if (stringValue == null)
+                if (stringValue is null)
                 {
                     throw new ArgumentException("Non-Tokenized Fields must have a String value");
                 }

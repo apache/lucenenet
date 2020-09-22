@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis
 
         public override bool IncrementToken()
         {
-            if (cache == null)
+            if (cache is null)
             {
                 // fill cache lazily
                 cache = new List<AttributeSource.State>();

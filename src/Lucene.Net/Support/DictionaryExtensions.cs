@@ -24,7 +24,7 @@ namespace Lucene.Net.Support
     {
         public static void PutAll<TKey, TValue>(this IDictionary<TKey, TValue> dict, IEnumerable<KeyValuePair<TKey, TValue>> kvps)
         {
-            if (dict == null)
+            if (dict is null)
                 throw new ArgumentNullException(nameof(dict));
 
             foreach (var kvp in kvps)
@@ -35,7 +35,7 @@ namespace Lucene.Net.Support
 
         public static TValue Put<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
         {
-            if (dict == null)
+            if (dict is null)
                 throw new ArgumentNullException(nameof(dict));
 
             if (!dict.TryGetValue(key, out TValue oldValue))

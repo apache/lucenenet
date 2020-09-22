@@ -141,7 +141,7 @@ namespace Lucene.Net.Search
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
                 // LUCENENET specific - optimized empty array creation
-                return results == null ? new TopDocs(m_totalHits, Arrays.Empty<ScoreDoc>(), float.NaN) : new TopDocs(m_totalHits, results);
+                return results is null ? new TopDocs(m_totalHits, Arrays.Empty<ScoreDoc>(), float.NaN) : new TopDocs(m_totalHits, results);
             }
         }
 
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search
             protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
             {
                 // LUCENENET specific - optimized empty array creation
-                return results == null ? new TopDocs(m_totalHits, Arrays.Empty<ScoreDoc>(), float.NaN) : new TopDocs(m_totalHits, results);
+                return results is null ? new TopDocs(m_totalHits, Arrays.Empty<ScoreDoc>(), float.NaN) : new TopDocs(m_totalHits, results);
             }
         }
 
@@ -283,11 +283,11 @@ namespace Lucene.Net.Search
 
             if (docsScoredInOrder)
             {
-                return after == null ? (TopScoreDocCollector)new InOrderTopScoreDocCollector(numHits) : new InOrderPagingScoreDocCollector(after, numHits);
+                return after is null ? (TopScoreDocCollector)new InOrderTopScoreDocCollector(numHits) : new InOrderPagingScoreDocCollector(after, numHits);
             }
             else
             {
-                return after == null ? (TopScoreDocCollector)new OutOfOrderTopScoreDocCollector(numHits) : new OutOfOrderPagingScoreDocCollector(after, numHits);
+                return after is null ? (TopScoreDocCollector)new OutOfOrderTopScoreDocCollector(numHits) : new OutOfOrderPagingScoreDocCollector(after, numHits);
             }
         }
 
@@ -306,7 +306,7 @@ namespace Lucene.Net.Search
 
         protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
         {
-            if (results == null)
+            if (results is null)
             {
                 return EMPTY_TOPDOCS;
             }

@@ -81,7 +81,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected virtual TopDocs NewTopDocs(ScoreDoc[] results, int start)
         {
-            return results == null ? EMPTY_TOPDOCS : new TopDocs(m_totalHits, results);
+            return results is null ? EMPTY_TOPDOCS : new TopDocs(m_totalHits, results);
         }
 
         /// <summary>

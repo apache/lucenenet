@@ -153,14 +153,14 @@ namespace Lucene.Net.Search
                 //DocIdSetIterator disi;
                 if (outerInstance.m_filter is object)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.m_query == null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.m_query is null);
                     return base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
                 }
                 else
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.m_query is object && innerWeight is object);
                     BulkScorer bulkScorer = innerWeight.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
-                    if (bulkScorer == null)
+                    if (bulkScorer is null)
                     {
                         return null;
                     }
@@ -173,9 +173,9 @@ namespace Lucene.Net.Search
                 DocIdSetIterator disi;
                 if (outerInstance.m_filter is object)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.m_query == null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.m_query is null);
                     DocIdSet dis = outerInstance.m_filter.GetDocIdSet(context, acceptDocs);
-                    if (dis == null)
+                    if (dis is null)
                     {
                         return null;
                     }
@@ -187,7 +187,7 @@ namespace Lucene.Net.Search
                     disi = innerWeight.GetScorer(context, acceptDocs);
                 }
 
-                if (disi == null)
+                if (disi is null)
                 {
                     return null;
                 }
@@ -345,7 +345,7 @@ namespace Lucene.Net.Search
 
         public override string ToString(string field)
         {
-            return (new StringBuilder("ConstantScore(")).Append((m_query == null) ? m_filter.ToString() : m_query.ToString(field)).Append(')').Append(ToStringUtils.Boost(Boost)).ToString();
+            return (new StringBuilder("ConstantScore(")).Append((m_query is null) ? m_filter.ToString() : m_query.ToString(field)).Append(')').Append(ToStringUtils.Boost(Boost)).ToString();
         }
 
         public override bool Equals(object o)
@@ -360,7 +360,7 @@ namespace Lucene.Net.Search
             }
             if (o is ConstantScoreQuery other)
             {
-                return ((this.m_filter == null) ? other.m_filter == null : this.m_filter.Equals(other.m_filter)) && ((this.m_query == null) ? other.m_query == null : this.m_query.Equals(other.m_query));
+                return ((this.m_filter is null) ? other.m_filter is null : this.m_filter.Equals(other.m_filter)) && ((this.m_query is null) ? other.m_query is null : this.m_query.Equals(other.m_query));
             }
             return false;
         }

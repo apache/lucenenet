@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
         {
             this.docScorer = docScorer;
             this.slop = slop;
-            this.numPostings = postings == null ? 0 : postings.Length;
+            this.numPostings = postings is null ? 0 : postings.Length;
             pq = new PhraseQueue(postings.Length);
             // min(cost)
             cost = postings[0].postings.GetCost();
@@ -538,7 +538,7 @@ namespace Lucene.Net.Search
                 {
                     int? cnt0;
                     tcnt.TryGetValue(t, out cnt0);
-                    int? cnt = cnt0 == null ? new int?(1) : new int?(1 + (int)cnt0);
+                    int? cnt = cnt0 is null ? new int?(1) : new int?(1 + (int)cnt0);
                     tcnt[t] = cnt;
                     if (cnt == 2)
                     {

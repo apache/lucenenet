@@ -179,7 +179,7 @@ namespace Lucene.Net.Search
             {
                 //if (BlockTreeTermsWriter.DEBUG) System.out.println("FuzzyTE.getAEnum: ed=" + editDistance + " lastTerm=" + (lastTerm==null ? "null" : lastTerm.utf8ToString()));
                 CompiledAutomaton compiled = runAutomata[editDistance];
-                return new AutomatonFuzzyTermsEnum(this, m_terms.Intersect(compiled, lastTerm == null ? null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.SubList(0, editDistance + 1).ToArray(/*new CompiledAutomaton[editDistance + 1]*/));
+                return new AutomatonFuzzyTermsEnum(this, m_terms.Intersect(compiled, lastTerm is null ? null : compiled.Floor(lastTerm, new BytesRef())), runAutomata.SubList(0, editDistance + 1).ToArray(/*new CompiledAutomaton[editDistance + 1]*/));
             }
             else
             {
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
             int oldMaxEdits = m_maxEdits;
 
             // true if the last term encountered is lexicographically equal or after the bottom term in the PQ
-            bool termAfter = bottomTerm == null || (lastTerm is object && termComparer.Compare(lastTerm, bottomTerm) >= 0);
+            bool termAfter = bottomTerm is null || (lastTerm is object && termComparer.Compare(lastTerm, bottomTerm) >= 0);
 
             // as long as the max non-competitive boost is >= the max boost
             // for some edit distance, keep dropping the max edit distance.
@@ -250,7 +250,7 @@ namespace Lucene.Net.Search
             TermsEnum newEnum = GetAutomatonEnum(maxEdits, lastTerm);
             // instead of assert, we do a hard check in case someone uses our enum directly
             // assert newEnum is object;
-            if (newEnum == null)
+            if (newEnum is null)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(maxEdits > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE);
                 throw new ArgumentException("maxEdits cannot be > LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE");

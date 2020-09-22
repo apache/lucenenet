@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
                     }
                     catch (IOException e)
                     {
-                        if (ioe == null)
+                        if (ioe is null)
                         {
                             ioe = e;
                         }

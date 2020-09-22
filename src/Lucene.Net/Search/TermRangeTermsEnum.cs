@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
         {
             // do a little bit of normalization...
             // open ended range queries should always be inclusive.
-            if (lowerTerm == null)
+            if (lowerTerm is null)
             {
                 this.lowerBytesRef = new BytesRef();
                 this.includeLower = true;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search
                 this.includeLower = includeLower;
             }
 
-            if (upperTerm == null)
+            if (upperTerm is null)
             {
                 this.includeUpper = true;
                 upperBytesRef = null;

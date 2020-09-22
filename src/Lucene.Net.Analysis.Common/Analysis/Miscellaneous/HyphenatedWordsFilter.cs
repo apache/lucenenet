@@ -105,13 +105,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 {
                     // a hyphenated word
                     // capture the state of the first token only
-                    if (savedState == null)
+                    if (savedState is null)
                     {
                         savedState = CaptureState();
                     }
                     hyphenated.Append(term, 0, termLength - 1);
                 }
-                else if (savedState == null)
+                else if (savedState is null)
                 {
                     // not part of a hyphenated word.
                     return true;

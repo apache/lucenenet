@@ -318,7 +318,7 @@ namespace Lucene.Net.Search
                     {
                         cIter.MoveNext();
                         BooleanClause c = cIter.Current;
-                        if (w.GetScorer(context, context.AtomicReader.LiveDocs) == null)
+                        if (w.GetScorer(context, context.AtomicReader.LiveDocs) is null)
                         {
                             if (c.IsRequired)
                             {
@@ -408,7 +408,7 @@ namespace Lucene.Net.Search
                         cIter.MoveNext();
                         BooleanClause c = cIter.Current;
                         BulkScorer subScorer = w.GetBulkScorer(context, false, acceptDocs);
-                        if (subScorer == null)
+                        if (subScorer is null)
                         {
                             if (c.IsRequired)
                             {
@@ -448,7 +448,7 @@ namespace Lucene.Net.Search
                     cIter.MoveNext();
                     BooleanClause c = cIter.Current;
                     Scorer subScorer = w.GetScorer(context, acceptDocs);
-                    if (subScorer == null)
+                    if (subScorer is null)
                     {
                         if (c.IsRequired)
                         {
@@ -565,7 +565,7 @@ namespace Lucene.Net.Search
                 Query query = c.Query.Rewrite(reader);
                 if (query != c.Query) // clause rewrote: must clone
                 {
-                    if (clone == null)
+                    if (clone is null)
                     {
                         // The BooleanQuery clone is lazily initialized so only initialize
                         // it if a rewritten clause differs from the original clause (and hasn't been

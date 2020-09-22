@@ -116,7 +116,7 @@ namespace Lucene.Net.Search.Spans
                     length = End - Start;
                     outerInstance.totalLength += length; // add new length
 
-                    if (outerInstance.max == null || Doc > outerInstance.max.Doc || (Doc == outerInstance.max.Doc) && (End > outerInstance.max.End))
+                    if (outerInstance.max is null || Doc > outerInstance.max.Doc || (Doc == outerInstance.max.Doc) && (End > outerInstance.max.End))
                     {
                         outerInstance.max = this;
                     }

@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.NGram
               : base(input)
         {
 
-            //if (version == null)
+            //if (version is null)
             //{
             //    throw new ArgumentException("version must not be null");
             //}
@@ -168,7 +168,7 @@ namespace Lucene.Net.Analysis.NGram
         {
             while (true)
             {
-                if (curTermBuffer == null)
+                if (curTermBuffer is null)
                 {
                     if (!m_input.IncrementToken())
                     {

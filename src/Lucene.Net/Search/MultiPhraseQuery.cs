@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
                     {
                         TermContext termContext;
                         termContexts.TryGetValue(term, out termContext);
-                        if (termContext == null)
+                        if (termContext is null)
                         {
                             termContext = TermContext.Build(context, term);
                             termContexts[term] = termContext;
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search
                 PhraseQuery.PostingsAndFreq[] postingsFreqs = new PhraseQuery.PostingsAndFreq[outerInstance.termArrays.Count];
 
                 Terms fieldTerms = reader.GetTerms(outerInstance.field);
-                if (fieldTerms == null)
+                if (fieldTerms is null)
                 {
                     return null;
                 }
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search
                         {
                             Term term = terms[termIdx];
                             TermState termState = termContexts[term].Get(context.Ord);
-                            if (termState == null)
+                            if (termState is null)
                             {
                                 // Term not in reader
                                 continue;
@@ -275,7 +275,7 @@ namespace Lucene.Net.Search
                     {
                         Term term = terms[0];
                         TermState termState = termContexts[term].Get(context.Ord);
-                        if (termState == null)
+                        if (termState is null)
                         {
                             // Term not in reader
                             return null;
@@ -283,7 +283,7 @@ namespace Lucene.Net.Search
                         termsEnum.SeekExact(term.Bytes, termState);
                         postingsEnum = termsEnum.DocsAndPositions(liveDocs, null, DocsAndPositionsFlags.NONE);
 
-                        if (postingsEnum == null)
+                        if (postingsEnum is null)
                         {
                             // term does exist, but has no positions
                             if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum.Docs(liveDocs, null, DocsFlags.NONE) is object, "termstate found but no term exists in reader");
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search
         public override sealed string ToString(string f)
         {
             StringBuilder buffer = new StringBuilder();
-            if (field == null || !field.Equals(f, StringComparison.Ordinal))
+            if (field is null || !field.Equals(f, StringComparison.Ordinal))
             {
                 buffer.Append(field);
                 buffer.Append(":");
@@ -471,7 +471,7 @@ namespace Lucene.Net.Search
             foreach (Term[] termArray in termArrays)
             {
                 hashCode = 31 * hashCode 
-                    + (termArray == null ? 0 : Arrays.GetHashCode(termArray));
+                    + (termArray is null ? 0 : Arrays.GetHashCode(termArray));
             }
             return hashCode;
         }
@@ -492,7 +492,7 @@ namespace Lucene.Net.Search
                         Term[] termArray1 = iterator1.Current;
                         iterator2.MoveNext();
                         Term[] termArray2 = iterator2.Current;
-                        if (!(termArray1 == null ? termArray2 == null : Arrays.Equals(termArray1, termArray2)))
+                        if (!(termArray1 is null ? termArray2 is null : Arrays.Equals(termArray1, termArray2)))
                         {
                             return false;
                         }
@@ -620,14 +620,14 @@ namespace Lucene.Net.Search
             {
                 Term term = terms[i];
                 TermState termState = termContexts[term].Get(context.Ord);
-                if (termState == null)
+                if (termState is null)
                 {
                     // Term doesn't exist in reader
                     continue;
                 }
                 termsEnum.SeekExact(term.Bytes, termState);
                 DocsAndPositionsEnum postings = termsEnum.DocsAndPositions(liveDocs, null, DocsAndPositionsFlags.NONE);
-                if (postings == null)
+                if (postings is null)
                 {
                     // term does exist, but has no positions
                     throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");

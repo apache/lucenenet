@@ -154,7 +154,7 @@ namespace Lucene.Net.Support
         /// <param name="array"></param>
         public static string ToString<T>(T[] array)
         {
-            if (array == null)
+            if (array is null)
                 return "null"; //$NON-NLS-1$
             if (array.Length == 0)
                 return "[]"; //$NON-NLS-1$

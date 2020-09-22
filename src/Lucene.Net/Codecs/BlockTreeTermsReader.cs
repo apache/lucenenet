@@ -302,7 +302,7 @@ namespace Lucene.Net.Codecs
         // for debugging
         internal virtual string BrToString(BytesRef b)
         {
-            if (b == null)
+            if (b is null)
             {
                 return "null";
             }
@@ -878,7 +878,7 @@ namespace Lucene.Net.Codecs
 
                         // metadata
                         numBytes = outerInstance.@in.ReadVInt32();
-                        if (bytes == null)
+                        if (bytes is null)
                         {
                             bytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
                             bytesReader = new ByteArrayDataInput();
@@ -1006,7 +1006,7 @@ namespace Lucene.Net.Codecs
                         arcs[arcIdx] = new FST.Arc<BytesRef>();
                     }
 
-                    if (outerInstance.index == null)
+                    if (outerInstance.index is null)
                     {
                         fstReader = null;
                     }
@@ -1048,7 +1048,7 @@ namespace Lucene.Net.Codecs
                 // only for assert:
                 internal bool SetSavedStartTerm(BytesRef startTerm)
                 {
-                    savedStartTerm = startTerm == null ? null : BytesRef.DeepCopyOf(startTerm);
+                    savedStartTerm = startTerm is null ? null : BytesRef.DeepCopyOf(startTerm);
                     return true;
                 }
 
@@ -1091,7 +1091,7 @@ namespace Lucene.Net.Codecs
 
                 private Frame PushFrame(int state)
                 {
-                    Frame f = GetFrame(currentFrame == null ? 0 : 1 + currentFrame.ord);
+                    Frame f = GetFrame(currentFrame is null ? 0 : 1 + currentFrame.ord);
 
                     f.fp = f.fpOrig = currentFrame.lastSubFP;
                     f.prefix = currentFrame.prefix + currentFrame.suffix;
@@ -1430,7 +1430,7 @@ namespace Lucene.Net.Codecs
                         {
                             CopyTerm();
                             //if (DEBUG) System.out.println("      term match to state=" + state + "; return term=" + brToString(term));
-                            if (Debugging.AssertsEnabled) Debugging.Assert(savedStartTerm == null || term.CompareTo(savedStartTerm) > 0, () => "saveStartTerm=" + savedStartTerm.Utf8ToString() + " term=" + term.Utf8ToString());
+                            if (Debugging.AssertsEnabled) Debugging.Assert(savedStartTerm is null || term.CompareTo(savedStartTerm) > 0, () => "saveStartTerm=" + savedStartTerm.Utf8ToString() + " term=" + term.Utf8ToString());
                             return true;
                         }
                         else
@@ -1520,7 +1520,7 @@ namespace Lucene.Net.Codecs
                     // Used to hold seek by TermState, or cached seek
                     staticFrame = new Frame(this, -1);
 
-                    if (outerInstance.index == null)
+                    if (outerInstance.index is null)
                     {
                         fstReader = null;
                     }
@@ -1564,7 +1564,7 @@ namespace Lucene.Net.Codecs
                 // Not private to avoid synthetic access$NNN methods
                 internal void InitIndexInput()
                 {
-                    if (this.@in == null)
+                    if (this.@in is null)
                     {
                         this.@in = (IndexInput)outerInstance.outerInstance.@in.Clone();
                     }
@@ -1787,7 +1787,7 @@ namespace Lucene.Net.Codecs
 
                 public override bool SeekExact(BytesRef target)
                 {
-                    if (outerInstance.index == null)
+                    if (outerInstance.index is null)
                     {
                         throw new InvalidOperationException("terms index was not loaded");
                     }
@@ -1969,7 +1969,7 @@ namespace Lucene.Net.Codecs
 
                         FST.Arc<BytesRef> nextArc = outerInstance.index.FindTargetArc(targetLabel, arc, GetArc(1 + targetUpto), fstReader);
 
-                        if (nextArc == null)
+                        if (nextArc is null)
                         {
                             // Index is exhausted
                             // if (DEBUG) {
@@ -2074,7 +2074,7 @@ namespace Lucene.Net.Codecs
 
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
-                    if (outerInstance.index == null)
+                    if (outerInstance.index is null)
                     {
                         throw new InvalidOperationException("terms index was not loaded");
                     }
@@ -2257,7 +2257,7 @@ namespace Lucene.Net.Codecs
 
                         FST.Arc<BytesRef> nextArc = outerInstance.index.FindTargetArc(targetLabel, arc, GetArc(1 + targetUpto), fstReader);
 
-                        if (nextArc == null)
+                        if (nextArc is null)
                         {
                             // Index is exhausted
                             // if (DEBUG) {
@@ -2395,7 +2395,7 @@ namespace Lucene.Net.Codecs
                 //                    throw new Exception("seek state is broken");
                 //                }
                 //                BytesRef output = Util.Get(OuterInstance.Index, prefix);
-                //                if (output == null)
+                //                if (output is null)
                 //                {
                 //                    @out.println("      broken seek state: prefix is not final in index");
                 //                    throw new Exception("seek state is broken");
@@ -2431,7 +2431,7 @@ namespace Lucene.Net.Codecs
                    decode all metadata up to the current term. */
                 public override bool MoveNext()
                 {
-                    if (@in == null)
+                    if (@in is null)
                     {
                         // Fresh TermsEnum; seek to first term:
                         FST.Arc<BytesRef> arc;
@@ -2760,7 +2760,7 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) {
                         //System.out.println("    loadNextFloorBlock fp=" + fp + " fpEnd=" + fpEnd);
                         //}
-                        if (Debugging.AssertsEnabled) Debugging.Assert(arc == null || isFloor, () => "arc=" + arc + " isFloor=" + isFloor);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc is null || isFloor, () => "arc=" + arc + " isFloor=" + isFloor);
                         fp = fpEnd;
                         nextEnt = -1;
                         LoadBlock();
@@ -2796,7 +2796,7 @@ namespace Lucene.Net.Codecs
                         entCount = (int)((uint)code >> 1);
                         if (Debugging.AssertsEnabled) Debugging.Assert(entCount > 0);
                         isLastInFloor = (code & 1) != 0;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(arc == null || (isLastInFloor || isFloor));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc is null || (isLastInFloor || isFloor));
 
                         // TODO: if suffixes were stored in random-access
                         // array structure, then we could do binary search
@@ -2815,7 +2815,7 @@ namespace Lucene.Net.Codecs
                         suffixesReader.Reset(suffixBytes, 0, numBytes);
 
                         /*if (DEBUG) {
-                          if (arc == null) {
+                          if (arc is null) {
                             System.out.println("    loadBlock (next) fp=" + fp + " entCount=" + entCount + " prefixLen=" + prefix + " isLastInFloor=" + isLastInFloor + " leaf?=" + isLeafBlock);
                           } else {
                             System.out.println("    loadBlock (seek) fp=" + fp + " entCount=" + entCount + " prefixLen=" + prefix + " hasTerms?=" + hasTerms + " isFloor?=" + isFloor + " isLastInFloor=" + isLastInFloor + " leaf?=" + isLeafBlock);
@@ -2840,7 +2840,7 @@ namespace Lucene.Net.Codecs
                         // that's rare so won't help much
                         // metadata
                         numBytes = outerInstance.@in.ReadVInt32();
-                        if (bytes == null)
+                        if (bytes is null)
                         {
                             bytes = new byte[ArrayUtil.Oversize(numBytes, 1)];
                             bytesReader = new ByteArrayDataInput();

@@ -176,7 +176,7 @@ namespace Lucene.Net.Sandbox.Queries
             int result = base.GetHashCode();
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(minimumSimilarity);
             result = prime * result + prefixLength;
-            result = prime * result + ((m_term == null) ? 0 : m_term.GetHashCode());
+            result = prime * result + ((m_term is null) ? 0 : m_term.GetHashCode());
             return result;
         }
 
@@ -194,7 +194,7 @@ namespace Lucene.Net.Sandbox.Queries
                 return false;
             if (prefixLength != other.prefixLength)
                 return false;
-            if (m_term == null)
+            if (m_term is null)
             {
                 if (other.m_term != null)
                     return false;

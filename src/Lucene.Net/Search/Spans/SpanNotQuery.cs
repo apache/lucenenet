@@ -251,7 +251,7 @@ namespace Lucene.Net.Search.Spans
             var rewrittenExclude = (SpanQuery)exclude.Rewrite(reader);
             if (rewrittenExclude != exclude)
             {
-                if (clone == null)
+                if (clone is null)
                 {
                     clone = (SpanNotQuery)this.Clone();
                 }

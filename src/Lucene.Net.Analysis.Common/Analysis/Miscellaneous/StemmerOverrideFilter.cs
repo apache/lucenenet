@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (m_input.IncrementToken())
             {
-                if (fstReader == null)
+                if (fstReader is null)
                 {
                     // No overrides
                     return true;
@@ -113,7 +113,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /// </summary>
             public FST.BytesReader GetBytesReader()
             {
-                if (fst == null)
+                if (fst is null)
                 {
                     return null;
                 }
@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 while (bufUpto < bufferLen)
                 {
                     int codePoint = Character.CodePointAt(buffer, bufUpto, bufferLen);
-                    if (fst.FindTargetArc(ignoreCase ? Character.ToLower(codePoint, CultureInfo.InvariantCulture) : codePoint, scratchArc, scratchArc, fstReader) == null)
+                    if (fst.FindTargetArc(ignoreCase ? Character.ToLower(codePoint, CultureInfo.InvariantCulture) : codePoint, scratchArc, scratchArc, fstReader) is null)
                     {
                         return null;
                     }

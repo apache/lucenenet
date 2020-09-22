@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
         {
             foreach (var merge in _mergeThreads.ToArray())
             {
-                if (merge == null || !merge.IsAlive)
+                if (merge is null || !merge.IsAlive)
                 {
                     continue;
                 }
@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
                     }
 
                     MergePolicy.OneMerge merge = writer.NextMerge();
-                    if (merge == null)
+                    if (merge is null)
                     {
                         if (Verbose)
                         {
@@ -539,7 +539,7 @@ namespace Lucene.Net.Index
             {
                 using (_lock.Write())
                 {
-                    if (_task == null && !_cancellationTokenSource.IsCancellationRequested)
+                    if (_task is null && !_cancellationTokenSource.IsCancellationRequested)
                     {
                         _task = Task.Factory.StartNew(() => Run(_cancellationTokenSource.Token), _cancellationTokenSource.Token, TaskCreationOptions.None, taskScheduler);
                     }
@@ -652,7 +652,7 @@ namespace Lucene.Net.Index
 
             public override string ToString()
             {
-                return _task == null
+                return _task is null
                     ? string.Format("Task[{0}], Task has not been started yet.", Name)
                     : string.Format("Task[{0}], Id[{1}], Status[{2}]", Name, _task.Id, _task.Status);
             }
@@ -660,8 +660,8 @@ namespace Lucene.Net.Index
             public override bool Equals(object obj)
             {
                 if (!(obj is MergeThread compared)
-                    || (Instance == null && compared.Instance is object)
-                    || (Instance is object && compared.Instance == null))
+                    || (Instance is null && compared.Instance is object)
+                    || (Instance is object && compared.Instance is null))
                 {
                     return false;
                 }
@@ -671,7 +671,7 @@ namespace Lucene.Net.Index
 
             public override int GetHashCode()
             {
-                return Instance == null
+                return Instance is null
                     ? base.GetHashCode()
                     : Instance.GetHashCode();
             }

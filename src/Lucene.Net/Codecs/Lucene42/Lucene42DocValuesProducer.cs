@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.Lucene42
             lock (this)
             {
                 NumericDocValues instance;
-                if (!numericInstances.TryGetValue(field.Number, out instance) || instance == null)
+                if (!numericInstances.TryGetValue(field.Number, out instance) || instance is null)
                 {
                     instance = LoadNumeric(field);
                     numericInstances[field.Number] = instance;
@@ -347,7 +347,7 @@ namespace Lucene.Net.Codecs.Lucene42
             lock (this)
             {
                 BinaryDocValues instance;
-                if (!binaryInstances.TryGetValue(field.Number, out instance) || instance == null)
+                if (!binaryInstances.TryGetValue(field.Number, out instance) || instance is null)
                 {
                     instance = LoadBinary(field);
                     binaryInstances[field.Number] = instance;
@@ -419,7 +419,7 @@ namespace Lucene.Net.Codecs.Lucene42
             FST<long?> instance;
             lock (this)
             {
-                if (!fstInstances.TryGetValue(field.Number, out instance) || instance == null)
+                if (!fstInstances.TryGetValue(field.Number, out instance) || instance is null)
                 {
                     data.Seek(entry.Offset);
                     instance = new FST<long?>(data, PositiveInt32Outputs.Singleton);
@@ -491,7 +491,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 try
                 {
                     BytesRefFSTEnum.InputOutput<long?> o = fstEnum.SeekCeil(key);
-                    if (o == null)
+                    if (o is null)
                     {
                         return -ValueCount - 1;
                     }
@@ -528,7 +528,7 @@ namespace Lucene.Net.Codecs.Lucene42
             FST<long?> instance;
             lock (this)
             {
-                if (!fstInstances.TryGetValue(field.Number, out instance) || instance == null)
+                if (!fstInstances.TryGetValue(field.Number, out instance) || instance is null)
                 {
                     data.Seek(entry.Offset);
                     instance = new FST<long?>(data, PositiveInt32Outputs.Singleton);
@@ -622,7 +622,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 try
                 {
                     var o = fstEnum.SeekCeil(key);
-                    if (o == null)
+                    if (o is null)
                     {
                         return -ValueCount - 1;
                     }
@@ -736,7 +736,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                if (@in.SeekCeil(text) == null)
+                if (@in.SeekCeil(text) is null)
                 {
                     return SeekStatus.END;
                 }
@@ -754,7 +754,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override bool SeekExact(BytesRef text)
             {
-                if (@in.SeekExact(text) == null)
+                if (@in.SeekExact(text) is null)
                 {
                     return false;
                 }

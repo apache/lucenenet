@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
                 // find SegmentReader for this segment
                 int? oldReaderIndex;
                 segmentReaders.TryGetValue(infos.Info(i).Info.Name, out oldReaderIndex);
-                if (oldReaderIndex == null)
+                if (oldReaderIndex is null)
                 {
                     // this is a new segment, no old SegmentReader can be reused
                     newReaders[i] = null;
@@ -213,7 +213,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     SegmentReader newReader;
-                    if (newReaders[i] == null || infos.Info(i).Info.UseCompoundFile != newReaders[i].SegmentInfo.Info.UseCompoundFile)
+                    if (newReaders[i] is null || infos.Info(i).Info.UseCompoundFile != newReaders[i].SegmentInfo.Info.UseCompoundFile)
                     {
                         // this is a new reader; in case we hit an exception we can close it safely
                         newReader = new SegmentReader(infos.Info(i), termInfosIndexDivisor, IOContext.READ);
@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
                                 }
                                 catch (Exception t)
                                 {
-                                    if (prior == null)
+                                    if (prior is null)
                                     {
                                         prior = t;
                                     }
@@ -381,7 +381,7 @@ namespace Lucene.Net.Index
 
         private DirectoryReader DoOpenNoWriter(IndexCommit commit)
         {
-            if (commit == null)
+            if (commit is null)
             {
                 if (IsCurrent())
                 {
@@ -443,7 +443,7 @@ namespace Lucene.Net.Index
         public override bool IsCurrent()
         {
             EnsureOpen();
-            if (writer == null || writer.IsClosed)
+            if (writer is null || writer.IsClosed)
             {
                 // Fully read the segments file: this ensures that it's
                 // completely written so that if
@@ -474,7 +474,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception t)
                 {
-                    if (firstExc == null)
+                    if (firstExc is null)
                     {
                         firstExc = t;
                     }

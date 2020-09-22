@@ -222,10 +222,10 @@ namespace Lucene.Net.Index
                 {
                     doSeek = false;
                     BytesRef t = NextSeekTerm(actualTerm);
-                    //System.out.println("  seek to t=" + (t == null ? "null" : t.utf8ToString()) + " tenum=" + tenum);
+                    //System.out.println("  seek to t=" + (t is null ? "null" : t.utf8ToString()) + " tenum=" + tenum);
                     // Make sure we always seek forward:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(actualTerm == null || t == null || Comparer.Compare(t, actualTerm) > 0, () => "curTerm=" + actualTerm + " seekTerm=" + t);
-                    if (t == null || tenum.SeekCeil(t) == SeekStatus.END)
+                    if (Debugging.AssertsEnabled) Debugging.Assert(actualTerm is null || t is null || Comparer.Compare(t, actualTerm) > 0, () => "curTerm=" + actualTerm + " seekTerm=" + t);
+                    if (t is null || tenum.SeekCeil(t) == SeekStatus.END)
                     {
                         // no more terms to seek to or enum exhausted
                         //System.out.println("  return null");

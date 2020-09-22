@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             for (int i = 0; indexEnum.Next(); i++)
             {
                 Term term = indexEnum.Term();
-                if (currentField == null || !currentField.Equals(term.Field, StringComparison.Ordinal))
+                if (currentField is null || !currentField.Equals(term.Field, StringComparison.Ordinal))
                 {
                     currentField = term.Field;
                     fieldStrs.Add(currentField);

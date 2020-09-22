@@ -101,7 +101,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (fieldsWriter == null)
+                if (fieldsWriter is null)
                 {
                     fieldsWriter = codec.StoredFieldsFormat.FieldsWriter(docWriter.directory, docWriter.SegmentInfo, context);
                     lastDocID = 0;

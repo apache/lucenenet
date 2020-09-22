@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Shingle
             }
             this.minShingleSize = minShingleSize;
 
-            this.tokenSeparator = (tokenSeparator == null ? "" : tokenSeparator);
+            this.tokenSeparator = tokenSeparator ?? "";
             this.outputUnigrams = outputUnigrams;
             this.outputUnigramsIfNoShingles = outputUnigramsIfNoShingles;
             this.fillerToken = fillerToken;

@@ -119,7 +119,7 @@ namespace Lucene.Net.Store
         protected internal FSDirectory(DirectoryInfo path, LockFactory lockFactory)
         {
             // new ctors use always NativeFSLockFactory as default:
-            if (lockFactory == null)
+            if (lockFactory is null)
             {
                 lockFactory = new NativeFSLockFactory();
             }
@@ -214,7 +214,7 @@ namespace Lucene.Net.Store
             {
                 DirectoryInfo dir = lf.LockDir;
                 // if the lock factory has no lockDir set, use the this directory as lockDir
-                if (dir == null)
+                if (dir is null)
                 {
                     lf.SetLockDir(m_directory);
                     lf.LockPrefix = null;
@@ -255,7 +255,7 @@ namespace Lucene.Net.Store
                 result[i] = files[i].Name;
             }
             // LUCENENET NOTE: this can never happen in .NET
-            //if (result == null)
+            //if (result is null)
             //{
             //    throw new IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
             //}

@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Util
                         }
                     }
 
-                    if (name == null)
+                    if (name is null)
                     {
                         throw new InvalidOperationException("The class name " + service.Name +
                           " has wrong suffix, allowed are: " + Arrays.ToString(suffixes));

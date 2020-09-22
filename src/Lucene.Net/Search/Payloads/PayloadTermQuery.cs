@@ -227,7 +227,7 @@ namespace Lucene.Net.Search.Payloads
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((m_function == null) ? 0 : m_function.GetHashCode());
+            result = prime * result + ((m_function is null) ? 0 : m_function.GetHashCode());
             result = prime * result + (includeSpanScore ? 1231 : 1237);
             return result;
         }
@@ -247,7 +247,7 @@ namespace Lucene.Net.Search.Payloads
                 return false;
             }
             PayloadTermQuery other = (PayloadTermQuery)obj;
-            if (m_function == null)
+            if (m_function is null)
             {
                 if (other.m_function is object)
                 {

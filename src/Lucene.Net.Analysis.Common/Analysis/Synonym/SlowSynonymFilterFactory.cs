@@ -175,7 +175,7 @@ namespace Lucene.Net.Analysis.Synonym
             IList<IList<string>> synList = new List<IList<string>>();
             foreach (string toks in strList)
             {
-                IList<string> tokList = tokFactory == null ? SplitWS(toks, true) : SplitByTokenizer(toks, tokFactory);
+                IList<string> tokList = tokFactory is null ? SplitWS(toks, true) : SplitByTokenizer(toks, tokFactory);
                 synList.Add(tokList);
             }
             return synList;
@@ -212,9 +212,9 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz, new object[] { tokArgs });
 
-                if (tokFactory is IResourceLoaderAware)
+                if (tokFactory is IResourceLoaderAware resLoader)
                 {
-                    ((IResourceLoaderAware)tokFactory).Inform(loader);
+                    resLoader.Inform(loader);
                 }
                 return tokFactory;
             }

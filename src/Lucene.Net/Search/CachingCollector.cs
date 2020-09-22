@@ -142,7 +142,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                if (m_curDocs == null)
+                if (m_curDocs is null)
                 {
                     // Cache was too large
                     cachedScorer.score = scorer.GetScore();
@@ -261,7 +261,7 @@ namespace Lucene.Net.Search
 
             public override void Collect(int doc)
             {
-                if (m_curDocs == null)
+                if (m_curDocs is null)
                 {
                     // Cache was too large
                     m_other.Collect(doc);

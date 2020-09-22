@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
             fieldsReaderLocal = new DisposableThreadLocal<StoredFieldsReader>(()
                 => (StoredFieldsReader)fieldsReaderOrig.Clone());
             termVectorsLocal = new DisposableThreadLocal<TermVectorsReader>(()
-                => (termVectorsReaderOrig == null) ? null : (TermVectorsReader)termVectorsReaderOrig.Clone());
+                => (termVectorsReaderOrig is null) ? null : (TermVectorsReader)termVectorsReaderOrig.Clone());
 
             if (termsIndexDivisor == 0)
             {
@@ -167,7 +167,7 @@ namespace Lucene.Net.Index
             object ret;
             normFields.TryGetValue(fi.Name, out ret);
             var norms = ret as NumericDocValues;
-            if (norms == null)
+            if (norms is null)
             {
                 norms = normsProducer.GetNumeric(fi);
                 normFields[fi.Name] = norms;
@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
                     catch (Exception t)
                     {
                         
-                        if (th == null)
+                        if (th is null)
                         {
                             th = t;
                         }

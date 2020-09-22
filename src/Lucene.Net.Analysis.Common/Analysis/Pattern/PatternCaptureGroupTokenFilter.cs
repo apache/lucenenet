@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Pattern
             {
                 if (currentGroup[i] == -1)
                 {
-                    if (matchers[i] == null)
+                    if (matchers[i] is null)
                         matchers[i] = patterns[i].Match(new string(spare.Chars, spare.Offset, spare.Length)); 
                     else
                         matchers[i] = matchers[i].NextMatch();

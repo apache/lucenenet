@@ -113,7 +113,7 @@ namespace Lucene.Net.Index
             {
                 EnsureOpen();
                 // lazy init without thread safety for perf reasons: Building the readerContext twice does not hurt!
-                if (readerContext == null)
+                if (readerContext is null)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(GetSequentialSubReaders() is object);
                     readerContext = CompositeReaderContext.Create(this);

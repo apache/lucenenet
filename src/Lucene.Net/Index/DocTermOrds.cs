@@ -273,16 +273,16 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual TermsEnum GetOrdTermsEnum(AtomicReader reader)
         {
-            if (m_indexedTermsArray == null)
+            if (m_indexedTermsArray is null)
             {
                 //System.out.println("GET normal enum");
                 Fields fields = reader.Fields;
-                if (fields == null)
+                if (fields is null)
                 {
                     return null;
                 }
                 Terms terms = fields.GetTerms(m_field);
-                if (terms == null)
+                if (terms is null)
                 {
                     return null;
                 }
@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns <c>true</c> if no terms were indexed.
         /// </summary>
-        public virtual bool IsEmpty => m_index == null;
+        public virtual bool IsEmpty => m_index is null;
 
         /// <summary>
         /// Subclass can override this </summary>
@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
             }
             //System.out.println("DTO uninvert field=" + field + " prefix=" + termPrefix);
             long startTime = Environment.TickCount;
-            m_prefix = termPrefix == null ? null : BytesRef.DeepCopyOf(termPrefix);
+            m_prefix = termPrefix is null ? null : BytesRef.DeepCopyOf(termPrefix);
 
             int maxDoc = reader.MaxDoc;
             int[] index = new int[maxDoc]; // immediate term numbers, or the index into the byte[] representing the last number
@@ -342,13 +342,13 @@ namespace Lucene.Net.Index
             var bytes = new sbyte[maxDoc][]; // list of term numbers for the doc (delta encoded vInts)
 
             Fields fields = reader.Fields;
-            if (fields == null)
+            if (fields is null)
             {
                 // No terms
                 return;
             }
             Terms terms = fields.GetTerms(m_field);
-            if (terms == null)
+            if (terms is null)
             {
                 // No terms
                 return;
@@ -398,7 +398,7 @@ namespace Lucene.Net.Index
             for (; ; )
             {
                 BytesRef t = te.Term;
-                if (t == null || (termPrefix is object && !StringHelper.StartsWith(t, termPrefix)))
+                if (t is null || (termPrefix is object && !StringHelper.StartsWith(t, termPrefix)))
                 {
                     break;
                 }
@@ -857,7 +857,7 @@ namespace Lucene.Net.Index
                     MoveNext();
                 }
 
-                if (term == null)
+                if (term is null)
                 {
                     return SeekStatus.END;
                 }
@@ -907,7 +907,7 @@ namespace Lucene.Net.Index
             private BytesRef SetTerm()
             {
                 term = termsEnum.Term;
-                //System.out.println("  setTerm() term=" + term.utf8ToString() + " vs prefix=" + (prefix == null ? "null" : prefix.utf8ToString()));
+                //System.out.println("  setTerm() term=" + term.utf8ToString() + " vs prefix=" + (prefix is null ? "null" : prefix.utf8ToString()));
                 if (outerInstance.m_prefix is object && !StringHelper.StartsWith(term, outerInstance.m_prefix))
                 {
                     term = null;
@@ -989,7 +989,7 @@ namespace Lucene.Net.Index
             internal virtual int Read(int[] buffer)
             {
                 int bufferUpto = 0;
-                if (arr == null)
+                if (arr is null)
                 {
                     // code is inlined into upto
                     //System.out.println("inlined");

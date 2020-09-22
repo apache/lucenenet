@@ -91,7 +91,7 @@ namespace Lucene.Net.Collation
             this.strength = this.RemoveFromDictionary(args, "strength");
             this.decomposition = this.RemoveFromDictionary(args, "decomposition");
             
-            if (this.custom == null && this.language == null)
+            if (this.custom is null && this.language is null)
             {
                 throw new ArgumentException("Either custom or language is required.");
             }
@@ -182,12 +182,12 @@ namespace Lucene.Net.Collation
         {
             CultureInfo cultureInfo;
 
-            if (language == null)
+            if (language is null)
             {
                 throw new ArgumentException("Language is required");
             }
 
-            if (language != null && country == null && variant != null)
+            if (language != null && country is null && variant != null)
             {
                 throw new ArgumentException("To specify variant, country is required");
             }

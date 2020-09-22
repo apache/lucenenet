@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
         /// <param name="files"> array of file names to check </param>
         public static long GetLastCommitGeneration(string[] files)
         {
-            if (files == null)
+            if (files is null)
             {
                 return -1;
             }
@@ -548,7 +548,7 @@ namespace Lucene.Net.Index
                     // If this segment is pre-4.x, perform a one-time
                     // "ugprade" to write the .si file for it:
                     string version = si.Version;
-                    if (version == null || StringHelper.VersionComparer.Compare(version, "4.0") < 0)
+                    if (version is null || StringHelper.VersionComparer.Compare(version, "4.0") < 0)
                     {
                         if (!SegmentWasUpgraded(directory, si))
                         {
@@ -744,7 +744,7 @@ namespace Lucene.Net.Index
             set =>
                 // LUCENENET specific - use a SafeTextWriterWrapper to ensure that if the TextWriter
                 // is disposed by the caller (using block) we don't get any exceptions if we keep using it.
-                infoStream = value == null
+                infoStream = value is null
                     ? null
                     : (value is SafeTextWriterWrapper ? value : new SafeTextWriterWrapper(value));
             get => infoStream;
@@ -1015,7 +1015,7 @@ namespace Lucene.Net.Index
                     catch (IOException err)
                     {
                         // Save the original root cause:
-                        if (exc == null)
+                        if (exc is null)
                         {
                             exc = err;
                         }
@@ -1166,7 +1166,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal void FinishCommit(Directory dir)
         {
-            if (pendingSegnOutput == null)
+            if (pendingSegnOutput is null)
             {
                 throw new InvalidOperationException("prepareCommit was not called");
             }
@@ -1284,7 +1284,7 @@ namespace Lucene.Net.Index
             get => userData;
             internal set
             {
-                if (value == null)
+                if (value is null)
                 {
                     userData = Collections.EmptyMap<string, string>();
                 }

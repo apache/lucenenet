@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Query
 
         protected override TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
         {
-            if (!stopWordsPerField.TryGetValue(fieldName, out ISet<string> stopWords) || stopWords == null)
+            if (!stopWordsPerField.TryGetValue(fieldName, out ISet<string> stopWords) || stopWords is null)
             {
                 return components;
             }

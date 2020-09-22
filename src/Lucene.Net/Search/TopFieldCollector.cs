@@ -1247,7 +1247,7 @@ namespace Lucene.Net.Search
 
             FieldValueHitQueue<Entry> queue = FieldValueHitQueue.Create<Entry>(sort.fields, numHits);
 
-            if (after == null)
+            if (after is null)
             {
                 if (queue.Comparers.Length == 1)
                 {
@@ -1317,7 +1317,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                if (after.Fields == null)
+                if (after.Fields is null)
                 {
                     throw new ArgumentException("after.fields wasn't set; you must pass fillFields=true for the previous search");
                 }
@@ -1365,7 +1365,7 @@ namespace Lucene.Net.Search
 
         protected override TopDocs NewTopDocs(ScoreDoc[] results, int start)
         {
-            if (results == null)
+            if (results is null)
             {
                 results = EMPTY_SCOREDOCS;
                 // Set maxScore to NaN, in case this is a maxScore tracking collector.

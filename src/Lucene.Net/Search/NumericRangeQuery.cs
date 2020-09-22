@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
             {
                 sb.Append(Field).Append(':');
             }
-            return sb.Append(minInclusive ? '[' : '{').Append((min == null) ? "*" : min.ToString()).Append(" TO ").Append((max == null) ? "*" : max.ToString()).Append(maxInclusive ? ']' : '}').Append(ToStringUtils.Boost(Boost)).ToString();
+            return sb.Append(minInclusive ? '[' : '{').Append((min is null) ? "*" : min.ToString()).Append(" TO ").Append((max is null) ? "*" : max.ToString()).Append(maxInclusive ? ']' : '}').Append(ToStringUtils.Boost(Boost)).ToString();
         }
 
         public override bool Equals(object o)
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
             }
             if (o is NumericRangeQuery<T> q)
             {
-                return ((q.min == null ? min == null : q.min.Equals(min)) && (q.max == null ? max == null : q.max.Equals(max)) && minInclusive == q.minInclusive && maxInclusive == q.maxInclusive && precisionStep == q.precisionStep);
+                return ((q.min is null ? min is null : q.min.Equals(min)) && (q.max is null ? max is null : q.max.Equals(max)) && minInclusive == q.minInclusive && maxInclusive == q.maxInclusive && precisionStep == q.precisionStep);
             }
             return false;
         }
@@ -315,12 +315,12 @@ namespace Lucene.Net.Search
                             long minBound;
                             if (this.outerInstance.dataType == NumericType.INT64)
                             {
-                                minBound = (this.outerInstance.min == null) ? long.MinValue : Convert.ToInt64(this.outerInstance.min.Value, CultureInfo.InvariantCulture);
+                                minBound = (this.outerInstance.min is null) ? long.MinValue : Convert.ToInt64(this.outerInstance.min.Value, CultureInfo.InvariantCulture);
                             }
                             else
                             {
                                 if (Debugging.AssertsEnabled) Debugging.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
-                                minBound = (this.outerInstance.min == null) ? INT64_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.min.Value, CultureInfo.InvariantCulture));
+                                minBound = (this.outerInstance.min is null) ? INT64_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.min.Value, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.minInclusive && this.outerInstance.min is object)
                             {
@@ -335,12 +335,12 @@ namespace Lucene.Net.Search
                             long maxBound;
                             if (this.outerInstance.dataType == NumericType.INT64)
                             {
-                                maxBound = (this.outerInstance.max == null) ? long.MaxValue : Convert.ToInt64(this.outerInstance.max, CultureInfo.InvariantCulture);
+                                maxBound = (this.outerInstance.max is null) ? long.MaxValue : Convert.ToInt64(this.outerInstance.max, CultureInfo.InvariantCulture);
                             }
                             else
                             {
                                 if (Debugging.AssertsEnabled) Debugging.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
-                                maxBound = (this.outerInstance.max == null) ? INT64_POSITIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.max, CultureInfo.InvariantCulture));
+                                maxBound = (this.outerInstance.max is null) ? INT64_POSITIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.max, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.maxInclusive && this.outerInstance.max is object)
                             {
@@ -362,12 +362,12 @@ namespace Lucene.Net.Search
                             int minBound;
                             if (this.outerInstance.dataType == NumericType.INT32)
                             {
-                                minBound = (this.outerInstance.min == null) ? int.MinValue : Convert.ToInt32(this.outerInstance.min, CultureInfo.InvariantCulture);
+                                minBound = (this.outerInstance.min is null) ? int.MinValue : Convert.ToInt32(this.outerInstance.min, CultureInfo.InvariantCulture);
                             }
                             else
                             {
                                 if (Debugging.AssertsEnabled) Debugging.Assert(this.outerInstance.dataType == NumericType.SINGLE);
-                                minBound = (this.outerInstance.min == null) ? INT32_NEGATIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.min, CultureInfo.InvariantCulture));
+                                minBound = (this.outerInstance.min is null) ? INT32_NEGATIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.min, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.minInclusive && this.outerInstance.min is object)
                             {
@@ -382,12 +382,12 @@ namespace Lucene.Net.Search
                             int maxBound;
                             if (this.outerInstance.dataType == NumericType.INT32)
                             {
-                                maxBound = (this.outerInstance.max == null) ? int.MaxValue : Convert.ToInt32(this.outerInstance.max, CultureInfo.InvariantCulture);
+                                maxBound = (this.outerInstance.max is null) ? int.MaxValue : Convert.ToInt32(this.outerInstance.max, CultureInfo.InvariantCulture);
                             }
                             else
                             {
                                 if (Debugging.AssertsEnabled) Debugging.Assert(this.outerInstance.dataType == NumericType.SINGLE);
-                                maxBound = (this.outerInstance.max == null) ? INT32_POSITIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.max, CultureInfo.InvariantCulture));
+                                maxBound = (this.outerInstance.max is null) ? INT32_POSITIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.max, CultureInfo.InvariantCulture));
                             }
                             if (!this.outerInstance.maxInclusive && this.outerInstance.max is object)
                             {
@@ -447,7 +447,7 @@ namespace Lucene.Net.Search
                 if (Debugging.AssertsEnabled) Debugging.Assert(rangeBounds.Count % 2 == 0);
 
                 currentLowerBound = rangeBounds.Dequeue();
-                if (Debugging.AssertsEnabled) Debugging.Assert(currentUpperBound == null || termComp.Compare(currentUpperBound, currentLowerBound) <= 0, "The current upper bound must be <= the new lower bound");
+                if (Debugging.AssertsEnabled) Debugging.Assert(currentUpperBound is null || termComp.Compare(currentUpperBound, currentLowerBound) <= 0, "The current upper bound must be <= the new lower bound");
 
                 currentUpperBound = rangeBounds.Dequeue();
             }
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search
 
             protected override sealed AcceptStatus Accept(BytesRef term)
             {
-                while (currentUpperBound == null || termComp.Compare(term, currentUpperBound) > 0)
+                while (currentUpperBound is null || termComp.Compare(term, currentUpperBound) > 0)
                 {
                     if (rangeBounds.Count == 0)
                     {

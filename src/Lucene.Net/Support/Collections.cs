@@ -77,7 +77,7 @@ namespace Lucene.Net.Support
 
         public static IComparer<T> ReverseOrder<T>(IComparer<T> cmp)
         {
-            if (cmp == null)
+            if (cmp is null)
                 return ReverseOrder<T>();
 
             if (cmp is ReverseComparer2<T>)
@@ -98,7 +98,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string ToString<T>(ICollection<T> collection)
         {
-            if (collection == null)
+            if (collection is null)
                 return "null";
 
             if (collection.Count == 0)
@@ -145,7 +145,7 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string ToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
         {
-            if (dictionary == null)
+            if (dictionary is null)
                 return "null";
 
             if (dictionary.Count == 0)

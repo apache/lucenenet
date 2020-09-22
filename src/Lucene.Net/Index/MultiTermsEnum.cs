@@ -118,7 +118,7 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled) Debugging.Assert(termsEnumIndex is object);
 
                 // init our term comp
-                if (termComp == null)
+                if (termComp is null)
                 {
                     queue.termComp = termComp = termsEnumIndex.TermsEnum.Comparer;
                 }

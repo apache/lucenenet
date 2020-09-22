@@ -86,7 +86,7 @@ namespace Lucene.Net.Configuration
                 .Aggregate(Enumerable.Empty<string>(),
                     (seed, source) => source.GetChildKeys(seed, path))
                 .Distinct()
-                .Select(key => GetSection(path == null ? key : ConfigurationPath.Combine(path, key)));
+                .Select(key => GetSection(path is null ? key : ConfigurationPath.Combine(path, key)));
         }
 
         /// <summary>

@@ -246,7 +246,7 @@ namespace Lucene.Net.Search
         private void InitFieldType(string field, SortFieldType type)
         {
             this.type = type;
-            if (field == null)
+            if (field is null)
             {
                 if (type != SortFieldType.SCORE && type != SortFieldType.DOC)
                 {
@@ -378,7 +378,7 @@ namespace Lucene.Net.Search
                 return (StringHelper.Equals(other.field, this.field)
                     && other.type == this.type
                     && other.reverse == this.reverse
-                    && (other.comparerSource == null ? this.comparerSource == null : other.comparerSource.Equals(this.comparerSource)));
+                    && (other.comparerSource is null ? this.comparerSource is null : other.comparerSource.Equals(this.comparerSource)));
             }
             return false;
         }

@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis.Sinks
                     {
                         if (sink.Accept(this))
                         {
-                            if (state == null)
+                            if (state is null)
                             {
                                 state = CaptureState();
                             }
@@ -232,7 +232,7 @@ namespace Lucene.Net.Analysis.Sinks
             public override sealed bool IncrementToken()
             {
                 // lazy init the iterator
-                if (it == null)
+                if (it is null)
                 {
                     it = cachedStates.GetEnumerator();
                 }

@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private CharsRef ParseSynonym(string line, CharsRef reuse)
         {
-            if (reuse == null)
+            if (reuse is null)
             {
                 reuse = new CharsRef(8);
             }

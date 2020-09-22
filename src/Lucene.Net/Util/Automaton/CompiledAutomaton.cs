@@ -146,7 +146,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     string commonPrefix;
                     string singleton;
-                    if (automaton.Singleton == null)
+                    if (automaton.Singleton is null)
                     {
                         commonPrefix = SpecialOperations.GetCommonPrefix(automaton);
                         if (commonPrefix.Length > 0 && BasicOperations.SameLanguage(automaton, BasicAutomata.MakeString(commonPrefix)))
@@ -192,7 +192,7 @@ namespace Lucene.Net.Util.Automaton
 
             Type = AUTOMATON_TYPE.NORMAL;
             Term = null;
-            if (finite == null)
+            if (finite is null)
             {
                 this.Finite = SpecialOperations.IsFinite(automaton);
             }
@@ -451,9 +451,9 @@ namespace Lucene.Net.Util.Automaton
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + ((RunAutomaton == null) ? 0 : RunAutomaton.GetHashCode());
-            result = prime * result + ((Term == null) ? 0 : Term.GetHashCode());
-            result = prime * result + Type.GetHashCode(); //((Type == null) ? 0 : Type.GetHashCode()); // LUCENENET NOTE: Enum cannot be null in .NET
+            result = prime * result + ((RunAutomaton is null) ? 0 : RunAutomaton.GetHashCode());
+            result = prime * result + ((Term is null) ? 0 : Term.GetHashCode());
+            result = prime * result + Type.GetHashCode(); //((Type is null) ? 0 : Type.GetHashCode()); // LUCENENET NOTE: Enum cannot be null in .NET
             return result;
         }
 
@@ -463,7 +463,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return true;
             }
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }

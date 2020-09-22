@@ -82,7 +82,7 @@ namespace Lucene.Net.Search
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((_prefix == null) ? 0 : _prefix.GetHashCode());
+            result = prime * result + ((_prefix is null) ? 0 : _prefix.GetHashCode());
             return result;
         }
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                 return false;
             }
             PrefixQuery other = (PrefixQuery)obj;
-            if (_prefix == null)
+            if (_prefix is null)
             {
                 if (other._prefix is object)
                 {

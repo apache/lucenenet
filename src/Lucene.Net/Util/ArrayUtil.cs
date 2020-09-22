@@ -90,7 +90,7 @@ namespace Lucene.Net.Util
         public static int ParseInt32(char[] chars, int offset, int len, int radix)
         {
             int minRadix = 2, maxRadix = 36;
-            if (chars == null || radix < minRadix || radix > maxRadix)
+            if (chars is null || radix < minRadix || radix > maxRadix)
             {
                 throw new FormatException();
             }

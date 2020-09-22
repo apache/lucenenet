@@ -1199,15 +1199,15 @@ namespace Lucene.Net.Search
 
                 BytesRef val1 = values[slot1];
                 BytesRef val2 = values[slot2];
-                if (val1 == null)
+                if (val1 is null)
                 {
-                    if (val2 == null)
+                    if (val2 is null)
                     {
                         return 0;
                     }
                     return missingSortCmp;
                 }
-                else if (val2 == null)
+                else if (val2 is null)
                 {
                     return -missingSortCmp;
                 }
@@ -1251,7 +1251,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(ord >= 0);
-                    if (values[slot] == null)
+                    if (values[slot] is null)
                     {
                         values[slot] = new BytesRef();
                     }
@@ -1316,7 +1316,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (bottomValue == null)
+                    if (bottomValue is null)
                     {
                         // missingOrd is null for all segments
                         if (Debugging.AssertsEnabled) Debugging.Assert(ords[bottomSlot] == missingOrd);
@@ -1383,15 +1383,15 @@ namespace Lucene.Net.Search
 
             public override int CompareValues(BytesRef val1, BytesRef val2)
             {
-                if (val1 == null)
+                if (val1 is null)
                 {
-                    if (val2 == null)
+                    if (val2 is null)
                     {
                         return 0;
                     }
                     return missingSortCmp;
                 }
-                else if (val2 == null)
+                else if (val2 is null)
                 {
                     return -missingSortCmp;
                 }
@@ -1460,7 +1460,7 @@ namespace Lucene.Net.Search
 
             public override void Copy(int slot, int doc)
             {
-                if (values[slot] == null)
+                if (values[slot] is null)
                 {
                     values[slot] = new BytesRef();
                 }
@@ -1482,7 +1482,7 @@ namespace Lucene.Net.Search
 
             public override void SetTopValue(object value)
             {
-                if (value == null)
+                if (value is null)
                 {
                     throw new ArgumentException("value cannot be null");
                 }

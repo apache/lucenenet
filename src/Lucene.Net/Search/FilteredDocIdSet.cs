@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
             get
             {
                 IBits bits = innerSet.Bits;
-                return (bits == null) ? null : new BitsAnonymousInnerClassHelper(this, bits);
+                return (bits is null) ? null : new BitsAnonymousInnerClassHelper(this, bits);
             }
         }
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
         public override DocIdSetIterator GetIterator()
         {
             DocIdSetIterator iterator = innerSet.GetIterator();
-            if (iterator == null)
+            if (iterator is null)
             {
                 return null;
             }

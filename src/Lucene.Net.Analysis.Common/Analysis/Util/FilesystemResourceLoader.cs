@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new ArgumentException("baseDirectory is not a directory or null");
             }
-            if (@delegate == null)
+            if (@delegate is null)
             {
                 throw new ArgumentException("delegate ResourceLoader may not be null");
             }

@@ -348,7 +348,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <returns> a query that will return docs like the passed lucene document ID. </returns>
         public Query Like(int docNum)
         {
-            if (FieldNames == null)
+            if (FieldNames is null)
             {
                 // gather list of valid fields from lucene
                 ICollection<string> fields = MultiFields.GetIndexedFields(ir);
@@ -510,7 +510,7 @@ namespace Lucene.Net.Queries.Mlt
                 }
 
                 // field does not store term vector info
-                if (vector == null)
+                if (vector is null)
                 {
                     Document d = ir.Document(docNum);
                     IIndexableField[] fields = d.GetFields(fieldName);
@@ -575,7 +575,7 @@ namespace Lucene.Net.Queries.Mlt
         /// <param name="fieldName"> Used by analyzer for any special per-field analysis </param>
         private void AddTermFrequencies(TextReader r, IDictionary<string, Int32> termFreqMap, string fieldName)
         {
-            if (Analyzer == null)
+            if (Analyzer is null)
             {
                 throw new NotSupportedException("To use MoreLikeThis without " + "term vectors, you must provide an Analyzer");
             }

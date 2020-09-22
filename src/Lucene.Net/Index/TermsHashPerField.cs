@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
                 // entire segment) and then throw an exc later in
                 // DocInverterPerField.java.  LengthFilter can always be
                 // used to prune the term before indexing:
-                if (docState.maxTermPrefix == null)
+                if (docState.maxTermPrefix is null)
                 {
                     int saved = termBytesRef.Length;
                     try
@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
 
             public override int[] Init()
             {
-                if (perField.postingsArray == null)
+                if (perField.postingsArray is null)
                 {
                     perField.postingsArray = perField.consumer.CreatePostingsArray(2);
                     bytesUsed.AddAndGet(perField.postingsArray.size * perField.postingsArray.BytesPerPosting());

@@ -59,7 +59,7 @@ namespace Lucene.Net.Util
         {
             get
             {
-                if (codecsAssembly == null)
+                if (codecsAssembly is null)
                 {
                     // Attempt to load the SimpleTextCodec type. If it loads it will not be null, 
                     // which means the assembly is referenced so we can load all of the named services from that assembly.
@@ -87,7 +87,7 @@ namespace Lucene.Net.Util
                 type.IsPublic &&
                 !type.IsAbstract &&
                 typeof(TService).IsAssignableFrom(type) &&
-                type.GetCustomAttribute<ExcludeServiceAttribute>(inherit: true) == null;
+                type.GetCustomAttribute<ExcludeServiceAttribute>(inherit: true) is null;
         }
 
         /// <summary>

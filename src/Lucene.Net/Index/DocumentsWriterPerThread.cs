@@ -558,7 +558,7 @@ namespace Lucene.Net.Index
                 SegmentCommitInfo segmentInfoPerCommit = new SegmentCommitInfo(segmentInfo, 0, -1L, -1L);
                 if (infoStream.IsEnabled("DWPT"))
                 {
-                    infoStream.Message("DWPT", "new segment has " + (flushState.LiveDocs == null ? 0 : (flushState.SegmentInfo.DocCount - flushState.DelCountOnFlush)) + " deleted docs");
+                    infoStream.Message("DWPT", "new segment has " + (flushState.LiveDocs is null ? 0 : (flushState.SegmentInfo.DocCount - flushState.DelCountOnFlush)) + " deleted docs");
                     infoStream.Message("DWPT", "new segment has " + (flushState.FieldInfos.HasVectors ? "vectors" : "no vectors") + "; " + (flushState.FieldInfos.HasNorms ? "norms" : "no norms") + "; " + (flushState.FieldInfos.HasDocValues ? "docValues" : "no docValues") + "; " + (flushState.FieldInfos.HasProx ? "prox" : "no prox") + "; " + (flushState.FieldInfos.HasFreq ? "freqs" : "no freqs"));
                     infoStream.Message("DWPT", "flushedFiles=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", segmentInfoPerCommit.GetFiles()));
                     infoStream.Message("DWPT", "flushed codec=" + codec);

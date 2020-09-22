@@ -98,13 +98,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                 if (Debugging.AssertsEnabled) Debugging.Assert(field.Equals(fieldInfos.FieldInfo(fieldNumber).Name, StringComparison.Ordinal),
                     () => "currentFieldNumber=" + currentFieldNumber + 
                     " field=" + field + 
-                    " vs " + fieldInfos.FieldInfo(fieldNumber) == null ? "null" : fieldInfos.FieldInfo(fieldNumber).Name);
+                    " vs " + fieldInfos.FieldInfo(fieldNumber) is null ? "null" : fieldInfos.FieldInfo(fieldNumber).Name);
             }
         }
 
         public void Set(Term term)
         {
-            if (term == null)
+            if (term is null)
             {
                 Reset();
                 return;
@@ -135,7 +135,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public Term ToTerm()
         {
-            if (field == null) // unset
+            if (field is null) // unset
             {
                 return null;
             }

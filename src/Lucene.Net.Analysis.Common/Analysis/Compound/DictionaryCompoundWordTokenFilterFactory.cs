@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Compound
         public override TokenStream Create(TokenStream input)
         {
             // if the dictionary is null, it means it was empty
-            return dictionary == null ? input : new DictionaryCompoundWordTokenFilter(m_luceneMatchVersion, input, dictionary, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch);
+            return dictionary is null ? input : new DictionaryCompoundWordTokenFilter(m_luceneMatchVersion, input, dictionary, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch);
         }
     }
 }

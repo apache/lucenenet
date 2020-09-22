@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
                     }
                     int? fieldNumber;
                     nameToNumber.TryGetValue(fieldName, out fieldNumber);
-                    if (fieldNumber == null)
+                    if (fieldNumber is null)
                     {
                         int? preferredBoxed = preferredFieldNumber;
 

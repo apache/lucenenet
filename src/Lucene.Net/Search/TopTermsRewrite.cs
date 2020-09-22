@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
                 if (Debugging.AssertsEnabled) Debugging.Assert(CompareToLastTerm(null));
 
                 // lazy init the initial ScoreTerm because comparer is not known on ctor:
-                if (st == null)
+                if (st is null)
                 {
                     st = new ScoreTerm(this.termComp, new TermContext(m_topReaderContext));
                 }
@@ -135,11 +135,11 @@ namespace Lucene.Net.Search
 
             private bool CompareToLastTerm(BytesRef t)
             {
-                if (lastTerm == null && t is object)
+                if (lastTerm is null && t is object)
                 {
                     lastTerm = BytesRef.DeepCopyOf(t);
                 }
-                else if (t == null)
+                else if (t is null)
                 {
                     lastTerm = null;
                 }
@@ -226,7 +226,7 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }

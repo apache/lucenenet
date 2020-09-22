@@ -66,7 +66,7 @@ namespace Lucene.Net.Search.Spans
 
         public override float GetValueForNormalization()
         {
-            return m_stats == null ? 1.0f : m_stats.GetValueForNormalization();
+            return m_stats is null ? 1.0f : m_stats.GetValueForNormalization();
         }
 
         public override void Normalize(float queryNorm, float topLevelBoost)
@@ -79,7 +79,7 @@ namespace Lucene.Net.Search.Spans
 
         public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
         {
-            if (m_stats == null)
+            if (m_stats is null)
             {
                 return null;
             }

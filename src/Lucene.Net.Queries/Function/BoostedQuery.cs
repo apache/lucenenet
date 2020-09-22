@@ -101,7 +101,7 @@ namespace Lucene.Net.Queries.Function
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Scorer subQueryScorer = qWeight.GetScorer(context, acceptDocs);
-                if (subQueryScorer == null)
+                if (subQueryScorer is null)
                 {
                     return null;
                 }

@@ -358,7 +358,7 @@ namespace Lucene.Net.Codecs.Lucene41
             posDeltaBuffer[posBufferUpto] = position - lastPosition;
             if (fieldHasPayloads)
             {
-                if (payload == null || payload.Length == 0)
+                if (payload is null || payload.Length == 0)
                 {
                     // no payload
                     payloadLengthBuffer[posBufferUpto] = 0;

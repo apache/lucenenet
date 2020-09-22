@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
             // TODO: sum into a double and cast to float if we ever send required clauses to BS1
             int curDoc = reqScorer.DocID;
             float reqScore = reqScorer.GetScore();
-            if (optScorer == null)
+            if (optScorer is null)
             {
                 return reqScore;
             }

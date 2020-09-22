@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Compound
             // get the hyphenation points
             Hyphenation.Hyphenation hyphens = hyphenator.Hyphenate(m_termAtt.Buffer, 0, m_termAtt.Length, 1, 1);
             // No hyphen points found -> exit
-            if (hyphens == null)
+            if (hyphens is null)
             {
                 return;
             }
@@ -232,7 +232,7 @@ namespace Lucene.Net.Analysis.Compound
                     }
 
                     // check the dictionary
-                    if (m_dictionary == null || m_dictionary.Contains(m_termAtt.Buffer, start, partLength))
+                    if (m_dictionary is null || m_dictionary.Contains(m_termAtt.Buffer, start, partLength))
                     {
                         if (this.m_onlyLongestMatch)
                         {

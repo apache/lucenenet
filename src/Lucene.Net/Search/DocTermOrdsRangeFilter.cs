@@ -75,8 +75,8 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 SortedSetDocValues docTermOrds = FieldCache.DEFAULT.GetDocTermOrds(context.AtomicReader, field);
-                long lowerPoint = lowerVal == null ? -1 : docTermOrds.LookupTerm(lowerVal);
-                long upperPoint = upperVal == null ? -1 : docTermOrds.LookupTerm(upperVal);
+                long lowerPoint = lowerVal is null ? -1 : docTermOrds.LookupTerm(lowerVal);
+                long upperPoint = upperVal is null ? -1 : docTermOrds.LookupTerm(upperVal);
 
                 long inclusiveLowerPoint, inclusiveUpperPoint;
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
                 // * binarySearchLookup returns -1, if value was null.
                 // * the value is <0 if no exact hit was found, the returned value
                 //   is (-(insertion point) - 1)
-                if (lowerPoint == -1 && lowerVal == null)
+                if (lowerPoint == -1 && lowerVal is null)
                 {
                     inclusiveLowerPoint = 0;
                 }
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                     inclusiveLowerPoint = Math.Max(0, -lowerPoint - 1);
                 }
 
-                if (upperPoint == -1 && upperVal == null)
+                if (upperPoint == -1 && upperVal is null)
                 {
                     inclusiveUpperPoint = long.MaxValue;
                 }
@@ -149,9 +149,9 @@ namespace Lucene.Net.Search
         {
             StringBuilder sb = (new StringBuilder(field)).Append(":");
             return sb.Append(includeLower ? '[' : '{')
-                .Append((lowerVal == null) ? "*" : lowerVal.ToString())
+                .Append((lowerVal is null) ? "*" : lowerVal.ToString())
                 .Append(" TO ")
-                .Append((upperVal == null) ? "*" : upperVal.ToString())
+                .Append((upperVal is null) ? "*" : upperVal.ToString())
                 .Append(includeUpper ? ']' : '}')
                 .ToString();
         }

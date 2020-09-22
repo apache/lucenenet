@@ -170,7 +170,7 @@ namespace Lucene.Net.Codecs
             get
             {
                 // Lazy load the default codec if not already supplied
-                if (defaultCodec == null)
+                if (defaultCodec is null)
                 {
                     defaultCodec = Codec.ForName("Lucene46");
                 }

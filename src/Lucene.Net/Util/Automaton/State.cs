@@ -359,7 +359,7 @@ namespace Lucene.Net.Util.Automaton
         // LUCENENET specific - implemented IEquatable.
         public bool Equals(State other)
         {
-            if (other == null)
+            if (other is null)
                 return false;
             return id.Equals(other.id);
         }

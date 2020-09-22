@@ -228,7 +228,7 @@ namespace Lucene.Net.Analysis.Util
         ///           if the given set is <c>null</c>. </exception>
         public static CharArraySet UnmodifiableSet(CharArraySet set)
         {
-            if (set == null)
+            if (set is null)
             {
                 throw new ArgumentNullException("Given set is null");
             }
@@ -410,7 +410,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public virtual bool UnionWith(IEnumerable<char[]> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -437,7 +437,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public virtual bool UnionWith(IEnumerable<ICharSequence> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -463,7 +463,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="other">The collection whose elements should be merged into the <see cref="CharArraySet"/>.</param>
         public virtual void UnionWith(IEnumerable<string> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -485,7 +485,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public virtual bool UnionWith<T>(IEnumerable<T> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -557,7 +557,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsSubsetOf(IEnumerable<string> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -565,8 +565,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return true;
             }
-            CharArraySet set = other as CharArraySet;
-            if (set != null)
+            if (other is CharArraySet set )
             {
                 if (this.Count > set.Count)
                 {
@@ -589,7 +588,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsSubsetOf<T>(IEnumerable<T> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -612,19 +611,17 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsSupersetOf(IEnumerable<string> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
-            ICollection<string> is2 = other as ICollection<string>;
-            if (is2 != null)
+            if (other is ICollection<string> is2)
             {
                 if (is2.Count == 0)
                 {
                     return true;
                 }
-                CharArraySet set = other as CharArraySet;
-                if ((set != null) && (set.Count > this.Count))
+                if ((other is CharArraySet set) && (set.Count > this.Count))
                 {
                     return false;
                 }
@@ -639,12 +636,11 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsSupersetOf<T>(IEnumerable<T> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
-            ICollection<T> is2 = other as ICollection<T>;
-            if (is2 != null && is2.Count == 0)
+            if (other is ICollection<T> is2 && is2.Count == 0)
             {
                 return true;
             }
@@ -658,19 +654,17 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsProperSubsetOf(IEnumerable<string> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
-            ICollection<string> is2 = other as ICollection<string>;
-            if (is2 != null)
+            if (other is ICollection<string> is2)
             {
                 if (this.Count == 0)
                 {
                     return (is2.Count > 0);
                 }
-                CharArraySet set = other as CharArraySet;
-                if (set != null)
+                if (other is CharArraySet set)
                 {
                     if (this.Count >= set.Count)
                     {
@@ -694,12 +688,11 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper subset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsProperSubsetOf<T>(IEnumerable<T> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
-            ICollection<T> is2 = other as ICollection<T>;
-            if (is2 != null && this.Count == 0)
+            if (other is ICollection<T> is2 && this.Count == 0)
             {
                 return (is2.Count > 0);
             }
@@ -718,7 +711,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsProperSupersetOf(IEnumerable<string> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -726,15 +719,13 @@ namespace Lucene.Net.Analysis.Util
             {
                 return false;
             }
-            ICollection<string> is2 = other as ICollection<string>;
-            if (is2 != null)
+            if (other is ICollection<string> is2)
             {
                 if (is2.Count == 0)
                 {
                     return true;
                 }
-                CharArraySet set = other as CharArraySet;
-                if (set != null)
+                if (other is CharArraySet set)
                 {
                     if (set.Count >= this.Count)
                     {
@@ -755,7 +746,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object is a proper superset of <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public virtual bool IsProperSupersetOf<T>(IEnumerable<T> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -763,8 +754,8 @@ namespace Lucene.Net.Analysis.Util
             {
                 return false;
             }
-            ICollection<T> is2 = other as ICollection<T>;
-            if (is2 != null && is2.Count == 0)
+
+            if (other is ICollection<T> is2 && is2.Count == 0)
             {
                 return true;
             }
@@ -780,7 +771,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if the <see cref="CharArraySet"/> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
         public virtual bool Overlaps(IEnumerable<string> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -804,7 +795,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> object and <paramref name="other"/> share at least one common element; otherwise, <c>false</c>.</returns>
         public virtual bool Overlaps<T>(IEnumerable<T> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -1142,7 +1133,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public static bool UnionWith(this CharArraySet set, IEnumerable<byte> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -1170,7 +1161,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public static bool UnionWith(this CharArraySet set, IEnumerable<char> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -1198,7 +1189,7 @@ namespace Lucene.Net.Analysis.Util
         ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<decimal> other)
         //{
-        //    if (other == null)
+        //    if (other is null)
         //    {
         //        throw new ArgumentNullException("other");
         //    }
@@ -1226,7 +1217,7 @@ namespace Lucene.Net.Analysis.Util
         ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<double> other)
         //{
-        //    if (other == null)
+        //    if (other is null)
         //    {
         //        throw new ArgumentNullException("other");
         //    }
@@ -1254,7 +1245,7 @@ namespace Lucene.Net.Analysis.Util
         ///// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         //public static bool UnionWith(this CharArraySet set, IEnumerable<float> other)
         //{
-        //    if (other == null)
+        //    if (other is null)
         //    {
         //        throw new ArgumentNullException("other");
         //    }
@@ -1282,7 +1273,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public static bool UnionWith(this CharArraySet set, IEnumerable<int> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -1310,7 +1301,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public static bool UnionWith(this CharArraySet set, IEnumerable<long> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -1339,7 +1330,7 @@ namespace Lucene.Net.Analysis.Util
         [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<sbyte> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -1367,7 +1358,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns><c>true</c> if this <see cref="CharArraySet"/> changed as a result of the call</returns>
         public static bool UnionWith(this CharArraySet set, IEnumerable<short> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -1396,7 +1387,7 @@ namespace Lucene.Net.Analysis.Util
         [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<uint> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -1425,7 +1416,7 @@ namespace Lucene.Net.Analysis.Util
         [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<ulong> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -1454,7 +1445,7 @@ namespace Lucene.Net.Analysis.Util
         [CLSCompliant(false)]
         public static bool UnionWith(this CharArraySet set, IEnumerable<ushort> other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException("other");
             }

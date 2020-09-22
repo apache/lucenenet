@@ -186,7 +186,7 @@ namespace Lucene.Net.Util.Fst
 
         public virtual long TermCount => frontier[0].InputCount;
 
-        public virtual long MappedStateCount => dedupHash == null ? 0 : fst.nodeCount;
+        public virtual long MappedStateCount => dedupHash is null ? 0 : fst.nodeCount;
 
         private CompiledNode CompileNode(UnCompiledNode<T> nodeIn, int tailLength)
         {
@@ -503,7 +503,7 @@ namespace Lucene.Net.Util.Fst
             DoFreezeTail(0);
             if (root.InputCount < minSuffixCount1 || root.InputCount < minSuffixCount2 || root.NumArcs == 0)
             {
-                if (fst.emptyOutput == null)
+                if (fst.emptyOutput is null)
                 {
                     return null;
                 }

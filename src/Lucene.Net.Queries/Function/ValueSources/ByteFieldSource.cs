@@ -130,12 +130,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             return !(o is ByteFieldSource other)
                 ? false
-                : base.Equals(other) && (this.parser == null ? other.parser == null : this.parser.GetType() == other.parser.GetType());
+                : base.Equals(other) && (this.parser is null ? other.parser is null : this.parser.GetType() == other.parser.GetType());
         }
 
         public override int GetHashCode()
         {
-            int h = parser == null ? typeof(sbyte?).GetHashCode() : parser.GetType().GetHashCode();
+            int h = parser is null ? typeof(sbyte?).GetHashCode() : parser.GetType().GetHashCode();
             h += base.GetHashCode();
             return h;
         }

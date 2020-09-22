@@ -209,7 +209,7 @@ namespace Lucene.Net.Util.Automaton
 
         public override bool Equals(object other)
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }
@@ -244,7 +244,7 @@ namespace Lucene.Net.Util.Automaton
 
         public bool Equals(FrozenInt32Set other) // LUCENENET TODO: This didn't exist in the original
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Util.Automaton
 
             public override bool Equals(object other)
             {
-                if (other == null)
+                if (other is null)
                 {
                     return false;
                 }
@@ -362,7 +362,7 @@ namespace Lucene.Net.Util.Automaton
 
             public bool Equals(SortedInt32Set other) // LUCENENET TODO: This didn't exist in the original
             {
-                if (other == null)
+                if (other is null)
                 {
                     return false;
                 }
@@ -387,7 +387,7 @@ namespace Lucene.Net.Util.Automaton
 
             public bool Equals(FrozenInt32Set other) // LUCENENET TODO: This didn't exist in the original
             {
-                if (other == null)
+                if (other is null)
                 {
                     return false;
                 }

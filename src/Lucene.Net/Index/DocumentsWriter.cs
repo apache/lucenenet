@@ -479,7 +479,7 @@ namespace Lucene.Net.Index
 
         private void EnsureInitialized(ThreadState state)
         {
-            if (state.IsActive && state.dwpt == null)
+            if (state.IsActive && state.dwpt is null)
             {
                 FieldInfos.Builder infos = new FieldInfos.Builder(writer.globalFieldNumberMap);
                 state.dwpt = new DocumentsWriterPerThread(writer.NewSegmentName(), directory, config, infoStream, deleteQueue, infos);
@@ -588,7 +588,7 @@ namespace Lucene.Net.Index
                 SegmentFlushTicket ticket = null;
                 try
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(currentFullFlushDelQueue == null || flushingDWPT.deleteQueue == currentFullFlushDelQueue, () => "expected: " + currentFullFlushDelQueue + "but was: " + flushingDWPT.deleteQueue + " " + flushControl.IsFullFlush);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(currentFullFlushDelQueue is null || flushingDWPT.deleteQueue == currentFullFlushDelQueue, () => "expected: " + currentFullFlushDelQueue + "but was: " + flushingDWPT.deleteQueue + " " + flushControl.IsFullFlush);
                     /*
                      * Since with DWPT the flush process is concurrent and several DWPT
                      * could flush at the same time we must maintain the order of the

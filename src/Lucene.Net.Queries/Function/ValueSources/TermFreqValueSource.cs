@@ -89,7 +89,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     docs = null;
                 }
 
-                if (docs == null)
+                if (docs is null)
                 {
                     docs = new DocsEnumAnonymousInnerClassHelper(this);
                 }

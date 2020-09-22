@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             DocValuesWriter writer;
             writers.TryGetValue(fieldInfo.Name, out writer);
             BinaryDocValuesWriter binaryWriter;
-            if (writer == null)
+            if (writer is null)
             {
                 binaryWriter = new BinaryDocValuesWriter(fieldInfo, bytesUsed);
                 writers[fieldInfo.Name] = binaryWriter;
@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
             DocValuesWriter writer;
             writers.TryGetValue(fieldInfo.Name, out writer);
             SortedDocValuesWriter sortedWriter;
-            if (writer == null)
+            if (writer is null)
             {
                 sortedWriter = new SortedDocValuesWriter(fieldInfo, bytesUsed);
                 writers[fieldInfo.Name] = sortedWriter;
@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
             DocValuesWriter writer;
             writers.TryGetValue(fieldInfo.Name, out writer);
             SortedSetDocValuesWriter sortedSetWriter;
-            if (writer == null)
+            if (writer is null)
             {
                 sortedSetWriter = new SortedSetDocValuesWriter(fieldInfo, bytesUsed);
                 writers[fieldInfo.Name] = sortedSetWriter;
@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
             DocValuesWriter writer;
             writers.TryGetValue(fieldInfo.Name, out writer);
             NumericDocValuesWriter numericWriter;
-            if (writer == null)
+            if (writer is null)
             {
                 numericWriter = new NumericDocValuesWriter(fieldInfo, bytesUsed, true);
                 writers[fieldInfo.Name] = numericWriter;

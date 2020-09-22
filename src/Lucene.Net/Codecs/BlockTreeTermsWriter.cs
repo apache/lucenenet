@@ -368,7 +368,7 @@ namespace Lucene.Net.Codecs
         {
             //DEBUG = field.name.Equals("id", StringComparison.Ordinal);
             //if (DEBUG) System.out.println("\nBTTW.addField seg=" + segment + " field=" + field.name);
-            if (Debugging.AssertsEnabled) Debugging.Assert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(currentField is null || currentField.Name.CompareToOrdinal(field.Name) < 0);
             currentField = field;
             return new TermsWriter(this, field);
         }
@@ -441,7 +441,7 @@ namespace Lucene.Net.Codecs
             // to using PendingBlock.Prefix.ToString() if PendingBlock.ToString()
             private string ToString(IList<PendingBlock> blocks) // For assert
             {
-                if (blocks == null)
+                if (blocks is null)
                     return "null";
 
 
@@ -481,7 +481,7 @@ namespace Lucene.Net.Codecs
                 // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
                 // it might contain garbage that cannot be converted into text.
                 if (Debugging.AssertsEnabled) Debugging.Assert(
-                    (IsFloor && floorBlocks is object && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null),
+                    (IsFloor && floorBlocks is object && floorBlocks.Count != 0) || (!IsFloor && floorBlocks is null),
                     () => "isFloor=" + IsFloor + " floorBlocks=" + ToString(floorBlocks));
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(scratchBytes.GetFilePointer() == 0);
@@ -852,7 +852,7 @@ namespace Lucene.Net.Codecs
                             }
                             //System.out.println("  " + subCount + " subs");
                             PendingBlock floorBlock = WriteBlock(prevTerm, prefixLength, curPrefixLength, curStart, pendingCount, subTermCountSums[1 + sub], true, startLabel, curStart == pendingCount);
-                            if (firstBlock == null)
+                            if (firstBlock is null)
                             {
                                 firstBlock = floorBlock;
                             }

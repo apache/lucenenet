@@ -158,11 +158,11 @@ namespace Lucene.Net.Util
         public void Dispose()
         {
             var copy = _values;
-            if (copy == null)
+            if (copy is null)
                 return;
 
             copy = Interlocked.CompareExchange(ref _values, null, copy);
-            if (copy == null)
+            if (copy is null)
                 return;
 
             Interlocked.Increment(ref globalVersion);
@@ -223,7 +223,7 @@ namespace Lucene.Net.Util
                         continue;
 
                     var copy = liveParent._values;
-                    if (copy == null)
+                    if (copy is null)
                         continue;
                     copy.TryRemove(selfReference, out _);
                 }

@@ -144,7 +144,7 @@ namespace Lucene.Net.Search.Payloads
                     {
                         Term[] termArray = termArrays[i];
                         IList<SpanQuery> disjuncts = disjunctLists[positions[i]]; // LUCENENET: Changed from Query to SpanQuery
-                        if (disjuncts == null)
+                        if (disjuncts is null)
                         {
                             disjuncts = (disjunctLists[positions[i]] = new List<SpanQuery>(termArray.Length)); // LUCENENET: Changed from Query to SpanQuery
                             ++distinctPositions;

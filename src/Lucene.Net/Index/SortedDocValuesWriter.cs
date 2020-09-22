@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             {
                 throw new ArgumentException("DocValuesField \"" + fieldInfo.Name + "\" appears more than once in this document (only one value is allowed per field)");
             }
-            if (value == null)
+            if (value is null)
             {
                 throw new ArgumentException("field \"" + fieldInfo.Name + "\": null value not allowed");
             }

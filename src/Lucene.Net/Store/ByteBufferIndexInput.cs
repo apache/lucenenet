@@ -289,7 +289,7 @@ namespace Lucene.Net.Store
 
         private ByteBufferIndexInput BuildSlice(long offset, long length)
         {
-            if (buffers == null)
+            if (buffers is null)
             {
                 throw new ObjectDisposedException(this.GetType().FullName, "Already closed: " + this);
             }
@@ -355,7 +355,7 @@ namespace Lucene.Net.Store
         // for control flow, we check whether we are disposed first.
         private void EnsureOpen()
         {
-            if (buffers == null || curBuf == null)
+            if (buffers is null || curBuf is null)
             {
                 throw new ObjectDisposedException(this.GetType().FullName, "Already closed: " + this);
             }
@@ -367,7 +367,7 @@ namespace Lucene.Net.Store
             {
                 try
                 {
-                    if (buffers == null)
+                    if (buffers is null)
                     {
                         return;
                     }

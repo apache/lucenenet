@@ -510,7 +510,7 @@ namespace Lucene.Net.Codecs.Lucene45
             lock (addressInstances)
             {
                 MonotonicBlockPackedReader addrInstance;
-                if (!addressInstances.TryGetValue(field.Number, out addrInstance) || addrInstance == null)
+                if (!addressInstances.TryGetValue(field.Number, out addrInstance) || addrInstance is null)
                 {
                     data.Seek(bytes.AddressesOffset);
                     addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedInt32sVersion, bytes.BlockSize, bytes.Count, false);

@@ -183,7 +183,7 @@ namespace Lucene.Net.Search
             result = prime * result + prefixLength;
             result = prime * result + maxExpansions;
             result = prime * result + (transpositions ? 0 : 1);
-            result = prime * result + ((term == null) ? 0 : term.GetHashCode());
+            result = prime * result + ((term is null) ? 0 : term.GetHashCode());
             return result;
         }
 
@@ -218,7 +218,7 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (term == null)
+            if (term is null)
             {
                 if (other.term is object)
                 {

@@ -209,7 +209,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public AttributeSource(AttributeSource input)
         {
-            if (input == null)
+            if (input is null)
             {
                 throw new ArgumentException("input AttributeSource must not be null");
             }
@@ -286,7 +286,7 @@ namespace Lucene.Net.Util
 
             public bool MoveNext()
             {
-                if (state == null)
+                if (state is null)
                 {
                     return false;
                 }
@@ -476,7 +476,7 @@ namespace Lucene.Net.Util
         public virtual State CaptureState()
         {
             State state = this.GetCurrentState();
-            return (state == null) ? null : (State)state.Clone();
+            return (state is null) ? null : (State)state.Clone();
         }
 
         /// <summary>
@@ -496,7 +496,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void RestoreState(State state)
         {
-            if (state == null)
+            if (state is null)
             {
                 return;
             }
@@ -683,7 +683,7 @@ namespace Lucene.Net.Util
             for (State state = GetCurrentState(); state is object; state = state.next)
             {
                 Attribute targetImpl = target.attributeImpls[state.attribute.GetType()];
-                if (targetImpl == null)
+                if (targetImpl is null)
                 {
                     throw new ArgumentException("this AttributeSource contains Attribute of type " + state.attribute.GetType().Name + " that is not in the target");
                 }

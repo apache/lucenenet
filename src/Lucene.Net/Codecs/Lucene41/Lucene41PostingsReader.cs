@@ -373,7 +373,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 singletonDocID = termState.singletonDocID;
                 if (docFreq > 1)
                 {
-                    if (docIn == null)
+                    if (docIn is null)
                     {
                         // lazy init
                         docIn = (IndexInput)startDocIn.Clone();
@@ -471,7 +471,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     accum += docDeltaBuffer[docBufferUpto];
                     docUpto++;
 
-                    if (liveDocs == null || liveDocs.Get(accum))
+                    if (liveDocs is null || liveDocs.Get(accum))
                     {
                         doc = accum;
                         freq = freqBuffer[docBufferUpto];
@@ -503,7 +503,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     //   System.out.println("load skipper");
                     // }
 
-                    if (skipper == null)
+                    if (skipper is null)
                     {
                         // Lazy init: first time this enum has ever been used for skipping
                         skipper = new Lucene41SkipReader((IndexInput)docIn.Clone(), Lucene41PostingsWriter.maxSkipLevels, Lucene41PostingsFormat.BLOCK_SIZE, indexHasPos, indexHasOffsets, indexHasPayloads);
@@ -570,7 +570,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     }
                 }
 
-                if (liveDocs == null || liveDocs.Get(accum))
+                if (liveDocs is null || liveDocs.Get(accum))
                 {
                     // if (DEBUG) {
                     //   System.out.println("  return doc=" + accum);
@@ -693,7 +693,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 singletonDocID = termState.singletonDocID;
                 if (docFreq > 1)
                 {
-                    if (docIn == null)
+                    if (docIn is null)
                     {
                         // lazy init
                         docIn = (IndexInput)startDocIn.Clone();
@@ -837,7 +837,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     docBufferUpto++;
                     docUpto++;
 
-                    if (liveDocs == null || liveDocs.Get(accum))
+                    if (liveDocs is null || liveDocs.Get(accum))
                     {
                         doc = accum;
                         position = 0;
@@ -864,7 +864,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    try skipper");
                     // }
-                    if (skipper == null)
+                    if (skipper is null)
                     {
                         // Lazy init: first time this enum has ever been used for skipping
                         // if (DEBUG) {
@@ -938,7 +938,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     }
                 }
 
-                if (liveDocs == null || liveDocs.Get(accum))
+                if (liveDocs is null || liveDocs.Get(accum))
                 {
                     // if (DEBUG) {
                     //   System.out.println("  return doc=" + accum);
@@ -1194,7 +1194,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 singletonDocID = termState.singletonDocID;
                 if (docFreq > 1)
                 {
-                    if (docIn == null)
+                    if (docIn is null)
                     {
                         // lazy init
                         docIn = (IndexInput)startDocIn.Clone();
@@ -1409,7 +1409,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     docBufferUpto++;
                     docUpto++;
 
-                    if (liveDocs == null || liveDocs.Get(accum))
+                    if (liveDocs is null || liveDocs.Get(accum))
                     {
                         doc = accum;
                         // if (DEBUG) {
@@ -1439,7 +1439,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     //   System.out.println("    try skipper");
                     // }
 
-                    if (skipper == null)
+                    if (skipper is null)
                     {
                         // Lazy init: first time this enum has ever been used for skipping
                         // if (DEBUG) {
@@ -1514,7 +1514,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     }
                 }
 
-                if (liveDocs == null || liveDocs.Get(accum))
+                if (liveDocs is null || liveDocs.Get(accum))
                 {
                     // if (DEBUG) {
                     //   System.out.println("  return doc=" + accum);

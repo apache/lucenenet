@@ -99,7 +99,7 @@ namespace Lucene.Net.Queries.Function.DocValues
         {
             double lower, upper;
 
-            if (lowerVal == null)
+            if (lowerVal is null)
             {
                 lower = double.NegativeInfinity;
             }
@@ -108,7 +108,7 @@ namespace Lucene.Net.Queries.Function.DocValues
                 lower = Convert.ToDouble(lowerVal, CultureInfo.InvariantCulture);
             }
 
-            if (upperVal == null)
+            if (upperVal is null)
             {
                 upper = double.PositiveInfinity;
             }

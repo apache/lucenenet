@@ -148,7 +148,7 @@ namespace Lucene.Net.Analysis.NGram
         {
             while (true)
             {
-                if (curTermBuffer == null)
+                if (curTermBuffer is null)
                 {
                     if (!m_input.IncrementToken())
                     {

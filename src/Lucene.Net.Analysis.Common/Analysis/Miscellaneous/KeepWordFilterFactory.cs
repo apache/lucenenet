@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public override TokenStream Create(TokenStream input)
         {
             // if the set is null, it means it was empty
-            if (words == null)
+            if (words is null)
             {
                 return input;
             }

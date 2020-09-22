@@ -81,7 +81,7 @@ namespace Lucene.Net.Util
 
         private static string AdjustDirectoryClassName(string clazzName)
         {
-            if (clazzName == null || clazzName.Trim().Length == 0)
+            if (clazzName is null || clazzName.Trim().Length == 0)
             {
                 throw new ArgumentException("The " + typeof(FSDirectory).Name + " implementation cannot be null or empty");
             }

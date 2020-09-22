@@ -83,7 +83,7 @@ namespace Lucene.Net.Util.Packed
             {
                 // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
                 long @base = minValues[block] + (long)(float)(averages[block] * (long)element);
-                if (values[block] == null)
+                if (values[block] is null)
                 {
                     return @base;
                 }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                if (values[block] == null)
+                if (values[block] is null)
                 {
                     int toFill = Math.Min(len, pending.Length - element);
                     for (int r = 0; r < toFill; r++, off++, element++)

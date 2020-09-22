@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
             }
 
             long? val = (long?)value;
-            if (val == null)
+            if (val is null)
             {
                 val = NumericDocValuesUpdate.MISSING;
             }

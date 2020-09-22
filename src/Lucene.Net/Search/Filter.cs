@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
         /// <code>
         ///     var filter = Filter.NewAnonymous(getDocIdSet: (context, acceptDocs) =>
         ///     {
-        ///         if (acceptDocs == null) acceptDocs = new Bits.MatchAllBits(5);
+        ///         if (acceptDocs is null) acceptDocs = new Bits.MatchAllBits(5);
         ///         OpenBitSet bitset = new OpenBitSet(5);
         ///         if (acceptDocs.Get(1)) bitset.Set(1);
         ///         if (acceptDocs.Get(3)) bitset.Set(3);

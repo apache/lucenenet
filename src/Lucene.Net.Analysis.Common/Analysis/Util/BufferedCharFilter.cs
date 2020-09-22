@@ -204,7 +204,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Indicates whether or not this reader is closed.
         /// </summary>
-        private bool IsClosed => buf == null;
+        private bool IsClosed => buf is null;
 
         /// <summary>
         /// Sets a mark position in this reader. The parameter <paramref name="markLimit"/>

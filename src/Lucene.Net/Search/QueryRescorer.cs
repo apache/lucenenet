@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
             float? secondPassScore = secondPassExplanation.IsMatch ? (float?)secondPassExplanation.Value : null;
 
             float score;
-            if (secondPassScore == null)
+            if (secondPassScore is null)
             {
                 score = Combine(firstPassExplanation.Value, false, 0.0f);
             }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
             result.AddDetail(first);
 
             Explanation second;
-            if (secondPassScore == null)
+            if (secondPassScore is null)
             {
                 second = new Explanation(0.0f, "no second pass score");
             }

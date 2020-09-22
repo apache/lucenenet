@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.No
               : base(args)
         {
             string variant = Get(args, "variant");
-            if (variant == null || "nb".Equals(variant, StringComparison.Ordinal))
+            if (variant is null || "nb".Equals(variant, StringComparison.Ordinal))
             {
                 flags = NorwegianStandard.BOKMAAL;
             }

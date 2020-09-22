@@ -35,13 +35,9 @@ namespace Lucene.Net.Analysis.Payloads
         public NumericPayloadTokenFilter(TokenStream input, float payload, string typeMatch) 
             : base(input)
         {
-            if (typeMatch == null)
-            {
-                throw new ArgumentException("typeMatch cannot be null");
-            }
             //Need to encode the payload
+            this.typeMatch = typeMatch ?? throw new ArgumentException("typeMatch cannot be null");
             thePayload = new BytesRef(PayloadHelper.EncodeSingle(payload));
-            this.typeMatch = typeMatch;
             this.payloadAtt = AddAttribute<IPayloadAttribute>();
             this.typeAtt = AddAttribute<ITypeAttribute>();
         }

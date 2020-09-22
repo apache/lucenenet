@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(termStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context), () => "The top-reader used to create Weight (" + termStates.TopReaderContext + ") is not the same as the current reader's top-reader (" + ReaderUtil.GetTopLevelContext(context));
                 TermsEnum termsEnum = GetTermsEnum(context);
-                if (termsEnum == null)
+                if (termsEnum is null)
                 {
                     return null;
                 }
@@ -103,7 +103,7 @@ namespace Lucene.Net.Search
             private TermsEnum GetTermsEnum(AtomicReaderContext context)
             {
                 TermState state = termStates.Get(context.Ord);
-                if (state == null) // term is not present in that reader
+                if (state is null) // term is not present in that reader
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(TermNotInReader(context.AtomicReader, outerInstance.term), () => "no termstate found but term exists in reader term=" + outerInstance.term);
                     return null;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
         {
             IndexReaderContext context = searcher.TopReaderContext;
             TermContext termState;
-            if (perReaderTermState == null || perReaderTermState.TopReaderContext != context)
+            if (perReaderTermState is null || perReaderTermState.TopReaderContext != context)
             {
                 // make TermQuery single-pass if we don't have a PRTS or if the context differs!
                 termState = TermContext.Build(context, term);

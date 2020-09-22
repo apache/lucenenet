@@ -198,7 +198,7 @@ namespace Lucene.Net.Search
                 this.postings = postings;
                 this.docFreq = docFreq;
                 this.position = position;
-                nTerms = terms == null ? 0 : terms.Length;
+                nTerms = terms is null ? 0 : terms.Length;
                 if (nTerms > 0)
                 {
                     if (terms.Length == 1)
@@ -267,7 +267,7 @@ namespace Lucene.Net.Search
                 {
                     return true;
                 }
-                if (obj == null)
+                if (obj is null)
                 {
                     return false;
                 }
@@ -284,9 +284,9 @@ namespace Lucene.Net.Search
                 {
                     return false;
                 }
-                if (terms == null)
+                if (terms is null)
                 {
-                    return other.terms == null;
+                    return other.terms is null;
                 }
                 return Arrays.Equals(terms, other.terms);
             }
@@ -343,7 +343,7 @@ namespace Lucene.Net.Search
                 PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[outerInstance.terms.Count];
 
                 Terms fieldTerms = reader.GetTerms(outerInstance.field);
-                if (fieldTerms == null)
+                if (fieldTerms is null)
                 {
                     return null;
                 }
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search
                 {
                     Term t = outerInstance.terms[i];
                     TermState state = states[i].Get(context.Ord);
-                    if (state == null) // term doesnt exist in this segment
+                    if (state is null) // term doesnt exist in this segment
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(TermNotInReader(reader, t), "no termstate found but term exists in reader");
                         return null;
@@ -365,7 +365,7 @@ namespace Lucene.Net.Search
 
                     // PhraseQuery on a field that did not index
                     // positions.
-                    if (postingsEnum == null)
+                    if (postingsEnum is null)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(te.SeekExact(t.Bytes), "termstate found but no term exists in reader");
                         // term does exist, but has no positions
@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
             {
                 int pos = (int)positions[i];
                 string s = pieces[pos];
-                if (s == null)
+                if (s is null)
                 {
                     s = (terms[i]).Text();
                 }
@@ -473,7 +473,7 @@ namespace Lucene.Net.Search
                     buffer.Append(' ');
                 }
                 string s = pieces[i];
-                if (s == null)
+                if (s is null)
                 {
                     buffer.Append('?');
                 }

@@ -74,17 +74,17 @@ namespace Lucene.Net.Analysis.Synonym
         {
             // if the fst is null, it means there's actually no synonyms... just return the original stream
             // as there is nothing to do here.
-            return map.Fst == null ? input : new SynonymFilter(input, map, ignoreCase);
+            return map.Fst is null ? input : new SynonymFilter(input, map, ignoreCase);
         }
 
         public void Inform(IResourceLoader loader)
         {
-            TokenizerFactory factory = tokenizerFactory == null ? null : LoadTokenizerFactory(loader, tokenizerFactory);
+            TokenizerFactory factory = tokenizerFactory is null ? null : LoadTokenizerFactory(loader, tokenizerFactory);
 
             Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
 #pragma warning disable 612, 618
-                Tokenizer tokenizer = factory == null ? new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader) : factory.Create(reader);
+                Tokenizer tokenizer = factory is null ? new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader) : factory.Create(reader);
                 TokenStream stream = ignoreCase ? (TokenStream)new LowerCaseFilter(LuceneVersion.LUCENE_CURRENT, tokenizer) : tokenizer;
 #pragma warning restore 612, 618
                 return new TokenStreamComponents(tokenizer, stream);
@@ -93,7 +93,7 @@ namespace Lucene.Net.Analysis.Synonym
             try
             {
                 string formatClass = format;
-                if (format == null || format.Equals("solr", StringComparison.Ordinal))
+                if (format is null || format.Equals("solr", StringComparison.Ordinal))
                 {
                     formatClass = typeof(SolrSynonymParser).AssemblyQualifiedName;
                 }
@@ -151,9 +151,9 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz, new object[] { tokArgs });
 
-                if (tokFactory is IResourceLoaderAware)
+                if (tokFactory is IResourceLoaderAware resLoader)
                 {
-                    ((IResourceLoaderAware)tokFactory).Inform(loader);
+                    resLoader.Inform(loader);
                 }
                 return tokFactory;
             }

@@ -123,8 +123,8 @@ namespace Lucene.Net.Index
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + ((Field == null) ? 0 : Field.GetHashCode());
-            result = prime * result + ((Bytes == null) ? 0 : Bytes.GetHashCode());
+            result = prime * result + ((Field is null) ? 0 : Field.GetHashCode());
+            result = prime * result + ((Bytes is null) ? 0 : Bytes.GetHashCode());
             return result;
         }
 
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
                 return false;
             }
 
-            if (Bytes == null)
+            if (Bytes is null)
             {
                 if (other.Bytes is object)
                 {

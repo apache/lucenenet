@@ -210,7 +210,7 @@ namespace Lucene.Net.Util
 
         public override bool Equals(object other)
         {
-            if (other == null)
+            if (other is null)
                 return false;
 
             if (other is BytesRef otherBytes)
@@ -356,7 +356,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public bool IsValid()
         {
-            if (Bytes == null)
+            if (Bytes is null)
             {
                 throw new InvalidOperationException("bytes is null");
             }

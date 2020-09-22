@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Similarities
         /// <param name="normalization"> Second (length) normalization </param>
         public DFRSimilarity(BasicModel basicModel, AfterEffect afterEffect, Normalization normalization)
         {
-            if (basicModel == null || afterEffect == null || normalization == null)
+            if (basicModel is null || afterEffect is null || normalization is null)
             {
                 throw new NullReferenceException("null parameters not allowed.");
             }

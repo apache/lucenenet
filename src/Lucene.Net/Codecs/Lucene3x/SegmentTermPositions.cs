@@ -198,7 +198,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         // as soon as positions are requested.
         private void LazySkip()
         {
-            if (proxStream == null)
+            if (proxStream is null)
             {
                 // clone lazily
                 proxStream = (IndexInput)proxStreamOrig.Clone();
@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (needToLoadPayload)
             {
                 // read payloads lazily
-                if (payload == null)
+                if (payload is null)
                 {
                     payload = new BytesRef(payloadLength);
                 }

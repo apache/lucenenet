@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Compound
         public DictionaryCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary)
             : base(matchVersion, input, dictionary)
         {
-            if (dictionary == null)
+            if (dictionary is null)
             {
                 throw new ArgumentException("dictionary cannot be null");
             }
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Compound
         public DictionaryCompoundWordTokenFilter(LuceneVersion matchVersion, TokenStream input, CharArraySet dictionary, int minWordSize, int minSubwordSize, int maxSubwordSize, bool onlyLongestMatch)
             : base(matchVersion, input, dictionary, minWordSize, minSubwordSize, maxSubwordSize, onlyLongestMatch)
         {
-            if (dictionary == null)
+            if (dictionary is null)
             {
                 throw new ArgumentException("dictionary cannot be null");
             }

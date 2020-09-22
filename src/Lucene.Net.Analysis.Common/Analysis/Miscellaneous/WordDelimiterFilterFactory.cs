@@ -126,7 +126,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             if (m_luceneMatchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
             {
-                return new WordDelimiterFilter(m_luceneMatchVersion, input, typeTable == null ? WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE : typeTable, flags, protectedWords);
+                return new WordDelimiterFilter(m_luceneMatchVersion, input, typeTable is null ? WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE : typeTable, flags, protectedWords);
             }
             else
             {

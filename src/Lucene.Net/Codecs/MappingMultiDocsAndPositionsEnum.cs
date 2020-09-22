@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs
         {
             while (true)
             {
-                if (current == null)
+                if (current is null)
                 {
                     if (upto == numSubs - 1)
                     {

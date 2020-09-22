@@ -241,7 +241,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private DocsEnum NewDocsEnum(IBits liveDocs, FieldInfo fieldInfo, StandardTermState termState)
         {
-            if (liveDocs == null)
+            if (liveDocs is null)
             {
                 return (new AllDocsSegmentDocsEnum(this, freqIn)).Reset(fieldInfo, termState);
             }
@@ -500,7 +500,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // There are enough docs in the posting to have
                     // skip data, and it isn't too close.
 
-                    if (skipper == null)
+                    if (skipper is null)
                     {
                         // this is the first time this enum has ever been used for skipping -- do lazy init
                         skipper = new Lucene40SkipListReader((IndexInput)freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
@@ -545,7 +545,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 : base(outerInstance, startFreqIn, null)
             {
                 this.outerInstance = outerInstance;
-                if (Debugging.AssertsEnabled) Debugging.Assert(m_liveDocs == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(m_liveDocs is null);
             }
 
             public override int NextDoc()
@@ -842,7 +842,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     posPendingCount += freq;
 
-                    if (liveDocs == null || liveDocs.Get(accum))
+                    if (liveDocs is null || liveDocs.Get(accum))
                     {
                         break;
                     }
@@ -867,7 +867,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // There are enough docs in the posting to have
                     // skip data, and it isn't too close
 
-                    if (skipper == null)
+                    if (skipper is null)
                     {
                         // this is the first time this enum has ever been used for skipping -- do lazy init
                         skipper = new Lucene40SkipListReader((IndexInput)freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);
@@ -1010,7 +1010,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     Debugging.Assert(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0);
                     Debugging.Assert(storePayloads || storeOffsets);
                 }
-                if (payload == null)
+                if (payload is null)
                 {
                     payload = new BytesRef();
                     payload.Bytes = new byte[1];
@@ -1069,7 +1069,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     posPendingCount += freq;
 
-                    if (liveDocs == null || liveDocs.Get(accum))
+                    if (liveDocs is null || liveDocs.Get(accum))
                     {
                         break;
                     }
@@ -1095,7 +1095,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // There are enough docs in the posting to have
                     // skip data, and it isn't too close
 
-                    if (skipper == null)
+                    if (skipper is null)
                     {
                         // this is the first time this enum has ever been used for skipping -- do lazy init
                         skipper = new Lucene40SkipListReader((IndexInput)freqIn.Clone(), outerInstance.maxSkipLevels, outerInstance.skipInterval);

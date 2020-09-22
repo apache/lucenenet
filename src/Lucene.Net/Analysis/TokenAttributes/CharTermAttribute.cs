@@ -166,7 +166,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         public ICharSequence Subsequence(int startIndex, int length)
         {
             // From Apache Harmony String class
-            if (termBuffer == null || (startIndex == 0 && length == termBuffer.Length))
+            if (termBuffer is null || (startIndex == 0 && length == termBuffer.Length))
             {
                 return new CharArrayCharSequence(termBuffer);
             }
@@ -195,7 +195,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (charCount < 0)
                 throw new ArgumentOutOfRangeException(nameof(charCount));
 
-            if (value == null)
+            if (value is null)
             {
                 if (startIndex == 0 && charCount == 0)
                     return this;
@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public CharTermAttribute Append(char[] value)
         {
-            if (value == null)
+            if (value is null)
                 //return AppendNull();
                 return this; // No-op
 
@@ -239,7 +239,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (charCount < 0)
                 throw new ArgumentOutOfRangeException(nameof(charCount));
 
-            if (value == null)
+            if (value is null)
             {
                 if (startIndex == 0 && charCount == 0)
                     return this;
@@ -258,12 +258,12 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public CharTermAttribute Append(string value)
         {
-            return Append(value, 0, value == null ? 0 : value.Length);
+            return Append(value, 0, value is null ? 0 : value.Length);
         }
 
         public CharTermAttribute Append(StringBuilder value)
         {
-            if (value == null) // needed for Appendable compliance
+            if (value is null) // needed for Appendable compliance
             {
                 //return AppendNull();
                 return this; // No-op
@@ -280,7 +280,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (charCount < 0)
                 throw new ArgumentOutOfRangeException(nameof(charCount));
 
-            if (value == null)
+            if (value is null)
             {
                 if (startIndex == 0 && charCount == 0)
                     return this;
@@ -296,7 +296,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public CharTermAttribute Append(ICharTermAttribute value)
         {
-            if (value == null) // needed for Appendable compliance
+            if (value is null) // needed for Appendable compliance
             {
                 //return AppendNull();
                 return this; // No-op
@@ -309,7 +309,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public CharTermAttribute Append(ICharSequence value)
         {
-            if (value == null)
+            if (value is null)
                 //return AppendNull();
                 return this; // No-op
 
@@ -324,7 +324,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (charCount < 0)
                 throw new ArgumentOutOfRangeException(nameof(charCount));
 
-            if (value == null)
+            if (value is null)
             {
                 if (startIndex == 0 && charCount == 0)
                     return this;

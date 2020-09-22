@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Pattern
         public override int Read(char[] cbuf, int off, int len)
         {
             // Buffer all input on the first call.
-            if (transformedInput == null)
+            if (transformedInput is null)
             {
                 Fill();
             }
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Pattern
 
         public override int Read()
         {
-            if (transformedInput == null)
+            if (transformedInput is null)
             {
                 Fill();
             }

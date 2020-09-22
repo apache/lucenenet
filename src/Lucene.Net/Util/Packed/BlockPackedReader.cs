@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 if ((token & AbstractBlockPackedWriter.MIN_VALUE_EQUALS_0) == 0)
                 {
-                    if (minValues == null)
+                    if (minValues is null)
                     {
                         minValues = new long[numBlocks];
                     }
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Packed
             if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < valueCount);
             int block = (int)((long)((ulong)index >> blockShift));
             int idx = (int)(index & blockMask);
-            return (minValues == null ? 0 : minValues[block]) + subReaders[block].Get(idx);
+            return (minValues is null ? 0 : minValues[block]) + subReaders[block].Get(idx);
         }
 
         /// <summary>

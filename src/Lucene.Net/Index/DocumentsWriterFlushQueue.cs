@@ -267,7 +267,7 @@ namespace Lucene.Net.Index
             protected void FinishFlush(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates bufferedUpdates)
             {
                 // Finish the flushed segment and publish it to IndexWriter
-                if (newSegment == null)
+                if (newSegment is null)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(bufferedUpdates is object);
                     if (bufferedUpdates is object && bufferedUpdates.Any())
@@ -329,7 +329,7 @@ namespace Lucene.Net.Index
 
             internal void SetFailed() // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(segment == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(segment is null);
                 failed = true;
             }
 

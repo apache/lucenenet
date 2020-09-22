@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 for (int i = length - 1; i >= 0; i--)
                 {
                     Int32sRef prefixes = dictionary.LookupPrefix(word, 0, i);
-                    if (prefixes == null)
+                    if (prefixes is null)
                     {
                         continue;
                     }
@@ -249,7 +249,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 for (int i = 0; i < length; i++)
                 {
                     Int32sRef suffixes = dictionary.LookupSuffix(word, i, length - i);
-                    if (suffixes == null)
+                    if (suffixes is null)
                     {
                         continue;
                     }

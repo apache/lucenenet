@@ -37,7 +37,7 @@ namespace Lucene.Net.Support
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void RemoveAll<T>(this ICollection<T> source, IEnumerable<T> removeList)
         {
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             if (source.Count == 0) return;

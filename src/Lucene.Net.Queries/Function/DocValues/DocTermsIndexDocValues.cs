@@ -92,8 +92,8 @@ namespace Lucene.Net.Queries.Function.DocValues
         public override ValueSourceScorer GetRangeScorer(IndexReader reader, string lowerVal, string upperVal, bool includeLower, bool includeUpper)
         {
             // TODO: are lowerVal and upperVal in indexed form or not?
-            lowerVal = lowerVal == null ? null : ToTerm(lowerVal);
-            upperVal = upperVal == null ? null : ToTerm(upperVal);
+            lowerVal = lowerVal is null ? null : ToTerm(lowerVal);
+            upperVal = upperVal is null ? null : ToTerm(upperVal);
 
             int lower = int.MinValue;
             if (lowerVal != null)

@@ -102,18 +102,18 @@ namespace Lucene.Net.Queries.Function.ValueSources
             this.q = vs.q;
             this.fcontext = fcontext;
 
-            Weight w = fcontext == null ? null : (Weight)fcontext[vs];
-            if (w == null)
+            Weight w = fcontext is null ? null : (Weight)fcontext[vs];
+            if (w is null)
             {
                 IndexSearcher weightSearcher;
-                if (fcontext == null)
+                if (fcontext is null)
                 {
                     weightSearcher = new IndexSearcher(ReaderUtil.GetTopLevelContext(readerContext));
                 }
                 else
                 {
                     weightSearcher = (IndexSearcher)fcontext["searcher"];
-                    if (weightSearcher == null)
+                    if (weightSearcher is null)
                     {
                         weightSearcher = new IndexSearcher(ReaderUtil.GetTopLevelContext(readerContext));
                     }
@@ -138,7 +138,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                         return defVal;
                     }
                     scorer = weight.GetScorer(readerContext, acceptDocs);
-                    if (scorer == null)
+                    if (scorer is null)
                     {
                         noMatches = true;
                         return defVal;
@@ -180,7 +180,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     }
                     scorer = weight.GetScorer(readerContext, acceptDocs);
                     scorerDoc = -1;
-                    if (scorer == null)
+                    if (scorer is null)
                     {
                         noMatches = true;
                         return false;
@@ -240,7 +240,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                     }
                     scorer = weight.GetScorer(readerContext, acceptDocs);
                     scorerDoc = -1;
-                    if (scorer == null)
+                    if (scorer is null)
                     {
                         noMatches = true;
                         mutableValue.Value = defVal;

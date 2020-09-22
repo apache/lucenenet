@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
                 {
                     return true;
                 }
-                if (o == null)
+                if (o is null)
                 {
                     return false;
                 }
@@ -167,7 +167,7 @@ namespace Lucene.Net.Search
             {
                 return true;
             }
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }

@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Spans
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((m_term == null) ? 0 : m_term.GetHashCode());
+            result = prime * result + ((m_term is null) ? 0 : m_term.GetHashCode());
             return result;
         }
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
             SpanTermQuery other = (SpanTermQuery)obj;
-            if (m_term == null)
+            if (m_term is null)
             {
                 if (other.m_term is object)
                 {
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Spans
             TermContext termContext;
             termContexts.TryGetValue(m_term, out termContext);
             TermState state;
-            if (termContext == null)
+            if (termContext is null)
             {
                 // this happens with span-not query, as it doesn't include the NOT side in extractTerms()
                 // so we seek to the term now in this segment..., this sucks because its ugly mostly!
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search.Spans
                 state = termContext.Get(context.Ord);
             }
 
-            if (state == null) // term is not present in that reader
+            if (state is null) // term is not present in that reader
             {
                 return TermSpans.EMPTY_TERM_SPANS;
             }

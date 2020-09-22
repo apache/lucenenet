@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
             writeLockTimeout = IndexWriterConfig.WRITE_LOCK_TIMEOUT;
             indexingChain = DocumentsWriterPerThread.DefaultIndexingChain;
             codec = Codec.Default;
-            if (codec == null)
+            if (codec is null)
             {
                 throw new NullReferenceException();
             }
@@ -580,7 +580,7 @@ namespace Lucene.Net.Index
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("matchVersion=").Append(matchVersion).Append("\n");
-            sb.Append("analyzer=").Append(analyzer == null ? "null" : analyzer.GetType().Name).Append("\n");
+            sb.Append("analyzer=").Append(analyzer is null ? "null" : analyzer.GetType().Name).Append("\n");
             sb.Append("ramBufferSizeMB=").Append(RAMBufferSizeMB).Append("\n");
             sb.Append("maxBufferedDocs=").Append(MaxBufferedDocs).Append("\n");
             sb.Append("maxBufferedDeleteTerms=").Append(MaxBufferedDeleteTerms).Append("\n");
@@ -589,7 +589,7 @@ namespace Lucene.Net.Index
             sb.Append("termIndexInterval=").Append(TermIndexInterval).Append("\n"); // TODO: this should be private to the codec, not settable here
             sb.Append("delPolicy=").Append(IndexDeletionPolicy.GetType().Name).Append("\n");
             IndexCommit commit = IndexCommit;
-            sb.Append("commit=").Append(commit == null ? "null" : commit.ToString()).Append("\n");
+            sb.Append("commit=").Append(commit is null ? "null" : commit.ToString()).Append("\n");
             sb.Append("openMode=").Append(OpenMode).Append("\n");
             sb.Append("similarity=").Append(Similarity.GetType().Name).Append("\n");
             sb.Append("mergeScheduler=").Append(MergeScheduler).Append("\n");

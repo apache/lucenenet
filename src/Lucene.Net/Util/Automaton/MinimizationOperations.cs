@@ -108,7 +108,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     //List<State>[] r = reverse[qq.Step(sigma[x]).number];
                     var r = qq.Step(sigma[x]).number;
-                    if (reverse[r, x] == null)
+                    if (reverse[r, x] is null)
                     {
                         reverse[r, x] = new List<State>();
                     }

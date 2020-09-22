@@ -57,12 +57,12 @@ namespace Lucene.Net.Queries.Function.ValueSources
             foreach (AtomicReaderContext readerContext in searcher.TopReaderContext.Leaves)
             {
                 Fields fields = readerContext.AtomicReader.Fields;
-                if (fields == null)
+                if (fields is null)
                 {
                     continue;
                 }
                 Terms terms = fields.GetTerms(m_indexedField);
-                if (terms == null)
+                if (terms is null)
                 {
                     continue;
                 }

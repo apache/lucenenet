@@ -111,8 +111,8 @@ namespace Lucene.Net.Search.Payloads
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((m_fieldName == null) ? 0 : m_fieldName.GetHashCode());
-            result = prime * result + ((m_function == null) ? 0 : m_function.GetHashCode());
+            result = prime * result + ((m_fieldName is null) ? 0 : m_fieldName.GetHashCode());
+            result = prime * result + ((m_function is null) ? 0 : m_function.GetHashCode());
             return result;
         }
 
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Payloads
                 return false;
             }
             PayloadNearQuery other = (PayloadNearQuery)obj;
-            if (m_fieldName == null)
+            if (m_fieldName is null)
             {
                 if (other.m_fieldName is object)
                 {
@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.Payloads
             {
                 return false;
             }
-            if (m_function == null)
+            if (m_function is null)
             {
                 if (other.m_function is object)
                 {

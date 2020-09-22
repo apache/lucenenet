@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Pattern
         public PatternReplaceFilter(TokenStream @in, Regex pattern, string replacement, bool all)
             : base(@in)
         {
-            this.replacement = (null == replacement) ? "" : replacement;
+            this.replacement = replacement ?? "";
             this.all = all;
             this.pattern = pattern;
             termAtt = AddAttribute<ICharTermAttribute>();

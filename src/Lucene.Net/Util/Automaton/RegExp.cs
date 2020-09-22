@@ -605,7 +605,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         aa = automata[s];
                     }
-                    if (aa == null && automaton_provider is object)
+                    if (aa is null && automaton_provider is object)
                     {
                         try
                         {
@@ -616,7 +616,7 @@ namespace Lucene.Net.Util.Automaton
                             throw new ArgumentException(e.ToString(), e);
                         }
                     }
-                    if (aa == null)
+                    if (aa is null)
                     {
                         throw new ArgumentException("'" + s + "' not found");
                     }

@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs
         /// Creates new buffers or empties the existing ones. </summary>
         public virtual void ResetSkip()
         {
-            if (skipBuffer == null)
+            if (skipBuffer is null)
             {
                 Init();
             }
@@ -187,7 +187,7 @@ namespace Lucene.Net.Codecs
         {
             long skipPointer = output.GetFilePointer();
             //System.out.println("skipper.writeSkip fp=" + skipPointer);
-            if (skipBuffer == null || skipBuffer.Length == 0)
+            if (skipBuffer is null || skipBuffer.Length == 0)
             {
                 return skipPointer;
             }

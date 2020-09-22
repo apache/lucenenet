@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
 
         public object Clone()
         {
-            return obj == null ? new SetOnce<T>() : new SetOnce<T>(obj);
+            return obj is null ? new SetOnce<T>() : new SetOnce<T>(obj);
         }
     }
 

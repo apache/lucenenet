@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
             if (doVectorPositions)
             {
                 BytesRef payload;
-                if (payloadAttribute == null)
+                if (payloadAttribute is null)
                 {
                     payload = null;
                 }

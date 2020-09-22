@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Spans
             for (int i = 0; i < clauses.Length; i++)
             {
                 SpanQuery clause = clauses[i];
-                if (m_field == null) // check field
+                if (m_field is null) // check field
                 {
                     m_field = clause.Field;
                 }
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search.Spans
                 SpanQuery query = (SpanQuery)c.Rewrite(reader);
                 if (query != c) // clause rewrote: must clone
                 {
-                    if (clone == null)
+                    if (clone is null)
                     {
                         clone = (SpanNearQuery)this.Clone();
                     }

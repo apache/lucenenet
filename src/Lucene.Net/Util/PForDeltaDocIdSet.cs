@@ -388,7 +388,7 @@ namespace Lucene.Net.Util
 
         public override DocIdSetIterator GetIterator()
         {
-            if (data == null)
+            if (data is null)
             {
                 return null;
             }

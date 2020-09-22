@@ -65,7 +65,7 @@ namespace Lucene.Net.Store
 
         public override void WriteByte(byte b)
         {
-            if (buffer == null) buffer = new byte[bufferSize]; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
+            if (buffer is null) buffer = new byte[bufferSize]; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
             if (bufferPosition >= bufferSize)
             {
                 Flush();
@@ -75,7 +75,7 @@ namespace Lucene.Net.Store
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
-            if (buffer == null) buffer = new byte[bufferSize]; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
+            if (buffer is null) buffer = new byte[bufferSize]; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
             int bytesLeft = bufferSize - bufferPosition;
             // is there enough space in the buffer?
             if (bytesLeft >= length)
@@ -131,7 +131,7 @@ namespace Lucene.Net.Store
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush()
         {
-            if (buffer == null) return; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
+            if (buffer is null) return; // LUCENENET: Lazy-load the buffer, so we don't force all subclasses to allocate it
             crc.Update(buffer, 0, bufferPosition);
             FlushBuffer(buffer, bufferPosition);
             bufferStart += bufferPosition;

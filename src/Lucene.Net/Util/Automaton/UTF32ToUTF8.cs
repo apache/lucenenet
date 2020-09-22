@@ -349,7 +349,7 @@ namespace Lucene.Net.Util.Automaton
                     Transition t = utf32State.TransitionsArray[i];
                     State destUTF32 = t.to;
                     State destUTF8 = map[destUTF32.number];
-                    if (destUTF8 == null)
+                    if (destUTF8 is null)
                     {
                         destUTF8 = NewUTF8State();
                         destUTF8.accept = destUTF32.accept;

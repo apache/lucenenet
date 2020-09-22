@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
                 Query rewrite = clause.Rewrite(reader);
                 if (rewrite != clause)
                 {
-                    if (clone == null)
+                    if (clone is null)
                     {
                         clone = (DisjunctionMaxQuery)this.Clone();
                     }

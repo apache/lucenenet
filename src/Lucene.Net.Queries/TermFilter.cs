@@ -32,11 +32,11 @@ namespace Lucene.Net.Queries
         /// <param name="term"> The term documents need to have in order to be a match for this filter. </param>
         public TermFilter(Term term)
         {
-            if (term == null)
+            if (term is null)
             {
                 throw new ArgumentException("Term must not be null");
             }
-            else if (term.Field == null)
+            else if (term.Field is null)
             {
                 throw new ArgumentException("Field must not be null");
             }
@@ -49,7 +49,7 @@ namespace Lucene.Net.Queries
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
             Terms terms = context.AtomicReader.GetTerms(term.Field);
-            if (terms == null)
+            if (terms is null)
             {
                 return null;
             }
@@ -85,7 +85,7 @@ namespace Lucene.Net.Queries
             {
                 return true;
             }
-            if (o == null || this.GetType() != o.GetType())
+            if (o is null || this.GetType() != o.GetType())
             {
                 return false;
             }

@@ -87,7 +87,7 @@ namespace Lucene.Net.Util
 
             public bool Equals(Int32Ref other)
             {
-                if (other == null)
+                if (other is null)
                     return false;
                 return value.Equals(other);
             }
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util
             try
             {
                 MethodInfo mi = GetMethod(baseClass, method, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, parameters);
-                if (mi == null)
+                if (mi is null)
                 {
                     throw new ArgumentException(baseClass.Name + " has no such method.");
                 }

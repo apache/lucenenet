@@ -401,7 +401,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static long ShallowSizeOf(object obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return 0;
             }
@@ -500,7 +500,7 @@ namespace Lucene.Net.Util
             {
                 object ob = stack.Pop();
 
-                if (ob == null || seen.Contains(ob))
+                if (ob is null || seen.Contains(ob))
                 {
                     continue;
                 }
@@ -556,7 +556,7 @@ namespace Lucene.Net.Util
                      */
                     try
                     {
-                        if (!classCache.TryGetValue(obClazz, out ClassCache cachedInfo) || cachedInfo == null)
+                        if (!classCache.TryGetValue(obClazz, out ClassCache cachedInfo) || cachedInfo is null)
                         {
                             classCache[obClazz] = cachedInfo = CreateCacheEntry(obClazz);
                         }
@@ -983,7 +983,7 @@ namespace Lucene.Net.Util
                 public bool MoveNext()
                 {
                     object r = nextElement;
-                    if (nextElement == null)
+                    if (nextElement is null)
                     {
                         return false;
                     }
@@ -1000,7 +1000,7 @@ namespace Lucene.Net.Util
                 private object FetchNext()
                 {
                     pos++;
-                    while (pos < outerInstance.keys.Length && outerInstance.keys[pos] == null)
+                    while (pos < outerInstance.keys.Length && outerInstance.keys[pos] is null)
                     {
                         pos++;
                     }

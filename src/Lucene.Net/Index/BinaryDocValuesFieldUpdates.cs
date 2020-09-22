@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
             }
 
             BytesRef val = (BytesRef)value;
-            if (val == null)
+            if (val is null)
             {
                 val = BinaryDocValuesUpdate.MISSING;
             }

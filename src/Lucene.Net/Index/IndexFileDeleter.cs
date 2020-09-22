@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
         // called only from assert
         private bool IsLocked =>
             //LUCENENET TODO: This always returns true - probably incorrect
-            writer == null || true /*Monitor.IsEntered(writer)*/;
+            writer is null || true /*Monitor.IsEntered(writer)*/;
 
         /// <summary>
         /// Initialize the deleter: find all previous commits in
@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
                                 commits.Add(commitPoint);
                                 IncRef(sis, true);
 
-                                if (lastSegmentInfos == null || sis.Generation > lastSegmentInfos.Generation)
+                                if (lastSegmentInfos is null || sis.Generation > lastSegmentInfos.Generation)
                                 {
                                     lastSegmentInfos = sis;
                                 }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            if (currentCommitPoint == null && currentSegmentsFile is object && initialIndexExists)
+            if (currentCommitPoint is null && currentSegmentsFile is object && initialIndexExists)
             {
                 // We did not in fact see the segments_N file
                 // corresponding to the segmentInfos that was passed
@@ -324,14 +324,14 @@ namespace Lucene.Net.Index
             // sometime it may not be the most recent commit
             Checkpoint(segmentInfos, false);
 
-            startingCommitDeleted = currentCommitPoint == null ? false : currentCommitPoint.IsDeleted;
+            startingCommitDeleted = currentCommitPoint is null ? false : currentCommitPoint.IsDeleted;
 
             DeleteCommits();
         }
 
         private void EnsureOpen()
         {
-            if (writer == null)
+            if (writer is null)
             {
                 throw new ObjectDisposedException(this.GetType().FullName, "this IndexWriter is closed");
             }
@@ -427,7 +427,7 @@ namespace Lucene.Net.Index
             {
                 string fileName = files[i];
                 //m.reset(fileName);
-                if ((segmentName == null || fileName.StartsWith(segmentPrefix1, StringComparison.Ordinal) || fileName.StartsWith(segmentPrefix2, StringComparison.Ordinal))
+                if ((segmentName is null || fileName.StartsWith(segmentPrefix1, StringComparison.Ordinal) || fileName.StartsWith(segmentPrefix2, StringComparison.Ordinal))
                     && !fileName.EndsWith("write.lock", StringComparison.Ordinal) && !refCounts.ContainsKey(fileName) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal)
                     && (r.IsMatch(fileName) || fileName.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal)))
                 {
@@ -731,7 +731,7 @@ namespace Lucene.Net.Index
                     infoStream.Message("IFD",
                         "unable to remove file \"" + fileName + "\": " + e.ToString() + "; Will re-try later.");
                 }
-                if (deletable == null)
+                if (deletable is null)
                 {
                     deletable = new List<string>();
                 }

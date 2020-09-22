@@ -109,24 +109,24 @@ namespace Lucene.Net.Codecs.PerField
             public override TermsConsumer AddField(FieldInfo field)
             {
                 PostingsFormat format = outerInstance.GetPostingsFormatForField(field.Name);
-                if (format == null)
+                if (format is null)
                 {
                     throw new InvalidOperationException("invalid null PostingsFormat for field=\"" + field.Name + "\"");
                 }
                 string formatName = format.Name;
 
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName);
-                if (Debugging.AssertsEnabled) Debugging.Assert(previousValue == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(previousValue is null);
 
                 int? suffix;
 
                 FieldsConsumerAndSuffix consumer;
-                if (!formats.TryGetValue(format, out consumer) || consumer == null)
+                if (!formats.TryGetValue(format, out consumer) || consumer is null)
                 {
                     // First time we are seeing this format; create a new instance
 
                     // bump the suffix
-                    if (!suffixes.TryGetValue(formatName, out suffix) || suffix == null)
+                    if (!suffixes.TryGetValue(formatName, out suffix) || suffix is null)
                     {
                         suffix = 0;
                     }
@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.PerField
                 }
 
                 previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix, CultureInfo.InvariantCulture));
-                if (Debugging.AssertsEnabled) Debugging.Assert(previousValue == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(previousValue is null);
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this PF actually sees ... then stuff like

@@ -71,7 +71,7 @@ namespace Lucene.Net.Queries
         {
             this.subQuery = subQuery;
             this.scoringQueries = scoringQueries ?? Arrays.Empty<Query>();
-            if (subQuery == null)
+            if (subQuery is null)
             {
                 throw new ArgumentException("<subquery> must not be null!");
             }
@@ -96,7 +96,7 @@ namespace Lucene.Net.Queries
                 Query v = scoringQueries[i].Rewrite(reader);
                 if (v != scoringQueries[i])
                 {
-                    if (clone == null)
+                    if (clone is null)
                     {
                         clone = (CustomScoreQuery)Clone();
                     }
@@ -268,7 +268,7 @@ namespace Lucene.Net.Queries
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
                 Scorer subQueryScorer = subQueryWeight.GetScorer(context, acceptDocs);
-                if (subQueryScorer == null)
+                if (subQueryScorer is null)
                 {
                     return null;
                 }

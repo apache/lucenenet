@@ -84,7 +84,7 @@ namespace Lucene.Net.Sandbox.Queries
             : base(field, SortFieldType.CUSTOM, reverse)
         {
             // LUCENENET NOTE: Selector enum cannot be null in .NET, so we avoid this issue by not making the parameter nullable
-            //if (selector == null)
+            //if (selector is null)
             //{
             //    throw new NullReferenceException();
             //}

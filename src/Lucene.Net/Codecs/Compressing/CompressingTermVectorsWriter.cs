@@ -143,7 +143,7 @@ namespace Lucene.Net.Codecs.Compressing
                 doc = doc.Previous;
             }
             DocData newDoc;
-            if (last == null)
+            if (last is null)
             {
                 newDoc = new DocData(this, numVectorFields, 0, 0, 0);
             }
@@ -371,7 +371,7 @@ namespace Lucene.Net.Codecs.Compressing
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(curField.flags != 0);
-            curField.AddPosition(position, startOffset, endOffset - startOffset, payload == null ? 0 : payload.Length);
+            curField.AddPosition(position, startOffset, endOffset - startOffset, payload is null ? 0 : payload.Length);
             if (curField.hasPayloads && payload is object)
             {
                 payloadBytes.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
@@ -895,7 +895,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int maxDoc = reader.MaxDoc;
                 IBits liveDocs = reader.LiveDocs;
 
-                if (matchingVectorsReader == null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != compressionMode || matchingVectorsReader.ChunkSize != chunkSize || matchingVectorsReader.PackedInt32sVersion != PackedInt32s.VERSION_CURRENT)
+                if (matchingVectorsReader is null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != compressionMode || matchingVectorsReader.ChunkSize != chunkSize || matchingVectorsReader.PackedInt32sVersion != PackedInt32s.VERSION_CURRENT)
                 {
                     // naive merge...
                     for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; i = NextLiveDoc(i + 1, liveDocs, maxDoc))
@@ -971,7 +971,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private static int NextLiveDoc(int doc, IBits liveDocs, int maxDoc)
         {
-            if (liveDocs == null)
+            if (liveDocs is null)
             {
                 return doc;
             }
@@ -984,7 +984,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private static int NextDeletedDoc(int doc, IBits liveDocs, int maxDoc)
         {
-            if (liveDocs == null)
+            if (liveDocs is null)
             {
                 return maxDoc;
             }

@@ -194,7 +194,7 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                if (blocks == null)
+                if (blocks is null)
                 {
                     blocks = new byte[blockSize];
                 }
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util.Packed
                 PackedInt32s.IDecoder decoder = PackedInt32s.GetDecoder(PackedInt32s.Format.PACKED, packedIntsVersion, bitsPerValue);
                 int iterations = blockSize / decoder.ByteValueCount;
                 int blocksSize = iterations * decoder.ByteBlockCount;
-                if (blocks == null || blocks.Length < blocksSize)
+                if (blocks is null || blocks.Length < blocksSize)
                 {
                     blocks = new byte[blocksSize];
                 }

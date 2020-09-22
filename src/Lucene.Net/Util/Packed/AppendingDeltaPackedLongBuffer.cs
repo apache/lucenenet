@@ -68,7 +68,7 @@ namespace Lucene.Net.Util.Packed
             {
                 return pending[element];
             }
-            else if (values[block] == null)
+            else if (values[block] is null)
             {
                 return minValues[block];
             }

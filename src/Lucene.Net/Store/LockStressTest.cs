@@ -83,7 +83,7 @@ namespace Lucene.Net.Store
             try
             {
                 c = Type.GetType(lockFactoryClassName);
-                if (c == null)
+                if (c is null)
                 {
                     // LUCENENET: try again, this time with the Store namespace
                     c = Type.GetType("Lucene.Net.Store." + lockFactoryClassName);

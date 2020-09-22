@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
             {
                 throw new ArgumentException("please use CompiledAutomaton.getTermsEnum instead");
             }
-            if (startTerm == null)
+            if (startTerm is null)
             {
                 return new AutomatonTermsEnum(GetEnumerator(), compiled);
             }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
 
             protected override BytesRef NextSeekTerm(BytesRef term)
             {
-                if (term == null)
+                if (term is null)
                 {
                     term = startTerm;
                 }

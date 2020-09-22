@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         public void SetReader(TextReader input)
         {
-            if (input == null)
+            if (input is null)
             {
                 throw new ArgumentNullException("value", "input must not be null");
             }

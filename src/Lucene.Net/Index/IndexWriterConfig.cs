@@ -212,7 +212,7 @@ namespace Lucene.Net.Index
             get => openMode;
             set =>
                 // LUCENENET specific - making non-nullable, so we don't need to worry about this.
-                //if (value == null)
+                //if (value is null)
                 //{
                 //    throw new ArgumentException("openMode must not be null");
                 //}
@@ -583,7 +583,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public IndexWriterConfig SetInfoStream(TextWriter printStream)
         {
-            if (printStream == null)
+            if (printStream is null)
             {
                 throw new ArgumentException("printStream must not be null");
             }

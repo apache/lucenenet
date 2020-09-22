@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
                     }
                     catch (Exception t)
                     {
-                        if (th == null)
+                        if (th is null)
                         {
                             th = t;
                         }
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception t)
             {
-                if (th == null)
+                if (th is null)
                 {
                     th = t;
                 }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception t)
             {
-                if (th == null)
+                if (th is null)
                 {
                     th = t;
                 }
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
                     fp = fp.next;
                 }
 
-                if (fp == null)
+                if (fp is null)
                 {
                     // TODO FI: we need to genericize the "flags" that a
                     // field holds, and, how these flags are merged; it

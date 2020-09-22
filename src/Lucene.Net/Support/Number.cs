@@ -78,7 +78,7 @@ namespace Lucene.Net.Support
         /// <returns>The parsed number in the specified radix.</returns>
         public static long Parse(System.String s, int radix)
         {
-            if (s == null)
+            if (s is null)
             {
                 throw new ArgumentException("null");
             }

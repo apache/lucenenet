@@ -63,8 +63,8 @@ namespace Lucene.Net.Analysis.Util
             originalArgs = args.AsReadOnly();
             string version = Get(args, LUCENE_MATCH_VERSION_PARAM);
             // LUCENENET TODO: What should we do if the version is null?
-            //luceneMatchVersion = version == null ? (LuceneVersion?)null : LuceneVersionHelpers.ParseLeniently(version);
-            m_luceneMatchVersion = version == null ?
+            //luceneMatchVersion = version is null ? (LuceneVersion?)null : LuceneVersionHelpers.ParseLeniently(version);
+            m_luceneMatchVersion = version is null ?
 #pragma warning disable 612, 618
                 LuceneVersion.LUCENE_CURRENT :
 #pragma warning restore 612, 618
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Util
             // LUCENENET NOTE: since luceneMatchVersion can never be null in .NET,
             // this method effectively does nothing. However, leaving it in place because
             // it is used throughout Lucene.
-            //if (luceneMatchVersion == null)
+            //if (luceneMatchVersion is null)
             //{
             //    throw new ArgumentException("Configuration Error: Factory '" + this.GetType().FullName + "' needs a 'luceneMatchVersion' parameter");
             //}
@@ -389,7 +389,7 @@ namespace Lucene.Net.Analysis.Util
         /// <returns> a list of file names with the escaping backslashed removed </returns>
         protected IList<string> SplitFileNames(string fileNames)
         {
-            if (fileNames == null)
+            if (fileNames is null)
             {
                 return Collections.EmptyList<string>();
             }

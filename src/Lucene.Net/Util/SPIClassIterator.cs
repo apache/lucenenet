@@ -177,13 +177,13 @@ namespace Lucene.Net.Util
         try
         {
           string fullName = META_INF_SERVICES + clazz.Name;
-          this.ProfilesEnum = (loader == null) ? ClassLoader.getSystemResources(fullName) : loader.getResources(fullName);
+          this.ProfilesEnum = (loader is null) ? ClassLoader.getSystemResources(fullName) : loader.getResources(fullName);
         }
         catch (IOException ioe)
         {
           throw new ServiceConfigurationError("Error loading SPI profiles for type " + clazz.Name + " from classpath", ioe);
         }
-        this.Loader = (loader == null) ? ClassLoader.SystemClassLoader : loader;
+        this.Loader = (loader is null) ? ClassLoader.SystemClassLoader : loader;
         this.LinesIterator = Collections.emptySet<string>().GetEnumerator();
       }
 

@@ -131,7 +131,7 @@ namespace Lucene.Net.Support
 
         void ICollection.CopyTo(Array array, int index)
         {
-            if (array == null)
+            if (array is null)
                 throw new ArgumentNullException(nameof(array));
             if (array.Rank != 1)
                 throw new ArgumentException("Only single dimensional arrays are supported for the requested action.", nameof(array));
@@ -154,7 +154,7 @@ namespace Lucene.Net.Support
             else
             {
                 object/*?*/[]/*?*/ objects = array as object[];
-                if (objects == null)
+                if (objects is null)
                 {
                     throw new ArgumentException("Target array type is not compatible with the type of items in the collection.", nameof(array));
                     //throw new ArgumentException(SR.Argument_InvalidArrayType, nameof(array));
@@ -193,7 +193,7 @@ namespace Lucene.Net.Support
         {
             get
             {
-                if (syncRoot == null)
+                if (syncRoot is null)
                 {
                     if (set is ICollection col)
                         syncRoot = col.SyncRoot;

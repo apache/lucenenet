@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
             const int prime = 31;
             int result = base.GetHashCode();
             result = prime * result + m_compiled.GetHashCode();
-            result = prime * result + ((m_term == null) ? 0 : m_term.GetHashCode());
+            result = prime * result + ((m_term is null) ? 0 : m_term.GetHashCode());
             return result;
         }
 
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (m_term == null)
+            if (m_term is null)
             {
                 if (other.m_term is object)
                 {

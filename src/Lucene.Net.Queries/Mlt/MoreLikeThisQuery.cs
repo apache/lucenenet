@@ -140,16 +140,16 @@ namespace Lucene.Net.Queries.Mlt
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + ((analyzer == null) ? 0 : analyzer.GetHashCode());
-            result = prime * result + ((fieldName == null) ? 0 : fieldName.GetHashCode());
-            result = prime * result + ((likeText == null) ? 0 : likeText.GetHashCode());
+            result = prime * result + ((analyzer is null) ? 0 : analyzer.GetHashCode());
+            result = prime * result + ((fieldName is null) ? 0 : fieldName.GetHashCode());
+            result = prime * result + ((likeText is null) ? 0 : likeText.GetHashCode());
             result = prime * result + maxQueryTerms;
             result = prime * result + minDocFreq;
             result = prime * result + minTermFrequency;
             result = prime * result + Arrays.GetHashCode(moreLikeFields);
             result = prime * result + J2N.BitConversion.SingleToInt32Bits(percentTermsToMatch);
             // LUCENENET specific: use structural equality comparison
-            result = prime * result + ((stopWords == null) ? 0 : JCG.SetEqualityComparer<string>.Default.GetHashCode(stopWords));
+            result = prime * result + ((stopWords is null) ? 0 : JCG.SetEqualityComparer<string>.Default.GetHashCode(stopWords));
             return result;
         }
 
@@ -168,7 +168,7 @@ namespace Lucene.Net.Queries.Mlt
                 return false;
             }
             var other = (MoreLikeThisQuery)obj;
-            if (analyzer == null)
+            if (analyzer is null)
             {
                 if (other.analyzer != null)
                 {
@@ -179,7 +179,7 @@ namespace Lucene.Net.Queries.Mlt
             {
                 return false;
             }
-            if (fieldName == null)
+            if (fieldName is null)
             {
                 if (other.fieldName != null)
                 {
@@ -190,7 +190,7 @@ namespace Lucene.Net.Queries.Mlt
             {
                 return false;
             }
-            if (likeText == null)
+            if (likeText is null)
             {
                 if (other.likeText != null)
                 {
@@ -221,7 +221,7 @@ namespace Lucene.Net.Queries.Mlt
             {
                 return false;
             }
-            if (stopWords == null)
+            if (stopWords is null)
             {
                 if (other.stopWords != null)
                 {

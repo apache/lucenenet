@@ -406,8 +406,8 @@ namespace Lucene.Net.Analysis
                     endOffset == other.endOffset &&
                     flags == other.flags &&
                     positionIncrement == other.positionIncrement &&
-                    (type == null ? other.type == null : type.Equals(other.type, StringComparison.Ordinal)) &&
-                    (payload == null ? other.payload == null : payload.Equals(other.payload)) &&
+                    (type is null ? other.type is null : type.Equals(other.type, StringComparison.Ordinal)) &&
+                    (payload is null ? other.payload is null : payload.Equals(other.payload)) &&
                     base.Equals(obj)
                 );
             }
@@ -611,7 +611,7 @@ namespace Lucene.Net.Analysis
                 base.CopyTo(target);
                 ((IOffsetAttribute)target).SetOffset(startOffset, endOffset);
                 ((IPositionIncrementAttribute)target).PositionIncrement = positionIncrement;
-                ((IPayloadAttribute)target).Payload = (payload == null) ? null : (BytesRef)payload.Clone();
+                ((IPayloadAttribute)target).Payload = (payload is null) ? null : (BytesRef)payload.Clone();
                 ((IFlagsAttribute)target).Flags = flags;
                 ((ITypeAttribute)target).Type = type;
             }

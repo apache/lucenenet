@@ -181,7 +181,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         internal void RawDocs(int[] tvdLengths, int[] tvfLengths, int startDocID, int numDocs)
         {
-            if (tvx == null)
+            if (tvx is null)
             {
                 Arrays.Fill(tvdLengths, 0);
                 Arrays.Fill(tvfLengths, 0);
@@ -298,7 +298,7 @@ namespace Lucene.Net.Codecs.Lucene40
             public override Terms GetTerms(string field)
             {
                 FieldInfo fieldInfo = outerInstance.fieldInfos.FieldInfo(field);
-                if (fieldInfo == null)
+                if (fieldInfo is null)
                 {
                     // No such field
                     return null;
@@ -318,7 +318,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 get
                 {
-                    if (fieldNumbers == null)
+                    if (fieldNumbers is null)
                     {
                         return 0;
                     }
@@ -633,7 +633,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override int NextDoc()
             {
-                if (!didNext && (liveDocs == null || liveDocs.Get(0)))
+                if (!didNext && (liveDocs is null || liveDocs.Get(0)))
                 {
                     didNext = true;
                     return (doc = 0);
@@ -696,7 +696,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override int NextDoc()
             {
-                if (!didNext && (liveDocs == null || liveDocs.Get(0)))
+                if (!didNext && (liveDocs is null || liveDocs.Get(0)))
                 {
                     didNext = true;
                     return (doc = 0);
@@ -727,7 +727,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override BytesRef GetPayload()
             {
-                if (payloadOffsets == null)
+                if (payloadOffsets is null)
                 {
                     return null;
                 }
@@ -775,7 +775,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 get
                 {
-                    if (startOffsets == null)
+                    if (startOffsets is null)
                     {
                         return -1;
                     }
@@ -790,7 +790,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 get
                 {
-                    if (endOffsets == null)
+                    if (endOffsets is null)
                     {
                         return -1;
                     }

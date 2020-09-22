@@ -40,7 +40,7 @@ namespace Lucene.Net.Configuration
         {
             get
             {
-                if (_key == null)
+                if (_key is null)
                 {
                     // Key is calculated lazily as last portion of Path
                     _key = ConfigurationPath.GetSectionKey(_path);

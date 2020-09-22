@@ -280,7 +280,7 @@ namespace Lucene.Net.Index
                 Terms vector = ent.Value.GetTermVector(docID, fieldName);
                 if (vector is object)
                 {
-                    if (fields == null)
+                    if (fields is null)
                     {
                         fields = new ParallelFields(this);
                     }
@@ -311,7 +311,7 @@ namespace Lucene.Net.Index
                     }
                     catch (IOException e)
                     {
-                        if (ioe == null)
+                        if (ioe is null)
                         {
                             ioe = e;
                         }

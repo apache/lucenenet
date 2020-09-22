@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
                     // unreleased thread states are deactivated during DW#close()
                     numThreadStatesActive++; // increment will publish the ThreadState
                                                         //System.out.println("activeCount=" + numThreadStatesActive);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(threadState.dwpt == null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(threadState.dwpt is null);
                     unlock = false;
                     return threadState;
                 }
@@ -316,7 +316,7 @@ namespace Lucene.Net.Index
                         // Important that we are LIFO here! This way if number of concurrent indexing threads was once high, but has now reduced, we only use a
                         // limited number of thread states:
                         threadState = freeList[freeCount - 1];
-                        if (threadState.dwpt == null)
+                        if (threadState.dwpt is null)
                         {
                             // This thread-state is not initialized, e.g. it
                             // was just flushed. See if we can instead find
@@ -400,7 +400,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < limit; i++)
             {
                 ThreadState state = threadStates[i];
-                if (minThreadState == null || state.QueueLength < minThreadState.QueueLength)
+                if (minThreadState is null || state.QueueLength < minThreadState.QueueLength)
                 {
                     minThreadState = state;
                 }

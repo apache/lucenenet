@@ -138,13 +138,13 @@ namespace Lucene.Net.Analysis.Sinks
 
         public override bool Accept(AttributeSource source)
         {
-            if (m_termAtt == null)
+            if (m_termAtt is null)
             {
                 m_termAtt = source.AddAttribute<ICharTermAttribute>();
             }
 
             DateTime date; //We don't care about the date, just that we can parse it as a date
-            if (m_formats == null)
+            if (m_formats is null)
             {
                 return DateTime.TryParse(m_termAtt.ToString(), m_culture, m_style, out date);
             }

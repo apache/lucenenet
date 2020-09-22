@@ -253,7 +253,7 @@ namespace Lucene.Net.Analysis
         {
             TokenStreamComponents components = reuseStrategy.GetReusableComponents(this, fieldName);
             TextReader r = InitReader(fieldName, reader);
-            if (components == null)
+            if (components is null)
             {
                 components = CreateComponents(fieldName, r);
                 reuseStrategy.SetReusableComponents(this, fieldName, components);
@@ -290,12 +290,12 @@ namespace Lucene.Net.Analysis
         {
             TokenStreamComponents components = reuseStrategy.GetReusableComponents(this, fieldName);
             ReusableStringReader strReader =
-                (components == null || components.reusableStringReader == null)
+                (components is null || components.reusableStringReader is null)
                     ? new ReusableStringReader()
                     : components.reusableStringReader;
             strReader.SetValue(text);
             var r = InitReader(fieldName, strReader);
-            if (components == null)
+            if (components is null)
             {
                 components = CreateComponents(fieldName, r);
                 reuseStrategy.SetReusableComponents(this, fieldName, components);
@@ -457,7 +457,7 @@ namespace Lucene.Net.Analysis
             public override void SetReusableComponents(Analyzer analyzer, string fieldName, TokenStreamComponents components)
             {
                 var componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
-                if (componentsPerField == null)
+                if (componentsPerField is null)
                 {
                     // LUCENENET-615: This needs to support nullable keys
                     componentsPerField = new JCG.Dictionary<string, TokenStreamComponents>();
@@ -610,7 +610,7 @@ namespace Lucene.Net.Analysis
         /// <exception cref="ObjectDisposedException"> if the <see cref="Analyzer"/> is closed. </exception>
         protected internal object GetStoredValue(Analyzer analyzer)
         {
-            if (analyzer.storedValue == null)
+            if (analyzer.storedValue is null)
             {
                 throw new ObjectDisposedException(this.GetType().FullName, "this Analyzer is closed");
             }
@@ -625,7 +625,7 @@ namespace Lucene.Net.Analysis
         /// <exception cref="ObjectDisposedException"> if the <see cref="Analyzer"/> is closed. </exception>
         protected internal void SetStoredValue(Analyzer analyzer, object storedValue)
         {
-            if (analyzer.storedValue == null)
+            if (analyzer.storedValue is null)
             {
                 throw new ObjectDisposedException("this Analyzer is closed");
             }
