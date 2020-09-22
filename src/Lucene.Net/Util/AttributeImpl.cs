@@ -146,7 +146,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary> The default implementation of this method accesses all declared
-        /// fields of th is object and prints the values in the following syntax:
+        /// fields of this object and prints the values in the following syntax:
         ///
         /// <code>
         /// public String ToString() 

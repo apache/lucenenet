@@ -527,7 +527,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Disposes all resources used by th is object.
+        /// Disposes all resources used by this object.
         /// </summary>
         public void Dispose()
         {

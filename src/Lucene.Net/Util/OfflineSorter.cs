@@ -168,7 +168,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Returns a string representation of th is object.
+            /// Returns a string representation of this object.
             /// </summary>
             public override string ToString()
             {

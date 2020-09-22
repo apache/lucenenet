@@ -25,7 +25,7 @@
     public interface IAccountable // LUCENENET NOTE: This interface wasn't added until Lucene 4.9
     { 
       /// <summary>
-      /// Return the memory usage of th is object in bytes. Negative values are illegal.
+      /// Return the memory usage of this object in bytes. Negative values are illegal.
       /// </summary>
       long RamBytesUsed();
     }

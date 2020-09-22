@@ -136,7 +136,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <exception cref="InvalidOperationException">
         ///           if <see cref="Dispose"/> had been called before or if no file has been added to
-        ///           th is object </exception>
+        ///           this object </exception>
         public void Dispose()
         {
             if (closed)

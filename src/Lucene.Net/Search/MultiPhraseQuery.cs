@@ -453,7 +453,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a hash code value for th is object. </summary>
+        /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
             //If this doesn't work hash all elements of positions. This was used to reduce time overhead

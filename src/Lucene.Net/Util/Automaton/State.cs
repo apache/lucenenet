@@ -347,7 +347,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Compares th is object with the specified object for order. States are
+        /// Compares this object with the specified object for order. States are
         /// ordered by the time of construction.
         /// </summary>
         public virtual int CompareTo(State s)

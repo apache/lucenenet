@@ -552,7 +552,7 @@ namespace Lucene.Net.Util
                 {
                     /*
                      * Consider an object. Push any references it has to the processing stack
-                     * and accumulate th is object's shallow size.
+                     * and accumulate this object's shallow size.
                      */
                     try
                     {

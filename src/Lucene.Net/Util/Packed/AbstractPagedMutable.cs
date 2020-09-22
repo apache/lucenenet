@@ -108,7 +108,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Return the number of bytes used by th is object. </summary>
+        /// Return the number of bytes used by this object. </summary>
         public virtual long RamBytesUsed()
         {
             long bytesUsed = RamUsageEstimator.AlignObjectSize(BaseRamBytesUsed());

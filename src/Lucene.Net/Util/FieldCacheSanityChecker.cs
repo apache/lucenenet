@@ -381,7 +381,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Type of insane behavior th is object represents
+            /// Type of insane behavior this object represents
             /// </summary>
             public InsanityType Type => type;
 

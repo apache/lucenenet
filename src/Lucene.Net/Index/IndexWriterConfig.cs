@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Holds all the configuration that is used to create an <see cref="IndexWriter"/>.
-    /// Once <see cref="IndexWriter"/> has been created with th is object, changes to this
+    /// Once <see cref="IndexWriter"/> has been created with this object, changes to this
     /// object will not affect the <see cref="IndexWriter"/> instance. For that, use
     /// <see cref="LiveIndexWriterConfig"/> that is returned from <see cref="IndexWriter.Config"/>.
     ///

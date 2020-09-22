@@ -519,7 +519,7 @@ namespace Lucene.Net.Util.Fst
                     lock (syncLock)
                     {
                         path = queue.Min;
-                        if (path is object)
+                        if (pathis object)
                         {
                             queue.Remove(path);
                         }

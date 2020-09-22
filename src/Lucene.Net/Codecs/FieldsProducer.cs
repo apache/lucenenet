@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs
 
         // LUCENENET specific - implementing proper dispose pattern
         /// <summary>
-        /// Disposes all resources used by th is object.
+        /// Disposes all resources used by this object.
         /// </summary>
         public void Dispose()
         {

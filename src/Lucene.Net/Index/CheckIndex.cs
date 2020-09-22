@@ -2451,7 +2451,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (indexPath is object)
+                    if (indexPathis object)
                     {
                         // LUCENENET specific - we only output from our CLI wrapper
                         throw new ArgumentException("ERROR: unexpected extra argument '" + args[i] + "'");

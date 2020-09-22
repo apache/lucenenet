@@ -511,7 +511,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a hash code value for th is object. </summary>
+        /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
             return J2N.BitConversion.SingleToInt32Bits(Boost) 

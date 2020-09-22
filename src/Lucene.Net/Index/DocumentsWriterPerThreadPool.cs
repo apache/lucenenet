@@ -183,7 +183,7 @@ namespace Lucene.Net.Index
             // We should only be cloned before being used:
             if (numThreadStatesActive != 0)
             {
-                throw new InvalidOperationException("clone th is object before it is used!");
+                throw new InvalidOperationException("clone this object before it is used!");
             }
             return new DocumentsWriterPerThreadPool(threadStates.Length);
         }

@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Decrements the reference counting of th is object. When reference counting
+        /// Decrements the reference counting of this object. When reference counting
         /// hits 0, calls <see cref="Release()"/>.
         /// </summary>
         public void DecRef()

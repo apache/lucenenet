@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
             }
 
             // If any errors occured, throw it.
-            if (th is object)
+            if (this object)
             {
                 if (th is Exception)
                 {

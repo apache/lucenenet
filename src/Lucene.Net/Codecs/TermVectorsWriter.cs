@@ -365,7 +365,7 @@ namespace Lucene.Net.Codecs
         public abstract IComparer<BytesRef> Comparer { get; }
 
         /// <summary>
-        /// Disposes all resources used by th is object.
+        /// Disposes all resources used by this object.
         /// </summary>
         public void Dispose()
         {

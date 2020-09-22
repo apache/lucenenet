@@ -384,7 +384,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a hash code value for th is object.  If a
+        /// Returns a hash code value for this object.  If a
         /// <see cref="FieldComparerSource"/> or
         /// <see cref="FieldCache.IParser"/> was provided, it must properly
         /// implement GetHashCode() (unless a singleton is always

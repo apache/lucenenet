@@ -221,7 +221,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Disposes all resources used by th is object.
+        /// Disposes all resources used by this object.
         /// </summary>
         public void Dispose()
         {
@@ -230,7 +230,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Disposes all resources used by th is object. Subclasses may override
+        /// Disposes all resources used by this object. Subclasses may override
         /// to dispose their own resources.
         /// </summary>
         protected virtual void Dispose(bool disposing)
