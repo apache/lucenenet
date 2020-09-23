@@ -20,6 +20,7 @@
 parameters:
   testProjectName: '' # The name of the test project
   framework: '' # The target framework for display purposes.
+  vsTestPlatform: 'x64' # Target platform architecture used for test execution. Valid values are x86, x64, and ARM.
   osName: '' # The name of the operating system for display purposes.
   testResultsFormat: VSTest # Specify the format of the results files you want to publish. The following formats are supported: JUnit, NUnit, VSTest, XUnit, CTest
   testResultsArtifactName: 'testresults' # The name of the Azure DevOps build artifact where the test results will be published. Default 'testresults'.
@@ -35,6 +36,7 @@ steps:
 #    }
 #    EnsureNotNullOrEmpty('${{ parameters.testProjectName }}', 'testProjectName')
 #    EnsureNotNullOrEmpty('${{ parameters.framework }}', 'framework')
+#    EnsureNotNullOrEmpty('${{ parameters.vsTestPlatform }}', 'vsTestPlatform')
 #    EnsureNotNullOrEmpty('${{ parameters.osName }}', 'osName')
 #    EnsureNotNullOrEmpty('${{ parameters.testResultsFormat }}', 'testResultsFormat')
 #    EnsureNotNullOrEmpty('${{ parameters.testResultsArtifactName }}', 'testResultsArtifactName')
@@ -44,7 +46,7 @@ steps:
 - template: 'show-all-files.yml' # Uncomment for debugging
 
 - powershell: |
-    $testResultsFileName = "$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}/${{ parameters.osName }}/${{ parameters.framework }}/${{ parameters.testProjectName }}/${{ parameters.testResultsFileName }}"
+    $testResultsFileName = "$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}/${{ parameters.osName }}/${{ parameters.framework }}/${{ parameters.vsTestPlatform }}/${{ parameters.testProjectName }}/${{ parameters.testResultsFileName }}"
     $testResultsFileExists = Test-Path $testResultsFileName
     if ($testResultsFileExists) {
 
@@ -73,9 +75,9 @@ steps:
   displayName: 'Parse Test Results File'
 
 - task: PublishTestResults@2
-  displayName: 'Publish Test Results ${{ parameters.testProjectName }},${{ parameters.framework }}'
+  displayName: 'Publish Test Results ${{ parameters.testProjectName }},${{ parameters.framework }},${{ parameters.vsTestPlatform }}'
   inputs:
     testResultsFormat: ${{ parameters.testResultsFormat }}
-    testResultsFiles: '$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}/${{ parameters.osName }}/${{ parameters.framework }}/${{ parameters.testProjectName }}/${{ parameters.testResultsFileName }}'
-    testRunTitle: '${{ parameters.testProjectName }} - ${{ parameters.framework }} - ${{ parameters.osName }} | $(TestResults)'
+    testResultsFiles: '$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}/${{ parameters.osName }}/${{ parameters.framework }}/${{ parameters.vsTestPlatform }}/${{ parameters.testProjectName }}/${{ parameters.testResultsFileName }}'
+    testRunTitle: '${{ parameters.testProjectName }} - ${{ parameters.framework }} - ${{ parameters.vsTestPlatform }} - ${{ parameters.osName }} | $(TestResults)'
   condition: and(succeeded(), eq(variables['TestResultsFileExists'], 'true'))

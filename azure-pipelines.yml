@@ -312,7 +312,7 @@ stages:
           imageName: 'macOS-10.14'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-    displayName: 'Test netcoreapp3.1 on'
+    displayName: 'Test netcoreapp3.1,x64 on'
     pool:
       vmImage: $(imageName)
     steps:
@@ -320,6 +320,7 @@ stages:
       parameters:
         osName: $(osName)
         framework: 'netcoreapp3.1'
+        vsTestPlatform: 'x64'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
@@ -343,7 +344,7 @@ stages:
           imageName: 'macOS-10.14'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
-    displayName: 'Test netcoreapp2.1 on'
+    displayName: 'Test netcoreapp2.1,x64 on'
     pool:
       vmImage: $(imageName)
     steps:
@@ -351,13 +352,14 @@ stages:
       parameters:
         osName: $(osName)
         framework: 'netcoreapp2.1'
+        vsTestPlatform: 'x64'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
 
-  - job: Test_net48_Windows
+  - job: Test_net48_Windows_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
-    displayName: 'Test net48 on Windows'
+    displayName: 'Test net48,x64 on Windows'
     pool:
       vmImage: 'windows-2019'
     steps:
@@ -365,9 +367,26 @@ stages:
       parameters:
         osName: 'Windows'
         framework: 'net48'
+        vsTestPlatform: 'x64'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: 8
-        maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
+
+  - job: Test_net48_Windows_x86
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+    displayName: 'Test net48,x86 on Windows'
+    pool:
+      vmImage: 'windows-2019'
+    steps:
+    - template: 'build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: 'Windows'
+        framework: 'net48'
+        vsTestPlatform: 'x86'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        maximumParallelJobs: 8
+        maximumAllowedFailures: 5 # Maximum allowed failures for a successful build
+
 
 - stage: Publish_Stage
   displayName: 'Publish Stage:'

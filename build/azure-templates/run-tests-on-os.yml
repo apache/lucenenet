@@ -145,7 +145,7 @@ steps:
             }
     
             $fwork = ConvertFrameworkName($framework)
-            $testResultDirectory = "$testResultsArtifactDirectory/$testOSName/$framework/$testName"
+            $testResultDirectory = "$testResultsArtifactDirectory/$testOSName/$framework/$testPlatform/$testName"
             if (!(Test-Path "$testResultDirectory")) {
                 New-Item "$testResultDirectory" -ItemType Directory -Force
             }
@@ -174,7 +174,7 @@ steps:
                 Start-Sleep -Milliseconds 500
     
                 # Execute the jobs in parallel
-                Start-Job -Name "$testName,$framework" -ScriptBlock $scriptBlock -ArgumentList $testExpression
+                Start-Job -Name "$testName,$framework,$testPlatform" -ScriptBlock $scriptBlock -ArgumentList $testExpression
             }
         }
     }
@@ -200,7 +200,7 @@ steps:
     }
     
     $global:LASTEXITCODE = 0 # Force the script to continue on error
-  displayName: 'dotnet vstest ${{ parameters.framework }}'
+  displayName: 'dotnet vstest ${{ parameters.framework }},${{ parameters.vsTestPlatform }}'
   ignoreLASTEXITCODE: true
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
@@ -209,7 +209,7 @@ steps:
   displayName: 'Publish Artifact: ${{ parameters.testResultsArtifactName }}'
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}'
-    ArtifactName: '${{ parameters.testResultsArtifactName }}_${{ parameters.osName }}_${{ parameters.framework }}'
+    ArtifactName: '${{ parameters.testResultsArtifactName }}_${{ parameters.osName }}_${{ parameters.framework }}_${{ parameters.vsTestPlatform }}'
   condition: succeededOrFailed()
 
 # Due to the fact that it is not possible to loop a task and
@@ -223,6 +223,7 @@ steps:
   parameters:
     osName: '${{ parameters.osName }}'
     framework: '${{ parameters.framework }}'
+    vsTestPlatform: '${{ parameters.vsTestPlatform }}'
 
 - pwsh: |
     $maximumAllowedFailures = '${{ parameters.maximumAllowedFailures }}'
