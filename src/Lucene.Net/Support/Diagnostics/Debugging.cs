@@ -26,6 +26,9 @@ namespace Lucene.Net.Diagnostics
     /// </summary>
     internal static class Debugging
     {
+        // LUCENENET specific - use a lazy wrapper around SystemProperties to avoid the repeated cost of getting the value
+        private static Lazy<bool> _assertsEnabled = new Lazy<bool>(() => SystemProperties.GetPropertyAsBoolean("assert", false));
+
         /// <summary>
         /// Allows toggling "assertions" on/off even in release builds. The default is <c>false</c>.
         /// <para/>
@@ -34,7 +37,11 @@ namespace Lucene.Net.Diagnostics
         /// <see cref="Index.FreqProxTermsWriterPerField"/>, <see cref="Index.StoredFieldsProcessor"/>,
         /// <see cref="Index.TermVectorsConsumer"/>, and <see cref="Index.TermVectorsConsumerPerField"/>.
         /// </summary>
-        public static bool AssertsEnabled = SystemProperties.GetPropertyAsBoolean("assert", false);
+        public static bool AssertsEnabled
+        {
+            get { return _assertsEnabled.Value; }
+            set { _assertsEnabled = new Lazy<bool>(() => value); }
+        }
 
         /// <summary>
         /// Checks for a condition; if the condition is <c>false</c>, throws an <see cref="AssertionException"/>.
