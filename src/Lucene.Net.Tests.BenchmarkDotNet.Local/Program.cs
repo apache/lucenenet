@@ -25,23 +25,7 @@ namespace Lucene.Net.Tests.BenchmarkDotNet
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("Setup");
-            var sf = new SearchFilesBenchmarks();
-            sf.GlobalSetUp();
-
-            Console.WriteLine("Running");
-
-            Parallel.For(0, 10_000, (i) => sf.SearchFiles());
-
-            Console.WriteLine("Teardown");
-
-            sf.GlobalTearDown();
-
-            Console.WriteLine("Done");
-
-
-
-            //new BenchmarkSwitcher(typeof(Program).Assembly).Run(args);
+            new BenchmarkSwitcher(typeof(Program).Assembly).Run(args);
         }
     }
 }
