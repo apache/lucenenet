@@ -94,6 +94,7 @@ namespace Lucene.Net.Codecs
 
             if (indexOptions == IndexOptions.DOCS_ONLY)
             {
+                bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
                 while (true)
                 {
                     int doc = postings.NextDoc();
@@ -101,7 +102,7 @@ namespace Lucene.Net.Codecs
                     {
                         break;
                     }
-                    visitedDocs.Set(doc);
+                    visitedDocs.Set(doc, assertsEnabled);
                     this.StartDoc(doc, -1);
                     this.FinishDoc();
                     df++;
@@ -110,6 +111,7 @@ namespace Lucene.Net.Codecs
             }
             else if (indexOptions == IndexOptions.DOCS_AND_FREQS)
             {
+                bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
                 while (true)
                 {
                     int doc = postings.NextDoc();
@@ -117,7 +119,7 @@ namespace Lucene.Net.Codecs
                     {
                         break;
                     }
-                    visitedDocs.Set(doc);
+                    visitedDocs.Set(doc, assertsEnabled);
                     int freq = postings.Freq;
                     this.StartDoc(doc, freq);
                     this.FinishDoc();
@@ -127,6 +129,7 @@ namespace Lucene.Net.Codecs
             }
             else if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
+                bool assertsEnabled = Debugging.AssertsEnabled;
                 var postingsEnum = (DocsAndPositionsEnum)postings;
                 while (true)
                 {
@@ -135,7 +138,7 @@ namespace Lucene.Net.Codecs
                     {
                         break;
                     }
-                    visitedDocs.Set(doc);
+                    visitedDocs.Set(doc, assertsEnabled);
                     int freq = postingsEnum.Freq;
                     this.StartDoc(doc, freq);
                     totTF += freq;
@@ -151,7 +154,8 @@ namespace Lucene.Net.Codecs
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+                bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
+                if (assertsEnabled) Debugging.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
                 var postingsEnum = (DocsAndPositionsEnum)postings;
                 while (true)
                 {
@@ -160,7 +164,7 @@ namespace Lucene.Net.Codecs
                     {
                         break;
                     }
-                    visitedDocs.Set(doc);
+                    visitedDocs.Set(doc, assertsEnabled);
                     int freq = postingsEnum.Freq;
                     this.StartDoc(doc, freq);
                     totTF += freq;

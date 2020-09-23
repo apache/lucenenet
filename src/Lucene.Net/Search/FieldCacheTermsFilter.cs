@@ -22,6 +22,7 @@ namespace Lucene.Net.Search
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FixedBitSet = Lucene.Net.Util.FixedBitSet;
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
+    using Lucene.Net.Diagnostics;
 
     /// <summary>
     /// A <see cref="Filter"/> that only accepts documents whose single
@@ -117,6 +118,8 @@ namespace Lucene.Net.Search
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
+            bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
+
             SortedDocValues fcsi = FieldCache.GetTermsIndex((context.AtomicReader), field);
             FixedBitSet bits = new FixedBitSet(fcsi.ValueCount);
             for (int i = 0; i < terms.Length; i++)
@@ -124,7 +127,7 @@ namespace Lucene.Net.Search
                 int ord = fcsi.LookupTerm(terms[i]);
                 if (ord >= 0)
                 {
-                    bits.Set(ord);
+                    bits.Set(ord, assertsEnabled);
                 }
             }
             return new FieldCacheDocIdSet(context.Reader.MaxDoc, acceptDocs, (doc) =>
@@ -137,7 +140,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    return bits.Get(ord);
+                    return bits.Get(ord, assertsEnabled);
                 }
             });
         }

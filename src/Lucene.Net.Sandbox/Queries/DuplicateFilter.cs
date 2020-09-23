@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
@@ -80,6 +81,8 @@ namespace Lucene.Net.Sandbox.Queries
                 return bits;
             }
 
+            bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
+
             TermsEnum termsEnum = terms.GetEnumerator();
             DocsEnum docs = null;
             while (termsEnum.MoveNext())
@@ -90,7 +93,7 @@ namespace Lucene.Net.Sandbox.Queries
                 {
                     if (keepMode == KeepMode.KM_USE_FIRST_OCCURRENCE)
                     {
-                        bits.Set(doc);
+                        bits.Set(doc, assertsEnabled);
                     }
                     else
                     {
@@ -104,7 +107,7 @@ namespace Lucene.Net.Sandbox.Queries
                                 break;
                             }
                         }
-                        bits.Set(lastDoc);
+                        bits.Set(lastDoc, assertsEnabled);
                     }
                 }
             }

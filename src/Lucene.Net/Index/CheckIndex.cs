@@ -991,6 +991,8 @@ namespace Lucene.Net.Index
         /// </summary>
         private static Status.TermIndexStatus CheckFields(Fields fields, IBits liveDocs, int maxDoc, FieldInfos fieldInfos, bool doPrint, bool isVectors, TextWriter infoStream, bool verbose)
         {
+            bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
+
             // TODO: we should probably return our own stats thing...?!
 
             Status.TermIndexStatus status = new Status.TermIndexStatus();
@@ -1098,7 +1100,7 @@ namespace Lucene.Net.Index
                 {
                     BytesRef term = termsEnum.Term;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(term.IsValid());
+                    if (assertsEnabled) Debugging.Assert(term.IsValid());
 
                     // make sure terms arrive in order according to
                     // the comp
@@ -1178,7 +1180,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                         status.TotFreq++;
-                        visitedDocs.Set(doc);
+                        visitedDocs.Set(doc, assertsEnabled);
                         int freq = -1;
                         if (hasFreqs)
                         {
@@ -1234,7 +1236,7 @@ namespace Lucene.Net.Index
                                 // LUCENENET specific - restructured to reduce number of checks in production
                                 if (!(payload is null))
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(payload.IsValid());
+                                    if (assertsEnabled) Debugging.Assert(payload.IsValid());
                                     if (payload.Length < 1)
                                     {
                                         throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + " payload length is out of bounds " + payload.Length);
@@ -1452,7 +1454,7 @@ namespace Lucene.Net.Index
                     if (fieldTerms is BlockTreeTermsReader.FieldReader)
                     {
                         BlockTreeTermsReader.Stats stats = ((BlockTreeTermsReader.FieldReader)fieldTerms).ComputeStats();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(stats != null);
+                        if (assertsEnabled) Debugging.Assert(stats != null);
                         if (status.BlockTreeStats == null)
                         {
                             status.BlockTreeStats = new Dictionary<string, BlockTreeTermsReader.Stats>();

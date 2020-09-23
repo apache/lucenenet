@@ -432,10 +432,12 @@ namespace Lucene.Net.Search
                 Terms terms = reader.GetTerms(field);
                 if (terms != null)
                 {
+                    bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
+
                     if (setDocsWithField)
                     {
                         int termsDocCount = terms.DocCount;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(termsDocCount <= maxDoc);
+                        if (assertsEnabled) Debugging.Assert(termsDocCount <= maxDoc);
                         if (termsDocCount == maxDoc)
                         {
                             // Fast case: all docs have this field:
@@ -467,7 +469,7 @@ namespace Lucene.Net.Search
                                     // Lazy init
                                     this.docsWithField = docsWithField = new FixedBitSet(maxDoc);
                                 }
-                                docsWithField.Set(docID);
+                                docsWithField.Set(docID, assertsEnabled);
                             }
                         }
                     }
@@ -1112,6 +1114,8 @@ namespace Lucene.Net.Search
 
             protected override object CreateValue(AtomicReader reader, CacheKey key, bool setDocsWithField) // ignored
             {
+                bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
+
                 string field = key.field;
                 int maxDoc = reader.MaxDoc;
 
@@ -1121,7 +1125,7 @@ namespace Lucene.Net.Search
                 if (terms != null)
                 {
                     int termsDocCount = terms.DocCount;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(termsDocCount <= maxDoc);
+                    if (assertsEnabled) Debugging.Assert(termsDocCount <= maxDoc);
                     if (termsDocCount == maxDoc)
                     {
                         // Fast case: all docs have this field:
@@ -1146,7 +1150,7 @@ namespace Lucene.Net.Search
                             {
                                 break;
                             }
-                            res.Set(docID);
+                            res.Set(docID, assertsEnabled);
                         }
                     }
                 }
@@ -1158,7 +1162,7 @@ namespace Lucene.Net.Search
                 if (numSet >= maxDoc)
                 {
                     // The cardinality of the BitSet is maxDoc if all documents have a value.
-                    if (Debugging.AssertsEnabled) Debugging.Assert(numSet == maxDoc);
+                    if (assertsEnabled) Debugging.Assert(numSet == maxDoc);
                     return new Lucene.Net.Util.Bits.MatchAllBits(maxDoc);
                 }
                 return res;

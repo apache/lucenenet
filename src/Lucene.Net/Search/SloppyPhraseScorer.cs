@@ -170,6 +170,8 @@ namespace Lucene.Net.Search
             {
                 return true; // not a repeater
             }
+            bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
+
             PhrasePositions[] rg = rptGroups[pp.rptGroup];
             FixedBitSet bits = new FixedBitSet(rg.Length); // for re-queuing after collisions are resolved
             int k0 = pp.rptInd;
@@ -184,7 +186,7 @@ namespace Lucene.Net.Search
                 if (k != k0) // careful: mark only those currently in the queue
                 {
                     bits = FixedBitSet.EnsureCapacity(bits, k);
-                    bits.Set(k); // mark that pp2 need to be re-queued
+                    bits.Set(k, assertsEnabled); // mark that pp2 need to be re-queued
                 }
             }
             // collisions resolved, now re-queue
@@ -573,6 +575,8 @@ namespace Lucene.Net.Search
         /// bit-sets - for each repeating pp, for each of its repeating terms, the term ordinal values is set </summary>
         private IList<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, IDictionary<Term, int?> tord)
         {
+            bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
+
             List<FixedBitSet> bb = new List<FixedBitSet>(rpp.Length);
             foreach (PhrasePositions pp in rpp)
             {
@@ -581,7 +585,7 @@ namespace Lucene.Net.Search
                 foreach (var t in pp.terms)
                 {
                     if (tord.TryGetValue(t, out ord) && ord != null)
-                        b.Set((int)ord);
+                        b.Set((int)ord, assertsEnabled);
                 }
                 bb.Add(b);
             }

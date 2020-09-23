@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -228,6 +229,9 @@ namespace Lucene.Net.Queries
             Terms terms = null;
             TermsEnum termsEnum = null;
             DocsEnum docs = null;
+            
+            bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
+
             foreach (TermsAndField termsAndField in this.termsAndFields)
             {
                 if ((terms = fields.GetTerms(termsAndField.field)) != null)
@@ -246,12 +250,12 @@ namespace Lucene.Net.Queries
                                 {
                                     result = new FixedBitSet(reader.MaxDoc);
                                     // lazy init but don't do it in the hot loop since we could read many docs
-                                    result.Set(docs.DocID);
+                                    result.Set(docs.DocID, assertsEnabled);
                                 }
                             }
                             while (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                             {
-                                result.Set(docs.DocID);
+                                result.Set(docs.DocID, assertsEnabled);
                             }
                         }
                     }

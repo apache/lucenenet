@@ -93,6 +93,8 @@ namespace Lucene.Net.Search
         /// </summary>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
+            bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
+
             AtomicReader reader = (context.AtomicReader);
             Fields fields = reader.Fields;
             if (fields == null)
@@ -109,7 +111,7 @@ namespace Lucene.Net.Search
             }
 
             TermsEnum termsEnum = m_query.GetTermsEnum(terms);
-            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
+            if (assertsEnabled) Debugging.Assert(termsEnum != null);
             if (termsEnum.MoveNext())
             {
                 // fill into a FixedBitSet
@@ -123,7 +125,7 @@ namespace Lucene.Net.Search
                     int docid;
                     while ((docid = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                     {
-                        bitSet.Set(docid);
+                        bitSet.Set(docid, assertsEnabled);
                     }
                 } while (termsEnum.MoveNext());
 

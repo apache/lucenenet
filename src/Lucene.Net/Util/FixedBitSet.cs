@@ -2,6 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -259,7 +260,14 @@ namespace Lucene.Net.Util
 
         public bool Get(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index + ", numBits=" + numBits);
+            return Get(index, Debugging.AssertsEnabled);
+        }
+
+        // LUCENENET specific - Add method to pass a pre-cached assertsEnabled bool so we can remove the call to the Debugging static class in tight loops
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Get(int index, bool assertsEnabled)
+        {
+            if (assertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index + ", numBits=" + numBits);
             int i = index >> 6; // div 64
             // signed shift will keep a negative index and force an
             // array-index-out-of-bounds-exception, removing the need for an explicit check.
@@ -270,7 +278,15 @@ namespace Lucene.Net.Util
 
         public void Set(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index + ", numBits=" + numBits);
+            Set(index, Debugging.AssertsEnabled);
+        }
+        
+        // LUCENENET specific - Add method to pass a pre-cached assertsEnabled bool so we can remove the call to the Debugging static class in tight loops
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Set(int index, bool assertsEnabled)
+        {
+            if (assertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index + ", numBits=" + numBits);
+
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -389,9 +405,10 @@ namespace Lucene.Net.Util
             else
             {
                 int doc;
+                bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
                 while ((doc = iter.NextDoc()) < numBits)
                 {
-                    Set(doc);
+                    Set(doc, assertsEnabled);
                 }
             }
         }

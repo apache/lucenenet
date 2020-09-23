@@ -403,6 +403,8 @@ namespace Lucene.Net.Index
             {
                 return; // nothing to flush, don't bother the codec with the unindexed field
             }
+            
+            bool assertsEnabled = Debugging.AssertsEnabled; //Cache the value out of the loop
 
             TermsConsumer termsConsumer = consumer.AddField(fieldInfo);
             IComparer<BytesRef> termComp = termsConsumer.Comparer;
@@ -416,7 +418,7 @@ namespace Lucene.Net.Index
             // new segment to the directory according to
             // currentFieldIndexOptions:
             IndexOptions currentFieldIndexOptions = fieldInfo.IndexOptions;
-            if (Debugging.AssertsEnabled) Debugging.Assert(currentFieldIndexOptions != IndexOptions.NONE);
+            if (assertsEnabled) Debugging.Assert(currentFieldIndexOptions != IndexOptions.NONE);
 
             bool writeTermFreq = currentFieldIndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
             bool writePositions = currentFieldIndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
@@ -429,7 +431,7 @@ namespace Lucene.Net.Index
             //System.out.println("flush readTF=" + readTermFreq + " readPos=" + readPositions + " readOffs=" + readOffsets);
 
             // Make sure FieldInfo.update is working correctly!:
-            if (Debugging.AssertsEnabled)
+            if (assertsEnabled)
             {
                 Debugging.Assert(!writeTermFreq || readTermFreq);
                 Debugging.Assert(!writePositions || readPositions);
@@ -555,11 +557,11 @@ namespace Lucene.Net.Index
                             }
                         }
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(docID != postings.lastDocIDs[termID]);
+                        if (assertsEnabled) Debugging.Assert(docID != postings.lastDocIDs[termID]);
                     }
 
                     docFreq++;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docID < state.SegmentInfo.DocCount, () => "doc=" + docID + " maxDoc=" + state.SegmentInfo.DocCount);
+                    if (assertsEnabled) Debugging.Assert(docID < state.SegmentInfo.DocCount, () => "doc=" + docID + " maxDoc=" + state.SegmentInfo.DocCount);
 
                     // NOTE: we could check here if the docID was
                     // deleted, and skip it.  However, this is somewhat
@@ -572,7 +574,7 @@ namespace Lucene.Net.Index
                     // passes, ie first sweep marks all del docs, and
                     // 2nd sweep does the real flush, but I suspect
                     // that'd add too much time to flush.
-                    visitedDocs.Set(docID);
+                    visitedDocs.Set(docID, assertsEnabled);
                     postingsConsumer.StartDoc(docID, writeTermFreq ? termFreq : -1);
                     if (docID < delDocLimit)
                     {
@@ -644,7 +646,7 @@ namespace Lucene.Net.Index
                                     {
                                         if (writeOffsets)
                                         {
-                                            if (Debugging.AssertsEnabled) Debugging.Assert(startOffset >= 0 && endOffset >= startOffset, () => "startOffset=" + startOffset + ",endOffset=" + endOffset + ",offset=" + offset);
+                                            if (assertsEnabled) Debugging.Assert(startOffset >= 0 && endOffset >= startOffset, () => "startOffset=" + startOffset + ",endOffset=" + endOffset + ",offset=" + offset);
                                             postingsConsumer.AddPosition(position, thisPayload, startOffset, endOffset);
                                         }
                                         else
