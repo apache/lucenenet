@@ -50,8 +50,8 @@ writer.Flush(triggerMerge: false, applyAllDeletes: false);
 <code class="csharp">// search with a phrase
 var phrase = new MultiPhraseQuery
 {
-    new Term("favoritePhrase", "brown");
-    new Term("favoritePhrase", "fox");
+    new Term("favoritePhrase", "brown"),
+    new Term("favoritePhrase", "fox")
 };
 </code>
 </pre>
