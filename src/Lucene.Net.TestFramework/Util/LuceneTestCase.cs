@@ -1396,7 +1396,10 @@ namespace Lucene.Net.Util
         /// </summary>
         public static bool Rarely(Random random)
         {
-            int p = TestNightly ? 10 : 1;
+            //int p = TestNightly ? 10 : 1;
+            // LUCENENET specific - reduced nightly instance by 1/2 to lower the
+            // total test time in Nightly builds to get under the 1 hour time limit of Azure DevOps
+            int p = TestNightly ? 5 : 1;
             p += (int)(p * Math.Log(RandomMultiplier));
             int min = 100 - Math.Min(p, 50); // never more than 50
             return random.Next(100) >= min;
