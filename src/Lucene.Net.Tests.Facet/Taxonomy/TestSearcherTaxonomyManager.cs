@@ -156,7 +156,10 @@ namespace Lucene.Net.Facet.Taxonomy
             AtomicBoolean stop = new AtomicBoolean();
 
             // How many unique facets to index before stopping:
-            int ordLimit = TestNightly ? 100000 : 6000;
+            //int ordLimit = TestNightly ? 100000 : 6000;
+            // LUCENENET specific: 100000 facets takes about 2-3 hours. To keep it under
+            // the 1 hour free limit of Azure DevOps, this was reduced to 30000.
+            int ordLimit = TestNightly ? 30000 : 6000;
 
             var indexer = new IndexerThread(w, config, tw, null, ordLimit, stop);
 
