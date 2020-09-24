@@ -186,7 +186,10 @@ namespace Lucene.Net.Index
                             {
                                 Console.WriteLine(Thread.CurrentThread.Name + ": now long sleep");
                             }
-                            Thread.Sleep(TestUtil.NextInt32(Random, 50, 500));
+                            //Thread.Sleep(TestUtil.NextInt32(Random, 50, 500));
+                            // LUCENENET specific - Reduced amount of pause to keep the total
+                            // Nightly test time under 1 hour
+                            Thread.Sleep(TestUtil.NextInt32(Random, 50, 250));
                         }
 
                         // Rate limit ingest rate:
@@ -585,15 +588,18 @@ namespace Lucene.Net.Index
                 MergePolicy mp = conf.MergePolicy;
                 if (mp is TieredMergePolicy)
                 {
-                    ((TieredMergePolicy)mp).MaxMergedSegmentMB = 5000.0;
+                    //((TieredMergePolicy)mp).MaxMergedSegmentMB = 5000.0;
+                    ((TieredMergePolicy)mp).MaxMergedSegmentMB = 2500.0; // LUCENENET specific - reduced each number by 50% to keep testing time under 1 hour
                 }
                 else if (mp is LogByteSizeMergePolicy)
                 {
-                    ((LogByteSizeMergePolicy)mp).MaxMergeMB = 1000.0;
+                    //((LogByteSizeMergePolicy)mp).MaxMergeMB = 1000.0;
+                    ((LogByteSizeMergePolicy)mp).MaxMergeMB = 500.0; // LUCENENET specific - reduced each number by 50% to keep testing time under 1 hour
                 }
                 else if (mp is LogMergePolicy)
                 {
-                    ((LogMergePolicy)mp).MaxMergeDocs = 100000;
+                    //((LogMergePolicy)mp).MaxMergeDocs = 100000;
+                    ((LogMergePolicy)mp).MaxMergeDocs = 50000; // LUCENENET specific - reduced each number by 50% to keep testing time under 1 hour
                 }
             }
 
@@ -612,7 +618,10 @@ namespace Lucene.Net.Index
 
             int NUM_INDEX_THREADS = TestUtil.NextInt32(LuceneTestCase.Random, 2, 4);
 
-            int RUN_TIME_SEC = LuceneTestCase.TestNightly ? 300 : RandomMultiplier;
+            //int RUN_TIME_SEC = LuceneTestCase.TestNightly ? 300 : RandomMultiplier;
+            // LUCENENET specific - lowered from 300 to 150 to reduce total time on Nightly
+            // build to less than 1 hour.
+            int RUN_TIME_SEC = LuceneTestCase.TestNightly ? 150 : RandomMultiplier;
 
             ISet<string> delIDs = new ConcurrentHashSet<string>();
             ISet<string> delPackIDs = new ConcurrentHashSet<string>();
