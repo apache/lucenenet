@@ -45,6 +45,7 @@ namespace Lucene.Net.Index
     {
         [Test]
         [Nightly]
+        [Ignore("LUCENENET specific - takes too long to run on Azure DevOps")]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostings"));
