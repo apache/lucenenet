@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -47,6 +48,9 @@ namespace Lucene.Net.Index
         [Nightly]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
+            // LUCENENET specific - disable the test if not 64 bit
+            AssumeTrue("This test consumes too much RAM be run on x86.", Constants.RUNTIME_IS_64BIT);
+
             MockDirectoryWrapper dir = new MockDirectoryWrapper(Random, new MMapDirectory(CreateTempDir("4GBStoredFields")));
             dir.Throttling = Throttling.NEVER;
 
