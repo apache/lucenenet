@@ -265,7 +265,10 @@ namespace Lucene.Net.Analysis
         [Test]
         public void TestRandomRegexps()
         {
-            int iters = TestNightly ? AtLeast(30) : AtLeast(1);
+            //int iters = TestNightly ? AtLeast(30) : AtLeast(1);
+            // LUCENENET specific - reduced Nightly iterations from 30 to 15
+            // to keep it under the 1 hour free limit of Azure DevOps
+            int iters = TestNightly ? AtLeast(15) : AtLeast(1);
             for (int i = 0; i < iters; i++)
             {
                 CharacterRunAutomaton dfa = new CharacterRunAutomaton(AutomatonTestUtil.RandomAutomaton(Random) /*, int.MaxValue*/);

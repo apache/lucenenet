@@ -56,7 +56,10 @@ namespace Lucene.Net.Analysis
                 TokenStream output = new MockRandomLookaheadTokenFilter(random, tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
             });
-            int maxLength = TestNightly ? 8192 : 1024;
+            //int maxLength = TestNightly ? 8192 : 1024;
+            // LUCENENET specific - reduced Nightly iterations from 8192 to 4096
+            // to keep it under the 1 hour free limit of Azure DevOps
+            int maxLength = TestNightly ? 4096 : 1024;
             CheckRandomData(Random, a, 50 * RandomMultiplier, maxLength);
         }
 
@@ -87,7 +90,10 @@ namespace Lucene.Net.Analysis
                 TokenStream output = new NeverPeeksLookaheadTokenFilter(tokenizer);
                 return new TokenStreamComponents(tokenizer, output);
             });
-            int maxLength = TestNightly ? 8192 : 1024;
+            //int maxLength = TestNightly ? 8192 : 1024;
+            // LUCENENET specific - reduced Nightly iterations from 8192 to 4096
+            // to keep it under the 1 hour free limit of Azure DevOps
+            int maxLength = TestNightly ? 4096 : 1024;
             CheckRandomData(Random, a, 50 * RandomMultiplier, maxLength);
         }
 
