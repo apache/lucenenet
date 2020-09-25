@@ -1378,7 +1378,10 @@ namespace Lucene.Net.Util
         /// </summary>
         public static int AtLeast(Random random, int i)
         {
-            int min = (TestNightly ? 2 * i : i) * RandomMultiplier;
+            //int min = (TestNightly ? 2 * i : i) * RandomMultiplier;
+            // LUCENENET specific - reduced nightly factor to lower the
+            // total test time in Nightly builds to get under the 1 hour time limit of Azure DevOps
+            int min = (TestNightly ? (int)(1.5 * i) : i) * RandomMultiplier;
             int max = min + (min / 2);
             return TestUtil.NextInt32(random, min, max);
         }
