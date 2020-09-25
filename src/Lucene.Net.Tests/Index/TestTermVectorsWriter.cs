@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using System;
 using System.IO;
 using Assert = Lucene.Net.TestFramework.Assert;
 
@@ -407,6 +408,10 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTermVectorCorruption()
         {
+            // LUCENENET specific - log the current locking strategy used and HResult values
+            // for assistance troubleshooting problems on Linux/macOS
+            LogNativeFSFactoryDebugInfo();
+
             Directory dir = NewDirectory();
             for (int iter = 0; iter < 2; iter++)
             {

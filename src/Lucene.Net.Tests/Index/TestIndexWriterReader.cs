@@ -867,6 +867,10 @@ namespace Lucene.Net.Index
         [Slow]
         public virtual void TestDuringAddIndexes()
         {
+            // LUCENENET specific - log the current locking strategy used and HResult values
+            // for assistance troubleshooting problems on Linux/macOS
+            LogNativeFSFactoryDebugInfo();
+
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
             IndexWriter writer = new IndexWriter(
                 dir1, 

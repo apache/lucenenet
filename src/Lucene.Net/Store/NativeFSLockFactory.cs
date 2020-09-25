@@ -58,7 +58,7 @@ namespace Lucene.Net.Store
     // to take advantage of .NET FileShare locking in the Windows and Linux environments.
     public class NativeFSLockFactory : FSLockFactory
     {
-        private enum FSLockingStrategy
+        internal enum FSLockingStrategy
         {
             FileStreamLockViolation,
             FileSharingViolation,
@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
         }
 
         // LUCENENET: This controls the locking strategy used for the current operating system and framework
-        private static FSLockingStrategy LockingStrategy
+        internal static FSLockingStrategy LockingStrategy
         {
             get
             {
