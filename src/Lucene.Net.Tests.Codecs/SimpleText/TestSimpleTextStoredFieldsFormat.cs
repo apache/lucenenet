@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Attributes;
 using Lucene.Net.Index;
+using NUnit.Framework;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -28,7 +29,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return new SimpleTextCodec();
         }
 
-        [Deadlock]
+        [Deadlock][Timeout(600000)]
         public override void TestConcurrentReads()
         {
             base.TestConcurrentReads();

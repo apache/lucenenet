@@ -261,7 +261,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         [Test]
         [Slow]
-        [Deadlock]
+        [Deadlock][Timeout(1200000)]
         public virtual void TestConcurrency()
         {
             int ncats = AtLeast(100000); // add many categories

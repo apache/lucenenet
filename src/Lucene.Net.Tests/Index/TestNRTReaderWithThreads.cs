@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow] // (occasionally)
-        [Deadlock]
+        [Deadlock][Timeout(600000)]
         public virtual void TestIndexing()
         {
             Directory mainDir = NewDirectory();

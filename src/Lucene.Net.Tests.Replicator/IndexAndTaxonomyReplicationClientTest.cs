@@ -290,7 +290,7 @@ namespace Lucene.Net.Replicator
         // handler copies them to the index directory.
         [Test]
         [Slow]
-        [Deadlock]
+        [Deadlock][Timeout(600000)]
         public void TestConsistencyOnExceptions()
         {
             // so the handler's index isn't empty

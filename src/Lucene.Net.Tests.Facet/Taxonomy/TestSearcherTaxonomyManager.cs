@@ -259,7 +259,7 @@ namespace Lucene.Net.Facet.Taxonomy
         
         [Test]
         [Slow]
-        [Deadlock]
+        [Deadlock][Timeout(1200000)]
         public virtual void Test_Directory() // LUCENENET specific - name collides with property of LuceneTestCase
         {
             Store.Directory indexDir = NewDirectory();

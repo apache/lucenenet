@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
     /// </summary>
     [SuppressCodecs("Lucene3x")]
     [Slow]
-    [Deadlock]
+    [Deadlock][Timeout(1200000)]
     [TestFixture]
     public class TestIndexWriterWithThreads : LuceneTestCase
     {
