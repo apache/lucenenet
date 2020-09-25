@@ -62,7 +62,10 @@ namespace Lucene.Net.Index
             if ((isSimpleText || iwc.MergePolicy is MockRandomMergePolicy) && (TestNightly || RandomMultiplier > 1))
             {
                 // Otherwise test can take way too long (> 2 hours)
-                numTerms /= 2;
+                //numTerms /= 2;
+                // LUCENENET specific - To keep this under the 1 hour free limit
+                // of Azure DevOps, this was reduced from /2 to /6.
+                numTerms /= 6;
             }
 
             if (Verbose)
