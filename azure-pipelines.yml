@@ -293,7 +293,7 @@ stages:
 - stage: Test_Stage
   displayName: 'Test Stage:'
   jobs:
-  - job: Test_netcoreapp3_1
+  - job: Test_netcoreapp3_1_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
       matrix:
@@ -325,7 +325,39 @@ stages:
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
 
-  - job: Test_netcoreapp2_2
+  - job: Test_netcoreapp3_1_x86 # Only run Nightly
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), eq(variables['IsNightly'], 'true'))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-2019'
+          maximumParallelJobs: 8
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        Linux:
+          osName: 'Linux'
+          imageName: 'ubuntu-16.04'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        macOS:
+          osName: 'macOS'
+          imageName: 'macOS-10.14'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+    displayName: 'Test netcoreapp3.1,x86 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: 'build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: $(osName)
+        framework: 'netcoreapp3.1'
+        vsTestPlatform: 'x86'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        maximumParallelJobs: $(maximumParallelJobs)
+        maximumAllowedFailures: $(maximumAllowedFailures)
+
+  - job: Test_netcoreapp2_2_x64
     condition: and(succeeded(), ne(variables['RunTests'], 'false'))
     strategy:
       matrix:
@@ -353,6 +385,38 @@ stages:
         osName: $(osName)
         framework: 'netcoreapp2.1'
         vsTestPlatform: 'x64'
+        testResultsArtifactName: '$(TestResultsArtifactName)'
+        maximumParallelJobs: $(maximumParallelJobs)
+        maximumAllowedFailures: $(maximumAllowedFailures)
+
+  - job: Test_netcoreapp2_2_x86 # Only run Nightly
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), eq(variables['IsNightly'], 'true'))
+    strategy:
+      matrix:
+        Windows:
+          osName: 'Windows'
+          imageName: 'windows-2019'
+          maximumParallelJobs: 8
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        Linux:
+          osName: 'Linux'
+          imageName: 'ubuntu-16.04'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+        macOS:
+          osName: 'macOS'
+          imageName: 'macOS-10.14'
+          maximumParallelJobs: 7
+          maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
+    displayName: 'Test netcoreapp2.1,x86 on'
+    pool:
+      vmImage: $(imageName)
+    steps:
+    - template: 'build/azure-templates/run-tests-on-os.yml'
+      parameters:
+        osName: $(osName)
+        framework: 'netcoreapp2.1'
+        vsTestPlatform: 'x86'
         testResultsArtifactName: '$(TestResultsArtifactName)'
         maximumParallelJobs: $(maximumParallelJobs)
         maximumAllowedFailures: $(maximumAllowedFailures)
