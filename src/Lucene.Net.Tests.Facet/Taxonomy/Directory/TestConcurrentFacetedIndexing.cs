@@ -85,12 +85,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 // this is the fastest, yet most memory consuming
                 return new Cl2oTaxonomyWriterCache(1024, 0.15f, 3);
             }
-            else if (TestNightly && d > 0.98)
-            {
-                // this is the slowest, but tests the writer concurrency when no caching is done.
-                // only pick it during NIGHTLY tests, and even then, with very low chances.
-                return NO_OP_CACHE;
-            }
+            // LUCENENET specific - this option takes too long to get under the 1 hour job limit in Azure DevOps
+            //else if (TestNightly && d > 0.98)
+            //{
+            //    // this is the slowest, but tests the writer concurrency when no caching is done.
+            //    // only pick it during NIGHTLY tests, and even then, with very low chances.
+            //    return NO_OP_CACHE;
+            //}
             else
             {
                 // this is slower than CL2O, but less memory consuming, and exercises finding categories on disk too.
