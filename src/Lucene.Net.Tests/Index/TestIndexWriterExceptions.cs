@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     [TestFixture]
-    [Deadlock]
+    [Deadlock][Timeout(600000)]
     public class TestIndexWriterExceptions : LuceneTestCase
     {
         private class DocCopyIterator : IEnumerable<Document>
