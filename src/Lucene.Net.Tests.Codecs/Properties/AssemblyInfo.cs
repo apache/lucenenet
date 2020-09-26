@@ -42,3 +42,7 @@ using System.Runtime.InteropServices;
 // LUCENENET specific - only allow tests in this assembly to run one at a time
 // to prevent polluting shared state.
 [assembly: LevelOfParallelism(1)]
+
+// LUCENENET specific - time out this test project at 50 minutes to allow for time before this
+// test runs and the results to be uploaded before the 60 minute Azure DevOps job cutoff for easier troubleshooting
+[assembly: Timeout(3000000)]

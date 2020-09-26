@@ -21,7 +21,6 @@
 
 using NUnit.Framework;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -34,3 +33,7 @@ using System.Runtime.CompilerServices;
 // LUCENENET specific - only allow tests in this assembly to run one at a time
 // to prevent polluting shared state.
 [assembly: LevelOfParallelism(1)]
+
+// LUCENENET specific - time out test projects at 55 minutes to allow the results
+// to be uploaded before the 60 minute Azure DevOps job cutoff for easier troubleshooting
+[assembly: Timeout(3300000)]

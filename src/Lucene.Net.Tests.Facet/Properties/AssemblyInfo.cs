@@ -19,6 +19,7 @@
  *
 */
 
+using NUnit.Framework;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -36,3 +37,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("253246a8-7b09-4251-ab4c-7971d3b2be4a")]
 
 
+// LUCENENET specific - time out this test project at 50 minutes to allow for time before this
+// test runs and the results to be uploaded before the 60 minute Azure DevOps job cutoff for easier troubleshooting
+[assembly: Timeout(3000000)]
