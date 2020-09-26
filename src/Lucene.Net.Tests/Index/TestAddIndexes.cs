@@ -816,6 +816,7 @@ namespace Lucene.Net.Index
         // LUCENE-1335: test simultaneous addIndexes & commits
         // from multiple threads
         [Test]
+        [Timeout(300000)]
         public virtual void TestAddIndexesWithThreads()
         {
             int NUM_ITER = TestNightly ? 15 : 5;
@@ -1004,6 +1005,7 @@ namespace Lucene.Net.Index
 
         // LUCENE-1335: test simultaneous addIndexes & close
         [Test]
+        [Timeout(300000)]
         public virtual void TestAddIndexesWithRollback()
         {
             int NUM_COPY = TestNightly ? 50 : 5;

@@ -39,6 +39,7 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow] // Occasionally
+        [Timeout(600000)]
         public virtual void TestPartialMerge()
         {
             Directory dir = NewDirectory();

@@ -32,6 +32,7 @@ namespace Lucene.Net.Index
     /// Tests for <seealso cref="DocumentsWriterStallControl"/>
     /// </summary>
     [TestFixture]
+    [Timeout(900000)]
     public class TestDocumentsWriterStallControl : LuceneTestCase
     {
         [Test]
