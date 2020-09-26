@@ -43,7 +43,7 @@ steps:
 #    EnsureNotNullOrEmpty('${{ parameters.testResultsFileName }}', 'testResultsFileName')
 #  displayName: 'Validate Template Parameters'
 
-- template: 'show-all-files.yml' # Uncomment for debugging
+#- template: 'show-all-files.yml' # Uncomment for debugging
 
 - powershell: |
     $testResultsFileName = "$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}/${{ parameters.osName }}/${{ parameters.framework }}/${{ parameters.vsTestPlatform }}/${{ parameters.testProjectName }}/${{ parameters.testResultsFileName }}"
