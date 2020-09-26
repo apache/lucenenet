@@ -745,7 +745,10 @@ namespace Lucene.Net.Index
             using (Directory dir = new MockDirectoryWrapper(Random, new MMapDirectory(CreateTempDir("testBigDocuments"))))
             {
                 IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random));
-                iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 30));
+                //iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 30));
+                // LUCENENET specific - Reduced amount to keep the total
+                // Nightly test time under 1 hour
+                iwConf.SetMaxBufferedDocs(RandomInts.RandomInt32Between(Random, 2, 15));
                 using (RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf))
                 {
 
@@ -767,13 +770,19 @@ namespace Lucene.Net.Index
                     onlyStored.IsIndexed = false;
 
                     Field smallField = new Field("fld", RandomByteArray(Random.Next(10), 256), onlyStored);
-                    int numFields = RandomInts.RandomInt32Between(Random, 500000, 1000000);
+                    //int numFields = RandomInts.RandomInt32Between(Random, 500000, 1000000);
+                    // LUCENENET specific - Reduced amount to keep the total
+                    // Nightly test time under 1 hour
+                    int numFields = RandomInts.RandomInt32Between(Random, 250000, 500000);
                     for (int i = 0; i < numFields; ++i)
                     {
                         bigDoc1.Add(smallField);
                     }
 
-                    Field bigField = new Field("fld", RandomByteArray(RandomInts.RandomInt32Between(Random, 1000000, 5000000), 2), onlyStored);
+                    //Field bigField = new Field("fld", RandomByteArray(RandomInts.RandomInt32Between(Random, 1000000, 5000000), 2), onlyStored);
+                    // LUCENENET specific - Reduced amount to keep the total
+                    // Nightly test time under 1 hour
+                    Field bigField = new Field("fld", RandomByteArray(RandomInts.RandomInt32Between(Random, 500000, 2500000), 2), onlyStored);
                     bigDoc2.Add(bigField);
 
                     int numDocs = AtLeast(5);
