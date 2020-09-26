@@ -66,7 +66,10 @@ namespace Lucene.Net.Index
             // LUCENENET specific - disable the test if asserts are not enabled
             AssumeTrue("This test requires asserts to be enabled.", Debugging.AssertsEnabled);
 
-            double ramBuffer = (TestNightly ? 1 : 10) + AtLeast(2) + Random.NextDouble();
+            //double ramBuffer = (TestNightly ? 1 : 10) + AtLeast(2) + Random.NextDouble();
+            // LUCENENET specific - increased size of ramBuffer to reduce the amount of
+            // time required and offset AtLeast(2).
+            double ramBuffer = (TestNightly ? 2 : 10) + AtLeast(2) + Random.NextDouble();
             RunFlushByRam(1 + Random.Next(TestNightly ? 5 : 1), ramBuffer, false);
         }
 
