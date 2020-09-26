@@ -146,12 +146,14 @@ namespace Lucene.Net.Index
 
             Start(threads);
             int iters = AtLeast(10000);
-            float checkPointProbability = TestNightly ? 0.5f : 0.1f;
+            //float checkPointProbability = TestNightly ? 0.5f : 0.1f;
+            // LUCENENET specific - reduced probabliltiy on x86 to prevent it from timing out.
+            float checkPointProbability = TestNightly ? (Lucene.Net.Util.Constants.RUNTIME_IS_64BIT ? 0.5f : 0.25f) : 0.1f;
             for (int i = 0; i < iters; i++)
             {
                 if (checkPoint)
                 {
-                    Assert.IsTrue(sync.updateJoin.Wait(new TimeSpan(0, 0, 0, 10)), "timed out waiting for update threads - deadlock?");
+                    Assert.IsTrue(sync.updateJoin.Wait(TimeSpan.FromSeconds(10)), "timed out waiting for update threads - deadlock?");
                     if (exceptions.Count > 0)
                     {
                         foreach (Exception throwable in exceptions)
