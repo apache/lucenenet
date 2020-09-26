@@ -46,6 +46,7 @@ namespace Lucene.Net.Index
     {
         [Test]
         [Nightly]
+        [Timeout(1200000)]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             // LUCENENET specific - disable the test if not 64 bit

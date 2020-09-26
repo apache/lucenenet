@@ -39,6 +39,7 @@ namespace Lucene.Net.Index
     
 
     [TestFixture]
+    [Timeout(900000)]
     public class TestFlushByRamOrCountsPolicy : LuceneTestCase 
     {
 

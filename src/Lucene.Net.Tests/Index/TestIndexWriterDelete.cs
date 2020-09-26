@@ -1305,6 +1305,7 @@ namespace Lucene.Net.Index
         // much RAM that it forces long tail of tiny segments:
         [Test]
         [Nightly]
+        [Timeout(600000)]
         public virtual void TestApplyDeletesOnFlush()
         {
             Directory dir = NewDirectory();

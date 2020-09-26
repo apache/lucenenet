@@ -47,6 +47,7 @@ namespace Lucene.Net.Index
     /// Tests for IndexWriter when the disk runs out of space
     /// </summary>
     [TestFixture]
+    [Timeout(900000)]
     public class TestIndexWriterOnDiskFull : LuceneTestCase
     {
         /*
