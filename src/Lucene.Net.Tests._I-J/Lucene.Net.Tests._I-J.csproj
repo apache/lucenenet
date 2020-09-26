@@ -29,6 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Lucene.Net.Tests\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestBinaryDocValuesUpdates.cs" LinkBase="Index" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestIndexWriterReader.cs" LinkBase="Index" />
     <Compile Include="..\Lucene.Net.Tests\Index\TestIndexWriter.cs" LinkBase="Index" />

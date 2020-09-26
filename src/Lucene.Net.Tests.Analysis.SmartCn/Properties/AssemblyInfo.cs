@@ -15,6 +15,7 @@
 * limitations under the License.
 */
 
+using NUnit.Framework;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -31,4 +32,6 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("8c8d78d3-bffd-4301-953b-fe5350b2aeeb")]
 
-
+// LUCENENET specific - time out test projects at 55 minutes to allow the results
+// to be uploaded before the 60 minute Azure DevOps job cutoff for easier troubleshooting
+[assembly: Timeout(3300000)]

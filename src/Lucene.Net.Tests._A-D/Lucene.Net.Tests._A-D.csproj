@@ -29,6 +29,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <Compile Include="..\Lucene.Net.Tests\Properties\AssemblyInfo.cs" Link="Properties\AssemblyInfo.cs" />
     <Compile Include="..\Lucene.Net.Tests\*.cs" />
     <Compile Include="..\Lucene.Net.Tests\Analysis\**\*.cs" LinkBase="Analysis" />
     <Compile Include="..\Lucene.Net.Tests\Codecs\**\*.cs" LinkBase="Codecs" />
