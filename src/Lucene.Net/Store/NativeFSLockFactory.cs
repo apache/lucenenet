@@ -139,7 +139,7 @@ namespace Lucene.Net.Store
 
             return FileSupport.GetFileIOExceptionHResult(provokeException: (fileName) =>
             {
-                using (var lockStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1, FileOptions.None))
+                using (var lockStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read, 1, FileOptions.None))
                 // Try to get an exclusive lock on the file - this should throw an IOException with the current platform's HResult value for FileShare violation
                 using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Write, FileShare.None, 1, FileOptions.None))
                 {
@@ -288,7 +288,8 @@ namespace Lucene.Net.Store
                 var success = false;
                 try
                 {
-                    channel = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
+                    // LUCENENET: Allow read access for the RAMDirectory to be able to copy the lock file.
+                    channel = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read);
 
                     success = true;
                 }
@@ -408,7 +409,7 @@ namespace Lucene.Net.Store
 
         public override string ToString()
         {
-            return "{nameof(FallbackNativeFSLock)}@{path}";
+            return $"{nameof(FallbackNativeFSLock)}@{path}";
         }
     }
 
@@ -454,7 +455,15 @@ namespace Lucene.Net.Store
                 throw new IOException("Found regular file where directory expected: " + lockDir.FullName);
             }
 
-            return new FileStream(path, mode, FileAccess.Write, FileShare.None, 1, mode == FileMode.Open ? FileOptions.None : FileOptions.DeleteOnClose);
+            return new FileStream(
+                path,
+                mode,
+                FileAccess.Write,
+                // LUCENENET: Allow read access of OpenOrCreate for the RAMDirectory to be able to copy the lock file.
+                // For the Open case, set to FileShare.None to force a file share exception in IsLocked().
+                share: mode == FileMode.Open ? FileShare.None : FileShare.Read,
+                bufferSize: 1,
+                options: mode == FileMode.Open ? FileOptions.None : FileOptions.DeleteOnClose);
         }
 
         public override bool Obtain()
