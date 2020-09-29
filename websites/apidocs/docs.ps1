@@ -34,7 +34,7 @@ param (
 
 # if the base URL is the lucene live site default value we also need to include the version
 if ($BaseUrl -eq 'https://lucenenet.apache.org/docs/') {
-    $BaseUrl += $LuceneNetVersion + "/"    
+    $BaseUrl += $LuceneNetVersion
 }
 Write-Host "Base URL for xref map set to $BaseUrl"
 
