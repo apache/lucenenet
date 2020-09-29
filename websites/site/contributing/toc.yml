@@ -1,3 +1,5 @@
+- name: Community Links
+  href: community-links.md
 - name: Mailing Lists
   href: mailing-lists.md
 - name: Source Code

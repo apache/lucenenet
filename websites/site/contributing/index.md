@@ -12,6 +12,10 @@ _There are lots ways to help contribute to the Lucene.Net project!_
 
 Lucene.Net is a very large project (over 400,000 executable lines of code and nearly 1,000,000 lines of text total) and we welcome any and all help to maintain such an effort. 
 
+### Write a blog post
+
+Community written blog posts and projects based on Lucene.Net are a wonderful way to be involved with the Lucene.Net project. We can even feature your work on the [Community Links Page](xref:contributing/community-links).
+
 ### Ask a Question
 
 If you have a general how-to question or need help from the Lucene.Net community, please email the Apache Lucene.Net-User mailing list by sending a message to:
