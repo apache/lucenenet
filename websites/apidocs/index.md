@@ -3,15 +3,16 @@ title: Lucene.Net Docs - The documentation website for Lucene.Net
 description: The documentation website for Lucene.Net
 ---
 
-# Apache Lucene.Net 4.8.0-beta00009 Documentation
+Apache Lucene.Net <EnvVar:LuceneNetVersion> Documentation
+===============
 
----
+---------------
 
-Lucene is a _.NET full-text search engine_. Lucene.NET is not a complete application,
+Lucene is a _.NET full-text search engine_. Lucene.NET is not a complete application, 
 but rather a code library and API that can easily be used to add search capabilities
 to applications.
 
-This is the official API documentation for **Apache Lucene.NET 4.8.0-beta00009**.
+This is the official API documentation for __Apache Lucene.NET <EnvVar:LuceneNetVersion>__.
 
 ## Getting Started
 
@@ -28,10 +29,10 @@ on some of the conceptual or inner details of Lucene:
 
 ## Reference Documents
 
-- [Changes](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_4_8_0_beta00007): List of changes in this release.
-- System Requirements: Minimum and supported .NET versions. **TODO: Add link**
-- Migration Guide: What changed in Lucene 4; how to migrate code from Lucene 3.x. **TODO: Add link**
-- [File Formats](xref:Lucene.Net.Codecs.Lucene46) : Guide to the supported index format used by Lucene. This can be customized by using [an alternate codec](xref:Lucene.Net.Codecs).
+- [Changes](https://github.com/apache/lucenenet/releases/tag/<EnvVar:LuceneNetReleaseTag>): List of changes in this release.
+- System Requirements: Minimum and supported .NET versions. __TODO: Add link__
+- Migration Guide: What changed in Lucene 4; how to migrate code from Lucene 3.x. __TODO: Add link__
+- [File Formats](xref:Lucene.Net.Codecs.Lucene46) : Guide to the supported index format used by Lucene.  This can be customized by using [an alternate codec](xref:Lucene.Net.Codecs).
 - [Search and Scoring in Lucene](xref:Lucene.Net.Search): Introduction to how Lucene scores documents.
 - [Classic Scoring Formula](xref:Lucene.Net.Search.Similarities.TFIDFSimilarity): Formula of Lucene's classic [Vector Space](http://en.wikipedia.org/wiki/Vector_Space_Model) implementation. (look [here](xref:Lucene.Net.Search.Similarities) for other models)
 - [Classic QueryParser Syntax](xref:Lucene.Net.QueryParsers.Classic): Overview of the Classic QueryParser's syntax and features.
