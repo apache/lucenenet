@@ -29,10 +29,14 @@ param (
     [Parameter(Mandatory = $false)]
     [string] $LogLevel = 'Warning',
     [Parameter(Mandatory = $false)]
-    [string] $BaseUrl = 'http://localhost:8080',
-    [Parameter(Mandatory = $false)]
-    [int] $StagingPort = 8080
+    [string] $BaseUrl = 'https://lucenenet.apache.org/docs/'
 )
+
+# if the base URL is the lucene live site default value we also need to include the version
+if ($BaseUrl -eq 'https://lucenenet.apache.org/docs/') {
+    $BaseUrl += $LuceneNetVersion + "/"    
+}
+Write-Host "Base URL for xref map set to $BaseUrl"
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -56,7 +60,7 @@ $DocFxExe = "$ToolsFolder\docfx\docfx.exe"
 if (-not (test-path $DocFxExe)) {
     Write-Host "Retrieving docfx..."
     $DocFxZip = "$ToolsFolder\tmp\docfx.zip"	
-    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.56/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
+    Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.56.2/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
 	
     #unzip
     Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
@@ -177,7 +181,7 @@ if ($? -and $DisableBuild -eq $false) {
 
         $DocFxLog = Join-Path -Path $ApiDocsFolder "obj\${proj}.build.log"
 
-        # build the output		
+        # build the output
         Write-Host "Building site output for $projFile..."
 
         # Before we build the site we have to clear the frickin docfx cache!
