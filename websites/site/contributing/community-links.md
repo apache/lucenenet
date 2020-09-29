@@ -28,13 +28,12 @@ An excellent introductory series from [Simone Chiaretta](http://codeclimber.net.
 * [Lucene - or how I stopped worrying and learned to love unstructured data](http://codeclimber.net.nz/archive/2009/09/08/lucene-or-how-i-stopped-worrying-and-learned-to.aspx)
 * [How Subtext Lucene.Net index is structured](http://codeclimber.net.nz/archive/2009/09/10/how-subtext-lucene.net-index-is-structured.aspx)
 
-### [Lazily setting the SetMultiTermRewriteMethod](https://shazwazza.com/post/how-to-set-rewrite-method-on-queries-lazily-in-lucene/)
+### Other posts
 
-How-to guide on lazily setting the rewrite method of the query parser instead of eagerly since you may not know it is required until the query is built.
-
-### [Spatial Search with Lucene.Net and Examine](https://shazwazza.com/post/spatial-search-with-examine-and-lucene/)
-
-How-to guide on implementing geo spatial search with Lucene.Net in the context of using [Examine](https://github.com/shazwazza/examine) to manage Lucene.Net. 
+* [Lazily setting the SetMultiTermRewriteMethod](https://shazwazza.com/post/how-to-set-rewrite-method-on-queries-lazily-in-lucene/)
+  * How-to guide on lazily setting the rewrite method of the query parser instead of eagerly since you may not know it is required until the query is built.
+* [Spatial Search with Lucene.Net and Examine](https://shazwazza.com/post/spatial-search-with-examine-and-lucene/)
+  * How-to guide on implementing geo spatial search with Lucene.Net in the context of using [Examine](https://github.com/shazwazza/examine) to manage Lucene.Net. 
 
 ## Lucene.Net projects
 
