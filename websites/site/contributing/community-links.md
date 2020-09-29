@@ -33,7 +33,9 @@ An excellent introductory series from [Simone Chiaretta](http://codeclimber.net.
 * [Lazily setting the SetMultiTermRewriteMethod](https://shazwazza.com/post/how-to-set-rewrite-method-on-queries-lazily-in-lucene/)
   * How-to guide on lazily setting the rewrite method of the query parser instead of eagerly since you may not know it is required until the query is built.
 * [Spatial Search with Lucene.Net and Examine](https://shazwazza.com/post/spatial-search-with-examine-and-lucene/)
-  * How-to guide on implementing geo spatial search with Lucene.Net in the context of using [Examine](https://github.com/shazwazza/examine) to manage Lucene.Net. 
+  * How-to guide on implementing geo spatial search with Lucene.Net in the context of using [Examine](https://github.com/shazwazza/examine) to manage Lucene.Net.
+* [Implementing Search in Blazor WebAssembly with Lucene.Net](https://www.aaron-powell.com/posts/2019-11-29-implementing-search-in-blazor-webassembly-with-lucenenet/)
+  * How-to guide on setting up Lucene.Net to work with [Blazor WebAssembly](https://docs.microsoft.com/en-gb/aspnet/core/blazor/?view=aspnetcore-3.0&WT.mc_id=aaronpowell-blog-aapowell#blazor-webassembly).
 
 ## Lucene.Net projects
 
