@@ -45,10 +45,6 @@ Here are some great projects built with Lucene.Net:
 
 Examine is a managed abstraction around Lucene.Net. It provides a fluent search API and handles all of the underlying Lucene.Net objects for you. 
 
-### [BoboBrowse.Net](https://github.com/NightOwl888/BoboBrowse.Net)
-
-Bobo-Browse is a powerful and extensible faceted search engine library built on top of Lucene.Net. It is a C# port of the original Bobo-Browse project written in Java by John Wang.
-
 ### [Azure Directory](https://github.com/azure-contrib/AzureDirectory)
 
 This project allows you to create Lucene Indexes and use them in Azure.
