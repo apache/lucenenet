@@ -181,7 +181,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             SetStartTimeMillis();
         }
 
-        private Store.Directory CreateDirectory(bool eraseIndex, string dirName,
+        protected virtual Store.Directory CreateDirectory(bool eraseIndex, string dirName,
             string dirParam)
         {
             if ("FSDirectory".Equals(config.Get(dirParam, "RAMDirectory"), StringComparison.Ordinal))
