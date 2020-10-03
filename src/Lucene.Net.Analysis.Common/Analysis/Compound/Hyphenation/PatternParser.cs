@@ -79,7 +79,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <exception cref="IOException"> In case of an exception while parsing </exception>
         public virtual void Parse(string path)
         {
-            // LUCENENET TODO: Create overloads that allow XmlReaderSettings to be passed in.
             Parse(path, Encoding.UTF8);
         }
 
@@ -92,8 +91,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         public virtual void Parse(string path, Encoding encoding)
         {
             var xmlReaderSettings = GetXmlReaderSettings();
-
-            // LUCENENET TODO: Create overloads that allow XmlReaderSettings to be passed in.
             using (var src = XmlReader.Create(new StreamReader(new FileStream(path, FileMode.Open), encoding), xmlReaderSettings))
             {
                 Parse(src);
@@ -205,7 +202,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
                 new XmlReaderSettings
                 {
                     // DTD Processing currently is
-                    // not supported in .NET Standard but will come back in .NET Standard 2.0.
+                    // not supported in .NET Standard 1.x but will come back in .NET Standard 2.0.
                     // https://github.com/dotnet/corefx/issues/4376.
 #if FEATURE_DTD_PROCESSING
                     DtdProcessing = DtdProcessing.Parse,

@@ -176,7 +176,6 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// <exception cref="IOException"> In case the parsing fails </exception>
         public virtual void LoadPatterns(Stream source, Encoding encoding)
         {
-            // LUCENENET TODO: Create overloads that allow XmlReaderSettings to be passed in.
             var xmlReaderSettings =
                 new XmlReaderSettings
                 {
