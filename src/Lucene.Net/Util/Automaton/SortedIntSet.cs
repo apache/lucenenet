@@ -30,7 +30,7 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// NOTE: This was SortedIntSet in Lucene
     /// </summary>
-    internal sealed class SortedInt32Set : IEquatable<SortedInt32Set>, IEquatable<SortedInt32Set.FrozenInt32Set>
+    internal sealed class SortedInt32Set
     {
         internal int[] values;
         internal int[] counts;
@@ -188,7 +188,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        public FrozenInt32Set ToFrozenInt32Set() // LUCENENET TODO: This didn't exist in the original
+        public FrozenInt32Set ToFrozenInt32Set() // LUCENENET specific
         {
             int[] c = new int[upto];
             Array.Copy(values, 0, c, 0, upto);
@@ -207,48 +207,16 @@ namespace Lucene.Net.Util.Automaton
             return hashCode;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object obj)
         {
-            if (other == null)
+            if (obj is null)
             {
                 return false;
             }
-            if (!(other is FrozenInt32Set))
+            if (!(obj is SortedInt32Set other)) // LUCENENET specific - don't compare against FrozenInt32Set
             {
                 return false;
             }
-            FrozenInt32Set other2 = (FrozenInt32Set)other;
-            if (hashCode != other2.hashCode)
-            {
-                return false;
-            }
-            if (other2.values.Length != upto)
-            {
-                return false;
-            }
-            for (int i = 0; i < upto; i++)
-            {
-                if (other2.values[i] != values[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool Equals(SortedInt32Set other) // LUCENENET TODO: This didn't exist in the original
-        {
-            throw new NotImplementedException("SortedIntSet Equals");
-        }
-
-        public bool Equals(FrozenInt32Set other) // LUCENENET TODO: This didn't exist in the original
-        {
-            if (other == null)
-            {
-                return false;
-            }
-
             if (hashCode != other.hashCode)
             {
                 return false;
@@ -257,7 +225,6 @@ namespace Lucene.Net.Util.Automaton
             {
                 return false;
             }
-
             for (int i = 0; i < upto; i++)
             {
                 if (other.values[i] != values[i])
@@ -287,11 +254,11 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// NOTE: This was FrozenIntSet in Lucene
         /// </summary>
-        public sealed class FrozenInt32Set : IEquatable<SortedInt32Set>, IEquatable<FrozenInt32Set> 
+        public struct FrozenInt32Set : IEquatable<FrozenInt32Set>
         {
-            internal readonly int[] values;
-            internal readonly int hashCode;
-            internal readonly State state;
+            internal int[] values;
+            internal int hashCode;
+            internal State state;
 
             public FrozenInt32Set(int[] values, int hashCode, State state)
             {
@@ -312,46 +279,25 @@ namespace Lucene.Net.Util.Automaton
                 return hashCode;
             }
 
-            public override bool Equals(object other)
+            public override bool Equals(object obj)
             {
-                if (other == null)
+                if (obj is null)
                 {
                     return false;
                 }
-                if (other is FrozenInt32Set)
+                if (obj is FrozenInt32Set other)
                 {
-                    FrozenInt32Set other2 = (FrozenInt32Set)other;
-                    if (hashCode != other2.hashCode)
+                    if (hashCode != other.hashCode)
                     {
                         return false;
                     }
-                    if (other2.values.Length != values.Length)
+                    if (other.values.Length != values.Length)
                     {
                         return false;
                     }
                     for (int i = 0; i < values.Length; i++)
                     {
-                        if (other2.values[i] != values[i])
-                        {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-                else if (other is SortedInt32Set)
-                {
-                    SortedInt32Set other3 = (SortedInt32Set)other;
-                    if (hashCode != other3.hashCode)
-                    {
-                        return false;
-                    }
-                    if (other3.values.Length != values.Length)
-                    {
-                        return false;
-                    }
-                    for (int i = 0; i < values.Length; i++)
-                    {
-                        if (other3.values[i] != values[i])
+                        if (other.values[i] != values[i])
                         {
                             return false;
                         }
@@ -362,38 +308,8 @@ namespace Lucene.Net.Util.Automaton
                 return false;
             }
 
-            public bool Equals(SortedInt32Set other) // LUCENENET TODO: This didn't exist in the original
+            public bool Equals(FrozenInt32Set other) // LUCENENET specific - implemented IEquatable<FrozenInt32Set>
             {
-                if (other == null)
-                {
-                    return false;
-                }
-
-                if (hashCode != other.hashCode)
-                {
-                    return false;
-                }
-                if (other.values.Length != values.Length)
-                {
-                    return false;
-                }
-                for (int i = 0; i < values.Length; i++)
-                {
-                    if (other.values[i] != values[i])
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            public bool Equals(FrozenInt32Set other) // LUCENENET TODO: This didn't exist in the original
-            {
-                if (other == null)
-                {
-                    return false;
-                }
-
                 if (hashCode != other.hashCode)
                 {
                     return false;
