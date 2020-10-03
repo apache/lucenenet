@@ -147,12 +147,12 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Syntactic sugar for <see cref="SetBaseline(long)"/> using <see cref="Counter.Get()"/>
+        /// Syntactic sugar for <see cref="SetBaseline(long)"/> using <see cref="Counter.Value"/>
         /// on the clock passed to the constructor.
         /// </summary>
         public virtual void SetBaseline()
         {
-            SetBaseline(clock.Get());
+            SetBaseline(clock);
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace Lucene.Net.Search
         ///           If the time allowed has exceeded. </exception>
         public virtual void Collect(int doc)
         {
-            long time = clock.Get();
+            long time = clock;
             if (timeout < time)
             {
                 if (greedy)

@@ -465,7 +465,7 @@ namespace Lucene.Net.Util
                 buffer.Append(scratch);
                 // Account for the created objects.
                 // (buffer slots do not account to buffer size.)
-                if (ramBufferSize.bytes < bufferBytesUsed.Get())
+                if (ramBufferSize.bytes < bufferBytesUsed)
                 {
                     break;
                 }

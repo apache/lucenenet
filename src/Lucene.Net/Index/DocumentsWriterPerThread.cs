@@ -681,7 +681,7 @@ namespace Lucene.Net.Index
         /// Get current segment info we are writing. </summary>
         internal virtual SegmentInfo SegmentInfo => segmentInfo;
 
-        public virtual long BytesUsed => bytesUsed.Get() + pendingUpdates.bytesUsed;
+        public virtual long BytesUsed => bytesUsed + pendingUpdates.bytesUsed;
 
         /// <summary>
         /// Initial chunks size of the shared byte[] blocks used to

@@ -1,4 +1,5 @@
 using J2N.Threading.Atomic;
+using System;
 
 namespace Lucene.Net.Util
 {
@@ -36,10 +37,16 @@ namespace Lucene.Net.Util
         public abstract long AddAndGet(long delta);
 
         /// <summary>
+        /// Gets the counters current value.
+        /// </summary>
+        public abstract long Value { get; }
+
+        /// <summary>
         /// Returns the counters current value.
         /// </summary>
         /// <returns> The counters current value. </returns>
-        public abstract long Get(); // LUCENENET TODO: API: Change to Value property and add implicit operator to get
+        [Obsolete("Use Value instead. This method will be removed in 4.8.0 release candidate.")]
+        public virtual long Get() => Value;
 
         /// <summary>
         /// Returns a new counter. The returned counter is not thread-safe.
@@ -61,6 +68,12 @@ namespace Lucene.Net.Util
             return threadSafe ? (Counter)new AtomicCounter() : new SerialCounter();
         }
 
+        /// <summary>
+        /// Returns this counter's <see cref="Value"/> implicitly.
+        /// </summary>
+        /// <param name="counter"></param>
+        public static implicit operator long(Counter counter) => counter.Value; // LUCENENET specific
+
         private sealed class SerialCounter : Counter
         {
             private long count = 0;
@@ -70,10 +83,7 @@ namespace Lucene.Net.Util
                 return count += delta;
             }
 
-            public override long Get()
-            {
-                return count;
-            }
+            public override long Value => count;
         }
 
         private sealed class AtomicCounter : Counter
@@ -85,7 +95,7 @@ namespace Lucene.Net.Util
                 return count.AddAndGet(delta);
             }
 
-            public override long Get() => count;
+            public override long Value => count;
         }
     }
 }

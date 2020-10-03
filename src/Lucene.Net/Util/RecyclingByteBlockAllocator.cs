@@ -109,14 +109,14 @@ namespace Lucene.Net.Util
                 blocks[i] = null;
             }
             bytesUsed.AddAndGet(-(end - stop) * m_blockSize);
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytesUsed.Get() >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bytesUsed >= 0);
         }
 
         /// <returns> The number of currently buffered blocks. </returns>
         public int NumBufferedBlocks => freeBlocks;
 
         /// <returns> The number of bytes currently allocated by this <see cref="ByteBlockPool.Allocator"/>. </returns>
-        public long BytesUsed => bytesUsed.Get();
+        public long BytesUsed => bytesUsed;
 
         /// <returns> The maximum number of buffered byte blocks. </returns>
         public int MaxBufferedBlocks => maxBufferedBlocks;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
                 freeByteBlocks[--freeBlocks] = null;
             }
             bytesUsed.AddAndGet(-count * m_blockSize);
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytesUsed.Get() >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bytesUsed >= 0);
             return count;
         }
     }
