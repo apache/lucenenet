@@ -118,8 +118,7 @@ namespace Lucene.Net.Index
 
         // called only from assert
         private bool IsLocked =>
-            //LUCENENET TODO: This always returns true - probably incorrect
-            writer == null || true /*Monitor.IsEntered(writer)*/;
+            writer == null || Monitor.IsEntered(writer);
 
         /// <summary>
         /// Initialize the deleter: find all previous commits in
