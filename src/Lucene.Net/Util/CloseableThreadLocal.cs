@@ -110,11 +110,11 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Obsolete("Use Value instead.")]
-        public T Get() => Value; // LUCENENET TODO: API - Remove this before the 4.8.0 release
+        [Obsolete("Use Value instead. This method will be removed in 4.8.0 release candidate.")]
+        public T Get() => Value;
 
-        [Obsolete("Use Value instead.")]
-        public void Set(T value) => Value = value; // LUCENENET TODO: API - Remove this before the 4.8.0 release
+        [Obsolete("Use Value instead. This method will be removed in 4.8.0 release candidate.")]
+        public void Set(T value) => Value = value;
 
         /// <summary>
         /// Gets or sets the value of this instance for the current thread.
