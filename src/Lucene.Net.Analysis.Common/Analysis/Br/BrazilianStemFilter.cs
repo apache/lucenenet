@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
 using System;
-using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Analysis.Br
 {
@@ -32,12 +31,11 @@ namespace Lucene.Net.Analysis.Br
     /// <seealso cref="Miscellaneous.SetKeywordMarkerFilter"/>
     public sealed class BrazilianStemFilter : TokenFilter
     {
-
         /// <summary>
         /// <see cref="BrazilianStemmer"/> in use by this filter.
         /// </summary>
-        private BrazilianStemmer stemmer = new BrazilianStemmer();
-        private JCG.HashSet<string> exclusions = null; // LUCENENET TODO: This is odd. No way to set it at all, so it cannot possibly have any values.
+        private readonly BrazilianStemmer stemmer = new BrazilianStemmer();
+        //private JCG.HashSet<string> exclusions = null; // LUCENENET specific: Removed unusd variable
         private readonly ICharTermAttribute termAtt;
         private readonly IKeywordAttribute keywordAttr;
 
@@ -58,7 +56,7 @@ namespace Lucene.Net.Analysis.Br
             {
                 string term = termAtt.ToString();
                 // Check the exclusion table.
-                if (!keywordAttr.IsKeyword && (exclusions == null || !exclusions.Contains(term)))
+                if (!keywordAttr.IsKeyword /*&& (exclusions == null || !exclusions.Contains(term))*/) // LUCENENET specific - removed unused variable "exclusions"
                 {
                     string s = stemmer.Stem(term);
                     // If not stemmed, don't waste the time adjusting the token.
