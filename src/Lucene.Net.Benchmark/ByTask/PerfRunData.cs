@@ -181,6 +181,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             SetStartTimeMillis();
         }
 
+        // LUCENENET specific - marked protected virtual so users can supply their own directory implementation
         protected virtual Store.Directory CreateDirectory(bool eraseIndex, string dirName,
             string dirParam)
         {
