@@ -7,6 +7,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -971,6 +972,19 @@ namespace Lucene.Net.Index
                     }
                 }
             }
+        }
+
+        [Explicit("Used for debugging the long running test")]
+        [FindFirstFailingSeed(TimeoutMilliseconds = 240000)]
+        [Test]
+        public virtual void TestAddIndexesWithCloseNoWait_Repeated()
+        {
+            TestContext.WriteLine("Starting");
+            var watch = Stopwatch.StartNew();
+            TestAddIndexesWithCloseNoWait();
+            if (watch.ElapsedMilliseconds > 60000)
+                throw new InvalidOperationException($"Took too long {watch.ElapsedMilliseconds}");
+            TestContext.WriteLine($"Completed {watch.ElapsedMilliseconds}");
         }
 
         // LUCENE-1335: test simultaneous addIndexes & close

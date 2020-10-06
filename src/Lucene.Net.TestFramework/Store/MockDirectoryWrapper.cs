@@ -93,6 +93,8 @@ namespace Lucene.Net.Store
     /// </summary>
     public class MockDirectoryWrapper : BaseDirectoryWrapper
     {
+        private object locker = new object();
+
         internal long maxSize;
 
         // Max actual bytes used. this is set by MockRAMOutputStream:
@@ -135,22 +137,30 @@ namespace Lucene.Net.Store
 
         private void Init()
         {
-            lock (this)
+            lock (locker)
             {
-                if (openFiles == null)
-                {
-                    openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
-                    openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
-                }
+                InitLocked();
+            }
+        }
+        // LUCENENET specific for avoiding deadlocks and recursive locks
+        private void InitLocked()
+        {
+            if (!Monitor.IsEntered(locker))
+                throw new InvalidOperationException($"{nameof(InitLocked)} must be called within the lock {nameof(locker)}");
 
-                if (createdFiles == null)
-                {
-                    createdFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
-                }
-                if (unSyncedFiles == null)
-                {
-                    unSyncedFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
-                }
+            if (openFiles == null)
+            {
+                openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
+                openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
+            }
+
+            if (createdFiles == null)
+            {
+                createdFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
+            }
+            if (unSyncedFiles == null)
+            {
+                unSyncedFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
             }
         }
 
@@ -234,10 +244,10 @@ namespace Lucene.Net.Store
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Sync(ICollection<string> names)
         {
-            lock (this)
+            lock (locker)
             {
                 MaybeYield();
-                MaybeThrowDeterministicException();
+                MaybeThrowDeterministicExceptionLocked();
                 if (crashed)
                 {
                     throw new IOException("cannot sync after crash");
@@ -262,22 +272,30 @@ namespace Lucene.Net.Store
 
         public long GetSizeInBytes()
         {
-            lock (this)
+            lock (locker)
             {
-                if (m_input is RAMDirectory)
+                return GetSizeInBytesLocked();
+            }
+        }
+        // LUCENENET specific for avoiding deadlocks and recursive locks
+        private long GetSizeInBytesLocked()
+        {
+            if (!Monitor.IsEntered(locker))
+                throw new InvalidOperationException($"{nameof(GetSizeInBytesLocked)} must be called within the lock {nameof(locker)}");
+
+            if (m_input is RAMDirectory)
+            {
+                return ((RAMDirectory)m_input).GetSizeInBytes();
+            }
+            else
+            {
+                // hack
+                long size = 0;
+                foreach (string file in m_input.ListAll())
                 {
-                    return ((RAMDirectory)m_input).GetSizeInBytes();
+                    size += m_input.FileLength(file);
                 }
-                else
-                {
-                    // hack
-                    long size = 0;
-                    foreach (string file in m_input.ListAll())
-                    {
-                        size += m_input.FileLength(file);
-                    }
-                    return size;
-                }
+                return size;
             }
         }
 
@@ -287,115 +305,123 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual void Crash()
         {
-            lock (this)
+            lock (locker)
             {
-                crashed = true;
-                openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
-                openFilesForWrite = new JCG.HashSet<string>(StringComparer.Ordinal);
-                openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
-                using (IEnumerator<string> it = unSyncedFiles.GetEnumerator())
+                CrashLocked();
+            }
+        }
+        // LUCENENET specific for avoiding deadlocks and recursive locks
+        private void CrashLocked()
+        {
+            if (!Monitor.IsEntered(locker))
+                throw new InvalidOperationException($"{nameof(CrashLocked)} must be called within the lock {nameof(locker)}");
+
+            crashed = true;
+            openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
+            openFilesForWrite = new JCG.HashSet<string>(StringComparer.Ordinal);
+            openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
+            using (IEnumerator<string> it = unSyncedFiles.GetEnumerator())
+            {
+                unSyncedFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
+                // first force-close all files, so we can corrupt on windows etc.
+                // clone the file map, as these guys want to remove themselves on close.
+                var m = new JCG.Dictionary<IDisposable, Exception>(openFileHandles, IdentityEqualityComparer<IDisposable>.Default);
+                foreach (IDisposable f in m.Keys)
                 {
-                    unSyncedFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
-                    // first force-close all files, so we can corrupt on windows etc.
-                    // clone the file map, as these guys want to remove themselves on close.
-                    var m = new JCG.Dictionary<IDisposable, Exception>(openFileHandles, IdentityEqualityComparer<IDisposable>.Default);
-                    foreach (IDisposable f in m.Keys)
+                    try
                     {
-                        try
-                        {
-                            f.Dispose();
-                        }
+                        f.Dispose();
+                    }
 #pragma warning disable 168
-                        catch (Exception ignored)
+                    catch (Exception ignored)
 #pragma warning restore 168
+                    {
+                        //Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ignored.ToString());
+                    }
+                }
+
+                while (it.MoveNext())
+                {
+                    string name = it.Current;
+                    int damage = randomState.Next(5);
+                    string action = null;
+
+                    if (damage == 0)
+                    {
+                        action = "deleted";
+                        DeleteFileLocked(name, true);
+                    }
+                    else if (damage == 1)
+                    {
+                        action = "zeroed";
+                        // Zero out file entirely
+                        long length = FileLength(name);
+                        var zeroes = new byte[256];
+                        long upto = 0;
+                        using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
                         {
-                            //Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ignored.ToString());
+                            while (upto < length)
+                            {
+                                var limit = (int)Math.Min(length - upto, zeroes.Length);
+                                @out.WriteBytes(zeroes, 0, limit);
+                                upto += limit;
+                            }
                         }
                     }
-
-                    while (it.MoveNext())
+                    else if (damage == 2)
                     {
-                        string name = it.Current;
-                        int damage = randomState.Next(5);
-                        string action = null;
+                        action = "partially truncated";
+                        // Partially Truncate the file:
 
-                        if (damage == 0)
+                        // First, make temp file and copy only half this
+                        // file over:
+                        string tempFileName;
+                        while (true)
                         {
-                            action = "deleted";
-                            DeleteFile(name, true);
-                        }
-                        else if (damage == 1)
-                        {
-                            action = "zeroed";
-                            // Zero out file entirely
-                            long length = FileLength(name);
-                            var zeroes = new byte[256];
-                            long upto = 0;
-                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
+                            tempFileName = "" + randomState.Next();
+                            if (!LuceneTestCase.SlowFileExists(m_input, tempFileName))
                             {
-                                while (upto < length)
-                                {
-                                    var limit = (int)Math.Min(length - upto, zeroes.Length);
-                                    @out.WriteBytes(zeroes, 0, limit);
-                                    upto += limit;
-                                }
+                                break;
                             }
                         }
-                        else if (damage == 2)
+                        using (IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(randomState)))
                         {
-                            action = "partially truncated";
-                            // Partially Truncate the file:
+                            using (IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(randomState)))
+                            {
+                                tempOut.CopyBytes(ii, ii.Length / 2);
+                            }
+                        }
 
-                            // First, make temp file and copy only half this
-                            // file over:
-                            string tempFileName;
-                            while (true)
-                            {
-                                tempFileName = "" + randomState.Next();
-                                if (!LuceneTestCase.SlowFileExists(m_input, tempFileName))
-                                {
-                                    break;
-                                }
-                            }
-                            using (IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(randomState)))
-                            {
-                                using (IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(randomState)))
-                                {
-                                    tempOut.CopyBytes(ii, ii.Length / 2);
-                                }
-                            }
+                        // Delete original and copy bytes back:
+                        DeleteFileLocked(name, true);
 
-                            // Delete original and copy bytes back:
-                            DeleteFile(name, true);
-
-                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
-                            {
-                                using (IndexInput ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(randomState)))
-                                {
-                                    @out.CopyBytes(ii, ii.Length);
-                                }
-                            }
-                            DeleteFile(tempFileName, true);
-                        }
-                        else if (damage == 3)
+                        using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
                         {
-                            // The file survived intact:
-                            action = "didn't change";
-                        }
-                        else
-                        {
-                            action = "fully truncated";
-                            // Totally truncate the file to zero bytes
-                            DeleteFile(name, true);
-                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
+                            using (IndexInput ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(randomState)))
                             {
-                                @out.Length = 0;
+                                @out.CopyBytes(ii, ii.Length);
                             }
                         }
+                        DeleteFileLocked(tempFileName, true);
+                    }
+                    else if (damage == 3)
+                    {
+                        // The file survived intact:
+                        action = "didn't change";
+                    }
+                    else
+                    {
+                        action = "fully truncated";
+                        // Totally truncate the file to zero bytes
+                        DeleteFileLocked(name, true);
+                        using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
+                        {
+                            @out.Length = 0;
+                        }
+                    }
                         if (LuceneTestCase.Verbose)
-                        {
-                            Console.WriteLine("MockDirectoryWrapper: " + action + " unsynced file: " + name);
-                        }
+                    {
+                        Console.WriteLine("MockDirectoryWrapper: " + action + " unsynced file: " + name);
                     }
                 }
             }
@@ -403,7 +429,7 @@ namespace Lucene.Net.Store
 
         public virtual void ClearCrash()
         {
-            lock (this)
+            lock (locker)
             {
                 crashed = false;
                 openLocks.Clear();
@@ -506,34 +532,51 @@ namespace Lucene.Net.Store
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void DeleteFile(string name)
         {
-            lock (this)
+            lock (locker)
             {
-                MaybeYield();
-                DeleteFile(name, false);
+                DeleteFileLocked(name);
             }
         }
+        // LUCENENET specific for avoiding deadlocks and recursive locks
+        private void DeleteFileLocked(string name)
+        {
+            if (!Monitor.IsEntered(locker))
+                throw new InvalidOperationException($"{nameof(DeleteFileLocked)} must be called within the lock {nameof(locker)}");
+
+            MaybeYield();
+            DeleteFileLocked(name, false);
+        }
+
 
         // if there are any exceptions in OpenFileHandles
         // capture those as inner exceptions
         private Exception WithAdditionalErrorInformation(Exception t, string name, bool input)
         {
-            lock (this)
+            lock(locker)
             {
-                foreach (var ent in openFileHandles)
-                {
-                    if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).name.Equals(name, StringComparison.Ordinal))
-                    {
-                        t = CreateException(t, ent.Value);
-                        break;
-                    }
-                    else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper)ent.Key).name.Equals(name, StringComparison.Ordinal))
-                    {
-                        t = CreateException(t, ent.Value);
-                        break;
-                    }
-                }
-                return t;
+                return WithAdditionalErrorInformationLocked(t, name, input);
             }
+        }
+        // LUCENENET specific for avoiding deadlocks and recursive locks
+        private Exception WithAdditionalErrorInformationLocked(Exception t, string name, bool input)
+        {
+            if (!Monitor.IsEntered(locker))
+                throw new InvalidOperationException($"{nameof(WithAdditionalErrorInformationLocked)} must be called within the lock {nameof(locker)}");
+
+            foreach (var ent in openFileHandles)
+            {
+                if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).name.Equals(name, StringComparison.Ordinal))
+                {
+                    t = CreateException(t, ent.Value);
+                    break;
+                }
+                else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper)ent.Key).name.Equals(name, StringComparison.Ordinal))
+                {
+                    t = CreateException(t, ent.Value);
+                    break;
+                }
+            }
+            return t;
         }
 
         private Exception CreateException(Exception exception, Exception innerException)
@@ -556,48 +599,57 @@ namespace Lucene.Net.Store
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void DeleteFile(string name, bool forced)
         {
-            lock (this)
+            lock (locker)
             {
-                MaybeYield();
+                DeleteFileLocked(name, forced);
+            }
+        }
+        // LUCENENET specific for avoiding deadlocks and recursive locks
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void DeleteFileLocked(string name, bool forced)
+        {
+            if (!Monitor.IsEntered(locker))
+                throw new InvalidOperationException($"{nameof(DeleteFileLocked)} must be called within the lock {nameof(locker)}");
 
-                MaybeThrowDeterministicException();
+            MaybeYield();
 
-                if (crashed && !forced)
-                {
-                    throw new IOException("cannot delete after crash");
-                }
+            MaybeThrowDeterministicExceptionLocked();
 
-                if (unSyncedFiles.Contains(name))
+            if (crashed && !forced)
+            {
+                throw new IOException("cannot delete after crash");
+            }
+
+            if (unSyncedFiles.Contains(name))
+            {
+                unSyncedFiles.Remove(name);
+            }
+            if (!forced && (noDeleteOpenFile || assertNoDeleteOpenFile))
+            {
+                if (openFiles.ContainsKey(name))
                 {
-                    unSyncedFiles.Remove(name);
-                }
-                if (!forced && (noDeleteOpenFile || assertNoDeleteOpenFile))
-                {
-                    if (openFiles.ContainsKey(name))
+                    openFilesDeleted.Add(name);
+
+                    if (!assertNoDeleteOpenFile)
                     {
-                        openFilesDeleted.Add(name);
-
-                        if (!assertNoDeleteOpenFile)
-                        {
-                            throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
-                        }
-                        else
-                        {
-                            throw WithAdditionalErrorInformation(new AssertionError("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
-                        }
+                        throw WithAdditionalErrorInformationLocked(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                     }
                     else
                     {
-                        openFilesDeleted.Remove(name);
+                        throw WithAdditionalErrorInformationLocked(new AssertionError("MockDirectoryWrapper: file \"" + name + "\" is still open: cannot delete"), name, true);
                     }
                 }
-                m_input.DeleteFile(name);
+                else
+                {
+                    openFilesDeleted.Remove(name);
+                }
             }
+            m_input.DeleteFile(name);
         }
 
         public virtual ICollection<string> GetOpenDeletedFiles()
         {
-            lock (this)
+            lock (locker)
             {
                 return new JCG.HashSet<string>(openFilesDeleted, StringComparer.Ordinal);
             }
@@ -613,27 +665,27 @@ namespace Lucene.Net.Store
 
         public override IndexOutput CreateOutput(string name, IOContext context)
         {
-            lock (this)
+            lock (locker)
             {
-                MaybeThrowDeterministicException();
+                MaybeThrowDeterministicExceptionLocked();
                 MaybeThrowIOExceptionOnOpen(name);
                 MaybeYield();
                 if (failOnCreateOutput)
                 {
-                    MaybeThrowDeterministicException();
+                    MaybeThrowDeterministicExceptionLocked();
                 }
                 if (crashed)
                 {
                     throw new IOException("cannot createOutput after crash");
                 }
-                Init();
-                lock (this)
+
+                InitLocked();
+
+                if (preventDoubleWrite && createdFiles.Contains(name) && !name.Equals("segments.gen", StringComparison.Ordinal))
                 {
-                    if (preventDoubleWrite && createdFiles.Contains(name) && !name.Equals("segments.gen", StringComparison.Ordinal))
-                    {
-                        throw new IOException("file \"" + name + "\" was already written to");
-                    }
+                    throw new IOException("file \"" + name + "\" was already written to");
                 }
+
                 if ((noDeleteOpenFile || assertNoDeleteOpenFile) && openFiles.ContainsKey(name))
                 {
                     if (!assertNoDeleteOpenFile)
@@ -682,7 +734,7 @@ namespace Lucene.Net.Store
                     delegateOutput = new BufferedIndexOutputWrapper(1 + randomState.Next(BufferedIndexOutput.DEFAULT_BUFFER_SIZE), delegateOutput);
                 }
                 IndexOutput io = new MockIndexOutputWrapper(this, delegateOutput, name);
-                AddFileHandle(io, name, Handle.Output);
+                AddFileHandleLocked(io, name, Handle.Output);
                 openFilesForWrite.Add(name);
 
                 // throttling REALLY slows down tests, so don't do it very often for SOMETIMES.
@@ -710,24 +762,32 @@ namespace Lucene.Net.Store
 
         internal void AddFileHandle(IDisposable c, string name, Handle handle)
         {
+            lock (locker)
+            {
+                AddFileHandleLocked(c, name, handle);
+            }
+        }
+        // LUCENENET specific for avoiding deadlocks and recursive locks
+        private void AddFileHandleLocked(IDisposable c, string name, Handle handle)
+        {
+            if (!Monitor.IsEntered(locker))
+                throw new InvalidOperationException($"{nameof(AddFileHandleLocked)} must be called within the lock {nameof(locker)}");
+
             //Trace.TraceInformation("Add {0} {1}", c, name);
 
-            lock (this)
+            if (openFiles.TryGetValue(name, out int v))
             {
-                if (openFiles.TryGetValue(name, out int v))
-                {
-                    v++;
-                    //Debug.WriteLine("Add {0} - {1} - {2}", c, name, v);
-                    openFiles[name] = v;
-                }
-                else
-                {
-                    //Debug.WriteLine("Add {0} - {1} - {2}", c, name, 1);
-                    openFiles[name] = 1;
-                }
-
-                openFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
+                v++;
+                //Debug.WriteLine("Add {0} - {1} - {2}", c, name, v);
+                openFiles[name] = v;
             }
+            else
+            {
+                //Debug.WriteLine("Add {0} - {1} - {2}", c, name, 1);
+                openFiles[name] = 1;
+            }
+
+            openFileHandles[c] = new Exception("unclosed Index" + handle.ToString() + ": " + name);
         }
 
         private bool failOnOpenInput = true;
@@ -740,14 +800,14 @@ namespace Lucene.Net.Store
 
         public override IndexInput OpenInput(string name, IOContext context)
         {
-            lock (this)
+            lock (locker)
             {
-                MaybeThrowDeterministicException();
+                MaybeThrowDeterministicExceptionLocked();
                 MaybeThrowIOExceptionOnOpen(name);
                 MaybeYield();
                 if (failOnOpenInput)
                 {
-                    MaybeThrowDeterministicException();
+                    MaybeThrowDeterministicExceptionLocked();
                 }
                 if (!LuceneTestCase.SlowFileExists(m_input, name))
                 {
@@ -758,7 +818,7 @@ namespace Lucene.Net.Store
                 // output, except for segments.gen and segments_N
                 if (!allowReadingFilesStillOpenForWrite && openFilesForWrite.Contains(name) && !name.StartsWith("segments", StringComparison.Ordinal))
                 {
-                    throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
+                    throw WithAdditionalErrorInformationLocked(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
                 }
 
                 IndexInput delegateInput = m_input.OpenInput(name, LuceneTestCase.NewIOContext(randomState, context));
@@ -785,7 +845,7 @@ namespace Lucene.Net.Store
                 {
                     ii = new MockIndexInputWrapper(this, name, delegateInput);
                 }
-                AddFileHandle(ii, name, Handle.Input);
+                AddFileHandleLocked(ii, name, Handle.Input);
                 return ii;
             }
         }
@@ -794,11 +854,11 @@ namespace Lucene.Net.Store
         /// Provided for testing purposes.  Use <see cref="GetSizeInBytes()"/> instead. </summary>
         public long GetRecomputedSizeInBytes()
         {
-            lock (this)
+            lock (locker)
             {
                 if (!(m_input is RAMDirectory))
                 {
-                    return GetSizeInBytes();
+                    return GetSizeInBytesLocked();
                 }
                 long size = 0;
                 foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
@@ -818,11 +878,11 @@ namespace Lucene.Net.Store
 
         public long GetRecomputedActualSizeInBytes()
         {
-            lock (this)
+            lock (locker)
             {
                 if (!(m_input is RAMDirectory))
                 {
-                    return GetSizeInBytes();
+                    return GetSizeInBytesLocked();
                 }
                 long size = 0;
                 foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
@@ -859,7 +919,7 @@ namespace Lucene.Net.Store
 
         protected override void Dispose(bool disposing)
         {
-            lock (this)
+            lock (locker)
             {
                 if (disposing)
                 {
@@ -899,7 +959,7 @@ namespace Lucene.Net.Store
                             {
                                 Console.WriteLine("\nNOTE: MockDirectoryWrapper: now crush");
                             }
-                            Crash(); // corrupt any unsynced-files
+                            CrashLocked(); // corrupt any unsynced-files
                             if (LuceneTestCase.Verbose)
                             {
                                 Console.WriteLine("\nNOTE: MockDirectoryWrapper: now run CheckIndex");
@@ -1045,9 +1105,20 @@ namespace Lucene.Net.Store
 
         internal virtual void RemoveOpenFile(IDisposable c, string name)
         {
+            lock (locker)
+            {
+                RemoveOpenFileLocked(c, name);
+            }
+        }
+        // LUCENENET specific for avoiding deadlocks and recursive locks
+        private void RemoveOpenFileLocked(IDisposable c, string name)
+        {
+            if (!Monitor.IsEntered(locker))
+                throw new InvalidOperationException($"{nameof(RemoveOpenFileLocked)} must be called within the lock {nameof(locker)}");
+
             //Trace.TraceInformation("Rem {0} {1}", c, name);
 
-            lock (this)
+            lock (locker)
             {
                 if (openFiles.TryGetValue(name, out int v))
                 {
@@ -1070,18 +1141,18 @@ namespace Lucene.Net.Store
 
         public virtual void RemoveIndexOutput(IndexOutput @out, string name)
         {
-            lock (this)
+            lock (locker)
             {
                 openFilesForWrite.Remove(name);
-                RemoveOpenFile(@out, name);
+                RemoveOpenFileLocked(@out, name);
             }
         }
 
         public virtual void RemoveIndexInput(IndexInput @in, string name)
         {
-            lock (this)
+            lock (locker)
             {
-                RemoveOpenFile(@in, name);
+                RemoveOpenFileLocked(@in, name);
             }
         }
 
@@ -1095,7 +1166,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public virtual void FailOn(Failure fail)
         {
-            lock (this)
+            lock (locker)
             {
                 if (failures == null)
                 {
@@ -1111,21 +1182,29 @@ namespace Lucene.Net.Store
         /// </summary>
         internal virtual void MaybeThrowDeterministicException()
         {
-            lock (this)
+            lock (locker)
             {
-                if (failures != null)
+                MaybeThrowDeterministicExceptionLocked();
+            }
+        }
+        // LUCENENET specific for avoiding deadlocks and recursive locks
+        private void MaybeThrowDeterministicExceptionLocked()
+        {
+            if (!Monitor.IsEntered(locker))
+                throw new InvalidOperationException($"{nameof(MaybeThrowDeterministicExceptionLocked)} must be called within the lock {nameof(locker)}");
+
+            if (failures != null)
+            {
+                for (int i = 0; i < failures.Count; i++)
                 {
-                    for (int i = 0; i < failures.Count; i++)
-                    {
-                        failures[i].Eval(this);
-                    }
+                    failures[i].Eval(this);
                 }
             }
         }
 
         public override string[] ListAll()
         {
-            lock (this)
+            lock (locker)
             {
                 MaybeYield();
                 return m_input.ListAll();
@@ -1135,7 +1214,7 @@ namespace Lucene.Net.Store
         [Obsolete("this method will be removed in 5.0")]
         public override bool FileExists(string name)
         {
-            lock (this)
+            lock (locker)
             {
                 MaybeYield();
                 return m_input.FileExists(name);
@@ -1144,16 +1223,24 @@ namespace Lucene.Net.Store
 
         public override long FileLength(string name)
         {
-            lock (this)
+            lock (locker)
             {
-                MaybeYield();
-                return m_input.FileLength(name);
+                return FileLengthLocked(name);
             }
+        }
+        // LUCENENET specific for avoiding deadlocks and recursive locks
+        private long FileLengthLocked(string name)
+        {
+            if (!Monitor.IsEntered(locker))
+                throw new InvalidOperationException($"{nameof(FileLengthLocked)} must be called within the lock {nameof(locker)}");
+
+            MaybeYield();
+            return m_input.FileLength(name);
         }
 
         public override Lock MakeLock(string name)
         {
-            lock (this)
+            lock (locker)
             {
                 MaybeYield();
                 return LockFactory.MakeLock(name);
@@ -1162,7 +1249,7 @@ namespace Lucene.Net.Store
 
         public override void ClearLock(string name)
         {
-            lock (this)
+            lock (locker)
             {
                 MaybeYield();
                 LockFactory.ClearLock(name);
@@ -1171,7 +1258,7 @@ namespace Lucene.Net.Store
 
         public override void SetLockFactory(LockFactory lockFactory)
         {
-            lock (this)
+            lock (locker)
             {
                 MaybeYield();
                 // sneaky: we must pass the original this way to the dir, because
@@ -1186,7 +1273,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                lock (this)
+                lock (locker)
                 {
                     MaybeYield();
                     if (wrapLockFactory)
@@ -1203,7 +1290,7 @@ namespace Lucene.Net.Store
 
         public override string GetLockID()
         {
-            lock (this)
+            lock (locker)
             {
                 MaybeYield();
                 return m_input.GetLockID();
@@ -1212,7 +1299,7 @@ namespace Lucene.Net.Store
 
         public override void Copy(Directory to, string src, string dest, IOContext context)
         {
-            lock (this)
+            lock (locker)
             {
                 MaybeYield();
                 // randomize the IOContext here?
