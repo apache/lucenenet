@@ -372,17 +372,12 @@ namespace Lucene.Net.Util
 
             public Insanity(InsanityType type, string msg, params FieldCache.CacheEntry[] entries)
             {
-                if (null == type)
-                {
-                    throw new ArgumentException("Insanity requires non-null InsanityType");
-                }
-                if (null == entries || 0 == entries.Length)
-                {
-                    throw new ArgumentException("Insanity requires non-null/non-empty CacheEntry[]");
-                }
-                this.type = type;
+                // LUCENENET specific - rearranged order to take advantage of throw expressions
+                this.type = type ?? throw new ArgumentNullException(nameof(type), "Insanity requires non-null InsanityType");
+                this.entries = entries ?? throw new ArgumentNullException(nameof(entries), "Insanity requires non-null CacheEntry[]");
+                if (0 == entries.Length)
+                    throw new ArgumentException("Insanity requires non-empty CacheEntry[]");
                 this.msg = msg;
-                this.entries = entries;
             }
 
             /// <summary>

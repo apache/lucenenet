@@ -64,17 +64,10 @@ namespace Lucene.Net.Search
         /// <seealso cref="FilterStrategy"/>
         public FilteredQuery(Query query, Filter filter, FilterStrategy strategy)
         {
-            if (query == null || filter == null)
-            {
-                throw new ArgumentException("Query and filter cannot be null.");
-            }
-            if (strategy == null)
-            {
-                throw new ArgumentException("FilterStrategy can not be null");
-            }
-            this.strategy = strategy;
-            this.query = query;
-            this.filter = filter;
+            // LUCENENET specific - rearranged order to take advantage of throw expressions
+            this.query = query ?? throw new ArgumentNullException(nameof(query), "Query cannot be null.");
+            this.filter = filter ?? throw new ArgumentNullException(nameof(filter), "filter can not be null");
+            this.strategy = strategy ?? throw new ArgumentNullException(nameof(strategy), "FilterStrategy can not be null");
         }
 
         /// <summary>

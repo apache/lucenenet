@@ -52,17 +52,14 @@ namespace Lucene.Net.Support
         /// <param name="toIndex">The exclusive ending index.</param>
         public SubList(IList<T> list, int fromIndex, int toIndex)
         {
-            if (fromIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(fromIndex));
-
-            if (toIndex > list.Count)
-                throw new ArgumentOutOfRangeException(nameof(toIndex));
-
-            if (toIndex < fromIndex)
-                throw new ArgumentOutOfRangeException(nameof(toIndex));
-
             if (list == null)
                 throw new ArgumentNullException(nameof(list));
+            if (fromIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(fromIndex));
+            if (toIndex > list.Count)
+                throw new ArgumentOutOfRangeException(nameof(toIndex));
+            if (toIndex < fromIndex)
+                throw new ArgumentOutOfRangeException(nameof(toIndex));
 
             this.list = list;
             this.fromIndex = fromIndex;

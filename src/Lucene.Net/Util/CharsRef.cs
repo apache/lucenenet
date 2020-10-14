@@ -54,14 +54,7 @@ namespace Lucene.Net.Util
         public char[] Chars
         {
             get => chars;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("Chars cannot be null");
-                }
-                chars = value;
-            }
+            set => chars = value ?? throw new ArgumentNullException(nameof(value), "Chars cannot be null");
         }
         private char[] chars;
 
