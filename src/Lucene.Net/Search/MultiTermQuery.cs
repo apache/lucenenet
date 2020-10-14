@@ -269,11 +269,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public MultiTermQuery(string field)
         {
-            if (field == null)
-            {
-                throw new ArgumentException("field must not be null");
-            }
-            this.m_field = field;
+            this.m_field = field ?? throw new ArgumentNullException(nameof(field), "field must not be null");
         }
 
         /// <summary>

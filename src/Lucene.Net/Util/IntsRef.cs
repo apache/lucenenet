@@ -57,14 +57,7 @@ namespace Lucene.Net.Util
         public int[] Int32s // LUCENENET TODO: API - change to indexer
         {
             get => ints;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("Ints should never be null");
-                }
-                ints = value;
-            }
+            set => ints = value ?? throw new ArgumentNullException(nameof(value), "Ints should never be null");
         }
         private int[] ints;
 

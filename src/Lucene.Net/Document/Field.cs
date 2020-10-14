@@ -155,17 +155,9 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>, or if the reader is <c>null</c> </exception>
         public Field(string name, TextReader reader, FieldType type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name), "name cannot be null");
-            }
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException(nameof(type), "type cannot be null");
-            }
-            if (reader == null)
-            {
-                throw new ArgumentNullException(nameof(reader), "reader cannot be null");
             }
             if (type.IsStored)
             {
@@ -176,8 +168,8 @@ namespace Lucene.Net.Documents
                 throw new ArgumentException("non-tokenized fields must use String values");
             }
 
-            this.m_name = name;
-            this.FieldsData = reader;
+            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
+            this.FieldsData = reader ?? throw new ArgumentNullException(nameof(reader), "reader cannot be null");
             this.m_type = type;
         }
 
@@ -192,15 +184,7 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>, or if the <paramref name="tokenStream"/> is <c>null</c> </exception>
         public Field(string name, TokenStream tokenStream, FieldType type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name), "name cannot be null");
-            }
-            if (tokenStream == null)
-            {
-                throw new ArgumentNullException(nameof(tokenStream), "tokenStream cannot be null");
-            }
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException(nameof(type), "type cannot be null");
             }
@@ -213,9 +197,9 @@ namespace Lucene.Net.Documents
                 throw new ArgumentException("TokenStream fields cannot be stored");
             }
 
-            this.m_name = name;
+            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
             this.FieldsData = null;
-            this.m_tokenStream = tokenStream;
+            this.m_tokenStream = tokenStream ?? throw new ArgumentNullException(nameof(tokenStream), "tokenStream cannot be null");
             this.m_type = type;
         }
 
@@ -269,21 +253,13 @@ namespace Lucene.Net.Documents
         ///         or the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, BytesRef bytes, FieldType type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name), "name cannot be null");
-            }
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type), "type cannot be null");
-            }
+            // LUCENENET specific - rearranged order to take advantage of throw expressions
+            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
+            this.m_type = type ?? throw new ArgumentNullException(nameof(type), "type cannot be null");
             if (type.IsIndexed)
-            {
                 throw new ArgumentException("Fields with BytesRef values cannot be indexed");
-            }
+
             this.FieldsData = bytes;
-            this.m_type = type;
-            this.m_name = name;
         }
 
         // TODO: allow direct construction of int, long, float, double value too..?
@@ -299,15 +275,7 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>, or if the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, string value, FieldType type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException(nameof(name), "name cannot be null");
-            }
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value), "value cannot be null");
-            }
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException(nameof(type), "type cannot be null");
             }
@@ -321,8 +289,8 @@ namespace Lucene.Net.Documents
             }
 
             this.m_type = type;
-            this.m_name = name;
-            this.FieldsData = value;
+            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
+            this.FieldsData = value ?? throw new ArgumentNullException(nameof(value), "value cannot be null");
         }
 
         /// <summary>

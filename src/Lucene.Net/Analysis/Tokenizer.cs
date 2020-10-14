@@ -53,11 +53,7 @@ namespace Lucene.Net.Analysis
         protected internal Tokenizer(AttributeFactory factory, TextReader input)
             : base(factory)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input), "input must not be null");
-            }
-            this.inputPending = input;
+            this.inputPending = input ?? throw new ArgumentNullException(nameof(input), "input must not be null");
         }
 
         /// <summary>
