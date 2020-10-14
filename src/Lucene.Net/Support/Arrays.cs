@@ -106,9 +106,9 @@ namespace Lucene.Net.Support
             if (fromIndex > toIndex)
                 throw new ArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
             if (fromIndex < 0)
-                throw new ArgumentOutOfRangeException("fromIndex");
+                throw new ArgumentOutOfRangeException(nameof(fromIndex));
             if (toIndex > a.Length)
-                throw new ArgumentOutOfRangeException("toIndex");
+                throw new ArgumentOutOfRangeException(nameof(toIndex));
 
             for (int i = fromIndex; i < toIndex; i++)
             {

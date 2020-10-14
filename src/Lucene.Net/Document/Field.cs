@@ -140,16 +140,8 @@ namespace Lucene.Net.Documents
         ///         is <c>null</c>. </exception>
         protected internal Field(string name, FieldType type)
         {
-            if (name == null)
-            {
-                throw new ArgumentNullException("name", "name cannot be null");
-            }
-            if (type == null)
-            {
-                throw new ArgumentNullException("type", "type cannot be null");
-            }
-            this.m_name = name;
-            this.m_type = type;
+            this.m_name = name ?? throw new ArgumentNullException(nameof(name), "name cannot be null");
+            this.m_type = type ?? throw new ArgumentNullException(nameof(type), "type cannot be null");
         }
 
         /// <summary>
@@ -165,15 +157,15 @@ namespace Lucene.Net.Documents
         {
             if (name == null)
             {
-                throw new ArgumentNullException("name", "name cannot be null");
+                throw new ArgumentNullException(nameof(name), "name cannot be null");
             }
             if (type == null)
             {
-                throw new ArgumentNullException("type", "type cannot be null");
+                throw new ArgumentNullException(nameof(type), "type cannot be null");
             }
             if (reader == null)
             {
-                throw new ArgumentNullException("reader", "reader cannot be null");
+                throw new ArgumentNullException(nameof(reader), "reader cannot be null");
             }
             if (type.IsStored)
             {
@@ -202,15 +194,15 @@ namespace Lucene.Net.Documents
         {
             if (name == null)
             {
-                throw new ArgumentNullException("name", "name cannot be null");
+                throw new ArgumentNullException(nameof(name), "name cannot be null");
             }
             if (tokenStream == null)
             {
-                throw new ArgumentNullException("tokenStream", "tokenStream cannot be null");
+                throw new ArgumentNullException(nameof(tokenStream), "tokenStream cannot be null");
             }
             if (type == null)
             {
-                throw new ArgumentNullException("type", "type cannot be null");
+                throw new ArgumentNullException(nameof(type), "type cannot be null");
             }
             if (!type.IsIndexed || !type.IsTokenized)
             {
@@ -279,11 +271,11 @@ namespace Lucene.Net.Documents
         {
             if (name == null)
             {
-                throw new ArgumentNullException("name", "name cannot be null");
+                throw new ArgumentNullException(nameof(name), "name cannot be null");
             }
             if (type == null)
             {
-                throw new ArgumentNullException("type", "type cannot be null");
+                throw new ArgumentNullException(nameof(type), "type cannot be null");
             }
             if (type.IsIndexed)
             {
@@ -309,15 +301,15 @@ namespace Lucene.Net.Documents
         {
             if (name == null)
             {
-                throw new ArgumentNullException("name", "name cannot be null");
+                throw new ArgumentNullException(nameof(name), "name cannot be null");
             }
             if (value == null)
             {
-                throw new ArgumentNullException("value", "value cannot be null");
+                throw new ArgumentNullException(nameof(value), "value cannot be null");
             }
             if (type == null)
             {
-                throw new ArgumentNullException("type", "type cannot be null");
+                throw new ArgumentNullException(nameof(type), "type cannot be null");
             }
             if (!type.IsStored && !type.IsIndexed)
             {
@@ -1313,7 +1305,7 @@ namespace Lucene.Net.Documents
                     return false;
 
                 default:
-                    throw new ArgumentOutOfRangeException("store", "Invalid value for Field.Store");
+                    throw new ArgumentOutOfRangeException(nameof(store), "Invalid value for Field.Store");
             }
         }
 
@@ -1332,7 +1324,7 @@ namespace Lucene.Net.Documents
                     return true;
 
                 default:
-                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
+                    throw new ArgumentOutOfRangeException(nameof(index), "Invalid value for Field.Index");
             }
         }
 
@@ -1351,7 +1343,7 @@ namespace Lucene.Net.Documents
                     return true;
 
                 default:
-                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
+                    throw new ArgumentOutOfRangeException(nameof(index), "Invalid value for Field.Index");
             }
         }
 
@@ -1370,7 +1362,7 @@ namespace Lucene.Net.Documents
                     return true;
 
                 default:
-                    throw new ArgumentOutOfRangeException("index", "Invalid value for Field.Index");
+                    throw new ArgumentOutOfRangeException(nameof(index), "Invalid value for Field.Index");
             }
         }
 
@@ -1389,7 +1381,7 @@ namespace Lucene.Net.Documents
                     return true;
 
                 default:
-                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
+                    throw new ArgumentOutOfRangeException(nameof(tv), "Invalid value for Field.TermVector");
             }
         }
 
@@ -1408,7 +1400,7 @@ namespace Lucene.Net.Documents
                     return true;
 
                 default:
-                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
+                    throw new ArgumentOutOfRangeException(nameof(tv), "Invalid value for Field.TermVector");
             }
         }
 
@@ -1427,7 +1419,7 @@ namespace Lucene.Net.Documents
                     return true;
 
                 default:
-                    throw new ArgumentOutOfRangeException("tv", "Invalid value for Field.TermVector");
+                    throw new ArgumentOutOfRangeException(nameof(tv), "Invalid value for Field.TermVector");
             }
         }
 

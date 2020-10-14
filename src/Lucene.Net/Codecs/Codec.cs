@@ -71,9 +71,7 @@ namespace Lucene.Net.Codecs
         /// <exception cref="ArgumentNullException">The <paramref name="codecFactory"/> parameter is <c>null</c>.</exception>
         public static void SetCodecFactory(ICodecFactory codecFactory)
         {
-            if (codecFactory == null)
-                throw new ArgumentNullException("codecFactory");
-            Codec.codecFactory = codecFactory;
+            Codec.codecFactory = codecFactory ?? throw new ArgumentNullException(nameof(codecFactory));
         }
 
         /// <summary>
