@@ -99,10 +99,10 @@ namespace Lucene.Net.Support
         public static IEnumerable<T> TakeAllButLast<T>(this IEnumerable<T> source, int n)
         {
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             if (n < 0)
-                throw new ArgumentOutOfRangeException("n",
+                throw new ArgumentOutOfRangeException(nameof(n),
                     "Argument n should be non-negative.");
 
             return TakeAllButLastImpl(source, n);

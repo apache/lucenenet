@@ -44,11 +44,7 @@ namespace Lucene.Net.Analysis
         /// Construct a token stream processing the given input. </summary>
         protected internal Tokenizer(TextReader input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException("input", "input must not be null");
-            }
-            this.inputPending = input;
+            this.inputPending = input ?? throw new ArgumentNullException(nameof(input), "input must not be null");
         }
 
         /// <summary>
@@ -59,7 +55,7 @@ namespace Lucene.Net.Analysis
         {
             if (input == null)
             {
-                throw new ArgumentNullException("input", "input must not be null");
+                throw new ArgumentNullException(nameof(input), "input must not be null");
             }
             this.inputPending = input;
         }

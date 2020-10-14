@@ -258,19 +258,10 @@ namespace Lucene.Net.Search
 
             public AnonymousCollector(Action<Scorer> setScorer, Action<int> collect, Action<AtomicReaderContext> setNextReader, Func<bool> acceptsDocsOutOfOrder)
             {
-                if (setScorer == null)
-                    throw new ArgumentNullException("setScorer");
-                if (collect == null)
-                    throw new ArgumentNullException("collect");
-                if (setNextReader == null)
-                    throw new ArgumentNullException("setNextReader");
-                if (acceptsDocsOutOfOrder == null)
-                    throw new ArgumentNullException("acceptsDocsOutOfOrder");
-
-                this.setScorer = setScorer;
-                this.collect = collect;
-                this.setNextReader = setNextReader;
-                this.acceptsDocsOutOfOrder = acceptsDocsOutOfOrder;
+                this.setScorer = setScorer ?? throw new ArgumentNullException(nameof(setScorer));
+                this.collect = collect ?? throw new ArgumentNullException(nameof(collect));
+                this.setNextReader = setNextReader ?? throw new ArgumentNullException(nameof(setNextReader));
+                this.acceptsDocsOutOfOrder = acceptsDocsOutOfOrder ?? throw new ArgumentNullException(nameof(acceptsDocsOutOfOrder));
             }
 
             public bool AcceptsDocsOutOfOrder => this.acceptsDocsOutOfOrder();

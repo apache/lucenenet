@@ -236,7 +236,7 @@ namespace Lucene.Net.Store
                 : base(resourceDescription, null, fc.Length, outerInstance.chunkSizePower, true)
             {
                 this.outerInstance = outerInstance;
-                this.fc = fc ?? throw new ArgumentNullException("fc");
+                this.fc = fc ?? throw new ArgumentNullException(nameof(fc));
                 this.SetBuffers(outerInstance.Map(this, fc, 0, fc.Length));
             }
 

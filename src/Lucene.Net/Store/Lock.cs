@@ -233,10 +233,7 @@ namespace Lucene.Net.Store
             public AnonymousWith(Lock @lock, int lockWaitTimeout, Func<T> doBody)
                 : base(@lock, lockWaitTimeout)
             {
-                if (doBody == null)
-                    throw new ArgumentNullException("doBody");
-
-                this.doBody = doBody;
+                this.doBody = doBody ?? throw new ArgumentNullException(nameof(doBody));
             }
 
             protected override T DoBody()

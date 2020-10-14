@@ -59,11 +59,7 @@ namespace Lucene.Net.Util
             get => longs;
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
-                longs = value;
+                longs = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
         private long[] longs;

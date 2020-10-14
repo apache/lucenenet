@@ -482,9 +482,7 @@ namespace Lucene.Net.Analysis
             public AnonymousAnalyzer(Func<string, TextReader, TokenStreamComponents> createComponents, Func<string, TextReader, TextReader> initReader, ReuseStrategy reuseStrategy)
                 : base(reuseStrategy)
             {
-                if (createComponents == null)
-                    throw new ArgumentNullException("createComponents");
-                this.createComponents = createComponents;
+                this.createComponents = createComponents ?? throw new ArgumentNullException(nameof(createComponents));
                 this.initReader = initReader;
             }
 
