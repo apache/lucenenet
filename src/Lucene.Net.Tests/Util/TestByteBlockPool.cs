@@ -57,11 +57,11 @@ namespace Lucene.Net.Util
                 pool.Reset(Random.NextBoolean(), reuseFirst);
                 if (reuseFirst)
                 {
-                    Assert.AreEqual(ByteBlockPool.BYTE_BLOCK_SIZE, bytesUsed.Get());
+                    Assert.AreEqual(ByteBlockPool.BYTE_BLOCK_SIZE, bytesUsed);
                 }
                 else
                 {
-                    Assert.AreEqual(0, bytesUsed.Get());
+                    Assert.AreEqual(0, bytesUsed);
                     pool.NextBuffer(); // prepare for next iter
                 }
             }
