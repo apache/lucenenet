@@ -72,5 +72,67 @@ namespace Lucene.Net.Index
         {
             return J2N.BitConversion.Int64BitsToDouble(Get(docID));
         }
+
+
+        private FieldCache.Bytes   _asBytes;
+        private FieldCache.Int16s  _asInt16s;
+        private FieldCache.Int32s  _asInt32s;
+        private FieldCache.Int64s  _asInt64s;
+        private FieldCache.Singles _asSingles;
+        private FieldCache.Doubles _asDoubles;
+
+        internal FieldCache.Bytes AsBytes() // LUCENENET specific - Avoid allocation of a new FieldCache.Bytes on every Get call
+        {
+            if (_asBytes is null) //No need to lock, as we don't care if this is replaced
+            {
+                _asBytes = new FieldCache.Bytes(this);
+            }
+            return _asBytes;
+        }
+
+        internal FieldCache.Int16s AsInt16s() // LUCENENET specific - Avoid allocation of a new FieldCache.Int16s on every Get call
+        {
+            if (_asInt16s is null) //No need to lock, as we don't care if this is replaced
+            {
+                _asInt16s = new FieldCache.Int16s(this);
+            }
+            return _asInt16s;
+        }
+
+        internal FieldCache.Int32s AsInt32s() // LUCENENET specific - Avoid allocation of a new FieldCache.Int32s on every Get call
+        {
+            if (_asInt32s is null) //No need to lock, as we don't care if this is replaced
+            {
+                _asInt32s = new FieldCache.Int32s(this);
+            }
+            return _asInt32s;
+        }
+
+        internal FieldCache.Int64s AsInt64s() // LUCENENET specific - Avoid allocation of a new FieldCache.Int64s on every Get call
+        {
+            if (_asInt64s is null) //No need to lock, as we don't care if this is replaced
+            {
+                _asInt64s = new FieldCache.Int64s(this);
+            }
+            return _asInt64s;
+        }
+
+        internal FieldCache.Singles AsSingles() // LUCENENET specific - Avoid allocation of a new FieldCache.Singles on every Get call
+        {
+            if (_asSingles is null) //No need to lock, as we don't care if this is replaced
+            {
+                _asSingles = new FieldCache.Singles(this);
+            }
+            return _asSingles;
+        }
+
+        internal FieldCache.Doubles AsDoubles() // LUCENENET specific - Avoid allocation of a new FieldCache.Doubles on every Get call
+        {
+            if(_asDoubles is null) //No need to lock, as we don't care if this is replaced
+            {
+                _asDoubles = new FieldCache.Doubles(this);
+            }
+            return _asDoubles;
+        }
     }
 }

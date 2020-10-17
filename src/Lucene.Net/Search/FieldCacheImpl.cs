@@ -598,7 +598,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Bytes(valuesIn);
+                return valuesIn.AsBytes();
             }
             else
             {
@@ -756,7 +756,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Int16s(valuesIn);
+                return valuesIn.AsInt16s();
             }
             else
             {
@@ -913,7 +913,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Int32s(valuesIn);
+                return valuesIn.AsInt32s();
             }
             else
             {
@@ -1193,7 +1193,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Singles(valuesIn);
+                return valuesIn.AsSingles();
             }
             else
             {
@@ -1344,7 +1344,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Int64s(valuesIn);
+                return valuesIn.AsInt64s();
             }
             else
             {
@@ -1507,7 +1507,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Doubles(valuesIn);
+                return valuesIn.AsDoubles();
             }
             else
             {
