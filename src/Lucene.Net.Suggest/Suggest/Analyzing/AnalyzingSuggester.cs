@@ -491,7 +491,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             output.WriteBytes(surfaceForm.Bytes, surfaceForm.Offset, surfaceForm.Length);
                         }
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(output.Position == requiredLength, () => output.Position + " vs " + requiredLength);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(output.Position == requiredLength, "{0} vs {1}", output.Position, requiredLength);
 
                         writer.Write(buffer, 0, output.Position);
                     }

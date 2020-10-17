@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         Debugging.Assert(endOffset >= startOffset);
                         Debugging.Assert(startOffset >= _lastStartOffset,
-                            () => "startOffset=" + startOffset + " lastStartOffset=" + _lastStartOffset);
+                            "startOffset={0} lastStartOffset={1}", startOffset, _lastStartOffset);
                     }
                     _lastStartOffset = startOffset;
                     _outerInstance.Write(START_OFFSET);
