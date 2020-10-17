@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.SimpleText
         /// </summary>
         private bool FieldSeen(string field)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!_fieldsSeen.Contains(field), () => "field \"" + field + "\" was added more than once during flush");
+            if (Debugging.AssertsEnabled) Debugging.Assert(!_fieldsSeen.Contains(field), "field \"{0}\" was added more than once during flush", field);
             _fieldsSeen.Add(field);
             return true;
         }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (Debugging.AssertsEnabled) Debugging.Assert(numDocsWritten <= numDocs);
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(numDocs == numDocsWritten, () => "numDocs=" + numDocs + " numDocsWritten=" + numDocsWritten);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numDocs == numDocsWritten, "numDocs={0} numDocsWritten={1}", numDocs, numDocsWritten);
         }
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)

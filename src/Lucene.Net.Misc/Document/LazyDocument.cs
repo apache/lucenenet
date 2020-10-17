@@ -121,7 +121,7 @@ namespace Lucene.Net.Documents
             IIndexableField[] realValues = d.GetFields(name);
 
             if (Debugging.AssertsEnabled) Debugging.Assert(realValues.Length <= lazyValues.Count,
-                () => "More lazy values then real values for field: " + name);
+                "More lazy values then real values for field: {0}", name);
 
             for (int i = 0; i < lazyValues.Count; i++)
             {
@@ -166,8 +166,8 @@ namespace Lucene.Net.Documents
                 }
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(HasBeenLoaded, () => "field value was not lazy loaded");
-                    Debugging.Assert(realValue.Name.Equals(Name, StringComparison.Ordinal), () => "realvalue name != name: " + realValue.Name + " != " + Name);
+                    Debugging.Assert(HasBeenLoaded, "field value was not lazy loaded");
+                    Debugging.Assert(realValue.Name.Equals(Name, StringComparison.Ordinal), "realvalue name != name: {0} != {1}", realValue.Name, Name);
                 }
 
                 return realValue;

@@ -907,7 +907,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
 
             int[] parents = GetTaxoArrays().Parents;
-            if (Debugging.AssertsEnabled) Debugging.Assert(ordinal < parents.Length, () => "requested ordinal (" + ordinal + "); parents.length (" + parents.Length + ") !");
+            if (Debugging.AssertsEnabled) Debugging.Assert(ordinal < parents.Length, "requested ordinal ({0}); parents.length ({1}) !", ordinal, parents.Length);
             return parents[ordinal];
         }
 
