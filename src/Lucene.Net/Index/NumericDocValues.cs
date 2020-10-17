@@ -1,3 +1,5 @@
+using Lucene.Net.Search;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -20,7 +22,12 @@ namespace Lucene.Net.Index
     /// <summary>
     /// A per-document numeric value.
     /// </summary>
-    public abstract class NumericDocValues
+    public abstract class NumericDocValues : IFieldCacheGetter<byte>,  // LUCENENET specific - Add interfaces per type to reduce previous Func<int,T> allocations on reading from cache
+                                             IFieldCacheGetter<short>, 
+                                             IFieldCacheGetter<int>,
+                                             IFieldCacheGetter<long>, 
+                                             IFieldCacheGetter<float>, 
+                                             IFieldCacheGetter<double>
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -35,5 +42,35 @@ namespace Lucene.Net.Index
         /// <param name="docID"> document ID to lookup </param>
         /// <returns> numeric value </returns>
         public abstract long Get(int docID);
+
+        byte IFieldCacheGetter<byte>.GetCached(int docID) // LUCENENET specific - moved read logic from FieldCacheImpl to here
+        {
+            return (byte)Get(docID);
+        }
+
+        short IFieldCacheGetter<short>.GetCached(int docID) // LUCENENET specific - moved read logic from FieldCacheImpl to here
+        {
+            return (short)Get(docID);
+        }
+
+        int IFieldCacheGetter<int>.GetCached(int docID) // LUCENENET specific - moved read logic from FieldCacheImpl to here
+        {
+            return (int)Get(docID);
+        }
+
+        long IFieldCacheGetter<long>.GetCached(int docID) // LUCENENET specific - moved read logic from FieldCacheImpl to here
+        {
+            return Get(docID);
+        }
+
+        float IFieldCacheGetter<float>.GetCached(int docID) // LUCENENET specific - moved read logic from FieldCacheImpl to here
+        {
+            return J2N.BitConversion.Int32BitsToSingle((int)Get(docID));
+        }
+
+        double IFieldCacheGetter<double>.GetCached(int docID) // LUCENENET specific - moved read logic from FieldCacheImpl to here
+        {
+            return J2N.BitConversion.Int64BitsToDouble(Get(docID));
+        }
     }
 }

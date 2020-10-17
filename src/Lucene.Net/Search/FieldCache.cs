@@ -358,6 +358,17 @@ namespace Lucene.Net.Search
         TextWriter InfoStream { set; get; }
     }
 
+    public interface IFieldCacheGetter<T> // LUCENENET specific - interface to replace passing a Func<int,T> to the FieldCache methods
+    {
+        T GetCached(int docID);
+    }
+
+    public class EmptyGetter<T> : IFieldCacheGetter<T> // LUCENENET specific - Replaces (docID) => 0 
+    {
+        public static readonly EmptyGetter<T> Default = new EmptyGetter<T>();
+        public T GetCached(int docID) => default(T);
+    }
+
     public static class FieldCache 
     {
         /// <summary>
@@ -365,7 +376,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public class Bytes // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
-            private readonly Func<int, byte> get;
+            private readonly IFieldCacheGetter<byte> get;
             private readonly bool hasGet;
 
             /// <summary>
@@ -378,7 +389,7 @@ namespace Lucene.Net.Search
             /// <paramref name="get"/> delegate method.
             /// </summary>
             /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
-            public Bytes(Func<int, byte> get) 
+            public Bytes(IFieldCacheGetter<byte> get) 
             {
                 this.get = get ?? throw new ArgumentNullException(nameof(get));
                 this.hasGet = true;
@@ -387,12 +398,12 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Return a single <see cref="byte"/> representation of this field's value.
             /// </summary>
-            public virtual byte Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
+            public virtual byte Get(int docID) => hasGet ? get.GetCached(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Bytes EMPTY = new Bytes((docID) => 0);
+            public static readonly Bytes EMPTY = new Bytes(EmptyGetter<byte>.Default);
         }
 
         /// <summary>
@@ -402,7 +413,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public class Int16s // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
-            private readonly Func<int, short> get;
+            private readonly IFieldCacheGetter<short> get;
             private readonly bool hasGet;
 
             /// <summary>
@@ -415,7 +426,7 @@ namespace Lucene.Net.Search
             /// <paramref name="get"/> delegate method.
             /// </summary>
             /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
-            public Int16s(Func<int, short> get)
+            public Int16s(IFieldCacheGetter<short> get)
             {
                 this.get = get ?? throw new ArgumentNullException(nameof(get));
                 this.hasGet = true;
@@ -424,12 +435,12 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Return a <see cref="short"/> representation of this field's value.
             /// </summary>
-            public virtual short Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
+            public virtual short Get(int docID) => hasGet ? get.GetCached(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Int16s EMPTY = new Int16s((docID) => 0);
+            public static readonly Int16s EMPTY = new Int16s(EmptyGetter<short>.Default);
         }
 
         /// <summary>
@@ -439,7 +450,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public class Int32s // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
-            private readonly Func<int, int> get;
+            private readonly IFieldCacheGetter<int> get;
             private readonly bool hasGet;
 
             /// <summary>
@@ -452,7 +463,7 @@ namespace Lucene.Net.Search
             /// <paramref name="get"/> delegate method.
             /// </summary>
             /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
-            public Int32s(Func<int, int> get)
+            public Int32s(IFieldCacheGetter<int> get)
             {
                 this.get = get ?? throw new ArgumentNullException(nameof(get));
                 this.hasGet = true;
@@ -461,12 +472,12 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Return an <see cref="int"/> representation of this field's value.
             /// </summary>
-            public virtual int Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
+            public virtual int Get(int docID) => hasGet ? get.GetCached(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Int32s EMPTY = new Int32s((docID) => 0);
+            public static readonly Int32s EMPTY = new Int32s(EmptyGetter<int>.Default);
         }
 
         /// <summary>
@@ -476,7 +487,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public class Int64s // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
-            private readonly Func<int, long> get;
+            private readonly IFieldCacheGetter<long> get;
             private readonly bool hasGet;
 
             /// <summary>
@@ -489,7 +500,7 @@ namespace Lucene.Net.Search
             /// <paramref name="get"/> delegate method.
             /// </summary>
             /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
-            public Int64s(Func<int, long> get)
+            public Int64s(IFieldCacheGetter<long> get)
             {
                 this.get = get ?? throw new ArgumentNullException(nameof(get));
                 this.hasGet = true;
@@ -498,12 +509,12 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Return an <see cref="long"/> representation of this field's value.
             /// </summary>
-            public virtual long Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
+            public virtual long Get(int docID) => hasGet ? get.GetCached(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Int64s EMPTY = new Int64s((docID) => 0);
+            public static readonly Int64s EMPTY = new Int64s(EmptyGetter<long>.Default);
         }
 
         /// <summary>
@@ -513,7 +524,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public class Singles // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
-            private readonly Func<int, float> get;
+            private readonly IFieldCacheGetter<float> get;
             private readonly bool hasGet;
 
             /// <summary>
@@ -526,7 +537,7 @@ namespace Lucene.Net.Search
             /// <paramref name="get"/> delegate method.
             /// </summary>
             /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
-            public Singles(Func<int, float> get)
+            public Singles(IFieldCacheGetter<float> get)
             {
                 this.get = get ?? throw new ArgumentNullException(nameof(get));
                 this.hasGet = true;
@@ -535,12 +546,12 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Return an <see cref="float"/> representation of this field's value.
             /// </summary>
-            public virtual float Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
+            public virtual float Get(int docID) => hasGet ? get.GetCached(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Singles EMPTY = new Singles((docID) => 0);
+            public static readonly Singles EMPTY = new Singles(EmptyGetter<float>.Default);
         }
 
         /// <summary>
@@ -548,7 +559,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public class Doubles // LUCENENET specific - removed abstract so we can pass a delegate to the constructor
         {
-            private readonly Func<int, double> get;
+            private readonly IFieldCacheGetter<double> get;
             private readonly bool hasGet;
 
             /// <summary>
@@ -561,7 +572,7 @@ namespace Lucene.Net.Search
             /// <paramref name="get"/> delegate method.
             /// </summary>
             /// <param name="get">A <see cref="Func{T, TResult}"/> that implements the <see cref="Get(int)"/> method body.</param>
-            public Doubles(Func<int, double> get)
+            public Doubles(IFieldCacheGetter<double> get)
             {
                 this.get = get ?? throw new ArgumentNullException(nameof(get));
                 this.hasGet = true;
@@ -570,12 +581,12 @@ namespace Lucene.Net.Search
             /// <summary>
             /// Return a <see cref="double"/> representation of this field's value.
             /// </summary>
-            public virtual double Get(int docID) => hasGet ? get(docID) : default; // LUCENENET specific - implemented with delegate by default
+            public virtual double Get(int docID) => hasGet ? get.GetCached(docID) : default; // LUCENENET specific - implemented with delegate by default
 
             /// <summary>
             /// Zero value for every document
             /// </summary>
-            public static readonly Doubles EMPTY = new Doubles((docID) => 0);
+            public static readonly Doubles EMPTY = new Doubles(EmptyGetter<double>.Default);
         }
 
         /// <summary>

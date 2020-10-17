@@ -598,7 +598,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Bytes(get: (docID) => (byte)valuesIn.Get(docID));
+                return new FieldCache.Bytes(valuesIn);
             }
             else
             {
@@ -756,7 +756,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Int16s(get: (docID) => (short)valuesIn.Get(docID));
+                return new FieldCache.Int16s(valuesIn);
             }
             else
             {
@@ -913,7 +913,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Int32s(get: (docID) => (int)valuesIn.Get(docID));
+                return new FieldCache.Int32s(valuesIn);
             }
             else
             {
@@ -1193,7 +1193,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Singles(get: (docID) => J2N.BitConversion.Int32BitsToSingle((int)valuesIn.Get(docID)));
+                return new FieldCache.Singles(valuesIn);
             }
             else
             {
@@ -1344,7 +1344,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Int64s(get: (docID) => valuesIn.Get(docID));
+                return new FieldCache.Int64s(valuesIn);
             }
             else
             {
@@ -1507,7 +1507,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache.Doubles(get: (docID) => J2N.BitConversion.Int64BitsToDouble(valuesIn.Get(docID)));
+                return new FieldCache.Doubles(valuesIn);
             }
             else
             {
