@@ -190,7 +190,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 int lo = 0;          // binary search
                 int hi = fieldIndex.numIndexTerms - 1;
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.totalIndexInterval > 0, () => "totalIndexInterval=" + outerInstance.totalIndexInterval);
+                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.totalIndexInterval > 0, "totalIndexInterval={0}", outerInstance.totalIndexInterval);
 
                 while (hi >= lo)
                 {
@@ -332,7 +332,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                     this.numIndexTerms = 1 + (numIndexTerms - 1) / outerInstance.outerInstance.indexDivisor;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.numIndexTerms > 0, () => "numIndexTerms=" + numIndexTerms + " indexDivisor=" + outerInstance.outerInstance.indexDivisor);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(this.numIndexTerms > 0, "numIndexTerms={0} indexDivisor={1}", numIndexTerms, outerInstance.outerInstance.indexDivisor);
 
                     if (outerInstance.outerInstance.indexDivisor == 1)
                     {
@@ -400,7 +400,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 clone.Seek(indexStart + termOffset);
                                 if (Debugging.AssertsEnabled)
                                 {
-                                    Debugging.Assert(indexStart + termOffset < clone.Length, () => "indexStart=" + indexStart + " termOffset=" + termOffset + " len=" + clone.Length);
+                                    Debugging.Assert(indexStart + termOffset < clone.Length, "indexStart={0} termOffset={1} len={2}", indexStart, termOffset, clone.Length);
                                     Debugging.Assert(indexStart + termOffset + numTermBytes < clone.Length);
                                 }
 
