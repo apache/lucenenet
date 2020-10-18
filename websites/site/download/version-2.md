@@ -2,14 +2,15 @@
 uid: download/2
 ---
 
-Download Lucene.Net 2.9.4
-===============
+<span id="forkongithub"><a href="https://github.com/apache/lucenenet">Fork me on GitHub</a></span>
 
----------------
+# Download Lucene.Net 2.9.4
+
+---
 
 ## Lucene 2.9.4.1
 
-_Status:_ __`Stable`__
+_Status:_ **`Stable`**
 
 _Released:_ `2011-12-02`
 
@@ -19,4 +20,4 @@ _Released:_ `2011-12-02`
 
 ### Source code
 
-* [Git release tag](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_2_9_4g_RC1)
+- [Git release tag](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_2_9_4g_RC1)

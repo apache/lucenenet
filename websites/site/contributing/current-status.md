@@ -1,10 +1,12 @@
 ---
 uid: contributing/current-status
 ---
-The current status of the Lucene.Net project
-===============
 
----------------
+<span id="forkongithub"><a href="https://github.com/apache/lucenenet">Fork me on GitHub</a></span>
+
+# The current status of the Lucene.Net project
+
+---
 
 Working toward Lucene.Net 4.8.0 (currently in BETA)
 

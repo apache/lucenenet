@@ -2,18 +2,19 @@
 uid: download/3
 ---
 
-Download Lucene.Net 3.0.3
-===============
+<span id="forkongithub"><a href="https://github.com/apache/lucenenet">Fork me on GitHub</a></span>
 
----------------
+# Download Lucene.Net 3.0.3
+
+---
 
 ## Lucene 3.0.3
 
-_Status:_ __`Stable`__
+_Status:_ **`Stable`**
 
 _Released:_ `2012-10-26`
 
-__[Release notes](https://cwiki.apache.org/confluence/display/LUCENENET/Lucene.Net+3.0.3)__
+**[Release notes](https://cwiki.apache.org/confluence/display/LUCENENET/Lucene.Net+3.0.3)**
 
 <div class="nuget-well" style="text-align:left;">
     PM> Install-Package Lucene.Net -Version 3.0.3
@@ -33,7 +34,7 @@ __[Release notes](https://cwiki.apache.org/confluence/display/LUCENENET/Lucene.N
 
 ### Source code
 
-* [Git release tag](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_3_0_3_RC2_final)
+- [Git release tag](https://github.com/apache/lucenenet/releases/tag/Lucene.Net_3_0_3_RC2_final)
 
 ### Binary releases
 
