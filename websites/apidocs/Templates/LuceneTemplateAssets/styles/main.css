@@ -36,12 +36,13 @@
       background-color: #1764AA;
   } */
 
-  .btn-primary:hover {
-    background-color: #1764AA;
+.btn-primary:hover {
+  background-color: #1764aa;
 }
-button, a {
-    color: #1764AA;
-    /* #0095eb */
+button,
+a {
+  color: #1764aa;
+  /* #0095eb */
 }
 button:hover,
 button:focus,
@@ -51,53 +52,111 @@ a:focus {
   text-decoration: none;
 }
 nav.navbar {
-    background-color:white;
-    min-height: 80px;
+  background-color: white;
+  min-height: 80px;
 }
-.navbar-brand  {
-    height:80px;
+.navbar-brand {
+  height: 80px;
 }
-.navbar-header .navbar-brand img {    
-    width:300px;
-    height:55px;
-    margin:10px 10px 10px 0px;
+.navbar-header .navbar-brand img {
+  width: 300px;
+  height: 55px;
+  margin: 10px 10px 10px 0px;
 }
-.navbar-toggle .icon-bar{
-    margin-top: 2px;
-    background-color:#0095eb;
+.navbar-toggle .icon-bar {
+  margin-top: 2px;
+  background-color: #0095eb;
 }
 .navbar-toggle {
-    border-color:#0095eb;
+  border-color: #0095eb;
 }
 header ul.navbar-nav {
-    font-size:1.2em;
-    float:right;
-    font-weight: 600;
+  font-size: 1.2em;
+  float: right;
+  font-weight: 600;
 }
 
 .sidefilter {
-    top:120px; 
+  top: 120px;
 }
 
 .sidetoc {
-    top: 180px;
-    background-color:rgb(247, 247, 247);
+  top: 180px;
+  background-color: rgb(247, 247, 247);
 }
 
 body .toc {
-    background-color:rgb(247, 247, 247);
+  background-color: rgb(247, 247, 247);
 }
 
 .sidefilter {
-    background-color: rgb(247, 247, 247);
+  background-color: rgb(247, 247, 247);
 }
 
 .level0.breadcrumb .level1.breadcrumb {
-    display: inline;
+  display: inline;
 }
 
 .level0.breadcrumb .level1.breadcrumb > li:before {
-    content: "\00a0/";
-    padding: 0 5px;
-    color: #ccc;
+  content: "\00a0/";
+  padding: 0 5px;
+  color: #ccc;
+}
+
+/* FORK ME ON GITHUB */
+#forkongithub a {
+  background: #1764aa;
+  color: #fff;
+  text-decoration: none;
+  font-family: arial, sans-serif;
+  text-align: center;
+  font-weight: bold;
+  padding: 5px 40px;
+  font-size: 1rem;
+  line-height: 2rem;
+  position: relative;
+  transition: 0.5s;
+}
+#forkongithub a:hover {
+  background: black;
+  color: #fff;
+}
+#forkongithub a::before,
+#forkongithub a::after {
+  content: "";
+  width: 100%;
+  display: block;
+  position: absolute;
+  top: 1px;
+  left: 0;
+  height: 1px;
+  background: #fff;
+}
+#forkongithub a::after {
+  bottom: 1px;
+  top: auto;
+}
+@media screen and (min-width: 800px) {
+  #forkongithub {
+    position: fixed;
+    display: block;
+    top: 0;
+    right: 0;
+    width: 200px;
+    overflow: hidden;
+    height: 200px;
+    z-index: 9999;
+  }
+  #forkongithub a {
+    width: 200px;
+    position: absolute;
+    top: 40px;
+    right: -40px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
+  }
 }
