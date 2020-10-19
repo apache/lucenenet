@@ -926,7 +926,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     else
                     {
                         current = t2.Bytes;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!unicodeSortOrder || term.CompareTo(current) < 0, () => "term=" + UnicodeUtil.ToHexString(term.Utf8ToString()) + " vs current=" + UnicodeUtil.ToHexString(current.Utf8ToString()));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!unicodeSortOrder || term.CompareTo(current) < 0,"term={0} vs current={1}", UnicodeUtil.ToHexString(term.Utf8ToString()), UnicodeUtil.ToHexString(current.Utf8ToString()));
                         return SeekStatus.NOT_FOUND;
                     }
                 }

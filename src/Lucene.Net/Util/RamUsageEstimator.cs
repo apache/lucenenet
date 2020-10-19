@@ -781,7 +781,7 @@ namespace Lucene.Net.Util
 
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(initialCapacity > 0, () => "Initial capacity must be between (0, " + int.MaxValue + "].");
+                    Debugging.Assert(initialCapacity > 0, "Initial capacity must be between (0, {0}].", int.MaxValue);
                     Debugging.Assert(loadFactor > 0 && loadFactor < 1, "Load factor must be between (0, 1).");
                 }
                 this.LoadFactor = loadFactor;
@@ -909,7 +909,7 @@ namespace Lucene.Net.Util
                 if (Debugging.AssertsEnabled)
                 {
                     Debugging.Assert(current > 0 && ((current & (current - 1)) == 0), "Capacity must be a power of two.");
-                    Debugging.Assert((current << 1) > 0, () => "Maximum capacity exceeded (" + ((int)((uint)0x80000000 >> 1)) + ").");
+                    Debugging.Assert((current << 1) > 0,"Maximum capacity exceeded ({0}", ((int)((uint)0x80000000 >> 1)) + ").");
                 }
 
                 if (current < MIN_CAPACITY / 2)

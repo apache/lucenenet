@@ -2137,7 +2137,7 @@ namespace Lucene.Net.Codecs
                                 break;
                             }
                             arc = arcs[1 + targetUpto];
-                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF), () => "arc.label=" + (char)arc.Label + " targetLabel=" + (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
+                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF),"arc.label={0} targetLabel={1}", (char)arc.Label, (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
                             // TOOD: we could save the outputs in local
                             // byte[][] instead of making new objs ever
                             // seek; but, often the FST doesn't have any
@@ -2760,7 +2760,7 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) {
                         //System.out.println("    loadNextFloorBlock fp=" + fp + " fpEnd=" + fpEnd);
                         //}
-                        if (Debugging.AssertsEnabled) Debugging.Assert(arc == null || isFloor, () => "arc=" + arc + " isFloor=" + isFloor);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc == null || isFloor,"arc={0} isFloor={1}", arc, isFloor);
                         fp = fpEnd;
                         nextEnt = -1;
                         LoadBlock();
@@ -2917,7 +2917,7 @@ namespace Lucene.Net.Codecs
                     public bool NextLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount, () => "nextEnt=" + nextEnt + " entCount=" + entCount + " fp=" + fp);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount,"nextEnt={0} entCount={1}", nextEnt, entCount + " fp=" + fp);
                         nextEnt++;
                         suffix = suffixesReader.ReadVInt32();
                         startBytePos = suffixesReader.Position;
@@ -2935,7 +2935,7 @@ namespace Lucene.Net.Codecs
                     public bool NextNonLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount, () => "nextEnt=" + nextEnt + " entCount=" + entCount + " fp=" + fp);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount,"nextEnt={0} entCount={1}", nextEnt, entCount + " fp=" + fp);
                         nextEnt++;
                         int code = suffixesReader.ReadVInt32();
                         suffix = (int)((uint)code >> 1);
@@ -3118,7 +3118,7 @@ namespace Lucene.Net.Codecs
                             //if (DEBUG) System.out.println("    already positioned");
                             return;
                         }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(subFP < fp, () => "fp=" + fp + " subFP=" + subFP);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(subFP < fp,"fp={0} subFP={1}", fp, subFP);
                         long targetSubCode = fp - subFP;
                         //if (DEBUG) System.out.println("    targetSubCode=" + targetSubCode);
                         while (true)

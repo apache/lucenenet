@@ -440,7 +440,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("RIW: doRandomForceMerge(" + limit + ")");
                     }
                     IndexWriter.ForceMerge(limit);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!doRandomForceMergeAssert || IndexWriter.SegmentCount <= limit, () => "limit=" + limit + " actual=" + IndexWriter.SegmentCount);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(!doRandomForceMergeAssert || IndexWriter.SegmentCount <= limit,"limit={0} actual={1}", limit, IndexWriter.SegmentCount);
                 }
             }
         }

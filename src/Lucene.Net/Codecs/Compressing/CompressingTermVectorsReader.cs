@@ -383,7 +383,7 @@ namespace Lucene.Net.Codecs.Compressing
                         totalPayloads += freq;
                     }
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(i != totalFields - 1 || termIndex == totalTerms, () => termIndex + " " + totalTerms);
+                if (Debugging.AssertsEnabled) Debugging.Assert(i != totalFields - 1 || termIndex == totalTerms, "{0} {1}", termIndex, totalTerms);
             }
 
             int[][] positionIndex = PositionIndex(skip, numFields, numTerms, termFreqs);
@@ -538,7 +538,7 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                     termIndex += termCount;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(termIndex == totalTerms, () => termIndex + " " + totalTerms);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termIndex == totalTerms, "{0} {1}", termIndex, totalTerms);
             }
 
             // decompress data
@@ -577,7 +577,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(Sum(fieldLengths) == docLen, () => Sum(fieldLengths) + " != " + docLen);
+            if (Debugging.AssertsEnabled) Debugging.Assert(Sum(fieldLengths) == docLen, "{0} != {1}", Sum(fieldLengths), docLen);
 
             return new TVFields(this, fieldNums, FieldFlags, fieldNumOffs, fieldNumTerms, fieldLengths, prefixLengths, suffixLengths, fieldTermFreqs, positionIndex, positions, startOffsets, lengths, payloadBytes, payloadIndex, suffixBytes);
         }

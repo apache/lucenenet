@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
             }
             writer.FinishDocument();
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(lastDocID == docState.docID, () => "lastDocID=" + lastDocID + " docState.docID=" + docState.docID);
+            if (Debugging.AssertsEnabled) Debugging.Assert(lastDocID == docState.docID,"lastDocID={0} docState.docID={1}", lastDocID, docState.docID);
 
             lastDocID++;
 

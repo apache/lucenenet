@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0, () => "fieldName=" + info.Name + " lastFieldName=" + lastFieldName);
+            if (Debugging.AssertsEnabled) Debugging.Assert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0,"fieldName={0} lastFieldName={1}", info.Name, lastFieldName);
             lastFieldName = info.Name;
             this.positions = positions;
             this.offsets = offsets;

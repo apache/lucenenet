@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
             long b = (long)((ulong)(((long)((ulong)SmallerUpTo7_8(s, (r * L8_L)) >> 7)) * L8_L) >> 53); // & (~7L); // Step 3, side ways addition for byte number times 8
 
             long l = r - (((long)((ulong)(s << 8) >> (int)b)) & 0xFFL); // Step 4, byte wise rank, subtract the rank with byte at b-8, or zero for b=0;
-            if (Debugging.AssertsEnabled) Debugging.Assert(0L <= 1, () => l.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.AssertsEnabled) Debugging.Assert(0L <= 1, l.ToString(CultureInfo.InvariantCulture));
             //assert l < 8 : l; //fails when bit r is not available.
 
             // Select bit l from byte (x >>> b):

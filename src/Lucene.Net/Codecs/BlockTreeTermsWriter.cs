@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(numTerms > 0);
                 this.FieldInfo = fieldInfo;
-                if (Debugging.AssertsEnabled) Debugging.Assert(rootCode != null, () => "field=" + fieldInfo.Name + " numTerms=" + numTerms);
+                if (Debugging.AssertsEnabled) Debugging.Assert(rootCode != null,"field={0} numTerms={1}", fieldInfo.Name, numTerms);
                 this.RootCode = rootCode;
                 this.IndexStartFP = indexStartFP;
                 this.NumTerms = numTerms;
@@ -480,9 +480,7 @@ namespace Lucene.Net.Codecs
             {
                 // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
                 // it might contain garbage that cannot be converted into text.
-                if (Debugging.AssertsEnabled) Debugging.Assert(
-                    (IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null),
-                    () => "isFloor=" + IsFloor + " floorBlocks=" + ToString(floorBlocks));
+                if (Debugging.AssertsEnabled) Debugging.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor={0} floorBlocks={1}", IsFloor , ToString(floorBlocks));
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(scratchBytes.GetFilePointer() == 0);
 
@@ -864,7 +862,7 @@ namespace Lucene.Net.Codecs
                             //System.out.println("    = " + pendingCount);
                             pendingCount = 0;
 
-                            if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.minItemsInBlock == 1 || subCount > 1, () => "minItemsInBlock=" + outerInstance.minItemsInBlock + " subCount=" + subCount + " sub=" + sub + " of " + numSubs + " subTermCount=" + subTermCountSums[sub] + " subSubCount=" + subSubCounts[sub] + " depth=" + prefixLength);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.minItemsInBlock == 1 || subCount > 1,"minItemsInBlock={0} subCount={1}", outerInstance.minItemsInBlock, subCount + " sub=" + sub + " of " + numSubs + " subTermCount=" + subTermCountSums[sub] + " subSubCount=" + subSubCounts[sub] + " depth=" + prefixLength);
                             subCount = 0;
                             startLabel = subBytes[sub + 1];
 
@@ -936,7 +934,7 @@ namespace Lucene.Net.Codecs
 
                 int start = pending.Count - startBackwards;
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(start >= 0, () => "pending.Count=" + pending.Count + " startBackwards=" + startBackwards + " length=" + length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(start >= 0,"pending.Count={0} startBackwards={1}", pending.Count, startBackwards + " length=" + length);
 
                 IList<PendingEntry> slice = pending.SubList(start, start + length);
 
@@ -1013,7 +1011,7 @@ namespace Lucene.Net.Codecs
                         statsWriter.WriteVInt32(state.DocFreq);
                         if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(state.TotalTermFreq >= state.DocFreq, () => state.TotalTermFreq + " vs " + state.DocFreq);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(state.TotalTermFreq >= state.DocFreq, "{0} vs {1}", state.TotalTermFreq, state.DocFreq);
                             statsWriter.WriteVInt64(state.TotalTermFreq - state.DocFreq);
                         }
 
@@ -1207,7 +1205,7 @@ namespace Lucene.Net.Codecs
                     blockBuilder.Finish();
 
                     // We better have one final "root" block:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(pending.Count == 1 && !pending[0].IsTerm, () => "pending.size()=" + pending.Count + " pending=" + pending);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(pending.Count == 1 && !pending[0].IsTerm,"pending.size()={0} pending={1}", pending.Count, pending);
                     PendingBlock root = (PendingBlock)pending[0];
                     if (Debugging.AssertsEnabled)
                     {

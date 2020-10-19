@@ -868,7 +868,7 @@ namespace Lucene.Net.Util.Automaton
                         }
                         else
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert((accCount > 0) == q.accept, () => "accCount=" + accCount + " vs existing accept=" + q.accept + " states=" + statesSet);
+                            if (Debugging.AssertsEnabled) Debugging.Assert((accCount > 0) == q.accept,"accCount={0} vs existing accept={1}", accCount, q.accept + " states=" + statesSet);
                         }
 
                         r.AddTransition(new Transition(lastPoint, point - 1, q));
@@ -902,7 +902,7 @@ namespace Lucene.Net.Util.Automaton
                     points.points[i].starts.count = 0;
                 }
                 points.Reset();
-                if (Debugging.AssertsEnabled) Debugging.Assert(statesSet.upto == 0, () => "upto=" + statesSet.upto);
+                if (Debugging.AssertsEnabled) Debugging.Assert(statesSet.upto == 0,"upto={0}", statesSet.upto);
             }
             a.deterministic = true;
             a.SetNumberedStates(newStatesArray, newStateUpto);

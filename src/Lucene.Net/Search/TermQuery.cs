@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(termStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context), () => "The top-reader used to create Weight (" + termStates.TopReaderContext + ") is not the same as the current reader's top-reader (" + ReaderUtil.GetTopLevelContext(context));
+                if (Debugging.AssertsEnabled) Debugging.Assert(termStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context),"The top-reader used to create Weight ({0}) is not the same as the current reader's top-reader ({1}", termStates.TopReaderContext, ReaderUtil.GetTopLevelContext(context));
                 TermsEnum termsEnum = GetTermsEnum(context);
                 if (termsEnum == null)
                 {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
                 TermState state = termStates.Get(context.Ord);
                 if (state == null) // term is not present in that reader
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(TermNotInReader(context.AtomicReader, outerInstance.term), () => "no termstate found but term exists in reader term=" + outerInstance.term);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(TermNotInReader(context.AtomicReader, outerInstance.term), "no termstate found but term exists in reader term={0}", outerInstance.term);
                     return null;
                 }
                 //System.out.println("LD=" + reader.getLiveDocs() + " set?=" + (reader.getLiveDocs() != null ? reader.getLiveDocs().get(0) : "null"));

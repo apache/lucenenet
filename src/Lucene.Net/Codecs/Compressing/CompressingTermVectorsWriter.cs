@@ -387,7 +387,7 @@ namespace Lucene.Net.Codecs.Compressing
         private void Flush()
         {
             int chunkDocs = pendingDocs.Count;
-            if (Debugging.AssertsEnabled) Debugging.Assert(chunkDocs > 0, chunkDocs.ToString);
+            if (Debugging.AssertsEnabled) Debugging.Assert(chunkDocs > 0, chunkDocs.ToString());
 
             // write the index file
             indexWriter.WriteIndex(chunkDocs, vectorsStream.GetFilePointer());

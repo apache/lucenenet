@@ -131,7 +131,7 @@ namespace Lucene.Net.Util.Fst
         internal virtual void WriteBytes(long dest, byte[] b, int offset, int len)
         {
             //System.out.println("  BS.writeBytes dest=" + dest + " offset=" + offset + " len=" + len);
-            if (Debugging.AssertsEnabled) Debugging.Assert(dest + len <= Position, () => "dest=" + dest + " pos=" + Position + " len=" + len);
+            if (Debugging.AssertsEnabled) Debugging.Assert(dest + len <= Position,"dest={0} pos={1}", dest, Position + " len=" + len);
 
             // Note: weird: must go "backwards" because copyBytes
             // calls us with overlapping src/dest.  If we
@@ -475,7 +475,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex + 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value, () => "pos=" + value + " Position=" + this.Position);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value,"pos={0} Position={1}", value, this.Position);
                 }
             }
 
@@ -548,7 +548,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex - 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value, () => "value=" + value + " this.Position=" + this.Position);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(this.Position == value,"value={0} this.Position={1}", value, this.Position);
                 }
             }
 

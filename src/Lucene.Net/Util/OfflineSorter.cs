@@ -652,7 +652,7 @@ namespace Lucene.Net.Util
                 }
 #pragma warning restore CA1031 // Do not catch general exception types
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0, () => "Sanity: sequence length < 0: " + length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0,"Sanity: sequence length < 0: {0}", length);
                 byte[] result = new byte[length];
                 inputStream.ReadBytes(result, 0, length);
                 return result;

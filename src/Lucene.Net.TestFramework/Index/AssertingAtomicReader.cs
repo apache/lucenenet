@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
             try
             {
                 int docid = @in.DocID;
-                if (Debugging.AssertsEnabled) Debugging.Assert(docid == -1, () => @in.GetType() + ": invalid initial doc id: " + docid);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docid == -1, "{0}: invalid initial doc id: {1}", @in.GetType(), docid);
             }
             catch (NotSupportedException /*e*/)
             {
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "NextDoc() called after NO_MORE_DOCS");
             int nextDoc = base.NextDoc();
-            if (Debugging.AssertsEnabled) Debugging.Assert(nextDoc > doc, () => "backwards NextDoc from " + doc + " to " + nextDoc + " " + m_input);
+            if (Debugging.AssertsEnabled) Debugging.Assert(nextDoc > doc, "backwards NextDoc from {0} to {1} {2}", doc, nextDoc, m_input);
             if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
             {
                 state = DocsEnumState.FINISHED;
@@ -141,9 +141,9 @@ namespace Lucene.Net.Index
         public override int Advance(int target)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "Advance() called after NO_MORE_DOCS");
-            if (Debugging.AssertsEnabled) Debugging.Assert(target > doc, () => "target must be > DocID, got " + target + " <= " + doc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(target > doc,"target must be > DocID, got {0} <= {1}", target, doc);
             int advanced = base.Advance(target);
-            if (Debugging.AssertsEnabled) Debugging.Assert(advanced >= target, () => "backwards advance from: " + target + " to: " + advanced);
+            if (Debugging.AssertsEnabled) Debugging.Assert(advanced >= target,"backwards advance from: {0} to: {1}", target, advanced);
             if (advanced == DocIdSetIterator.NO_MORE_DOCS)
             {
                 state = DocsEnumState.FINISHED;
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(doc == base.DocID, () => " invalid DocID in " + m_input.GetType() + " " + base.DocID + " instead of " + doc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(doc == base.DocID," invalid DocID in {0} {1}", m_input.GetType(), base.DocID + " instead of " + doc);
                 return doc;
             }
         }
@@ -309,7 +309,7 @@ namespace Lucene.Net.Index
 
         public override void SetDocument(int docID)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(docID >= 0 && docID < maxDoc, () => "docid=" + docID + ",maxDoc=" + maxDoc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(docID >= 0 && docID < maxDoc,"docid={0},maxDoc={1}", docID, maxDoc);
             @in.SetDocument(docID);
             lastOrd = -2;
         }
@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
                 : base(@in)
             {
                 int docid = @in.DocID;
-                if (Debugging.AssertsEnabled) Debugging.Assert(docid == -1, () => "invalid initial doc id: " + docid);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docid == -1,"invalid initial doc id: {0}", docid);
                 doc = -1;
             }
 
@@ -580,7 +580,7 @@ namespace Lucene.Net.Index
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "NextDoc() called after NO_MORE_DOCS");
                 int nextDoc = base.NextDoc();
-                if (Debugging.AssertsEnabled) Debugging.Assert(nextDoc > doc, () => "backwards nextDoc from " + doc + " to " + nextDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(nextDoc > doc,"backwards nextDoc from {0} to {1}", doc, nextDoc);
                 positionCount = 0;
                 if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
                 {
@@ -599,9 +599,9 @@ namespace Lucene.Net.Index
             public override int Advance(int target)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "Advance() called after NO_MORE_DOCS");
-                if (Debugging.AssertsEnabled) Debugging.Assert(target > doc, () => "target must be > DocID, got " + target + " <= " + doc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(target > doc,"target must be > DocID, got {0} <= {1}", target, doc);
                 int advanced = base.Advance(target);
-                if (Debugging.AssertsEnabled) Debugging.Assert(advanced >= target, () => "backwards advance from: " + target + " to: " + advanced);
+                if (Debugging.AssertsEnabled) Debugging.Assert(advanced >= target,"backwards advance from: {0} to: {1}", target, advanced);
                 positionCount = 0;
                 if (advanced == DocIdSetIterator.NO_MORE_DOCS)
                 {
@@ -621,7 +621,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(doc == base.DocID, () => " invalid DocID in " + m_input.GetType() + " " + base.DocID + " instead of " + doc);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(doc == base.DocID," invalid DocID in {0} {1}", m_input.GetType(), base.DocID + " instead of " + doc);
                     return doc;
                 }
             }
@@ -644,7 +644,7 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "NextPosition() called after NO_MORE_DOCS");
                 if (Debugging.AssertsEnabled) Debugging.Assert(positionCount < positionMax, "NextPosition() called more than Freq times!");
                 int position = base.NextPosition();
-                if (Debugging.AssertsEnabled) Debugging.Assert(position >= 0 || position == -1, () => "invalid position: " + position);
+                if (Debugging.AssertsEnabled) Debugging.Assert(position >= 0 || position == -1,"invalid position: {0}", position);
                 positionCount++;
                 return position;
             }
