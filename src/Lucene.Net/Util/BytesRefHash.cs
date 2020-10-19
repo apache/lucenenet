@@ -327,7 +327,7 @@ namespace Lucene.Net.Util
                 if (count >= bytesStart.Length)
                 {
                     bytesStart = bytesStartArray.Grow();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(count < bytesStart.Length + 1, () => "count: " + count + " len: " + bytesStart.Length);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(count < bytesStart.Length + 1,"count: {0} len: {1}", count, bytesStart.Length);
                 }
                 e = count++;
 
@@ -434,7 +434,7 @@ namespace Lucene.Net.Util
                 if (count >= bytesStart.Length)
                 {
                     bytesStart = bytesStartArray.Grow();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(count < bytesStart.Length + 1, () => "count: " + count + " len: " + bytesStart.Length);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(count < bytesStart.Length + 1,"count: {0} len: {1}", count, bytesStart.Length);
                 }
                 e = count++;
                 bytesStart[e] = offset;

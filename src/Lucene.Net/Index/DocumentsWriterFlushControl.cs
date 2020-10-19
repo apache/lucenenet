@@ -650,7 +650,7 @@ namespace Lucene.Net.Index
                         }
                         continue;
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(next.dwpt.deleteQueue == flushingQueue || next.dwpt.deleteQueue == documentsWriter.deleteQueue, () => " flushingQueue: " + flushingQueue + " currentqueue: " + documentsWriter.deleteQueue + " perThread queue: " + next.dwpt.deleteQueue + " numDocsInRam: " + next.dwpt.NumDocsInRAM);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(next.dwpt.deleteQueue == flushingQueue || next.dwpt.deleteQueue == documentsWriter.deleteQueue," flushingQueue: {0} currentqueue: {1}", flushingQueue, documentsWriter.deleteQueue + " perThread queue: " + next.dwpt.deleteQueue + " numDocsInRam: " + next.dwpt.NumDocsInRAM);
                     if (next.dwpt.deleteQueue != flushingQueue)
                     {
                         // this one is already a new DWPT
@@ -691,7 +691,7 @@ namespace Lucene.Net.Index
                 next.@Lock();
                 try
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!next.IsInitialized || next.dwpt.deleteQueue == queue, () => "isInitialized: " + next.IsInitialized + " numDocs: " + (next.IsInitialized ? next.dwpt.NumDocsInRAM : 0));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(!next.IsInitialized || next.dwpt.deleteQueue == queue,"isInitialized: {0} numDocs: {1}", next.IsInitialized, (next.IsInitialized ? next.dwpt.NumDocsInRAM : 0));
                 }
                 finally
                 {

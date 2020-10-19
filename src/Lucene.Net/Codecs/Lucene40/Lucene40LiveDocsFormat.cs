@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.Lucene40
             BitVector liveDocs = new BitVector(dir, filename, context);
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(liveDocs.Count() == info.Info.DocCount - info.DelCount, () => "liveDocs.count()=" + liveDocs.Count() + " info.docCount=" + info.Info.DocCount + " info.getDelCount()=" + info.DelCount);
+                Debugging.Assert(liveDocs.Count() == info.Info.DocCount - info.DelCount,"liveDocs.count()={0} info.docCount={1}", liveDocs.Count(), info.Info.DocCount + " info.getDelCount()=" + info.DelCount);
                 Debugging.Assert(liveDocs.Length == info.Info.DocCount);
             }
             return liveDocs;

@@ -240,11 +240,11 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         public virtual void AddMapping(int sourceId, int wordId)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(wordId > lastWordId, () => "words out of order: " + wordId + " vs lastID: " + lastWordId);
+            if (Debugging.AssertsEnabled) Debugging.Assert(wordId > lastWordId,"words out of order: {0} vs lastID: {1}", wordId, lastWordId);
 
             if (sourceId > lastSourceId)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(sourceId > lastSourceId, () => "source ids out of order: lastSourceId=" + lastSourceId + " vs sourceId=" + sourceId);
+                if (Debugging.AssertsEnabled) Debugging.Assert(sourceId > lastSourceId,"source ids out of order: lastSourceId={0} vs sourceId={1}", lastSourceId, sourceId);
                 targetMapOffsets = ArrayUtil.Grow(targetMapOffsets, sourceId + 1);
                 for (int i = lastSourceId + 1; i <= sourceId; i++)
                 {
@@ -320,7 +320,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     }
                     prev += delta;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(sourceId == numSourceIds, () => "sourceId:" + sourceId + " != numSourceIds:" + numSourceIds);
+                if (Debugging.AssertsEnabled) Debugging.Assert(sourceId == numSourceIds,"sourceId:{0} != numSourceIds:{1}", sourceId, numSourceIds);
             }
         }
 

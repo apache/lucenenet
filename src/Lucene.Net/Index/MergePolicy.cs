@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
                     int target = Map(i);
                     if (target < 0 || target >= maxDoc)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "out of range: " + target + " not in [0-" + maxDoc + "[");
+                        if (Debugging.AssertsEnabled) Debugging.Assert(false,"out of range: {0} not in [0-{1}", target, maxDoc + "[");
                         return false;
                     }
                     else if (targets.Get(target))

@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(termStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context), () => "The top-reader used to create Weight (" + termStates.TopReaderContext + ") is not the same as the current reader's top-reader (" + ReaderUtil.GetTopLevelContext(context));
+                if (Debugging.AssertsEnabled) Debugging.Assert(termStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context),"The top-reader used to create Weight ({0}) is not the same as the current reader's top-reader ({1}", termStates.TopReaderContext, ReaderUtil.GetTopLevelContext(context));
                 TermsEnum termsEnum = GetTermsEnum(context);
                 if (termsEnum == null)
                 {

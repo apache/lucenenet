@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
             }
             if (r1.NumDocs != r2.NumDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "r1.NumDocs=" + r1.NumDocs + " vs r2.NumDocs=" + r2.NumDocs);
+                if (Debugging.AssertsEnabled) Debugging.Assert(false,"r1.NumDocs={0} vs r2.NumDocs={1}", r1.NumDocs, r2.NumDocs);
             }
             bool hasDeletes = !(r1.MaxDoc == r2.MaxDoc && r1.NumDocs == r1.MaxDoc);
 

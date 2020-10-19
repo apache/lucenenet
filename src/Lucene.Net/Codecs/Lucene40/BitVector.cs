@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public bool Get(int bit)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bit >= 0 && bit < size, () => "bit " + bit + " is out of bounds 0.." + (size - 1));
+            if (Debugging.AssertsEnabled) Debugging.Assert(bit >= 0 && bit < size,"bit {0} is out of bounds 0..{1}", bit, (size - 1));
             return (bits[bit >> 3] & (1 << (bit & 7))) != 0;
         }
 
@@ -215,7 +215,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 count = c;
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(count <= size, () => "count=" + count + " size=" + size);
+            if (Debugging.AssertsEnabled) Debugging.Assert(count <= size,"count={0} size={1}", count, size);
             return count;
         }
 
@@ -474,7 +474,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (Debugging.AssertsEnabled) Debugging.Assert(count != -1);
             int countSav = count;
             count = -1;
-            if (Debugging.AssertsEnabled) Debugging.Assert(countSav == Count(), () => "saved count was " + countSav + " but recomputed count is " + count);
+            if (Debugging.AssertsEnabled) Debugging.Assert(countSav == Count(),"saved count was {0} but recomputed count is {1}", countSav, count);
             return true;
         }
 

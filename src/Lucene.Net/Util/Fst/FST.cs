@@ -807,7 +807,7 @@ namespace Lucene.Net.Util.Fst
                         if (srcPos != destPos)
                         {
                             //System.out.println("  copy len=" + bytesPerArc[arcIdx]);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(destPos > srcPos, () => "destPos=" + destPos + " srcPos=" + srcPos + " arcIdx=" + arcIdx + " maxBytesPerArc=" + maxBytesPerArc + " bytesPerArc[arcIdx]=" + bytesPerArc[arcIdx] + " nodeIn.numArcs=" + nodeIn.NumArcs);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(destPos > srcPos,"destPos={0} srcPos={1}", destPos, srcPos + " arcIdx=" + arcIdx + " maxBytesPerArc=" + maxBytesPerArc + " bytesPerArc[arcIdx]=" + bytesPerArc[arcIdx] + " nodeIn.numArcs=" + nodeIn.NumArcs);
                             bytes.CopyBytes(srcPos, destPos, bytesPerArc[arcIdx]);
                         }
                     }
@@ -2025,9 +2025,9 @@ namespace Lucene.Net.Util.Fst
 
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(fst.nodeCount == nodeCount, () => "fst.nodeCount=" + fst.nodeCount + " nodeCount=" + nodeCount);
+                Debugging.Assert(fst.nodeCount == nodeCount,"fst.nodeCount={0} nodeCount={1}", fst.nodeCount, nodeCount);
                 Debugging.Assert(fst.arcCount == arcCount);
-                Debugging.Assert(fst.arcWithOutputCount == arcWithOutputCount, () => "fst.arcWithOutputCount=" + fst.arcWithOutputCount + " arcWithOutputCount=" + arcWithOutputCount);
+                Debugging.Assert(fst.arcWithOutputCount == arcWithOutputCount,"fst.arcWithOutputCount={0} arcWithOutputCount={1}", fst.arcWithOutputCount, arcWithOutputCount);
             }
 
             fst.bytes.Finish();

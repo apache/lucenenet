@@ -191,7 +191,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(code >= t.Min && code <= t.Max && (code < UnicodeUtil.UNI_SUR_HIGH_START || code > UnicodeUtil.UNI_SUR_LOW_END), () => "code=" + code + " min=" + t.Min + " max=" + t.Max);
+            if (Debugging.AssertsEnabled) Debugging.Assert(code >= t.Min && code <= t.Max && (code < UnicodeUtil.UNI_SUR_HIGH_START || code > UnicodeUtil.UNI_SUR_LOW_END),"code={0} min={1}", code, t.Min + " max=" + t.Max);
             return code;
         }
 

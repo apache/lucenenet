@@ -193,7 +193,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     // Verify the file is long enough to hold all of our
                     // docs
-                    if (Debugging.AssertsEnabled) Debugging.Assert(((int)(indexSize / 8)) >= size + this.docStoreOffset, () => "indexSize=" + indexSize + " size=" + size + " docStoreOffset=" + docStoreOffset);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(((int)(indexSize / 8)) >= size + this.docStoreOffset,"indexSize={0} size={1}", indexSize, size + " docStoreOffset=" + docStoreOffset);
                 }
                 else
                 {

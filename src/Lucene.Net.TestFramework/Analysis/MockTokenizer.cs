@@ -227,7 +227,7 @@ namespace Lucene.Net.Analysis
                     if (ch2 >= 0)
                     {
                         off++;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(char.IsLowSurrogate((char)ch2), () => "unpaired high surrogate: " + ch.ToString("x") + ", followed by: " + ch2.ToString("x"));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(char.IsLowSurrogate((char)ch2),"unpaired high surrogate: {0}, followed by: {1}", ch.ToString("x"), ch2.ToString("x"));
                         return Character.ToCodePoint((char)ch, (char)ch2);
                     }
                     else

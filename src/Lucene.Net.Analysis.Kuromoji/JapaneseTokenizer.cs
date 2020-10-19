@@ -916,7 +916,7 @@ namespace Lucene.Net.Analysis.Ja
                 if (Debugging.AssertsEnabled) Debugging.Assert(bestIDX < posData.count);
 
                 int backPos = posData.backPos[bestIDX];
-                if (Debugging.AssertsEnabled) Debugging.Assert(backPos >= lastBackTracePos, () => "backPos=" + backPos + " vs lastBackTracePos=" + lastBackTracePos);
+                if (Debugging.AssertsEnabled) Debugging.Assert(backPos >= lastBackTracePos,"backPos={0} vs lastBackTracePos={1}", backPos, lastBackTracePos);
                 int length = pos - backPos;
                 JapaneseTokenizerType backType = posData.backType[bestIDX];
                 int backID = posData.backID[bestIDX];
@@ -1355,7 +1355,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             count = 0;
             // forwardCount naturally resets after it runs:
-            if (Debugging.AssertsEnabled) Debugging.Assert(forwardCount == 0, () => "pos=" + pos + " forwardCount=" + forwardCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(forwardCount == 0,"pos={0} forwardCount={1}", pos, forwardCount);
         }
     }
 
