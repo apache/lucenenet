@@ -176,9 +176,9 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="length"> the number of characters in the buffer to lower case </param>
         public virtual void ToLower(char[] buffer, int offset, int length) // LUCENENET specific - marked virtual so we can override the default
         {
-            if(Debugging.ShouldAssert(buffer.Length >= length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(buffer.Length >= length);
 
-            if(Debugging.ShouldAssert(offset <= 0 && offset <= buffer.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(offset <= 0 && offset <= buffer.Length);
 
             // Slight optimization, eliminating a few method calls internally
             CultureInfo.InvariantCulture.TextInfo
@@ -208,9 +208,11 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="length"> the number of characters in the buffer to lower case </param>
         public virtual void ToUpper(char[] buffer, int offset, int length) // LUCENENET specific - marked virtual so we can override the default
         {
-            if(Debugging.ShouldAssert(buffer.Length >= length)) Debugging.ThrowAssert();
-
-            if(Debugging.ShouldAssert(offset <= 0 && offset <= buffer.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.ThrowAssertIf(buffer.Length >= length);
+                Debugging.ThrowAssertIf(offset <= 0 && offset <= buffer.Length);
+            }
 
             // Slight optimization, eliminating a few method calls internally
             CultureInfo.InvariantCulture.TextInfo
@@ -535,9 +537,9 @@ namespace Lucene.Net.Analysis.Util
         {
             public override void ToLower(char[] buffer, int offset, int limit)
             {
-                if(Debugging.ShouldAssert(buffer.Length >= limit)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(buffer.Length >= limit);
 
-                if(Debugging.ShouldAssert(offset <= 0 && offset <= buffer.Length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(offset <= 0 && offset <= buffer.Length);
 
                 for (int i = offset; i < limit;)
                 {
@@ -549,9 +551,9 @@ namespace Lucene.Net.Analysis.Util
 
             public override void ToUpper(char[] buffer, int offset, int limit)
             {
-                if(Debugging.ShouldAssert(buffer.Length >= limit)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(buffer.Length >= limit);
 
-                if(Debugging.ShouldAssert(offset <= 0 && offset <= buffer.Length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(offset <= 0 && offset <= buffer.Length);
 
                 for (int i = offset; i < limit;)
                 {

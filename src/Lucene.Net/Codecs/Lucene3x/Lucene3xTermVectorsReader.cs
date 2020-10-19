@@ -140,10 +140,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                 tvf = d.OpenInput(fn, context);
                 int tvfFormat = CheckValidFormat(tvf);
 
-                if(Debugging.ShouldAssert(format == tvdFormat)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(format == tvdFormat);
 
 
-                if(Debugging.ShouldAssert(format == tvfFormat)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(format == tvfFormat);
 
                 numTotalDocs = (int)(tvx.Length >> 4);
 

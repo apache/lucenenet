@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
         internal Packed64SingleBlock(int valueCount, int bitsPerValue)
             : base(valueCount, bitsPerValue)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(IsSupported(bitsPerValue))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsSupported(bitsPerValue));
             int valuesPerBlock = 64 / bitsPerValue;
             blocks = new long[RequiredCapacity(valueCount, valuesPerBlock)];
         }
@@ -100,9 +100,9 @@ namespace Lucene.Net.Util.Packed
             // bulk get
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index % valuesPerBlock == 0);
             PackedInt32s.IDecoder decoder = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
-            if(Debugging.ShouldAssert(decoder.Int64BlockCount == 1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(decoder.Int64BlockCount == 1);
 
-            if(Debugging.ShouldAssert(decoder.Int64ValueCount == valuesPerBlock)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(decoder.Int64ValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             decoder.Decode(blocks, blockIndex, arr, off, nblocks);

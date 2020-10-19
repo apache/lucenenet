@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
                     rld.DecRef();
 
                     // Pool still holds a ref:
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(rld.RefCount() >= 1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(rld.RefCount() >= 1);
 
                     if (!outerInstance.poolReaders && rld.RefCount() == 1)
                     {
@@ -528,7 +528,7 @@ namespace Lucene.Net.Index
                         if (rld.WriteLiveDocs(outerInstance.directory))
                         {
                             // Make sure we only write del docs for a live segment:
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(assertInfoLive == false || InfoIsLive(rld.Info))) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(assertInfoLive == false || InfoIsLive(rld.Info));
                             // Must checkpoint because we just
                             // created new _X_N.del and field updates files;
                             // don't call IW.checkpoint because that also
@@ -577,7 +577,7 @@ namespace Lucene.Net.Index
                             if (doSave && rld.WriteLiveDocs(outerInstance.directory)) // Throws IOException
                             {
                                 // Make sure we only write del docs and field updates for a live segment:
-                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(InfoIsLive(rld.Info))) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(InfoIsLive(rld.Info));
                                 // Must checkpoint because we just
                                 // created new _X_N.del and field updates files;
                                 // don't call IW.checkpoint because that also
@@ -669,7 +669,7 @@ namespace Lucene.Net.Index
                             if (rld.WriteLiveDocs(outerInstance.directory))
                             {
                                 // Make sure we only write del docs for a live segment:
-                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(InfoIsLive(info))) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(InfoIsLive(info));
                                 // Must checkpoint because we just
                                 // created new _X_N.del and field updates files;
                                 // don't call IW.checkpoint because that also
@@ -718,7 +718,7 @@ namespace Lucene.Net.Index
                         rld.IncRef();
                     }
 
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(NoDups())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(NoDups());
 
                     return rld;
                 }
@@ -733,7 +733,7 @@ namespace Lucene.Net.Index
                 JCG.HashSet<string> seen = new JCG.HashSet<string>();
                 foreach (SegmentCommitInfo info in readerMap.Keys)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!seen.Contains(info.Info.Name))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!seen.Contains(info.Info.Name));
                     seen.Add(info.Info.Name);
                 }
                 return true;
@@ -1097,7 +1097,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         CloseInternal(waitForMerges, true);
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertEventQueueAfterClose())) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertEventQueueAfterClose());
                     }
                 }
             }
@@ -2572,7 +2572,7 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "rollback: infos=" + SegString(segmentInfos.Segments));
                     }
 
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(TestPoint("rollback before checkpoint"))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(TestPoint("rollback before checkpoint"));
 
                     // Ask deleter to locate unreferenced files & remove
                     // them:
@@ -2865,7 +2865,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(packet != null && packet.Any())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(packet != null && packet.Any());
                 lock (bufferedUpdatesStream)
                 {
                     bufferedUpdatesStream.Push(packet);
@@ -4036,7 +4036,7 @@ namespace Lucene.Net.Index
                 {
                     mergedDeletesAndUpdates = readerPool.Get(merge.info, true);
                     docMap = merge.GetDocMap(mergeState);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docMap.IsConsistent(merge.info.Info.DocCount))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docMap.IsConsistent(merge.info.Info.DocCount));
                 }
                 if (initWritableLiveDocs && !initializedWritableLiveDocs)
                 {
@@ -4087,7 +4087,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(TestPoint("startCommitMergeDeletes"))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(TestPoint("startCommitMergeDeletes"));
 
                 IList<SegmentCommitInfo> sourceSegments = merge.Segments;
 
@@ -4177,7 +4177,7 @@ namespace Lucene.Net.Index
                             {
                                 if (!prevLiveDocs.Get(j))
                                 {
-                                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!currentLiveDocs.Get(j))) Debugging.ThrowAssert();
+                                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!currentLiveDocs.Get(j));
                                 }
                                 else
                                 {
@@ -4323,7 +4323,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(TestPoint("startCommitMerge"))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(TestPoint("startCommitMerge"));
 
                 if (hitOOM)
                 {
@@ -4371,7 +4371,7 @@ namespace Lucene.Net.Index
                 // started), then we will switch to the compound
                 // format as well:
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!segmentInfos.Contains(merge.info))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!segmentInfos.Contains(merge.info));
 
                 bool allDeleted = merge.Segments.Count == 0 || merge.info.Info.DocCount == 0 || (mergedUpdates != null && mergedUpdates.PendingDeleteCount == merge.info.Info.DocCount);
 
@@ -4424,7 +4424,7 @@ namespace Lucene.Net.Index
 
                 if (dropSegment)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!segmentInfos.Contains(merge.info))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!segmentInfos.Contains(merge.info));
                     readerPool.Drop(merge.info);
                     deleter.DeleteNewFiles(merge.info.GetFiles());
                 }
@@ -4690,10 +4690,10 @@ namespace Lucene.Net.Index
                     mergingSegments.Add(info);
                 }
 
-                if(Debugging.ShouldAssert(merge.EstimatedMergeBytes == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(merge.EstimatedMergeBytes == 0);
 
 
-                if(Debugging.ShouldAssert(merge.totalMergeBytes == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(merge.totalMergeBytes == 0);
                 foreach (SegmentCommitInfo info in merge.Segments)
                 {
                     if (info.Info.DocCount > 0)
@@ -5450,16 +5450,16 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "startCommit index=" + SegString(ToLiveInfos(toSync).Segments) + " changeCount=" + changeCount);
                     }
 
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(FilesExist(toSync))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(FilesExist(toSync));
                 }
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(TestPoint("midStartCommit"))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(TestPoint("midStartCommit"));
 
                 bool pendingCommitSet = false;
 
                 try
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(TestPoint("midStartCommit2"))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(TestPoint("midStartCommit2"));
 
                     lock (this)
                     {
@@ -5502,7 +5502,7 @@ namespace Lucene.Net.Index
                         infoStream.Message("IW", "done all syncs: " + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", filesToSync));
                     }
 
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(TestPoint("midStartCommitSuccess"))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(TestPoint("midStartCommitSuccess"));
                 }
                 finally
                 {
@@ -5532,7 +5532,7 @@ namespace Lucene.Net.Index
             {
                 HandleOOM(oom, "startCommit");
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(TestPoint("finishStartCommit"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(TestPoint("finishStartCommit"));
         }
 
         /// <summary>
@@ -5702,7 +5702,7 @@ namespace Lucene.Net.Index
             {
                 infoStream.Message("IW", "create compound file " + fileName);
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Lucene3xSegmentInfoFormat.GetDocStoreOffset(info) == -1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Lucene3xSegmentInfoFormat.GetDocStoreOffset(info) == -1);
             // Now merge all added files
             ICollection<string> files = info.GetFiles();
             CompoundFileDirectory cfsDir = new CompoundFileDirectory(directory, fileName, context, true);

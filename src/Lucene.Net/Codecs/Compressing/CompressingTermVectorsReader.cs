@@ -78,7 +78,7 @@ namespace Lucene.Net.Codecs.Compressing
                 indexStream = d.OpenChecksumInput(indexStreamFN, context);
                 string codecNameIdx = formatName + CompressingTermVectorsWriter.CODEC_SFX_IDX;
                 version = CodecUtil.CheckHeader(indexStream, codecNameIdx, CompressingTermVectorsWriter.VERSION_START, CompressingTermVectorsWriter.VERSION_CURRENT);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
                 indexReader = new CompressingStoredFieldsIndexReader(indexStream, si);
 
                 if (version >= CompressingTermVectorsWriter.VERSION_CHECKSUM)
@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     throw new Exception("Version mismatch between stored fields index and data: " + version + " != " + version2);
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.GetFilePointer())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.GetFilePointer());
 
                 packedIntsVersion = vectorsStream.ReadVInt32();
                 chunkSize = vectorsStream.ReadVInt32();

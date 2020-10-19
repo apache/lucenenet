@@ -331,9 +331,9 @@ namespace Lucene.Net.Codecs
                         if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docsAndPositionsEnum != null);
 
                         int docID = docsAndPositionsEnum.NextDoc();
-                        if(Debugging.ShouldAssert(docID != DocIdSetIterator.NO_MORE_DOCS)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID != DocIdSetIterator.NO_MORE_DOCS);
 
-                        if(Debugging.ShouldAssert(docsAndPositionsEnum.Freq == freq)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docsAndPositionsEnum.Freq == freq);
 
                         for (int posUpto = 0; posUpto < freq; posUpto++)
                         {

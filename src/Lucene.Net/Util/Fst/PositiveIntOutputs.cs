@@ -111,7 +111,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(long? output, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Valid(output))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(output));
             @out.WriteVInt64(output.Value);
         }
 

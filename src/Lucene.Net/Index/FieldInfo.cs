@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
                 this.normType = DocValuesType.NONE;
             }
             this.attributes = attributes;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckConsistency())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CheckConsistency());
         }
 
         private bool CheckConsistency()
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(normType == DocValuesType.NONE);
                 }
                 // Cannot store payloads unless positions are indexed:
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads);
             }
 
             return true;
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckConsistency())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CheckConsistency());
         }
 
         public DocValuesType DocValuesType
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
                     throw new ArgumentException("cannot change DocValues type from " + docValueType + " to " + value + " for field \"" + Name + "\"");
                 }
                 docValueType = value;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckConsistency())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CheckConsistency());
             }
         }
 
@@ -207,14 +207,14 @@ namespace Lucene.Net.Index
                     throw new ArgumentException("cannot change Norm type from " + normType + " to " + value + " for field \"" + Name + "\"");
                 }
                 normType = value;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckConsistency())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CheckConsistency());
             }
         }
 
         internal void SetStoreTermVectors()
         {
             storeTermVector = true;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckConsistency())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CheckConsistency());
         }
 
         internal void SetStorePayloads()
@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
             {
                 storePayloads = true;
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckConsistency())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CheckConsistency());
         }
 
         /// <summary>

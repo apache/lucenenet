@@ -175,7 +175,7 @@ namespace Lucene.Net.Index
             {
                 activeBytes += delta;
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(UpdatePeaks(delta))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(UpdatePeaks(delta));
         }
 
         // only for asserts
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
                 finally
                 {
                     bool stalled = UpdateStallState();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertNumDocsSinceStalled(stalled) && AssertMemory())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertNumDocsSinceStalled(stalled) && AssertMemory());
                 }
             }
         }
@@ -264,14 +264,14 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(flushingWriters.ContainsKey(dwpt))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(flushingWriters.ContainsKey(dwpt));
                 try
                 {
                     long? bytes = flushingWriters[dwpt];
                     flushingWriters.Remove(dwpt);
                     flushBytes -= (long)bytes;
                     perThreadPool.Recycle(dwpt);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertMemory())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertMemory());
                 }
                 finally
                 {
@@ -289,7 +289,7 @@ namespace Lucene.Net.Index
 
         private bool UpdateStallState()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Monitor.IsEntered(this))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Monitor.IsEntered(this));
             long limit = StallLimitBytes;
             /*
              * we block indexing threads if net byte grows due to slow flushes
@@ -342,7 +342,7 @@ namespace Lucene.Net.Index
                     flushBytes += bytes;
                     activeBytes -= bytes;
                     numPending++; // write access synced
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertMemory())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertMemory());
                 } // don't assert on numDocs since we could hit an abort excp. while selecting that dwpt for flushing
             }
         }
@@ -361,7 +361,7 @@ namespace Lucene.Net.Index
                     {
                         activeBytes -= state.bytesUsed;
                     }
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertMemory())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertMemory());
                     // Take it out of the loop this DWPT is stale
                     perThreadPool.Reset(state, closed);
                 }
@@ -662,7 +662,7 @@ namespace Lucene.Net.Index
                  * a chance that this happens since we marking DWPT for full flush without
                  * blocking indexing.*/
                 PruneBlockedQueue(flushingQueue);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertBlockedFlushes(documentsWriter.deleteQueue))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertBlockedFlushes(documentsWriter.deleteQueue));
                 //FlushQueue.AddAll(FullFlushBuffer);
                 foreach (var dwpt in fullFlushBuffer)
                 {
@@ -671,7 +671,7 @@ namespace Lucene.Net.Index
                 fullFlushBuffer.Clear();
                 UpdateStallState();
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertActiveDeleteQueue(documentsWriter.deleteQueue))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertActiveDeleteQueue(documentsWriter.deleteQueue));
         }
 
         private bool AssertActiveDeleteQueue(DocumentsWriterDeleteQueue queue)
@@ -767,7 +767,7 @@ namespace Lucene.Net.Index
                 {
                     if (blockedFlushes.Count > 0)
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertBlockedFlushes(documentsWriter.deleteQueue))) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertBlockedFlushes(documentsWriter.deleteQueue));
                         PruneBlockedQueue(documentsWriter.deleteQueue);
                         if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(blockedFlushes.Count == 0);
                     }

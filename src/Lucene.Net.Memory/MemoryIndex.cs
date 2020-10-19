@@ -217,7 +217,7 @@ namespace Lucene.Net.Index.Memory
             this.bytesUsed = Counter.NewCounter();
             int maxBufferedByteBlocks = (int)((maxReusedBytes / 2) / ByteBlockPool.BYTE_BLOCK_SIZE);
             int maxBufferedIntBlocks = (int)((maxReusedBytes - (maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE)) / (Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32));
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert((maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE) + (maxBufferedIntBlocks * Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32) <= maxReusedBytes)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE) + (maxBufferedIntBlocks * Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32) <= maxReusedBytes);
             byteBlockPool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, maxBufferedByteBlocks, bytesUsed));
             intBlockPool = new Int32BlockPool(new RecyclingInt32BlockAllocator(Int32BlockPool.INT32_BLOCK_SIZE, maxBufferedIntBlocks, bytesUsed));
             postingsWriter = new Int32BlockPool.SliceWriter(intBlockPool);

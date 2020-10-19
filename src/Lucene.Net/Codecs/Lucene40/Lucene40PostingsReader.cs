@@ -783,9 +783,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public SegmentDocsAndPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, IBits liveDocs)
             {
-                if(Debugging.ShouldAssert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
-                if(Debugging.ShouldAssert(!fieldInfo.HasPayloads)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!fieldInfo.HasPayloads);
 
                 this.liveDocs = liveDocs;
 
@@ -1248,9 +1248,9 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         return null;
                     }
-                    if(Debugging.ShouldAssert(lazyProxPointer == -1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lazyProxPointer == -1);
 
-                    if(Debugging.ShouldAssert(posPendingCount < freq)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(posPendingCount < freq);
 
                     if (payloadPending)
                     {

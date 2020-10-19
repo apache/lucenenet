@@ -368,14 +368,14 @@ namespace Lucene.Net.Codecs
         {
             //DEBUG = field.name.Equals("id", StringComparison.Ordinal);
             //if (DEBUG) System.out.println("\nBTTW.addField seg=" + segment + " field=" + field.name);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
             currentField = field;
             return new TermsWriter(this, field);
         }
 
         internal static long EncodeOutput(long fp, bool hasTerms, bool isFloor)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fp < (1L << 62))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fp < (1L << 62));
             return (fp << 2) | (uint)(hasTerms ? OUTPUT_FLAG_HAS_TERMS : 0) | (uint)(isFloor ? OUTPUT_FLAG_IS_FLOOR : 0);
         }
 
@@ -482,7 +482,7 @@ namespace Lucene.Net.Codecs
                 // it might contain garbage that cannot be converted into text.
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null))) Debugging.ThrowAssert("isFloor={0} floorBlocks={1}", IsFloor , ToString(floorBlocks));
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(scratchBytes.GetFilePointer() == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(scratchBytes.GetFilePointer() == 0);
 
                 // TODO: try writing the leading vLong in MSB order
                 // (opposite of what Lucene does today), for better
@@ -726,9 +726,9 @@ namespace Lucene.Net.Codecs
                                 // Suffix is 0, ie prefix 'foo' and term is
                                 // 'foo' so the term has empty string suffix
                                 // in this block
-                                if(Debugging.ShouldAssert(lastSuffixLeadLabel == -1)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lastSuffixLeadLabel == -1);
 
-                                if(Debugging.ShouldAssert(numSubs == 0)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numSubs == 0);
                                 suffixLeadLabel = -1;
                             }
                             else
@@ -875,9 +875,9 @@ namespace Lucene.Net.Codecs
                                 // block.  NOTE that this may be too small (<
                                 // minItemsInBlock); need a true segmenter
                                 // here
-                                if(Debugging.ShouldAssert(startLabel != -1)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startLabel != -1);
 
-                                if(Debugging.ShouldAssert(firstBlock != null)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(firstBlock != null);
                                 prevTerm.Int32s[prevTerm.Offset + prefixLength] = startLabel;
                                 //System.out.println("  final " + (numSubs-sub-1) + " subs");
                                 /*
@@ -1203,9 +1203,9 @@ namespace Lucene.Net.Codecs
                     // We better have one final "root" block:
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pending.Count == 1 && !pending[0].IsTerm)) Debugging.ThrowAssert("pending.size()={0} pending={1}", pending.Count, pending);
                     PendingBlock root = (PendingBlock)pending[0];
-                    if(Debugging.ShouldAssert(root.Prefix.Length == 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.Prefix.Length == 0);
 
-                    if(Debugging.ShouldAssert(root.Index.EmptyOutput != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.Index.EmptyOutput != null);
 
                     this.sumTotalTermFreq = sumTotalTermFreq;
                     this.sumDocFreq = sumDocFreq;

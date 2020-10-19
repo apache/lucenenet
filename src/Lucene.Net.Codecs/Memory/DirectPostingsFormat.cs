@@ -979,7 +979,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     termOrd = (int) ((OrdTermState) state).Ord;
                     SetTerm();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(term.Equals(scratch))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term.Equals(scratch));
                 }
 
                 public override BytesRef Term => scratch;

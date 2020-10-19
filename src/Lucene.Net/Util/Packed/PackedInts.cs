@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public override float OverheadPerValue(int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(IsSupported(bitsPerValue))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsSupported(bitsPerValue));
                 int valuesPerBlock = 64 / bitsPerValue;
                 int overhead = 64 % bitsPerValue;
                 return (float)overhead / valuesPerBlock;
@@ -241,7 +241,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual float OverheadPerValue(int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(IsSupported(bitsPerValue))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsSupported(bitsPerValue));
                 return 0f;
             }
 
@@ -250,7 +250,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual float OverheadRatio(int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(IsSupported(bitsPerValue))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsSupported(bitsPerValue));
                 return OverheadPerValue(bitsPerValue) / bitsPerValue;
             }
         }
@@ -827,9 +827,9 @@ namespace Lucene.Net.Util.Packed
 
             protected Writer(DataOutput @out, int valueCount, int bitsPerValue)
             {
-                if(Debugging.ShouldAssert(bitsPerValue <= 64)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bitsPerValue <= 64);
 
-                if(Debugging.ShouldAssert(valueCount >= 0 || valueCount == -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(valueCount >= 0 || valueCount == -1);
                 this.m_out = @out;
                 this.m_valueCount = valueCount;
                 this.m_bitsPerValue = bitsPerValue;
@@ -1360,9 +1360,9 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, int mem)
         {
-            if(Debugging.ShouldAssert(srcPos + len <= src.Count)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(srcPos + len <= src.Count);
 
-            if(Debugging.ShouldAssert(destPos + len <= dest.Count)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(destPos + len <= dest.Count);
             int capacity = (int)((uint)mem >> 3);
             if (capacity == 0)
             {

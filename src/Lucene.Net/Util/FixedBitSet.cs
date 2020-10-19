@@ -577,9 +577,9 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> One-past the last bit to flip </param>
         public void Flip(int startIndex, int endIndex)
         {
-            if(Debugging.ShouldAssert(startIndex >= 0 && startIndex < numBits)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startIndex >= 0 && startIndex < numBits);
 
-            if(Debugging.ShouldAssert(endIndex >= 0 && endIndex <= numBits)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(endIndex >= 0 && endIndex <= numBits);
             if (endIndex <= startIndex)
             {
                 return;
@@ -624,9 +624,9 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> One-past the last bit to set </param>
         public void Set(int startIndex, int endIndex)
         {
-            if(Debugging.ShouldAssert(startIndex >= 0 && startIndex < numBits)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startIndex >= 0 && startIndex < numBits);
 
-            if(Debugging.ShouldAssert(endIndex >= 0 && endIndex <= numBits)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(endIndex >= 0 && endIndex <= numBits);
             if (endIndex <= startIndex)
             {
                 return;

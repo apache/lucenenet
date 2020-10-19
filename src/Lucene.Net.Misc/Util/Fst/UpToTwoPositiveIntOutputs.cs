@@ -70,9 +70,9 @@ namespace Lucene.Net.Util.Fst
             {
                 this.first = first;
                 this.second = second;
-                if(Debugging.ShouldAssert(first >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(first >= 0);
 
-                if(Debugging.ShouldAssert(second >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(second >= 0);
             }
 
             public override string ToString()
@@ -135,8 +135,8 @@ namespace Lucene.Net.Util.Fst
 
         public override object Common(object output1, object output2)
         {
-            if(Debugging.ShouldAssert(Valid(output1, false))) Debugging.ThrowAssert();
-            if(Debugging.ShouldAssert(Valid(output2, false))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(output1, false));
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(output2, false));
 
             long? output1_ = (long?)output1;
             long? output2_ = (long?)output2;
@@ -146,9 +146,9 @@ namespace Lucene.Net.Util.Fst
             }
             else if (doShare)
             {
-                if(Debugging.ShouldAssert(output1_ > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output1_ > 0);
 
-                if(Debugging.ShouldAssert(output2_ > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output2_ > 0);
                 return Math.Min(output1_.GetValueOrDefault(), output2_.GetValueOrDefault());
             }
             else if (output1_.Equals(output2_))
@@ -163,8 +163,8 @@ namespace Lucene.Net.Util.Fst
 
         public override object Subtract(object output, object inc)
         {
-            if(Debugging.ShouldAssert(Valid(output, false))) Debugging.ThrowAssert();
-            if(Debugging.ShouldAssert(Valid(inc, false))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(output, false));
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(inc, false));
 
             long? output2 = (long?)output;
             long? inc2 = (long?)inc;
@@ -186,8 +186,8 @@ namespace Lucene.Net.Util.Fst
 
         public override object Add(object prefix, object output)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Valid(prefix, false))) Debugging.ThrowAssert();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Valid(output, true))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(prefix, false));
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(output, true));
 
             long? prefix2 = (long?)prefix;
             if (output is long?)
@@ -293,8 +293,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Valid(first, false))) Debugging.ThrowAssert();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Valid(second, false))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(first, false));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(second, false));
             }
 
             return new TwoInt64s(((long?)first).GetValueOrDefault(), ((long?)second).GetValueOrDefault());

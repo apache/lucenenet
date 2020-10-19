@@ -138,7 +138,7 @@ namespace Lucene.Net.Util
                 nextPos++;
                 count++;
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(InBounds(pos))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(InBounds(pos));
             int index = GetIndex(pos);
             //System.out.println("  pos=" + pos + " nextPos=" + nextPos + " -> index=" + index);
             //assert buffer[index].pos == pos;

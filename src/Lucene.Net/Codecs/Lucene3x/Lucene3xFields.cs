@@ -249,7 +249,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get
                 {
                     // preflex doesn't support this
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0);
                     return false;
                 }
             }
@@ -465,10 +465,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     Console.WriteLine("  try pop");
                 }
 
-                if(Debugging.ShouldAssert(newSuffixStart <= prevTerm.Length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(newSuffixStart <= prevTerm.Length);
 
 
-                if(Debugging.ShouldAssert(newSuffixStart < scratchTerm.Length || newSuffixStart == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(newSuffixStart < scratchTerm.Length || newSuffixStart == 0);
 
                 if (prevTerm.Length > newSuffixStart && IsNonBMPChar(prevTerm.Bytes, newSuffixStart) && IsHighBMPChar(scratchTerm.Bytes, newSuffixStart))
                 {
@@ -598,9 +598,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 // this code assumes TermInfosReader/SegmentTermEnum
                 // always use BytesRef.offset == 0
-                if(Debugging.ShouldAssert(prevTerm.Offset == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(prevTerm.Offset == 0);
 
-                if(Debugging.ShouldAssert(scratchTerm.Offset == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(scratchTerm.Offset == 0);
 
                 // Need to loop here because we may need to do multiple
                 // pops, and possibly a continue in the end, ie:

@@ -244,9 +244,9 @@ namespace Lucene.Net.Index
             /// </summary>
             protected void PublishFlushedSegment(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates globalPacket)
             {
-                if(Debugging.ShouldAssert(newSegment != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(newSegment != null);
 
-                if(Debugging.ShouldAssert(newSegment.segmentInfo != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(newSegment.segmentInfo != null);
                 FrozenBufferedUpdates segmentUpdates = newSegment.segmentUpdates;
                 //System.out.println("FLUSH: " + newSegment.segmentInfo.info.name);
                 if (indexWriter.infoStream.IsEnabled("DW"))

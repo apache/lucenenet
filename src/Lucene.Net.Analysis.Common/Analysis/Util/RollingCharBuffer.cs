@@ -169,9 +169,9 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public void FreeBefore(int pos)
         {
-            if(Debugging.ShouldAssert(pos >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pos >= 0);
 
-            if(Debugging.ShouldAssert(pos <= nextPos)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pos <= nextPos);
             int newCount = nextPos - pos;
             if(Debugging.ShouldAssert(newCount <= count)) Debugging.ThrowAssert("newCount={0} count={1}", newCount, count);
 

@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.MINVALUE))) Debugging.ThrowAssert("got {0} field={1} ext={2}", scratch.Utf8ToString(), fieldName, ext);
                     field.MinValue = Convert.ToInt64(StripPrefix(SimpleTextDocValuesWriter.MINVALUE), CultureInfo.InvariantCulture);
                     ReadLine();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.PATTERN))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
                     field.DataStartFilePointer = data.GetFilePointer();
                     data.Seek(data.GetFilePointer() + (1 + field.Pattern.Length + 2)*maxDoc);
@@ -101,10 +101,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 else if (dvType == DocValuesType.BINARY)
                 {
                     ReadLine();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH));
                     field.MaxLength = Convert.ToInt32(StripPrefix(SimpleTextDocValuesWriter.MAXLENGTH), CultureInfo.InvariantCulture);
                     ReadLine();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.PATTERN))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
                     field.DataStartFilePointer = data.GetFilePointer();
                     data.Seek(data.GetFilePointer() + (9 + field.Pattern.Length + field.MaxLength + 2)*maxDoc);
@@ -112,16 +112,16 @@ namespace Lucene.Net.Codecs.SimpleText
                 else if (dvType == DocValuesType.SORTED || dvType == DocValuesType.SORTED_SET)
                 {
                     ReadLine();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.NUMVALUES))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StartsWith(SimpleTextDocValuesWriter.NUMVALUES));
                     field.NumValues = Convert.ToInt64(StripPrefix(SimpleTextDocValuesWriter.NUMVALUES), CultureInfo.InvariantCulture);
                     ReadLine();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH));
                     field.MaxLength = Convert.ToInt32(StripPrefix(SimpleTextDocValuesWriter.MAXLENGTH), CultureInfo.InvariantCulture);
                     ReadLine();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.PATTERN))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
                     ReadLine();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.ORDPATTERN))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StartsWith(SimpleTextDocValuesWriter.ORDPATTERN));
                     field.OrdPattern = StripPrefix(SimpleTextDocValuesWriter.ORDPATTERN);
                     field.DataStartFilePointer = data.GetFilePointer();
                     data.Seek(data.GetFilePointer() + (9 + field.Pattern.Length + field.MaxLength)*field.NumValues +

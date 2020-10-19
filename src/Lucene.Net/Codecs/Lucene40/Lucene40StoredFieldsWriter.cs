@@ -266,7 +266,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 position += lengths[i];
             }
             fieldsStream.CopyBytes(stream, position - start);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldsStream.GetFilePointer() == position)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldsStream.GetFilePointer() == position);
         }
 
         public override void Finish(FieldInfos fis, int numDocs)

@@ -83,7 +83,7 @@ namespace Lucene.Net.Util.Packed
 
             maskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));    //mod
 
-            //if (Debugging.AssertsEnabled && Debugging.ShouldAssert((long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue)) == (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue))) Debugging.ThrowAssert();
+            //if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue)) == (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));
 
             bpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
         }
@@ -200,7 +200,7 @@ namespace Lucene.Net.Util.Packed
             // bulk get
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index % decoder.Int64ValueCount == 0);
             int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert((((long)index * m_bitsPerValue) & MOD_MASK) == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((((long)index * m_bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / decoder.Int64ValueCount;
             decoder.Decode(blocks, blockIndex, arr, off, iterations);
             int gotValues = iterations * decoder.Int64ValueCount;
@@ -268,7 +268,7 @@ namespace Lucene.Net.Util.Packed
             // bulk set
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index % encoder.Int64ValueCount == 0);
             int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert((((long)index * m_bitsPerValue) & MOD_MASK) == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((((long)index * m_bitsPerValue) & MOD_MASK) == 0);
             int iterations = len / encoder.Int64ValueCount;
             encoder.Encode(arr, off, blocks, blockIndex, iterations);
             int setValues = iterations * encoder.Int64ValueCount;

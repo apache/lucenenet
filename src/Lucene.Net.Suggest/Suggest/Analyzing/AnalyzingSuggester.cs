@@ -968,7 +968,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             ReplaceSep(automaton);
             automaton = ConvertAutomaton(automaton);
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(SpecialOperations.IsFinite(automaton))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(SpecialOperations.IsFinite(automaton));
 
             // Get all paths from the automaton (there can be
             // more than one path, eg if the analyzer created a

@@ -64,17 +64,17 @@ namespace Lucene.Net.Util.Fst
 
         public override object Common(object output1, object output2)
         {
-            if(Debugging.ShouldAssert(output1 == NO_OUTPUT)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output1 == NO_OUTPUT);
 
-            if(Debugging.ShouldAssert(output2 == NO_OUTPUT)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output2 == NO_OUTPUT);
             return NO_OUTPUT;
         }
 
         public override object Subtract(object output, object inc)
         {
-            if(Debugging.ShouldAssert(output == NO_OUTPUT)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output == NO_OUTPUT);
 
-            if(Debugging.ShouldAssert(inc == NO_OUTPUT)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(inc == NO_OUTPUT);
             return NO_OUTPUT;
         }
 
@@ -91,9 +91,9 @@ namespace Lucene.Net.Util.Fst
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override object Merge(object first, object second)
         {
-            if(Debugging.ShouldAssert(first == NO_OUTPUT)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(first == NO_OUTPUT);
 
-            if(Debugging.ShouldAssert(second == NO_OUTPUT)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(second == NO_OUTPUT);
             return NO_OUTPUT;
         }
 

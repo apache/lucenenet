@@ -317,9 +317,9 @@ namespace Lucene.Net.Codecs.Sep
         {
             SepTermState state_ = (SepTermState)state;
             // TODO: -- wasteful we are counting this in two places?
-            if(Debugging.ShouldAssert(state_.DocFreq > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state_.DocFreq > 0);
 
-            if(Debugging.ShouldAssert(state_.DocFreq == df)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state_.DocFreq == df);
 
             state_.DocIndex = docOut.GetIndex();
             state_.DocIndex.CopyFrom(docIndex, false);

@@ -44,9 +44,9 @@ namespace Lucene.Net.Util.Fst
 
         public override Int32sRef Common(Int32sRef output1, Int32sRef output2)
         {
-            if(Debugging.ShouldAssert(output1 != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output1 != null);
 
-            if(Debugging.ShouldAssert(output2 != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output2 != null);
 
             int pos1 = output1.Offset;
             int pos2 = output2.Offset;
@@ -84,9 +84,9 @@ namespace Lucene.Net.Util.Fst
 
         public override Int32sRef Subtract(Int32sRef output, Int32sRef inc)
         {
-            if(Debugging.ShouldAssert(output != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output != null);
 
-            if(Debugging.ShouldAssert(inc != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(inc != null);
             if (inc == NO_OUTPUT)
             {
                 // no prefix removed
@@ -110,9 +110,9 @@ namespace Lucene.Net.Util.Fst
 
         public override Int32sRef Add(Int32sRef prefix, Int32sRef output)
         {
-            if(Debugging.ShouldAssert(prefix != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(prefix != null);
 
-            if(Debugging.ShouldAssert(output != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output != null);
             if (prefix == NO_OUTPUT)
             {
                 return output;
@@ -123,9 +123,9 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                if(Debugging.ShouldAssert(prefix.Length > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(prefix.Length > 0);
 
-                if(Debugging.ShouldAssert(output.Length > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output.Length > 0);
                 Int32sRef result = new Int32sRef(prefix.Length + output.Length);
                 Array.Copy(prefix.Int32s, prefix.Offset, result.Int32s, 0, prefix.Length);
                 Array.Copy(output.Int32s, output.Offset, result.Int32s, prefix.Length, output.Length);

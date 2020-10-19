@@ -197,7 +197,7 @@ namespace Lucene.Net.Index
         {
             // First time we're seeing this term since the last
             // flush
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docState.TestPoint("FreqProxTermsWriterPerField.newTerm start"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docState.TestPoint("FreqProxTermsWriterPerField.newTerm start"));
 
             FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
             postings.lastDocIDs[termID] = docState.docID;
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
 
         internal override void AddTerm(int termID)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docState.TestPoint("FreqProxTermsWriterPerField.addTerm start"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docState.TestPoint("FreqProxTermsWriterPerField.addTerm start"));
 
             FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
 

@@ -469,7 +469,7 @@ namespace Lucene.Net.Util
 
             internal virtual void UnaryDecompress(byte token)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert((token & HAS_EXCEPTIONS) == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((token & HAS_EXCEPTIONS) == 0);
                 int docID = this.docID;
                 for (int i = 0; i < BLOCK_SIZE; )
                 {

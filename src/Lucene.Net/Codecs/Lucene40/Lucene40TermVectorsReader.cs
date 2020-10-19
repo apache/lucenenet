@@ -748,7 +748,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override int NextPosition()
             {
-                //if (Debugging.AssertsEnabled && Debugging.ShouldAssert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length)) Debugging.ThrowAssert();
+                //if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
 
                 // LUCENENET: The above assertion was for control flow when testing. In Java, it would throw an AssertionError, which is
                 // caught by the BaseTermVectorsFormatTestCase.assertEquals(RandomTokenStream tk, FieldType ft, Terms terms) method in the

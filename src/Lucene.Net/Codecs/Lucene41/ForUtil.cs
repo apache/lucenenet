@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 var bitsPerValue = (code & 31) + 1;
 
                 PackedInt32s.Format format = PackedInt32s.Format.ById(formatId);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(format.IsSupported(bitsPerValue))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(format.IsSupported(bitsPerValue));
                 encodedSizes[bpv] = EncodedSize(format, packedIntsVersion, bitsPerValue);
                 encoders[bpv] = PackedInt32s.GetEncoder(format, packedIntsVersion, bitsPerValue);
                 decoders[bpv] = PackedInt32s.GetDecoder(format, packedIntsVersion, bitsPerValue);

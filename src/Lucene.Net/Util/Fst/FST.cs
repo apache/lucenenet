@@ -696,7 +696,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.NextFinalOutput.Equals(NO_OUTPUT))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(arc.NextFinalOutput.Equals(NO_OUTPUT));
                 }
 
                 bool targetHasArcs = target.Node > 0;
@@ -1302,7 +1302,7 @@ namespace Lucene.Net.Util.Fst
             {
                 // LUCENE-5152: detect tricky cases where caller
                 // modified previously returned cached root-arcs:
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertRootArcs())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertRootArcs());
                 FST.Arc<T> result = cachedRootArcs[labelToMatch];
                 if (result == null)
                 {
@@ -1829,7 +1829,7 @@ namespace Lucene.Net.Util.Fst
                             }
                             else
                             {
-                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.NextFinalOutput.Equals(NO_OUTPUT))) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(arc.NextFinalOutput.Equals(NO_OUTPUT));
                             }
                             if (!TargetHasArcs(arc))
                             {
