@@ -570,7 +570,7 @@ namespace Lucene.Net.Index
                 // Randomly picked the IndexOptions to index this
                 // field with:
                 IndexOptions indexOptions = ALL_INDEX_OPTIONS[alwaysTestMax ? fieldMaxIndexOption : Random.Next(1, 1 + fieldMaxIndexOption)]; // LUCENENET: Skipping NONE option
-                bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
+                bool doPayloads = indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
 
                 newFieldInfoArray[fieldUpto] = new FieldInfo(oldFieldInfo.Name, true, fieldUpto, false, false, doPayloads, indexOptions, DocValuesType.NONE, DocValuesType.NUMERIC, null);
             }
@@ -601,10 +601,10 @@ namespace Lucene.Net.Index
                         Console.WriteLine("field=" + field + " indexOtions=" + indexOptions);
                     }
 
-                    bool doFreq = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-                    bool doPos = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-                    bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
-                    bool doOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                    bool doFreq = indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS) >= 0;
+                    bool doPos = indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                    bool doPayloads = indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
+                    bool doOffsets = indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
                     TermsConsumer termsConsumer = fieldsConsumer.AddField(fieldInfo);
                     long sumTotalTF = 0;
@@ -748,15 +748,15 @@ namespace Lucene.Net.Index
                                                     maxIndexOptions);
             Assert.AreEqual(expected.DocFreq, termsEnum.DocFreq);
 
-            bool allowFreqs = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && 
+            bool allowFreqs = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS) >= 0 && 
                 maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
             bool doCheckFreqs = allowFreqs && (alwaysTestMax || Random.Next(3) <= 2);
 
-            bool allowPositions = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && 
+            bool allowPositions = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && 
                 maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
             bool doCheckPositions = allowPositions && (alwaysTestMax || Random.Next(3) <= 2);
 
-            bool allowOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >=0 && 
+            bool allowOffsets = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >=0 && 
                 maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool doCheckOffsets = allowOffsets && (alwaysTestMax || Random.Next(3) <= 2);
 
@@ -1085,7 +1085,7 @@ namespace Lucene.Net.Index
                                 }
                             }
                         }
-                        else if (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0)
+                        else if (fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0)
                         {
                             if (Verbose)
                             {

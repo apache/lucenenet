@@ -177,7 +177,7 @@ namespace Lucene.Net.Codecs.Pulsing
             termState2.Absolute = termState2.Absolute || absolute;
             // if we have positions, its total TF, otherwise its computed based on docFreq.
             // TODO Double check this is right..
-            long count = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0
+            long count = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0
                 ? termState2.TotalTermFreq
                 : termState2.DocFreq;
            
@@ -335,7 +335,7 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 _indexOptions = fieldInfo.IndexOptions;
                 _storePayloads = fieldInfo.HasPayloads;
-                _storeOffsets = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                _storeOffsets = _indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             public virtual PulsingDocsEnum Reset(IBits liveDocs, PulsingTermState termState)
@@ -385,7 +385,7 @@ namespace Lucene.Net.Codecs.Pulsing
                         _accum += (int)((uint)code >> 1); ; // shift off low bit
                         _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt32();
 
-                        if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+                        if (_indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
                         {
                             // Skip positions
                             if (_storePayloads)
@@ -472,7 +472,7 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 _indexOptions = fieldInfo.IndexOptions;
                 _storePayloads = fieldInfo.HasPayloads;
-                _storeOffsets = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                _storeOffsets = _indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             internal bool CanReuse(FieldInfo fieldInfo)

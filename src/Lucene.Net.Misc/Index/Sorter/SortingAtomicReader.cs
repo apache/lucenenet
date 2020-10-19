@@ -158,7 +158,7 @@ namespace Lucene.Net.Index.Sorter
                 }
 
                 DocsEnum inDocs = m_input.Docs(NewToOld(liveDocs), inReuse, flags);
-                bool withFreqs = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && (flags & DocsFlags.FREQS) != 0;
+                bool withFreqs = indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS) >= 0 && (flags & DocsFlags.FREQS) != 0;
                 return new SortingDocsEnum(docMap.Count, wrapReuse, inDocs, withFreqs, docMap);
             }
 
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index.Sorter
                 // since this code is expected to be used during addIndexes which will
                 // ask for everything. if that assumption changes in the future, we can
                 // factor in whether 'flags' says offsets are not required.
-                bool storeOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                bool storeOffsets = indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 return new SortingDocsAndPositionsEnum(docMap.Count, wrapReuse, inDocsAndPositions, docMap, storeOffsets);
             }
         }

@@ -140,8 +140,8 @@ namespace Lucene.Net.Codecs.Lucene41
         public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState termState, bool absolute)
         {
             Lucene41PostingsWriter.Int32BlockTermState termState2 = (Lucene41PostingsWriter.Int32BlockTermState)termState;
-            bool fieldHasPositions = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-            bool fieldHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            bool fieldHasPositions = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            bool fieldHasOffsets = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool fieldHasPayloads = fieldInfo.HasPayloads;
 
             if (absolute)
@@ -195,8 +195,8 @@ namespace Lucene.Net.Codecs.Lucene41
 
         private void DecodeTerm(DataInput @in, FieldInfo fieldInfo, Lucene41PostingsWriter.Int32BlockTermState termState)
         {
-            bool fieldHasPositions = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-            bool fieldHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            bool fieldHasPositions = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            bool fieldHasOffsets = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool fieldHasPayloads = fieldInfo.HasPayloads;
             if (termState.DocFreq == 1)
             {
@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
-            bool indexHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            bool indexHasOffsets = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool indexHasPayloads = fieldInfo.HasPayloads;
 
             if ((!indexHasOffsets || (flags & DocsAndPositionsFlags.OFFSETS) == 0) && (!indexHasPayloads || (flags & DocsAndPositionsFlags.PAYLOADS) == 0))
@@ -345,9 +345,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.outerInstance = outerInstance;
                 this.startDocIn = outerInstance.docIn;
                 this.docIn = null;
-                indexHasFreq = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-                indexHasPos = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-                indexHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                indexHasFreq = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS) >= 0;
+                indexHasPos = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                indexHasOffsets = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 indexHasPayloads = fieldInfo.HasPayloads;
                 encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
             }
@@ -355,8 +355,8 @@ namespace Lucene.Net.Codecs.Lucene41
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
                 return docIn == startDocIn && 
-                    indexHasFreq == (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0) && 
-                    indexHasPos == (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0) && 
+                    indexHasFreq == (fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS) >= 0) && 
+                    indexHasPos == (fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0) && 
                     indexHasPayloads == fieldInfo.HasPayloads;
             }
 
@@ -667,14 +667,14 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.docIn = null;
                 this.posIn = (IndexInput)outerInstance.posIn.Clone();
                 encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
-                indexHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                indexHasOffsets = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 indexHasPayloads = fieldInfo.HasPayloads;
             }
 
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
                 return docIn == startDocIn && 
-                    indexHasOffsets == (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) 
+                    indexHasOffsets == (fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) 
                     && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
@@ -1143,7 +1143,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.posIn = (IndexInput)outerInstance.posIn.Clone();
                 this.payIn = (IndexInput)outerInstance.payIn.Clone();
                 encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
-                indexHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                indexHasOffsets = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 if (indexHasOffsets)
                 {
                     offsetStartDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
@@ -1175,7 +1175,7 @@ namespace Lucene.Net.Codecs.Lucene41
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
                 return docIn == startDocIn && 
-                    indexHasOffsets == (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) && 
+                    indexHasOffsets == (fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) && 
                     indexHasPayloads == fieldInfo.HasPayloads;
             }
 

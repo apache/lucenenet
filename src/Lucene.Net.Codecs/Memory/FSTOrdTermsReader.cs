@@ -243,11 +243,11 @@ namespace Lucene.Net.Codecs.Memory
 
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            public override bool HasFreqs => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+            public override bool HasFreqs => fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            public override bool HasOffsets => fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            public override bool HasPositions => fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
             public override bool HasPayloads => fieldInfo.HasPayloads;
 

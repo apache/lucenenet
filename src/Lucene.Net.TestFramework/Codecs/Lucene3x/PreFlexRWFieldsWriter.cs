@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override TermsConsumer AddField(FieldInfo field)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(field.Number != -1);
-            if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+            if (field.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
                 throw new NotSupportedException("this codec cannot index offsets");
             }

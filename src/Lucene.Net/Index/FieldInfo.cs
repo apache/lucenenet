@@ -352,6 +352,13 @@ namespace Lucene.Net.Index
         /// </summary>
         DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS
     }
+    public static class IndexOptionsComparer // LUCENENET specific: Avoid boxing IndexOptions on call to Enum.CompareTo
+    {
+        public static int CompareAgainst(this IndexOptions one, IndexOptions other)
+        {
+            return ((int)one).CompareTo((int)other);
+        }
+    }
 
     /// <summary>
     /// DocValues types.

@@ -274,7 +274,7 @@ namespace Lucene.Net.Codecs.Asserting
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(state == PostingsConsumerState.START);
                 state = PostingsConsumerState.INITIAL;
-                if (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                if (fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(positionCount == 0); // we should not have fed any positions!
                 }

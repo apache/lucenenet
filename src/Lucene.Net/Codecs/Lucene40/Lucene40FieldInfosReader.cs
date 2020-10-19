@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // LUCENE-3027: past indices were able to write
                     // storePayloads=true when omitTFAP is also true,
                     // which is invalid.  We correct that, here:
-                    if (isIndexed && indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                    if (isIndexed && indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {
                         storePayloads = false;
                     }
