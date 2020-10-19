@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs
                 bool hasPositions = terms.HasPositions;
                 bool hasOffsets = terms.HasOffsets;
                 bool hasPayloads = terms.HasPayloads;
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!hasPayloads || hasPositions);
+                if (Debugging.AssertsEnabled) Debugging.Assert(!hasPayloads || hasPositions);
 
                 int numTerms = (int)terms.Count;
                 if (numTerms == -1)
@@ -328,12 +328,12 @@ namespace Lucene.Net.Codecs
                     if (hasPositions || hasOffsets)
                     {
                         docsAndPositionsEnum = termsEnum.DocsAndPositions(null, docsAndPositionsEnum);
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docsAndPositionsEnum != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(docsAndPositionsEnum != null);
 
                         int docID = docsAndPositionsEnum.NextDoc();
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID != DocIdSetIterator.NO_MORE_DOCS);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(docID != DocIdSetIterator.NO_MORE_DOCS);
 
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docsAndPositionsEnum.Freq == freq);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(docsAndPositionsEnum.Freq == freq);
 
                         for (int posUpto = 0; posUpto < freq; posUpto++)
                         {
@@ -343,16 +343,16 @@ namespace Lucene.Net.Codecs
 
                             BytesRef payload = docsAndPositionsEnum.GetPayload();
 
-                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!hasPositions || pos >= 0);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(!hasPositions || pos >= 0);
                             AddPosition(pos, startOffset, endOffset, payload);
                         }
                     }
                     FinishTerm();
                 }
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termCount == numTerms);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termCount == numTerms);
                 FinishField();
             }
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldCount == numFields);
+            if (Debugging.AssertsEnabled) Debugging.Assert(fieldCount == numFields);
             FinishDocument();
         }
 

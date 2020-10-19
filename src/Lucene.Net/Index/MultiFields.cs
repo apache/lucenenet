@@ -175,9 +175,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public static DocsEnum GetTermDocsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsFlags flags)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(field != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
             Terms terms = GetTerms(r, field);
             if (terms != null)
             {
@@ -211,9 +211,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsAndPositionsFlags flags)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(field != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
             Terms terms = GetTerms(r, field);
             if (terms != null)
             {

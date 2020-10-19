@@ -297,7 +297,7 @@ namespace Lucene.Net.Index
                 if (m_input.HasDeletions)
                 {
                     IBits oldLiveDocs = m_input.LiveDocs;
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(oldLiveDocs != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(oldLiveDocs != null);
                     // this loop is a little bit ineffective, as Bits has no nextSetBit():
                     for (int i = 0; i < maxDoc; i++)
                     {

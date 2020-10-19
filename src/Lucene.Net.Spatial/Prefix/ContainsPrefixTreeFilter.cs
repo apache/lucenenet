@@ -102,7 +102,7 @@ namespace Lucene.Net.Spatial.Prefix
                 if (cell.Level != 0 && ((cell.ShapeRel == SpatialRelation.NOT_SET || cell.ShapeRel == SpatialRelation.WITHIN)))
                 {
                     subCellsFilter = null;
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(cell.Shape.Relate(outerInstance.m_queryShape) == SpatialRelation.WITHIN);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(cell.Shape.Relate(outerInstance.m_queryShape) == SpatialRelation.WITHIN);
                 }
                 ICollection<Cell> subCells = cell.GetSubCells(subCellsFilter);
                 foreach (Cell subCell in subCells)
@@ -147,7 +147,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             private bool SeekExact(Cell cell)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(new BytesRef(cell.GetTokenBytes()).CompareTo(termBytes) > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(new BytesRef(cell.GetTokenBytes()).CompareTo(termBytes) > 0);
                 this.termBytes.Bytes = cell.GetTokenBytes();
                 this.termBytes.Length = this.termBytes.Bytes.Length;
                 if (m_termsEnum == null)
@@ -157,7 +157,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             private SmallDocSet GetDocs(Cell cell, IBits acceptContains)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(new BytesRef(cell.GetTokenBytes()).Equals(termBytes));
+                if (Debugging.AssertsEnabled) Debugging.Assert(new BytesRef(cell.GetTokenBytes()).Equals(termBytes));
                 return this.CollectDocs(acceptContains);
             }
 
@@ -167,8 +167,8 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.ThrowAssertIf(new BytesRef(leafCell.GetTokenBytes()).Equals(termBytes));
-                    Debugging.ThrowAssertIf(!leafCell.Equals(lastLeaf));//don't call for same leaf again
+                    Debugging.Assert(new BytesRef(leafCell.GetTokenBytes()).Equals(termBytes));
+                    Debugging.Assert(!leafCell.Equals(lastLeaf));//don't call for same leaf again
                 }
                 lastLeaf = leafCell;
 
@@ -301,7 +301,7 @@ namespace Lucene.Net.Spatial.Prefix
                     }
                     docs[d++] = v;
                 }
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(d == intSet.Count);
+                if (Debugging.AssertsEnabled) Debugging.Assert(d == intSet.Count);
                 int size = d;
                 //sort them
                 Array.Sort(docs, 0, size);

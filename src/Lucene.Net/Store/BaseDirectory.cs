@@ -66,7 +66,7 @@ namespace Lucene.Net.Store
 
         public override void SetLockFactory(LockFactory lockFactory)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lockFactory != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(lockFactory != null);
             this.m_lockFactory = lockFactory;
             lockFactory.LockPrefix = this.GetLockID();
         }

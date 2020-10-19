@@ -91,8 +91,8 @@ namespace Lucene.Net.Analysis.Ja
 
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.ThrowAssertIf(!bestPathMap.ContainsKey(fromNodeID));
-                    Debugging.ThrowAssertIf(!bestPathMap.Values.Contains(toNodeID));
+                    Debugging.Assert(!bestPathMap.ContainsKey(fromNodeID));
+                    Debugging.Assert(!bestPathMap.Values.Contains(toNodeID));
                 }
                 bestPathMap[fromNodeID] = toNodeID;
                 pos = backPos;

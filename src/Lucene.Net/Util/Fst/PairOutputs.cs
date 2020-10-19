@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Fst
             else
             {
                 var p = new Pair(a, b);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(p));
+                if (Debugging.AssertsEnabled) Debugging.Assert(Valid(p));
                 return p;
             }
         }
@@ -128,8 +128,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(Valid(pair1));
-                Debugging.ThrowAssertIf(Valid(pair2));
+                Debugging.Assert(Valid(pair1));
+                Debugging.Assert(Valid(pair2));
             }
             return NewPair(outputs1.Common(pair1.Output1, pair2.Output1), outputs2.Common(pair1.Output2, pair2.Output2));
         }
@@ -138,8 +138,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(Valid(output));
-                Debugging.ThrowAssertIf(Valid(inc));
+                Debugging.Assert(Valid(output));
+                Debugging.Assert(Valid(inc));
             }
             return NewPair(outputs1.Subtract(output.Output1, inc.Output1), outputs2.Subtract(output.Output2, inc.Output2));
         }
@@ -148,15 +148,15 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(Valid(prefix));
-                Debugging.ThrowAssertIf(Valid(output));
+                Debugging.Assert(Valid(prefix));
+                Debugging.Assert(Valid(output));
             }
             return NewPair(outputs1.Add(prefix.Output1, output.Output1), outputs2.Add(prefix.Output2, output.Output2));
         }
 
         public override void Write(Pair output, DataOutput writer)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(output));
+            if (Debugging.AssertsEnabled) Debugging.Assert(Valid(output));
             outputs1.Write(output.Output1, writer);
             outputs2.Write(output.Output2, writer);
         }
@@ -172,7 +172,7 @@ namespace Lucene.Net.Util.Fst
 
         public override string OutputToString(Pair output)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(output));
+            if (Debugging.AssertsEnabled) Debugging.Assert(Valid(output));
             return "<pair:" + outputs1.OutputToString(output.Output1) + "," + outputs2.OutputToString(output.Output2) + ">";
         }
 

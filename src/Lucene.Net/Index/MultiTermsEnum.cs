@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public TermsEnum Reset(TermsEnumIndex[] termsEnumsIndex)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termsEnumsIndex.Length <= top.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnumsIndex.Length <= top.Length);
             numSubs = 0;
             numTop = 0;
             termComp = null;
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < termsEnumsIndex.Length; i++)
             {
                 TermsEnumIndex termsEnumIndex = termsEnumsIndex[i];
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termsEnumIndex != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termsEnumIndex != null);
 
                 // init our term comp
                 if (termComp == null)
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
                 {
                     top[numTop++] = currentSubs[i];
                     current = currentSubs[i].Current = currentSubs[i].Terms.Term;
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term.Equals(currentSubs[i].Current));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(term.Equals(currentSubs[i].Current));
                 }
             }
 
@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
                     if (status == SeekStatus.NOT_FOUND)
                     {
                         currentSubs[i].Current = currentSubs[i].Terms.Term;
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(currentSubs[i].Current != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(currentSubs[i].Current != null);
                         queue.Add(currentSubs[i]);
                     }
                     else
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
         {
             // extract all subs from the queue that have the same
             // top term
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numTop == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numTop == 0);
             while (true)
             {
                 top[numTop++] = queue.Pop();
@@ -370,7 +370,7 @@ namespace Lucene.Net.Index
                 // most impls short-circuit if you SeekCeil to term
                 // they are already on.
                 SeekStatus status = SeekCeil(current);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(status == SeekStatus.FOUND);
+                if (Debugging.AssertsEnabled) Debugging.Assert(status == SeekStatus.FOUND);
                 lastSeekExact = false;
             }
             lastSeek = null;

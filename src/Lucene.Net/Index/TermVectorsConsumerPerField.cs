@@ -164,13 +164,13 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal void FinishDocument()
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docState.TestPoint("TermVectorsTermsWriterPerField.finish start"));
+            if (Debugging.AssertsEnabled) Debugging.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.finish start"));
 
             int numPostings = termsHashPerField.bytesHash.Count;
 
             BytesRef flushTerm = termsWriter.flushTerm;
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numPostings >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numPostings >= 0);
 
             if (numPostings > maxNumPostings)
             {
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
             // of a given field in the doc.  At this point we flush
             // our hash into the DocWriter.
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termsWriter.VectorFieldsInOrder(fieldInfo));
+            if (Debugging.AssertsEnabled) Debugging.Assert(termsWriter.VectorFieldsInOrder(fieldInfo));
 
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
             TermVectorsWriter tv = termsWriter.writer;
@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
 
         internal override void NewTerm(int termID)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docState.TestPoint("TermVectorsTermsWriterPerField.newTerm start"));
+            if (Debugging.AssertsEnabled) Debugging.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.newTerm start"));
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
 
             postings.freqs[termID] = 1;
@@ -305,7 +305,7 @@ namespace Lucene.Net.Index
 
         internal override void AddTerm(int termID)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docState.TestPoint("TermVectorsTermsWriterPerField.addTerm start"));
+            if (Debugging.AssertsEnabled) Debugging.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.addTerm start"));
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
 
             postings.freqs[termID]++;
@@ -344,7 +344,7 @@ namespace Lucene.Net.Index
 
             internal override void CopyTo(ParallelPostingsArray toArray, int numToCopy)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(toArray is TermVectorsPostingsArray);
+                if (Debugging.AssertsEnabled) Debugging.Assert(toArray is TermVectorsPostingsArray);
                 TermVectorsPostingsArray to = (TermVectorsPostingsArray)toArray;
 
                 base.CopyTo(toArray, numToCopy);

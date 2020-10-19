@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
         public SingletonSortedSetDocValues(SortedDocValues @in)
         {
             this.@in = @in;
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(NO_MORE_ORDS == -1); // this allows our nextOrd() to work for missing values without a check
+            if (Debugging.AssertsEnabled) Debugging.Assert(NO_MORE_ORDS == -1); // this allows our nextOrd() to work for missing values without a check
         }
 
         /// <summary>

@@ -165,7 +165,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     if (Debugging.AssertsEnabled)
                     {
-                        Debugging.ThrowAssertIf(endOffset >= startOffset);
+                        Debugging.Assert(endOffset >= startOffset);
                         if(Debugging.ShouldAssert(startOffset >= _lastStartOffset)) Debugging.ThrowAssert("startOffset={0} lastStartOffset={1}", startOffset, _lastStartOffset);
                     }
 
@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 if (payload != null && payload.Length > 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(payload.Length != 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(payload.Length != 0);
                     _outerInstance.Write(PAYLOAD);
                     _outerInstance.Write(payload);
                     _outerInstance.Newline();

@@ -64,17 +64,17 @@ namespace Lucene.Net.Util.Fst
 
         public override object Common(object output1, object output2)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output1 == NO_OUTPUT);
+            if (Debugging.AssertsEnabled) Debugging.Assert(output1 == NO_OUTPUT);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output2 == NO_OUTPUT);
+            if (Debugging.AssertsEnabled) Debugging.Assert(output2 == NO_OUTPUT);
             return NO_OUTPUT;
         }
 
         public override object Subtract(object output, object inc)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output == NO_OUTPUT);
+            if (Debugging.AssertsEnabled) Debugging.Assert(output == NO_OUTPUT);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(inc == NO_OUTPUT);
+            if (Debugging.AssertsEnabled) Debugging.Assert(inc == NO_OUTPUT);
             return NO_OUTPUT;
         }
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Util.Fst
             if (Debugging.AssertsEnabled)
             {
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(prefix == NO_OUTPUT)) Debugging.ThrowAssert("got {0}", prefix);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output == NO_OUTPUT);
+                if (Debugging.AssertsEnabled) Debugging.Assert(output == NO_OUTPUT);
             }
             return NO_OUTPUT;
         }
@@ -91,9 +91,9 @@ namespace Lucene.Net.Util.Fst
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override object Merge(object first, object second)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(first == NO_OUTPUT);
+            if (Debugging.AssertsEnabled) Debugging.Assert(first == NO_OUTPUT);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(second == NO_OUTPUT);
+            if (Debugging.AssertsEnabled) Debugging.Assert(second == NO_OUTPUT);
             return NO_OUTPUT;
         }
 

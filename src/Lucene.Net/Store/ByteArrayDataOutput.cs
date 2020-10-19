@@ -66,13 +66,13 @@ namespace Lucene.Net.Store
 
         public override void WriteByte(byte b)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pos < limit);
+            if (Debugging.AssertsEnabled) Debugging.Assert(pos < limit);
             bytes[pos++] = b;
         }
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pos + length <= limit);
+            if (Debugging.AssertsEnabled) Debugging.Assert(pos + length <= limit);
             System.Buffer.BlockCopy(b, offset, bytes, pos, length);
             pos += length;
         }

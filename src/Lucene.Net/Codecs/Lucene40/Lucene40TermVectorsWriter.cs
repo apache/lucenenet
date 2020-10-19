@@ -80,9 +80,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.WriteHeader(tvf, Lucene40TermVectorsReader.CODEC_NAME_FIELDS, Lucene40TermVectorsReader.VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.ThrowAssertIf(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.GetFilePointer());
-                    Debugging.ThrowAssertIf(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.GetFilePointer());
-                    Debugging.ThrowAssertIf(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
+                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.GetFilePointer());
+                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.GetFilePointer());
+                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
                 }
                 success = true;
             }
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene40
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void FinishDocument()
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldCount == numVectorFields);
+            if (Debugging.AssertsEnabled) Debugging.Assert(fieldCount == numVectorFields);
             for (int i = 1; i < fieldCount; i++)
             {
                 tvd.WriteVInt64(fps[i] - fps[i - 1]);
@@ -273,8 +273,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 // dump buffer
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.ThrowAssertIf(positions && (offsets || payloads));
-                    Debugging.ThrowAssertIf(bufferedIndex == bufferedFreq);
+                    Debugging.Assert(positions && (offsets || payloads));
+                    Debugging.Assert(bufferedIndex == bufferedFreq);
                 }
                 if (payloads)
                 {
@@ -365,8 +365,8 @@ namespace Lucene.Net.Codecs.Lucene40
             tvf.CopyBytes(reader.TvfStream, tvfPosition - tvfStart);
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(tvd.GetFilePointer() == tvdPosition);
-                Debugging.ThrowAssertIf(tvf.GetFilePointer() == tvfPosition);
+                Debugging.Assert(tvd.GetFilePointer() == tvdPosition);
+                Debugging.Assert(tvf.GetFilePointer() == tvfPosition);
             }
         }
 

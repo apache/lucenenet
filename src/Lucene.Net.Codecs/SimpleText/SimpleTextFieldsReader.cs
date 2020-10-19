@@ -454,7 +454,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
+                        if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
                                      StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END));
 
                         if (!first && (_liveDocs == null || _liveDocs.Get(_docId)))

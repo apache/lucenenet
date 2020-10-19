@@ -198,7 +198,7 @@ namespace Lucene.Net.Util.Fst
         public virtual void CopyBytes(long src, long dest, int len)
         {
             //System.out.println("BS.copyBytes src=" + src + " dest=" + dest + " len=" + len);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(src < dest);
+            if (Debugging.AssertsEnabled) Debugging.Assert(src < dest);
 
             // Note: weird: must go "backwards" because copyBytes
             // calls us with overlapping src/dest.  If we
@@ -287,9 +287,9 @@ namespace Lucene.Net.Util.Fst
         /// Reverse from <paramref name="srcPos"/>, inclusive, to <paramref name="destPos"/>, inclusive. </summary>
         public virtual void Reverse(long srcPos, long destPos)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(srcPos < destPos);
+            if (Debugging.AssertsEnabled) Debugging.Assert(srcPos < destPos);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(destPos < Position);
+            if (Debugging.AssertsEnabled) Debugging.Assert(destPos < Position);
             //System.out.println("reverse src=" + srcPos + " dest=" + destPos);
 
             int srcBlockIndex = (int)(srcPos >> blockBits);
@@ -356,9 +356,9 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public virtual void Truncate(long newLen)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(newLen <= Position);
+            if (Debugging.AssertsEnabled) Debugging.Assert(newLen <= Position);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(newLen >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(newLen >= 0);
             int blockIndex = (int)(newLen >> blockBits);
             nextWrite = (int)(newLen & blockMask);
             if (nextWrite == 0)
@@ -375,7 +375,7 @@ namespace Lucene.Net.Util.Fst
             {
                 current = blocks[blockIndex];
             }
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(newLen == Position);
+            if (Debugging.AssertsEnabled) Debugging.Assert(newLen == Position);
         }
 
         public virtual void Finish()

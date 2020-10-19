@@ -652,7 +652,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(false);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(false);
                     return 0;
                 }
             }

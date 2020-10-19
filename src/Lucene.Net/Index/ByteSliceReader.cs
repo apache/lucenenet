@@ -50,9 +50,9 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(endIndex - startIndex >= 0);
-                Debugging.ThrowAssertIf(startIndex >= 0);
-                Debugging.ThrowAssertIf(endIndex >= 0);
+                Debugging.Assert(endIndex - startIndex >= 0);
+                Debugging.Assert(startIndex >= 0);
+                Debugging.Assert(endIndex >= 0);
             }
 
             this.pool = pool;
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
 
         public bool Eof()
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto + BufferOffset <= EndIndex);
+            if (Debugging.AssertsEnabled) Debugging.Assert(upto + BufferOffset <= EndIndex);
             return upto + BufferOffset == EndIndex;
         }
 
@@ -87,8 +87,8 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(!Eof());
-                Debugging.ThrowAssertIf(upto <= limit);
+                Debugging.Assert(!Eof());
+                Debugging.Assert(upto <= limit);
             }
             if (upto == limit)
             {
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
             {
                 if (limit + BufferOffset == EndIndex)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(EndIndex - BufferOffset >= upto);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(EndIndex - BufferOffset >= upto);
                     @out.WriteBytes(buffer, upto, limit - upto);
                     size += limit - upto;
                     break;
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
             if (nextIndex + newSize >= EndIndex)
             {
                 // We are advancing to the final slice
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(EndIndex - nextIndex > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(EndIndex - nextIndex > 0);
                 limit = EndIndex - BufferOffset;
             }
             else

@@ -137,7 +137,7 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         public static void Encode(sbyte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(outputLength == GetEncodedLength(inputArray, inputOffset, inputLength));
+            if (Debugging.AssertsEnabled) Debugging.Assert(outputLength == GetEncodedLength(inputArray, inputOffset, inputLength));
             if (inputLength > 0)
             {
                 int inputByteNum = inputOffset;
@@ -217,7 +217,7 @@ namespace Lucene.Net.Util
         [CLSCompliant(false)]
         public static void Decode(char[] inputArray, int inputOffset, int inputLength, sbyte[] outputArray, int outputOffset, int outputLength)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(outputLength == GetDecodedLength(inputArray, inputOffset, inputLength));
+            if (Debugging.AssertsEnabled) Debugging.Assert(outputLength == GetDecodedLength(inputArray, inputOffset, inputLength));
             int numInputChars = inputLength - 1;
             int numOutputBytes = outputLength;
 

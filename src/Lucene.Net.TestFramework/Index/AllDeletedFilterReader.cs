@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
             : base(@in)
         {
             liveDocs = new Bits.MatchNoBits(@in.MaxDoc);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(MaxDoc == 0 || HasDeletions);
+            if (Debugging.AssertsEnabled) Debugging.Assert(MaxDoc == 0 || HasDeletions);
         }
 
         public override IBits LiveDocs => liveDocs;

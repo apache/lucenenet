@@ -72,7 +72,7 @@ namespace Lucene.Net.Util.Packed
         /// Reset this writer to wrap <paramref name="out"/>. The block size remains unchanged. </summary>
         public virtual void Reset(DataOutput @out)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(@out != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(@out != null);
             this.m_out = @out;
             m_off = 0;
             m_ord = 0L;

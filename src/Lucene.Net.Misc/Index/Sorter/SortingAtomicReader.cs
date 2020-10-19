@@ -766,7 +766,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 throw new ArgumentException("reader.MaxDoc should be equal to docMap.Count, got" + reader.MaxDoc + " != " + docMap.Count);
             }
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Sorter.IsConsistent(docMap));
+            if (Debugging.AssertsEnabled) Debugging.Assert(Sorter.IsConsistent(docMap));
             return new SortingAtomicReader(reader, docMap);
         }
 

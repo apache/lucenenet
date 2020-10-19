@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
                                 if (toDeleteSubDocs.Count > 0 && Random.NextBoolean())
                                 {
                                     delSubDocs = toDeleteSubDocs[Random.Next(toDeleteSubDocs.Count)];
-                                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!delSubDocs.Deleted);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(!delSubDocs.Deleted);
                                     toDeleteSubDocs.Remove(delSubDocs);
                                     // Update doc block, replacing prior packID
                                     packID = delSubDocs.PackID;
@@ -367,7 +367,7 @@ namespace Lucene.Net.Index
 
                             foreach (SubDocs subDocs in toDeleteSubDocs)
                             {
-                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!subDocs.Deleted);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(!subDocs.Deleted);
                                 delPackIDs.Add(subDocs.PackID);
                                 outerInstance.DeleteDocuments(new Term("packID", subDocs.PackID));
                                 subDocs.Deleted = true;

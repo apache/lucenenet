@@ -94,8 +94,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.CheckHeader(fieldsStream, Lucene40StoredFieldsWriter.CODEC_NAME_DAT, Lucene40StoredFieldsWriter.VERSION_START, Lucene40StoredFieldsWriter.VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.ThrowAssertIf(Lucene40StoredFieldsWriter.HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
-                    Debugging.ThrowAssertIf(Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX == indexStream.GetFilePointer());
+                    Debugging.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
+                    Debugging.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX == indexStream.GetFilePointer());
                 }
                 long indexSize = indexStream.Length - Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX;
                 this.size = (int)(indexSize >> 3);
@@ -284,7 +284,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 long offset;
                 int docID = startDocID + count + 1;
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID <= numTotalDocs);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docID <= numTotalDocs);
                 if (docID < numTotalDocs)
                 {
                     offset = indexStream.ReadInt64();

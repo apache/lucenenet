@@ -42,7 +42,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                                IList<TokenFilterFactory> tokenFilterFactories)
         {
             this.charFilterFactories = charFilterFactories;
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(null != tokenizerFactory);
+            if (Debugging.AssertsEnabled) Debugging.Assert(null != tokenizerFactory);
             this.tokenizerFactory = tokenizerFactory;
             this.tokenFilterFactories = tokenFilterFactories;
         }

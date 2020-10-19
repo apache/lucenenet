@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis
         {
             excAtChar = charUpto;
             // You should only call this on init!:
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(0 == readSoFar);
+            if (Debugging.AssertsEnabled) Debugging.Assert(0 == readSoFar);
         }
 
         public virtual void ThrowExcNext()
@@ -91,10 +91,10 @@ namespace Lucene.Net.Analysis
             if (excAtChar != -1)
             {
                 int left = excAtChar - readSoFar;
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(left != 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(left != 0);
                 read = input.Read(cbuf, off, Math.Min(realLen, left));
                 //Characters are left
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(read != 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(read != 0);
                 readSoFar += read;
             }
             else

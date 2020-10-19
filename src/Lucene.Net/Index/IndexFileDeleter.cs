@@ -404,7 +404,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Refresh(string segmentName)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
 
             string[] files = directory.ListAll();
             string segmentPrefix1;
@@ -445,7 +445,7 @@ namespace Lucene.Net.Index
             // Set to null so that we regenerate the list of pending
             // files; else we can accumulate same file more than
             // once
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             deletable = null;
             Refresh(null);
         }
@@ -453,7 +453,7 @@ namespace Lucene.Net.Index
         public void Dispose()
         {
             // DecRef old files from the last checkpoint, if any:
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
 
             if (lastFiles.Count > 0)
             {
@@ -475,7 +475,7 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void RevisitPolicy()
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             if (infoStream.IsEnabled("IFD"))
             {
                 infoStream.Message("IFD", "now revisitPolicy");
@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
 
         public void DeletePendingFiles()
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             if (deletable != null)
             {
                 IList<string> oldDeletable = deletable;
@@ -529,9 +529,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Checkpoint(SegmentInfos segmentInfos, bool isCommit)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Monitor.IsEntered(writer));
+            if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
             long t0 = 0;
             if (infoStream.IsEnabled("IFD"))
             {
@@ -575,7 +575,7 @@ namespace Lucene.Net.Index
 
         internal void IncRef(SegmentInfos segmentInfos, bool isCommit)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             // If this is a commit point, also incRef the
             // segments_N file:
             foreach (string fileName in segmentInfos.GetFiles(directory, isCommit))
@@ -586,7 +586,7 @@ namespace Lucene.Net.Index
 
         internal void IncRef(ICollection<string> files)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             foreach (string file in files)
             {
                 IncRef(file);
@@ -595,7 +595,7 @@ namespace Lucene.Net.Index
 
         internal void IncRef(string fileName)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             RefCount rc = GetRefCount(fileName);
             if (infoStream.IsEnabled("IFD"))
             {
@@ -609,7 +609,7 @@ namespace Lucene.Net.Index
 
         internal void DecRef(ICollection<string> files)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             foreach (string file in files)
             {
                 DecRef(file);
@@ -618,7 +618,7 @@ namespace Lucene.Net.Index
 
         internal void DecRef(string fileName)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             RefCount rc = GetRefCount(fileName);
             if (infoStream.IsEnabled("IFD"))
             {
@@ -638,7 +638,7 @@ namespace Lucene.Net.Index
 
         internal void DecRef(SegmentInfos segmentInfos)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             foreach (string file in segmentInfos.GetFiles(directory, false))
             {
                 DecRef(file);
@@ -647,14 +647,14 @@ namespace Lucene.Net.Index
 
         public bool Exists(string fileName)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             // LUCENENET: Using TryGetValue to eliminate extra lookup
             return refCounts.TryGetValue(fileName, out RefCount value) && value.count > 0;
         }
 
         private RefCount GetRefCount(string fileName)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             // LUCENENET: Using TryGetValue to eliminate extra lookup
             if (!refCounts.TryGetValue(fileName, out RefCount rc))
             {
@@ -666,7 +666,7 @@ namespace Lucene.Net.Index
 
         internal void DeleteFiles(IList<string> files)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             foreach (string file in files)
             {
                 DeleteFile(file);
@@ -679,7 +679,7 @@ namespace Lucene.Net.Index
         /// </summary>
         internal void DeleteNewFiles(ICollection<string> files)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             foreach (string fileName in files)
             {
                 // NOTE: it's very unusual yet possible for the
@@ -704,7 +704,7 @@ namespace Lucene.Net.Index
 
         internal void DeleteFile(string fileName)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
+            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
             EnsureOpen();
             try
             {

@@ -52,7 +52,7 @@ namespace Lucene.Net.Spatial.Prefix
             : base(queryShape, fieldName, grid, detailLevel)
         {
             this.m_prefixGridScanLevel = Math.Max(0, Math.Min(prefixGridScanLevel, grid.MaxLevels - 1));
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(detailLevel <= grid.MaxLevels);
+            if (Debugging.AssertsEnabled) Debugging.Assert(detailLevel <= grid.MaxLevels);
         }
 
         public override bool Equals(object o)
@@ -170,7 +170,7 @@ namespace Lucene.Net.Spatial.Prefix
                         // LUCENENET IMPORTANT: Must not call this inline with Debug.Assert
                         // because the compiler removes Debug.Assert statements in release mode!!
                         bool hasNext = curVNode.children.MoveNext();
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(hasNext);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(hasNext);
 
                         curVNode = curVNode.children.Current;
                     }
@@ -253,7 +253,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="IOException"></exception>
             private void AddIntersectingChildren()
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(thisTerm != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(thisTerm != null);
                 Cell cell = curVNode.cell;
                 if (cell.Level >= m_outerInstance.m_detailLevel)
                 {
@@ -264,7 +264,7 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     //If the next indexed term just adds a leaf marker ('+') to cell,
                     // then add all of those docs
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(thisTerm, curVNodeTerm));//TODO refactor to use method on curVNode.cell
+                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(thisTerm, curVNodeTerm));//TODO refactor to use method on curVNode.cell
                     scanCell = m_outerInstance.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
                     if (scanCell.Level == cell.Level && scanCell.IsLeaf)
                     {
@@ -503,9 +503,9 @@ namespace Lucene.Net.Spatial.Prefix
 
             internal virtual void Reset(Cell cell)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(cell != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(cell != null);
                 this.cell = cell;
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(children == null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(children == null);
             }
         }
 

@@ -86,8 +86,8 @@ namespace Lucene.Net.Util.Packed
         public override int Get(int index, long[] arr, int off, int len)
         {
             if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(off + len <= arr.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < m_valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
 
             int gets = Math.Min(m_valueCount - index, len);
             for (int i = index, o = off, end = index + gets; i < end; ++i, ++o)
@@ -100,8 +100,8 @@ namespace Lucene.Net.Util.Packed
         public override int Set(int index, long[] arr, int off, int len)
         {
             if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(off + len <= arr.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < m_valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
 
             int sets = Math.Min(m_valueCount - index, len);
             for (int i = index, o = off, end = index + sets; i < end; ++i, ++o)
@@ -113,7 +113,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(val == (val & 0xFFL));
+            if (Debugging.AssertsEnabled) Debugging.Assert(val == (val & 0xFFL));
             Arrays.Fill(values, fromIndex, toIndex, (byte)val);
         }
     }

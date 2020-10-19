@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             //if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.Length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
             if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)) Debugging.ThrowAssert("invalid indexOptions: {0}", indexOptions);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(proxOut != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(proxOut != null);
 
             int delta = position - lastPosition;
 
@@ -308,11 +308,11 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             StandardTermState state_ = (StandardTermState)state;
             // if (DEBUG) System.out.println("SPW: finishTerm seg=" + segment + " freqStart=" + freqStart);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state_.DocFreq > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(state_.DocFreq > 0);
 
             // TODO: wasteful we are counting this (counting # docs
             // for this term) in two places?
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state_.DocFreq == df);
+            if (Debugging.AssertsEnabled) Debugging.Assert(state_.DocFreq == df);
             state_.FreqStart = freqStart;
             state_.ProxStart = proxStart;
             if (df >= skipMinimum)
@@ -337,7 +337,7 @@ namespace Lucene.Net.Codecs.Lucene40
             @out.WriteVInt64(state_.FreqStart - lastState.FreqStart);
             if (state_.SkipOffset != -1)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state_.SkipOffset > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(state_.SkipOffset > 0);
                 @out.WriteVInt64(state_.SkipOffset);
             }
             if (indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)

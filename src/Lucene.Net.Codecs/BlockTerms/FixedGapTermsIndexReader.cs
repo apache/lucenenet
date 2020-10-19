@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             this.termComp = termComp;
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(indexDivisor == -1 || indexDivisor > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(indexDivisor == -1 || indexDivisor > 0);
 
             input = dir.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, FixedGapTermsIndexWriter.TERMS_INDEX_EXTENSION), context);
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // In case terms index gets loaded, later, on demand
                     totalIndexInterval = indexInterval * indexDivisor;
                 }
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(totalIndexInterval > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(totalIndexInterval > 0);
 
                 SeekDir(input, dirOffset);
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(mid >= 0);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(mid >= 0);
                         ord = mid * outerInstance.totalIndexInterval;
                         return fieldIndex.termsStart + fieldIndex.termsDictOffsets.Get(mid);
                     }
@@ -219,7 +219,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 if (hi < 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(hi == -1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(hi == -1);
                     hi = 0;
                 }
 
@@ -252,7 +252,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 int idx = (int)(ord / outerInstance.totalIndexInterval);
                 // caller must ensure ord is in bounds
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(idx < fieldIndex.numIndexTerms);
+                if (Debugging.AssertsEnabled) Debugging.Assert(idx < fieldIndex.numIndexTerms);
                 long offset = fieldIndex.termOffsets.Get(idx);
                 int length = (int)(fieldIndex.termOffsets.Get(1 + idx) - offset);
                 outerInstance.termBytesReader.FillSlice(term, fieldIndex.termBytesStart + offset, length);
@@ -328,7 +328,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // -1 is passed to mean "don't load term index", but
                     // if we are then later loaded it's overwritten with
                     // a real value
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(outerInstance.outerInstance.indexDivisor > 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.outerInstance.indexDivisor > 0);
 
                     this.numIndexTerms = 1 + (numIndexTerms - 1) / outerInstance.outerInstance.indexDivisor;
 
@@ -345,11 +345,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                             // records offsets into main terms dict file
                             termsDictOffsets = PackedInt32s.GetReader(clone);
-                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termsDictOffsets.Count == numIndexTerms);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(termsDictOffsets.Count == numIndexTerms);
 
                             // records offsets into byte[] term data
                             termOffsets = PackedInt32s.GetReader(clone);
-                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termOffsets.Count == 1 + numIndexTerms);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(termOffsets.Count == 1 + numIndexTerms);
                         }
                         finally
                         {
@@ -401,7 +401,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 if (Debugging.AssertsEnabled)
                                 {
                                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexStart + termOffset < clone.Length)) Debugging.ThrowAssert("indexStart={0} termOffset={1} len={2}", indexStart, termOffset, clone.Length);
-                                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(indexStart + termOffset + numTermBytes < clone.Length);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(indexStart + termOffset + numTermBytes < clone.Length);
                                 }
 
                                 outerInstance.outerInstance.termBytes.Copy(clone, numTermBytes);

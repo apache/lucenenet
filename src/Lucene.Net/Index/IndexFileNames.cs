@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(gen > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(gen > 0);
                 // The '6' part in the length is: 1 for '.', 1 for '_' and 4 as estimate
                 // to the gen length as string (hopefully an upper limit so SB won't
                 // expand in the middle.
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
         {
             if (ext.Length > 0 || segmentSuffix.Length > 0)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!ext.StartsWith(".", StringComparison.Ordinal));
+                if (Debugging.AssertsEnabled) Debugging.Assert(!ext.StartsWith(".", StringComparison.Ordinal));
                 StringBuilder sb = new StringBuilder(segmentName.Length + 2 + segmentSuffix.Length + ext.Length);
                 sb.Append(segmentName);
                 if (segmentSuffix.Length > 0)

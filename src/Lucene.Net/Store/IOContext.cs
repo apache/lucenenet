@@ -67,7 +67,7 @@ namespace Lucene.Net.Store
 
         public IOContext(FlushInfo flushInfo)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(flushInfo != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(flushInfo != null);
             this.Context = UsageContext.FLUSH;
             this.MergeInfo = null;
             this.ReadOnce = false;

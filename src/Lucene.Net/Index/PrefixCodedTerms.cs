@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
             /// add a term </summary>
             public virtual void Add(Term term)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lastTerm.Equals(new Term("")) || term.CompareTo(lastTerm) > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(lastTerm.Equals(new Term("")) || term.CompareTo(lastTerm) > 0);
 
                 try
                 {

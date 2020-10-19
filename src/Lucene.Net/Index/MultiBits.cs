@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 
         public MultiBits(IBits[] subs, int[] starts, bool defaultValue)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(starts.Length == 1 + subs.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(starts.Length == 1 + subs.Length);
             this.subs = subs;
             this.starts = starts;
             this.sefaultValue = defaultValue;
@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
         public bool Get(int doc)
         {
             int reader = ReaderUtil.SubIndex(doc, starts);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(reader != -1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(reader != -1);
             IBits bits = subs[reader];
             if (bits == null)
             {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CheckLength(reader, doc));
+                if (Debugging.AssertsEnabled) Debugging.Assert(CheckLength(reader, doc));
                 return bits.Get(doc - starts[reader]);
             }
         }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
         {
             int reader = ReaderUtil.SubIndex(slice.Start, starts);
             
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(reader != -1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(reader != -1);
             if(Debugging.ShouldAssert(reader < subs.Length)) Debugging.ThrowAssert("slice={0} starts[-1]={1}", slice, starts[starts.Length - 1]);
 
             SubResult subResult = new SubResult();

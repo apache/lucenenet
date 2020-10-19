@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 else if (fp == lastFP)
                 {
                     // same block
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto >= lastUpto);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(upto >= lastUpto);
                     int uptoDelta = upto - lastUpto;
                     indexOut.WriteVInt32(uptoDelta << 1 | 1);
                 }

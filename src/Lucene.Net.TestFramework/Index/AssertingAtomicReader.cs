@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
         public override IEnumerator<string> GetEnumerator()
         {
             IEnumerator<string> iterator = base.GetEnumerator();
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(iterator != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(iterator != null);
             return iterator;
         }
 
@@ -59,15 +59,15 @@ namespace Lucene.Net.Index
         public override TermsEnum Intersect(CompiledAutomaton automaton, BytesRef bytes)
         {
             TermsEnum termsEnum = m_input.Intersect(automaton, bytes);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termsEnum != null);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bytes == null || bytes.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bytes == null || bytes.IsValid());
             return new AssertingAtomicReader.AssertingTermsEnum(termsEnum);
         }
 
         public override TermsEnum GetEnumerator()
         {
             var termsEnum = base.GetEnumerator();
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termsEnum != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
             return new AssertingAtomicReader.AssertingTermsEnum(termsEnum);
         }
 
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
                 reuse = reusable.m_input;
             }
             TermsEnum termsEnum = base.GetEnumerator(reuse);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termsEnum != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
             return new AssertingAtomicReader.AssertingTermsEnum(termsEnum);
         }
     }
@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
             {
                 state = DocsEnumState.ITERATING;
             }
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(base.DocID == nextDoc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(base.DocID == nextDoc);
             return doc = nextDoc;
         }
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
             {
                 state = DocsEnumState.ITERATING;
             }
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(base.DocID == advanced);
+            if (Debugging.AssertsEnabled) Debugging.Assert(base.DocID == advanced);
             return doc = advanced;
         }
 
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state != DocsEnumState.START)) Debugging.ThrowAssert("Freq called before NextDoc()/Advance()");
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state != DocsEnumState.FINISHED)) Debugging.ThrowAssert("Freq called after NO_MORE_DOCS");
                 int freq = base.Freq;
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(freq > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(freq > 0);
                 return freq;
             }
         }
@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
 
         public override long Get(int docID)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID >= 0 && docID < maxDoc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(docID >= 0 && docID < maxDoc);
             return @in.Get(docID);
         }
     }
@@ -213,10 +213,10 @@ namespace Lucene.Net.Index
 
         public override void Get(int docID, BytesRef result)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID >= 0 && docID < maxDoc);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(docID >= 0 && docID < maxDoc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(result.IsValid());
             @in.Get(docID, result);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(result.IsValid());
         }
     }
 
@@ -233,23 +233,23 @@ namespace Lucene.Net.Index
             this.@in = @in;
             this.maxDoc = maxDoc;
             this.valueCount = @in.ValueCount;
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(valueCount >= 0 && valueCount <= maxDoc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(valueCount >= 0 && valueCount <= maxDoc);
         }
 
         public override int GetOrd(int docID)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID >= 0 && docID < maxDoc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(docID >= 0 && docID < maxDoc);
             int ord = @in.GetOrd(docID);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord >= -1 && ord < valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(ord >= -1 && ord < valueCount);
             return ord;
         }
 
         public override void LookupOrd(int ord, BytesRef result)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord >= 0 && ord < valueCount);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(ord >= 0 && ord < valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(result.IsValid());
             @in.LookupOrd(ord, result);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(result.IsValid());
         }
 
         public override int ValueCount
@@ -257,25 +257,25 @@ namespace Lucene.Net.Index
             get
             {
                 int valueCount = @in.ValueCount;
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(valueCount == this.valueCount); // should not change
+                if (Debugging.AssertsEnabled) Debugging.Assert(valueCount == this.valueCount); // should not change
                 return valueCount;
             }
         }
 
         public override void Get(int docID, BytesRef result)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID >= 0 && docID < maxDoc);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(docID >= 0 && docID < maxDoc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(result.IsValid());
             @in.Get(docID, result);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(result.IsValid());
         }
 
         public override int LookupTerm(BytesRef key)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(key.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(key.IsValid());
             int result = @in.LookupTerm(key);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result < valueCount);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(key.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(result < valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(key.IsValid());
             return result;
         }
     }
@@ -294,15 +294,15 @@ namespace Lucene.Net.Index
             this.@in = @in;
             this.maxDoc = maxDoc;
             this.valueCount = @in.ValueCount;
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(valueCount >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(valueCount >= 0);
         }
 
         public override long NextOrd()
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lastOrd != NO_MORE_ORDS);
+            if (Debugging.AssertsEnabled) Debugging.Assert(lastOrd != NO_MORE_ORDS);
             long ord = @in.NextOrd();
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord < valueCount);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord == NO_MORE_ORDS || ord > lastOrd);
+            if (Debugging.AssertsEnabled) Debugging.Assert(ord < valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(ord == NO_MORE_ORDS || ord > lastOrd);
             lastOrd = ord;
             return ord;
         }
@@ -316,10 +316,10 @@ namespace Lucene.Net.Index
 
         public override void LookupOrd(long ord, BytesRef result)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord >= 0 && ord < valueCount);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(ord >= 0 && ord < valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(result.IsValid());
             @in.LookupOrd(ord, result);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(result.IsValid());
         }
 
         public override long ValueCount
@@ -327,17 +327,17 @@ namespace Lucene.Net.Index
             get
             {
                 long valueCount = @in.ValueCount;
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(valueCount == this.valueCount); // should not change
+                if (Debugging.AssertsEnabled) Debugging.Assert(valueCount == this.valueCount); // should not change
                 return valueCount;
             }
         }
 
         public override long LookupTerm(BytesRef key)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(key.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(key.IsValid());
             long result = @in.LookupTerm(key);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result < valueCount);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(key.IsValid());
+            if (Debugging.AssertsEnabled) Debugging.Assert(result < valueCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(key.IsValid());
             return result;
         }
     }
@@ -355,7 +355,7 @@ namespace Lucene.Net.Index
 
         public virtual bool Get(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < Length);
             return @in.Get(index);
         }
 
@@ -372,10 +372,10 @@ namespace Lucene.Net.Index
             : base(@in)
         {
             // check some basic reader sanity
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(@in.MaxDoc >= 0);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(@in.NumDocs <= @in.MaxDoc);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(@in.NumDeletedDocs + @in.NumDocs == @in.MaxDoc);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!@in.HasDeletions || @in.NumDeletedDocs > 0 && @in.NumDocs < @in.MaxDoc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(@in.MaxDoc >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(@in.NumDocs <= @in.MaxDoc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(@in.NumDeletedDocs + @in.NumDocs == @in.MaxDoc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(!@in.HasDeletions || @in.NumDeletedDocs > 0 && @in.NumDocs < @in.MaxDoc);
         }
 
         public override Fields Fields
@@ -452,7 +452,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(base.Term.IsValid());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(base.Term.IsValid());
                     state = State.POSITIONED;
                     return true;
                 }
@@ -502,7 +502,7 @@ namespace Lucene.Net.Index
                 {
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state == State.POSITIONED)) Debugging.ThrowAssert("Term called on unpositioned TermsEnum");
                     BytesRef ret = base.Term;
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ret == null || ret.IsValid());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ret == null || ret.IsValid());
                     return ret;
                 }
             }
@@ -515,7 +515,7 @@ namespace Lucene.Net.Index
 
             public override SeekStatus SeekCeil(BytesRef term)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term.IsValid());
+                if (Debugging.AssertsEnabled) Debugging.Assert(term.IsValid());
                 SeekStatus result = base.SeekCeil(term);
                 if (result == SeekStatus.END)
                 {
@@ -530,7 +530,7 @@ namespace Lucene.Net.Index
 
             public override bool SeekExact(BytesRef text)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(text.IsValid());
+                if (Debugging.AssertsEnabled) Debugging.Assert(text.IsValid());
                 if (base.SeekExact(text))
                 {
                     state = State.POSITIONED;
@@ -551,7 +551,7 @@ namespace Lucene.Net.Index
 
             public override void SeekExact(BytesRef term, TermState state)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term.IsValid());
+                if (Debugging.AssertsEnabled) Debugging.Assert(term.IsValid());
                 base.SeekExact(term, state);
                 this.state = State.POSITIONED;
             }
@@ -592,7 +592,7 @@ namespace Lucene.Net.Index
                     state = DocsEnumState.ITERATING;
                     positionMax = base.Freq;
                 }
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(base.DocID == nextDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(base.DocID == nextDoc);
                 return doc = nextDoc;
             }
 
@@ -613,7 +613,7 @@ namespace Lucene.Net.Index
                     state = DocsEnumState.ITERATING;
                     positionMax = base.Freq;
                 }
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(base.DocID == advanced);
+                if (Debugging.AssertsEnabled) Debugging.Assert(base.DocID == advanced);
                 return doc = advanced;
             }
 
@@ -633,7 +633,7 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state != DocsEnumState.START)) Debugging.ThrowAssert("Freq called before NextDoc()/Advance()");
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state != DocsEnumState.FINISHED)) Debugging.ThrowAssert("Freq called after NO_MORE_DOCS");
                     int freq = base.Freq;
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(freq > 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(freq > 0);
                     return freq;
                 }
             }
@@ -697,13 +697,13 @@ namespace Lucene.Net.Index
             FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (dv != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi != null);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi.DocValuesType == DocValuesType.NUMERIC);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi.DocValuesType == DocValuesType.NUMERIC);
                 return new AssertingNumericDocValues(dv, MaxDoc);
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi == null || fi.DocValuesType != DocValuesType.NUMERIC);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.DocValuesType != DocValuesType.NUMERIC);
                 return null;
             }
         }
@@ -714,13 +714,13 @@ namespace Lucene.Net.Index
             FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (dv != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi != null);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi.DocValuesType == DocValuesType.BINARY);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi.DocValuesType == DocValuesType.BINARY);
                 return new AssertingBinaryDocValues(dv, MaxDoc);
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi == null || fi.DocValuesType != DocValuesType.BINARY);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.DocValuesType != DocValuesType.BINARY);
                 return null;
             }
         }
@@ -731,13 +731,13 @@ namespace Lucene.Net.Index
             FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (dv != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi != null);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi.DocValuesType == DocValuesType.SORTED);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi.DocValuesType == DocValuesType.SORTED);
                 return new AssertingSortedDocValues(dv, MaxDoc);
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi == null || fi.DocValuesType != DocValuesType.SORTED);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.DocValuesType != DocValuesType.SORTED);
                 return null;
             }
         }
@@ -748,13 +748,13 @@ namespace Lucene.Net.Index
             FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (dv != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi != null);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi.DocValuesType == DocValuesType.SORTED_SET);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi.DocValuesType == DocValuesType.SORTED_SET);
                 return new AssertingSortedSetDocValues(dv, MaxDoc);
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi == null || fi.DocValuesType != DocValuesType.SORTED_SET);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.DocValuesType != DocValuesType.SORTED_SET);
                 return null;
             }
         }
@@ -765,13 +765,13 @@ namespace Lucene.Net.Index
             FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (dv != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi != null);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi.HasNorms);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi.HasNorms);
                 return new AssertingNumericDocValues(dv, MaxDoc);
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi == null || fi.HasNorms == false);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.HasNorms == false);
                 return null;
             }
         }
@@ -785,13 +785,13 @@ namespace Lucene.Net.Index
                 IBits liveDocs = base.LiveDocs;
                 if (liveDocs != null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(MaxDoc == liveDocs.Length);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(MaxDoc == liveDocs.Length);
                     liveDocs = new AssertingBits(liveDocs);
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(MaxDoc == NumDocs);
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!HasDeletions);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(MaxDoc == NumDocs);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(!HasDeletions);
                 }
                 return liveDocs;
             }
@@ -803,14 +803,14 @@ namespace Lucene.Net.Index
             FieldInfo fi = base.FieldInfos.FieldInfo(field);
             if (docsWithField != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi != null);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi.HasDocValues);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(MaxDoc == docsWithField.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi.HasDocValues);
+                if (Debugging.AssertsEnabled) Debugging.Assert(MaxDoc == docsWithField.Length);
                 docsWithField = new AssertingBits(docsWithField);
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi == null || fi.HasDocValues == false);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fi == null || fi.HasDocValues == false);
             }
             return docsWithField;
         }

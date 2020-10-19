@@ -65,7 +65,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             public TermInfoAndOrd(TermInfo ti, long termOrd)
                 : base(ti)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termOrd >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(termOrd >= 0);
                 this.termOrd = termOrd;
             }
         }
@@ -293,8 +293,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                             }
                             else if (Debugging.AssertsEnabled)
                             {
-                                Debugging.ThrowAssertIf(SameTermInfo(ti, tiOrd, enumerator));
-                                Debugging.ThrowAssertIf((int)enumerator.position == tiOrd.termOrd);
+                                Debugging.Assert(SameTermInfo(ti, tiOrd, enumerator));
+                                Debugging.Assert((int)enumerator.position == tiOrd.termOrd);
                             }
                         }
                     }
@@ -335,8 +335,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else if (Debugging.AssertsEnabled)
                 {
-                    Debugging.ThrowAssertIf(SameTermInfo(ti_, tiOrd, enumerator));
-                    Debugging.ThrowAssertIf(enumerator.position == tiOrd.termOrd);
+                    Debugging.Assert(SameTermInfo(ti_, tiOrd, enumerator));
+                    Debugging.Assert(enumerator.position == tiOrd.termOrd);
                 }
             }
             else

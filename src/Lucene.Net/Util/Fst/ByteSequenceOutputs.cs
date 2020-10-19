@@ -42,9 +42,9 @@ namespace Lucene.Net.Util.Fst
 
         public override BytesRef Common(BytesRef output1, BytesRef output2)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output1 != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(output1 != null);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output2 != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(output2 != null);
 
             int pos1 = output1.Offset;
             int pos2 = output2.Offset;
@@ -82,9 +82,9 @@ namespace Lucene.Net.Util.Fst
 
         public override BytesRef Subtract(BytesRef output, BytesRef inc)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(output != null);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(inc != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(inc != null);
             if (inc == NO_OUTPUT)
             {
                 // no prefix removed
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util.Fst
                 if (Debugging.AssertsEnabled)
                 {
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(inc.Length < output.Length)) Debugging.ThrowAssert("inc.length={0} vs output.length={1}", inc.Length, output.Length);
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(inc.Length > 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(inc.Length > 0);
                 }
                 return new BytesRef(output.Bytes, output.Offset + inc.Length, output.Length - inc.Length);
             }
@@ -108,9 +108,9 @@ namespace Lucene.Net.Util.Fst
 
         public override BytesRef Add(BytesRef prefix, BytesRef output)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(prefix != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(prefix != null);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(output != null);
             if (prefix == NO_OUTPUT)
             {
                 return output;
@@ -121,8 +121,8 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(prefix.Length > 0);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(output.Length > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(prefix.Length > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(output.Length > 0);
                 BytesRef result = new BytesRef(prefix.Length + output.Length);
                 Array.Copy(prefix.Bytes, prefix.Offset, result.Bytes, 0, prefix.Length);
                 Array.Copy(output.Bytes, output.Offset, result.Bytes, prefix.Length, output.Length);
@@ -133,7 +133,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(BytesRef prefix, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(prefix != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(prefix != null);
             @out.WriteVInt32(prefix.Length);
             @out.WriteBytes(prefix.Bytes, prefix.Offset, prefix.Length);
         }

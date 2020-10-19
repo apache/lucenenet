@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Sole constructor. </summary>
         public Lucene40StoredFieldsWriter(Directory directory, string segment, IOContext context)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(directory != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(directory != null);
             this.directory = directory;
             this.segment = segment;
 
@@ -105,8 +105,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.WriteHeader(indexStream, CODEC_NAME_IDX, VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.ThrowAssertIf(HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
-                    Debugging.ThrowAssertIf(HEADER_LENGTH_IDX == indexStream.GetFilePointer());
+                    Debugging.Assert(HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
+                    Debugging.Assert(HEADER_LENGTH_IDX == indexStream.GetFilePointer());
                 }
                 success = true;
             }
@@ -266,7 +266,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 position += lengths[i];
             }
             fieldsStream.CopyBytes(stream, position - start);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldsStream.GetFilePointer() == position);
+            if (Debugging.AssertsEnabled) Debugging.Assert(fieldsStream.GetFilePointer() == position);
         }
 
         public override void Finish(FieldInfos fis, int numDocs)
@@ -328,7 +328,7 @@ namespace Lucene.Net.Codecs.Lucene40
             int docCount = 0;
             int maxDoc = reader.MaxDoc;
             IBits liveDocs = reader.LiveDocs;
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(liveDocs != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(liveDocs != null);
             if (matchingFieldsReader != null)
             {
                 // We can bulk-copy because the fieldInfos are "congruent"

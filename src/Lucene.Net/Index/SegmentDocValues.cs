@@ -85,7 +85,7 @@ namespace Lucene.Net.Index
                 if (!(genDVProducers.TryGetValue(gen, out dvp)))
                 {
                     dvp = NewDocValuesProducer(si, context, dir, dvFormat, gen, infos, termsIndexDivisor);
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(dvp != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(dvp != null);
                     genDVProducers[gen] = dvp;
                 }
                 else

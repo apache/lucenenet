@@ -120,7 +120,7 @@ namespace Lucene.Net.Facet.Range
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(flags == 2);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(flags == 2);
                     // This point is only the end of an interval; attach
                     // it to last interval:
                     elementaryIntervals.Add(new InclusiveRange(prev, v));
@@ -275,7 +275,7 @@ namespace Lucene.Net.Facet.Range
 
             public InclusiveRange(long start, long end)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(end >= start);
+                if (Debugging.AssertsEnabled) Debugging.Assert(end >= start);
                 this.Start = start;
                 this.End = end;
             }
@@ -349,7 +349,7 @@ namespace Lucene.Net.Facet.Range
                 }
                 else if (left != null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(right != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(right != null);
                     // Recurse:
                     left.AddOutputs(index, range);
                     right.AddOutputs(index, range);
@@ -361,7 +361,7 @@ namespace Lucene.Net.Facet.Range
                 Indent(sb, depth);
                 if (left == null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(right == null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(right == null);
                     sb.Append("leaf: " + start + " to " + end);
                 }
                 else
@@ -377,7 +377,7 @@ namespace Lucene.Net.Facet.Range
 
                 if (left != null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(right != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(right != null);
                     left.ToString(sb, depth + 1);
                     right.ToString(sb, depth + 1);
                 }

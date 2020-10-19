@@ -963,7 +963,7 @@ namespace Lucene.Net.Store
                                             {
                                                 if (endSet.Contains(s) && !startSet.Contains(s))
                                                 {
-                                                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pendingDeletions.Contains(s));
+                                                    if (Debugging.AssertsEnabled) Debugging.Assert(pendingDeletions.Contains(s));
                                                     if (LuceneTestCase.Verbose)
                                                     {
                                                         Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + 

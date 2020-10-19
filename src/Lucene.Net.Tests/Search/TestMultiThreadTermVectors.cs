@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
             foreach (string field in vectors)
             {
                 Terms terms = vectors.GetTerms(field);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(terms != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(terms != null);
                 VerifyVector(terms.GetEnumerator(), num);
             }
         }

@@ -132,7 +132,7 @@ namespace Lucene.Net.Search
             // return a filtering scorer
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(outerInstance.filter != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.filter != null);
 
                 DocIdSet filterDocIdSet = outerInstance.filter.GetDocIdSet(context, acceptDocs);
                 if (filterDocIdSet == null)
@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
             // return a filtering top scorer
             public override BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(outerInstance.filter != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.filter != null);
 
                 DocIdSet filterDocIdSet = outerInstance.filter.GetDocIdSet(context, acceptDocs);
                 if (filterDocIdSet == null)
@@ -442,7 +442,7 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(o is FilteredQuery);
+            if (Debugging.AssertsEnabled) Debugging.Assert(o is FilteredQuery);
             FilteredQuery fq = (FilteredQuery)o;
             return fq.query.Equals(this.query) && fq.filter.Equals(this.filter) && fq.strategy.Equals(this.strategy);
         }
@@ -587,7 +587,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(firstFilterDoc > -1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(firstFilterDoc > -1);
                     // we are gonna advance() this scorer, so we set inorder=true/toplevel=false
                     // we pass null as acceptDocs, as our filter has already respected acceptDocs, no need to do twice
                     Scorer scorer = weight.GetScorer(context, null);

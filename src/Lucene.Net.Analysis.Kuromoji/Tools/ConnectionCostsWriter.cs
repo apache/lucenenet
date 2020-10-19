@@ -63,10 +63,10 @@ namespace Lucene.Net.Analysis.Ja.Util
                 @out.WriteVInt32(forwardSize);
                 @out.WriteVInt32(backwardSize);
                 int last = 0;
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(costs.Length == backwardSize);
+                if (Debugging.AssertsEnabled) Debugging.Assert(costs.Length == backwardSize);
                 foreach (short[] a in costs)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(a.Length == forwardSize);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(a.Length == forwardSize);
                     for (int i = 0; i < a.Length; i++)
                     {
                         int delta = (int)a[i] - last;

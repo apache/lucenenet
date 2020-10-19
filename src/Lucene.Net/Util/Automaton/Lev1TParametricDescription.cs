@@ -34,12 +34,12 @@ namespace Lucene.Net.Util.Automaton
         internal override int Transition(int absState, int position, int vector)
         {
             // null absState should never be passed in
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(absState != -1);
+            if (Debugging.AssertsEnabled) Debugging.Assert(absState != -1);
 
             // decode absState -> state, offset
             int state = absState / (m_w + 1);
             int offset = absState % (m_w + 1);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(offset >= 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(offset >= 0);
 
             if (position == m_w)
             {

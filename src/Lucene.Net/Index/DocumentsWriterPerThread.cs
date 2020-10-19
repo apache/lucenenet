@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
             deleteSlice = deleteQueue.NewSlice();
 
             segmentInfo = new SegmentInfo(directoryOrig, Constants.LUCENE_MAIN_VERSION, segmentName, -1, false, codec, null);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numDocsInRAM == 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numDocsInRAM == 0);
             if (INFO_VERBOSE && infoStream.IsEnabled("DWPT"))
             {
                 infoStream.Message("DWPT", Thread.CurrentThread.Name + " init seg=" + segmentName + " delQueue=" + deleteQueue);
@@ -276,8 +276,8 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(TestPoint("DocumentsWriterPerThread addDocument start"));
-                Debugging.ThrowAssertIf(deleteQueue != null);
+                Debugging.Assert(TestPoint("DocumentsWriterPerThread addDocument start"));
+                Debugging.Assert(deleteQueue != null);
             }
             docState.doc = doc;
             docState.analyzer = analyzer;
@@ -335,8 +335,8 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(TestPoint("DocumentsWriterPerThread addDocuments start"));
-                Debugging.ThrowAssertIf(deleteQueue != null);
+                Debugging.Assert(TestPoint("DocumentsWriterPerThread addDocuments start"));
+                Debugging.Assert(deleteQueue != null);
             }
             docState.analyzer = analyzer;
             if (INFO_VERBOSE && infoStream.IsEnabled("DWPT"))
@@ -490,7 +490,7 @@ namespace Lucene.Net.Index
         /// </summary>
         internal virtual FrozenBufferedUpdates PrepareFlush()
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numDocsInRAM > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numDocsInRAM > 0);
             FrozenBufferedUpdates globalUpdates = deleteQueue.FreezeGlobalBuffer(deleteSlice);
             /* deleteSlice can possibly be null if we have hit non-aborting exceptions during indexing and never succeeded
             adding a document. */
@@ -498,7 +498,7 @@ namespace Lucene.Net.Index
             {
                 // apply all deletes before we flush and release the delete slice
                 deleteSlice.Apply(pendingUpdates, numDocsInRAM);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(deleteSlice.IsEmpty);
+                if (Debugging.AssertsEnabled) Debugging.Assert(deleteSlice.IsEmpty);
                 deleteSlice.Reset();
             }
             return globalUpdates;
@@ -511,7 +511,7 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(numDocsInRAM > 0);
+                Debugging.Assert(numDocsInRAM > 0);
                 if (Debugging.ShouldAssert(deleteSlice.IsEmpty)) Debugging.ThrowAssert("all deletes must be applied in prepareFlush");
             }
             segmentInfo.DocCount = numDocsInRAM;
@@ -581,7 +581,7 @@ namespace Lucene.Net.Index
                     infoStream.Message("DWPT", "flushed: segment=" + segmentInfo.Name + " ramUsed=" + startMBUsed.ToString(nf) + " MB" + " newFlushedSize(includes docstores)=" + newSegmentSize.ToString(nf) + " MB" + " docs/MB=" + (flushState.SegmentInfo.DocCount / newSegmentSize).ToString(nf));
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(segmentInfo != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(segmentInfo != null);
 
                 FlushedSegment fs = new FlushedSegment(segmentInfoPerCommit, flushState.FieldInfos, segmentDeletes, flushState.LiveDocs, flushState.DelCountOnFlush);
                 SealFlushedSegment(fs);
@@ -609,7 +609,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal virtual void SealFlushedSegment(FlushedSegment flushedSegment)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(flushedSegment != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(flushedSegment != null);
 
             SegmentCommitInfo newSegment = flushedSegment.segmentInfo;
 
@@ -641,7 +641,7 @@ namespace Lucene.Net.Index
                 if (flushedSegment.liveDocs != null)
                 {
                     int delCount = flushedSegment.delCount;
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(delCount > 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(delCount > 0);
                     if (infoStream.IsEnabled("DWPT"))
                     {
                         infoStream.Message("DWPT", "flush: write " + delCount + " deletes gen=" + flushedSegment.segmentInfo.DelGen);

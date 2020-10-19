@@ -43,9 +43,9 @@ namespace Lucene.Net.Search
         public ReqOptSumScorer(Scorer reqScorer, Scorer optScorer)
             : base(reqScorer.m_weight)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(reqScorer != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(reqScorer != null);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(optScorer != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(optScorer != null);
             this.reqScorer = reqScorer;
             this.optScorer = optScorer;
         }

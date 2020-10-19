@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
             }
             starts[size] = r.MaxDoc;
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(anyReal);
+            if (Debugging.AssertsEnabled) Debugging.Assert(anyReal);
 
             return new NumericDocValuesAnonymousInnerClassHelper(values, starts);
         }
@@ -591,8 +591,8 @@ namespace Lucene.Net.Index
             /// Creates a new <see cref="MultiSortedDocValues"/> over <paramref name="values"/> </summary>
             internal MultiSortedDocValues(SortedDocValues[] values, int[] docStarts, OrdinalMap mapping)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(values.Length == mapping.ordDeltas.Length);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docStarts.Length == values.Length + 1);
+                if (Debugging.AssertsEnabled) Debugging.Assert(values.Length == mapping.ordDeltas.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docStarts.Length == values.Length + 1);
 
                 this.values = values;
                 this.docStarts = docStarts;
@@ -651,9 +651,9 @@ namespace Lucene.Net.Index
             /// Creates a new <see cref="MultiSortedSetDocValues"/> over <paramref name="values"/> </summary>
             internal MultiSortedSetDocValues(SortedSetDocValues[] values, int[] docStarts, OrdinalMap mapping)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(values.Length == mapping.ordDeltas.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(values.Length == mapping.ordDeltas.Length);
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docStarts.Length == values.Length + 1);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docStarts.Length == values.Length + 1);
                 this.values = values;
                 this.docStarts = docStarts;
                 this.mapping = mapping;

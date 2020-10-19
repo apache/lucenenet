@@ -63,7 +63,7 @@ namespace Lucene.Net.Util
             for (int i = 1; i < ITERATIONS.Length; ++i)
             {
                 DECODERS[i] = PackedInt32s.GetDecoder(PackedInt32s.Format.PACKED, PackedInt32s.VERSION_CURRENT, i);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(BLOCK_SIZE % DECODERS[i].ByteValueCount == 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(BLOCK_SIZE % DECODERS[i].ByteValueCount == 0);
                 ITERATIONS[i] = BLOCK_SIZE / DECODERS[i].ByteValueCount;
                 BYTE_BLOCK_COUNTS[i] = ITERATIONS[i] * DECODERS[i].ByteBlockCount;
                 maxByteBLockCount = Math.Max(maxByteBLockCount, DECODERS[i].ByteBlockCount);
@@ -212,7 +212,7 @@ namespace Lucene.Net.Util
                     }
                 }
                 this.bitsPerException = actualBitsPerValue - bitsPerValue;
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bufferSize < BLOCK_SIZE || numExceptions < bufferSize);
+                if (Debugging.AssertsEnabled) Debugging.Assert(bufferSize < BLOCK_SIZE || numExceptions < bufferSize);
                 return blockSize;
             }
 
@@ -231,7 +231,7 @@ namespace Lucene.Net.Util
                             buffer[i] &= mask;
                         }
                     }
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ex == numExceptions);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ex == numExceptions);
                     Arrays.Fill(exceptions, numExceptions, BLOCK_SIZE, 0);
                 }
 
@@ -245,7 +245,7 @@ namespace Lucene.Net.Util
 
                 if (numExceptions > 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bitsPerException > 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerException > 0);
                     data.WriteByte((byte)(sbyte)numExceptions);
                     data.WriteByte((byte)(sbyte)bitsPerException);
                     PackedInt32s.IEncoder encoder = PackedInt32s.GetEncoder(PackedInt32s.Format.PACKED, PackedInt32s.VERSION_CURRENT, bitsPerException);
@@ -323,11 +323,11 @@ namespace Lucene.Net.Util
             /// Build the <see cref="PForDeltaDocIdSet"/> instance. </summary>
             public virtual PForDeltaDocIdSet Build()
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bufferSize < BLOCK_SIZE);
+                if (Debugging.AssertsEnabled) Debugging.Assert(bufferSize < BLOCK_SIZE);
 
                 if (cardinality == 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(previousDoc == -1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(previousDoc == -1);
                     return EMPTY;
                 }
 
@@ -469,7 +469,7 @@ namespace Lucene.Net.Util
 
             internal virtual void UnaryDecompress(byte token)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((token & HAS_EXCEPTIONS) == 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert((token & HAS_EXCEPTIONS) == 0);
                 int docID = this.docID;
                 for (int i = 0; i < BLOCK_SIZE; )
                 {
@@ -505,7 +505,7 @@ namespace Lucene.Net.Util
 
             internal virtual void SkipBlock()
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(i == BLOCK_SIZE);
+                if (Debugging.AssertsEnabled) Debugging.Assert(i == BLOCK_SIZE);
                 DecompressBlock();
                 docID = nextDocs[BLOCK_SIZE - 1];
             }
@@ -527,8 +527,8 @@ namespace Lucene.Net.Util
                 int lo = Math.Max(blockIdx / indexInterval, 0), hi = lo + 1;
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.ThrowAssertIf(blockIdx == -1 || docIDs.Get(lo) <= docID);
-                    Debugging.ThrowAssertIf(lo + 1 == docIDs.Count || docIDs.Get(lo + 1) > docID);
+                    Debugging.Assert(blockIdx == -1 || docIDs.Get(lo) <= docID);
+                    Debugging.Assert(lo + 1 == docIDs.Count || docIDs.Get(lo + 1) > docID);
                 }
                 while (true)
                 {
@@ -562,15 +562,15 @@ namespace Lucene.Net.Util
                 }
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.ThrowAssertIf(docIDs.Get(hi) <= target);
-                    Debugging.ThrowAssertIf(hi + 1 == docIDs.Count || docIDs.Get(hi + 1) > target);
+                    Debugging.Assert(docIDs.Get(hi) <= target);
+                    Debugging.Assert(hi + 1 == docIDs.Count || docIDs.Get(hi + 1) > target);
                 }
                 return hi;
             }
 
             public override int Advance(int target)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(target > docID);
+                if (Debugging.AssertsEnabled) Debugging.Assert(target > docID);
                 if (nextDocs[BLOCK_SIZE - 1] < target)
                 {
                     // not in the next block, now use the index

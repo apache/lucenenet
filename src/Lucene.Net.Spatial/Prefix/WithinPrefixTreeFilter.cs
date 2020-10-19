@@ -205,8 +205,8 @@ namespace Lucene.Net.Spatial.Prefix
                 //visitRelation is declared as a field, populated by visit() so we don't recompute it
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.ThrowAssertIf(m_outerInstance.m_detailLevel != cell.Level);
-                    Debugging.ThrowAssertIf(visitRelation == cell.Shape.Relate(m_outerInstance.m_queryShape));
+                    Debugging.Assert(m_outerInstance.m_detailLevel != cell.Level);
+                    Debugging.Assert(visitRelation == cell.Shape.Relate(m_outerInstance.m_queryShape));
                 }
                 if (AllCellsIntersectQuery(cell, visitRelation))
                 {

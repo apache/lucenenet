@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
                 return new FieldCacheDocIdSet(context.AtomicReader.MaxDoc, acceptDocs, (doc) =>
                 {

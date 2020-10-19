@@ -88,8 +88,8 @@ namespace Lucene.Net.Store
 
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(chunkSizePower >= 0 && chunkSizePower <= 30);
-                Debugging.ThrowAssertIf(((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
+                Debugging.Assert(chunkSizePower >= 0 && chunkSizePower <= 30);
+                Debugging.Assert(((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
             }
 
             // LUCENENET specific: MMapIndexInput calls SetBuffers() to populate
@@ -304,7 +304,7 @@ namespace Lucene.Net.Store
             ByteBufferIndexInput clone = (ByteBufferIndexInput)base.Clone();
             clone.isClone = true;
             // we keep clone.clones, so it shares the same map with original and we have no additional cost on clones
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(clone.clones == this.clones);
+            if (Debugging.AssertsEnabled) Debugging.Assert(clone.clones == this.clones);
             clone.buffers = BuildSlice(buffers, offset, length);
             clone.offset = (int)(offset & chunkSizeMask);
             clone.length = length;
@@ -394,7 +394,7 @@ namespace Lucene.Net.Store
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                         foreach (var pair in clones)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pair.Key.isClone);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(pair.Key.isClone);
                             pair.Key.UnsetBuffers();
                         }
                         this.clones.Clear();

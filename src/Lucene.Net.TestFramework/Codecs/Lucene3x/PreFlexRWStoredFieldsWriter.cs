@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public PreFlexRWStoredFieldsWriter(Directory directory, string segment, IOContext context)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(directory != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(directory != null);
             this.directory = directory;
             this.segment = segment;
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         fieldsStream.WriteInt64(J2N.BitConversion.DoubleToInt64Bits(field.GetDoubleValue().Value));
                         break;
                     default:
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(false);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(false);
                         break;
                 }
             }

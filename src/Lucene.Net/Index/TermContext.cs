@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public TermContext(IndexReaderContext context)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(context != null && context.IsTopLevel);
+            if (Debugging.AssertsEnabled) Debugging.Assert(context != null && context.IsTopLevel);
             TopReaderContext = context;
             docFreq = 0;
             int len;
@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static TermContext Build(IndexReaderContext context, Term term)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(context != null && context.IsTopLevel);
+            if (Debugging.AssertsEnabled) Debugging.Assert(context != null && context.IsTopLevel);
             string field = term.Field;
             BytesRef bytes = term.Bytes;
             TermContext perReaderTermState = new TermContext(context);
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
         public void Register(TermState state, int ord, int docFreq, long totalTermFreq)
         {
             if(Debugging.ShouldAssert(state != null)) Debugging.ThrowAssert("state must not be null");
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord >= 0 && ord < states.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(ord >= 0 && ord < states.Length);
             if(Debugging.ShouldAssert(states[ord] == null)) Debugging.ThrowAssert("state for ord: {0} already registered", ord);
 
             this.docFreq += docFreq;
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
         ///         <see cref="TermState"/> for the reader was registered </returns>
         public TermState Get(int ord)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord >= 0 && ord < states.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(ord >= 0 && ord < states.Length);
             return states[ord];
         }
 

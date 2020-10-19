@@ -142,7 +142,7 @@ namespace Lucene.Net.Util
 
         public bool GetAndSet(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)(index & 0x3f); // mod 64
             long bitmask = 1L << bit;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util
 
         public void Clear(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6);
             int bit = (int)(index & 0x03f);
             long bitmask = 1L << bit;
@@ -162,7 +162,7 @@ namespace Lucene.Net.Util
 
         public bool GetAndClear(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)(index & 0x3f); // mod 64
             long bitmask = 1L << bit;
@@ -177,7 +177,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public long NextSetBit(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
             int i = (int)(index >> 6);
             int subIndex = (int)(index & 0x3f); // index within the word
             long word = bits[i] >> subIndex; // skip all the bits to the right of index
@@ -303,9 +303,9 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> One-past the last bit to flip </param>
         public void Flip(long startIndex, long endIndex)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startIndex >= 0 && startIndex < numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(startIndex >= 0 && startIndex < numBits);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(endIndex >= 0 && endIndex <= numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(endIndex >= 0 && endIndex <= numBits);
             if (endIndex <= startIndex)
             {
                 return;
@@ -349,9 +349,9 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> One-past the last bit to set </param>
         public void Set(long startIndex, long endIndex)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startIndex >= 0 && startIndex < numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(startIndex >= 0 && startIndex < numBits);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(endIndex >= 0 && endIndex <= numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(endIndex >= 0 && endIndex <= numBits);
             if (endIndex <= startIndex)
             {
                 return;
@@ -381,9 +381,9 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> One-past the last bit to clear </param>
         public void Clear(long startIndex, long endIndex)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startIndex >= 0 && startIndex < numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(startIndex >= 0 && startIndex < numBits);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(endIndex >= 0 && endIndex <= numBits);
+            if (Debugging.AssertsEnabled) Debugging.Assert(endIndex >= 0 && endIndex <= numBits);
             if (endIndex <= startIndex)
             {
                 return;

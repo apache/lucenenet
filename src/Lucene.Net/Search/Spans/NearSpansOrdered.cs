@@ -409,7 +409,7 @@ namespace Lucene.Net.Search.Spans
                     possibleMatchPayloads.UnionWith(possiblePayload);
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(prevStart <= matchStart);
+                if (Debugging.AssertsEnabled) Debugging.Assert(prevStart <= matchStart);
                 if (matchStart > prevEnd) // Only non overlapping spans add to slop.
                 {
                     matchSlop += (matchStart - prevEnd);

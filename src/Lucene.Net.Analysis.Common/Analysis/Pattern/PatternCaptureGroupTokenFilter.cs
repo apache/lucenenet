@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis.Pattern
         {
             if (currentMatcher != -1 && NextCapture())
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != null);
                 ClearAttributes();
                 RestoreState(state);
                 int start = matchers[currentMatcher].Groups[currentGroup[currentMatcher]].Index;

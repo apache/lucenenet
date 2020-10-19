@@ -177,9 +177,9 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startUTF8.len > upto + 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(startUTF8.len > upto + 1);
 
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(endUTF8.len > upto + 1);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(endUTF8.len > upto + 1);
                     State n = NewUTF8State();
 
                     // Single value leading edge

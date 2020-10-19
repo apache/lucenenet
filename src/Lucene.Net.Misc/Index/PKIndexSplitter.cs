@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
                 if (m_input.HasDeletions)
                 {
                     IBits oldLiveDocs = m_input.LiveDocs;
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(oldLiveDocs != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(oldLiveDocs != null);
                     DocIdSetIterator it = bits.GetIterator();
                     for (int i = it.NextDoc(); i < maxDoc; i = it.NextDoc())
                     {

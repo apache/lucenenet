@@ -59,7 +59,7 @@ namespace Lucene.Net.Util.Packed
             if (Debugging.AssertsEnabled)
             {
                 if(Debugging.ShouldAssert(m_bitsPerValue == 64 || (v >= 0 && v <= PackedInt32s.MaxValue(m_bitsPerValue)))) Debugging.ThrowAssert(m_bitsPerValue.ToString(CultureInfo.InvariantCulture));
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!finished);
+                if (Debugging.AssertsEnabled) Debugging.Assert(!finished);
             }
 
             if (m_valueCount != -1 && written >= m_valueCount)
@@ -76,7 +76,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Finish()
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!finished);
+            if (Debugging.AssertsEnabled) Debugging.Assert(!finished);
             if (m_valueCount != -1)
             {
                 while (written < m_valueCount)

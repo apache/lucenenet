@@ -176,9 +176,9 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="length"> the number of characters in the buffer to lower case </param>
         public virtual void ToLower(char[] buffer, int offset, int length) // LUCENENET specific - marked virtual so we can override the default
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(buffer.Length >= length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Length >= length);
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(offset <= 0 && offset <= buffer.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(offset <= 0 && offset <= buffer.Length);
 
             // Slight optimization, eliminating a few method calls internally
             CultureInfo.InvariantCulture.TextInfo
@@ -210,8 +210,8 @@ namespace Lucene.Net.Analysis.Util
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.ThrowAssertIf(buffer.Length >= length);
-                Debugging.ThrowAssertIf(offset <= 0 && offset <= buffer.Length);
+                Debugging.Assert(buffer.Length >= length);
+                Debugging.Assert(offset <= 0 && offset <= buffer.Length);
             }
 
             // Slight optimization, eliminating a few method calls internally
@@ -353,7 +353,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override bool Fill(CharacterBuffer buffer, TextReader reader, int numChars)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(buffer.Buffer.Length >= 2);
+                if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Buffer.Length >= 2);
                 if (numChars < 2 || numChars > buffer.Buffer.Length)
                 {
                     throw new ArgumentException("numChars must be >= 2 and <= the buffer size");
@@ -474,7 +474,7 @@ namespace Lucene.Net.Analysis.Util
 
             public override bool Fill(CharacterBuffer buffer, TextReader reader, int numChars)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(buffer.Buffer.Length >= 1);
+                if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Buffer.Length >= 1);
                 if (numChars < 1 || numChars > buffer.Buffer.Length)
                 {
                     throw new ArgumentException("numChars must be >= 1 and <= the buffer size");
@@ -537,9 +537,9 @@ namespace Lucene.Net.Analysis.Util
         {
             public override void ToLower(char[] buffer, int offset, int limit)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(buffer.Length >= limit);
+                if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Length >= limit);
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(offset <= 0 && offset <= buffer.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(offset <= 0 && offset <= buffer.Length);
 
                 for (int i = offset; i < limit;)
                 {
@@ -551,9 +551,9 @@ namespace Lucene.Net.Analysis.Util
 
             public override void ToUpper(char[] buffer, int offset, int limit)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(buffer.Length >= limit);
+                if (Debugging.AssertsEnabled) Debugging.Assert(buffer.Length >= limit);
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(offset <= 0 && offset <= buffer.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(offset <= 0 && offset <= buffer.Length);
 
                 for (int i = offset; i < limit;)
                 {

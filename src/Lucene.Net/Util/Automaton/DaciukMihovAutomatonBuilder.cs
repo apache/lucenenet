@@ -161,7 +161,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     s = states[index];
                 }
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(s == GetState(label));
+                if (Debugging.AssertsEnabled) Debugging.Assert(s == GetState(label));
                 return s;
             }
 
@@ -231,7 +231,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(stateRegistry != null)) Debugging.ThrowAssert("Automaton already built.");
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(previous == null || comparer.Compare(previous, current) <= 0)) Debugging.ThrowAssert("Input must be in sorted UTF-8 order: {0} >= {1}", previous, current);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(SetPrevious(current));
+                if (Debugging.AssertsEnabled) Debugging.Assert(SetPrevious(current));
             }
 
             // Descend in the automaton (find matching prefix).

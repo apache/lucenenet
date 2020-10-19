@@ -446,7 +446,7 @@ namespace Lucene.Net.Index
                     for (int i = 0; i < NUM_TEST_THREADS - 1; i++)
                     {
                         threads[i].Join();
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!threads[i].failed);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!threads[i].failed);
                     }
 
                 }
@@ -755,14 +755,14 @@ namespace Lucene.Net.Index
                                         if (doc == DocIdSetIterator.NO_MORE_DOCS)
                                         {
                                             // skipped past last doc
-                                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto2 == term2.docs.Length - 1);
+                                            if (Debugging.AssertsEnabled) Debugging.Assert(upto2 == term2.docs.Length - 1);
                                             ended = true;
                                             break;
                                         }
                                         else
                                         {
                                             // skipped to next doc
-                                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto2 < term2.docs.Length - 1);
+                                            if (Debugging.AssertsEnabled) Debugging.Assert(upto2 < term2.docs.Length - 1);
                                             if (doc >= term2.docs[1 + upto2])
                                             {
                                                 upto2++;

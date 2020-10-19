@@ -76,7 +76,7 @@ namespace Lucene.Net.Util.Automaton
                 nonSurrogateCount = endCode - startCode + 1 - (UnicodeUtil.UNI_SUR_LOW_END - UnicodeUtil.UNI_SUR_HIGH_START + 1);
             }
 
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(nonSurrogateCount > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(nonSurrogateCount > 0);
 
             for (int iter = 0; iter < iters; iter++)
             {
@@ -96,7 +96,7 @@ namespace Lucene.Net.Util.Automaton
                 }
 
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(code >= startCode && code <= endCode)) Debugging.ThrowAssert("code={0} start={1}", code, startCode + " end=" + endCode);
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!IsSurrogate(code));
+                if (Debugging.AssertsEnabled) Debugging.Assert(!IsSurrogate(code));
 
                 Assert.IsTrue(Matches(a, code), "DFA for range " + startCode + "-" + endCode + " failed to match code=" + code);
             }

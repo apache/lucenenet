@@ -377,9 +377,9 @@ namespace Lucene.Net.Codecs.Lucene41
 
             if (fieldHasOffsets)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startOffset >= lastStartOffset);
+                if (Debugging.AssertsEnabled) Debugging.Assert(startOffset >= lastStartOffset);
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(endOffset >= startOffset);
+                if (Debugging.AssertsEnabled) Debugging.Assert(endOffset >= startOffset);
                 offsetStartDeltaBuffer[posBufferUpto] = startOffset - lastStartOffset;
                 offsetLengthBuffer[posBufferUpto] = endOffset - startOffset;
                 lastStartOffset = startOffset;
@@ -440,7 +440,7 @@ namespace Lucene.Net.Codecs.Lucene41
         public override void FinishTerm(BlockTermState state)
         {
             Int32BlockTermState state2 = (Int32BlockTermState)state;
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state2.DocFreq > 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(state2.DocFreq > 0);
 
             // TODO: wasteful we are counting this (counting # docs
             // for this term) in two places?
@@ -499,7 +499,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                 // totalTermFreq is just total number of positions(or payloads, or offsets)
                 // associated with current term.
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state2.TotalTermFreq != -1);
+                if (Debugging.AssertsEnabled) Debugging.Assert(state2.TotalTermFreq != -1);
                 if (state2.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     // record file offset for last pos in last block
@@ -577,7 +577,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     if (fieldHasPayloads)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(payloadBytesReadUpto == payloadByteUpto);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(payloadBytesReadUpto == payloadByteUpto);
                         payloadByteUpto = 0;
                     }
                 }

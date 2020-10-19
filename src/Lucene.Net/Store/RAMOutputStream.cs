@@ -162,7 +162,7 @@ namespace Lucene.Net.Store
 
         public override void WriteBytes(byte[] b, int offset, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(b != null);
             crc.Update(b, offset, len);
             while (len > 0)
             {

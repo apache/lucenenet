@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs
 
             public FieldMetaData(FieldInfo fieldInfo, BytesRef rootCode, long numTerms, long indexStartFP, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numTerms > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(numTerms > 0);
                 this.FieldInfo = fieldInfo;
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(rootCode != null)) Debugging.ThrowAssert("field={0} numTerms={1}", fieldInfo.Name, numTerms);
                 this.RootCode = rootCode;
@@ -368,14 +368,14 @@ namespace Lucene.Net.Codecs
         {
             //DEBUG = field.name.Equals("id", StringComparison.Ordinal);
             //if (DEBUG) System.out.println("\nBTTW.addField seg=" + segment + " field=" + field.name);
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
+            if (Debugging.AssertsEnabled) Debugging.Assert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
             currentField = field;
             return new TermsWriter(this, field);
         }
 
         internal static long EncodeOutput(long fp, bool hasTerms, bool isFloor)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fp < (1L << 62));
+            if (Debugging.AssertsEnabled) Debugging.Assert(fp < (1L << 62));
             return (fp << 2) | (uint)(hasTerms ? OUTPUT_FLAG_HAS_TERMS : 0) | (uint)(isFloor ? OUTPUT_FLAG_IS_FLOOR : 0);
         }
 
@@ -482,7 +482,7 @@ namespace Lucene.Net.Codecs
                 // it might contain garbage that cannot be converted into text.
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null))) Debugging.ThrowAssert("isFloor={0} floorBlocks={1}", IsFloor , ToString(floorBlocks));
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(scratchBytes.GetFilePointer() == 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(scratchBytes.GetFilePointer() == 0);
 
                 // TODO: try writing the leading vLong in MSB order
                 // (opposite of what Lucene does today), for better
@@ -493,12 +493,12 @@ namespace Lucene.Net.Codecs
                     scratchBytes.WriteVInt32(floorBlocks.Count);
                     foreach (PendingBlock sub in floorBlocks)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(sub.FloorLeadByte != -1);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(sub.FloorLeadByte != -1);
                         //if (DEBUG) {
                         //  System.out.println("    write floorLeadByte=" + Integer.toHexString(sub.floorLeadByte&0xff));
                         //}
                         scratchBytes.WriteByte((byte)(sbyte)sub.FloorLeadByte);
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(sub.Fp > Fp);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(sub.Fp > Fp);
                         scratchBytes.WriteVInt64((sub.Fp - Fp) << 1 | (uint)(sub.HasTerms ? 1 : 0));
                     }
                 }
@@ -506,7 +506,7 @@ namespace Lucene.Net.Codecs
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                 Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInt32s.COMPACT, true, 15);
                 var bytes = new byte[(int)scratchBytes.GetFilePointer()];
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bytes.Length > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(bytes.Length > 0);
                 scratchBytes.WriteTo(bytes, 0);
                 indexBuilder.Add(Util.ToInt32sRef(Prefix, scratchIntsRef), new BytesRef(bytes, 0, bytes.Length));
                 scratchBytes.Reset();
@@ -726,9 +726,9 @@ namespace Lucene.Net.Codecs
                                 // Suffix is 0, ie prefix 'foo' and term is
                                 // 'foo' so the term has empty string suffix
                                 // in this block
-                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lastSuffixLeadLabel == -1);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(lastSuffixLeadLabel == -1);
 
-                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numSubs == 0);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(numSubs == 0);
                                 suffixLeadLabel = -1;
                             }
                             else
@@ -739,7 +739,7 @@ namespace Lucene.Net.Codecs
                         else
                         {
                             PendingBlock block = (PendingBlock)ent;
-                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(block.Prefix.Length > prefixLength);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(block.Prefix.Length > prefixLength);
                             suffixLeadLabel = block.Prefix.Bytes[block.Prefix.Offset + prefixLength] & 0xff;
                         }
 
@@ -875,9 +875,9 @@ namespace Lucene.Net.Codecs
                                 // block.  NOTE that this may be too small (<
                                 // minItemsInBlock); need a true segmenter
                                 // here
-                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startLabel != -1);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(startLabel != -1);
 
-                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(firstBlock != null);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(firstBlock != null);
                                 prevTerm.Int32s[prevTerm.Offset + prefixLength] = startLabel;
                                 //System.out.println("  final " + (numSubs-sub-1) + " subs");
                                 /*
@@ -897,7 +897,7 @@ namespace Lucene.Net.Codecs
 
                     prevTerm.Int32s[prevTerm.Offset + prefixLength] = savLabel;
 
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(firstBlock != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(firstBlock != null);
                     firstBlock.CompileIndex(floorBlocks, outerInstance.scratchBytes);
 
                     pending.Add(firstBlock);
@@ -926,7 +926,7 @@ namespace Lucene.Net.Codecs
             // block:
             private PendingBlock WriteBlock(Int32sRef prevTerm, int prefixLength, int indexPrefixLength, int startBackwards, int length, int futureTermCount, bool isFloor, int floorLeadByte, bool isLastInFloor)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(length > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(length > 0);
 
                 int start = pending.Count - startBackwards;
 
@@ -989,7 +989,7 @@ namespace Lucene.Net.Codecs
                     subIndices = null;
                     foreach (PendingEntry ent in slice)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ent.IsTerm);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(ent.IsTerm);
                         PendingTerm term = (PendingTerm)ent;
                         BlockTermState state = term.State;
                         int suffix = term.Term.Length - prefixLength;
@@ -1015,7 +1015,7 @@ namespace Lucene.Net.Codecs
                         outerInstance.postingsWriter.EncodeTerm(longs, bytesWriter, fieldInfo, state, absolute);
                         for (int pos = 0; pos < longsSize; pos++)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(longs[pos] >= 0);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(longs[pos] >= 0);
                             metaWriter.WriteVInt64(longs[pos]);
                         }
                         bytesWriter.WriteTo(metaWriter);
@@ -1050,7 +1050,7 @@ namespace Lucene.Net.Codecs
                             statsWriter.WriteVInt32(state.DocFreq);
                             if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                             {
-                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state.TotalTermFreq >= state.DocFreq);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(state.TotalTermFreq >= state.DocFreq);
                                 statsWriter.WriteVInt64(state.TotalTermFreq - state.DocFreq);
                             }
 
@@ -1066,7 +1066,7 @@ namespace Lucene.Net.Codecs
                             outerInstance.postingsWriter.EncodeTerm(longs, bytesWriter, fieldInfo, state, absolute);
                             for (int pos = 0; pos < longsSize; pos++)
                             {
-                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(longs[pos] >= 0);
+                                if (Debugging.AssertsEnabled) Debugging.Assert(longs[pos] >= 0);
                                 metaWriter.WriteVInt64(longs[pos]);
                             }
                             bytesWriter.WriteTo(metaWriter);
@@ -1080,13 +1080,13 @@ namespace Lucene.Net.Codecs
                             PendingBlock block = (PendingBlock)ent;
                             int suffix = block.Prefix.Length - prefixLength;
 
-                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(suffix > 0);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(suffix > 0);
 
                             // For non-leaf block we borrow 1 bit to record
                             // if entry is term or sub-block
                             suffixWriter.WriteVInt32((suffix << 1) | 1);
                             suffixWriter.WriteBytes(block.Prefix.Bytes, prefixLength, suffix);
-                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(block.Fp < startFP);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(block.Fp < startFP);
 
                             // if (DEBUG) {
                             //   BytesRef suffixBytes = new BytesRef(suffix);
@@ -1100,7 +1100,7 @@ namespace Lucene.Net.Codecs
                         }
                     }
 
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(subIndices.Count != 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(subIndices.Count != 0);
                 }
 
                 // TODO: we could block-write the term suffix pointers;
@@ -1179,7 +1179,7 @@ namespace Lucene.Net.Codecs
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(stats.DocFreq > 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(stats.DocFreq > 0);
                 //if (DEBUG) System.out.println("BTTW.finishTerm term=" + fieldInfo.name + ":" + toString(text) + " seg=" + segment + " df=" + stats.docFreq);
 
                 blockBuilder.Add(Util.ToInt32sRef(text, scratchIntsRef), noOutputs.NoOutput);
@@ -1203,9 +1203,9 @@ namespace Lucene.Net.Codecs
                     // We better have one final "root" block:
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pending.Count == 1 && !pending[0].IsTerm)) Debugging.ThrowAssert("pending.size()={0} pending={1}", pending.Count, pending);
                     PendingBlock root = (PendingBlock)pending[0];
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.Prefix.Length == 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(root.Prefix.Length == 0);
 
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.Index.EmptyOutput != null);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(root.Index.EmptyOutput != null);
 
                     this.sumTotalTermFreq = sumTotalTermFreq;
                     this.sumDocFreq = sumDocFreq;
@@ -1230,9 +1230,9 @@ namespace Lucene.Net.Codecs
                 {
                     if (Debugging.AssertsEnabled)
                     {
-                        Debugging.ThrowAssertIf(sumTotalTermFreq == 0 || fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY && sumTotalTermFreq == -1);
-                        Debugging.ThrowAssertIf(sumDocFreq == 0);
-                        Debugging.ThrowAssertIf(docCount == 0);
+                        Debugging.Assert(sumTotalTermFreq == 0 || fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY && sumTotalTermFreq == -1);
+                        Debugging.Assert(sumDocFreq == 0);
+                        Debugging.Assert(docCount == 0);
                     }
                 }
             }

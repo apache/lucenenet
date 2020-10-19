@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
                 this.termsEnum = termsEnum;
                 this.termComp = termsEnum.Comparer;
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CompareToLastTerm(null));
+                if (Debugging.AssertsEnabled) Debugging.Assert(CompareToLastTerm(null));
 
                 // lazy init the initial ScoreTerm because comparer is not known on ctor:
                 if (st == null)
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
 
                 // make sure within a single seg we always collect
                 // terms in order
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CompareToLastTerm(bytes));
+                if (Debugging.AssertsEnabled) Debugging.Assert(CompareToLastTerm(bytes));
 
                 //System.out.println("TTR.collect term=" + bytes.utf8ToString() + " boost=" + boost + " ord=" + readerContext.ord);
                 // ignore uncompetitive hits
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
                     }
                 }
                 TermState state = termsEnum.GetTermState();
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state != null);
+                if (Debugging.AssertsEnabled) Debugging.Assert(state != null);
                 if (visitedTerms.TryGetValue(bytes, out ScoreTerm t2))
                 {
                     // if the term is already in the PQ, only update docFreq of term in PQ
@@ -187,7 +187,7 @@ namespace Lucene.Net.Search
                     st.Bytes.CopyBytes(bytes);
                     st.Boost = boost;
                     visitedTerms[st.Bytes] = st;
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(st.TermState.DocFreq == 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(st.TermState.DocFreq == 0);
                     st.TermState.Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
                     stQueue.Add(st);
                     // possibly drop entries from queue

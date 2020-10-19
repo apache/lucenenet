@@ -779,7 +779,7 @@ namespace Lucene.Net.Util
             }
 
             // paranoia:
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto == result.Length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(upto == result.Length);
 
             return result;
         }

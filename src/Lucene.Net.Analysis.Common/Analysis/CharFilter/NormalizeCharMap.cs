@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         map.ReadFirstRealTargetArc(scratchArc.Target, scratchArc, fstReader);
                         while (true)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(scratchArc.Label != FST.END_LABEL);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(scratchArc.Label != FST.END_LABEL);
                             cachedRootArcs[Convert.ToChar((char)scratchArc.Label)] = (new FST.Arc<CharsRef>()).CopyFrom(scratchArc);
                             if (scratchArc.IsLast)
                             {

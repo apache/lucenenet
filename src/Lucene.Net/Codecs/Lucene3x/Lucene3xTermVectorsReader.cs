@@ -140,10 +140,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                 tvf = d.OpenInput(fn, context);
                 int tvfFormat = CheckValidFormat(tvf);
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(format == tvdFormat);
+                if (Debugging.AssertsEnabled) Debugging.Assert(format == tvdFormat);
 
 
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(format == tvfFormat);
+                if (Debugging.AssertsEnabled) Debugging.Assert(format == tvfFormat);
 
                 numTotalDocs = (int)(tvx.Length >> 4);
 
@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     this.docStoreOffset = 0;
                     this.size = numTotalDocs;
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(size == 0 || numTotalDocs == size);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(size == 0 || numTotalDocs == size);
                 }
                 else
                 {
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 outerInstance.tvd.Seek(outerInstance.tvx.ReadInt64());
 
                 int fieldCount = outerInstance.tvd.ReadVInt32();
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldCount >= 0);
+                if (Debugging.AssertsEnabled) Debugging.Assert(fieldCount >= 0);
                 if (fieldCount != 0)
                 {
                     fieldNumbers = new int[fieldCount];
@@ -703,7 +703,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startOffsets != null);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(startOffsets != null);
                         return startOffsets.Length;
                     }
                 }

@@ -188,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Convert.ToInt64(v, CultureInfo.InvariantCulture) != SegmentInfo.NO);
+                if (Debugging.AssertsEnabled) Debugging.Assert(Convert.ToInt64(v, CultureInfo.InvariantCulture) != SegmentInfo.NO);
                 return true;
             }
         }
@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
             var dv = norms[field.Name];
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(dv != null);
+            if (Debugging.AssertsEnabled) Debugging.Assert(dv != null);
             return dv.Instance;
         }
 
