@@ -913,7 +913,7 @@ namespace Lucene.Net.Util
             // https://github.com/apache/lucenenet/pull/154
             int oldLen = m_wlen;
             EnsureCapacityWords(newLen);
-            Debugging.ThrowAssertIf((numBits = Math.Max(other.numBits, numBits)) >= 0);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((numBits = Math.Max(other.numBits, numBits)) >= 0);
 
             long[] thisArr = this.m_bits;
             long[] otherArr = other.m_bits;
@@ -953,7 +953,7 @@ namespace Lucene.Net.Util
             // https://github.com/apache/lucenenet/pull/154
             int oldLen = m_wlen;
             EnsureCapacityWords(newLen);
-            Debugging.ThrowAssertIf((numBits = Math.Max(other.numBits, numBits)) >= 0);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((numBits = Math.Max(other.numBits, numBits)) >= 0);
 
             long[] thisArr = this.m_bits;
             long[] otherArr = other.m_bits;
@@ -1011,7 +1011,7 @@ namespace Lucene.Net.Util
         {
             m_bits = ArrayUtil.Grow(m_bits, numWords);
             m_wlen = numWords;
-            Debugging.ThrowAssertIf((this.numBits = Math.Max(this.numBits, numWords << 6)) >= 0);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((this.numBits = Math.Max(this.numBits, numWords << 6)) >= 0);
         }
 
         /// <summary>
@@ -1023,7 +1023,7 @@ namespace Lucene.Net.Util
             EnsureCapacityWords(Bits2words(numBits));
             // ensureCapacityWords sets numBits to a multiple of 64, but we want to set
             // it to exactly what the app asked.
-            Debugging.ThrowAssertIf((this.numBits = Math.Max(this.numBits, numBits)) >= 0);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((this.numBits = Math.Max(this.numBits, numBits)) >= 0);
         }
 
         /// <summary>

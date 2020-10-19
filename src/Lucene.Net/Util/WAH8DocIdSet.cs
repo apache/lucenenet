@@ -331,8 +331,8 @@ namespace Lucene.Net.Util
             {
                 for (int i = 1; i < dirtyWords.Length; ++i)
                 {
-                    Debugging.ThrowAssertIf(dirtyWords.Bytes[i - 1] != 0 || dirtyWords.Bytes[i] != 0);
-                    Debugging.ThrowAssertIf((byte)dirtyWords.Bytes[i - 1] != 0xFF || (byte)dirtyWords.Bytes[i] != 0xFF);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(dirtyWords.Bytes[i - 1] != 0 || dirtyWords.Bytes[i] != 0);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((byte)dirtyWords.Bytes[i - 1] != 0xFF || (byte)dirtyWords.Bytes[i] != 0xFF);
                 }
                 return true;
             }

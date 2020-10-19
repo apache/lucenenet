@@ -420,37 +420,37 @@ namespace Lucene.Net.Util.Fst
 
         private bool AssertRootArcs()
         {
-            Debugging.ThrowAssertIf(cachedRootArcs != null);
-            Debugging.ThrowAssertIf(assertingCachedRootArcs != null);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(cachedRootArcs != null);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(assertingCachedRootArcs != null);
             for (int i = 0; i < cachedRootArcs.Length; i++)
             {
                 FST.Arc<T> root = cachedRootArcs[i];
                 FST.Arc<T> asserting = assertingCachedRootArcs[i];
                 if (root != null)
                 {
-                    Debugging.ThrowAssertIf(root.ArcIdx == asserting.ArcIdx);
-                    Debugging.ThrowAssertIf(root.BytesPerArc == asserting.BytesPerArc);
-                    Debugging.ThrowAssertIf(root.Flags == asserting.Flags);
-                    Debugging.ThrowAssertIf(root.Label == asserting.Label);
-                    Debugging.ThrowAssertIf(root.NextArc == asserting.NextArc);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.ArcIdx == asserting.ArcIdx);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.BytesPerArc == asserting.BytesPerArc);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.Flags == asserting.Flags);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.Label == asserting.Label);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.NextArc == asserting.NextArc);
 
                     // LUCENENET NOTE: In .NET, IEnumerable will not equal another identical IEnumerable
                     // because it checks for reference equality, not that the list contents
                     // are the same. StructuralEqualityComparer.Default.Equals() will make that check.
-                    Debugging.ThrowAssertIf(typeof(T).IsValueType 
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(typeof(T).IsValueType 
                         ? JCG.EqualityComparer<T>.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput)
                         : StructuralEqualityComparer.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput));
-                    Debugging.ThrowAssertIf(root.Node == asserting.Node);
-                    Debugging.ThrowAssertIf(root.NumArcs == asserting.NumArcs);
-                    Debugging.ThrowAssertIf(typeof(T).IsValueType
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.Node == asserting.Node);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.NumArcs == asserting.NumArcs);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(typeof(T).IsValueType
                         ? JCG.EqualityComparer<T>.Default.Equals(root.Output, asserting.Output)
                         : StructuralEqualityComparer.Default.Equals(root.Output, asserting.Output));
-                    Debugging.ThrowAssertIf(root.PosArcsStart == asserting.PosArcsStart);
-                    Debugging.ThrowAssertIf(root.Target == asserting.Target);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.PosArcsStart == asserting.PosArcsStart);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root.Target == asserting.Target);
                 }
                 else
                 {
-                    Debugging.ThrowAssertIf(root == null && asserting == null);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(root == null && asserting == null);
                 }
             }
             return true;
@@ -2026,7 +2026,7 @@ namespace Lucene.Net.Util.Fst
             if (Debugging.AssertsEnabled)
             {
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fst.nodeCount == nodeCount)) Debugging.ThrowAssert("fst.nodeCount={0} nodeCount={1}", fst.nodeCount, nodeCount);
-                Debugging.ThrowAssertIf(fst.arcCount == arcCount);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fst.arcCount == arcCount);
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fst.arcWithOutputCount == arcWithOutputCount)) Debugging.ThrowAssert("fst.arcWithOutputCount={0} arcWithOutputCount={1}", fst.arcWithOutputCount, arcWithOutputCount);
             }
 

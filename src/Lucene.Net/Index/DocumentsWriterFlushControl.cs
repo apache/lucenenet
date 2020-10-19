@@ -406,9 +406,9 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled)
             {
                 // LUCENENET specific - Since we need to mimic the unfair behavior of ReentrantLock, we need to ensure that all threads that enter here hold the lock.
-                Debugging.ThrowAssertIf(perThread.IsHeldByCurrentThread);
-                Debugging.ThrowAssertIf(Monitor.IsEntered(this));
-                Debugging.ThrowAssertIf(perThread.flushPending);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(perThread.IsHeldByCurrentThread);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Monitor.IsEntered(this));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(perThread.flushPending);
             }
             try
             {

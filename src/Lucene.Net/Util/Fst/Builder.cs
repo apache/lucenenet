@@ -373,7 +373,7 @@ namespace Lucene.Net.Util.Fst
             if (Debugging.AssertsEnabled)
             {
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastInput.Length == 0 || input.CompareTo(lastInput) >= 0)) Debugging.ThrowAssert("inputs are added out of order lastInput={0} vs input={1}", lastInput, input);
-                Debugging.ThrowAssertIf(ValidOutput(output));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ValidOutput(output));
             }
 
             //System.out.println("\nadd: " + input);

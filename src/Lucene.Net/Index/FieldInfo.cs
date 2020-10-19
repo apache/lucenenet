@@ -94,11 +94,11 @@ namespace Lucene.Net.Index
         {
             if (!indexed)
             {
-                Debugging.ThrowAssertIf(!storeTermVector);
-                Debugging.ThrowAssertIf(!storePayloads);
-                Debugging.ThrowAssertIf(!omitNorms);
-                Debugging.ThrowAssertIf(normType == DocValuesType.NONE);
-                Debugging.ThrowAssertIf(indexOptions == IndexOptions.NONE);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!storeTermVector);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!storePayloads);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!omitNorms);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(normType == DocValuesType.NONE);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(indexOptions == IndexOptions.NONE);
             }
             else
             {

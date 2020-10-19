@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Grouping
                     else
                     {
                         
-                        Debugging.ThrowAssertIf(!groupValueIsValueType 
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!groupValueIsValueType 
                             ? JCG.EqualityComparer<T>.Default.Equals(groupValue, otherMergedGroup.groupValue)
 
                             // LUCENENET specific - use J2N.Collections.StructuralEqualityComparer.Default.Equals() if we have a reference type

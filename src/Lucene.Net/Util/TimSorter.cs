@@ -297,7 +297,7 @@ namespace Lucene.Net.Util
 
         internal virtual void MergeLo(int lo, int mid, int hi)
         {
-            Debugging.ThrowAssertIf(Compare(lo, mid) > 0);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Compare(lo, mid) > 0);
             int len1 = mid - lo;
             Save(lo, len1);
             Copy(mid, lo);
@@ -340,7 +340,7 @@ namespace Lucene.Net.Util
 
         internal virtual void MergeHi(int lo, int mid, int hi)
         {
-            Debugging.ThrowAssertIf(Compare(mid - 1, hi - 1) > 0);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Compare(mid - 1, hi - 1) > 0);
             int len2 = hi - mid;
             Save(mid, len2);
             Copy(mid - 1, hi - 1);

@@ -512,7 +512,7 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled)
             {
                 Debugging.ThrowAssertIf(numDocsInRAM > 0);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(deleteSlice.IsEmpty)) Debugging.ThrowAssert("all deletes must be applied in prepareFlush");
+                if (Debugging.ShouldAssert(deleteSlice.IsEmpty)) Debugging.ThrowAssert("all deletes must be applied in prepareFlush");
             }
             segmentInfo.DocCount = numDocsInRAM;
             SegmentWriteState flushState = new SegmentWriteState(infoStream, directory, segmentInfo, fieldInfos.Finish(), indexWriterConfig.TermIndexInterval, pendingUpdates, new IOContext(new FlushInfo(numDocsInRAM, BytesUsed)));

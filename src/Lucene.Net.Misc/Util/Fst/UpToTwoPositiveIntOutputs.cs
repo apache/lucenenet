@@ -216,7 +216,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(object output, DataOutput @out)
         {
-            Debugging.ThrowAssertIf(Valid(output, true));
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(output, true));
             if (output is long?)
             {
                 long? output2 = (long?)output;
@@ -257,9 +257,9 @@ namespace Lucene.Net.Util.Fst
 
         private bool Valid(long? o)
         {
-            Debugging.ThrowAssertIf(o != null);
-            Debugging.ThrowAssertIf(o is long?);
-            Debugging.ThrowAssertIf(o == NO_OUTPUT || o > 0);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(o != null);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(o is long?);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(o == NO_OUTPUT || o > 0);
             return true;
         }
 
@@ -268,7 +268,7 @@ namespace Lucene.Net.Util.Fst
         {
             if (!allowDouble)
             {
-                Debugging.ThrowAssertIf(o is long?);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(o is long?);
                 return Valid((long?)o);
             }
             else if (o is TwoInt64s)

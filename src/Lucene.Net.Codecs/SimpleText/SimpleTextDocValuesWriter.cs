@@ -79,8 +79,7 @@ namespace Lucene.Net.Codecs.SimpleText
             if (Debugging.AssertsEnabled)
             {
                 Debugging.ThrowAssertIf(FieldSeen(field.Name));
-                Debugging.ThrowAssertIf(field.DocValuesType == DocValuesType.NUMERIC ||
-                             field.NormType == DocValuesType.NUMERIC);
+                Debugging.ThrowAssertIf(field.DocValuesType == DocValuesType.NUMERIC || field.NormType == DocValuesType.NUMERIC);
             }
             WriteFieldEntry(field, DocValuesType.NUMERIC);
 

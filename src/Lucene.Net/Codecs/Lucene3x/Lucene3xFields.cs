@@ -308,7 +308,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 // The 3 bytes starting at downTo make up 1
                 // unicode character:
-                Debugging.ThrowAssertIf(IsHighBMPChar(term.Bytes, pos));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsHighBMPChar(term.Bytes, pos));
 
                 // NOTE: we cannot make this assert, because
                 // AutomatonQuery legitimately sends us malformed UTF8
@@ -916,7 +916,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t2 == null || t2.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        Debugging.ThrowAssertIf(t2 == null || !t2.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(t2 == null || !t2.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         current = null;
                         return SeekStatus.END;
                     }
@@ -1000,7 +1000,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t == null || t.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        Debugging.ThrowAssertIf(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         current = null;
                         return false;
                     }
@@ -1026,7 +1026,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t == null || t.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        Debugging.ThrowAssertIf(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         return false;
                     }
                     else

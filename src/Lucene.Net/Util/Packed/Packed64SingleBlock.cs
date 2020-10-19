@@ -74,7 +74,7 @@ namespace Lucene.Net.Util.Packed
             if (Debugging.AssertsEnabled)
             {
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-                Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
             }
             len = Math.Min(len, m_valueCount - index);
             if (Debugging.AssertsEnabled && Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();
@@ -129,7 +129,7 @@ namespace Lucene.Net.Util.Packed
             if (Debugging.AssertsEnabled)
             {
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-                Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
             }
             len = Math.Min(len, m_valueCount - index);
             if (Debugging.AssertsEnabled && Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();

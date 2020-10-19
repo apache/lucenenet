@@ -126,8 +126,8 @@ namespace Lucene.Net.Util.Packed
             if (Debugging.AssertsEnabled)
             {
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-                Debugging.ThrowAssertIf(index >= 0 && index < Count);
-                Debugging.ThrowAssertIf(off + len <= arr.Length);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < Count);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(off + len <= arr.Length);
             }
 
             int block = (int)(index >> pageShift);

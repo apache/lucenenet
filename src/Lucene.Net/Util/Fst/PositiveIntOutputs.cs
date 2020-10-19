@@ -56,9 +56,11 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                if(Debugging.ShouldAssert(output1 > 0)) Debugging.ThrowAssert();
-
-                if(Debugging.ShouldAssert(output2 > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.ThrowAssertIf(output1 > 0);
+                    Debugging.ThrowAssertIf(output2 > 0);
+                }
                 return Math.Min(output1.Value, output2.Value);
             }
         }

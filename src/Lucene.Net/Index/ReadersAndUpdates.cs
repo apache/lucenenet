@@ -230,10 +230,10 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Debugging.ThrowAssertIf(liveDocs != null);
-                Debugging.ThrowAssertIf(Monitor.IsEntered(writer));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(liveDocs != null);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Monitor.IsEntered(writer));
                 if(Debugging.ShouldAssert(docID >= 0 && docID < liveDocs.Length)) Debugging.ThrowAssert("out of bounds: docid={0} liveDocsLength={1}", docID, liveDocs.Length + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
-                Debugging.ThrowAssertIf(!liveDocsShared);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!liveDocsShared);
                 
                 bool didDelete = liveDocs.Get(docID);
                 if (didDelete)
@@ -320,8 +320,8 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Debugging.ThrowAssertIf(Monitor.IsEntered(writer));
-                Debugging.ThrowAssertIf(Info.Info.DocCount > 0);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Monitor.IsEntered(writer));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Info.Info.DocCount > 0);
 
                 //System.out.println("initWritableLivedocs seg=" + info + " liveDocs=" + liveDocs + " shared=" + shared);
                 if (liveDocsShared)

@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             _input.Seek(_offsets[doc]);
             ReadLine();
-            Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.NUMFIELDS));
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.NUMFIELDS));
             var numFields = ParseInt32At(SimpleTextTermVectorsWriter.NUMFIELDS.Length);
             if (numFields == 0)
             {
@@ -128,28 +128,28 @@ namespace Lucene.Net.Codecs.SimpleText
             for (var i = 0; i < numFields; i++)
             {
                 ReadLine();
-                Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELD));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELD));
                 // skip fieldNumber:
                 ParseInt32At(SimpleTextTermVectorsWriter.FIELD.Length);
 
                 ReadLine();
-                Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDNAME));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDNAME));
                 var fieldName = ReadString(SimpleTextTermVectorsWriter.FIELDNAME.Length, _scratch);
 
                 ReadLine();
-                Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPOSITIONS));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPOSITIONS));
                 var positions = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDPOSITIONS.Length, _scratch), CultureInfo.InvariantCulture);
 
                 ReadLine();
-                Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDOFFSETS));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDOFFSETS));
                 var offsets = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDOFFSETS.Length, _scratch), CultureInfo.InvariantCulture);
 
                 ReadLine();
-                Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPAYLOADS));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDPAYLOADS));
                 var payloads = Convert.ToBoolean(ReadString(SimpleTextTermVectorsWriter.FIELDPAYLOADS.Length, _scratch), CultureInfo.InvariantCulture);
 
                 ReadLine();
-                Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDTERMCOUNT));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.FIELDTERMCOUNT));
                 var termCount = ParseInt32At(SimpleTextTermVectorsWriter.FIELDTERMCOUNT.Length);
 
                 var terms = new SimpleTVTerms(offsets, positions, payloads);
@@ -158,7 +158,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 for (var j = 0; j < termCount; j++)
                 {
                     ReadLine();
-                    Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMTEXT));
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMTEXT));
                     var term = new BytesRef();
                     var termLength = _scratch.Length - SimpleTextTermVectorsWriter.TERMTEXT.Length;
                     term.Grow(termLength);
@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     terms.terms.Add(term, postings);
 
                     ReadLine();
-                    Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMFREQ));
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.TERMFREQ));
                     postings.freq = ParseInt32At(SimpleTextTermVectorsWriter.TERMFREQ.Length);
 
                     if (!positions && !offsets) continue;
@@ -194,12 +194,12 @@ namespace Lucene.Net.Codecs.SimpleText
                         if (positions)
                         {
                             ReadLine();
-                            Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.POSITION));
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.POSITION));
                             postings.positions[k] = ParseInt32At(SimpleTextTermVectorsWriter.POSITION.Length);
                             if (payloads)
                             {
                                 ReadLine();
-                                Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.PAYLOAD));
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.PAYLOAD));
                                 if (_scratch.Length - SimpleTextTermVectorsWriter.PAYLOAD.Length == 0)
                                 {
                                     postings.payloads[k] = null;
@@ -217,11 +217,11 @@ namespace Lucene.Net.Codecs.SimpleText
                         if (!offsets) continue;
 
                         ReadLine();
-                        Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.STARTOFFSET));
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.STARTOFFSET));
                         postings.startOffsets[k] = ParseInt32At(SimpleTextTermVectorsWriter.STARTOFFSET.Length);
 
                         ReadLine();
-                        Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.ENDOFFSET));
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextTermVectorsWriter.ENDOFFSET));
                         postings.endOffsets[k] = ParseInt32At(SimpleTextTermVectorsWriter.ENDOFFSET.Length);
                     }
                 }

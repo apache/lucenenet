@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
         {
             if (ext.Length > 0 || segmentSuffix.Length > 0)
             {
-                Debugging.ThrowAssertIf(!ext.StartsWith(".", StringComparison.Ordinal));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!ext.StartsWith(".", StringComparison.Ordinal));
                 StringBuilder sb = new StringBuilder(segmentName.Length + 2 + segmentSuffix.Length + ext.Length);
                 sb.Append(segmentName);
                 if (segmentSuffix.Length > 0)

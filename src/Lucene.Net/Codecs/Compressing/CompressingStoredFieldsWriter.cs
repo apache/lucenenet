@@ -114,6 +114,7 @@ namespace Lucene.Net.Codecs.Compressing
                 string codecNameDat = formatName + CODEC_SFX_DAT;
                 CodecUtil.WriteHeader(indexStream, codecNameIdx, VERSION_CURRENT);
                 CodecUtil.WriteHeader(fieldsStream, codecNameDat, VERSION_CURRENT);
+                
                 if (Debugging.AssertsEnabled)
                 {
                     Debugging.ThrowAssertIf(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.GetFilePointer());

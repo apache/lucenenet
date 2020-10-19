@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                Debugging.ThrowAssertIf(CheckLength(reader, doc));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CheckLength(reader, doc));
                 return bits.Get(doc - starts[reader]);
             }
         }
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
         {
             int reader = ReaderUtil.SubIndex(slice.Start, starts);
             
-            Debugging.ThrowAssertIf(reader != -1);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(reader != -1);
             if(Debugging.ShouldAssert(reader < subs.Length)) Debugging.ThrowAssert("slice={0} starts[-1]={1}", slice, starts[starts.Length - 1]);
 
             SubResult subResult = new SubResult();

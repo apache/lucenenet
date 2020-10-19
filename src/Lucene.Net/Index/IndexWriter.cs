@@ -1644,9 +1644,9 @@ namespace Lucene.Net.Index
                     int subIndex = ReaderUtil.SubIndex(docID, leaves);
                     reader = leaves[subIndex].AtomicReader;
                     docID -= leaves[subIndex].DocBase;
-                    Debugging.ThrowAssertIf(docID >= 0);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID >= 0);
 
-                    Debugging.ThrowAssertIf(docID < reader.MaxDoc);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID < reader.MaxDoc);
                 }
 
                 if (!(reader is SegmentReader))
@@ -4152,9 +4152,9 @@ namespace Lucene.Net.Index
                     {
                         // If we had deletions on starting the merge we must
                         // still have deletions now:
-                        Debugging.ThrowAssertIf(currentLiveDocs != null);
-                        Debugging.ThrowAssertIf(prevLiveDocs.Length == docCount);
-                        Debugging.ThrowAssertIf(currentLiveDocs.Length == docCount);
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(currentLiveDocs != null);
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(prevLiveDocs.Length == docCount);
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(currentLiveDocs.Length == docCount);
 
                         // There were deletes on this segment when the merge
                         // started.  The merge has collapsed away those
@@ -4745,9 +4745,9 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                Debugging.ThrowAssertIf(TestPoint("startMergeInit"));
-                Debugging.ThrowAssertIf(merge.registerDone);
-                Debugging.ThrowAssertIf(merge.MaxNumSegments == -1 || merge.MaxNumSegments > 0);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(TestPoint("startMergeInit"));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(merge.registerDone);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(merge.MaxNumSegments == -1 || merge.MaxNumSegments > 0);
 
                 if (hitOOM)
                 {
@@ -5415,8 +5415,8 @@ namespace Lucene.Net.Index
         /// </summary>
         private void StartCommit(SegmentInfos toSync)
         {
-            Debugging.ThrowAssertIf(TestPoint("startStartCommit"));
-            Debugging.ThrowAssertIf(pendingCommit == null);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(TestPoint("startStartCommit"));
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pendingCommit == null);
 
             if (hitOOM)
             {

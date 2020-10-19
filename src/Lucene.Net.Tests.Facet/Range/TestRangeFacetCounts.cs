@@ -1197,7 +1197,7 @@ namespace Lucene.Net.Facet.Range
 
             protected override Facets BuildFacetsResult(FacetsCollector drillDowns, FacetsCollector[] drillSideways, string[] drillSidewaysDims)
             {
-                Debugging.ThrowAssertIf(drillSideways.Length == 1);
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(drillSideways.Length == 1);
                 return new DoubleRangeFacetCounts("field", vs, drillSideways[0], fastMatchFilter, ranges);
             }
 

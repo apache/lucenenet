@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
         public void Register(TermState state, int ord, int docFreq, long totalTermFreq)
         {
             if(Debugging.ShouldAssert(state != null)) Debugging.ThrowAssert("state must not be null");
-            Debugging.ThrowAssertIf(ord >= 0 && ord < states.Length);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord >= 0 && ord < states.Length);
             if(Debugging.ShouldAssert(states[ord] == null)) Debugging.ThrowAssert("state for ord: {0} already registered", ord);
 
             this.docFreq += docFreq;
