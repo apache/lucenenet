@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
             this.parent = parent;
             this.start = slice.Start;
             this.length = slice.Length;
-            if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0, () => "length=" + length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0,"length={0}", length);
         }
 
         public bool Get(int doc)

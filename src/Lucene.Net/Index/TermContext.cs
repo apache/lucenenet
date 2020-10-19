@@ -137,9 +137,9 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(state != null, () => "state must not be null");
+                Debugging.Assert(state != null, "state must not be null");
                 Debugging.Assert(ord >= 0 && ord < states.Length);
-                Debugging.Assert(states[ord] == null, () => "state for ord: " + ord + " already registered");
+                Debugging.Assert(states[ord] == null, "state for ord: {0} already registered", ord);
             }
             this.docFreq += docFreq;
             if (this.totalTermFreq >= 0 && totalTermFreq >= 0)

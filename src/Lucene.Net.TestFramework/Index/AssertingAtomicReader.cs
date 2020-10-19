@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
                 : base(@in)
             {
                 int docid = @in.DocID;
-                if (Debugging.AssertsEnabled) Debugging.Assert(docid == -1, () => "invalid initial doc id: " + docid);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docid == -1,"invalid initial doc id: {0}", docid);
                 doc = -1;
             }
 
@@ -644,7 +644,7 @@ namespace Lucene.Net.Index
                 if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "NextPosition() called after NO_MORE_DOCS");
                 if (Debugging.AssertsEnabled) Debugging.Assert(positionCount < positionMax, "NextPosition() called more than Freq times!");
                 int position = base.NextPosition();
-                if (Debugging.AssertsEnabled) Debugging.Assert(position >= 0 || position == -1, () => "invalid position: " + position);
+                if (Debugging.AssertsEnabled) Debugging.Assert(position >= 0 || position == -1,"invalid position: {0}", position);
                 positionCount++;
                 return position;
             }

@@ -122,7 +122,7 @@ namespace Lucene.Net.Util
 
         public bool Get(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits, () => "index=" + index);
+            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits,"index={0}", index);
             int i = (int)(index >> 6); // div 64
             // signed shift will keep a negative index and force an
             // array-index-out-of-bounds-exception, removing the need for an explicit check.

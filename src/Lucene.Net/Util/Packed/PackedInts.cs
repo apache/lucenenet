@@ -205,7 +205,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual long ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, () => bitsPerValue.ToString(CultureInfo.InvariantCulture));
+                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, bitsPerValue.ToString(CultureInfo.InvariantCulture));
                 // assume long-aligned
                 return 8L * Int64Count(packedIntsVersion, valueCount, bitsPerValue);
             }
@@ -218,7 +218,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual int Int64Count(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, () => bitsPerValue.ToString(CultureInfo.InvariantCulture));
+                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, bitsPerValue.ToString(CultureInfo.InvariantCulture));
                 long byteCount = ByteCount(packedIntsVersion, valueCount, bitsPerValue);
                 if (Debugging.AssertsEnabled) Debugging.Assert(byteCount < 8L * int.MaxValue);
                 if ((byteCount % 8) == 0)
@@ -533,7 +533,7 @@ namespace Lucene.Net.Util.Packed
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                    Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                     Debugging.Assert(index >= 0 && index < Count);
                     Debugging.Assert(off + len <= arr.Length);
                 }
@@ -674,7 +674,7 @@ namespace Lucene.Net.Util.Packed
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                    Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                     Debugging.Assert(index >= 0 && index < Count);
                 }
                 len = Math.Min(len, Count - index);
@@ -746,7 +746,7 @@ namespace Lucene.Net.Util.Packed
             protected ReaderImpl(int valueCount, int bitsPerValue)
             {
                 this.m_bitsPerValue = bitsPerValue;
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64,"bitsPerValue={0}", bitsPerValue);
                 this.m_valueCount = valueCount;
             }
 
@@ -765,7 +765,7 @@ namespace Lucene.Net.Util.Packed
             protected MutableImpl(int valueCount, int bitsPerValue)
             {
                 this.m_valueCount = valueCount;
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64,"bitsPerValue={0}", bitsPerValue);
                 this.m_bitsPerValue = bitsPerValue;
             }
 
@@ -796,7 +796,7 @@ namespace Lucene.Net.Util.Packed
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                    Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                     Debugging.Assert(index >= 0 && index < valueCount);
                 }
                 len = Math.Min(len, valueCount - index);
@@ -986,7 +986,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64,"bitsPerValue={0}", bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
 
@@ -1028,7 +1028,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64,"bitsPerValue={0}", bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
             return GetReaderIteratorNoHeader(@in, format, version, valueCount, bitsPerValue, mem);
@@ -1151,7 +1151,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64,"bitsPerValue={0}", bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
             return GetDirectReaderNoHeader(@in, format, version, valueCount, bitsPerValue);
@@ -1428,7 +1428,7 @@ namespace Lucene.Net.Util.Packed
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
             int bitsPerValue = @in.ReadVInt32();
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => "bitsPerValue=" + bitsPerValue);
+            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64,"bitsPerValue={0}", bitsPerValue);
             int valueCount = @in.ReadVInt32();
             Format format = Format.ById(@in.ReadVInt32());
             return new Header(format, valueCount, bitsPerValue, version);

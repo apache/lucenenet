@@ -98,8 +98,8 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(length >= 0, () => "length=" + length);
-                    Debugging.Assert(length <= blockSize + 1, () => "length=" + length);
+                    Debugging.Assert(length >= 0,"length={0}", length);
+                    Debugging.Assert(length <= blockSize + 1,"length={0}", length);
                 }
                 b.Length = length;
                 if (length == 0)
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public PagedBytes(int blockBits)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(blockBits > 0 && blockBits <= 31, () => blockBits.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.AssertsEnabled) Debugging.Assert(blockBits > 0 && blockBits <= 31, blockBits.ToString(CultureInfo.InvariantCulture));
             this.blockSize = 1 << blockBits;
             this.blockBits = blockBits;
             blockMask = blockSize - 1;

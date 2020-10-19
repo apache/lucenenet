@@ -480,9 +480,7 @@ namespace Lucene.Net.Codecs
             {
                 // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
                 // it might contain garbage that cannot be converted into text.
-                if (Debugging.AssertsEnabled) Debugging.Assert(
-                    (IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null),
-                    () => "isFloor=" + IsFloor + " floorBlocks=" + ToString(floorBlocks));
+                if (Debugging.AssertsEnabled) Debugging.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor={0} floorBlocks={1}", IsFloor , ToString(floorBlocks));
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(scratchBytes.GetFilePointer() == 0);
 
@@ -1013,7 +1011,7 @@ namespace Lucene.Net.Codecs
                         statsWriter.WriteVInt32(state.DocFreq);
                         if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(state.TotalTermFreq >= state.DocFreq, () => state.TotalTermFreq + " vs " + state.DocFreq);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(state.TotalTermFreq >= state.DocFreq, "{0} vs {1}", state.TotalTermFreq, state.DocFreq);
                             statsWriter.WriteVInt64(state.TotalTermFreq - state.DocFreq);
                         }
 

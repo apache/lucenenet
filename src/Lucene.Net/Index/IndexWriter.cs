@@ -462,8 +462,8 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     int idx = outerInstance.segmentInfos.IndexOf(info);
-                    Debugging.Assert(idx != -1, () => "info=" + info + " isn't live");
-                    Debugging.Assert(outerInstance.segmentInfos.Info(idx) == info, () => "info=" + info + " doesn't match live info in segmentInfos");
+                    Debugging.Assert(idx != -1, "info={0} isn't live", info);
+                    Debugging.Assert(outerInstance.segmentInfos.Info(idx) == info, "info={0} doesn't match live info in segmentInfos", info);
                     return true;
                 }
             }
@@ -1109,7 +1109,7 @@ namespace Lucene.Net.Index
             }
             foreach (IEvent e in eventQueue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(e is DocumentsWriter.MergePendingEvent, () => e.ToString());
+                if (Debugging.AssertsEnabled) Debugging.Assert(e is DocumentsWriter.MergePendingEvent, e.ToString());
             }
             return true;
         }
@@ -2402,7 +2402,7 @@ namespace Lucene.Net.Index
                 MergePolicy.MergeSpecification spec;
                 if (maxNumSegments != UNBOUNDED_MAX_MERGE_SEGMENTS)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED, () => "Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: " + trigger.ToString());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED,"Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: {0}", trigger.ToString());
                     spec = mergePolicy.FindForcedMerges(segmentInfos, maxNumSegments, segmentsToMerge);
                     newMergesFound = spec != null;
                     if (newMergesFound)
@@ -3450,8 +3450,8 @@ namespace Lucene.Net.Index
 
                     if (Debugging.AssertsEnabled)
                     {
-                        Debugging.Assert(!SlowFileExists(directory, newFileName), () => "file \"" + newFileName + "\" already exists; siFiles=" + string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", siFiles));
-                        Debugging.Assert(!copiedFiles.Contains(file), () => "file \"" + file + "\" is being copied more than once");
+                        Debugging.Assert(!SlowFileExists(directory, newFileName), "file \"{0}\" already exists; siFiles={1}", newFileName, string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", siFiles));
+                        Debugging.Assert(!copiedFiles.Contains(file), "file \"{0}\" is being copied more than once", file);
                     }
                     copiedFiles.Add(file);
                     info.Info.Dir.Copy(directory, file, newFileName, context);
@@ -4115,7 +4115,7 @@ namespace Lucene.Net.Index
                     IBits prevLiveDocs = merge.readers[i].LiveDocs;
                     ReadersAndUpdates rld = readerPool.Get(info, false);
                     // We hold a ref so it should still be in the pool:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(rld != null, () => "seg=" + info.Info.Name);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(rld != null,"seg={0}", info.Info.Name);
                     IBits currentLiveDocs = rld.LiveDocs;
                     IDictionary<string, DocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
                     string[] mergingFields;
@@ -5385,7 +5385,7 @@ namespace Lucene.Net.Index
                 // are called, deleter should know about every
                 // file referenced by the current head
                 // segmentInfos:
-                if (Debugging.AssertsEnabled) Debugging.Assert(deleter.Exists(fileName), () => "IndexFileDeleter doesn't know about file " + fileName);
+                if (Debugging.AssertsEnabled) Debugging.Assert(deleter.Exists(fileName),"IndexFileDeleter doesn't know about file {0}", fileName);
             }
             return true;
         }

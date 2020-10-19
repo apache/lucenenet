@@ -124,7 +124,7 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
-                Debugging.Assert(bytesID < bytesStart.Length, () => "bytesID exceeds byteStart len: " + bytesStart.Length);
+                Debugging.Assert(bytesID < bytesStart.Length,"bytesID exceeds byteStart len: {0}", bytesStart.Length);
             }
             pool.SetBytesRef(@ref, bytesStart[bytesID]);
             return @ref;
@@ -342,7 +342,7 @@ namespace Lucene.Net.Util
                     // 1 byte to store length
                     buffer[bufferUpto] = (byte)length;
                     pool.ByteUpto += length + 1;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0, () => "Length must be positive: " + length);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0,"Length must be positive: {0}", length);
                     System.Buffer.BlockCopy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 1, length);
                 }
                 else
@@ -552,7 +552,7 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
-                Debugging.Assert(bytesID >= 0 && bytesID < count, () => bytesID.ToString());
+                Debugging.Assert(bytesID >= 0 && bytesID < count, bytesID.ToString());
             }
             return bytesStart[bytesID];
         }

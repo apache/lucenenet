@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis
 
         public sealed override bool IncrementToken()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || (streamState == State.RESET || streamState == State.INCREMENT), () => "IncrementToken() called while in wrong state: " + streamState);
+            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || (streamState == State.RESET || streamState == State.INCREMENT),"IncrementToken() called while in wrong state: {0}", streamState);
             ClearAttributes();
             for (; ; )
             {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!char.IsLowSurrogate((char)ch), () => "unpaired low surrogate: " + ch.ToString("x"));
+                if (Debugging.AssertsEnabled) Debugging.Assert(!char.IsLowSurrogate((char)ch),"unpaired low surrogate: {0}", ch.ToString("x"));
                 off++;
                 if (char.IsHighSurrogate((char)ch))
                 {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Analysis
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "stream ends with unpaired high surrogate: " + ch.ToString("x"));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(false,"stream ends with unpaired high surrogate: {0}", ch.ToString("x"));
                     }
                 }
                 return ch;
@@ -312,14 +312,14 @@ namespace Lucene.Net.Analysis
                 // in some exceptional cases (e.g. TestIndexWriterExceptions) a test can prematurely close()
                 // these tests should disable this check, by default we check the normal workflow.
                 // TODO: investigate the CachingTokenFilter "double-close"... for now we ignore this
-                if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState == State.END || streamState == State.CLOSE, () => "Dispose() called in wrong state: " + streamState);
+                if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState == State.END || streamState == State.CLOSE,"Dispose() called in wrong state: {0}", streamState);
                 streamState = State.CLOSE;
             }
         }
 
         internal override bool SetReaderTestPoint()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState == State.CLOSE, () => "SetReader() called in wrong state: " + streamState);
+            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState == State.CLOSE,"SetReader() called in wrong state: {0}", streamState);
             streamState = State.SETREADER;
             return true;
         }

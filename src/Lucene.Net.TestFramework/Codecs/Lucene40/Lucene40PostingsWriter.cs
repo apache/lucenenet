@@ -234,7 +234,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
             //if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.Length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
-            if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0, () => "invalid indexOptions: " + indexOptions);
+            if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0,"invalid indexOptions: {0}", indexOptions);
             if (Debugging.AssertsEnabled) Debugging.Assert(proxOut != null);
 
             int delta = position - lastPosition;

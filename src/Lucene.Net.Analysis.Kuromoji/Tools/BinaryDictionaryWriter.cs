@@ -344,7 +344,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     else
                     {
                         string[] data = CSVUtil.Parse(s);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(data.Length == 3, () => "malformed pos/inflection: " + s);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(data.Length == 3,"malformed pos/inflection: {0}", s);
                         @out.WriteString(data[0]);
                         @out.WriteString(data[1]);
                         @out.WriteString(data[2]);

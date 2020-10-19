@@ -174,7 +174,7 @@ namespace Lucene.Net.Util.Packed
 
         public override int Get(int index, long[] arr, int off, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
             if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < m_valueCount);
             len = Math.Min(len, m_valueCount - index);
             if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
@@ -242,7 +242,7 @@ namespace Lucene.Net.Util.Packed
 
         public override int Set(int index, long[] arr, int off, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
             if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < m_valueCount);
             len = Math.Min(len, m_valueCount - index);
             if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);

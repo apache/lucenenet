@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
                     }
                     else if (packet != null && segGen == packet.DelGen)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(packet.isSegmentPrivate, () => "Packet and Segments deletegen can only match on a segment private del packet gen=" + segGen);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(packet.isSegmentPrivate,"Packet and Segments deletegen can only match on a segment private del packet gen={0}", segGen);
                         //System.out.println("  eq");
 
                         // Lock order: IW -> BD -> RP

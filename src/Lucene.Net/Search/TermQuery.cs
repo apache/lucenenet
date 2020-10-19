@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
                 TermState state = termStates.Get(context.Ord);
                 if (state == null) // term is not present in that reader
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(TermNotInReader(context.AtomicReader, outerInstance.term), () => "no termstate found but term exists in reader term=" + outerInstance.term);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(TermNotInReader(context.AtomicReader, outerInstance.term), "no termstate found but term exists in reader term={0}", outerInstance.term);
                     return null;
                 }
                 //System.out.println("LD=" + reader.getLiveDocs() + " set?=" + (reader.getLiveDocs() != null ? reader.getLiveDocs().get(0) : "null"));

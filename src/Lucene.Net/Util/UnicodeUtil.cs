@@ -844,7 +844,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(b < 0xf8, () => "b = 0x" + b.ToString("x"));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(b < 0xf8,"b = 0x{0}", b.ToString("x"));
                     int ch = ((b & 0x7) << 18) + ((utf8[offset] & 0x3f) << 12) + ((utf8[offset + 1] & 0x3f) << 6) + (utf8[offset + 2] & 0x3f);
                     offset += 3;
                     if (ch < UNI_MAX_BMP)

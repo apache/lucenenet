@@ -88,17 +88,14 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfos.FieldInfo(currentFieldNumber) != null, currentFieldNumber.ToString);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfos.FieldInfo(currentFieldNumber) != null, "{0}", currentFieldNumber);
                     
                     field = fieldInfos.FieldInfo(currentFieldNumber).Name.Intern();
                 }
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(field.Equals(fieldInfos.FieldInfo(fieldNumber).Name, StringComparison.Ordinal),
-                    () => "currentFieldNumber=" + currentFieldNumber + 
-                    " field=" + field + 
-                    " vs " + fieldInfos.FieldInfo(fieldNumber) == null ? "null" : fieldInfos.FieldInfo(fieldNumber).Name);
+                if (Debugging.AssertsEnabled) Debugging.Assert(field.Equals(fieldInfos.FieldInfo(fieldNumber).Name, StringComparison.Ordinal), "currentFieldNumber={0} field={1} vs {2}", currentFieldNumber, field, fieldInfos.FieldInfo(fieldNumber)?.Name ?? "null");
             }
         }
 

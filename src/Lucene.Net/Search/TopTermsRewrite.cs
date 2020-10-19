@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum.Comparer.Compare(lastTerm, t) < 0, () => "lastTerm=" + lastTerm + " t=" + t);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum.Comparer.Compare(lastTerm, t) < 0, "lastTerm={0} t={1}", lastTerm, t);
                     lastTerm.CopyBytes(t);
                 }
                 return true;

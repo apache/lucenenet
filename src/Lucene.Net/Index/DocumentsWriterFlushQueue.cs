@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(ticketCount >= 0, () => "ticketCount should be >= 0 but was: " + ticketCount);
+                if (Debugging.AssertsEnabled) Debugging.Assert(ticketCount >= 0,"ticketCount should be >= 0 but was: {0}", ticketCount);
                 return ticketCount != 0;
             }
         }

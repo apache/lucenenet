@@ -902,7 +902,7 @@ namespace Lucene.Net.Util.Automaton
                     points.points[i].starts.count = 0;
                 }
                 points.Reset();
-                if (Debugging.AssertsEnabled) Debugging.Assert(statesSet.upto == 0, () => "upto=" + statesSet.upto);
+                if (Debugging.AssertsEnabled) Debugging.Assert(statesSet.upto == 0,"upto={0}", statesSet.upto);
             }
             a.deterministic = true;
             a.SetNumberedStates(newStatesArray, newStateUpto);
