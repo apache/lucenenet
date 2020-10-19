@@ -80,9 +80,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.WriteHeader(tvf, Lucene40TermVectorsReader.CODEC_NAME_FIELDS, Lucene40TermVectorsReader.VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.GetFilePointer());
-                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.GetFilePointer());
-                    Debugging.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
+                    Debugging.ThrowAssertIf(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.GetFilePointer());
+                    Debugging.ThrowAssertIf(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.GetFilePointer());
+                    Debugging.ThrowAssertIf(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
                 }
                 success = true;
             }
@@ -273,8 +273,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 // dump buffer
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(positions && (offsets || payloads));
-                    Debugging.Assert(bufferedIndex == bufferedFreq);
+                    Debugging.ThrowAssertIf(positions && (offsets || payloads));
+                    Debugging.ThrowAssertIf(bufferedIndex == bufferedFreq);
                 }
                 if (payloads)
                 {
@@ -365,8 +365,8 @@ namespace Lucene.Net.Codecs.Lucene40
             tvf.CopyBytes(reader.TvfStream, tvfPosition - tvfStart);
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(tvd.GetFilePointer() == tvdPosition);
-                Debugging.Assert(tvf.GetFilePointer() == tvfPosition);
+                Debugging.ThrowAssertIf(tvd.GetFilePointer() == tvdPosition);
+                Debugging.ThrowAssertIf(tvf.GetFilePointer() == tvfPosition);
             }
         }
 

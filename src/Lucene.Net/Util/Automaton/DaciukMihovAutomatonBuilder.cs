@@ -231,7 +231,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 Debugging.Assert(stateRegistry != null, "Automaton already built.");
                 Debugging.Assert(previous == null || comparer.Compare(previous, current) <= 0, "Input must be in sorted UTF-8 order: {0} >= {1}", previous, current);
-                Debugging.Assert(SetPrevious(current));
+                Debugging.ThrowAssertIf(SetPrevious(current));
             }
 
             // Descend in the automaton (find matching prefix).

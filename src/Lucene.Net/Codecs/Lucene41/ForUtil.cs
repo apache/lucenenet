@@ -113,8 +113,8 @@ namespace Lucene.Net.Codecs.Lucene41
                 PackedInt32s.FormatAndBits formatAndBits = PackedInt32s.FastestFormatAndBits(Lucene41PostingsFormat.BLOCK_SIZE, bpv, acceptableOverheadRatio);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(formatAndBits.Format.IsSupported(formatAndBits.BitsPerValue));
-                    Debugging.Assert(formatAndBits.BitsPerValue <= 32);
+                    Debugging.ThrowAssertIf(formatAndBits.Format.IsSupported(formatAndBits.BitsPerValue));
+                    Debugging.ThrowAssertIf(formatAndBits.BitsPerValue <= 32);
                 }
                 encodedSizes[bpv] = EncodedSize(formatAndBits.Format, PackedInt32s.VERSION_CURRENT, formatAndBits.BitsPerValue);
                 encoders[bpv] = PackedInt32s.GetEncoder(formatAndBits.Format, PackedInt32s.VERSION_CURRENT, formatAndBits.BitsPerValue);

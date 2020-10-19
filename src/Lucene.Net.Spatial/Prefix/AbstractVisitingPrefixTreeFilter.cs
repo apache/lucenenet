@@ -264,7 +264,7 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     //If the next indexed term just adds a leaf marker ('+') to cell,
                     // then add all of those docs
-                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(thisTerm, curVNodeTerm));//TODO refactor to use method on curVNode.cell
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(thisTerm, curVNodeTerm));//TODO refactor to use method on curVNode.cell
                     scanCell = m_outerInstance.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
                     if (scanCell.Level == cell.Level && scanCell.IsLeaf)
                     {

@@ -211,11 +211,9 @@ namespace Lucene.Net.Index
         /// <seealso cref="TermsEnum.Docs(IBits, DocsEnum)"/>
         public DocsEnum GetTermDocsEnum(Term term) // LUCENENET specific: Renamed from TermDocsEnum()
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(term.Field != null);
-                Debugging.Assert(term.Bytes != null);
-            }
+            if(Debugging.ShouldAssert(term.Field != null)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(term.Bytes != null)) Debugging.ThrowAssert();
             Fields fields = Fields;
             if (fields != null)
             {

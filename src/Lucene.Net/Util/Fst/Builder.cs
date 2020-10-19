@@ -373,7 +373,7 @@ namespace Lucene.Net.Util.Fst
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(lastInput.Length == 0 || input.CompareTo(lastInput) >= 0,"inputs are added out of order lastInput={0} vs input={1}", lastInput, input);
-                Debugging.Assert(ValidOutput(output));
+                Debugging.ThrowAssertIf(ValidOutput(output));
             }
 
             //System.out.println("\nadd: " + input);
@@ -660,11 +660,9 @@ namespace Lucene.Net.Util.Fst
 
             public S GetLastOutput(int labelToMatch)
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(NumArcs > 0);
-                    Debugging.Assert(Arcs[NumArcs - 1].Label == labelToMatch);
-                }
+                if(Debugging.ShouldAssert(NumArcs > 0)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(Arcs[NumArcs - 1].Label == labelToMatch)) Debugging.ThrowAssert();
                 return Arcs[NumArcs - 1].Output;
             }
 
@@ -707,9 +705,9 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(NumArcs > 0);
-                    Debugging.Assert(label == Arcs[NumArcs - 1].Label);
-                    Debugging.Assert(target == Arcs[NumArcs - 1].Target);
+                    Debugging.ThrowAssertIf(NumArcs > 0);
+                    Debugging.ThrowAssertIf(label == Arcs[NumArcs - 1].Label);
+                    Debugging.ThrowAssertIf(target == Arcs[NumArcs - 1].Target);
                 }
                 NumArcs--;
             }
@@ -718,8 +716,8 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(Owner.ValidOutput(newOutput));
-                    Debugging.Assert(NumArcs > 0);
+                    Debugging.ThrowAssertIf(Owner.ValidOutput(newOutput));
+                    Debugging.ThrowAssertIf(NumArcs > 0);
                 }
                 Arc<S> arc = Arcs[NumArcs - 1];
                 if (Debugging.ShouldAssert(arc.Label == labelToMatch)) Debugging.ThrowAssert();

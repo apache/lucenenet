@@ -45,11 +45,9 @@ namespace Lucene.Net.Search
 
             public override int Advance(int target)
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(!exhausted);
-                    Debugging.Assert(target >= 0);
-                }
+                if(Debugging.ShouldAssert(!exhausted)) Debugging.ThrowAssert();
+                if(Debugging.ShouldAssert(target >= 0)) Debugging.ThrowAssert();
+
                 exhausted = true;
                 return NO_MORE_DOCS;
             }

@@ -378,8 +378,8 @@ namespace Lucene.Net.Util.Fst
 
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(SetAssertingRootArcs(cachedRootArcs));
-                Debugging.Assert(AssertRootArcs());
+                Debugging.ThrowAssertIf(SetAssertingRootArcs(cachedRootArcs));
+                Debugging.ThrowAssertIf(AssertRootArcs());
             }
         }
 
@@ -420,37 +420,37 @@ namespace Lucene.Net.Util.Fst
 
         private bool AssertRootArcs()
         {
-            Debugging.Assert(cachedRootArcs != null);
-            Debugging.Assert(assertingCachedRootArcs != null);
+            Debugging.ThrowAssertIf(cachedRootArcs != null);
+            Debugging.ThrowAssertIf(assertingCachedRootArcs != null);
             for (int i = 0; i < cachedRootArcs.Length; i++)
             {
                 FST.Arc<T> root = cachedRootArcs[i];
                 FST.Arc<T> asserting = assertingCachedRootArcs[i];
                 if (root != null)
                 {
-                    Debugging.Assert(root.ArcIdx == asserting.ArcIdx);
-                    Debugging.Assert(root.BytesPerArc == asserting.BytesPerArc);
-                    Debugging.Assert(root.Flags == asserting.Flags);
-                    Debugging.Assert(root.Label == asserting.Label);
-                    Debugging.Assert(root.NextArc == asserting.NextArc);
+                    Debugging.ThrowAssertIf(root.ArcIdx == asserting.ArcIdx);
+                    Debugging.ThrowAssertIf(root.BytesPerArc == asserting.BytesPerArc);
+                    Debugging.ThrowAssertIf(root.Flags == asserting.Flags);
+                    Debugging.ThrowAssertIf(root.Label == asserting.Label);
+                    Debugging.ThrowAssertIf(root.NextArc == asserting.NextArc);
 
                     // LUCENENET NOTE: In .NET, IEnumerable will not equal another identical IEnumerable
                     // because it checks for reference equality, not that the list contents
                     // are the same. StructuralEqualityComparer.Default.Equals() will make that check.
-                    Debugging.Assert(typeof(T).IsValueType 
+                    Debugging.ThrowAssertIf(typeof(T).IsValueType 
                         ? JCG.EqualityComparer<T>.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput)
                         : StructuralEqualityComparer.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput));
-                    Debugging.Assert(root.Node == asserting.Node);
-                    Debugging.Assert(root.NumArcs == asserting.NumArcs);
-                    Debugging.Assert(typeof(T).IsValueType
+                    Debugging.ThrowAssertIf(root.Node == asserting.Node);
+                    Debugging.ThrowAssertIf(root.NumArcs == asserting.NumArcs);
+                    Debugging.ThrowAssertIf(typeof(T).IsValueType
                         ? JCG.EqualityComparer<T>.Default.Equals(root.Output, asserting.Output)
                         : StructuralEqualityComparer.Default.Equals(root.Output, asserting.Output));
-                    Debugging.Assert(root.PosArcsStart == asserting.PosArcsStart);
-                    Debugging.Assert(root.Target == asserting.Target);
+                    Debugging.ThrowAssertIf(root.PosArcsStart == asserting.PosArcsStart);
+                    Debugging.ThrowAssertIf(root.Target == asserting.Target);
                 }
                 else
                 {
-                    Debugging.Assert(root == null && asserting == null);
+                    Debugging.ThrowAssertIf(root == null && asserting == null);
                 }
             }
             return true;
@@ -2026,7 +2026,7 @@ namespace Lucene.Net.Util.Fst
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(fst.nodeCount == nodeCount,"fst.nodeCount={0} nodeCount={1}", fst.nodeCount, nodeCount);
-                Debugging.Assert(fst.arcCount == arcCount);
+                Debugging.ThrowAssertIf(fst.arcCount == arcCount);
                 Debugging.Assert(fst.arcWithOutputCount == arcWithOutputCount,"fst.arcWithOutputCount={0} arcWithOutputCount={1}", fst.arcWithOutputCount, arcWithOutputCount);
             }
 

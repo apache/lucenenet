@@ -90,9 +90,9 @@ namespace Lucene.Net.Index
                 packet.DelGen = nextGen++;
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(packet.Any());
-                    Debugging.Assert(CheckDeleteStats());
-                    Debugging.Assert(packet.DelGen < nextGen);
+                    Debugging.ThrowAssertIf(packet.Any());
+                    Debugging.ThrowAssertIf(CheckDeleteStats());
+                    Debugging.ThrowAssertIf(packet.DelGen < nextGen);
                     Debugging.Assert(updates.Count == 0 || updates[updates.Count - 1].DelGen < packet.DelGen, "Delete packets must be in order");
                 }
                 updates.Add(packet);
@@ -418,8 +418,8 @@ namespace Lucene.Net.Index
                 Prune(limit);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(!Any());
-                    Debugging.Assert(CheckDeleteStats());
+                    Debugging.ThrowAssertIf(!Any());
+                    Debugging.ThrowAssertIf(CheckDeleteStats());
                 }
             }
         }
@@ -705,11 +705,9 @@ namespace Lucene.Net.Index
                 numTerms2 += packet.numTermDeletes;
                 bytesUsed2 += packet.bytesUsed;
             }
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(numTerms2 == numTerms,"numTerms2={0} vs {1}", numTerms2, numTerms);
-                Debugging.Assert(bytesUsed2 == bytesUsed,"bytesUsed2={0} vs {1}", bytesUsed2, bytesUsed);
-            }
+            if(Debugging.ShouldAssert(numTerms2 == numTerms)) Debugging.ThrowAssert("numTerms2={0} vs {1}", numTerms2, numTerms);
+
+            if(Debugging.ShouldAssert(bytesUsed2 == bytesUsed)) Debugging.ThrowAssert("bytesUsed2={0} vs {1}", bytesUsed2, bytesUsed);
             return true;
         }
     }

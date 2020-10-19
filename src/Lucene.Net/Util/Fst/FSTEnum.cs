@@ -201,7 +201,7 @@ namespace Lucene.Net.Util.Fst
                         m_fst.ReadNextRealArc(arc, @in);
                         if (Debugging.AssertsEnabled)
                         {
-                            Debugging.Assert(arc.ArcIdx == mid);
+                            Debugging.ThrowAssertIf(arc.ArcIdx == mid);
                             Debugging.Assert(arc.Label == targetLabel,"arc.label={0} vs targetLabel={1}", arc.Label, targetLabel + " mid=" + mid);
                         }
                         m_output[m_upto] = m_fst.Outputs.Add(m_output[m_upto - 1], arc.Output);
@@ -375,7 +375,7 @@ namespace Lucene.Net.Util.Fst
                         m_fst.ReadNextRealArc(arc, @in);
                         if (Debugging.AssertsEnabled)
                         {
-                            Debugging.Assert(arc.ArcIdx == mid);
+                            Debugging.ThrowAssertIf(arc.ArcIdx == mid);
                             Debugging.Assert(arc.Label == targetLabel,"arc.label={0} vs targetLabel={1}", arc.Label, targetLabel + " mid=" + mid);
                         }
                         m_output[m_upto] = m_fst.Outputs.Add(m_output[m_upto - 1], arc.Output);
@@ -434,7 +434,7 @@ namespace Lucene.Net.Util.Fst
                         bool check = arc.IsLast || m_fst.ReadNextArcLabel(arc, @in) > targetLabel;
                         if (Debugging.AssertsEnabled)
                         {
-                            Debugging.Assert(check);
+                            Debugging.ThrowAssertIf(check);
                             Debugging.Assert(arc.Label < targetLabel,"arc.label={0} vs targetLabel={1}", arc.Label, targetLabel);
                         }
                         PushLast();

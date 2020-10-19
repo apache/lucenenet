@@ -250,7 +250,7 @@ namespace Lucene.Net.Index.Memory
                             return mid;
                         }
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(comparer.Compare(bytesRef, b) != 0);
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(comparer.Compare(bytesRef, b) != 0);
                     return -(low + 1);
                 }
 
@@ -460,7 +460,7 @@ namespace Lucene.Net.Index.Memory
                 {
                     if (Debugging.AssertsEnabled)
                     {
-                        Debugging.Assert(posUpto++ < freq);
+                        Debugging.ThrowAssertIf(posUpto++ < freq);
                         Debugging.Assert(!sliceReader.IsEndOfSlice, " stores offsets : {0}", startOffset);
                     }
                     if (outerInstance.outerInstance.storeOffsets)

@@ -63,9 +63,9 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(nextValues.Length >= 0);
-                Debugging.Assert(count > 0);
-                Debugging.Assert(nextValues.Offset + nextValues.Length <= nextValues.Int64s.Length);
+                Debugging.ThrowAssertIf(nextValues.Length >= 0);
+                Debugging.ThrowAssertIf(count > 0);
+                Debugging.ThrowAssertIf(nextValues.Offset + nextValues.Length <= nextValues.Int64s.Length);
             }
 
             nextValues.Offset += nextValues.Length;

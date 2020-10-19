@@ -175,8 +175,8 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(!Monitor.IsEntered(this));
-                Debugging.Assert(!Monitor.IsEntered(writer));
+                Debugging.ThrowAssertIf(!Monitor.IsEntered(this));
+                Debugging.ThrowAssertIf(!Monitor.IsEntered(writer));
             }
             purgeLock.@Lock();
             try
@@ -193,8 +193,8 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(!Monitor.IsEntered(this));
-                Debugging.Assert(!Monitor.IsEntered(writer));
+                Debugging.ThrowAssertIf(!Monitor.IsEntered(this));
+                Debugging.ThrowAssertIf(!Monitor.IsEntered(writer));
             }
             if (purgeLock.TryLock())
             {
@@ -244,11 +244,9 @@ namespace Lucene.Net.Index
             /// </summary>
             protected void PublishFlushedSegment(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates globalPacket)
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(newSegment != null);
-                    Debugging.Assert(newSegment.segmentInfo != null);
-                }
+                if(Debugging.ShouldAssert(newSegment != null)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(newSegment.segmentInfo != null)) Debugging.ThrowAssert();
                 FrozenBufferedUpdates segmentUpdates = newSegment.segmentUpdates;
                 //System.out.println("FLUSH: " + newSegment.segmentInfo.info.name);
                 if (indexWriter.infoStream.IsEnabled("DW"))

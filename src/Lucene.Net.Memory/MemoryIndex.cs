@@ -741,9 +741,9 @@ namespace Lucene.Net.Index.Memory
                 freq = new int[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_INT32)];
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(start.Length >= ord.Length);
-                    Debugging.Assert(end.Length >= ord.Length);
-                    Debugging.Assert(freq.Length >= ord.Length);
+                    Debugging.ThrowAssertIf(start.Length >= ord.Length);
+                    Debugging.ThrowAssertIf(end.Length >= ord.Length);
+                    Debugging.ThrowAssertIf(freq.Length >= ord.Length);
                 }
                 return ord;
             }
@@ -759,9 +759,9 @@ namespace Lucene.Net.Index.Memory
                 }
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(start.Length >= ord.Length);
-                    Debugging.Assert(end.Length >= ord.Length);
-                    Debugging.Assert(freq.Length >= ord.Length);
+                    Debugging.ThrowAssertIf(start.Length >= ord.Length);
+                    Debugging.ThrowAssertIf(end.Length >= ord.Length);
+                    Debugging.ThrowAssertIf(freq.Length >= ord.Length);
                 }
                 return ord;
             }

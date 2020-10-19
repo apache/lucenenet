@@ -308,8 +308,8 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(PackedInt32s.BitsRequired(val) <= BitsPerValue);
-                Debugging.Assert(fromIndex <= toIndex);
+                Debugging.ThrowAssertIf(PackedInt32s.BitsRequired(val) <= BitsPerValue);
+                Debugging.ThrowAssertIf(fromIndex <= toIndex);
             }
 
             // minimum number of values that use an exact number of full blocks

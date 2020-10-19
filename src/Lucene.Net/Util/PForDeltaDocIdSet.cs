@@ -527,8 +527,8 @@ namespace Lucene.Net.Util
                 int lo = Math.Max(blockIdx / indexInterval, 0), hi = lo + 1;
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(blockIdx == -1 || docIDs.Get(lo) <= docID);
-                    Debugging.Assert(lo + 1 == docIDs.Count || docIDs.Get(lo + 1) > docID);
+                    Debugging.ThrowAssertIf(blockIdx == -1 || docIDs.Get(lo) <= docID);
+                    Debugging.ThrowAssertIf(lo + 1 == docIDs.Count || docIDs.Get(lo + 1) > docID);
                 }
                 while (true)
                 {
@@ -562,8 +562,8 @@ namespace Lucene.Net.Util
                 }
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(docIDs.Get(hi) <= target);
-                    Debugging.Assert(hi + 1 == docIDs.Count || docIDs.Get(hi + 1) > target);
+                    Debugging.ThrowAssertIf(docIDs.Get(hi) <= target);
+                    Debugging.ThrowAssertIf(hi + 1 == docIDs.Count || docIDs.Get(hi + 1) > target);
                 }
                 return hi;
             }

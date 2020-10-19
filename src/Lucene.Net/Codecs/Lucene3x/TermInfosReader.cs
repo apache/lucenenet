@@ -293,8 +293,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                             }
                             else if (Debugging.AssertsEnabled)
                             {
-                                Debugging.Assert(SameTermInfo(ti, tiOrd, enumerator));
-                                Debugging.Assert((int)enumerator.position == tiOrd.termOrd);
+                                Debugging.ThrowAssertIf(SameTermInfo(ti, tiOrd, enumerator));
+                                Debugging.ThrowAssertIf((int)enumerator.position == tiOrd.termOrd);
                             }
                         }
                     }
@@ -335,8 +335,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(SameTermInfo(ti_, tiOrd, enumerator));
-                    Debugging.Assert(enumerator.position == tiOrd.termOrd);
+                    Debugging.ThrowAssertIf(SameTermInfo(ti_, tiOrd, enumerator));
+                    Debugging.ThrowAssertIf(enumerator.position == tiOrd.termOrd);
                 }
             }
             else

@@ -816,7 +816,7 @@ namespace Lucene.Net.Search.Grouping
         {
             BytesRef facetPrefixBR = facetPrefix == null ? null : new BytesRef(facetPrefix);
             // DocValues cannot be multi-valued:
-            if (Debugging.AssertsEnabled) Debugging.Assert(!multipleFacetsPerDocument || !groupField.EndsWith("_dv", StringComparison.Ordinal));
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!multipleFacetsPerDocument || !groupField.EndsWith("_dv", StringComparison.Ordinal));
             return TermGroupFacetCollector.CreateTermGroupFacetCollector(groupField, facetField, multipleFacetsPerDocument, facetPrefixBR, Random.nextInt(1024));
         }
 

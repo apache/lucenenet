@@ -167,8 +167,8 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(new BytesRef(leafCell.GetTokenBytes()).Equals(termBytes));
-                    Debugging.Assert(!leafCell.Equals(lastLeaf));//don't call for same leaf again
+                    Debugging.ThrowAssertIf(new BytesRef(leafCell.GetTokenBytes()).Equals(termBytes));
+                    Debugging.ThrowAssertIf(!leafCell.Equals(lastLeaf));//don't call for same leaf again
                 }
                 lastLeaf = leafCell;
 

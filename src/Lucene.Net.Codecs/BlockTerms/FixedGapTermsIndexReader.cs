@@ -401,7 +401,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 if (Debugging.AssertsEnabled)
                                 {
                                     Debugging.Assert(indexStart + termOffset < clone.Length, "indexStart={0} termOffset={1} len={2}", indexStart, termOffset, clone.Length);
-                                    Debugging.Assert(indexStart + termOffset + numTermBytes < clone.Length);
+                                    Debugging.ThrowAssertIf(indexStart + termOffset + numTermBytes < clone.Length);
                                 }
 
                                 outerInstance.outerInstance.termBytes.Copy(clone, numTermBytes);

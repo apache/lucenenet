@@ -143,7 +143,7 @@ namespace Lucene.Net.Codecs.SimpleText
             var field = fields[fieldInfo.Name];
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(field != null);
+                Debugging.ThrowAssertIf(field != null);
 
                 // SegmentCoreReaders already verifies this field is valid:
                 Debugging.Assert(field != null, "field={0} fields={1}", fieldInfo.Name, fields);
@@ -277,7 +277,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                     _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * docId);
                     SimpleTextUtil.ReadLine(_input, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
                     int len;
                     try
                     {
@@ -334,7 +334,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * index);
                     SimpleTextUtil.ReadLine(_input, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
                     int len;
                     try
                     {

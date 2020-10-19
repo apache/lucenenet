@@ -308,7 +308,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 // The 3 bytes starting at downTo make up 1
                 // unicode character:
-                if (Debugging.AssertsEnabled) Debugging.Assert(IsHighBMPChar(term.Bytes, pos));
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsHighBMPChar(term.Bytes, pos));
 
                 // NOTE: we cannot make this assert, because
                 // AutomatonQuery legitimately sends us malformed UTF8
@@ -465,11 +465,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     Console.WriteLine("  try pop");
                 }
 
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(newSuffixStart <= prevTerm.Length);
-                    Debugging.Assert(newSuffixStart < scratchTerm.Length || newSuffixStart == 0);
-                }
+                if(Debugging.ShouldAssert(newSuffixStart <= prevTerm.Length)) Debugging.ThrowAssert();
+
+
+                if(Debugging.ShouldAssert(newSuffixStart < scratchTerm.Length || newSuffixStart == 0)) Debugging.ThrowAssert();
 
                 if (prevTerm.Length > newSuffixStart && IsNonBMPChar(prevTerm.Bytes, newSuffixStart) && IsHighBMPChar(scratchTerm.Bytes, newSuffixStart))
                 {
@@ -599,11 +598,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 // this code assumes TermInfosReader/SegmentTermEnum
                 // always use BytesRef.offset == 0
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(prevTerm.Offset == 0);
-                    Debugging.Assert(scratchTerm.Offset == 0);
-                }
+                if(Debugging.ShouldAssert(prevTerm.Offset == 0)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(scratchTerm.Offset == 0)) Debugging.ThrowAssert();
 
                 // Need to loop here because we may need to do multiple
                 // pops, and possibly a continue in the end, ie:
@@ -919,7 +916,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t2 == null || t2.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(t2 == null || !t2.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(t2 == null || !t2.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         current = null;
                         return SeekStatus.END;
                     }
@@ -1003,7 +1000,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t == null || t.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         current = null;
                         return false;
                     }
@@ -1029,7 +1026,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t == null || t.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         return false;
                     }
                     else

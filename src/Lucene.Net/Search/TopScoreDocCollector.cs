@@ -57,8 +57,8 @@ namespace Lucene.Net.Search
                 // this collector cannot handle these scores:
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(!float.IsNegativeInfinity(score));
-                    Debugging.Assert(!float.IsNaN(score));
+                    Debugging.ThrowAssertIf(!float.IsNegativeInfinity(score));
+                    Debugging.ThrowAssertIf(!float.IsNaN(score));
                 }
 
                 m_totalHits++;
@@ -103,8 +103,8 @@ namespace Lucene.Net.Search
                 if (Debugging.AssertsEnabled)
                 {
                     // this collector cannot handle these scores:
-                    Debugging.Assert(!float.IsNegativeInfinity(score));
-                    Debugging.Assert(!float.IsNaN(score));
+                    Debugging.ThrowAssertIf(!float.IsNegativeInfinity(score));
+                    Debugging.ThrowAssertIf(!float.IsNaN(score));
                 }
 
                 m_totalHits++;

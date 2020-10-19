@@ -78,8 +78,8 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(FieldSeen(field.Name));
-                Debugging.Assert(field.DocValuesType == DocValuesType.NUMERIC ||
+                Debugging.ThrowAssertIf(FieldSeen(field.Name));
+                Debugging.ThrowAssertIf(field.DocValuesType == DocValuesType.NUMERIC ||
                              field.NormType == DocValuesType.NUMERIC);
             }
             WriteFieldEntry(field, DocValuesType.NUMERIC);
@@ -141,8 +141,8 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(FieldSeen(field.Name));
-                Debugging.Assert(field.DocValuesType == DocValuesType.BINARY);
+                Debugging.ThrowAssertIf(FieldSeen(field.Name));
+                Debugging.ThrowAssertIf(field.DocValuesType == DocValuesType.BINARY);
             }
 
             var maxLength = 0;
@@ -205,8 +205,8 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(FieldSeen(field.Name));
-                Debugging.Assert(field.DocValuesType == DocValuesType.SORTED);
+                Debugging.ThrowAssertIf(FieldSeen(field.Name));
+                Debugging.ThrowAssertIf(field.DocValuesType == DocValuesType.SORTED);
             }
             WriteFieldEntry(field, DocValuesType.SORTED);
 
@@ -294,8 +294,8 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(FieldSeen(field.Name));
-                Debugging.Assert(field.DocValuesType == DocValuesType.SORTED_SET);
+                Debugging.ThrowAssertIf(FieldSeen(field.Name));
+                Debugging.ThrowAssertIf(field.DocValuesType == DocValuesType.SORTED_SET);
             }
             WriteFieldEntry(field, DocValuesType.SORTED_SET);
 

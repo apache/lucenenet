@@ -726,11 +726,9 @@ namespace Lucene.Net.Codecs
                                 // Suffix is 0, ie prefix 'foo' and term is
                                 // 'foo' so the term has empty string suffix
                                 // in this block
-                                if (Debugging.AssertsEnabled)
-                                {
-                                    Debugging.Assert(lastSuffixLeadLabel == -1);
-                                    Debugging.Assert(numSubs == 0);
-                                }
+                                if(Debugging.ShouldAssert(lastSuffixLeadLabel == -1)) Debugging.ThrowAssert();
+
+                                if(Debugging.ShouldAssert(numSubs == 0)) Debugging.ThrowAssert();
                                 suffixLeadLabel = -1;
                             }
                             else
@@ -877,11 +875,9 @@ namespace Lucene.Net.Codecs
                                 // block.  NOTE that this may be too small (<
                                 // minItemsInBlock); need a true segmenter
                                 // here
-                                if (Debugging.AssertsEnabled)
-                                {
-                                    Debugging.Assert(startLabel != -1);
-                                    Debugging.Assert(firstBlock != null);
-                                }
+                                if(Debugging.ShouldAssert(startLabel != -1)) Debugging.ThrowAssert();
+
+                                if(Debugging.ShouldAssert(firstBlock != null)) Debugging.ThrowAssert();
                                 prevTerm.Int32s[prevTerm.Offset + prefixLength] = startLabel;
                                 //System.out.println("  final " + (numSubs-sub-1) + " subs");
                                 /*
@@ -1207,11 +1203,9 @@ namespace Lucene.Net.Codecs
                     // We better have one final "root" block:
                     if (Debugging.ShouldAssert(pending.Count == 1 && !pending[0].IsTerm)) Debugging.ThrowAssert("pending.size()={0} pending={1}", pending.Count, pending);
                     PendingBlock root = (PendingBlock)pending[0];
-                    if (Debugging.AssertsEnabled)
-                    {
-                        Debugging.Assert(root.Prefix.Length == 0);
-                        Debugging.Assert(root.Index.EmptyOutput != null);
-                    }
+                    if(Debugging.ShouldAssert(root.Prefix.Length == 0)) Debugging.ThrowAssert();
+
+                    if(Debugging.ShouldAssert(root.Index.EmptyOutput != null)) Debugging.ThrowAssert();
 
                     this.sumTotalTermFreq = sumTotalTermFreq;
                     this.sumDocFreq = sumDocFreq;
@@ -1236,9 +1230,9 @@ namespace Lucene.Net.Codecs
                 {
                     if (Debugging.AssertsEnabled)
                     {
-                        Debugging.Assert(sumTotalTermFreq == 0 || fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY && sumTotalTermFreq == -1);
-                        Debugging.Assert(sumDocFreq == 0);
-                        Debugging.Assert(docCount == 0);
+                        Debugging.ThrowAssertIf(sumTotalTermFreq == 0 || fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY && sumTotalTermFreq == -1);
+                        Debugging.ThrowAssertIf(sumDocFreq == 0);
+                        Debugging.ThrowAssertIf(docCount == 0);
                     }
                 }
             }

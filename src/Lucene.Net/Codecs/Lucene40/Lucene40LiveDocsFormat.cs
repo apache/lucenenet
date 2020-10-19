@@ -95,7 +95,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(liveDocs.Count() == info.Info.DocCount - info.DelCount,"liveDocs.count()={0} info.docCount={1}", liveDocs.Count(), info.Info.DocCount + " info.getDelCount()=" + info.DelCount);
-                Debugging.Assert(liveDocs.Length == info.Info.DocCount);
+                Debugging.ThrowAssertIf(liveDocs.Length == info.Info.DocCount);
             }
             return liveDocs;
         }
@@ -107,8 +107,8 @@ namespace Lucene.Net.Codecs.Lucene40
             BitVector liveDocs = (BitVector)bits;
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(liveDocs.Count() == info.Info.DocCount - info.DelCount - newDelCount);
-                Debugging.Assert(liveDocs.Length == info.Info.DocCount);
+                Debugging.ThrowAssertIf(liveDocs.Count() == info.Info.DocCount - info.DelCount - newDelCount);
+                Debugging.ThrowAssertIf(liveDocs.Length == info.Info.DocCount);
             }
             liveDocs.Write(dir, filename, context);
         }

@@ -779,11 +779,10 @@ namespace Lucene.Net.Util
             {
                 initialCapacity = Math.Max(MIN_CAPACITY, initialCapacity);
 
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(initialCapacity > 0, "Initial capacity must be between (0, {0}].", int.MaxValue);
-                    Debugging.Assert(loadFactor > 0 && loadFactor < 1, "Load factor must be between (0, 1).");
-                }
+                if(Debugging.ShouldAssert(initialCapacity > 0)) Debugging.ThrowAssert("Initial capacity must be between (0, {0}].", int.MaxValue);
+
+
+                if(Debugging.ShouldAssert(loadFactor > 0 && loadFactor < 1)) Debugging.ThrowAssert("Load factor must be between (0, 1).");
                 this.LoadFactor = loadFactor;
                 AllocateBuffers(RoundCapacity(initialCapacity));
             }

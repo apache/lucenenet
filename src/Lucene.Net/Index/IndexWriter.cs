@@ -462,8 +462,10 @@ namespace Lucene.Net.Index
                 lock (this)
                 {
                     int idx = outerInstance.segmentInfos.IndexOf(info);
-                    Debugging.Assert(idx != -1, "info={0} isn't live", info);
-                    Debugging.Assert(outerInstance.segmentInfos.Info(idx) == info, "info={0} doesn't match live info in segmentInfos", info);
+                    
+                    if(Debugging.ShouldAssert(idx != -1)) Debugging.ThrowAssert("info={0} isn't live", info);
+                    if(Debugging.ShouldAssert(outerInstance.segmentInfos.Info(idx) == info)) Debugging.ThrowAssert("info={0} doesn't match live info in segmentInfos", info);
+
                     return true;
                 }
             }
@@ -1276,7 +1278,7 @@ namespace Lucene.Net.Index
                 {
                     closed = true;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates,"{0} {1}", docWriter.perThreadPool.NumDeactivatedThreadStates(), docWriter.perThreadPool.MaxThreadStates);
+                if (Debugging.ShouldAssert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates)) Debugging.ThrowAssert("{0} {1}", docWriter.perThreadPool.NumDeactivatedThreadStates(), docWriter.perThreadPool.MaxThreadStates);
             }
             catch (OutOfMemoryException oom)
             {
@@ -1642,11 +1644,9 @@ namespace Lucene.Net.Index
                     int subIndex = ReaderUtil.SubIndex(docID, leaves);
                     reader = leaves[subIndex].AtomicReader;
                     docID -= leaves[subIndex].DocBase;
-                    if (Debugging.AssertsEnabled)
-                    {
-                        Debugging.Assert(docID >= 0);
-                        Debugging.Assert(docID < reader.MaxDoc);
-                    }
+                    Debugging.ThrowAssertIf(docID >= 0);
+
+                    Debugging.ThrowAssertIf(docID < reader.MaxDoc);
                 }
 
                 if (!(reader is SegmentReader))
@@ -2587,7 +2587,7 @@ namespace Lucene.Net.Index
                     IOUtils.Dispose(writeLock); // release write lock
                     writeLock = null;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates,"{0} {1}", docWriter.perThreadPool.NumDeactivatedThreadStates(), docWriter.perThreadPool.MaxThreadStates);
+                    if (Debugging.ShouldAssert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates)) Debugging.ThrowAssert("{0} {1}", docWriter.perThreadPool.NumDeactivatedThreadStates(), docWriter.perThreadPool.MaxThreadStates);
                 }
 
                 success = true;
@@ -3061,7 +3061,7 @@ namespace Lucene.Net.Index
                         JCG.HashSet<string> copiedFiles = new JCG.HashSet<string>();
                         foreach (SegmentCommitInfo info in sis.Segments)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(!infos.Contains(info),"dup info dir={0} name={1}", info.Info.Dir, info.Info.Name);
+                            if (Debugging.ShouldAssert(!infos.Contains(info))) Debugging.ThrowAssert("dup info dir={0} name={1}", info.Info.Dir, info.Info.Name);
 
                             string newSegName = NewSegmentName();
 
@@ -3448,11 +3448,9 @@ namespace Lucene.Net.Index
                         continue;
                     }
 
-                    if (Debugging.AssertsEnabled)
-                    {
-                        Debugging.Assert(!SlowFileExists(directory, newFileName), "file \"{0}\" already exists; siFiles={1}", newFileName, string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", siFiles));
-                        Debugging.Assert(!copiedFiles.Contains(file), "file \"{0}\" is being copied more than once", file);
-                    }
+                    if(Debugging.ShouldAssert(!SlowFileExists(directory, newFileName))) Debugging.ThrowAssert("file \"{0}\" already exists; siFiles={1}", newFileName, string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", siFiles));
+                    if(Debugging.ShouldAssert(!copiedFiles.Contains(file))) Debugging.ThrowAssert("file \"{0}\" is being copied more than once", file);
+
                     copiedFiles.Add(file);
                     info.Info.Dir.Copy(directory, file, newFileName, context);
                 }
@@ -4154,12 +4152,9 @@ namespace Lucene.Net.Index
                     {
                         // If we had deletions on starting the merge we must
                         // still have deletions now:
-                        if (Debugging.AssertsEnabled)
-                        {
-                            Debugging.Assert(currentLiveDocs != null);
-                            Debugging.Assert(prevLiveDocs.Length == docCount);
-                            Debugging.Assert(currentLiveDocs.Length == docCount);
-                        }
+                        Debugging.ThrowAssertIf(currentLiveDocs != null);
+                        Debugging.ThrowAssertIf(prevLiveDocs.Length == docCount);
+                        Debugging.ThrowAssertIf(currentLiveDocs.Length == docCount);
 
                         // There were deletes on this segment when the merge
                         // started.  The merge has collapsed away those
@@ -4695,11 +4690,10 @@ namespace Lucene.Net.Index
                     mergingSegments.Add(info);
                 }
 
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(merge.EstimatedMergeBytes == 0);
-                    Debugging.Assert(merge.totalMergeBytes == 0);
-                }
+                if(Debugging.ShouldAssert(merge.EstimatedMergeBytes == 0)) Debugging.ThrowAssert();
+
+
+                if(Debugging.ShouldAssert(merge.totalMergeBytes == 0)) Debugging.ThrowAssert();
                 foreach (SegmentCommitInfo info in merge.Segments)
                 {
                     if (info.Info.DocCount > 0)
@@ -4751,13 +4745,9 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(TestPoint("startMergeInit"));
-
-                    Debugging.Assert(merge.registerDone);
-                    Debugging.Assert(merge.MaxNumSegments == -1 || merge.MaxNumSegments > 0);
-                }
+                Debugging.ThrowAssertIf(TestPoint("startMergeInit"));
+                Debugging.ThrowAssertIf(merge.registerDone);
+                Debugging.ThrowAssertIf(merge.MaxNumSegments == -1 || merge.MaxNumSegments > 0);
 
                 if (hitOOM)
                 {
@@ -4988,8 +4978,8 @@ namespace Lucene.Net.Index
 
                         if (Debugging.AssertsEnabled)
                         {
-                            Debugging.Assert(reader != null);
-                            Debugging.Assert(rld.VerifyDocCounts());
+                            Debugging.ThrowAssertIf(reader != null);
+                            Debugging.ThrowAssertIf(rld.VerifyDocCounts());
                         }
 
                         if (infoStream.IsEnabled("IW"))
@@ -5379,13 +5369,13 @@ namespace Lucene.Net.Index
             ICollection<string> files = toSync.GetFiles(directory, false);
             foreach (string fileName in files)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(SlowFileExists(directory, fileName), "file {0} does not exist; files={1}, ", fileName, Arrays.ToString(directory.ListAll()));
+                if (Debugging.ShouldAssert(SlowFileExists(directory, fileName))) Debugging.ThrowAssert("file {0} does not exist; files={1}, ", fileName, Arrays.ToString(directory.ListAll()));
                 // If this trips it means we are missing a call to
                 // .checkpoint somewhere, because by the time we
                 // are called, deleter should know about every
                 // file referenced by the current head
                 // segmentInfos:
-                if (Debugging.AssertsEnabled) Debugging.Assert(deleter.Exists(fileName),"IndexFileDeleter doesn't know about file {0}", fileName);
+                if (Debugging.ShouldAssert(deleter.Exists(fileName))) Debugging.ThrowAssert("IndexFileDeleter doesn't know about file {0}", fileName);
             }
             return true;
         }
@@ -5425,11 +5415,8 @@ namespace Lucene.Net.Index
         /// </summary>
         private void StartCommit(SegmentInfos toSync)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(TestPoint("startStartCommit"));
-                Debugging.Assert(pendingCommit == null);
-            }
+            Debugging.ThrowAssertIf(TestPoint("startStartCommit"));
+            Debugging.ThrowAssertIf(pendingCommit == null);
 
             if (hitOOM)
             {

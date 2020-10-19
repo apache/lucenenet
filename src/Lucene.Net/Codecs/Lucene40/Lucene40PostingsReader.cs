@@ -783,11 +783,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public SegmentDocsAndPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, IBits liveDocs)
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
-                    Debugging.Assert(!fieldInfo.HasPayloads);
-                }
+                if(Debugging.ShouldAssert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(!fieldInfo.HasPayloads)) Debugging.ThrowAssert();
 
                 this.liveDocs = liveDocs;
 
@@ -1008,8 +1006,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 storePayloads = fieldInfo.HasPayloads;
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0);
-                    Debugging.Assert(storePayloads || storeOffsets);
+                    Debugging.ThrowAssertIf(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0);
+                    Debugging.ThrowAssertIf(storePayloads || storeOffsets);
                 }
                 if (payload == null)
                 {
@@ -1250,11 +1248,9 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         return null;
                     }
-                    if (Debugging.AssertsEnabled)
-                    {
-                        Debugging.Assert(lazyProxPointer == -1);
-                        Debugging.Assert(posPendingCount < freq);
-                    }
+                    if(Debugging.ShouldAssert(lazyProxPointer == -1)) Debugging.ThrowAssert();
+
+                    if(Debugging.ShouldAssert(posPendingCount < freq)) Debugging.ThrowAssert();
 
                     if (payloadPending)
                     {

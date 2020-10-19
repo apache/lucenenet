@@ -276,8 +276,8 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(TestPoint("DocumentsWriterPerThread addDocument start"));
-                Debugging.Assert(deleteQueue != null);
+                Debugging.ThrowAssertIf(TestPoint("DocumentsWriterPerThread addDocument start"));
+                Debugging.ThrowAssertIf(deleteQueue != null);
             }
             docState.doc = doc;
             docState.analyzer = analyzer;
@@ -335,8 +335,8 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(TestPoint("DocumentsWriterPerThread addDocuments start"));
-                Debugging.Assert(deleteQueue != null);
+                Debugging.ThrowAssertIf(TestPoint("DocumentsWriterPerThread addDocuments start"));
+                Debugging.ThrowAssertIf(deleteQueue != null);
             }
             docState.analyzer = analyzer;
             if (INFO_VERBOSE && infoStream.IsEnabled("DWPT"))
@@ -511,7 +511,7 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(numDocsInRAM > 0);
+                Debugging.ThrowAssertIf(numDocsInRAM > 0);
                 Debugging.Assert(deleteSlice.IsEmpty, "all deletes must be applied in prepareFlush");
             }
             segmentInfo.DocCount = numDocsInRAM;

@@ -50,9 +50,9 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(endIndex - startIndex >= 0);
-                Debugging.Assert(startIndex >= 0);
-                Debugging.Assert(endIndex >= 0);
+                Debugging.ThrowAssertIf(endIndex - startIndex >= 0);
+                Debugging.ThrowAssertIf(startIndex >= 0);
+                Debugging.ThrowAssertIf(endIndex >= 0);
             }
 
             this.pool = pool;
@@ -87,8 +87,8 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(!Eof());
-                Debugging.Assert(upto <= limit);
+                Debugging.ThrowAssertIf(!Eof());
+                Debugging.ThrowAssertIf(upto <= limit);
             }
             if (upto == limit)
             {

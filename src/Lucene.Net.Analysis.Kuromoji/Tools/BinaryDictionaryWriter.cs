@@ -120,8 +120,8 @@ namespace Lucene.Net.Analysis.Ja.Util
 
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(leftId == rightId);
-                Debugging.Assert(leftId < 4096); // there are still unused bits
+                Debugging.ThrowAssertIf(leftId == rightId);
+                Debugging.ThrowAssertIf(leftId < 4096); // there are still unused bits
             }
                                          // add pos mapping
             int toFill = 1 + leftId - posDict.Count;
@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
 
             string existing = posDict[leftId];
-            if (Debugging.AssertsEnabled) Debugging.Assert(existing == null || existing.Equals(fullPOSData, StringComparison.Ordinal));
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(existing == null || existing.Equals(fullPOSData, StringComparison.Ordinal));
             posDict[leftId] = fullPOSData;
 
             m_buffer.PutInt16((short)(leftId << 3 | flags));

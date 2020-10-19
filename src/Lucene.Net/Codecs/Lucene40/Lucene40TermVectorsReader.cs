@@ -122,11 +122,11 @@ namespace Lucene.Net.Codecs.Lucene40
                 int tvfVersion = CodecUtil.CheckHeader(tvf, CODEC_NAME_FIELDS, VERSION_START, VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(HEADER_LENGTH_INDEX == tvx.GetFilePointer());
-                    Debugging.Assert(HEADER_LENGTH_DOCS == tvd.GetFilePointer());
-                    Debugging.Assert(HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
-                    Debugging.Assert(tvxVersion == tvdVersion);
-                    Debugging.Assert(tvxVersion == tvfVersion);
+                    Debugging.ThrowAssertIf(HEADER_LENGTH_INDEX == tvx.GetFilePointer());
+                    Debugging.ThrowAssertIf(HEADER_LENGTH_DOCS == tvd.GetFilePointer());
+                    Debugging.ThrowAssertIf(HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
+                    Debugging.ThrowAssertIf(tvxVersion == tvdVersion);
+                    Debugging.ThrowAssertIf(tvxVersion == tvfVersion);
                 }
 
                 numTotalDocs = (int)(tvx.Length - HEADER_LENGTH_INDEX >> 4);

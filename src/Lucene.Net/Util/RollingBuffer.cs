@@ -156,7 +156,7 @@ namespace Lucene.Net.Util
             int toFree = count - (nextPos - pos);
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(toFree >= 0);
+                Debugging.ThrowAssertIf(toFree >= 0);
                 Debugging.Assert(toFree <= count,"toFree={0} count={1}", toFree, count);
             }
             int index = nextWrite - count;

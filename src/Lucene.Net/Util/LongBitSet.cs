@@ -303,11 +303,9 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> One-past the last bit to flip </param>
         public void Flip(long startIndex, long endIndex)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(startIndex >= 0 && startIndex < numBits);
-                Debugging.Assert(endIndex >= 0 && endIndex <= numBits);
-            }
+            if(Debugging.ShouldAssert(startIndex >= 0 && startIndex < numBits)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(endIndex >= 0 && endIndex <= numBits)) Debugging.ThrowAssert();
             if (endIndex <= startIndex)
             {
                 return;
@@ -351,11 +349,9 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> One-past the last bit to set </param>
         public void Set(long startIndex, long endIndex)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(startIndex >= 0 && startIndex < numBits);
-                Debugging.Assert(endIndex >= 0 && endIndex <= numBits);
-            }
+            if(Debugging.ShouldAssert(startIndex >= 0 && startIndex < numBits)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(endIndex >= 0 && endIndex <= numBits)) Debugging.ThrowAssert();
             if (endIndex <= startIndex)
             {
                 return;
@@ -385,11 +381,9 @@ namespace Lucene.Net.Util
         /// <param name="endIndex"> One-past the last bit to clear </param>
         public void Clear(long startIndex, long endIndex)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(startIndex >= 0 && startIndex < numBits);
-                Debugging.Assert(endIndex >= 0 && endIndex <= numBits);
-            }
+            if(Debugging.ShouldAssert(startIndex >= 0 && startIndex < numBits)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(endIndex >= 0 && endIndex <= numBits)) Debugging.ThrowAssert();
             if (endIndex <= startIndex)
             {
                 return;

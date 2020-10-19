@@ -1219,10 +1219,10 @@ namespace Lucene.Net.Codecs.Memory
                                     states[i].transitionMax = states[i].transitions[states[i].transitionUpto].Max;
                                     if (Debugging.AssertsEnabled)
                                     {
-                                        Debugging.Assert(states[i].transitionMin >= 0);
-                                        Debugging.Assert(states[i].transitionMin <= 255);
-                                        Debugging.Assert(states[i].transitionMax >= 0);
-                                        Debugging.Assert(states[i].transitionMax <= 255);
+                                        Debugging.ThrowAssertIf(states[i].transitionMin >= 0);
+                                        Debugging.ThrowAssertIf(states[i].transitionMin <= 255);
+                                        Debugging.ThrowAssertIf(states[i].transitionMax >= 0);
+                                        Debugging.ThrowAssertIf(states[i].transitionMax <= 255);
                                     }
                                 }
 
@@ -1310,7 +1310,7 @@ namespace Lucene.Net.Codecs.Memory
                                             while (termOrd < outerInstance.terms.Length &&
                                                    outerInstance.Compare(termOrd, startTerm) <= 0)
                                             {
-                                                if (Debugging.AssertsEnabled) Debugging.Assert(termOrd == startTermOrd ||
+                                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termOrd == startTermOrd ||
                                                              outerInstance.skipOffsets[termOrd] ==
                                                              outerInstance.skipOffsets[termOrd + 1]);
                                                 termOrd++;
@@ -1482,10 +1482,10 @@ namespace Lucene.Net.Codecs.Memory
                             state.transitionMax = state.transitions[state.transitionUpto].Max;
                             if (Debugging.AssertsEnabled)
                             {
-                                Debugging.Assert(state.transitionMin >= 0);
-                                Debugging.Assert(state.transitionMin <= 255);
-                                Debugging.Assert(state.transitionMax >= 0);
-                                Debugging.Assert(state.transitionMax <= 255);
+                                Debugging.ThrowAssertIf(state.transitionMin >= 0);
+                                Debugging.ThrowAssertIf(state.transitionMin <= 255);
+                                Debugging.ThrowAssertIf(state.transitionMax >= 0);
+                                Debugging.ThrowAssertIf(state.transitionMax <= 255);
                             }
                         }
 

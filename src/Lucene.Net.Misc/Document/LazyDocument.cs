@@ -163,11 +163,9 @@ namespace Lucene.Net.Documents
                 {
                     outerInstance.FetchRealValues(name, fieldNum);
                 }
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(HasBeenLoaded, "field value was not lazy loaded");
-                    Debugging.Assert(realValue.Name.Equals(Name, StringComparison.Ordinal), "realvalue name != name: {0} != {1}", realValue.Name, Name);
-                }
+                if(Debugging.ShouldAssert(HasBeenLoaded)) Debugging.ThrowAssert("field value was not lazy loaded");
+
+                if(Debugging.ShouldAssert(realValue.Name.Equals(Name)) Debugging.ThrowAssert(StringComparison.Ordinal), "realvalue name != name: {0} != {1}", realValue.Name, Name);
 
                 return realValue;
             }

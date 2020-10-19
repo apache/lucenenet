@@ -287,11 +287,9 @@ namespace Lucene.Net.Util.Fst
         /// Reverse from <paramref name="srcPos"/>, inclusive, to <paramref name="destPos"/>, inclusive. </summary>
         public virtual void Reverse(long srcPos, long destPos)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(srcPos < destPos);
-                Debugging.Assert(destPos < Position);
-            }
+            if(Debugging.ShouldAssert(srcPos < destPos)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(destPos < Position)) Debugging.ThrowAssert();
             //System.out.println("reverse src=" + srcPos + " dest=" + destPos);
 
             int srcBlockIndex = (int)(srcPos >> blockBits);
@@ -358,11 +356,9 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public virtual void Truncate(long newLen)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(newLen <= Position);
-                Debugging.Assert(newLen >= 0);
-            }
+            if(Debugging.ShouldAssert(newLen <= Position)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(newLen >= 0)) Debugging.ThrowAssert();
             int blockIndex = (int)(newLen >> blockBits);
             nextWrite = (int)(newLen & blockMask);
             if (nextWrite == 0)

@@ -153,11 +153,9 @@ namespace Lucene.Net.Search.Grouping
             {
 
                 //System.out.println("    ltcheck");
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(group1 != group2);
-                    Debugging.Assert(group1.comparerSlot != group2.comparerSlot);
-                }
+                if(Debugging.ShouldAssert(group1 != group2)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(group1.comparerSlot != group2.comparerSlot)) Debugging.ThrowAssert();
 
                 int numComparers = outerInstance.comparers.Length;
                 for (int compIDX = 0; compIDX < numComparers; compIDX++)

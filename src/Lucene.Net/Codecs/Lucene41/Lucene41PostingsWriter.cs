@@ -377,11 +377,9 @@ namespace Lucene.Net.Codecs.Lucene41
 
             if (fieldHasOffsets)
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(startOffset >= lastStartOffset);
-                    Debugging.Assert(endOffset >= startOffset);
-                }
+                if(Debugging.ShouldAssert(startOffset >= lastStartOffset)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(endOffset >= startOffset)) Debugging.ThrowAssert();
                 offsetStartDeltaBuffer[posBufferUpto] = startOffset - lastStartOffset;
                 offsetLengthBuffer[posBufferUpto] = endOffset - startOffset;
                 lastStartOffset = startOffset;

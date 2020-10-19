@@ -42,11 +42,9 @@ namespace Lucene.Net.Util.Fst
 
         public override CharsRef Common(CharsRef output1, CharsRef output2)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(output1 != null);
-                Debugging.Assert(output2 != null);
-            }
+            if(Debugging.ShouldAssert(output1 != null)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(output2 != null)) Debugging.ThrowAssert();
 
             int pos1 = output1.Offset;
             int pos2 = output2.Offset;
@@ -84,11 +82,9 @@ namespace Lucene.Net.Util.Fst
 
         public override CharsRef Subtract(CharsRef output, CharsRef inc)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(output != null);
-                Debugging.Assert(inc != null);
-            }
+            if(Debugging.ShouldAssert(output != null)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(inc != null)) Debugging.ThrowAssert();
             if (inc == NO_OUTPUT)
             {
                 // no prefix removed
@@ -104,7 +100,7 @@ namespace Lucene.Net.Util.Fst
                 if (Debugging.AssertsEnabled)
                 {
                     Debugging.Assert(inc.Length < output.Length,"inc.Length={0} vs output.Length={1}", inc.Length, output.Length);
-                    Debugging.Assert(inc.Length > 0);
+                    Debugging.ThrowAssertIf(inc.Length > 0);
                 }
                 return new CharsRef(output.Chars, output.Offset + inc.Length, output.Length - inc.Length);
             }
@@ -112,11 +108,9 @@ namespace Lucene.Net.Util.Fst
 
         public override CharsRef Add(CharsRef prefix, CharsRef output)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(prefix != null);
-                Debugging.Assert(output != null);
-            }
+            if(Debugging.ShouldAssert(prefix != null)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(output != null)) Debugging.ThrowAssert();
             if (prefix == NO_OUTPUT)
             {
                 return output;
@@ -127,11 +121,9 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(prefix.Length > 0);
-                    Debugging.Assert(output.Length > 0);
-                }
+                if(Debugging.ShouldAssert(prefix.Length > 0)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(output.Length > 0)) Debugging.ThrowAssert();
                 var result = new CharsRef(prefix.Length + output.Length);
                 Array.Copy(prefix.Chars, prefix.Offset, result.Chars, 0, prefix.Length);
                 Array.Copy(output.Chars, output.Offset, result.Chars, prefix.Length, output.Length);

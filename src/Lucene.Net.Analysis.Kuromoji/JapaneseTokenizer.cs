@@ -1466,11 +1466,9 @@ namespace Lucene.Net.Analysis.Ja
         public void FreeBefore(int pos)
         {
             int toFree = count - (nextPos - pos);
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(toFree >= 0);
-                Debugging.Assert(toFree <= count);
-            }
+            if(Debugging.ShouldAssert(toFree >= 0)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(toFree <= count)) Debugging.ThrowAssert();
             int index = nextWrite - count;
             if (index < 0)
             {

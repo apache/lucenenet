@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(length > 0);
+                Debugging.ThrowAssertIf(length > 0);
                 Debugging.Assert(InBounds(posStart), "posStart={0} length={1}", posStart, length);
             }
             //System.out.println("    buffer.Get posStart=" + posStart + " len=" + length);
@@ -169,17 +169,13 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         public void FreeBefore(int pos)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(pos >= 0);
-                Debugging.Assert(pos <= nextPos);
-            }
+            if(Debugging.ShouldAssert(pos >= 0)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(pos <= nextPos)) Debugging.ThrowAssert();
             int newCount = nextPos - pos;
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(newCount <= count, "newCount={0} count={1}", newCount, count);
-                Debugging.Assert(newCount <= buffer.Length, "newCount={0} buf.length={1}", newCount, buffer.Length);
-            }
+            if(Debugging.ShouldAssert(newCount <= count)) Debugging.ThrowAssert("newCount={0} count={1}", newCount, count);
+
+            if(Debugging.ShouldAssert(newCount <= buffer.Length)) Debugging.ThrowAssert("newCount={0} buf.length={1}", newCount, buffer.Length);
             count = newCount;
         }
     }

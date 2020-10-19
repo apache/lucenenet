@@ -116,8 +116,8 @@ namespace Lucene.Net.Codecs.Compressing
                 CodecUtil.WriteHeader(fieldsStream, codecNameDat, VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.GetFilePointer());
-                    Debugging.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
+                    Debugging.ThrowAssertIf(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.GetFilePointer());
+                    Debugging.ThrowAssertIf(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
                 }
 
                 indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);

@@ -429,14 +429,10 @@ namespace Lucene.Net.Index
             //System.out.println("flush readTF=" + readTermFreq + " readPos=" + readPositions + " readOffs=" + readOffsets);
 
             // Make sure FieldInfo.update is working correctly!:
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(!writeTermFreq || readTermFreq);
-                Debugging.Assert(!writePositions || readPositions);
-                Debugging.Assert(!writeOffsets || readOffsets);
-
-                Debugging.Assert(!writeOffsets || writePositions);
-            }
+            Debugging.ThrowAssertIf(!writeTermFreq || readTermFreq);
+            Debugging.ThrowAssertIf(!writePositions || readPositions);
+            Debugging.ThrowAssertIf(!writeOffsets || readOffsets);
+            Debugging.ThrowAssertIf(!writeOffsets || writePositions);
 
             IDictionary<Term, int?> segDeletes;
             if (state.SegUpdates != null && state.SegUpdates.terms.Count > 0)

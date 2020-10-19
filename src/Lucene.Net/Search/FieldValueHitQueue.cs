@@ -72,11 +72,9 @@ namespace Lucene.Net.Search
             /// <returns><c>true</c> if document <c>a</c> should be sorted after document <c>b</c>.</returns>
             protected internal override bool LessThan(T hitA, T hitB)
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(hitA != hitB);
-                    Debugging.Assert(hitA.Slot != hitB.Slot);
-                }
+                if(Debugging.ShouldAssert(hitA != hitB)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(hitA.Slot != hitB.Slot)) Debugging.ThrowAssert();
 
                 int c = oneReverseMul * m_firstComparer.Compare(hitA.Slot, hitB.Slot);
                 if (c != 0)
@@ -110,11 +108,9 @@ namespace Lucene.Net.Search
 
             protected internal override bool LessThan(T hitA, T hitB)
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(hitA != hitB);
-                    Debugging.Assert(hitA.Slot != hitB.Slot);
-                }
+                if(Debugging.ShouldAssert(hitA != hitB)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(hitA.Slot != hitB.Slot)) Debugging.ThrowAssert();
 
                 int numComparers = m_comparers.Length;
                 for (int i = 0; i < numComparers; ++i)

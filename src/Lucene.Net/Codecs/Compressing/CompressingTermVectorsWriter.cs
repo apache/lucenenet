@@ -271,8 +271,8 @@ namespace Lucene.Net.Codecs.Compressing
                 CodecUtil.WriteHeader(vectorsStream, codecNameDat, VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.GetFilePointer());
-                    Debugging.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
+                    Debugging.ThrowAssertIf(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.GetFilePointer());
+                    Debugging.ThrowAssertIf(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
                 }
 
                 indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
@@ -802,8 +802,8 @@ namespace Lucene.Net.Codecs.Compressing
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert((curField.hasPositions) == (positions != null));
-                Debugging.Assert((curField.hasOffsets) == (offsets != null));
+                Debugging.ThrowAssertIf((curField.hasPositions) == (positions != null));
+                Debugging.ThrowAssertIf((curField.hasOffsets) == (offsets != null));
             }
 
             if (curField.hasPositions)

@@ -361,8 +361,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 long bCost = readerB.ReadInt32();
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(DecodeWeight(aCost) >= 0);
-                    Debugging.Assert(DecodeWeight(bCost) >= 0);
+                    Debugging.ThrowAssertIf(DecodeWeight(aCost) >= 0);
+                    Debugging.ThrowAssertIf(DecodeWeight(bCost) >= 0);
                 }
                 if (aCost < bCost)
                 {

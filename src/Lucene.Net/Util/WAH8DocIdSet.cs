@@ -300,11 +300,9 @@ namespace Lucene.Net.Util
             internal virtual void WriteHeader(bool reverse, int cleanLength, int dirtyLength)
             {
                 int cleanLengthMinus2 = cleanLength - 2;
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(cleanLengthMinus2 >= 0);
-                    Debugging.Assert(dirtyLength >= 0);
-                }
+                if(Debugging.ShouldAssert(cleanLengthMinus2 >= 0)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(dirtyLength >= 0)) Debugging.ThrowAssert();
                 int token = ((cleanLengthMinus2 & 0x03) << 4) | (dirtyLength & 0x07);
                 if (reverse)
                 {
@@ -333,8 +331,8 @@ namespace Lucene.Net.Util
             {
                 for (int i = 1; i < dirtyWords.Length; ++i)
                 {
-                    Debugging.Assert(dirtyWords.Bytes[i - 1] != 0 || dirtyWords.Bytes[i] != 0);
-                    Debugging.Assert((byte)dirtyWords.Bytes[i - 1] != 0xFF || (byte)dirtyWords.Bytes[i] != 0xFF);
+                    Debugging.ThrowAssertIf(dirtyWords.Bytes[i - 1] != 0 || dirtyWords.Bytes[i] != 0);
+                    Debugging.ThrowAssertIf((byte)dirtyWords.Bytes[i - 1] != 0xFF || (byte)dirtyWords.Bytes[i] != 0xFF);
                 }
                 return true;
             }
@@ -357,11 +355,9 @@ namespace Lucene.Net.Util
 
             internal virtual void AddWord(int wordNum, byte word)
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(wordNum > lastWordNum);
-                    Debugging.Assert(word != 0);
-                }
+                if(Debugging.ShouldAssert(wordNum > lastWordNum)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(word != 0)) Debugging.ThrowAssert();
 
                 if (!reverse)
                 {
@@ -476,11 +472,9 @@ namespace Lucene.Net.Util
                     positions.Add(0L);
                     wordNums.Add(0L);
                     Iterator it = new Iterator(data, cardinality, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
-                    if (Debugging.AssertsEnabled)
-                    {
-                        Debugging.Assert(it.@in.Position == 0);
-                        Debugging.Assert(it.wordNum == -1);
-                    }
+                    if(Debugging.ShouldAssert(it.@in.Position == 0)) Debugging.ThrowAssert();
+
+                    if(Debugging.ShouldAssert(it.wordNum == -1)) Debugging.ThrowAssert();
                     for (int i = 1; i < valueCount; ++i)
                     {
                         // skip indexInterval sequences
@@ -694,11 +688,9 @@ namespace Lucene.Net.Util
 
             internal virtual void SkipDirtyBytes(int count)
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(count >= 0);
-                    Debugging.Assert(count <= allOnesLength + dirtyLength);
-                }
+                if(Debugging.ShouldAssert(count >= 0)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(count <= allOnesLength + dirtyLength)) Debugging.ThrowAssert();
                 wordNum += count;
                 if (count <= allOnesLength)
                 {
@@ -761,8 +753,8 @@ namespace Lucene.Net.Util
                 int lo = sequenceNum / indexInterval, hi = lo + 1;
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(sequenceNum == -1 || wordNums.Get(lo) <= wordNum);
-                    Debugging.Assert(lo + 1 == wordNums.Count || wordNums.Get(lo + 1) > wordNum);
+                    Debugging.ThrowAssertIf(sequenceNum == -1 || wordNums.Get(lo) <= wordNum);
+                    Debugging.ThrowAssertIf(lo + 1 == wordNums.Count || wordNums.Get(lo + 1) > wordNum);
                 }
                 while (true)
                 {
@@ -796,8 +788,8 @@ namespace Lucene.Net.Util
                 }
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(wordNums.Get(hi) <= targetWordNum);
-                    Debugging.Assert(hi + 1 == wordNums.Count || wordNums.Get(hi + 1) > targetWordNum);
+                    Debugging.ThrowAssertIf(wordNums.Get(hi) <= targetWordNum);
+                    Debugging.ThrowAssertIf(hi + 1 == wordNums.Count || wordNums.Get(hi + 1) > targetWordNum);
                 }
                 return hi;
             }

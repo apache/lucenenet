@@ -74,7 +74,7 @@ namespace Lucene.Net.Util.Packed
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
-                Debugging.Assert(index >= 0 && index < m_valueCount);
+                Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
             }
             len = Math.Min(len, m_valueCount - index);
             if (Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();
@@ -100,11 +100,9 @@ namespace Lucene.Net.Util.Packed
             // bulk get
             if (Debugging.ShouldAssert(index % valuesPerBlock == 0)) Debugging.ThrowAssert();
             PackedInt32s.IDecoder decoder = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(decoder.Int64BlockCount == 1);
-                Debugging.Assert(decoder.Int64ValueCount == valuesPerBlock);
-            }
+            if(Debugging.ShouldAssert(decoder.Int64BlockCount == 1)) Debugging.ThrowAssert();
+
+            if(Debugging.ShouldAssert(decoder.Int64ValueCount == valuesPerBlock)) Debugging.ThrowAssert();
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             decoder.Decode(blocks, blockIndex, arr, off, nblocks);
@@ -131,7 +129,7 @@ namespace Lucene.Net.Util.Packed
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
-                Debugging.Assert(index >= 0 && index < m_valueCount);
+                Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
             }
             len = Math.Min(len, m_valueCount - index);
             if (Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();
@@ -184,9 +182,9 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(fromIndex >= 0);
-                Debugging.Assert(fromIndex <= toIndex);
-                Debugging.Assert(PackedInt32s.BitsRequired(val) <= m_bitsPerValue);
+                Debugging.ThrowAssertIf(fromIndex >= 0);
+                Debugging.ThrowAssertIf(fromIndex <= toIndex);
+                Debugging.ThrowAssertIf(PackedInt32s.BitsRequired(val) <= m_bitsPerValue);
             }
 
             int valuesPerBlock = 64 / m_bitsPerValue;

@@ -47,8 +47,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(Valid(output1));
-                Debugging.Assert(Valid(output2));
+                Debugging.ThrowAssertIf(Valid(output1));
+                Debugging.ThrowAssertIf(Valid(output2));
             }
             if (output1 == NO_OUTPUT || output2 == NO_OUTPUT)
             {
@@ -56,11 +56,9 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(output1 > 0);
-                    Debugging.Assert(output2 > 0);
-                }
+                if(Debugging.ShouldAssert(output1 > 0)) Debugging.ThrowAssert();
+
+                if(Debugging.ShouldAssert(output2 > 0)) Debugging.ThrowAssert();
                 return Math.Min(output1.Value, output2.Value);
             }
         }
@@ -69,9 +67,9 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(Valid(output));
-                Debugging.Assert(Valid(inc));
-                Debugging.Assert(output >= inc);
+                Debugging.ThrowAssertIf(Valid(output));
+                Debugging.ThrowAssertIf(Valid(inc));
+                Debugging.ThrowAssertIf(output >= inc);
             }
 
             if (inc == NO_OUTPUT)
@@ -92,8 +90,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(Valid(prefix));
-                Debugging.Assert(Valid(output));
+                Debugging.ThrowAssertIf(Valid(prefix));
+                Debugging.ThrowAssertIf(Valid(output));
             }
             if (prefix == NO_OUTPUT)
             {

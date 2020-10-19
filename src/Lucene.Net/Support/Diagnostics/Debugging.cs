@@ -42,6 +42,15 @@ namespace Lucene.Net.Diagnostics
             return AssertsEnabled && condition;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ThrowAssertIf(bool condition)
+        {
+            if (ShouldAssert(condition))
+            {
+                ThrowAssert();
+            }
+        }
+
         /// <summary>
         /// Checks for a condition; if the condition is <c>false</c>, throws an <see cref="AssertionException"/>.
         /// </summary>

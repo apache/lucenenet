@@ -105,8 +105,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.WriteHeader(indexStream, CODEC_NAME_IDX, VERSION_CURRENT);
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
-                    Debugging.Assert(HEADER_LENGTH_IDX == indexStream.GetFilePointer());
+                    Debugging.ThrowAssertIf(HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
+                    Debugging.ThrowAssertIf(HEADER_LENGTH_IDX == indexStream.GetFilePointer());
                 }
                 success = true;
             }

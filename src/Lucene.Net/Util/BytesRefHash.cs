@@ -121,11 +121,9 @@ namespace Lucene.Net.Util
         ///         bytesID </returns>
         public BytesRef Get(int bytesID, BytesRef @ref)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
-                Debugging.Assert(bytesID < bytesStart.Length,"bytesID exceeds byteStart len: {0}", bytesStart.Length);
-            }
+            if(Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
+
+            if(Debugging.ShouldAssert(bytesID < bytesStart.Length)) Debugging.ThrowAssert("bytesID exceeds byteStart len: {0}", bytesStart.Length);
             pool.SetBytesRef(@ref, bytesStart[bytesID]);
             return @ref;
         }
@@ -549,11 +547,9 @@ namespace Lucene.Net.Util
         ///         <see cref="ByteBlockPool"/> for the given id </returns>
         public int ByteStart(int bytesID)
         {
-            if (Debugging.AssertsEnabled)
-            {
-                Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
-                Debugging.Assert(bytesID >= 0 && bytesID < count, bytesID.ToString());
-            }
+            if(Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
+
+            if(Debugging.ShouldAssert(bytesID >= 0 && bytesID < count)) Debugging.ThrowAssert(bytesID.ToString());
             return bytesStart[bytesID];
         }
 

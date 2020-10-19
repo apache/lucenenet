@@ -88,8 +88,8 @@ namespace Lucene.Net.Store
 
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(chunkSizePower >= 0 && chunkSizePower <= 30);
-                Debugging.Assert(((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
+                Debugging.ThrowAssertIf(chunkSizePower >= 0 && chunkSizePower <= 30);
+                Debugging.ThrowAssertIf(((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
             }
 
             // LUCENENET specific: MMapIndexInput calls SetBuffers() to populate

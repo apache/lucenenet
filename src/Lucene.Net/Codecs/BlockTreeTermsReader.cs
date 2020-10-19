@@ -1940,11 +1940,9 @@ namespace Lucene.Net.Codecs
                         arc = outerInstance.index.GetFirstArc(arcs[0]);
 
                         // Empty string prefix must have an output (block) in the index!
-                        if (Debugging.AssertsEnabled)
-                        {
-                            Debugging.Assert(arc.IsFinal);
-                            Debugging.Assert(arc.Output != null);
-                        }
+                        if(Debugging.ShouldAssert(arc.IsFinal)) Debugging.ThrowAssert();
+
+                        if(Debugging.ShouldAssert(arc.Output != null)) Debugging.ThrowAssert();
 
                         // if (DEBUG) {
                         //   System.out.println("    no seek state; push root frame");
@@ -2228,11 +2226,9 @@ namespace Lucene.Net.Codecs
                         arc = outerInstance.index.GetFirstArc(arcs[0]);
 
                         // Empty string prefix must have an output (block) in the index!
-                        if (Debugging.AssertsEnabled)
-                        {
-                            Debugging.Assert(arc.IsFinal);
-                            Debugging.Assert(arc.Output != null);
-                        }
+                        if(Debugging.ShouldAssert(arc.IsFinal)) Debugging.ThrowAssert();
+
+                        if(Debugging.ShouldAssert(arc.Output != null)) Debugging.ThrowAssert();
 
                         //if (DEBUG) {
                         //System.out.println("    no seek state; push root frame");

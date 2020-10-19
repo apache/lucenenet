@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ContainsConsistent(number, name, dvType));
+                    Debugging.ThrowAssertIf(ContainsConsistent(number, name, dvType));
                     docValuesType[name] = dvType;
                 }
             }
@@ -376,11 +376,8 @@ namespace Lucene.Net.Index
                     // else we'll allocate a new one:
                     int fieldNumber = globalFieldNumbers.AddOrGet(name, preferredFieldNumber, docValues);
                     fi = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValues, normType, null);
-                    if (Debugging.AssertsEnabled)
-                    {
-                        Debugging.Assert(!byName.ContainsKey(fi.Name));
-                        Debugging.Assert(globalFieldNumbers.ContainsConsistent(fi.Number, fi.Name, fi.DocValuesType));
-                    }
+                    Debugging.ThrowAssertIf(!byName.ContainsKey(fi.Name));
+                    Debugging.ThrowAssertIf(globalFieldNumbers.ContainsConsistent(fi.Number, fi.Name, fi.DocValuesType));
                     byName[fi.Name] = fi;
                 }
                 else

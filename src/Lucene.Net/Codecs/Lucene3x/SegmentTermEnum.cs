@@ -105,11 +105,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                 indexInterval = input.ReadInt32();
                 skipInterval = input.ReadInt32();
                 maxSkipLevels = input.ReadInt32();
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(indexInterval > 0, "indexInterval={0} is negative; must be > 0", indexInterval);
-                    Debugging.Assert(skipInterval > 0, "skipInterval={0} is negative; must be > 0", skipInterval);
-                }
+                
+                if(Debugging.ShouldAssert(indexInterval > 0)) Debugging.ThrowAssert("indexInterval={0} is negative; must be > 0", indexInterval);
+                if(Debugging.ShouldAssert(skipInterval > 0)) Debugging.ThrowAssert("skipInterval={0} is negative; must be > 0", skipInterval);
             }
         }
 
