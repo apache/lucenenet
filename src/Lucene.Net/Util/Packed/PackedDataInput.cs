@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public long ReadInt64(int bitsPerValue)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, bitsPerValue.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.ShouldAssert(bitsPerValue > 0 && bitsPerValue <= 64) Debugging.ThrowAssert(bitsPerValue.ToString(CultureInfo.InvariantCulture));
             long r = 0;
             while (bitsPerValue > 0)
             {

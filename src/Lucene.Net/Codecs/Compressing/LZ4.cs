@@ -365,7 +365,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int v = ReadInt32(bytes, off);
                 int h = HashHC(v);
                 int delta = off - hashTable[h];
-                if (Debugging.AssertsEnabled) Debugging.Assert(delta > 0, delta.ToString());
+                if (Debugging.ShouldAssert(delta > 0) Debugging.ThrowAssert(delta.ToString());
                 if (delta >= MAX_DISTANCE)
                 {
                     delta = MAX_DISTANCE - 1;

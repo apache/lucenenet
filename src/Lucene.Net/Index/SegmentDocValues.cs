@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
                 foreach (long? gen in dvProducersGens)
                 {
                     RefCount<DocValuesProducer> dvp = genDVProducers[gen];
-                    if (Debugging.AssertsEnabled) Debugging.Assert(dvp != null,"gen={0}", gen);
+                    if (Debugging.ShouldAssert(dvp != null) Debugging.ThrowAssert("gen={0}", gen);
                     try
                     {
                         dvp.DecRef();

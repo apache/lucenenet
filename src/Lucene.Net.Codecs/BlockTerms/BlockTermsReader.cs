@@ -844,7 +844,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     seekPending = false;
 
                     state.Ord = indexEnum.Ord - 1;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state.Ord >= -1, "Ord={0}", state.Ord);
+                    if (Debugging.ShouldAssert(state.Ord >= -1) Debugging.ThrowAssert("Ord={0}", state.Ord);
                     term.CopyBytes(indexEnum.Term);
 
                     // Now, scan:

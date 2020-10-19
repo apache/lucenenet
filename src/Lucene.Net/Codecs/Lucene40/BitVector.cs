@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public bool Get(int bit)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bit >= 0 && bit < size,"bit {0} is out of bounds 0..{1}", bit, (size - 1));
+            if (Debugging.ShouldAssert(bit >= 0 && bit < size) Debugging.ThrowAssert("bit {0} is out of bounds 0..{1}", bit, (size - 1));
             return (bits[bit >> 3] & (1 << (bit & 7))) != 0;
         }
 
@@ -215,7 +215,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 count = c;
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(count <= size,"count={0} size={1}", count, size);
+            if (Debugging.ShouldAssert(count <= size) Debugging.ThrowAssert("count={0} size={1}", count, size);
             return count;
         }
 

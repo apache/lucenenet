@@ -498,7 +498,7 @@ namespace Lucene.Net.Index
                 if (!perThread.IsActive)
                 {
                     EnsureOpen();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "perThread is not active but we are still open");
+                    if (Debugging.ShouldAssert(false) Debugging.ThrowAssert("perThread is not active but we are still open");
                 }
                 EnsureInitialized(perThread);
                 if (Debugging.ShouldAssert(perThread.IsInitialized)) Debugging.ThrowAssert();
@@ -544,7 +544,7 @@ namespace Lucene.Net.Index
                 if (!perThread.IsActive)
                 {
                     EnsureOpen();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "perThread is not active but we are still open");
+                    if (Debugging.ShouldAssert(false) Debugging.ThrowAssert("perThread is not active but we are still open");
                 }
                 EnsureInitialized(perThread);
                 if (Debugging.ShouldAssert(perThread.IsInitialized)) Debugging.ThrowAssert();
@@ -588,7 +588,7 @@ namespace Lucene.Net.Index
                 SegmentFlushTicket ticket = null;
                 try
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(currentFullFlushDelQueue == null || flushingDWPT.deleteQueue == currentFullFlushDelQueue,"expected: {0}but was: {1}", currentFullFlushDelQueue, flushingDWPT.deleteQueue + " " + flushControl.IsFullFlush);
+                    if (Debugging.ShouldAssert(currentFullFlushDelQueue == null || flushingDWPT.deleteQueue == currentFullFlushDelQueue) Debugging.ThrowAssert("expected: {0}but was: {1}", currentFullFlushDelQueue, flushingDWPT.deleteQueue + " " + flushControl.IsFullFlush);
                     /*
                      * Since with DWPT the flush process is concurrent and several DWPT
                      * could flush at the same time we must maintain the order of the

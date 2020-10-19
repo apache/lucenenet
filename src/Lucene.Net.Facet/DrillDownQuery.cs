@@ -86,7 +86,7 @@ namespace Lucene.Net.Facet
             {
                 throw new ArgumentException("cannot apply filter unless baseQuery isn't null; pass ConstantScoreQuery instead");
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(clauses.Length == 1 + other.drillDownDims.Count, "{0} vs {1}", clauses.Length, (1 + other.drillDownDims.Count));
+            if (Debugging.ShouldAssert(clauses.Length == 1 + other.drillDownDims.Count) Debugging.ThrowAssert("{0} vs {1}", clauses.Length, (1 + other.drillDownDims.Count));
             drillDownDims.PutAll(other.drillDownDims);
             query.Add(new FilteredQuery(clauses[0].Query, filter), Occur.MUST);
             for (int i = 1; i < clauses.Length; i++)

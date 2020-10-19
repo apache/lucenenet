@@ -179,7 +179,7 @@ namespace Lucene.Net.Search
                     // duplicate term: update docFreq
                     int pos = (-e) - 1;
                     array.termState[pos].Register(state, m_readerContext.Ord, termsEnum.DocFreq, termsEnum.TotalTermFreq);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(array.boost[pos] == boostAtt.Boost, "boost should be equal in all segment TermsEnums");
+                    if (Debugging.ShouldAssert(array.boost[pos] == boostAtt.Boost) Debugging.ThrowAssert("boost should be equal in all segment TermsEnums");
                 }
                 else
                 {

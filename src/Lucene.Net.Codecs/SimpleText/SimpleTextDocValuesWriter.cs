@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (Debugging.ShouldAssert(numDocsWritten <= numDocs)) Debugging.ThrowAssert();
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(numDocs == numDocsWritten, "numDocs={0} numDocsWritten={1}", numDocs, numDocsWritten);
+            if (Debugging.ShouldAssert(numDocs == numDocsWritten) Debugging.ThrowAssert("numDocs={0} numDocsWritten={1}", numDocs, numDocsWritten);
         }
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)

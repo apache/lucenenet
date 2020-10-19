@@ -79,7 +79,7 @@ namespace Lucene.Net.Util.Packed
 
             /*var a = ~0L << (int)((uint)(BLOCK_SIZE - bitsPerValue) >> (BLOCK_SIZE - bitsPerValue));    //original
             var b = (uint)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue);          //mod
-            if (Debugging.AssertsEnabled) Debugging.Assert(a == b, "a: " + a, ", b: " + b);*/
+            if (Debugging.ShouldAssert(a == b) Debugging.ThrowAssert("a: " + a, ", b: " + b);*/
 
             maskRight = (long)((ulong)(~0L << (BLOCK_SIZE - bitsPerValue)) >> (BLOCK_SIZE - bitsPerValue));    //mod
 
@@ -174,7 +174,7 @@ namespace Lucene.Net.Util.Packed
 
         public override int Get(int index, long[] arr, int off, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
+            if (Debugging.ShouldAssert(len > 0) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
             if (Debugging.ShouldAssert(index >= 0 && index < m_valueCount)) Debugging.ThrowAssert();
             len = Math.Min(len, m_valueCount - index);
             if (Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();
@@ -242,7 +242,7 @@ namespace Lucene.Net.Util.Packed
 
         public override int Set(int index, long[] arr, int off, int len)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
+            if (Debugging.ShouldAssert(len > 0) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
             if (Debugging.ShouldAssert(index >= 0 && index < m_valueCount)) Debugging.ThrowAssert();
             len = Math.Min(len, m_valueCount - index);
             if (Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();

@@ -190,7 +190,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 int lo = 0;          // binary search
                 int hi = fieldIndex.numIndexTerms - 1;
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.totalIndexInterval > 0, "totalIndexInterval={0}", outerInstance.totalIndexInterval);
+                if (Debugging.ShouldAssert(outerInstance.totalIndexInterval > 0) Debugging.ThrowAssert("totalIndexInterval={0}", outerInstance.totalIndexInterval);
 
                 while (hi >= lo)
                 {
@@ -332,7 +332,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                     this.numIndexTerms = 1 + (numIndexTerms - 1) / outerInstance.outerInstance.indexDivisor;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(this.numIndexTerms > 0, "numIndexTerms={0} indexDivisor={1}", numIndexTerms, outerInstance.outerInstance.indexDivisor);
+                    if (Debugging.ShouldAssert(this.numIndexTerms > 0) Debugging.ThrowAssert("numIndexTerms={0} indexDivisor={1}", numIndexTerms, outerInstance.outerInstance.indexDivisor);
 
                     if (outerInstance.outerInstance.indexDivisor == 1)
                     {

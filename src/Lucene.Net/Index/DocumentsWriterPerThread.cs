@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
             pendingUpdates = new BufferedUpdates();
             intBlockAllocator = new Int32BlockAllocator(bytesUsed);
             this.deleteQueue = deleteQueue;
-            if (Debugging.AssertsEnabled) Debugging.Assert(numDocsInRAM == 0,"num docs {0}", numDocsInRAM);
+            if (Debugging.ShouldAssert(numDocsInRAM == 0) Debugging.ThrowAssert("num docs {0}", numDocsInRAM);
             pendingUpdates.Clear();
             deleteSlice = deleteQueue.NewSlice();
 

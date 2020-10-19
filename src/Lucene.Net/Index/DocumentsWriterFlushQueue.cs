@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(ticketCount >= 0,"ticketCount should be >= 0 but was: {0}", ticketCount);
+                if (Debugging.ShouldAssert(ticketCount >= 0) Debugging.ThrowAssert("ticketCount should be >= 0 but was: {0}", ticketCount);
                 return ticketCount != 0;
             }
         }
@@ -295,7 +295,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!m_published, "ticket was already publised - can not publish twice");
+                if (Debugging.ShouldAssert(!m_published) Debugging.ThrowAssert("ticket was already publised - can not publish twice");
                 m_published = true;
                 // its a global ticket - no segment to publish
                 FinishFlush(writer, null, m_frozenUpdates);
@@ -316,7 +316,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!m_published, "ticket was already publised - can not publish twice");
+                if (Debugging.ShouldAssert(!m_published) Debugging.ThrowAssert("ticket was already publised - can not publish twice");
                 m_published = true;
                 FinishFlush(writer, segment, m_frozenUpdates);
             }

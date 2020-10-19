@@ -673,7 +673,7 @@ namespace Lucene.Net.Util.Fst
                 if (Debugging.ShouldAssert(label >= 0)) Debugging.ThrowAssert();
                 if (NumArcs != 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(label > Arcs[NumArcs - 1].Label,"arc[-1].Label={0} new label={1}", Arcs[NumArcs - 1].Label, label + " numArcs=" + NumArcs);
+                    if (Debugging.ShouldAssert(label > Arcs[NumArcs - 1].Label) Debugging.ThrowAssert("arc[-1].Label={0} new label={1}", Arcs[NumArcs - 1].Label, label + " numArcs=" + NumArcs);
                 }
                 if (NumArcs == Arcs.Length)
                 {
@@ -696,7 +696,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.ShouldAssert(NumArcs > 0)) Debugging.ThrowAssert();
                 Arc<S> arc = Arcs[NumArcs - 1];
-                if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == labelToMatch,"arc.Label={0} vs {1}", arc.Label, labelToMatch);
+                if (Debugging.ShouldAssert(arc.Label == labelToMatch) Debugging.ThrowAssert("arc.Label={0} vs {1}", arc.Label, labelToMatch);
                 arc.Target = target;
                 //assert target.Node != -2;
                 arc.NextFinalOutput = nextFinalOutput;

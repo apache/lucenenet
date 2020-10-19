@@ -184,7 +184,7 @@ namespace Lucene.Net.Analysis.Util
         /// commons-io's readFully, but without bugs if offset != 0 </summary>
         private static int Read(TextReader input, char[] buffer, int offset, int length)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0,"length must not be negative: {0}", length);
+            if (Debugging.ShouldAssert(length >= 0) Debugging.ThrowAssert("length must not be negative: {0}", length);
 
             int remaining = length;
             while (remaining > 0)

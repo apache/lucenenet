@@ -216,7 +216,7 @@ namespace Lucene.Net.Analysis
                 else
                 {
                     // Make sure our input isn't messing up offsets:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(startPosData.StartOffset == startOffset,"prev startOffset={0} vs new startOffset={1}", startPosData.StartOffset, startOffset + " inputPos=" + m_inputPos);
+                    if (Debugging.ShouldAssert(startPosData.StartOffset == startOffset) Debugging.ThrowAssert("prev startOffset={0} vs new startOffset={1}", startPosData.StartOffset, startOffset + " inputPos=" + m_inputPos);
                 }
 
                 int endOffset = m_offsetAtt.EndOffset;
@@ -227,7 +227,7 @@ namespace Lucene.Net.Analysis
                 else
                 {
                     // Make sure our input isn't messing up offsets:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(endPosData.EndOffset == endOffset,"prev endOffset={0} vs new endOffset={1}", endPosData.EndOffset, endOffset + " inputPos=" + m_inputPos);
+                    if (Debugging.ShouldAssert(endPosData.EndOffset == endOffset) Debugging.ThrowAssert("prev endOffset={0} vs new endOffset={1}", endPosData.EndOffset, endOffset + " inputPos=" + m_inputPos);
                 }
 
                 tokenPending = true;
@@ -365,7 +365,7 @@ namespace Lucene.Net.Analysis
             int posLen = m_posLenAtt.PositionLength;
             Position endPosData = m_positions.Get(m_outputPos + posLen);
             if (Debugging.ShouldAssert(endPosData.EndOffset != -1)) Debugging.ThrowAssert();
-            if (Debugging.AssertsEnabled) Debugging.Assert(m_offsetAtt.EndOffset == endPosData.EndOffset,"offsetAtt.endOffset={0} vs expected={1}", m_offsetAtt.EndOffset, endPosData.EndOffset);
+            if (Debugging.ShouldAssert(m_offsetAtt.EndOffset == endPosData.EndOffset) Debugging.ThrowAssert("offsetAtt.endOffset={0} vs expected={1}", m_offsetAtt.EndOffset, endPosData.EndOffset);
             return true;
         }
 

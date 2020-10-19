@@ -384,7 +384,7 @@ namespace Lucene.Net.Search
 
             public override float GetScore()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(score != 0, currentMatched.ToString());
+                if (Debugging.ShouldAssert(score != 0) Debugging.ThrowAssert(currentMatched.ToString());
                 return (float)score * ((BooleanWeight)m_weight).Coord(currentMatched, ((BooleanWeight)m_weight).MaxCoord);
             }
 

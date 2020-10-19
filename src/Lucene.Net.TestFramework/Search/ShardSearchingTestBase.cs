@@ -306,7 +306,7 @@ namespace Lucene.Net.Search
                     this.outerInstance = nodeState;
                     this.nodeVersions = nodeVersions;
                     MyNodeID = nodeID;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(MyNodeID == nodeState.MyNodeID,"myNodeID={0} NodeState.this.myNodeID={1}", nodeID, nodeState.MyNodeID);
+                    if (Debugging.ShouldAssert(MyNodeID == nodeState.MyNodeID) Debugging.ThrowAssert("myNodeID={0} NodeState.this.myNodeID={1}", nodeID, nodeState.MyNodeID);
                 }
 
                 public override Query Rewrite(Query original)
@@ -419,7 +419,7 @@ namespace Lucene.Net.Search
                         }
                         // Collection stats are pre-shared on reopen, so,
                         // we better not have a cache miss:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(nodeStats != null,"myNodeID={0} nodeID={1}", MyNodeID, nodeID + " version=" + nodeVersions[nodeID] + " field=" + field);
+                        if (Debugging.ShouldAssert(nodeStats != null) Debugging.ThrowAssert("myNodeID={0} nodeID={1}", MyNodeID, nodeID + " version=" + nodeVersions[nodeID] + " field=" + field);
 
                         long nodeDocCount = nodeStats.DocCount;
                         if (docCount >= 0 && nodeDocCount >= 0)

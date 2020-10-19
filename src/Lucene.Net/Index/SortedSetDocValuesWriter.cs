@@ -203,7 +203,7 @@ namespace Lucene.Net.Index
         {
             AppendingDeltaPackedInt64Buffer.Iterator iter = pendingCounts.GetIterator();
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(pendingCounts.Count == maxDoc,"MaxDoc: {0}, pending.Count: {1}", maxDoc, pending.Count);
+            if (Debugging.ShouldAssert(pendingCounts.Count == maxDoc) Debugging.ThrowAssert("MaxDoc: {0}, pending.Count: {1}", maxDoc, pending.Count);
 
             for (int i = 0; i < maxDoc; ++i)
             {

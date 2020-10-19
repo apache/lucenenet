@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public int[] Compact()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
+            if (Debugging.ShouldAssert(bytesStart != null) Debugging.ThrowAssert("bytesStart is null - not initialized");
             int upto = 0;
             for (int i = 0; i < hashSize; i++)
             {
@@ -304,7 +304,7 @@ namespace Lucene.Net.Util
         ///           <see cref="ByteBlockPool.BYTE_BLOCK_SIZE"/> </exception>
         public int Add(BytesRef bytes)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
+            if (Debugging.ShouldAssert(bytesStart != null) Debugging.ThrowAssert("bytesStart is null - not initialized");
             int length = bytes.Length;
             // final position
             int hashPos = FindHash(bytes);
@@ -327,7 +327,7 @@ namespace Lucene.Net.Util
                 if (count >= bytesStart.Length)
                 {
                     bytesStart = bytesStartArray.Grow();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(count < bytesStart.Length + 1,"count: {0} len: {1}", count, bytesStart.Length);
+                    if (Debugging.ShouldAssert(count < bytesStart.Length + 1) Debugging.ThrowAssert("count: {0} len: {1}", count, bytesStart.Length);
                 }
                 e = count++;
 
@@ -342,7 +342,7 @@ namespace Lucene.Net.Util
                     // 1 byte to store length
                     buffer[bufferUpto] = (byte)length;
                     pool.ByteUpto += length + 1;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(length >= 0,"Length must be positive: {0}", length);
+                    if (Debugging.ShouldAssert(length >= 0) Debugging.ThrowAssert("Length must be positive: {0}", length);
                     System.Buffer.BlockCopy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 1, length);
                 }
                 else
@@ -380,7 +380,7 @@ namespace Lucene.Net.Util
 
         private int FindHash(BytesRef bytes)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
+            if (Debugging.ShouldAssert(bytesStart != null) Debugging.ThrowAssert("bytesStart is null - not initialized");
 
             int code = DoHash(bytes.Bytes, bytes.Offset, bytes.Length);
 
@@ -412,7 +412,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public int AddByPoolOffset(int offset)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
+            if (Debugging.ShouldAssert(bytesStart != null) Debugging.ThrowAssert("bytesStart is null - not initialized");
             // final position
             int code = offset;
             int hashPos = offset & hashMask;
@@ -434,7 +434,7 @@ namespace Lucene.Net.Util
                 if (count >= bytesStart.Length)
                 {
                     bytesStart = bytesStartArray.Grow();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(count < bytesStart.Length + 1,"count: {0} len: {1}", count, bytesStart.Length);
+                    if (Debugging.ShouldAssert(count < bytesStart.Length + 1) Debugging.ThrowAssert("count: {0} len: {1}", count, bytesStart.Length);
                 }
                 e = count++;
                 bytesStart[e] = offset;

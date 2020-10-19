@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
              * competing updates wins!
              */
             slice.sliceTail = termNode;
-            if (Debugging.AssertsEnabled) Debugging.Assert(slice.sliceHead != slice.sliceTail, "slice head and tail must differ after add");
+            if (Debugging.ShouldAssert(slice.sliceHead != slice.sliceTail) Debugging.ThrowAssert("slice head and tail must differ after add");
             TryApplyGlobalSlice(); // TODO doing this each time is not necessary maybe
             // we can do it just every n times or so?
         }
@@ -319,7 +319,7 @@ namespace Lucene.Net.Index
                 do
                 {
                     current = current.next;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(current != null, "slice property violated between the head on the tail must not be a null node");
+                    if (Debugging.ShouldAssert(current != null) Debugging.ThrowAssert("slice property violated between the head on the tail must not be a null node");
                     current.Apply(del, docIDUpto);
                     //        System.out.println(Thread.currentThread().getName() + ": pull " + current + " docIDUpto=" + docIDUpto);
                 } while (current != sliceTail);

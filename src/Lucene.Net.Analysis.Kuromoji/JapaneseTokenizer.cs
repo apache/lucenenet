@@ -916,7 +916,7 @@ namespace Lucene.Net.Analysis.Ja
                 if (Debugging.ShouldAssert(bestIDX < posData.count)) Debugging.ThrowAssert();
 
                 int backPos = posData.backPos[bestIDX];
-                if (Debugging.AssertsEnabled) Debugging.Assert(backPos >= lastBackTracePos,"backPos={0} vs lastBackTracePos={1}", backPos, lastBackTracePos);
+                if (Debugging.ShouldAssert(backPos >= lastBackTracePos) Debugging.ThrowAssert("backPos={0} vs lastBackTracePos={1}", backPos, lastBackTracePos);
                 int length = pos - backPos;
                 JapaneseTokenizerType backType = posData.backType[bestIDX];
                 int backID = posData.backID[bestIDX];
@@ -1035,7 +1035,7 @@ namespace Lucene.Net.Analysis.Ja
                     // The pruning we did when we created the altToken
                     // ensures that the back trace will align back with
                     // the start of the altToken:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(altToken.Position == backPos, "{0} vs {1}", altToken.Position, backPos);
+                    if (Debugging.ShouldAssert(altToken.Position == backPos) Debugging.ThrowAssert("{0} vs {1}", altToken.Position, backPos);
 
                     // NOTE: not quite right: the compound token may
                     // have had all punctuation back traced so far, but
@@ -1355,7 +1355,7 @@ namespace Lucene.Net.Analysis.Ja
         {
             count = 0;
             // forwardCount naturally resets after it runs:
-            if (Debugging.AssertsEnabled) Debugging.Assert(forwardCount == 0,"pos={0} forwardCount={1}", pos, forwardCount);
+            if (Debugging.ShouldAssert(forwardCount == 0) Debugging.ThrowAssert("pos={0} forwardCount={1}", pos, forwardCount);
         }
     }
 

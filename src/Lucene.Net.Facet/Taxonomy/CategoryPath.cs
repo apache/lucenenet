@@ -65,8 +65,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // while the code which calls this method is safe, at some point a test
             // tripped on AIOOBE in toString, but we failed to reproduce. adding the
             // assert as a safety check.
-            if (Debugging.AssertsEnabled) Debugging.Assert(prefixLen > 0 && prefixLen <= copyFrom.Components.Length,
-                "prefixLen cannot be negative nor larger than the given components' length: prefixLen={0} components.length={1}", prefixLen, copyFrom.Components.Length);
+            if (Debugging.ShouldAssert(prefixLen > 0 && prefixLen <= copyFrom.Components.Length) Debugging.ThrowAssert(                "prefixLen cannot be negative nor larger than the given components' length: prefixLen={0} components.length={1}", prefixLen, copyFrom.Components.Length);
             this.Components = copyFrom.Components;
             Length = prefixLen;
         }
@@ -76,7 +75,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public CategoryPath(params string[] components)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(components.Length > 0, "use CategoryPath.EMPTY to create an empty path");
+            if (Debugging.ShouldAssert(components.Length > 0) Debugging.ThrowAssert("use CategoryPath.EMPTY to create an empty path");
             foreach (string comp in components)
             {
                 if (string.IsNullOrEmpty(comp))

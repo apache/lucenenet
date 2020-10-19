@@ -135,7 +135,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             public virtual DocIdSet GetDocIdSet()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(curVNode == null, "Called more than once?");
+                if (Debugging.ShouldAssert(curVNode == null) Debugging.ThrowAssert("Called more than once?");
                 if (m_termsEnum == null)
                 {
                     return null;

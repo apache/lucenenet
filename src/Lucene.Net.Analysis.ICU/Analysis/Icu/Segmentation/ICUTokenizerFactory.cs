@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         public virtual void Inform(IResourceLoader loader)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(tailored != null, "init must be called first!");
+            if (Debugging.ShouldAssert(tailored != null) Debugging.ThrowAssert("init must be called first!");
             if (tailored.Count == 0)
             {
                 config = new DefaultICUTokenizerConfig(cjkAsWords, myanmarAsWords);
@@ -165,7 +165,7 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         public override Tokenizer Create(AttributeSource.AttributeFactory factory, TextReader input)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(config != null, "inform must be called first!");
+            if (Debugging.ShouldAssert(config != null) Debugging.ThrowAssert("inform must be called first!");
             return new ICUTokenizer(factory, input, config);
         }
     }

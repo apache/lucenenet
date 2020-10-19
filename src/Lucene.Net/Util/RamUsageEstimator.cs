@@ -793,7 +793,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public bool Add(KType e)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(e != null, "Null keys not allowed.");
+                if (Debugging.ShouldAssert(e != null) Debugging.ThrowAssert("Null keys not allowed.");
 
                 if (Assigned >= resizeThreshold)
                 {

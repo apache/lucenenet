@@ -550,7 +550,7 @@ namespace Lucene.Net.Facet
                     //}
 
                     // Mark slot as valid:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docIDs[slot] != docID, "slot={0} docID={1}", slot, docID);
+                    if (Debugging.ShouldAssert(docIDs[slot] != docID) Debugging.ThrowAssert("slot={0} docID={1}", slot, docID);
                     docIDs[slot] = docID;
                     scores[slot] = baseScorer.GetScore();
                     filledSlots[filledCount++] = slot;

@@ -262,7 +262,7 @@ namespace Lucene.Net.Store
         /// Copy numBytes bytes from input to ourself. </summary>
         public virtual void CopyBytes(DataInput input, long numBytes)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(numBytes >= 0,"numBytes={0}", numBytes);
+            if (Debugging.ShouldAssert(numBytes >= 0) Debugging.ThrowAssert("numBytes={0}", numBytes);
             long left = numBytes;
             if (copyBuffer == null)
             {

@@ -763,14 +763,14 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(count > 0, "{0}: RefCount is 0 pre-increment for file \"{1}\"", Thread.CurrentThread.Name, fileName);
+                    if (Debugging.ShouldAssert(count > 0) Debugging.ThrowAssert("{0}: RefCount is 0 pre-increment for file \"{1}\"", Thread.CurrentThread.Name, fileName);
                 }
                 return ++count;
             }
 
             public int DecRef()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(count > 0, "{0}: RefCount is 0 pre-decrement for file \"{1}\"", Thread.CurrentThread.Name, fileName);
+                if (Debugging.ShouldAssert(count > 0) Debugging.ThrowAssert("{0}: RefCount is 0 pre-decrement for file \"{1}\"", Thread.CurrentThread.Name, fileName);
                 return --count;
             }
         }

@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override void StartDoc(int docId, int termDocFreq)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(docId >= 0, "Got DocID={0}", docId);
+            if (Debugging.ShouldAssert(docId >= 0) Debugging.ThrowAssert("Got DocID={0}", docId);
 
             if (_pendingCount == _pending.Length)
             {

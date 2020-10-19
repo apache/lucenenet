@@ -584,15 +584,15 @@ namespace Lucene.Net.Util.Fst
         // LUCENENET NOTE: static Read<T>() was moved into the FST class
         private void WriteLabel(DataOutput @out, int v)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(v >= 0,"v={0}", v);
+            if (Debugging.ShouldAssert(v >= 0) Debugging.ThrowAssert("v={0}", v);
             if (inputType == FST.INPUT_TYPE.BYTE1)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(v <= 255,"v={0}", v);
+                if (Debugging.ShouldAssert(v <= 255) Debugging.ThrowAssert("v={0}", v);
                 @out.WriteByte((byte)(sbyte)v);
             }
             else if (inputType == FST.INPUT_TYPE.BYTE2)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(v <= 65535,"v={0}", v);
+                if (Debugging.ShouldAssert(v <= 65535) Debugging.ThrowAssert("v={0}", v);
                 @out.WriteInt16((short)v);
             }
             else
@@ -807,7 +807,7 @@ namespace Lucene.Net.Util.Fst
                         if (srcPos != destPos)
                         {
                             //System.out.println("  copy len=" + bytesPerArc[arcIdx]);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(destPos > srcPos,"destPos={0} srcPos={1}", destPos, srcPos + " arcIdx=" + arcIdx + " maxBytesPerArc=" + maxBytesPerArc + " bytesPerArc[arcIdx]=" + bytesPerArc[arcIdx] + " nodeIn.numArcs=" + nodeIn.NumArcs);
+                            if (Debugging.ShouldAssert(destPos > srcPos) Debugging.ThrowAssert("destPos={0} srcPos={1}", destPos, srcPos + " arcIdx=" + arcIdx + " maxBytesPerArc=" + maxBytesPerArc + " bytesPerArc[arcIdx]=" + bytesPerArc[arcIdx] + " nodeIn.numArcs=" + nodeIn.NumArcs);
                             bytes.CopyBytes(srcPos, destPos, bytesPerArc[arcIdx]);
                         }
                     }

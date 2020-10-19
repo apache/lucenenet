@@ -122,7 +122,7 @@ namespace Lucene.Net.Util
 
         public bool Get(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits,"index={0}", index);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits) Debugging.ThrowAssert("index={0}", index);
             int i = (int)(index >> 6); // div 64
             // signed shift will keep a negative index and force an
             // array-index-out-of-bounds-exception, removing the need for an explicit check.
@@ -133,7 +133,7 @@ namespace Lucene.Net.Util
 
         public void Set(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits,"index={0} numBits={1}", index, numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits) Debugging.ThrowAssert("index={0} numBits={1}", index, numBits);
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)(index & 0x3f); // mod 64
             long bitmask = 1L << bit;
@@ -205,7 +205,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public long PrevSetBit(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits,"index={0} numBits={1}", index, numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits) Debugging.ThrowAssert("index={0} numBits={1}", index, numBits);
             int i = (int)(index >> 6);
             int subIndex = (int)(index & 0x3f); // index within the word
             long word = (bits[i] << (63 - subIndex)); // skip all the bits to the left of index
@@ -231,7 +231,7 @@ namespace Lucene.Net.Util
         /// this = this OR other </summary>
         public void Or(Int64BitSet other)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(other.numWords <= numWords,"numWords={0}, other.numWords={1}", numWords, other.numWords);
+            if (Debugging.ShouldAssert(other.numWords <= numWords) Debugging.ThrowAssert("numWords={0}, other.numWords={1}", numWords, other.numWords);
             int pos = Math.Min(numWords, other.numWords);
             while (--pos >= 0)
             {
@@ -243,7 +243,7 @@ namespace Lucene.Net.Util
         /// this = this XOR other </summary>
         public void Xor(Int64BitSet other)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(other.numWords <= numWords,"numWords={0}, other.numWords={1}", numWords, other.numWords);
+            if (Debugging.ShouldAssert(other.numWords <= numWords) Debugging.ThrowAssert("numWords={0}, other.numWords={1}", numWords, other.numWords);
             int pos = Math.Min(numWords, other.numWords);
             while (--pos >= 0)
             {

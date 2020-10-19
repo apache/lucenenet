@@ -120,8 +120,7 @@ namespace Lucene.Net.Documents
             fields.TryGetValue(fieldNum, out lazyValues);
             IIndexableField[] realValues = d.GetFields(name);
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(realValues.Length <= lazyValues.Count,
-                "More lazy values then real values for field: {0}", name);
+            if (Debugging.ShouldAssert(realValues.Length <= lazyValues.Count) Debugging.ThrowAssert(                "More lazy values then real values for field: {0}", name);
 
             for (int i = 0; i < lazyValues.Count; i++)
             {

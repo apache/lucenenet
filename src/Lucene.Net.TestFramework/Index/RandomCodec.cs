@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
                 }
                 previousMappings[name] = codec;
                 // Safety:
-                if (Debugging.AssertsEnabled) Debugging.Assert(previousMappings.Count < 10000, "test went insane");
+                if (Debugging.ShouldAssert(previousMappings.Count < 10000) Debugging.ThrowAssert("test went insane");
             }
 
             //if (LuceneTestCase.VERBOSE)
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
                 }
                 previousDVMappings[name] = codec;
                 // Safety:
-                if (Debugging.AssertsEnabled) Debugging.Assert(previousDVMappings.Count < 10000, "test went insane");
+                if (Debugging.ShouldAssert(previousDVMappings.Count < 10000) Debugging.ThrowAssert("test went insane");
             }
 
             //if (LuceneTestCase.VERBOSE)

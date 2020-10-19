@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene41
         private static int EncodedSize(PackedInt32s.Format format, int packedIntsVersion, int bitsPerValue)
         {
             long byteCount = format.ByteCount(packedIntsVersion, Lucene41PostingsFormat.BLOCK_SIZE, bitsPerValue);
-            if (Debugging.AssertsEnabled) Debugging.Assert(byteCount >= 0 && byteCount <= int.MaxValue, byteCount.ToString());
+            if (Debugging.ShouldAssert(byteCount >= 0 && byteCount <= int.MaxValue) Debugging.ThrowAssert(byteCount.ToString());
             return (int)byteCount;
         }
 
@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
 
             int numBits = BitsRequired(data);
-            if (Debugging.AssertsEnabled) Debugging.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
+            if (Debugging.ShouldAssert(numBits > 0 && numBits <= 32) Debugging.ThrowAssert(numBits.ToString());
             PackedInt32s.IEncoder encoder = encoders[numBits];
             int iters = iterations[numBits];
             if (Debugging.ShouldAssert(iters * encoder.ByteValueCount >= Lucene41PostingsFormat.BLOCK_SIZE)) Debugging.ThrowAssert();
@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.Lucene41
         internal void ReadBlock(IndexInput @in, byte[] encoded, int[] decoded)
         {
             int numBits = @in.ReadByte();
-            if (Debugging.AssertsEnabled) Debugging.Assert(numBits <= 32, numBits.ToString());
+            if (Debugging.ShouldAssert(numBits <= 32) Debugging.ThrowAssert(numBits.ToString());
 
             if (numBits == ALL_VALUES_EQUAL)
             {
@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 @in.ReadVInt32();
                 return;
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
+            if (Debugging.ShouldAssert(numBits > 0 && numBits <= 32) Debugging.ThrowAssert(numBits.ToString());
             int encodedSize = encodedSizes[numBits];
             @in.Seek(@in.GetFilePointer() + encodedSize);
         }

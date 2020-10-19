@@ -1447,7 +1447,7 @@ namespace Lucene.Net.Codecs.Memory
 
                         if (Debugging.ShouldAssert(termOrd < state.changeOrd)) Debugging.ThrowAssert();
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(stateUpto <= termLength, "term.length={0}; stateUpto={1}", termLength, stateUpto);
+                        if (Debugging.ShouldAssert(stateUpto <= termLength) Debugging.ThrowAssert("term.length={0}; stateUpto={1}", termLength, stateUpto);
                         int label = outerInstance.termBytes[termOffset + stateUpto] & 0xFF;
 
                         while (label > state.transitionMax)
@@ -1477,8 +1477,7 @@ namespace Lucene.Net.Codecs.Memory
                                 }
                                 goto nextTermContinue;
                             }
-                            if (Debugging.AssertsEnabled) Debugging.Assert(state.transitionUpto < state.transitions.Length,
-                                " state.transitionUpto={0} vs {1}", state.transitionUpto, state.transitions.Length);
+                            if (Debugging.ShouldAssert(state.transitionUpto < state.transitions.Length) Debugging.ThrowAssert(                                " state.transitionUpto={0} vs {1}", state.transitionUpto, state.transitions.Length);
                             state.transitionMin = state.transitions[state.transitionUpto].Min;
                             state.transitionMax = state.transitions[state.transitionUpto].Max;
                             if (Debugging.AssertsEnabled)

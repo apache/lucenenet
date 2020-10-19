@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(false,"unrecognized DocValues.Type: {0}", dvType);
+                    if (Debugging.ShouldAssert(false) Debugging.ThrowAssert("unrecognized DocValues.Type: {0}", dvType);
                 }
             }
         }

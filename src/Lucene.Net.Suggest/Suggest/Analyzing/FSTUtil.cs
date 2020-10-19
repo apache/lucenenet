@@ -121,7 +121,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         while (nextArc != null && nextArc.Label <= max)
                         {
                             if (Debugging.ShouldAssert(nextArc.Label <= max)) Debugging.ThrowAssert();
-                            if (Debugging.AssertsEnabled) Debugging.Assert(nextArc.Label >= min, "{0} {1}", nextArc.Label, min);
+                            if (Debugging.ShouldAssert(nextArc.Label >= min) Debugging.ThrowAssert("{0} {1}", nextArc.Label, min);
                             Int32sRef newInput = new Int32sRef(currentInput.Length + 1);
                             newInput.CopyInt32s(currentInput);
                             newInput.Int32s[currentInput.Length] = nextArc.Label;
@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                               .CopyFrom(nextArc), fst.Outputs.Add(path.Output, nextArc.Output), newInput));
                             int label = nextArc.Label; // used in assert
                             nextArc = nextArc.IsLast ? null : fst.ReadNextRealArc(nextArc, fstReader);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(nextArc == null || label < nextArc.Label, "last: {0} next: {1}", label, (nextArc == null ? "" : nextArc.Label.ToString()));
+                            if (Debugging.ShouldAssert(nextArc == null || label < nextArc.Label) Debugging.ThrowAssert("last: {0} next: {1}", label, (nextArc == null ? "" : nextArc.Label.ToString()));
                         }
                     }
                 }

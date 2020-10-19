@@ -112,7 +112,7 @@ namespace Lucene.Net.Analysis
                 ret = currentOff;
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(ret >= 0,"currentOff={0},diff={1}", currentOff, (ret - currentOff));
+            if (Debugging.ShouldAssert(ret >= 0) Debugging.ThrowAssert("currentOff={0},diff={1}", currentOff, (ret - currentOff));
             return ret;
         }
 

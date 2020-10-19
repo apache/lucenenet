@@ -95,7 +95,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(code >= startCode && code <= endCode,"code={0} start={1}", code, startCode + " end=" + endCode);
+                if (Debugging.ShouldAssert(code >= startCode && code <= endCode) Debugging.ThrowAssert("code={0} start={1}", code, startCode + " end=" + endCode);
                 if (Debugging.ShouldAssert(!IsSurrogate(code))) Debugging.ThrowAssert();
 
                 Assert.IsTrue(Matches(a, code), "DFA for range " + startCode + "-" + endCode + " failed to match code=" + code);

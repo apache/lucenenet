@@ -208,7 +208,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 skipListWriter.BufferSkip(df);
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(docID < totalNumDocs,"docID={0} totalNumDocs={1}", docID, totalNumDocs);
+            if (Debugging.ShouldAssert(docID < totalNumDocs) Debugging.ThrowAssert("docID={0} totalNumDocs={1}", docID, totalNumDocs);
 
             lastDocID = docID;
             if (indexOptions == IndexOptions.DOCS_ONLY)
@@ -239,7 +239,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             int delta = position - lastPosition;
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(delta >= 0,"position={0} lastPosition={1}", position, lastPosition); // not quite right (if pos=0 is repeated twice we don't catch it)
+            if (Debugging.ShouldAssert(delta >= 0) Debugging.ThrowAssert("position={0} lastPosition={1}", position, lastPosition); // not quite right (if pos=0 is repeated twice we don't catch it)
 
             lastPosition = position;
 
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // and the numbers aren't that much smaller anyways.
                 int offsetDelta = startOffset - lastOffset;
                 int offsetLength = endOffset - startOffset;
-                if (Debugging.AssertsEnabled) Debugging.Assert(offsetDelta >= 0 && offsetLength >= 0,"startOffset={0},lastOffset={1}", startOffset, lastOffset + ",endOffset=" + endOffset);
+                if (Debugging.ShouldAssert(offsetDelta >= 0 && offsetLength >= 0) Debugging.ThrowAssert("startOffset={0},lastOffset={1}", startOffset, lastOffset + ",endOffset=" + endOffset);
                 if (offsetLength != lastOffsetLength)
                 {
                     proxOut.WriteVInt32(offsetDelta << 1 | 1);

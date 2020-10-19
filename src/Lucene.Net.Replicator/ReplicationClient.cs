@@ -416,7 +416,7 @@ namespace Lucene.Net.Replicator
             updateThread = new ReplicationThread(intervalMillis, threadName, DoUpdate, HandleUpdateException, updateLock);
             updateThread.Start();
             // we rely on isAlive to return true in isUpdateThreadAlive, assert to be on the safe side
-            if (Debugging.AssertsEnabled) Debugging.Assert(updateThread.IsAlive, "updateThread started but not alive?");
+            if (Debugging.ShouldAssert(updateThread.IsAlive) Debugging.ThrowAssert("updateThread started but not alive?");
         }
 
         /// <summary>

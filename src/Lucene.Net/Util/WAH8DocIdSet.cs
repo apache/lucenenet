@@ -687,7 +687,7 @@ namespace Lucene.Net.Util
                     allOnesLength = ReadCleanLength(@in, token);
                 }
                 dirtyLength = ReadDirtyLength(@in, token);
-                if (Debugging.AssertsEnabled) Debugging.Assert(@in.Length - @in.Position >= dirtyLength, "{0} {1} {2}", @in.Position, @in.Length, dirtyLength);
+                if (Debugging.ShouldAssert(@in.Length - @in.Position >= dirtyLength) Debugging.ThrowAssert("{0} {1} {2}", @in.Position, @in.Length, dirtyLength);
                 ++sequenceNum;
                 return true;
             }

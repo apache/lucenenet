@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
                     // need to addOrUpdate so that FieldInfos can update globalFieldNumbers
                     // with the correct DocValue type (LUCENE-5192)
                     FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.IndexableFieldType);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(fi == fp.fieldInfo, "should only have updated an existing FieldInfo instance");
+                    if (Debugging.ShouldAssert(fi == fp.fieldInfo) Debugging.ThrowAssert("should only have updated an existing FieldInfo instance");
                 }
 
                 if (thisFieldGen != fp.lastGen)

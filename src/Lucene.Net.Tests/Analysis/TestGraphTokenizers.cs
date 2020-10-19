@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis
                     pos += minPosLength;
                     offset = 2 * pos;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(maxPos <= pos, "input string mal-formed: posLength>1 tokens hang over the end");
+                if (Debugging.ShouldAssert(maxPos <= pos) Debugging.ThrowAssert("input string mal-formed: posLength>1 tokens hang over the end");
             }
         }
 
