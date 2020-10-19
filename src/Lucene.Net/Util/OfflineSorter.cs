@@ -367,7 +367,7 @@ namespace Lucene.Net.Util
                 IBytesRefEnumerator iter = buffer.GetEnumerator(comparer);
                 while (iter.MoveNext())
                 {
-                    if (Debugging.ShouldAssert(iter.Current.Length <= ushort.MaxValue)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(iter.Current.Length <= ushort.MaxValue)) Debugging.ThrowAssert();
                     @out.Write(iter.Current);
                 }
             }
@@ -532,7 +532,7 @@ namespace Lucene.Net.Util
             /// <seealso cref="Write(byte[], int, int)"/>
             public virtual void Write(BytesRef @ref)
             {
-                if (Debugging.ShouldAssert(@ref != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(@ref != null)) Debugging.ThrowAssert();
                 Write(@ref.Bytes, @ref.Offset, @ref.Length);
             }
 
@@ -652,7 +652,7 @@ namespace Lucene.Net.Util
                 }
 #pragma warning restore CA1031 // Do not catch general exception types
 
-                if (Debugging.ShouldAssert(length >= 0)) Debugging.ThrowAssert("Sanity: sequence length < 0: {0}", length);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(length >= 0)) Debugging.ThrowAssert("Sanity: sequence length < 0: {0}", length);
                 byte[] result = new byte[length];
                 inputStream.ReadBytes(result, 0, length);
                 return result;

@@ -440,11 +440,11 @@ namespace Lucene.Net.Codecs.Lucene41
         public override void FinishTerm(BlockTermState state)
         {
             Int32BlockTermState state2 = (Int32BlockTermState)state;
-            if (Debugging.ShouldAssert(state2.DocFreq > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state2.DocFreq > 0)) Debugging.ThrowAssert();
 
             // TODO: wasteful we are counting this (counting # docs
             // for this term) in two places?
-            if (Debugging.ShouldAssert(state2.DocFreq == docCount)) Debugging.ThrowAssert("{0} vs {1}", state2.DocFreq, docCount);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state2.DocFreq == docCount)) Debugging.ThrowAssert("{0} vs {1}", state2.DocFreq, docCount);
 
             // if (DEBUG) {
             //   System.out.println("FPW.finishTerm docFreq=" + state2.docFreq);
@@ -499,7 +499,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                 // totalTermFreq is just total number of positions(or payloads, or offsets)
                 // associated with current term.
-                if (Debugging.ShouldAssert(state2.TotalTermFreq != -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state2.TotalTermFreq != -1)) Debugging.ThrowAssert();
                 if (state2.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     // record file offset for last pos in last block
@@ -577,7 +577,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     if (fieldHasPayloads)
                     {
-                        if (Debugging.ShouldAssert(payloadBytesReadUpto == payloadByteUpto)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payloadBytesReadUpto == payloadByteUpto)) Debugging.ThrowAssert();
                         payloadByteUpto = 0;
                     }
                 }

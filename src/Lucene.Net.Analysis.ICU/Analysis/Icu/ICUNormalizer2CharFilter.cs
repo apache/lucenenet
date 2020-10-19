@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.Icu
                 bool hasRemainingChars = CharacterUtils.GetInstance(LuceneVersion.LUCENE_CURRENT).Fill(tmpBuffer, m_input);
 #pragma warning restore 612, 618
 
-                if (Debugging.ShouldAssert(tmpBuffer.Offset == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(tmpBuffer.Offset == 0)) Debugging.ThrowAssert();
                 inputBuffer.Append(tmpBuffer.Buffer, 0, tmpBuffer.Length);
 
                 if (hasRemainingChars == false)

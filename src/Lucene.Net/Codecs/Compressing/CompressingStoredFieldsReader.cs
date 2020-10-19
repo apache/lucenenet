@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs.Compressing
                 indexStream = d.OpenChecksumInput(indexStreamFN, context);
                 string codecNameIdx = formatName + CompressingStoredFieldsWriter.CODEC_SFX_IDX;
                 version = CodecUtil.CheckHeader(indexStream, codecNameIdx, CompressingStoredFieldsWriter.VERSION_START, CompressingStoredFieldsWriter.VERSION_CURRENT);
-                if (Debugging.ShouldAssert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer())) Debugging.ThrowAssert();
                 indexReader = new CompressingStoredFieldsIndexReader(indexStream, si);
 
                 long maxPointer = -1;
@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     throw new CorruptIndexException("Version mismatch between stored fields index and data: " + version + " != " + fieldsVersion);
                 }
-                if (Debugging.ShouldAssert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.GetFilePointer())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.GetFilePointer())) Debugging.ThrowAssert();
 
                 if (version >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS)
                 {
@@ -344,7 +344,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 BytesRef bytes = totalLength <= BUFFER_REUSE_THRESHOLD ? this.bytes : new BytesRef();
                 decompressor.Decompress(fieldsStream, totalLength, offset, length, bytes);
-                if (Debugging.ShouldAssert(bytes.Length == length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytes.Length == length)) Debugging.ThrowAssert();
                 documentInput = new ByteArrayDataInput(bytes.Bytes, bytes.Offset, bytes.Length);
             }
 
@@ -355,7 +355,7 @@ namespace Lucene.Net.Codecs.Compressing
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = (int)(infoAndBits & CompressingStoredFieldsWriter.TYPE_MASK);
-                if (Debugging.ShouldAssert(bits <= CompressingStoredFieldsWriter.NUMERIC_DOUBLE)) Debugging.ThrowAssert("bits={0}", bits.ToString("x"));
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bits <= CompressingStoredFieldsWriter.NUMERIC_DOUBLE)) Debugging.ThrowAssert("bits={0}", bits.ToString("x"));
 
                 switch (visitor.NeedsField(fieldInfo))
                 {
@@ -392,7 +392,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             internal virtual void FillBuffer()
             {
-                if (Debugging.ShouldAssert(decompressed <= length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(decompressed <= length)) Debugging.ThrowAssert();
                 if (decompressed == length)
                 {
                     throw new Exception();
@@ -490,7 +490,7 @@ namespace Lucene.Net.Codecs.Compressing
             /// </summary>
             internal void Next(int doc)
             {
-                if (Debugging.ShouldAssert(doc >= this.docBase + this.chunkDocs)) Debugging.ThrowAssert("{0} {1} {2}", doc, this.docBase, this.chunkDocs);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(doc >= this.docBase + this.chunkDocs)) Debugging.ThrowAssert("{0} {1} {2}", doc, this.docBase, this.chunkDocs);
                 fieldsStream.Seek(outerInstance.indexReader.GetStartPointer(doc));
 
                 int docBase = fieldsStream.ReadVInt32();
@@ -589,7 +589,7 @@ namespace Lucene.Net.Codecs.Compressing
             /// </summary>
             internal void CopyCompressedData(DataOutput @out)
             {
-                if (Debugging.ShouldAssert(outerInstance.Version == CompressingStoredFieldsWriter.VERSION_CURRENT)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.Version == CompressingStoredFieldsWriter.VERSION_CURRENT)) Debugging.ThrowAssert();
                 long chunkEnd = docBase + chunkDocs == outerInstance.numDocs ? outerInstance.maxPointer : outerInstance.indexReader.GetStartPointer(docBase + chunkDocs);
                 @out.CopyBytes(fieldsStream, chunkEnd - fieldsStream.GetFilePointer());
             }

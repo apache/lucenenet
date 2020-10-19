@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
             }
             else
             {
-                if (Debugging.ShouldAssert(m_filter != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_filter != null)) Debugging.ThrowAssert();
                 // Fix outdated usage pattern from Lucene 2.x/early-3.x:
                 // because ConstantScoreQuery only accepted filters,
                 // QueryWrapperFilter was used to wrap queries.
@@ -154,12 +154,12 @@ namespace Lucene.Net.Search
                 //DocIdSetIterator disi;
                 if (outerInstance.m_filter != null)
                 {
-                    if (Debugging.ShouldAssert(outerInstance.m_query == null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.m_query == null)) Debugging.ThrowAssert();
                     return base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
                 }
                 else
                 {
-                    if (Debugging.ShouldAssert(outerInstance.m_query != null && innerWeight != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.m_query != null && innerWeight != null)) Debugging.ThrowAssert();
                     BulkScorer bulkScorer = innerWeight.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
                     if (bulkScorer == null)
                     {
@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
                 DocIdSetIterator disi;
                 if (outerInstance.m_filter != null)
                 {
-                    if (Debugging.ShouldAssert(outerInstance.m_query == null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.m_query == null)) Debugging.ThrowAssert();
                     DocIdSet dis = outerInstance.m_filter.GetDocIdSet(context, acceptDocs);
                     if (dis == null)
                     {
@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (Debugging.ShouldAssert(outerInstance.m_query != null && innerWeight != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.m_query != null && innerWeight != null)) Debugging.ThrowAssert();
                     disi = innerWeight.GetScorer(context, acceptDocs);
                 }
 
@@ -310,7 +310,7 @@ namespace Lucene.Net.Search
 
             public override float GetScore()
             {
-                if (Debugging.ShouldAssert(docIdSetIterator.DocID != NO_MORE_DOCS)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docIdSetIterator.DocID != NO_MORE_DOCS)) Debugging.ThrowAssert();
                 return theScore;
             }
 

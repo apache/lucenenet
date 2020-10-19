@@ -177,7 +177,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = fieldsStream.ReadByte() & 0xFF;
-                if (Debugging.ShouldAssert(bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY))) Debugging.ThrowAssert("bits={0}", bits.ToString("x"));
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bits <= (Lucene40StoredFieldsWriter.FIELD_IS_NUMERIC_MASK | Lucene40StoredFieldsWriter.FIELD_IS_BINARY))) Debugging.ThrowAssert("bits={0}", bits.ToString("x"));
 
                 switch (visitor.NeedsField(fieldInfo))
                 {
@@ -284,7 +284,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 long offset;
                 int docID = startDocID + count + 1;
-                if (Debugging.ShouldAssert(docID <= numTotalDocs)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docID <= numTotalDocs)) Debugging.ThrowAssert();
                 if (docID < numTotalDocs)
                 {
                     offset = indexStream.ReadInt64();

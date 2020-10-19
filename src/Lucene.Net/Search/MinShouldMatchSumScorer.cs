@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
                 this.subScorers[i] = this.sortedSubScorers[mm - 1 + i];
             }
             MinheapHeapify();
-            if (Debugging.ShouldAssert(MinheapCheck())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(MinheapCheck())) Debugging.ThrowAssert();
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 
         public override int NextDoc()
         {
-            if (Debugging.ShouldAssert(doc != NO_MORE_DOCS)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(doc != NO_MORE_DOCS)) Debugging.ThrowAssert();
             while (true)
             {
                 // to remove current doc, call next() on all subScorers on current doc within heap

@@ -110,7 +110,7 @@ namespace Lucene.Net.Util.Packed
 
         public override sealed long Get(long index)
         {
-            if (Debugging.ShouldAssert(index >= 0 && index < Count)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index >= 0 && index < Count)) Debugging.ThrowAssert();
             int block = (int)(index >> pageShift);
             int element = (int)(index & pageMask);
             return Get(block, element);
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                if (Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
                 Debugging.ThrowAssertIf(index >= 0 && index < Count);
                 Debugging.ThrowAssertIf(off + len <= arr.Length);
             }
@@ -196,7 +196,7 @@ namespace Lucene.Net.Util.Packed
             /// Return the next long in the buffer. </summary>
             public long Next()
             {
-                if (Debugging.ShouldAssert(HasNext)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(HasNext)) Debugging.ThrowAssert();
                 long result = currentValues[pOff++];
                 if (pOff == currentCount)
                 {

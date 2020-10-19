@@ -193,13 +193,13 @@ namespace Lucene.Net.Codecs.Lucene40
               System.out.println("  freqFP=" + termState2.freqOffset);
             }
             */
-            if (Debugging.ShouldAssert(termState2.freqOffset < freqIn.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termState2.freqOffset < freqIn.Length)) Debugging.ThrowAssert();
 
             if (termState2.DocFreq >= skipMinimum)
             {
                 termState2.skipOffset = @in.ReadVInt64();
                 // if (DEBUG) System.out.println("  skipOffset=" + termState2.skipOffset + " vs freqIn.length=" + freqIn.length());
-                if (Debugging.ShouldAssert(termState2.freqOffset + termState2.skipOffset < freqIn.Length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termState2.freqOffset + termState2.skipOffset < freqIn.Length)) Debugging.ThrowAssert();
             }
             else
             {
@@ -356,7 +356,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // cases
                 freqIn.Seek(termState.freqOffset);
                 m_limit = termState.DocFreq;
-                if (Debugging.ShouldAssert(m_limit > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_limit > 0)) Debugging.ThrowAssert();
                 m_ord = 0;
                 m_doc = -1;
                 m_accum = 0;
@@ -546,7 +546,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 : base(outerInstance, startFreqIn, null)
             {
                 this.outerInstance = outerInstance;
-                if (Debugging.ShouldAssert(m_liveDocs == null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_liveDocs == null)) Debugging.ThrowAssert();
             }
 
             public override int NextDoc()
@@ -639,7 +639,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 : base(outerInstance, startFreqIn, liveDocs)
             {
                 this.outerInstance = outerInstance;
-                if (Debugging.ShouldAssert(liveDocs != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(liveDocs != null)) Debugging.ThrowAssert();
             }
 
             public override int NextDoc()
@@ -796,7 +796,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 lazyProxPointer = termState.proxOffset;
 
                 limit = termState.DocFreq;
-                if (Debugging.ShouldAssert(limit > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(limit > 0)) Debugging.ThrowAssert();
 
                 ord = 0;
                 doc = -1;
@@ -931,7 +931,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 posPendingCount--;
 
-                if (Debugging.ShouldAssert(posPendingCount >= 0)) Debugging.ThrowAssert("nextPosition() was called too many times (more than freq() times) posPendingCount={0}", posPendingCount);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(posPendingCount >= 0)) Debugging.ThrowAssert("nextPosition() was called too many times (more than freq() times) posPendingCount={0}", posPendingCount);
 
                 return position;
             }
@@ -1164,9 +1164,9 @@ namespace Lucene.Net.Codecs.Lucene40
                         {
                             // new payload length
                             payloadLength = proxIn.ReadVInt32();
-                            if (Debugging.ShouldAssert(payloadLength >= 0)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payloadLength >= 0)) Debugging.ThrowAssert();
                         }
-                        if (Debugging.ShouldAssert(payloadLength != -1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payloadLength != -1)) Debugging.ThrowAssert();
                     }
 
                     if (storeOffsets)
@@ -1204,9 +1204,9 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         // new payload length
                         payloadLength = proxIn.ReadVInt32();
-                        if (Debugging.ShouldAssert(payloadLength >= 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payloadLength >= 0)) Debugging.ThrowAssert();
                     }
-                    if (Debugging.ShouldAssert(payloadLength != -1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payloadLength != -1)) Debugging.ThrowAssert();
 
                     payloadPending = true;
                     code_ = (int)((uint)code_ >> 1);
@@ -1226,7 +1226,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 posPendingCount--;
 
-                if (Debugging.ShouldAssert(posPendingCount >= 0)) Debugging.ThrowAssert("nextPosition() was called too many times (more than freq() times) posPendingCount={0}", posPendingCount);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(posPendingCount >= 0)) Debugging.ThrowAssert("nextPosition() was called too many times (more than freq() times) posPendingCount={0}", posPendingCount);
 
                 //System.out.println("StandardR.D&PE nextPos   return pos=" + position);
                 return position;

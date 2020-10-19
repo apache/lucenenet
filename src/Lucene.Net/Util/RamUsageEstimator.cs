@@ -792,7 +792,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public bool Add(KType e)
             {
-                if (Debugging.ShouldAssert(e != null)) Debugging.ThrowAssert("Null keys not allowed.");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(e != null)) Debugging.ThrowAssert("Null keys not allowed.");
 
                 if (Assigned >= resizeThreshold)
                 {
@@ -866,7 +866,7 @@ namespace Lucene.Net.Util
             {
                 object[] oldKeys = this.keys;
 
-                if (Debugging.ShouldAssert(Assigned >= resizeThreshold)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Assigned >= resizeThreshold)) Debugging.ThrowAssert();
                 AllocateBuffers(NextCapacity(keys.Length));
 
                 /*
@@ -907,8 +907,8 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    if (Debugging.ShouldAssert(current > 0 && ((current & (current - 1)) == 0))) Debugging.ThrowAssert("Capacity must be a power of two.");
-                    if (Debugging.ShouldAssert((current << 1) > 0)) Debugging.ThrowAssert("Maximum capacity exceeded ({0}", ((int)((uint)0x80000000 >> 1)) + ").");
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(current > 0 && ((current & (current - 1)) == 0))) Debugging.ThrowAssert("Capacity must be a power of two.");
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert((current << 1) > 0)) Debugging.ThrowAssert("Maximum capacity exceeded ({0}", ((int)((uint)0x80000000 >> 1)) + ").");
                 }
 
                 if (current < MIN_CAPACITY / 2)

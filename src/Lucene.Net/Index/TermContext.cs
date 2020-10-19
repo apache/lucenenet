@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public TermContext(IndexReaderContext context)
         {
-            if (Debugging.ShouldAssert(context != null && context.IsTopLevel)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(context != null && context.IsTopLevel)) Debugging.ThrowAssert();
             TopReaderContext = context;
             docFreq = 0;
             int len;
@@ -92,7 +92,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static TermContext Build(IndexReaderContext context, Term term)
         {
-            if (Debugging.ShouldAssert(context != null && context.IsTopLevel)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(context != null && context.IsTopLevel)) Debugging.ThrowAssert();
             string field = term.Field;
             BytesRef bytes = term.Bytes;
             TermContext perReaderTermState = new TermContext(context);
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
         ///         <see cref="TermState"/> for the reader was registered </returns>
         public TermState Get(int ord)
         {
-            if (Debugging.ShouldAssert(ord >= 0 && ord < states.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ord >= 0 && ord < states.Length)) Debugging.ThrowAssert();
             return states[ord];
         }
 

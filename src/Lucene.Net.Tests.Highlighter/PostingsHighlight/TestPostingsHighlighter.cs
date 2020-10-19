@@ -775,8 +775,8 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             protected override IList<string[]> LoadFieldValues(IndexSearcher searcher, string[] fields, int[] docids, int maxLength)
             {
-                if (Debugging.ShouldAssert(fields.Length == 1)) Debugging.ThrowAssert();
-                if (Debugging.ShouldAssert(docids.Length == 1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fields.Length == 1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docids.Length == 1)) Debugging.ThrowAssert();
                 String[][] contents = RectangularArrays.ReturnRectangularArray<string>(1, 1); //= new String[1][1];
                 contents[0][0] = text;
                 return contents;

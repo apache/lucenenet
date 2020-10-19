@@ -175,8 +175,8 @@ namespace Lucene.Net.Analysis.Synonym
 
                 if (Debugging.AssertsEnabled)
                 {
-                    if (Debugging.ShouldAssert(!HasHoles(input))) Debugging.ThrowAssert("input has holes: {0}", input);
-                    if (Debugging.ShouldAssert(!HasHoles(output))) Debugging.ThrowAssert("output has holes: {0}", output);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!HasHoles(input))) Debugging.ThrowAssert("input has holes: {0}", input);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!HasHoles(output))) Debugging.ThrowAssert("output has holes: {0}", output);
                 }
 
                 //System.out.println("fmap.add input=" + input + " numInputWords=" + numInputWords + " output=" + output + " numOutputWords=" + numOutputWords);
@@ -284,7 +284,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                     scratch.Grow(estimatedSize);
                     scratchOutput.Reset(scratch.Bytes, scratch.Offset, scratch.Bytes.Length);
-                    if (Debugging.ShouldAssert(scratch.Offset == 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(scratch.Offset == 0)) Debugging.ThrowAssert();
 
                     // now write our output data:
                     int count = 0;

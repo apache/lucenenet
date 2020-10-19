@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
         public FrozenBufferedUpdates(BufferedUpdates deletes, bool isSegmentPrivate)
         {
             this.isSegmentPrivate = isSegmentPrivate;
-            if (Debugging.ShouldAssert(!isSegmentPrivate || deletes.terms.Count == 0)) Debugging.ThrowAssert("segment private package should only have del queries");
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!isSegmentPrivate || deletes.terms.Count == 0)) Debugging.ThrowAssert("segment private package should only have del queries");
             Term[] termsArray = deletes.terms.Keys.ToArray(/*new Term[deletes.terms.Count]*/);
 
             termCount = termsArray.Length;
@@ -140,12 +140,12 @@ namespace Lucene.Net.Index
         {
             set
             {
-                if (Debugging.ShouldAssert(this.gen == -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(this.gen == -1)) Debugging.ThrowAssert();
                 this.gen = value;
             }
             get
             {
-                if (Debugging.ShouldAssert(gen != -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(gen != -1)) Debugging.ThrowAssert();
                 return gen;
             }
         }

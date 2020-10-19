@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="IndexReader.Context"/>
         public IndexSearcher(IndexReaderContext context, TaskScheduler executor)
         {
-            if (Debugging.ShouldAssert(context.IsTopLevel)) Debugging.ThrowAssert("IndexSearcher's ReaderContext must be topLevel for reader{0}", context.Reader);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(context.IsTopLevel)) Debugging.ThrowAssert("IndexSearcher's ReaderContext must be topLevel for reader{0}", context.Reader);
             reader = context.Reader;
             this.executor = executor;
             this.m_readerContext = context;
@@ -801,7 +801,7 @@ namespace Lucene.Net.Search
 
             public TopFieldDocs Call()
             {
-                if (Debugging.ShouldAssert(slice.Leaves.Length == 1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(slice.Leaves.Length == 1)) Debugging.ThrowAssert();
                 TopFieldDocs docs = searcher.Search(slice.Leaves, weight, after, nDocs, sort, true, doDocScores || sort.NeedsScores, doMaxScore);
                 @lock.Lock();
                 try
@@ -966,7 +966,7 @@ namespace Lucene.Net.Search
             long sumTotalTermFreq;
             long sumDocFreq;
 
-            if (Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
 
             Terms terms = MultiFields.GetTerms(reader, field);
             if (terms == null)

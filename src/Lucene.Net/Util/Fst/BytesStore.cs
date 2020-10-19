@@ -131,7 +131,7 @@ namespace Lucene.Net.Util.Fst
         internal virtual void WriteBytes(long dest, byte[] b, int offset, int len)
         {
             //System.out.println("  BS.writeBytes dest=" + dest + " offset=" + offset + " len=" + len);
-            if (Debugging.ShouldAssert(dest + len <= Position)) Debugging.ThrowAssert("dest={0} pos={1}", dest, Position + " len=" + len);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(dest + len <= Position)) Debugging.ThrowAssert("dest={0} pos={1}", dest, Position + " len=" + len);
 
             // Note: weird: must go "backwards" because copyBytes
             // calls us with overlapping src/dest.  If we
@@ -198,7 +198,7 @@ namespace Lucene.Net.Util.Fst
         public virtual void CopyBytes(long src, long dest, int len)
         {
             //System.out.println("BS.copyBytes src=" + src + " dest=" + dest + " len=" + len);
-            if (Debugging.ShouldAssert(src < dest)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(src < dest)) Debugging.ThrowAssert();
 
             // Note: weird: must go "backwards" because copyBytes
             // calls us with overlapping src/dest.  If we
@@ -375,7 +375,7 @@ namespace Lucene.Net.Util.Fst
             {
                 current = blocks[blockIndex];
             }
-            if (Debugging.ShouldAssert(newLen == Position)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(newLen == Position)) Debugging.ThrowAssert();
         }
 
         public virtual void Finish()
@@ -471,7 +471,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex + 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    if (Debugging.ShouldAssert(this.Position == value)) Debugging.ThrowAssert("pos={0} Position={1}", value, this.Position);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(this.Position == value)) Debugging.ThrowAssert("pos={0} Position={1}", value, this.Position);
                 }
             }
 
@@ -544,7 +544,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex - 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    if (Debugging.ShouldAssert(this.Position == value)) Debugging.ThrowAssert("value={0} this.Position={1}", value, this.Position);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(this.Position == value)) Debugging.ThrowAssert("value={0} this.Position={1}", value, this.Position);
                 }
             }
 

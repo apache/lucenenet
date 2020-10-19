@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
                 childFields[f.FieldInfo.Name] = f;
             }
 
-            if (Debugging.ShouldAssert(fields.Count == totalFieldCount)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fields.Count == totalFieldCount)) Debugging.ThrowAssert();
 
             storedConsumer.Flush(state);
             consumer.Flush(childFields, state);
@@ -166,14 +166,14 @@ namespace Lucene.Net.Index
                     field = field.next;
                 }
             }
-            if (Debugging.ShouldAssert(fields.Count == totalFieldCount)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fields.Count == totalFieldCount)) Debugging.ThrowAssert();
             return fields;
         }
 
         private void Rehash()
         {
             int newHashSize = (fieldHash.Length * 2);
-            if (Debugging.ShouldAssert(newHashSize > fieldHash.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(newHashSize > fieldHash.Length)) Debugging.ThrowAssert();
 
             DocFieldProcessorPerField[] newHashArray = new DocFieldProcessorPerField[newHashSize];
 
@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
                     // need to addOrUpdate so that FieldInfos can update globalFieldNumbers
                     // with the correct DocValue type (LUCENE-5192)
                     FieldInfo fi = fieldInfos.AddOrUpdate(fieldName, field.IndexableFieldType);
-                    if (Debugging.ShouldAssert(fi == fp.fieldInfo)) Debugging.ThrowAssert("should only have updated an existing FieldInfo instance");
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fi == fp.fieldInfo)) Debugging.ThrowAssert("should only have updated an existing FieldInfo instance");
                 }
 
                 if (thisFieldGen != fp.lastGen)

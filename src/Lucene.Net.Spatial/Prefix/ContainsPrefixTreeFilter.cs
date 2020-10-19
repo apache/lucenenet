@@ -102,7 +102,7 @@ namespace Lucene.Net.Spatial.Prefix
                 if (cell.Level != 0 && ((cell.ShapeRel == SpatialRelation.NOT_SET || cell.ShapeRel == SpatialRelation.WITHIN)))
                 {
                     subCellsFilter = null;
-                    if (Debugging.ShouldAssert(cell.Shape.Relate(outerInstance.m_queryShape) == SpatialRelation.WITHIN)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cell.Shape.Relate(outerInstance.m_queryShape) == SpatialRelation.WITHIN)) Debugging.ThrowAssert();
                 }
                 ICollection<Cell> subCells = cell.GetSubCells(subCellsFilter);
                 foreach (Cell subCell in subCells)
@@ -147,7 +147,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             private bool SeekExact(Cell cell)
             {
-                if (Debugging.ShouldAssert(new BytesRef(cell.GetTokenBytes()).CompareTo(termBytes) > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(new BytesRef(cell.GetTokenBytes()).CompareTo(termBytes) > 0)) Debugging.ThrowAssert();
                 this.termBytes.Bytes = cell.GetTokenBytes();
                 this.termBytes.Length = this.termBytes.Bytes.Length;
                 if (m_termsEnum == null)
@@ -157,7 +157,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             private SmallDocSet GetDocs(Cell cell, IBits acceptContains)
             {
-                if (Debugging.ShouldAssert(new BytesRef(cell.GetTokenBytes()).Equals(termBytes))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(new BytesRef(cell.GetTokenBytes()).Equals(termBytes))) Debugging.ThrowAssert();
                 return this.CollectDocs(acceptContains);
             }
 
@@ -301,7 +301,7 @@ namespace Lucene.Net.Spatial.Prefix
                     }
                     docs[d++] = v;
                 }
-                if (Debugging.ShouldAssert(d == intSet.Count)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(d == intSet.Count)) Debugging.ThrowAssert();
                 int size = d;
                 //sort them
                 Array.Sort(docs, 0, size);

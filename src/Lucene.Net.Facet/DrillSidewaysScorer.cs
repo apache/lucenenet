@@ -89,7 +89,7 @@ namespace Lucene.Net.Facet
             // TODO: if we ever allow null baseScorer ... it will
             // mean we DO score docs out of order ... hmm, or if we
             // change up the order of the conjuntions below
-            if (Debugging.ShouldAssert(baseScorer != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(baseScorer != null)) Debugging.ThrowAssert();
 
             // some scorers, eg ReqExlScorer, can hit NPE if cost is called after nextDoc
             long baseQueryCost = baseScorer.GetCost();
@@ -395,7 +395,7 @@ namespace Lucene.Net.Facet
                 while (slot0 < CHUNK && (slot0 = seen.NextSetBit(slot0)) != -1)
                 {
                     int ddDocID = docIDs[slot0];
-                    if (Debugging.ShouldAssert(ddDocID != -1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ddDocID != -1)) Debugging.ThrowAssert();
 
                     int baseDocID = baseScorer.DocID;
                     if (baseDocID < ddDocID)
@@ -550,7 +550,7 @@ namespace Lucene.Net.Facet
                     //}
 
                     // Mark slot as valid:
-                    if (Debugging.ShouldAssert(docIDs[slot] != docID)) Debugging.ThrowAssert("slot={0} docID={1}", slot, docID);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docIDs[slot] != docID)) Debugging.ThrowAssert("slot={0} docID={1}", slot, docID);
                     docIDs[slot] = docID;
                     scores[slot] = baseScorer.GetScore();
                     filledSlots[filledCount++] = slot;

@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
         {
             this.finite = compiled.Finite;
             this.runAutomaton = compiled.RunAutomaton;
-            if (Debugging.ShouldAssert(this.runAutomaton != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(this.runAutomaton != null)) Debugging.ThrowAssert();
             this.commonSuffixRef = compiled.CommonSuffixRef;
             this.allTransitions = compiled.SortedTransitions;
 
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
             //System.out.println("ATE.nextSeekTerm term=" + term);
             if (term == null)
             {
-                if (Debugging.ShouldAssert(seekBytesRef.Length == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(seekBytesRef.Length == 0)) Debugging.ThrowAssert();
                 // return the empty term, as its valid
                 if (runAutomaton.IsAccept(runAutomaton.InitialState))
                 {
@@ -159,14 +159,14 @@ namespace Lucene.Net.Index
         /// </summary>
         private void SetLinear(int position)
         {
-            if (Debugging.ShouldAssert(linear == false)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(linear == false)) Debugging.ThrowAssert();
 
             int state = runAutomaton.InitialState;
             int maxInterval = 0xff;
             for (int i = 0; i < position; i++)
             {
                 state = runAutomaton.Step(state, seekBytesRef.Bytes[i] & 0xff);
-                if (Debugging.ShouldAssert(state >= 0)) Debugging.ThrowAssert("state={0}", state);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state >= 0)) Debugging.ThrowAssert("state={0}", state);
             }
             for (int i = 0; i < allTransitions[state].Length; i++)
             {

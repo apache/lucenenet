@@ -107,7 +107,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public TermsEnum Reset(TermsEnumIndex[] termsEnumsIndex)
         {
-            if (Debugging.ShouldAssert(termsEnumsIndex.Length <= top.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termsEnumsIndex.Length <= top.Length)) Debugging.ThrowAssert();
             numSubs = 0;
             numTop = 0;
             termComp = null;
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < termsEnumsIndex.Length; i++)
             {
                 TermsEnumIndex termsEnumIndex = termsEnumsIndex[i];
-                if (Debugging.ShouldAssert(termsEnumIndex != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termsEnumIndex != null)) Debugging.ThrowAssert();
 
                 // init our term comp
                 if (termComp == null)
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
                 {
                     top[numTop++] = currentSubs[i];
                     current = currentSubs[i].Current = currentSubs[i].Terms.Term;
-                    if (Debugging.ShouldAssert(term.Equals(currentSubs[i].Current))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(term.Equals(currentSubs[i].Current))) Debugging.ThrowAssert();
                 }
             }
 
@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
                     if (status == SeekStatus.NOT_FOUND)
                     {
                         currentSubs[i].Current = currentSubs[i].Terms.Term;
-                        if (Debugging.ShouldAssert(currentSubs[i].Current != null)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentSubs[i].Current != null)) Debugging.ThrowAssert();
                         queue.Add(currentSubs[i]);
                     }
                     else
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
         {
             // extract all subs from the queue that have the same
             // top term
-            if (Debugging.ShouldAssert(numTop == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numTop == 0)) Debugging.ThrowAssert();
             while (true)
             {
                 top[numTop++] = queue.Pop();
@@ -370,7 +370,7 @@ namespace Lucene.Net.Index
                 // most impls short-circuit if you SeekCeil to term
                 // they are already on.
                 SeekStatus status = SeekCeil(current);
-                if (Debugging.ShouldAssert(status == SeekStatus.FOUND)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(status == SeekStatus.FOUND)) Debugging.ThrowAssert();
                 lastSeekExact = false;
             }
             lastSeek = null;
@@ -495,7 +495,7 @@ namespace Lucene.Net.Index
                     b = null;
                 }
 
-                if (Debugging.ShouldAssert(entry.Index < docsEnum.subDocsEnum.Length)) Debugging.ThrowAssert("{0} vs {1}; {2}", entry.Index, docsEnum.subDocsEnum.Length, subs.Length);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(entry.Index < docsEnum.subDocsEnum.Length)) Debugging.ThrowAssert("{0} vs {1}; {2}", entry.Index, docsEnum.subDocsEnum.Length, subs.Length);
                 DocsEnum subDocsEnum = entry.Terms.Docs(b, docsEnum.subDocsEnum[entry.Index], flags);
                 if (subDocsEnum != null)
                 {
@@ -507,7 +507,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // should this be an error?
-                    if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert("One of our subs cannot provide a docsenum");
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert("One of our subs cannot provide a docsenum");
                 }
             }
 
@@ -587,7 +587,7 @@ namespace Lucene.Net.Index
                     b = null;
                 }
 
-                if (Debugging.ShouldAssert(entry.Index < docsAndPositionsEnum.subDocsAndPositionsEnum.Length)) Debugging.ThrowAssert("{0} vs {1}; {2}", entry.Index, docsAndPositionsEnum.subDocsAndPositionsEnum.Length, subs.Length);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(entry.Index < docsAndPositionsEnum.subDocsAndPositionsEnum.Length)) Debugging.ThrowAssert("{0} vs {1}; {2}", entry.Index, docsAndPositionsEnum.subDocsAndPositionsEnum.Length, subs.Length);
                 DocsAndPositionsEnum subPostings = entry.Terms.DocsAndPositions(b, docsAndPositionsEnum.subDocsAndPositionsEnum[entry.Index], flags);
 
                 if (subPostings != null)
@@ -630,7 +630,7 @@ namespace Lucene.Net.Index
             {
                 this.SubSlice = subSlice;
                 this.Index = index;
-                if (Debugging.ShouldAssert(subSlice.Length >= 0)) Debugging.ThrowAssert("length={0}", subSlice.Length);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(subSlice.Length >= 0)) Debugging.ThrowAssert("length={0}", subSlice.Length);
             }
 
             public void Reset(TermsEnum terms, BytesRef term)

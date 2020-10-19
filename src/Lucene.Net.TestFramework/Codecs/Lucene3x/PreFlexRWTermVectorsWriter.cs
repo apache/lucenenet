@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            if (Debugging.ShouldAssert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0)) Debugging.ThrowAssert("fieldName={0} lastFieldName={1}", info.Name, lastFieldName);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0)) Debugging.ThrowAssert("fieldName={0} lastFieldName={1}", info.Name, lastFieldName);
             lastFieldName = info.Name;
             if (payloads)
             {
@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             tvf.WriteByte((byte)bits);
 
-            if (Debugging.ShouldAssert(fieldCount <= numVectorFields)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldCount <= numVectorFields)) Debugging.ThrowAssert();
             if (fieldCount == numVectorFields)
             {
                 // last field of the document
@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
-            if (Debugging.ShouldAssert(payload == null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payload == null)) Debugging.ThrowAssert();
             if (positions && offsets)
             {
                 // write position delta

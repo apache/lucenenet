@@ -292,7 +292,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 get
                 {
-                    if (Debugging.ShouldAssert(currentStartOffset >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentStartOffset >= 0)) Debugging.ThrowAssert();
                     return currentStartOffset;
                 }
             }
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 get
                 {
-                    if (Debugging.ShouldAssert(currentEndOffset >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentEndOffset >= 0)) Debugging.ThrowAssert();
                     return currentEndOffset;
                 }
             }

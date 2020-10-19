@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override TermsConsumer AddField(FieldInfo field)
         {
-            if (Debugging.ShouldAssert(field.Number != -1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(field.Number != -1)) Debugging.ThrowAssert();
             if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
                 throw new NotSupportedException("this codec cannot index offsets");
@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     lastDocID = docID;
 
-                    if (Debugging.ShouldAssert(docID < outerInstance.outerInstance.totalNumDocs)) Debugging.ThrowAssert("docID={0} totalNumDocs={1}", docID, outerInstance.outerInstance.totalNumDocs);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docID < outerInstance.outerInstance.totalNumDocs)) Debugging.ThrowAssert("docID={0} totalNumDocs={1}", docID, outerInstance.outerInstance.totalNumDocs);
 
                     if (outerInstance.omitTF)
                     {
@@ -188,9 +188,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
                 {
-                    if (Debugging.ShouldAssert(outerInstance.outerInstance.proxOut != null)) Debugging.ThrowAssert();
-                    if (Debugging.ShouldAssert(startOffset == -1)) Debugging.ThrowAssert();
-                    if (Debugging.ShouldAssert(endOffset == -1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.outerInstance.proxOut != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(startOffset == -1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(endOffset == -1)) Debugging.ThrowAssert();
                     //System.out.println("      w pos=" + position + " payl=" + payload);
                     int delta = position - lastPosition;
                     lastPosition = position;

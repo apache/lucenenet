@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
         internal void AddMatch(int startOffset, int endOffset, BytesRef term)
         {
-            if (Debugging.ShouldAssert(startOffset >= this.startOffset && startOffset <= this.endOffset)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(startOffset >= this.startOffset && startOffset <= this.endOffset)) Debugging.ThrowAssert();
             if (numMatches == matchStarts.Length)
             {
                 int newLength = ArrayUtil.Oversize(numMatches + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 matchEnds = newMatchEnds;
                 matchTerms = newMatchTerms;
             }
-            if (Debugging.ShouldAssert(matchStarts.Length == matchEnds.Length && matchEnds.Length == matchTerms.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(matchStarts.Length == matchEnds.Length && matchEnds.Length == matchTerms.Length)) Debugging.ThrowAssert();
             matchStarts[numMatches] = startOffset;
             matchEnds[numMatches] = endOffset;
             matchTerms[numMatches] = term;

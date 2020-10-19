@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
             // Returns true if first is < second
             protected internal override bool LessThan(ShardRef first, ShardRef second)
             {
-                if (Debugging.ShouldAssert(first != second)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(first != second)) Debugging.ThrowAssert();
                 float firstScore = shardHits[first.ShardIndex][first.HitIndex].Score;
                 float secondScore = shardHits[second.ShardIndex][second.HitIndex].Score;
 
@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
                     {
                         // Tie break in same shard: resolve however the
                         // shard had resolved it:
-                        if (Debugging.ShouldAssert(first.HitIndex != second.HitIndex)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(first.HitIndex != second.HitIndex)) Debugging.ThrowAssert();
                         return first.HitIndex < second.HitIndex;
                     }
                 }
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search
             // Returns true if first is < second
             protected internal override bool LessThan(ShardRef first, ShardRef second)
             {
-                if (Debugging.ShouldAssert(first != second)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(first != second)) Debugging.ThrowAssert();
                 FieldDoc firstFD = (FieldDoc)shardHits[first.ShardIndex][first.HitIndex];
                 FieldDoc secondFD = (FieldDoc)shardHits[second.ShardIndex][second.HitIndex];
                 //System.out.println("  lessThan:\n     first=" + first + " doc=" + firstFD.doc + " score=" + firstFD.score + "\n    second=" + second + " doc=" + secondFD.doc + " score=" + secondFD.score);
@@ -226,7 +226,7 @@ namespace Lucene.Net.Search
                     // Tie break in same shard: resolve however the
                     // shard had resolved it:
                     //System.out.println("    return tb " + (first.hitIndex < second.hitIndex));
-                    if (Debugging.ShouldAssert(first.HitIndex != second.HitIndex)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(first.HitIndex != second.HitIndex)) Debugging.ThrowAssert();
                     return first.HitIndex < second.HitIndex;
                 }
             }
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search
                 int hitUpto = 0;
                 while (hitUpto < numIterOnHits)
                 {
-                    if (Debugging.ShouldAssert(queue.Count > 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(queue.Count > 0)) Debugging.ThrowAssert();
                     ShardRef @ref = queue.Pop();
                     ScoreDoc hit = shardHits[@ref.ShardIndex].ScoreDocs[@ref.HitIndex++];
                     hit.ShardIndex = @ref.ShardIndex;

@@ -184,7 +184,7 @@ namespace Lucene.Net.Util.Automaton
         /// <seealso cref="Step(int, ICollection{State})"/>
         public virtual State Step(int c)
         {
-            if (Debugging.ShouldAssert(c >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(c >= 0)) Debugging.ThrowAssert();
             for (int i = 0; i < numTransitions; i++)
             {
                 Transition t = transitionsArray[i];

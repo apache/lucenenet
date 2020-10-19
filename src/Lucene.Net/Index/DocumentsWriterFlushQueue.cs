@@ -63,13 +63,13 @@ namespace Lucene.Net.Index
         private void IncTickets()
         {
             int numTickets = ticketCount.IncrementAndGet();
-            if (Debugging.ShouldAssert(numTickets > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numTickets > 0)) Debugging.ThrowAssert();
         }
 
         private void DecTickets()
         {
             int numTickets = ticketCount.DecrementAndGet();
-            if (Debugging.ShouldAssert(numTickets >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numTickets >= 0)) Debugging.ThrowAssert();
         }
 
         internal virtual SegmentFlushTicket AddFlushTicket(DocumentsWriterPerThread dwpt)
@@ -121,14 +121,14 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.ShouldAssert(ticketCount >= 0)) Debugging.ThrowAssert("ticketCount should be >= 0 but was: {0}", ticketCount);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ticketCount >= 0)) Debugging.ThrowAssert("ticketCount should be >= 0 but was: {0}", ticketCount);
                 return ticketCount != 0;
             }
         }
 
         private int InnerPurge(IndexWriter writer)
         {
-            if (Debugging.ShouldAssert(purgeLock.IsHeldByCurrentThread)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(purgeLock.IsHeldByCurrentThread)) Debugging.ThrowAssert();
             int numPurged = 0;
             while (true)
             {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
                             // finally remove the published ticket from the queue
                             FlushTicket poll = queue.Dequeue();
                             ticketCount.DecrementAndGet();
-                            if (Debugging.ShouldAssert(poll == head)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(poll == head)) Debugging.ThrowAssert();
                         }
                     }
                 }
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
 
             protected FlushTicket(FrozenBufferedUpdates frozenUpdates)
             {
-                if (Debugging.ShouldAssert(frozenUpdates != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(frozenUpdates != null)) Debugging.ThrowAssert();
                 this.m_frozenUpdates = frozenUpdates;
             }
 
@@ -267,7 +267,7 @@ namespace Lucene.Net.Index
                 // Finish the flushed segment and publish it to IndexWriter
                 if (newSegment == null)
                 {
-                    if (Debugging.ShouldAssert(bufferedUpdates != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bufferedUpdates != null)) Debugging.ThrowAssert();
                     if (bufferedUpdates != null && bufferedUpdates.Any())
                     {
                         indexWriter.PublishFrozenUpdates(bufferedUpdates);
@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                if (Debugging.ShouldAssert(!m_published)) Debugging.ThrowAssert("ticket was already publised - can not publish twice");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!m_published)) Debugging.ThrowAssert("ticket was already publised - can not publish twice");
                 m_published = true;
                 // its a global ticket - no segment to publish
                 FinishFlush(writer, null, m_frozenUpdates);
@@ -314,20 +314,20 @@ namespace Lucene.Net.Index
 
             protected internal override void Publish(IndexWriter writer)
             {
-                if (Debugging.ShouldAssert(!m_published)) Debugging.ThrowAssert("ticket was already publised - can not publish twice");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!m_published)) Debugging.ThrowAssert("ticket was already publised - can not publish twice");
                 m_published = true;
                 FinishFlush(writer, segment, m_frozenUpdates);
             }
 
             internal void SetSegment(FlushedSegment segment) // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
-                if (Debugging.ShouldAssert(!failed)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!failed)) Debugging.ThrowAssert();
                 this.segment = segment;
             }
 
             internal void SetFailed() // LUCENENET NOTE: Made internal rather than protected because class is sealed
             {
-                if (Debugging.ShouldAssert(segment == null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(segment == null)) Debugging.ThrowAssert();
                 failed = true;
             }
 

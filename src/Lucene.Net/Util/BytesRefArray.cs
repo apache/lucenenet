@@ -97,7 +97,7 @@ namespace Lucene.Net.Util
             {
                 int offset = offsets[index];
                 int length = index == lastElement - 1 ? currentOffset - offset : offsets[index + 1] - offset;
-                if (Debugging.ShouldAssert(spare.Offset == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(spare.Offset == 0)) Debugging.ThrowAssert();
                 spare.Grow(length);
                 spare.Length = length;
                 pool.ReadBytes(offset, spare.Bytes, spare.Offset, spare.Length);

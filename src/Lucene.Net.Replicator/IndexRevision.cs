@@ -134,7 +134,7 @@ namespace Lucene.Net.Replicator
 
         public virtual Stream Open(string source, string fileName)
         {
-            if (Debugging.ShouldAssert(source.Equals(SOURCE, StringComparison.Ordinal))) Debugging.ThrowAssert("invalid source; expected={0} got={1}", SOURCE, source);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(source.Equals(SOURCE, StringComparison.Ordinal))) Debugging.ThrowAssert("invalid source; expected={0} got={1}", SOURCE, source);
             return new IndexInputStream(commit.Directory.OpenInput(fileName, IOContext.READ_ONCE));
         }
 

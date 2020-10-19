@@ -152,7 +152,7 @@ namespace Lucene.Net.Spatial
 
         private double randomGaussianMinMeanMax(double min, double mean, double max)
         {
-            if (Debugging.ShouldAssert(mean > min)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(mean > min)) Debugging.ThrowAssert();
             return randomGaussianMeanMax(mean - min, max - min) + min;
         }
 
@@ -166,7 +166,7 @@ namespace Lucene.Net.Spatial
         private double randomGaussianMeanMax(double mean, double max)
         {
             // DWS: I verified the results empirically
-            if (Debugging.ShouldAssert(mean <= max && mean >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(mean <= max && mean >= 0)) Debugging.ThrowAssert();
             double g = randomGaussian();
             double mean2 = mean;
             double flip = 1;
@@ -180,7 +180,7 @@ namespace Lucene.Net.Spatial
             // 1 standard deviation alters the calculation
             double pivotMax = max - mean2;
             double pivot = Math.Min(mean2, pivotMax / 2);//from 0 to max-mean2
-            if (Debugging.ShouldAssert(pivot >= 0 && pivotMax >= pivot && g >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pivot >= 0 && pivotMax >= pivot && g >= 0)) Debugging.ThrowAssert();
             double pivotResult;
             if (g <= 1)
                 pivotResult = pivot * g;

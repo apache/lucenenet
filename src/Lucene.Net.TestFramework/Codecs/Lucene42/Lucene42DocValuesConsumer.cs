@@ -125,7 +125,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
                     ++count;
                 }
-                if (Debugging.ShouldAssert(count == maxDoc)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count == maxDoc)) Debugging.ThrowAssert();
             }
 
             if (uniqueValues != null)

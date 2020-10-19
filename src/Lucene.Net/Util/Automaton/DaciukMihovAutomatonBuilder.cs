@@ -131,7 +131,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State NewState(int label)
             {
-                if (Debugging.ShouldAssert(Array.BinarySearch(labels, label) < 0)) Debugging.ThrowAssert("State already has transition labeled: {0}", label);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Array.BinarySearch(labels, label) < 0)) Debugging.ThrowAssert("State already has transition labeled: {0}", label);
 
                 labels = Arrays.CopyOf(labels, labels.Length + 1);
                 states = Arrays.CopyOf(states, states.Length + 1);
@@ -145,7 +145,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State LastChild() // LUCENENET NOTE: Kept this a method because there is another overload
             {
-                if (Debugging.ShouldAssert(HasChildren)) Debugging.ThrowAssert("No outgoing transitions.");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(HasChildren)) Debugging.ThrowAssert("No outgoing transitions.");
                 return states[states.Length - 1];
             }
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     s = states[index];
                 }
-                if (Debugging.ShouldAssert(s == GetState(label))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(s == GetState(label))) Debugging.ThrowAssert();
                 return s;
             }
 
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal void ReplaceLastChild(State state)
             {
-                if (Debugging.ShouldAssert(HasChildren)) Debugging.ThrowAssert("No outgoing transitions.");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(HasChildren)) Debugging.ThrowAssert("No outgoing transitions.");
                 states[states.Length - 1] = state;
             }
 
@@ -229,8 +229,8 @@ namespace Lucene.Net.Util.Automaton
         {
             if (Debugging.AssertsEnabled)
             {
-                if (Debugging.ShouldAssert(stateRegistry != null)) Debugging.ThrowAssert("Automaton already built.");
-                if (Debugging.ShouldAssert(previous == null || comparer.Compare(previous, current) <= 0)) Debugging.ThrowAssert("Input must be in sorted UTF-8 order: {0} >= {1}", previous, current);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(stateRegistry != null)) Debugging.ThrowAssert("Automaton already built.");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(previous == null || comparer.Compare(previous, current) <= 0)) Debugging.ThrowAssert("Input must be in sorted UTF-8 order: {0} >= {1}", previous, current);
                 Debugging.ThrowAssertIf(SetPrevious(current));
             }
 

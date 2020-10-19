@@ -495,13 +495,13 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 else
                 {
-                    if (Debugging.ShouldAssert(current == 1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(current == 1)) Debugging.ThrowAssert();
                     ordsIter.MoveNext();
                     yield return ordsIter.Current;
                 }
             }
 
-            if (Debugging.ShouldAssert(!ordsIter.MoveNext())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!ordsIter.MoveNext())) Debugging.ThrowAssert();
         }
 
         protected override void Dispose(bool disposing)

@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis.Synonym
 
             public virtual CharsRef PullNext()
             {
-                if (Debugging.ShouldAssert(upto < count)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto < count)) Debugging.ThrowAssert();
                 lastEndOffset = endOffsets[upto];
                 lastPosLength = posLengths[upto];
                 CharsRef result = outputs[upto++];
@@ -306,7 +306,7 @@ namespace Lucene.Net.Analysis.Synonym
             nextWrite = RollIncr(nextWrite);
 
             // Buffer head should never catch up to tail:
-            if (Debugging.ShouldAssert(nextWrite != nextRead)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(nextWrite != nextRead)) Debugging.ThrowAssert();
         }
 
         /*
@@ -325,7 +325,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             //System.out.println("\nS: parse");
 
-            if (Debugging.ShouldAssert(inputSkipCount == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(inputSkipCount == 0)) Debugging.ThrowAssert();
 
             int curNextRead = nextRead;
 
@@ -337,7 +337,7 @@ namespace Lucene.Net.Analysis.Synonym
             BytesRef pendingOutput = fst.Outputs.NoOutput;
             fst.GetFirstArc(scratchArc);
 
-            if (Debugging.ShouldAssert(scratchArc.Output == fst.Outputs.NoOutput)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(scratchArc.Output == fst.Outputs.NoOutput)) Debugging.ThrowAssert();
 
             int tokenCount = 0;
 
@@ -364,7 +364,7 @@ namespace Lucene.Net.Analysis.Synonym
                     else
                     {
                         //System.out.println("  input.incrToken");
-                        if (Debugging.ShouldAssert(futureInputs[nextWrite].consumed)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(futureInputs[nextWrite].consumed)) Debugging.ThrowAssert();
                         // Not correct: a syn match whose output is longer
                         // than its input can set future inputs keepOrig
                         // to true:
@@ -480,7 +480,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             else
             {
-                if (Debugging.ShouldAssert(finished)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(finished)) Debugging.ThrowAssert();
             }
 
             //System.out.println("  parse done inputSkipCount=" + inputSkipCount + " nextRead=" + nextRead + " nextWrite=" + nextWrite);
@@ -510,7 +510,7 @@ namespace Lucene.Net.Analysis.Synonym
                         int outputLen = chIDX - lastStart;
                         // Caller is not allowed to have empty string in
                         // the output:
-                        if (Debugging.ShouldAssert(outputLen > 0)) Debugging.ThrowAssert("output contains empty string: {0}", scratchChars);
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outputLen > 0)) Debugging.ThrowAssert("output contains empty string: {0}", scratchChars);
                         int endOffset;
                         int posLen;
                         if (chIDX == chEnd && lastStart == scratchChars.Offset)
@@ -536,7 +536,7 @@ namespace Lucene.Net.Analysis.Synonym
                         lastStart = 1 + chIDX;
                         //System.out.println("  slot=" + outputUpto + " keepOrig=" + keepOrig);
                         outputUpto = RollIncr(outputUpto);
-                        if (Debugging.ShouldAssert(futureOutputs[outputUpto].posIncr == 1)) Debugging.ThrowAssert("outputUpto={0} vs nextWrite={1}", outputUpto, nextWrite);
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(futureOutputs[outputUpto].posIncr == 1)) Debugging.ThrowAssert("outputUpto={0} vs nextWrite={1}", outputUpto, nextWrite);
                     }
                 }
             }
@@ -602,7 +602,7 @@ namespace Lucene.Net.Analysis.Synonym
                         {
                             // Pass-through case: return token we just pulled
                             // but didn't capture:
-                            if (Debugging.ShouldAssert(inputSkipCount == 1)) Debugging.ThrowAssert("inputSkipCount={0} nextRead={1}", inputSkipCount, nextRead);
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(inputSkipCount == 1)) Debugging.ThrowAssert("inputSkipCount={0} nextRead={1}", inputSkipCount, nextRead);
                         }
                         input.Reset();
                         if (outputs.count > 0)

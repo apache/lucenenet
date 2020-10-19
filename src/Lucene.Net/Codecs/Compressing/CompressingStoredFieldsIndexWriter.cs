@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private void WriteBlock()
         {
-            if (Debugging.ShouldAssert(blockChunks > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(blockChunks > 0)) Debugging.ThrowAssert();
             fieldsIndexOut.WriteVInt32(blockChunks);
 
             // The trick here is that we only store the difference from the average start
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Compressing
             for (int i = 0; i < blockChunks; ++i)
             {
                 long delta = docBase - avgChunkDocs * i;
-                if (Debugging.ShouldAssert(PackedInt32s.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(PackedInt32s.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue)) Debugging.ThrowAssert();
                 writer.Add(MoveSignToLowOrderBit(delta));
                 docBase += docBaseDeltas[i];
             }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 startPointer += startPointerDeltas[i];
                 long delta = startPointer - avgChunkSize * i;
-                if (Debugging.ShouldAssert(PackedInt32s.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(PackedInt32s.BitsRequired(MoveSignToLowOrderBit(delta)) <= writer.BitsPerValue)) Debugging.ThrowAssert();
                 writer.Add(MoveSignToLowOrderBit(delta));
             }
             writer.Finish();
@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 firstStartPointer = maxStartPointer = startPointer;
             }
-            if (Debugging.ShouldAssert(firstStartPointer > 0 && startPointer >= firstStartPointer)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(firstStartPointer > 0 && startPointer >= firstStartPointer)) Debugging.ThrowAssert();
 
             docBaseDeltas[blockChunks] = numDocs;
             startPointerDeltas[blockChunks] = startPointer - maxStartPointer;

@@ -164,12 +164,12 @@ namespace Lucene.Net.Util.Packed
         {
             if (format == PackedInt32s.Format.PACKED)
             {
-                if (Debugging.ShouldAssert(packedBulkOps[bitsPerValue - 1] != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(packedBulkOps[bitsPerValue - 1] != null)) Debugging.ThrowAssert();
                 return packedBulkOps[bitsPerValue - 1];
             }
             else if (format == PackedInt32s.Format.PACKED_SINGLE_BLOCK)
             {
-                if (Debugging.ShouldAssert(packedSingleBlockBulkOps[bitsPerValue - 1] != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(packedSingleBlockBulkOps[bitsPerValue - 1] != null)) Debugging.ThrowAssert();
                 return packedSingleBlockBulkOps[bitsPerValue - 1];
             }
             else

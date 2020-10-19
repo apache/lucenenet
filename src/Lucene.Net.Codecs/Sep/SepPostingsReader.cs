@@ -263,7 +263,7 @@ namespace Lucene.Net.Codecs.Sep
         public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState,
             IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
-            if (Debugging.ShouldAssert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)) Debugging.ThrowAssert();
             SepTermState termState_ = (SepTermState)termState;
             SepDocsAndPositionsEnum postingsEnum;
             if (reuse == null || !(reuse is SepDocsAndPositionsEnum))
@@ -692,7 +692,7 @@ namespace Lucene.Net.Codecs.Sep
                     {
                         // Payload length has changed
                         payloadLength = posReader.Next();
-                        if (Debugging.ShouldAssert(payloadLength >= 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payloadLength >= 0)) Debugging.ThrowAssert();
                     }
                     pendingPosCount--;
                     position = 0;
@@ -707,7 +707,7 @@ namespace Lucene.Net.Codecs.Sep
                     {
                         // Payload length has changed
                         payloadLength = posReader.Next();
-                        if (Debugging.ShouldAssert(payloadLength >= 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payloadLength >= 0)) Debugging.ThrowAssert();
                     }
                     position += (int)(((uint)code) >> 1);
                     pendingPayloadBytes += payloadLength;
@@ -719,7 +719,7 @@ namespace Lucene.Net.Codecs.Sep
                 }
 
                 pendingPosCount--;
-                if (Debugging.ShouldAssert(pendingPosCount >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pendingPosCount >= 0)) Debugging.ThrowAssert();
                 return position;
             }
 
@@ -741,7 +741,7 @@ namespace Lucene.Net.Codecs.Sep
                     return payload;
                 }
 
-                if (Debugging.ShouldAssert(pendingPayloadBytes >= payloadLength)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pendingPayloadBytes >= payloadLength)) Debugging.ThrowAssert();
 
                 if (pendingPayloadBytes > payloadLength)
                 {

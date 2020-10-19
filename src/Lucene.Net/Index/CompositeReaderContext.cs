@@ -70,7 +70,7 @@ namespace Lucene.Net.Index
                 {
                     throw new NotSupportedException("this is not a top-level context.");
                 }
-                if (Debugging.ShouldAssert(leaves != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(leaves != null)) Debugging.ThrowAssert();
                 return leaves;
             }
         }
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
                         children[i] = Build(newParent, r, i, newDocBase);
                         newDocBase += r.MaxDoc;
                     }
-                    if (Debugging.ShouldAssert(newDocBase == cr.MaxDoc)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(newDocBase == cr.MaxDoc)) Debugging.ThrowAssert();
                     return newParent;
                 }
             }

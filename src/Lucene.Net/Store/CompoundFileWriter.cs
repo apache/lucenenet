@@ -153,7 +153,7 @@ namespace Lucene.Net.Store
                 closed = true;
                 // open the compound stream
                 GetOutput();
-                if (Debugging.ShouldAssert(dataOut != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(dataOut != null)) Debugging.ThrowAssert();
                 CodecUtil.WriteFooter(dataOut);
             }
             catch (IOException e)
@@ -246,7 +246,7 @@ namespace Lucene.Net.Store
             bool outputLocked = false;
             try
             {
-                if (Debugging.ShouldAssert(name != null)) Debugging.ThrowAssert("name must not be null");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(name != null)) Debugging.ThrowAssert("name must not be null");
                 if (entries.ContainsKey(name))
                 {
                     throw new ArgumentException("File " + name + " already exists");
@@ -255,7 +255,7 @@ namespace Lucene.Net.Store
                 entry.File = name;
                 entries[name] = entry;
                 string id = IndexFileNames.StripSegmentName(name);
-                if (Debugging.ShouldAssert(!seenIDs.Contains(id))) Debugging.ThrowAssert("file=\"{0}\" maps to id=\"{1}\", which was already written", name, id);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!seenIDs.Contains(id))) Debugging.ThrowAssert("file=\"{0}\" maps to id=\"{1}\", which was already written", name, id);
                 seenIDs.Add(id);
                 DirectCFSIndexOutput @out;
 
@@ -278,7 +278,7 @@ namespace Lucene.Net.Store
                     entries.Remove(name);
                     if (outputLocked) // release the output lock if not successful
                     {
-                        if (Debugging.ShouldAssert(outputTaken)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outputTaken)) Debugging.ThrowAssert();
                         ReleaseOutputLock();
                     }
                 }
@@ -308,7 +308,7 @@ namespace Lucene.Net.Store
                 finally
                 {
                     bool compareAndSet = outputTaken.CompareAndSet(true, false);
-                    if (Debugging.ShouldAssert(compareAndSet)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(compareAndSet)) Debugging.ThrowAssert();
                 }
             }
         }
@@ -390,7 +390,7 @@ namespace Lucene.Net.Store
             [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
             public override void Seek(long pos)
             {
-                if (Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
                 @delegate.Seek(offset + pos);
             }
 
@@ -398,21 +398,21 @@ namespace Lucene.Net.Store
             {
                 get
                 {
-                    if (Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
                     return @delegate.Length - offset;
                 }
             }
 
             public override void WriteByte(byte b)
             {
-                if (Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
                 writtenBytes++;
                 @delegate.WriteByte(b);
             }
 
             public override void WriteBytes(byte[] b, int offset, int length)
             {
-                if (Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
                 writtenBytes += length;
                 @delegate.WriteBytes(b, offset, length);
             }

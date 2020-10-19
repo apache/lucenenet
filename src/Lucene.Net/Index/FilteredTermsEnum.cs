@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
         /// <param name="startWithSeek"> start with seek </param>
         public FilteredTermsEnum(TermsEnum tenum, bool startWithSeek)
         {
-            if (Debugging.ShouldAssert(tenum != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(tenum != null)) Debugging.ThrowAssert();
             this.tenum = tenum;
             doSeek = startWithSeek;
         }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public override TermState GetTermState()
         {
-            if (Debugging.ShouldAssert(tenum != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(tenum != null)) Debugging.ThrowAssert();
             return tenum.GetTermState();
         }
 
@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
                     BytesRef t = NextSeekTerm(actualTerm);
                     //System.out.println("  seek to t=" + (t == null ? "null" : t.utf8ToString()) + " tenum=" + tenum);
                     // Make sure we always seek forward:
-                    if (Debugging.ShouldAssert(actualTerm == null || t == null || Comparer.Compare(t, actualTerm) > 0)) Debugging.ThrowAssert("curTerm={0} seekTerm={1}", actualTerm, t);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(actualTerm == null || t == null || Comparer.Compare(t, actualTerm) > 0)) Debugging.ThrowAssert("curTerm={0} seekTerm={1}", actualTerm, t);
                     if (t == null || tenum.SeekCeil(t) == SeekStatus.END)
                     {
                         // no more terms to seek to or enum exhausted

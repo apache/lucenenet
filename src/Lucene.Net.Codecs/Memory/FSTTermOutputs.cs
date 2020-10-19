@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Memory
             if (Equals(t1, NO_OUTPUT) || Equals(t2, NO_OUTPUT))
                 return NO_OUTPUT;
             
-            if (Debugging.ShouldAssert(t1.longs.Length == t2.longs.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(t1.longs.Length == t2.longs.Length)) Debugging.ThrowAssert();
 
             long[] min = t1.longs, max = t2.longs;
             int pos = 0;
@@ -183,7 +183,7 @@ namespace Lucene.Net.Codecs.Memory
             if (Equals(t2, NO_OUTPUT))
                 return t1;
             
-            if (Debugging.ShouldAssert(t1.longs.Length == t2.longs.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(t1.longs.Length == t2.longs.Length)) Debugging.ThrowAssert();
 
             int pos = 0;
             long diff = 0;
@@ -220,7 +220,7 @@ namespace Lucene.Net.Codecs.Memory
             if (Equals(t2, NO_OUTPUT))
                 return t1;
             
-            if (Debugging.ShouldAssert(t1.longs.Length == t2.longs.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(t1.longs.Length == t2.longs.Length)) Debugging.ThrowAssert();
 
             var pos = 0;
             var accum = new long[_longsSize];

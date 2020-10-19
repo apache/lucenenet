@@ -65,8 +65,8 @@ namespace Lucene.Net.QueryParsers.Classic
 
         public override Query GetQuery(string query, ICommonQueryParserConfiguration cqpC)
         {
-            if (Debugging.ShouldAssert(cqpC != null)) Debugging.ThrowAssert("Parameter must not be null");
-            if (Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert("Parameter must be instance of QueryParser");
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cqpC != null)) Debugging.ThrowAssert("Parameter must not be null");
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert("Parameter must be instance of QueryParser");
             QueryParser qp = (QueryParser)cqpC;
             return qp.Parse(query);
         }
@@ -83,35 +83,35 @@ namespace Lucene.Net.QueryParsers.Classic
 
         public override void SetDefaultOperatorOR(ICommonQueryParserConfiguration cqpC)
         {
-            if (Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert();
             QueryParser qp = (QueryParser)cqpC;
             qp.DefaultOperator = Operator.OR;
         }
 
         public override void SetDefaultOperatorAND(ICommonQueryParserConfiguration cqpC)
         {
-            if (Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert();
             QueryParser qp = (QueryParser)cqpC;
             qp.DefaultOperator = Operator.AND;
         }
 
         public override void SetAnalyzeRangeTerms(ICommonQueryParserConfiguration cqpC, bool value)
         {
-            if (Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert();
             QueryParser qp = (QueryParser)cqpC;
             qp.AnalyzeRangeTerms = (value);
         }
 
         public override void SetAutoGeneratePhraseQueries(ICommonQueryParserConfiguration cqpC, bool value)
         {
-            if (Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert();
             QueryParser qp = (QueryParser)cqpC;
             qp.AutoGeneratePhraseQueries = value;
         }
 
         public override void SetDateResolution(ICommonQueryParserConfiguration cqpC, string field, DateTools.Resolution value)
         {
-            if (Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cqpC is QueryParser)) Debugging.ThrowAssert();
             QueryParser qp = (QueryParser)cqpC;
             qp.SetDateResolution(field, value);
         }

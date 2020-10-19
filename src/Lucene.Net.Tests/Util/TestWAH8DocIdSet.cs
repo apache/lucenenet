@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
         /// Create a random set which has <paramref name="numBitsSet"/> of its <paramref name="numBits"/> bits set. </summary>
         protected static OpenBitSet RandomOpenSet(int numBits, int numBitsSet)
         {
-            if (Debugging.ShouldAssert(numBitsSet <= numBits)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numBitsSet <= numBits)) Debugging.ThrowAssert();
             OpenBitSet set = new OpenBitSet(numBits);
             Random random = Random;
             if (numBitsSet == numBits)

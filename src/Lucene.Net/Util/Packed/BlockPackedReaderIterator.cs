@@ -129,7 +129,7 @@ namespace Lucene.Net.Util.Packed
         public void Reset(DataInput @in, long valueCount)
         {
             this.@in = @in;
-            if (Debugging.ShouldAssert(valueCount >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(valueCount >= 0)) Debugging.ThrowAssert();
             this.valueCount = valueCount;
             off = blockSize;
             ord = 0;
@@ -139,7 +139,7 @@ namespace Lucene.Net.Util.Packed
         /// Skip exactly <paramref name="count"/> values. </summary>
         public void Skip(long count)
         {
-            if (Debugging.ShouldAssert(count >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count >= 0)) Debugging.ThrowAssert();
             if (ord + count > valueCount || ord + count < 0)
             {
                 throw new EndOfStreamException();
@@ -156,7 +156,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             // 2. skip as many blocks as necessary
-            if (Debugging.ShouldAssert(off == blockSize)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(off == blockSize)) Debugging.ThrowAssert();
             while (count >= blockSize)
             {
                 int token = @in.ReadByte() & 0xFF;
@@ -180,7 +180,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             // 3. skip last values
-            if (Debugging.ShouldAssert(count < blockSize)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count < blockSize)) Debugging.ThrowAssert();
             Refill();
             ord += count;
             off += (int)count;
@@ -229,7 +229,7 @@ namespace Lucene.Net.Util.Packed
         /// Read between <c>1</c> and <paramref name="count"/> values. </summary>
         public Int64sRef Next(int count)
         {
-            if (Debugging.ShouldAssert(count > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count > 0)) Debugging.ThrowAssert();
             if (ord == valueCount)
             {
                 throw new EndOfStreamException();
@@ -259,7 +259,7 @@ namespace Lucene.Net.Util.Packed
                 throw new IOException("Corrupted");
             }
             long minValue = minEquals0 ? 0L : ZigZagDecode(1L + ReadVInt64(@in));
-            if (Debugging.ShouldAssert(minEquals0 || minValue != 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(minEquals0 || minValue != 0)) Debugging.ThrowAssert();
 
             if (bitsPerValue == 0)
             {

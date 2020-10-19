@@ -187,7 +187,7 @@ namespace Lucene.Net.Replicator
         /// <exception cref="IOException"></exception>
         public virtual Stream Open(string source, string fileName)
         {
-            if (Debugging.ShouldAssert(source.Equals(INDEX_SOURCE, StringComparison.Ordinal) || source.Equals(TAXONOMY_SOURCE, StringComparison.Ordinal))) Debugging.ThrowAssert("invalid source; expected=({0} or {1}) got={2}", INDEX_SOURCE, TAXONOMY_SOURCE, source);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(source.Equals(INDEX_SOURCE, StringComparison.Ordinal) || source.Equals(TAXONOMY_SOURCE, StringComparison.Ordinal))) Debugging.ThrowAssert("invalid source; expected=({0} or {1}) got={2}", INDEX_SOURCE, TAXONOMY_SOURCE, source);
             IndexCommit commit = source.Equals(INDEX_SOURCE, StringComparison.Ordinal) ? indexCommit : taxonomyCommit;
             return new IndexInputStream(commit.Directory.OpenInput(fileName, IOContext.READ_ONCE));
         }

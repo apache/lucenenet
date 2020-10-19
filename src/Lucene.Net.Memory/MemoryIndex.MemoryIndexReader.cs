@@ -285,7 +285,7 @@ namespace Lucene.Net.Index.Memory
 
                 public override void SeekExact(long ord)
                 {
-                    if (Debugging.ShouldAssert(ord < info.terms.Count)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ord < info.terms.Count)) Debugging.ThrowAssert();
                     termUpto = (int)ord;
                 }
 
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index.Memory
 
                 public override void SeekExact(BytesRef term, TermState state)
                 {
-                    if (Debugging.ShouldAssert(state != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state != null)) Debugging.ThrowAssert();
                     this.SeekExact(((OrdTermState)state).Ord);
                 }
 
@@ -461,7 +461,7 @@ namespace Lucene.Net.Index.Memory
                     if (Debugging.AssertsEnabled)
                     {
                         Debugging.ThrowAssertIf(posUpto++ < freq);
-                        if (Debugging.ShouldAssert(!sliceReader.IsEndOfSlice)) Debugging.ThrowAssert(" stores offsets : {0}", startOffset);
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!sliceReader.IsEndOfSlice)) Debugging.ThrowAssert(" stores offsets : {0}", startOffset);
                     }
                     if (outerInstance.outerInstance.storeOffsets)
                     {

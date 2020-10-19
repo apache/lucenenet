@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Suggest
         {
             get
             {
-                if (Debugging.ShouldAssert(currentOrd == ords[m_curPos])) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentOrd == ords[m_curPos])) Debugging.ThrowAssert();
                 return m_freqs[currentOrd];
             }
         }
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 if (HasPayloads && m_curPos < m_payloads.Length)
                 {
-                    if (Debugging.ShouldAssert(currentOrd == ords[m_curPos])) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentOrd == ords[m_curPos])) Debugging.ThrowAssert();
                     return m_payloads.Get(payloadSpare, currentOrd);
                 }
                 return null;
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Suggest
             {
                 if (HasContexts && m_curPos < m_contextSets.Count)
                 {
-                    if (Debugging.ShouldAssert(currentOrd == ords[m_curPos])) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentOrd == ords[m_curPos])) Debugging.ThrowAssert();
                     return m_contextSets[currentOrd];
                 }
                 return null;

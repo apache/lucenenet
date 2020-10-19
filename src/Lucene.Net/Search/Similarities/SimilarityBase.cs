@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Similarities
         protected internal virtual void FillBasicStats(BasicStats stats, CollectionStatistics collectionStats, TermStatistics termStats)
         {
             // #positions(field) must be >= #positions(term)
-            if (Debugging.ShouldAssert(collectionStats.SumTotalTermFreq == -1 || collectionStats.SumTotalTermFreq >= termStats.TotalTermFreq)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(collectionStats.SumTotalTermFreq == -1 || collectionStats.SumTotalTermFreq >= termStats.TotalTermFreq)) Debugging.ThrowAssert();
             long numberOfDocuments = collectionStats.MaxDoc;
 
             long docFreq = termStats.DocFreq;

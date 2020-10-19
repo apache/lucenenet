@@ -422,7 +422,7 @@ namespace Lucene.Net.Analysis.CharFilters
                                 // Same length: no change to offset
                             }
 
-                            if (Debugging.ShouldAssert(inputOffsets.Count == output.Length)) Debugging.ThrowAssert("inputOffsets.size()={0} vs output.length()={1}", inputOffsets.Count, output.Length);
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(inputOffsets.Count == output.Length)) Debugging.ThrowAssert("inputOffsets.size()={0} vs output.length()={1}", inputOffsets.Count, output.Length);
                         }
                         else
                         {

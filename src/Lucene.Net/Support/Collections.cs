@@ -270,7 +270,7 @@ namespace Lucene.Net.Support
 
             public ReverseComparer2(IComparer<T> cmp)
             {
-                if (Debugging.ShouldAssert(cmp != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cmp != null)) Debugging.ThrowAssert();
                 this.cmp = cmp;
             }
 

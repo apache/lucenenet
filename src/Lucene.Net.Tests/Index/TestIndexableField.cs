@@ -317,7 +317,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            if (Debugging.ShouldAssert(stringValue != null)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(stringValue != null)) Debugging.ThrowAssert();
                             Assert.AreEqual(stringValue, f.GetStringValue());
                         }
                     }
@@ -426,7 +426,7 @@ namespace Lucene.Net.Index
                         return false;
                     }
 
-                    if (Debugging.ShouldAssert(fieldUpto < outerInstance.fieldCount)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldUpto < outerInstance.fieldCount)) Debugging.ThrowAssert();
                     if (fieldUpto == 0)
                     {
                         fieldUpto = 1;

@@ -2147,14 +2147,14 @@ namespace Lucene.Net.Index
             r = w.GetReader();
             long version2 = r.Version;
             r.Dispose();
-            if (Debugging.ShouldAssert(version2 > version)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(version2 > version)) Debugging.ThrowAssert();
 
             w.DeleteDocuments(new Term("id", "0"));
             r = w.GetReader();
             w.Dispose();
             long version3 = r.Version;
             r.Dispose();
-            if (Debugging.ShouldAssert(version3 > version2)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(version3 > version2)) Debugging.ThrowAssert();
             d.Dispose();
         }
 

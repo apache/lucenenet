@@ -101,7 +101,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    if (Debugging.ShouldAssert(inc.Length < output.Length)) Debugging.ThrowAssert("inc.length={0} vs output.length={1}", inc.Length, output.Length);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(inc.Length < output.Length)) Debugging.ThrowAssert("inc.length={0} vs output.length={1}", inc.Length, output.Length);
                     Debugging.ThrowAssertIf(inc.Length > 0);
                 }
                 return new Int32sRef(output.Int32s, output.Offset + inc.Length, output.Length - inc.Length);
@@ -136,7 +136,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(Int32sRef prefix, DataOutput @out)
         {
-            if (Debugging.ShouldAssert(prefix != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(prefix != null)) Debugging.ThrowAssert();
             @out.WriteVInt32(prefix.Length);
             for (int idx = 0; idx < prefix.Length; idx++)
             {

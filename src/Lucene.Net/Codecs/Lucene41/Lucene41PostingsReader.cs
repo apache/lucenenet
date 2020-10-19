@@ -402,7 +402,7 @@ namespace Lucene.Net.Codecs.Lucene41
             private void RefillDocs()
             {
                 int left = docFreq - docUpto;
-                if (Debugging.ShouldAssert(left > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(left > 0)) Debugging.ThrowAssert();
 
                 if (left >= Lucene41PostingsFormat.BLOCK_SIZE)
                 {
@@ -511,7 +511,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     if (!skipped)
                     {
-                        if (Debugging.ShouldAssert(skipOffset != -1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(skipOffset != -1)) Debugging.ThrowAssert();
                         // this is the first time this enum has skipped
                         // since reset() was called; load the skip data:
                         skipper.Init(docTermStartFP + skipOffset, docTermStartFP, 0, 0, docFreq);
@@ -528,7 +528,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer());
                         // }
-                        if (Debugging.ShouldAssert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0)) Debugging.ThrowAssert("got {0}", newDocUpto);
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0)) Debugging.ThrowAssert("got {0}", newDocUpto);
                         docUpto = newDocUpto;
 
                         // Force to read next block
@@ -731,7 +731,7 @@ namespace Lucene.Net.Codecs.Lucene41
             private void RefillDocs()
             {
                 int left = docFreq - docUpto;
-                if (Debugging.ShouldAssert(left > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(left > 0)) Debugging.ThrowAssert();
 
                 if (left >= Lucene41PostingsFormat.BLOCK_SIZE)
                 {
@@ -875,7 +875,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     if (!skipped)
                     {
-                        if (Debugging.ShouldAssert(skipOffset != -1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(skipOffset != -1)) Debugging.ThrowAssert();
                         // this is the first time this enum has skipped
                         // since reset() was called; load the skip data:
                         // if (DEBUG) {
@@ -894,7 +894,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         //   System.out.println("    skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer() + " pos.fp=" + skipper.getPosPointer() + " pos.bufferUpto=" + skipper.getPosBufferUpto());
                         // }
 
-                        if (Debugging.ShouldAssert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0)) Debugging.ThrowAssert("got {0}", newDocUpto);
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0)) Debugging.ThrowAssert("got {0}", newDocUpto);
                         docUpto = newDocUpto;
 
                         // Force to read next block
@@ -983,7 +983,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
                         // }
-                        if (Debugging.ShouldAssert(posIn.GetFilePointer() != lastPosBlockFP)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(posIn.GetFilePointer() != lastPosBlockFP)) Debugging.ThrowAssert();
                         outerInstance.forUtil.SkipBlock(posIn);
                         toSkip -= Lucene41PostingsFormat.BLOCK_SIZE;
                     }
@@ -1236,7 +1236,7 @@ namespace Lucene.Net.Codecs.Lucene41
             private void RefillDocs()
             {
                 int left = docFreq - docUpto;
-                if (Debugging.ShouldAssert(left > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(left > 0)) Debugging.ThrowAssert();
 
                 if (left >= Lucene41PostingsFormat.BLOCK_SIZE)
                 {
@@ -1450,7 +1450,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     if (!skipped)
                     {
-                        if (Debugging.ShouldAssert(skipOffset != -1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(skipOffset != -1)) Debugging.ThrowAssert();
                         // this is the first time this enum has skipped
                         // since reset() was called; load the skip data:
                         // if (DEBUG) {
@@ -1468,7 +1468,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("    skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer() + " pos.fp=" + skipper.getPosPointer() + " pos.bufferUpto=" + skipper.getPosBufferUpto() + " pay.fp=" + skipper.getPayPointer() + " lastStartOffset=" + lastStartOffset);
                         // }
-                        if (Debugging.ShouldAssert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0)) Debugging.ThrowAssert("got {0}", newDocUpto);
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0)) Debugging.ThrowAssert("got {0}", newDocUpto);
                         docUpto = newDocUpto;
 
                         // Force to read next block
@@ -1568,7 +1568,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
                         // }
-                        if (Debugging.ShouldAssert(posIn.GetFilePointer() != lastPosBlockFP)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(posIn.GetFilePointer() != lastPosBlockFP)) Debugging.ThrowAssert();
                         outerInstance.forUtil.SkipBlock(posIn);
 
                         if (indexHasPayloads)

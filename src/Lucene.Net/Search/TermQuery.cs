@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
             public TermWeight(TermQuery outerInstance, IndexSearcher searcher, TermContext termStates)
             {
                 this.outerInstance = outerInstance;
-                if (Debugging.ShouldAssert(termStates != null)) Debugging.ThrowAssert("TermContext must not be null");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termStates != null)) Debugging.ThrowAssert("TermContext must not be null");
                 this.termStates = termStates;
                 this.similarity = searcher.Similarity;
                 this.stats = similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance.term.Field), searcher.TermStatistics(outerInstance.term, termStates));
@@ -85,14 +85,14 @@ namespace Lucene.Net.Search
 
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                if (Debugging.ShouldAssert(termStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context))) Debugging.ThrowAssert("The top-reader used to create Weight ({0}) is not the same as the current reader's top-reader ({1}", termStates.TopReaderContext, ReaderUtil.GetTopLevelContext(context));
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termStates.TopReaderContext == ReaderUtil.GetTopLevelContext(context))) Debugging.ThrowAssert("The top-reader used to create Weight ({0}) is not the same as the current reader's top-reader ({1}", termStates.TopReaderContext, ReaderUtil.GetTopLevelContext(context));
                 TermsEnum termsEnum = GetTermsEnum(context);
                 if (termsEnum == null)
                 {
                     return null;
                 }
                 DocsEnum docs = termsEnum.Docs(acceptDocs, null);
-                if (Debugging.ShouldAssert(docs != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docs != null)) Debugging.ThrowAssert();
                 return new TermScorer(this, docs, similarity.GetSimScorer(stats, context));
             }
 
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
                 TermState state = termStates.Get(context.Ord);
                 if (state == null) // term is not present in that reader
                 {
-                    if (Debugging.ShouldAssert(TermNotInReader(context.AtomicReader, outerInstance.term))) Debugging.ThrowAssert("no termstate found but term exists in reader term={0}", outerInstance.term);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(TermNotInReader(context.AtomicReader, outerInstance.term))) Debugging.ThrowAssert("no termstate found but term exists in reader term={0}", outerInstance.term);
                     return null;
                 }
                 //System.out.println("LD=" + reader.getLiveDocs() + " set?=" + (reader.getLiveDocs() != null ? reader.getLiveDocs().get(0) : "null"));
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public TermQuery(Term t, TermContext states)
         {
-            if (Debugging.ShouldAssert(states != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(states != null)) Debugging.ThrowAssert();
             term = t;
             docFreq = states.DocFreq;
             perReaderTermState = states;

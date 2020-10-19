@@ -365,14 +365,14 @@ namespace Lucene.Net.Search
                 this.sims = new SimScorer[(int)dv.ValueCount];
                 foreach (BooleanClause clause in bq.GetClauses())
                 {
-                    if (Debugging.ShouldAssert(!clause.IsProhibited)) Debugging.ThrowAssert();
-                    if (Debugging.ShouldAssert(!clause.IsRequired)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!clause.IsProhibited)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!clause.IsRequired)) Debugging.ThrowAssert();
                     Term term = ((TermQuery)clause.Query).Term;
                     long ord = dv.LookupTerm(term.Bytes);
                     if (ord >= 0)
                     {
                         bool success = ords.Add(ord);
-                        if (Debugging.ShouldAssert(success)) Debugging.ThrowAssert(); // no dups
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(success)) Debugging.ThrowAssert(); // no dups
                         TermContext context = TermContext.Build(reader.Context, term);
                         SimWeight w = weight.Similarity.ComputeWeight(1f, searcher.CollectionStatistics("field"), searcher.TermStatistics(term, context));
                         var dummy = w.GetValueForNormalization(); // ignored
@@ -384,7 +384,7 @@ namespace Lucene.Net.Search
 
             public override float GetScore()
             {
-                if (Debugging.ShouldAssert(score != 0)) Debugging.ThrowAssert(currentMatched.ToString());
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(score != 0)) Debugging.ThrowAssert(currentMatched.ToString());
                 return (float)score * ((BooleanWeight)m_weight).Coord(currentMatched, ((BooleanWeight)m_weight).MaxCoord);
             }
 
@@ -394,7 +394,7 @@ namespace Lucene.Net.Search
 
             public override int NextDoc()
             {
-                if (Debugging.ShouldAssert(currentDoc != NO_MORE_DOCS)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentDoc != NO_MORE_DOCS)) Debugging.ThrowAssert();
                 for (currentDoc = currentDoc + 1; currentDoc < maxDoc; currentDoc++)
                 {
                     currentMatched = 0;

@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert("unrecognized DocValues.Type: {0}", dvType);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert("unrecognized DocValues.Type: {0}", dvType);
                 }
             }
         }
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.ShouldAssert(obj is SortedDocValuesWriter)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(obj is SortedDocValuesWriter)) Debugging.ThrowAssert();
                 return "sorted";
             }
         }

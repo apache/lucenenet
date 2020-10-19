@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             for (int i = 4; i < 8; i++)
             {
                 string part = entry[i];
-                if (Debugging.ShouldAssert(part.Length > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(part.Length > 0)) Debugging.ThrowAssert();
                 if (!"*".Equals(part, StringComparison.Ordinal))
                 {
                     if (sb.Length > 0)
@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis.Ja.Util
 
             if ((flags & BinaryDictionary.HAS_BASEFORM) != 0)
             {
-                if (Debugging.ShouldAssert(baseForm.Length < 16)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(baseForm.Length < 16)) Debugging.ThrowAssert();
                 int shared = SharedPrefix(entry[0], baseForm);
                 int suffix = baseForm.Length - shared;
                 m_buffer.Put((byte)(shared << 4 | suffix));
@@ -240,11 +240,11 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         public virtual void AddMapping(int sourceId, int wordId)
         {
-            if (Debugging.ShouldAssert(wordId > lastWordId)) Debugging.ThrowAssert("words out of order: {0} vs lastID: {1}", wordId, lastWordId);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(wordId > lastWordId)) Debugging.ThrowAssert("words out of order: {0} vs lastID: {1}", wordId, lastWordId);
 
             if (sourceId > lastSourceId)
             {
-                if (Debugging.ShouldAssert(sourceId > lastSourceId)) Debugging.ThrowAssert("source ids out of order: lastSourceId={0} vs sourceId={1}", lastSourceId, sourceId);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(sourceId > lastSourceId)) Debugging.ThrowAssert("source ids out of order: lastSourceId={0} vs sourceId={1}", lastSourceId, sourceId);
                 targetMapOffsets = ArrayUtil.Grow(targetMapOffsets, sourceId + 1);
                 for (int i = lastSourceId + 1; i <= sourceId; i++)
                 {
@@ -253,7 +253,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
             else
             {
-                if (Debugging.ShouldAssert(sourceId == lastSourceId)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(sourceId == lastSourceId)) Debugging.ThrowAssert();
             }
 
             targetMap = ArrayUtil.Grow(targetMap, targetMapEndOffset + 1);
@@ -308,7 +308,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                 for (int ofs = 0; ofs < targetMapEndOffset; ofs++)
                 {
                     int val = targetMap[ofs], delta = val - prev;
-                    if (Debugging.ShouldAssert(delta >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(delta >= 0)) Debugging.ThrowAssert();
                     if (ofs == targetMapOffsets[sourceId])
                     {
                         @out.WriteVInt32((delta << 1) | 0x01);
@@ -320,7 +320,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     }
                     prev += delta;
                 }
-                if (Debugging.ShouldAssert(sourceId == numSourceIds)) Debugging.ThrowAssert("sourceId:{0} != numSourceIds:{1}", sourceId, numSourceIds);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(sourceId == numSourceIds)) Debugging.ThrowAssert("sourceId:{0} != numSourceIds:{1}", sourceId, numSourceIds);
             }
         }
 
@@ -344,7 +344,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     else
                     {
                         string[] data = CSVUtil.Parse(s);
-                        if (Debugging.ShouldAssert(data.Length == 3)) Debugging.ThrowAssert("malformed pos/inflection: {0}", s);
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(data.Length == 3)) Debugging.ThrowAssert("malformed pos/inflection: {0}", s);
                         @out.WriteString(data[0]);
                         @out.WriteString(data[1]);
                         @out.WriteString(data[2]);
@@ -373,7 +373,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     @out.WriteByte(m_buffer.Get());
                 }
 
-                if (Debugging.ShouldAssert(m_buffer.Remaining == 0L)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_buffer.Remaining == 0L)) Debugging.ThrowAssert();
             }
         }
     }

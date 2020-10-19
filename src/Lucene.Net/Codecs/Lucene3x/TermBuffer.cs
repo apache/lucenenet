@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             newSuffixStart = input.ReadVInt32();
             int length = input.ReadVInt32();
             int totalLength = newSuffixStart + length;
-            if (Debugging.ShouldAssert(totalLength <= ByteBlockPool.BYTE_BLOCK_SIZE - 2)) Debugging.ThrowAssert("termLength={0},resource={1}", totalLength, input);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(totalLength <= ByteBlockPool.BYTE_BLOCK_SIZE - 2)) Debugging.ThrowAssert("termLength={0},resource={1}", totalLength, input);
             if (bytes.Bytes.Length < totalLength)
             {
                 bytes.Grow(totalLength);
@@ -88,14 +88,14 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 else
                 {
-                    if (Debugging.ShouldAssert(fieldInfos.FieldInfo(currentFieldNumber) != null)) Debugging.ThrowAssert("{0}", currentFieldNumber);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldInfos.FieldInfo(currentFieldNumber) != null)) Debugging.ThrowAssert("{0}", currentFieldNumber);
                     
                     field = fieldInfos.FieldInfo(currentFieldNumber).Name.Intern();
                 }
             }
             else
             {
-                if (Debugging.ShouldAssert(field.Equals(fieldInfos.FieldInfo(fieldNumber).Name, StringComparison.Ordinal))) Debugging.ThrowAssert("currentFieldNumber={0} field={1} vs {2}", currentFieldNumber, field, fieldInfos.FieldInfo(fieldNumber)?.Name ?? "null");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(field.Equals(fieldInfos.FieldInfo(fieldNumber).Name, StringComparison.Ordinal))) Debugging.ThrowAssert("currentFieldNumber={0} field={1} vs {2}", currentFieldNumber, field, fieldInfos.FieldInfo(fieldNumber)?.Name ?? "null");
             }
         }
 

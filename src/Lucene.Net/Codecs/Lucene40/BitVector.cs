@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (count != -1)
                 {
                     count++;
-                    if (Debugging.ShouldAssert(count <= size)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count <= size)) Debugging.ThrowAssert();
                 }
                 return false;
             }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (count != -1)
                 {
                     count--;
-                    if (Debugging.ShouldAssert(count >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count >= 0)) Debugging.ThrowAssert();
                 }
                 return true;
             }
@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public bool Get(int bit)
         {
-            if (Debugging.ShouldAssert(bit >= 0 && bit < size)) Debugging.ThrowAssert("bit {0} is out of bounds 0..{1}", bit, (size - 1));
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bit >= 0 && bit < size)) Debugging.ThrowAssert("bit {0} is out of bounds 0..{1}", bit, (size - 1));
             return (bits[bit >> 3] & (1 << (bit & 7))) != 0;
         }
 
@@ -215,7 +215,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 count = c;
             }
-            if (Debugging.ShouldAssert(count <= size)) Debugging.ThrowAssert("count={0} size={1}", count, size);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count <= size)) Debugging.ThrowAssert("count={0} size={1}", count, size);
             return count;
         }
 
@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public void Write(Directory d, string name, IOContext context)
         {
-            if (Debugging.ShouldAssert(!(d is CompoundFileDirectory))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!(d is CompoundFileDirectory))) Debugging.ThrowAssert();
             IndexOutput output = d.CreateOutput(name, context);
             try
             {
@@ -275,7 +275,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     WriteBits(output);
                 }
                 CodecUtil.WriteFooter(output);
-                if (Debugging.ShouldAssert(VerifyCount())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(VerifyCount())) Debugging.ThrowAssert();
             }
             finally
             {
@@ -351,7 +351,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     output.WriteByte(bits[i]);
                     last = i;
                     numCleared -= (8 - BitUtil.BitCount(bits[i]));
-                    if (Debugging.ShouldAssert(numCleared >= 0 || (i == (bits.Length - 1) && numCleared == -(8 - (size & 7))))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numCleared >= 0 || (i == (bits.Length - 1) && numCleared == -(8 - (size & 7))))) Debugging.ThrowAssert();
                 }
             }
         }
@@ -460,7 +460,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     CodecUtil.CheckEOF(input);
 #pragma warning restore 612, 618
                 }
-                if (Debugging.ShouldAssert(VerifyCount())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(VerifyCount())) Debugging.ThrowAssert();
             }
             finally
             {
@@ -471,10 +471,10 @@ namespace Lucene.Net.Codecs.Lucene40
         // asserts only
         private bool VerifyCount()
         {
-            if (Debugging.ShouldAssert(count != -1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count != -1)) Debugging.ThrowAssert();
             int countSav = count;
             count = -1;
-            if (Debugging.ShouldAssert(countSav == Count())) Debugging.ThrowAssert("saved count was {0} but recomputed count is {1}", countSav, count);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(countSav == Count())) Debugging.ThrowAssert("saved count was {0} but recomputed count is {1}", countSav, count);
             return true;
         }
 
@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 last += input.ReadVInt32();
                 bits[last] = input.ReadByte();
                 n -= BitUtil.BitCount(bits[last]);
-                if (Debugging.ShouldAssert(n >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(n >= 0)) Debugging.ThrowAssert();
             }
         }
 
@@ -524,7 +524,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 last += input.ReadVInt32();
                 bits[last] = input.ReadByte();
                 numCleared -= 8 - BitUtil.BitCount(bits[last]);
-                if (Debugging.ShouldAssert(numCleared >= 0 || (last == (bits.Length - 1) && numCleared == -(8 - (size & 7))))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numCleared >= 0 || (last == (bits.Length - 1) && numCleared == -(8 - (size & 7))))) Debugging.ThrowAssert();
             }
         }
     }

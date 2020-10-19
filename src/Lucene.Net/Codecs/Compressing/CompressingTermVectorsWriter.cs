@@ -245,7 +245,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// Sole constructor. </summary>
         public CompressingTermVectorsWriter(Directory directory, SegmentInfo si, string segmentSuffix, IOContext context, string formatName, CompressionMode compressionMode, int chunkSize)
         {
-            if (Debugging.ShouldAssert(directory != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(directory != null)) Debugging.ThrowAssert();
             this.directory = directory;
             this.segment = si.Name;
             this.segmentSuffix = segmentSuffix;
@@ -354,7 +354,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override void StartTerm(BytesRef term, int freq)
         {
-            if (Debugging.ShouldAssert(freq >= 1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(freq >= 1)) Debugging.ThrowAssert();
             int prefix = StringHelper.BytesDifference(lastTerm, term);
             curField.AddTerm(freq, prefix, term.Length - prefix);
             termSuffixes.WriteBytes(term.Bytes, term.Offset + prefix, term.Length - prefix);
@@ -370,7 +370,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
-            if (Debugging.ShouldAssert(curField.flags != 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(curField.flags != 0)) Debugging.ThrowAssert();
             curField.AddPosition(position, startOffset, endOffset - startOffset, payload == null ? 0 : payload.Length);
             if (curField.hasPayloads && payload != null)
             {
@@ -387,7 +387,7 @@ namespace Lucene.Net.Codecs.Compressing
         private void Flush()
         {
             int chunkDocs = pendingDocs.Count;
-            if (Debugging.ShouldAssert(chunkDocs > 0)) Debugging.ThrowAssert(chunkDocs.ToString());
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(chunkDocs > 0)) Debugging.ThrowAssert(chunkDocs.ToString());
 
             // write the index file
             indexWriter.WriteIndex(chunkDocs, vectorsStream.GetFilePointer());
@@ -467,7 +467,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
 
             int numDistinctFields = fieldNums.Count;
-            if (Debugging.ShouldAssert(numDistinctFields > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numDistinctFields > 0)) Debugging.ThrowAssert();
             int bitsRequired = PackedInt32s.BitsRequired(fieldNums.Max);
             int token = (Math.Min(numDistinctFields - 1, 0x07) << 5) | bitsRequired;
             vectorsStream.WriteByte((byte)(sbyte)token);
@@ -499,7 +499,7 @@ namespace Lucene.Net.Codecs.Compressing
                 foreach (FieldData fd in dd.fields)
                 {
                     int fieldNumIndex = Array.BinarySearch(fieldNums, fd.fieldNum);
-                    if (Debugging.ShouldAssert(fieldNumIndex >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldNumIndex >= 0)) Debugging.ThrowAssert();
                     writer.Add(fieldNumIndex);
                 }
             }
@@ -519,7 +519,7 @@ namespace Lucene.Net.Codecs.Compressing
                 foreach (FieldData fd in dd.fields)
                 {
                     int fieldNumOff = Array.BinarySearch(fieldNums, fd.fieldNum);
-                    if (Debugging.ShouldAssert(fieldNumOff >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldNumOff >= 0)) Debugging.ThrowAssert();
                     if (fieldFlags[fieldNumOff] == -1)
                     {
                         fieldFlags[fieldNumOff] = fd.flags;
@@ -541,10 +541,10 @@ namespace Lucene.Net.Codecs.Compressing
                 PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(vectorsStream, PackedInt32s.Format.PACKED, fieldFlags.Length, FLAGS_BITS, 1);
                 foreach (int flags in fieldFlags)
                 {
-                    if (Debugging.ShouldAssert(flags >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(flags >= 0)) Debugging.ThrowAssert();
                     writer.Add(flags);
                 }
-                if (Debugging.ShouldAssert(writer.Ord == fieldFlags.Length - 1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(writer.Ord == fieldFlags.Length - 1)) Debugging.ThrowAssert();
                 writer.Finish();
             }
             else
@@ -559,7 +559,7 @@ namespace Lucene.Net.Codecs.Compressing
                         writer.Add(fd.flags);
                     }
                 }
-                if (Debugging.ShouldAssert(writer.Ord == totalFields - 1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(writer.Ord == totalFields - 1)) Debugging.ThrowAssert();
                 writer.Finish();
             }
         }
@@ -584,7 +584,7 @@ namespace Lucene.Net.Codecs.Compressing
                     writer.Add(fd.numTerms);
                 }
             }
-            if (Debugging.ShouldAssert(writer.Ord == totalFields - 1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(writer.Ord == totalFields - 1)) Debugging.ThrowAssert();
             writer.Finish();
         }
 
@@ -652,7 +652,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 previousPosition = position;
                             }
                         }
-                        if (Debugging.ShouldAssert(pos == fd.totalPositions)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pos == fd.totalPositions)) Debugging.ThrowAssert();
                     }
                 }
             }
@@ -688,7 +688,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 ++pos;
                             }
                         }
-                        if (Debugging.ShouldAssert(pos == fd.totalPositions)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pos == fd.totalPositions)) Debugging.ThrowAssert();
                     }
                 }
             }
@@ -756,7 +756,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 writer.Add(lengthsBuf[fd.offStart + pos++] - fd.prefixLengths[i] - fd.suffixLengths[i]);
                             }
                         }
-                        if (Debugging.ShouldAssert(pos == fd.totalPositions)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pos == fd.totalPositions)) Debugging.ThrowAssert();
                     }
                 }
             }
@@ -926,7 +926,7 @@ namespace Lucene.Net.Codecs.Compressing
                         {
                             int docBase = vectorsStream.ReadVInt32();
                             int chunkDocs = vectorsStream.ReadVInt32();
-                            if (Debugging.ShouldAssert(docBase + chunkDocs <= matchingSegmentReader.MaxDoc)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docBase + chunkDocs <= matchingSegmentReader.MaxDoc)) Debugging.ThrowAssert();
                             if (docBase + chunkDocs < matchingSegmentReader.MaxDoc && NextDeletedDoc(docBase, liveDocs, docBase + chunkDocs) == docBase + chunkDocs)
                             {
                                 long chunkEnd = index.GetStartPointer(docBase + chunkDocs);

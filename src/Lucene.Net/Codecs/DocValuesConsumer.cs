@@ -486,7 +486,7 @@ namespace Lucene.Net.Codecs
 
                 if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
                 {
-                    if (Debugging.ShouldAssert(docIDUpto < currentReader.MaxDoc)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docIDUpto < currentReader.MaxDoc)) Debugging.ThrowAssert();
                     SortedSetDocValues dv = dvs[readerUpto];
                     dv.SetDocument(docIDUpto);
                     ordUpto = ordLength = 0;
@@ -516,7 +516,7 @@ namespace Lucene.Net.Codecs
             internal BitsFilteredTermsEnum(TermsEnum @in, Int64BitSet liveTerms)
                 : base(@in, false)
             {
-                if (Debugging.ShouldAssert(liveTerms != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(liveTerms != null)) Debugging.ThrowAssert();
                 this.liveTerms = liveTerms;
             }
 

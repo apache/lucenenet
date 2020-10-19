@@ -168,7 +168,7 @@ namespace Lucene.Net.Util.Fst
 
             long? output2 = (long?)output;
             long? inc2 = (long?)inc;
-            if (Debugging.ShouldAssert(output2 >= inc2)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(output2 >= inc2)) Debugging.ThrowAssert();
 
             if (inc2 == NO_OUTPUT)
             {
@@ -186,8 +186,8 @@ namespace Lucene.Net.Util.Fst
 
         public override object Add(object prefix, object output)
         {
-            if (Debugging.ShouldAssert(Valid(prefix, false))) Debugging.ThrowAssert();
-            if (Debugging.ShouldAssert(Valid(output, true))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Valid(prefix, false))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Valid(output, true))) Debugging.ThrowAssert();
 
             long? prefix2 = (long?)prefix;
             if (output is long?)
@@ -293,8 +293,8 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                if (Debugging.ShouldAssert(Valid(first, false))) Debugging.ThrowAssert();
-                if (Debugging.ShouldAssert(Valid(second, false))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Valid(first, false))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Valid(second, false))) Debugging.ThrowAssert();
             }
 
             return new TwoInt64s(((long?)first).GetValueOrDefault(), ((long?)second).GetValueOrDefault());

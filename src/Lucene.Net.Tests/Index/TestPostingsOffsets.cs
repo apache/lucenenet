@@ -177,9 +177,9 @@ namespace Lucene.Net.Index
                     {
                         dp.NextPosition();
                         int start = dp.StartOffset;
-                        if (Debugging.ShouldAssert(start >= 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(start >= 0)) Debugging.ThrowAssert();
                         int end = dp.EndOffset;
-                        if (Debugging.ShouldAssert(end >= 0 && end >= start)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(end >= 0 && end >= start)) Debugging.ThrowAssert();
                         // check that the offsets correspond to the term in the src text
                         Assert.IsTrue(storedNumbers.Substring(start, end - start).Equals(term, StringComparison.Ordinal));
                         if (withPayloads)
@@ -208,9 +208,9 @@ namespace Lucene.Net.Index
                     string storedNumbers = reader.Document(doc).Get("numbers");
                     dp.NextPosition();
                     int start = dp.StartOffset;
-                    if (Debugging.ShouldAssert(start >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(start >= 0)) Debugging.ThrowAssert();
                     int end = dp.EndOffset;
-                    if (Debugging.ShouldAssert(end >= 0 && end >= start)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(end >= 0 && end >= start)) Debugging.ThrowAssert();
                     // check that the offsets correspond to the term in the src text
                     Assert.IsTrue(storedNumbers.Substring(start, end - start).Equals("hundred", StringComparison.Ordinal));
                     if (withPayloads)

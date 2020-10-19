@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
 
             public override bool Score(ICollector c, int maxDoc)
             {
-                if (Debugging.ShouldAssert(doc == -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(doc == -1)) Debugging.ThrowAssert();
                 doc = 3000;
                 FakeScorer fs = new FakeScorer();
                 fs.doc = doc;

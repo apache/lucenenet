@@ -304,7 +304,7 @@ namespace Lucene.Net.Store
             ByteBufferIndexInput clone = (ByteBufferIndexInput)base.Clone();
             clone.isClone = true;
             // we keep clone.clones, so it shares the same map with original and we have no additional cost on clones
-            if (Debugging.ShouldAssert(clone.clones == this.clones)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(clone.clones == this.clones)) Debugging.ThrowAssert();
             clone.buffers = BuildSlice(buffers, offset, length);
             clone.offset = (int)(offset & chunkSizeMask);
             clone.length = length;
@@ -394,7 +394,7 @@ namespace Lucene.Net.Store
 #if FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR
                         foreach (var pair in clones)
                         {
-                            if (Debugging.ShouldAssert(pair.Key.isClone)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pair.Key.isClone)) Debugging.ThrowAssert();
                             pair.Key.UnsetBuffers();
                         }
                         this.clones.Clear();

@@ -604,7 +604,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
                 else
                 {
-                    if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
                     return 0;
                 }
             }
@@ -1314,7 +1314,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 else
                 {
                     int c = CHARSEQUENCE_COMPARER.Compare(a.Key, b.Key);
-                    if (Debugging.ShouldAssert(c != 0)) Debugging.ThrowAssert("term={0}", a.Key);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(c != 0)) Debugging.ThrowAssert("term={0}", a.Key);
                     return c;
                 }
             }

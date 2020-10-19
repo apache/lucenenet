@@ -949,7 +949,7 @@ namespace Lucene.Net.Index
                     if (info.HasNorms)
                     {
 #pragma warning disable 612, 618
-                        if (Debugging.ShouldAssert(reader.HasNorms(info.Name))) Debugging.ThrowAssert(); // deprecated path
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(reader.HasNorms(info.Name))) Debugging.ThrowAssert(); // deprecated path
 #pragma warning restore 612, 618
                         CheckNorms(info, reader, infoStream);
                         ++status.TotFields;
@@ -957,7 +957,7 @@ namespace Lucene.Net.Index
                     else
                     {
 #pragma warning disable 612, 618
-                        if (Debugging.ShouldAssert(!reader.HasNorms(info.Name))) Debugging.ThrowAssert(); // deprecated path
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!reader.HasNorms(info.Name))) Debugging.ThrowAssert(); // deprecated path
 #pragma warning restore 612, 618
                         if (reader.GetNormValues(info.Name) != null)
                         {
@@ -1098,7 +1098,7 @@ namespace Lucene.Net.Index
                 {
                     BytesRef term = termsEnum.Term;
 
-                    if (Debugging.ShouldAssert(term.IsValid())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(term.IsValid())) Debugging.ThrowAssert();
 
                     // make sure terms arrive in order according to
                     // the comp
@@ -1234,7 +1234,7 @@ namespace Lucene.Net.Index
                                 // LUCENENET specific - restructured to reduce number of checks in production
                                 if (!(payload is null))
                                 {
-                                    if (Debugging.ShouldAssert(payload.IsValid())) Debugging.ThrowAssert();
+                                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payload.IsValid())) Debugging.ThrowAssert();
                                     if (payload.Length < 1)
                                     {
                                         throw new Exception("term " + term + ": doc " + doc + ": pos " + pos + " payload length is out of bounds " + payload.Length);
@@ -1452,7 +1452,7 @@ namespace Lucene.Net.Index
                     if (fieldTerms is BlockTreeTermsReader.FieldReader)
                     {
                         BlockTreeTermsReader.Stats stats = ((BlockTreeTermsReader.FieldReader)fieldTerms).ComputeStats();
-                        if (Debugging.ShouldAssert(stats != null)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(stats != null)) Debugging.ThrowAssert();
                         if (status.BlockTreeStats == null)
                         {
                             status.BlockTreeStats = new Dictionary<string, BlockTreeTermsReader.Stats>();
@@ -1807,7 +1807,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < reader.MaxDoc; i++)
             {
                 dv.Get(i, scratch);
-                if (Debugging.ShouldAssert(scratch.IsValid())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(scratch.IsValid())) Debugging.ThrowAssert();
                 if (docsWithField.Get(i) == false && scratch.Length > 0)
                 {
                     throw new Exception("dv for field: " + fieldName + " is missing but has value=" + scratch + " for doc: " + i);
@@ -1858,7 +1858,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i <= maxOrd; i++)
             {
                 dv.LookupOrd(i, scratch);
-                if (Debugging.ShouldAssert(scratch.IsValid())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(scratch.IsValid())) Debugging.ThrowAssert();
                 if (lastValue != null)
                 {
                     if (scratch.CompareTo(lastValue) <= 0)
@@ -1950,7 +1950,7 @@ namespace Lucene.Net.Index
             for (long i = 0; i <= maxOrd; i++)
             {
                 dv.LookupOrd(i, scratch);
-                if (Debugging.ShouldAssert(scratch.IsValid())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(scratch.IsValid())) Debugging.ThrowAssert();
                 if (lastValue != null)
                 {
                     if (scratch.CompareTo(lastValue) <= 0)
@@ -2154,25 +2154,25 @@ namespace Lucene.Net.Index
                                     if (hasProx)
                                     {
                                         postings = termsEnum.DocsAndPositions(null, postings);
-                                        if (Debugging.ShouldAssert(postings != null)) Debugging.ThrowAssert();
+                                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(postings != null)) Debugging.ThrowAssert();
                                         docs = null;
                                     }
                                     else
                                     {
                                         docs = termsEnum.Docs(null, docs);
-                                        if (Debugging.ShouldAssert(docs != null)) Debugging.ThrowAssert();
+                                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docs != null)) Debugging.ThrowAssert();
                                         postings = null;
                                     }
 
                                     DocsEnum docs2;
                                     if (hasProx)
                                     {
-                                        if (Debugging.ShouldAssert(postings != null)) Debugging.ThrowAssert();
+                                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(postings != null)) Debugging.ThrowAssert();
                                         docs2 = postings;
                                     }
                                     else
                                     {
-                                        if (Debugging.ShouldAssert(docs != null)) Debugging.ThrowAssert();
+                                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docs != null)) Debugging.ThrowAssert();
                                         docs2 = docs;
                                     }
 
@@ -2270,12 +2270,12 @@ namespace Lucene.Net.Index
 
                                                 if (payload != null)
                                                 {
-                                                    if (Debugging.ShouldAssert(vectorsHasPayload)) Debugging.ThrowAssert();
+                                                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(vectorsHasPayload)) Debugging.ThrowAssert();
                                                 }
 
                                                 if (postingsHasPayload && vectorsHasPayload)
                                                 {
-                                                    if (Debugging.ShouldAssert(postingsPostings != null)) Debugging.ThrowAssert();
+                                                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(postingsPostings != null)) Debugging.ThrowAssert();
 
                                                     if (payload == null)
                                                     {
@@ -2365,7 +2365,7 @@ namespace Lucene.Net.Index
 
         //private static bool AssertsOn()
         //{
-        //    if (Debugging.ShouldAssert(TestAsserts)) Debugging.ThrowAssert();
+        //    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(TestAsserts)) Debugging.ThrowAssert();
         //    return assertsOn;
         //}
 

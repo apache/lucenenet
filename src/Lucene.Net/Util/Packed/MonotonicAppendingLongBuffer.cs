@@ -137,7 +137,7 @@ namespace Lucene.Net.Util.Packed
 
         internal override void PackPendingValues()
         {
-            if (Debugging.ShouldAssert(pendingOff > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pendingOff > 0)) Debugging.ThrowAssert();
             minValues[valuesOff] = pending[0];
             averages[valuesOff] = pendingOff == 1 ? 0 : (float)(pending[pendingOff - 1] - pending[0]) / (pendingOff - 1);
 

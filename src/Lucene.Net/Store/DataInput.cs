@@ -324,7 +324,7 @@ namespace Lucene.Net.Store
             {
                 skipBuffer = new byte[SKIP_BUFFER_SIZE];
             }
-            if (Debugging.ShouldAssert(skipBuffer.Length == SKIP_BUFFER_SIZE)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(skipBuffer.Length == SKIP_BUFFER_SIZE)) Debugging.ThrowAssert();
             for (long skipped = 0; skipped < numBytes; )
             {
                 var step = (int)Math.Min(SKIP_BUFFER_SIZE, numBytes - skipped);

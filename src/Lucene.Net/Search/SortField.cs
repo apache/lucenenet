@@ -456,7 +456,7 @@ namespace Lucene.Net.Search
 #pragma warning restore 612, 618
 
                 case SortFieldType.CUSTOM:
-                    if (Debugging.ShouldAssert(comparerSource != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(comparerSource != null)) Debugging.ThrowAssert();
                     return comparerSource.NewComparer(field, numHits, sortPos, reverse);
 
                 case SortFieldType.STRING:

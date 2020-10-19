@@ -106,7 +106,7 @@ namespace Lucene.Net.Util.Fst
             m_targetLength = target.Length;
             if (base.DoSeekExact())
             {
-                if (Debugging.ShouldAssert(m_upto == 1 + target.Length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_upto == 1 + target.Length)) Debugging.ThrowAssert();
                 return SetResult();
             }
             else

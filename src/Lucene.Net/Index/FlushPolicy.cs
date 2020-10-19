@@ -113,11 +113,11 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual ThreadState FindLargestNonPendingWriter(DocumentsWriterFlushControl control, ThreadState perThreadState)
         {
-            if (Debugging.ShouldAssert(perThreadState.dwpt.NumDocsInRAM > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(perThreadState.dwpt.NumDocsInRAM > 0)) Debugging.ThrowAssert();
             long maxRamSoFar = perThreadState.bytesUsed;
             // the dwpt which needs to be flushed eventually
             ThreadState maxRamUsingThreadState = perThreadState;
-            if (Debugging.ShouldAssert(!perThreadState.flushPending)) Debugging.ThrowAssert("DWPT should have flushed");
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!perThreadState.flushPending)) Debugging.ThrowAssert("DWPT should have flushed");
             IEnumerator<ThreadState> activePerThreadsIterator = control.AllActiveThreadStates();
             while (activePerThreadsIterator.MoveNext())
             {
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            if (Debugging.ShouldAssert(AssertMessage("set largest ram consuming thread pending on lower watermark"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertMessage("set largest ram consuming thread pending on lower watermark"))) Debugging.ThrowAssert();
             return maxRamUsingThreadState;
         }
 

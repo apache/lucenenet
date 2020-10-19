@@ -35,11 +35,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public SingleTokenTokenStream(Token token) 
             : base(Token.TOKEN_ATTRIBUTE_FACTORY)
         {
-            if (Debugging.ShouldAssert(token != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(token != null)) Debugging.ThrowAssert();
             this.singleToken = (Token)token.Clone();
 
             tokenAtt = AddAttribute<ICharTermAttribute>();
-            if (Debugging.ShouldAssert(tokenAtt is Token)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(tokenAtt is Token)) Debugging.ThrowAssert();
         }
 
         public override sealed bool IncrementToken()

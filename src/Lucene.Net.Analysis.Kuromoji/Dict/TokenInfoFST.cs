@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         {
             if (useCache && ch >= 0x3040 && ch <= cacheCeiling)
             {
-                if (Debugging.ShouldAssert(ch != FST.END_LABEL)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ch != FST.END_LABEL)) Debugging.ThrowAssert();
                 FST.Arc<long?> result = rootCache[ch - 0x3040];
                 if (result == null)
                 {

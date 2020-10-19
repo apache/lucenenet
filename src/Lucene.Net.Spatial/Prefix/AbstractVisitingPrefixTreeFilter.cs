@@ -52,7 +52,7 @@ namespace Lucene.Net.Spatial.Prefix
             : base(queryShape, fieldName, grid, detailLevel)
         {
             this.m_prefixGridScanLevel = Math.Max(0, Math.Min(prefixGridScanLevel, grid.MaxLevels - 1));
-            if (Debugging.ShouldAssert(detailLevel <= grid.MaxLevels)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(detailLevel <= grid.MaxLevels)) Debugging.ThrowAssert();
         }
 
         public override bool Equals(object o)
@@ -135,7 +135,7 @@ namespace Lucene.Net.Spatial.Prefix
 
             public virtual DocIdSet GetDocIdSet()
             {
-                if (Debugging.ShouldAssert(curVNode == null)) Debugging.ThrowAssert("Called more than once?");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(curVNode == null)) Debugging.ThrowAssert("Called more than once?");
                 if (m_termsEnum == null)
                 {
                     return null;
@@ -170,7 +170,7 @@ namespace Lucene.Net.Spatial.Prefix
                         // LUCENENET IMPORTANT: Must not call this inline with Debug.Assert
                         // because the compiler removes Debug.Assert statements in release mode!!
                         bool hasNext = curVNode.children.MoveNext();
-                        if (Debugging.ShouldAssert(hasNext)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(hasNext)) Debugging.ThrowAssert();
 
                         curVNode = curVNode.children.Current;
                     }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Spatial.Prefix
                     if (compare > 0)
                     {
                         // leap frog (termsEnum is beyond where we would otherwise seek)
-                        if (Debugging.ShouldAssert(!m_context.AtomicReader.GetTerms(m_outerInstance.m_fieldName).GetEnumerator().SeekExact(curVNodeTerm))) Debugging.ThrowAssert("should be absent");
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!m_context.AtomicReader.GetTerms(m_outerInstance.m_fieldName).GetEnumerator().SeekExact(curVNodeTerm))) Debugging.ThrowAssert("should be absent");
                     }
                     else
                     {
@@ -253,7 +253,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="IOException"></exception>
             private void AddIntersectingChildren()
             {
-                if (Debugging.ShouldAssert(thisTerm != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(thisTerm != null)) Debugging.ThrowAssert();
                 Cell cell = curVNode.cell;
                 if (cell.Level >= m_outerInstance.m_detailLevel)
                 {
@@ -385,7 +385,7 @@ namespace Lucene.Net.Spatial.Prefix
 
                 public bool MoveNext()
                 {
-                    //if (Debugging.ShouldAssert(cellIter.Current != null)) Debugging.ThrowAssert();
+                    //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cellIter.Current != null)) Debugging.ThrowAssert();
 
                     // LUCENENET NOTE: The consumer of this class calls
                     // cellIter.MoveNext() before it is instantiated.
@@ -503,9 +503,9 @@ namespace Lucene.Net.Spatial.Prefix
 
             internal virtual void Reset(Cell cell)
             {
-                if (Debugging.ShouldAssert(cell != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cell != null)) Debugging.ThrowAssert();
                 this.cell = cell;
-                if (Debugging.ShouldAssert(children == null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(children == null)) Debugging.ThrowAssert();
             }
         }
 

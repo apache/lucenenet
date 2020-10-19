@@ -243,7 +243,7 @@ namespace Lucene.Net.Util
             if (Int32Upto > INT32_BLOCK_SIZE - size)
             {
                 NextBuffer();
-                if (Debugging.ShouldAssert(AssertSliceBuffer(buffer))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertSliceBuffer(buffer))) Debugging.ThrowAssert();
             }
 
             int upto = Int32Upto;
@@ -292,7 +292,7 @@ namespace Lucene.Net.Util
             if (Int32Upto > INT32_BLOCK_SIZE - newSize)
             {
                 NextBuffer();
-                if (Debugging.ShouldAssert(AssertSliceBuffer(buffer))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertSliceBuffer(buffer))) Debugging.ThrowAssert();
             }
 
             int newUpto = Int32Upto;
@@ -337,7 +337,7 @@ namespace Lucene.Net.Util
             public virtual void WriteInt32(int value)
             {
                 int[] ints = pool.buffers[offset >> INT32_BLOCK_SHIFT];
-                if (Debugging.ShouldAssert(ints != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ints != null)) Debugging.ThrowAssert();
                 int relativeOffset = offset & INT32_BLOCK_MASK;
                 if (ints[relativeOffset] != 0)
                 {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Util
             {
                 get
                 {
-                    if (Debugging.ShouldAssert(upto + bufferOffset <= end)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto + bufferOffset <= end)) Debugging.ThrowAssert();
                     return upto + bufferOffset == end;
                 }
             }
@@ -466,7 +466,7 @@ namespace Lucene.Net.Util
                 if (nextIndex + newSize >= end)
                 {
                     // We are advancing to the final slice
-                    if (Debugging.ShouldAssert(end - nextIndex > 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(end - nextIndex > 0)) Debugging.ThrowAssert();
                     limit = end - bufferOffset;
                 }
                 else

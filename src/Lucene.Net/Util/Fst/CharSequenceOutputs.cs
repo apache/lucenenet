@@ -99,7 +99,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    if (Debugging.ShouldAssert(inc.Length < output.Length)) Debugging.ThrowAssert("inc.Length={0} vs output.Length={1}", inc.Length, output.Length);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(inc.Length < output.Length)) Debugging.ThrowAssert("inc.Length={0} vs output.Length={1}", inc.Length, output.Length);
                     Debugging.ThrowAssertIf(inc.Length > 0);
                 }
                 return new CharsRef(output.Chars, output.Offset + inc.Length, output.Length - inc.Length);
@@ -134,7 +134,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(CharsRef prefix, DataOutput @out)
         {
-            if (Debugging.ShouldAssert(prefix != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(prefix != null)) Debugging.ThrowAssert();
             @out.WriteVInt32(prefix.Length);
             // TODO: maybe UTF8?
             for (int idx = 0; idx < prefix.Length; idx++)

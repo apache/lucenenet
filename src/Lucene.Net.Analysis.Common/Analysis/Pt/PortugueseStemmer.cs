@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Pt
         /// <returns> new valid length, stemmed </returns>
         public virtual int Stem(char[] s, int len)
         {
-            if (Debugging.ShouldAssert(s.Length >= len + 1)) Debugging.ThrowAssert("this stemmer requires an oversized array of at least 1");
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(s.Length >= len + 1)) Debugging.ThrowAssert("this stemmer requires an oversized array of at least 1");
 
             len = plural.Apply(s, len);
             len = adverb.Apply(s, len);

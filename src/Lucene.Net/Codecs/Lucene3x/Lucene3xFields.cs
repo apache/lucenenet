@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (Debugging.ShouldAssert(preTerms.Count == fields.Count)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(preTerms.Count == fields.Count)) Debugging.ThrowAssert();
                 return fields.Count;
             }
         }
@@ -249,7 +249,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get
                 {
                     // preflex doesn't support this
-                    if (Debugging.ShouldAssert(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0)) Debugging.ThrowAssert();
                     return false;
                 }
             }
@@ -304,7 +304,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 int savLength = term.Length;
 
-                if (Debugging.ShouldAssert(term.Offset == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(term.Offset == 0)) Debugging.ThrowAssert();
 
                 // The 3 bytes starting at downTo make up 1
                 // unicode character:
@@ -361,7 +361,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // Now test if prefix is identical and we found
                 // a non-BMP char at the same position:
                 BytesRef b2 = t2.Bytes;
-                if (Debugging.ShouldAssert(b2.Offset == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b2.Offset == 0)) Debugging.ThrowAssert();
 
                 bool matches;
                 if (b2.Length >= term.Length && IsNonBMPChar(b2.Bytes, pos))
@@ -497,7 +497,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         }
 
                         BytesRef b2 = t2.Bytes;
-                        if (Debugging.ShouldAssert(b2.Offset == 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b2.Offset == 0)) Debugging.ThrowAssert();
 
                         // Set newSuffixStart -- we can't use
                         // termEnum's since the above seek may have
@@ -653,7 +653,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (IsNonBMPChar(scratchTerm.Bytes, upTo) && (upTo > newSuffixStart || (upTo >= prevTerm.Length || (!IsNonBMPChar(prevTerm.Bytes, upTo) && !IsHighBMPChar(prevTerm.Bytes, upTo)))))
                     {
                         // A non-BMP char (4 bytes UTF8) starts here:
-                        if (Debugging.ShouldAssert(scratchTerm.Length >= upTo + 4)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(scratchTerm.Length >= upTo + 4)) Debugging.ThrowAssert();
 
                         int savLength = scratchTerm.Length;
                         scratch[0] = (sbyte)scratchTerm.Bytes[upTo];
@@ -701,7 +701,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         if (t2 != null && t2.Field == internedFieldName)
                         {
                             BytesRef b2 = t2.Bytes;
-                            if (Debugging.ShouldAssert(b2.Offset == 0)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b2.Offset == 0)) Debugging.ThrowAssert();
                             if (b2.Length >= upTo + 3 && IsHighBMPChar(b2.Bytes, upTo))
                             {
                                 matches = true;
@@ -826,7 +826,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 TermInfosReader tis = outerInstance.TermsDict;
                 Term t0 = new Term(fieldInfo.Name, term);
 
-                if (Debugging.ShouldAssert(termEnum != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termEnum != null)) Debugging.ThrowAssert();
 
                 tis.SeekEnum(termEnum, t0, false);
 
@@ -857,7 +857,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     // find an E, try swapping in S, backwards:
                     scratchTerm.CopyBytes(term);
 
-                    if (Debugging.ShouldAssert(scratchTerm.Offset == 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(scratchTerm.Offset == 0)) Debugging.ThrowAssert();
 
                     for (int i = scratchTerm.Length - 1; i >= 0; i--)
                     {
@@ -906,7 +906,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
 
                     BytesRef br = t.Bytes;
-                    if (Debugging.ShouldAssert(br.Offset == 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(br.Offset == 0)) Debugging.ThrowAssert();
 
                     SetNewSuffixStart(term, br);
 
@@ -923,7 +923,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     else
                     {
                         current = t2.Bytes;
-                        if (Debugging.ShouldAssert(!unicodeSortOrder || term.CompareTo(current) < 0)) Debugging.ThrowAssert("term={0} vs current={1}", UnicodeUtil.ToHexString(term.Utf8ToString()), UnicodeUtil.ToHexString(current.Utf8ToString()));
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!unicodeSortOrder || term.CompareTo(current) < 0)) Debugging.ThrowAssert("term={0} vs current={1}", UnicodeUtil.ToHexString(term.Utf8ToString()), UnicodeUtil.ToHexString(current.Utf8ToString()));
                         return SeekStatus.NOT_FOUND;
                     }
                 }
@@ -1203,7 +1203,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int NextPosition()
             {
-                if (Debugging.ShouldAssert(docID != NO_MORE_DOCS)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docID != NO_MORE_DOCS)) Debugging.ThrowAssert();
                 return pos.NextPosition();
             }
 

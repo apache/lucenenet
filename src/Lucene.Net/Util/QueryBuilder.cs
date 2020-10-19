@@ -186,7 +186,7 @@ namespace Lucene.Net.Util
         /// <param name="phraseSlop"> Slop factor for phrase/multiphrase queries. </param>
         protected Query CreateFieldQuery(Analyzer analyzer, Occur @operator, string field, string queryText, bool quoted, int phraseSlop)
         {
-            if (Debugging.ShouldAssert(@operator == Occur.SHOULD || @operator == Occur.MUST)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(@operator == Occur.SHOULD || @operator == Occur.MUST)) Debugging.ThrowAssert();
             // Use the analyzer to get all the tokens, and then build a TermQuery,
             // PhraseQuery, or nothing based on the term count
             CachingTokenFilter buffer = null;
@@ -263,7 +263,7 @@ namespace Lucene.Net.Util
                 try
                 {
                     bool hasNext = buffer.IncrementToken();
-                    if (Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
                     termAtt.FillBytesRef();
                 }
                 catch (IOException)
@@ -289,7 +289,7 @@ namespace Lucene.Net.Util
                                 try
                                 {
                                     bool hasNext = buffer.IncrementToken();
-                                    if (Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
+                                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
                                     termAtt.FillBytesRef();
                                 }
                                 catch (IOException)
@@ -311,7 +311,7 @@ namespace Lucene.Net.Util
                                 try
                                 {
                                     bool hasNext = buffer.IncrementToken();
-                                    if (Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
+                                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
                                     termAtt.FillBytesRef();
                                 }
                                 catch (IOException)
@@ -354,7 +354,7 @@ namespace Lucene.Net.Util
                             try
                             {
                                 bool hasNext = buffer.IncrementToken();
-                                if (Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
                                 termAtt.FillBytesRef();
                                 if (posIncrAtt != null)
                                 {
@@ -405,7 +405,7 @@ namespace Lucene.Net.Util
                         try
                         {
                             bool hasNext = buffer.IncrementToken();
-                            if (Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
                             termAtt.FillBytesRef();
                             if (posIncrAtt != null)
                             {

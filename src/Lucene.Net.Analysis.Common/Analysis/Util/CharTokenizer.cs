@@ -169,7 +169,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     if (length == 0) // start of token
                     {
-                        if (Debugging.ShouldAssert(start == -1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(start == -1)) Debugging.ThrowAssert();
                         start = offset + bufferIndex - charCount;
                         end = start;
                     } // check if a supplementary could run out of bounds
@@ -191,7 +191,7 @@ namespace Lucene.Net.Analysis.Util
             }
 
             termAtt.Length = length;
-            if (Debugging.ShouldAssert(start != -1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(start != -1)) Debugging.ThrowAssert();
             offsetAtt.SetOffset(CorrectOffset(start), finalOffset = CorrectOffset(end));
             return true;
         }

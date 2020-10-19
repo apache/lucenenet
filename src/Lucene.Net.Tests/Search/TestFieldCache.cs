@@ -373,7 +373,7 @@ namespace Lucene.Net.Search
                         break;
                     }
                     long ord = termOrds.NextOrd();
-                    if (Debugging.ShouldAssert(ord != SortedSetDocValues.NO_MORE_ORDS)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ord != SortedSetDocValues.NO_MORE_ORDS)) Debugging.ThrowAssert();
                     BytesRef scratch = new BytesRef();
                     termOrds.LookupOrd(ord, scratch);
                     Assert.AreEqual(v, scratch);

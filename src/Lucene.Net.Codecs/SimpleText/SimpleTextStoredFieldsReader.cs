@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
             SimpleTextUtil.CheckFooter(input);
-            if (Debugging.ShouldAssert(upto == _offsets.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto == _offsets.Length)) Debugging.ThrowAssert();
         }
 
         public override void VisitDocument(int n, StoredFieldVisitor visitor)

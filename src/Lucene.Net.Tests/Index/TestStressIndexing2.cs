@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
             }
             if (r1.NumDocs != r2.NumDocs)
             {
-                if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert("r1.NumDocs={0} vs r2.NumDocs={1}", r1.NumDocs, r2.NumDocs);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert("r1.NumDocs={0} vs r2.NumDocs={1}", r1.NumDocs, r2.NumDocs);
             }
             bool hasDeletes = !(r1.MaxDoc == r2.MaxDoc && r1.NumDocs == r1.MaxDoc);
 
@@ -678,7 +678,7 @@ namespace Lucene.Net.Index
                 IIndexableField f2 = ff2[i];
                 if (f1.GetBinaryValue() != null)
                 {
-                    if (Debugging.ShouldAssert(f2.GetBinaryValue() != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(f2.GetBinaryValue() != null)) Debugging.ThrowAssert();
                 }
                 else
                 {

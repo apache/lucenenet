@@ -97,7 +97,7 @@ namespace Lucene.Net.Util
                 return false;
             }
 
-            if (Debugging.ShouldAssert(nextIsSet)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(nextIsSet)) Debugging.ThrowAssert();
             try
             {
                 current = next;

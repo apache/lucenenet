@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override bool MoveNext()
             {
-                //if (Debugging.ShouldAssert(!ended)) Debugging.ThrowAssert(); // LUCENENET: Ended field is never set, so this can never fail
+                //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!ended)) Debugging.ThrowAssert(); // LUCENENET: Ended field is never set, so this can never fail
                 if (!_fstEnum.MoveNext()) return false;
 
                 var pair1 = _fstEnum.Current.Output;
@@ -321,7 +321,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
                     else
                     {
-                        if (Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || 
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || 
                                                    StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
                                                    StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END)))
                         {
@@ -480,7 +480,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (_readPositions)
                 {
                     SimpleTextUtil.ReadLine(_in, _scratch);
-                    if (Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.POS))) Debugging.ThrowAssert("got line={0}", _scratch.Utf8ToString());
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.POS))) Debugging.ThrowAssert("got line={0}", _scratch.Utf8ToString());
                     UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.POS.Length, _scratch.Length - SimpleTextFieldsWriter.POS.Length,
                         _scratchUtf162);
                     pos = ArrayUtil.ParseInt32(_scratchUtf162.Chars, 0, _scratchUtf162.Length);
@@ -493,12 +493,12 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (_readOffsets)
                 {
                     SimpleTextUtil.ReadLine(_in, _scratch);
-                    if (Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.START_OFFSET))) Debugging.ThrowAssert("got line={0}", _scratch.Utf8ToString());
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.START_OFFSET))) Debugging.ThrowAssert("got line={0}", _scratch.Utf8ToString());
                     UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.START_OFFSET.Length,
                         _scratch.Length - SimpleTextFieldsWriter.START_OFFSET.Length, _scratchUtf162);
                     _startOffset = ArrayUtil.ParseInt32(_scratchUtf162.Chars, 0, _scratchUtf162.Length);
                     SimpleTextUtil.ReadLine(_in, _scratch);
-                    if (Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END_OFFSET))) Debugging.ThrowAssert("got line={0}", _scratch.Utf8ToString());
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END_OFFSET))) Debugging.ThrowAssert("got line={0}", _scratch.Utf8ToString());
                     UnicodeUtil.UTF8toUTF16(_scratch.Bytes, _scratch.Offset + SimpleTextFieldsWriter.END_OFFSET.Length,
                         _scratch.Length - SimpleTextFieldsWriter.END_OFFSET.Length, _scratchUtf162);
                     _endOffset = ArrayUtil.ParseInt32(_scratchUtf162.Chars, 0, _scratchUtf162.Length);

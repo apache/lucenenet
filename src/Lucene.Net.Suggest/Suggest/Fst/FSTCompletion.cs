@@ -407,7 +407,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 output.Bytes = ArrayUtil.Grow(output.Bytes);
             }
-            if (Debugging.ShouldAssert(output.Offset == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(output.Offset == 0)) Debugging.ThrowAssert();
             output.Bytes[output.Length++] = (byte) arc.Label;
             FST.BytesReader fstReader = automaton.GetBytesReader();
             automaton.ReadFirstTargetArc(arc, arc, fstReader);

@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
                 }
                 if (GetRefCount(@ref) == 0 && (object)current == (object)@ref)
                 {
-                    if (Debugging.ShouldAssert(@ref != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(@ref != null)) Debugging.ThrowAssert();
                     /* if we can't increment the reader but we are
                        still the current reference the RM is in a
                        illegal states since we can't make any progress
@@ -200,7 +200,7 @@ namespace Lucene.Net.Search
                     G newReference = RefreshIfNeeded(reference);
                     if (newReference != null)
                     {
-                        if (Debugging.ShouldAssert(!ReferenceEquals(newReference, reference))) Debugging.ThrowAssert("refreshIfNeeded should return null if refresh wasn't needed");
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!ReferenceEquals(newReference, reference))) Debugging.ThrowAssert("refreshIfNeeded should return null if refresh wasn't needed");
                         try
                         {
                             SwapReference(newReference);
@@ -311,7 +311,7 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> If the release operation on the given resource throws an <see cref="IOException"/> </exception>
         public void Release(G reference)
         {
-            if (Debugging.ShouldAssert(!(reference is null))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!(reference is null))) Debugging.ThrowAssert();
             DecRef(reference);
         }
 

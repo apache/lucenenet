@@ -202,7 +202,7 @@ namespace Lucene.Net.Util.Fst
                         if (Debugging.AssertsEnabled)
                         {
                             Debugging.ThrowAssertIf(arc.ArcIdx == mid);
-                            if (Debugging.ShouldAssert(arc.Label == targetLabel)) Debugging.ThrowAssert("arc.label={0} vs targetLabel={1}", arc.Label, targetLabel + " mid=" + mid);
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.Label == targetLabel)) Debugging.ThrowAssert("arc.label={0} vs targetLabel={1}", arc.Label, targetLabel + " mid=" + mid);
                         }
                         m_output[m_upto] = m_fst.Outputs.Add(m_output[m_upto - 1], arc.Output);
                         if (targetLabel == FST.END_LABEL)
@@ -220,7 +220,7 @@ namespace Lucene.Net.Util.Fst
                         // Dead end
                         arc.ArcIdx = arc.NumArcs - 2;
                         m_fst.ReadNextRealArc(arc, @in);
-                        if (Debugging.ShouldAssert(arc.IsLast)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.IsLast)) Debugging.ThrowAssert();
                         // Dead end (target is after the last arc);
                         // rollback to last fork then push
                         m_upto--;
@@ -245,7 +245,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         arc.ArcIdx = (low > high ? low : high) - 1;
                         m_fst.ReadNextRealArc(arc, @in);
-                        if (Debugging.ShouldAssert(arc.Label > targetLabel)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.Label > targetLabel)) Debugging.ThrowAssert();
                         PushFirst();
                         return;
                     }
@@ -376,7 +376,7 @@ namespace Lucene.Net.Util.Fst
                         if (Debugging.AssertsEnabled)
                         {
                             Debugging.ThrowAssertIf(arc.ArcIdx == mid);
-                            if (Debugging.ShouldAssert(arc.Label == targetLabel)) Debugging.ThrowAssert("arc.label={0} vs targetLabel={1}", arc.Label, targetLabel + " mid=" + mid);
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.Label == targetLabel)) Debugging.ThrowAssert("arc.label={0} vs targetLabel={1}", arc.Label, targetLabel + " mid=" + mid);
                         }
                         m_output[m_upto] = m_fst.Outputs.Add(m_output[m_upto - 1], arc.Output);
                         if (targetLabel == FST.END_LABEL)
@@ -435,7 +435,7 @@ namespace Lucene.Net.Util.Fst
                         if (Debugging.AssertsEnabled)
                         {
                             Debugging.ThrowAssertIf(check);
-                            if (Debugging.ShouldAssert(arc.Label < targetLabel)) Debugging.ThrowAssert("arc.label={0} vs targetLabel={1}", arc.Label, targetLabel);
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.Label < targetLabel)) Debugging.ThrowAssert("arc.label={0} vs targetLabel={1}", arc.Label, targetLabel);
                         }
                         PushLast();
                         return;
@@ -583,7 +583,7 @@ namespace Lucene.Net.Util.Fst
         private void PushFirst()
         {
             FST.Arc<T> arc = m_arcs[m_upto];
-            if (Debugging.ShouldAssert(arc != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc != null)) Debugging.ThrowAssert();
 
             while (true)
             {
@@ -610,7 +610,7 @@ namespace Lucene.Net.Util.Fst
         private void PushLast()
         {
             FST.Arc<T> arc = m_arcs[m_upto];
-            if (Debugging.ShouldAssert(arc != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc != null)) Debugging.ThrowAssert();
 
             while (true)
             {

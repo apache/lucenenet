@@ -396,7 +396,7 @@ namespace Lucene.Net.Codecs.Bloom
                 var bloomFilter = outerInstance._bloomFilterFactory.GetSetForField(_state, field);
                 if (bloomFilter != null)
                 {
-                    if (Debugging.ShouldAssert((_bloomFilters.ContainsKey(field) == false))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert((_bloomFilters.ContainsKey(field) == false))) Debugging.ThrowAssert();
 
                     _bloomFilters.Add(field, bloomFilter);
                     return new WrappedTermsConsumer(_delegateFieldsConsumer.AddField(field), bloomFilter);

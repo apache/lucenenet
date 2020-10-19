@@ -106,12 +106,12 @@ namespace Lucene.Net.Search.Grouping
             {
                 this.shardIndex = shardIndex;
                 iter = shard.GetEnumerator();
-                //if (Debugging.ShouldAssert(iter.hasNext())) Debugging.ThrowAssert(); // No reasonable way to do this in .NET
+                //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(iter.hasNext())) Debugging.ThrowAssert(); // No reasonable way to do this in .NET
             }
 
             public ISearchGroup<T> Next()
             {
-                //if (Debugging.ShouldAssert(iter.hasNext())) Debugging.ThrowAssert(); // No reasonable way to do this in .NET
+                //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(iter.hasNext())) Debugging.ThrowAssert(); // No reasonable way to do this in .NET
                 ISearchGroup<T> group = iter.Current;
                 if (group.SortValues == null)
                 {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     if (groupValue == null)
                     {
-                        if (Debugging.ShouldAssert(otherMergedGroup.groupValue != null)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(otherMergedGroup.groupValue != null)) Debugging.ThrowAssert();
                     }
                     else
                     {
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 // We never have another MergedGroup instance with
                 // same groupValue
-                if (Debugging.ShouldAssert(NeverEquals(other))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(NeverEquals(other))) Debugging.ThrowAssert();
 
                 if (other is MergedGroup<T> otherMergedGroup)
                 {
@@ -294,7 +294,7 @@ namespace Lucene.Net.Search.Grouping
                 }
 
                 // Tie break by min shard index:
-                if (Debugging.ShouldAssert(group.MinShardIndex != other.MinShardIndex)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(group.MinShardIndex != other.MinShardIndex)) Debugging.ThrowAssert();
                 return group.MinShardIndex - other.MinShardIndex;
             }
         }
@@ -327,7 +327,7 @@ namespace Lucene.Net.Search.Grouping
                         //System.out.println("      new");
                         mergedGroup = new MergedGroup<T>(group.GroupValue);
                         mergedGroup.MinShardIndex = shard.ShardIndex;
-                        if (Debugging.ShouldAssert(group.SortValues != null)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(group.SortValues != null)) Debugging.ThrowAssert();
                         mergedGroup.TopValues = group.SortValues;
                         groupsSeen[group.GroupValue] = mergedGroup;
                         mergedGroup.IsInQueue = true;

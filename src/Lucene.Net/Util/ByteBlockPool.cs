@@ -354,7 +354,7 @@ namespace Lucene.Net.Util
                 term.Length = (bytes[pos] & 0x7f) + ((bytes[pos + 1] & 0xff) << 7);
                 term.Offset = pos + 2;
             }
-            if (Debugging.ShouldAssert(term.Length >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(term.Length >= 0)) Debugging.ThrowAssert();
         }
 
         /// <summary>

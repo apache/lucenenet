@@ -178,7 +178,7 @@ namespace Lucene.Net.Codecs.Sep
             //         current payload length equals the length at the previous
             //         skip point
 
-            if (Debugging.ShouldAssert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !curStorePayloads)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !curStorePayloads)) Debugging.ThrowAssert();
 
             if (curStorePayloads)
             {

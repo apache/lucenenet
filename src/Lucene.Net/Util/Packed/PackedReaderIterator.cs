@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Packed
             this.packedIntsVersion = packedIntsVersion;
             bulkOperation = BulkOperation.Of(format, bitsPerValue);
             iterations = Iterations(mem);
-            if (Debugging.ShouldAssert(valueCount == 0 || iterations > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(valueCount == 0 || iterations > 0)) Debugging.ThrowAssert();
             nextBlocks = new byte[iterations * bulkOperation.ByteBlockCount];
             nextValues = new Int64sRef(new long[iterations * bulkOperation.ByteValueCount], 0, 0);
             nextValues.Offset = nextValues.Int64s.Length;

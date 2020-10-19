@@ -94,7 +94,7 @@ namespace Lucene.Net.Index
 
         public override void SeekExact(long ord)
         {
-            if (Debugging.ShouldAssert(ord >= 0 && ord < values.ValueCount)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ord >= 0 && ord < values.ValueCount)) Debugging.ThrowAssert();
             currentOrd = (int)ord;
             values.LookupOrd(currentOrd, term);
         }
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
 
         public override void SeekExact(BytesRef term, TermState state)
         {
-            if (Debugging.ShouldAssert(state != null && state is OrdTermState)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state != null && state is OrdTermState)) Debugging.ThrowAssert();
             this.SeekExact(((OrdTermState)state).Ord);
         }
 

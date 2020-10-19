@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
             this.chars = chars;
             this.Offset = offset;
             this.Length = length;
-            if (Debugging.ShouldAssert(IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(IsValid())) Debugging.ThrowAssert();
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Grow(int newLength)
         {
-            if (Debugging.ShouldAssert(Offset == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Offset == 0)) Debugging.ThrowAssert();
             if (chars.Length < newLength)
             {
                 chars = ArrayUtil.Grow(chars, newLength);

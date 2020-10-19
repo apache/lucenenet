@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
                 long t1 = Time.NanoTime();
                 mergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge stored fields [" + numMerged + " docs]");
             }
-            if (Debugging.ShouldAssert(numMerged == mergeState.SegmentInfo.DocCount)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numMerged == mergeState.SegmentInfo.DocCount)) Debugging.ThrowAssert();
 
             SegmentWriteState segmentWriteState = new SegmentWriteState(mergeState.InfoStream, directory, mergeState.SegmentInfo, mergeState.FieldInfos, termIndexInterval, null, context);
             if (mergeState.InfoStream.IsEnabled("SM"))
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
                     long t1 = Time.NanoTime();
                     mergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge vectors [" + numMerged + " docs]");
                 }
-                if (Debugging.ShouldAssert(numMerged == mergeState.SegmentInfo.DocCount)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numMerged == mergeState.SegmentInfo.DocCount)) Debugging.ThrowAssert();
             }
 
             // write the merged infos

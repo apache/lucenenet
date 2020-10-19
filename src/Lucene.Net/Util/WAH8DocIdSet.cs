@@ -154,7 +154,7 @@ namespace Lucene.Net.Util
                         wordNum = iterators[i].wordNum;
                         goto mainContinue;
                     }
-                    if (Debugging.ShouldAssert(iterators[i].wordNum == wordNum)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(iterators[i].wordNum == wordNum)) Debugging.ThrowAssert();
                     word &= iterators[i].word;
                     if (word == 0)
                     {
@@ -164,7 +164,7 @@ namespace Lucene.Net.Util
                     }
                 }
                 // Found a common word
-                if (Debugging.ShouldAssert(word != 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(word != 0)) Debugging.ThrowAssert();
                 builder.AddWord(wordNum, word);
                 ++wordNum;
             mainContinue:;
@@ -250,7 +250,7 @@ namespace Lucene.Net.Util
 
         internal static int WordNum(int docID)
         {
-            if (Debugging.ShouldAssert(docID >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docID >= 0)) Debugging.ThrowAssert();
             return (int)((uint)docID >> 3);
         }
 
@@ -339,7 +339,7 @@ namespace Lucene.Net.Util
 
             internal virtual void WriteSequence()
             {
-                if (Debugging.ShouldAssert(SequenceIsConsistent())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(SequenceIsConsistent())) Debugging.ThrowAssert();
                 try
                 {
                     WriteHeader(reverse, clean, dirtyWords.Length);
@@ -399,7 +399,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    if (Debugging.ShouldAssert(lastWordNum >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastWordNum >= 0)) Debugging.ThrowAssert();
                     switch (wordNum - lastWordNum)
                     {
                         case 1:
@@ -449,7 +449,7 @@ namespace Lucene.Net.Util
             {
                 if (cardinality == 0)
                 {
-                    if (Debugging.ShouldAssert(lastWordNum == -1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastWordNum == -1)) Debugging.ThrowAssert();
                     return EMPTY;
                 }
                 WriteSequence();
@@ -481,7 +481,7 @@ namespace Lucene.Net.Util
                         for (int j = 0; j < indexInterval; ++j)
                         {
                             bool readSequence = it.ReadSequence();
-                            if (Debugging.ShouldAssert(readSequence)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(readSequence)) Debugging.ThrowAssert();
                             it.SkipDirtyBytes();
                         }
                         int position = it.@in.Position;
@@ -681,7 +681,7 @@ namespace Lucene.Net.Util
                     allOnesLength = ReadCleanLength(@in, token);
                 }
                 dirtyLength = ReadDirtyLength(@in, token);
-                if (Debugging.ShouldAssert(@in.Length - @in.Position >= dirtyLength)) Debugging.ThrowAssert("{0} {1} {2}", @in.Position, @in.Length, dirtyLength);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(@in.Length - @in.Position >= dirtyLength)) Debugging.ThrowAssert("{0} {1} {2}", @in.Position, @in.Length, dirtyLength);
                 ++sequenceNum;
                 return true;
             }
@@ -736,7 +736,7 @@ namespace Lucene.Net.Util
                         word = @in.ReadByte();
                         ++wordNum;
                         --dirtyLength;
-                        if (Debugging.ShouldAssert(word != 0)) Debugging.ThrowAssert(); // never more than one consecutive 0
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(word != 0)) Debugging.ThrowAssert(); // never more than one consecutive 0
                         return;
                     }
                 }
@@ -796,7 +796,7 @@ namespace Lucene.Net.Util
 
             internal virtual void AdvanceWord(int targetWordNum)
             {
-                if (Debugging.ShouldAssert(targetWordNum > wordNum)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(targetWordNum > wordNum)) Debugging.ThrowAssert();
                 int delta = targetWordNum - wordNum;
                 if (delta <= allOnesLength + dirtyLength + 1)
                 {
@@ -805,7 +805,7 @@ namespace Lucene.Net.Util
                 else
                 {
                     SkipDirtyBytes();
-                    if (Debugging.ShouldAssert(dirtyLength == 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(dirtyLength == 0)) Debugging.ThrowAssert();
                     if (delta > indexThreshold)
                     {
                         // use the index
@@ -857,7 +857,7 @@ namespace Lucene.Net.Util
                     return docID = NO_MORE_DOCS;
                 }
                 bitList = BitUtil.BitList(word);
-                if (Debugging.ShouldAssert(bitList != 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bitList != 0)) Debugging.ThrowAssert();
                 docID = (wordNum << 3) | ((bitList & 0x0F) - 1);
                 bitList = (int)((uint)bitList >> 4);
                 return docID;
@@ -865,7 +865,7 @@ namespace Lucene.Net.Util
 
             public override int Advance(int target)
             {
-                if (Debugging.ShouldAssert(target > docID)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(target > docID)) Debugging.ThrowAssert();
                 int targetWordNum = WordNum(target);
                 if (targetWordNum > this.wordNum)
                 {

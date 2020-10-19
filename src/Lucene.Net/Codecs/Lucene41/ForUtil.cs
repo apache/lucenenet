@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene41
         private static int EncodedSize(PackedInt32s.Format format, int packedIntsVersion, int bitsPerValue)
         {
             long byteCount = format.ByteCount(packedIntsVersion, Lucene41PostingsFormat.BLOCK_SIZE, bitsPerValue);
-            if (Debugging.ShouldAssert(byteCount >= 0 && byteCount <= int.MaxValue)) Debugging.ThrowAssert(byteCount.ToString());
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(byteCount >= 0 && byteCount <= int.MaxValue)) Debugging.ThrowAssert(byteCount.ToString());
             return (int)byteCount;
         }
 
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 var bitsPerValue = (code & 31) + 1;
 
                 PackedInt32s.Format format = PackedInt32s.Format.ById(formatId);
-                if (Debugging.ShouldAssert(format.IsSupported(bitsPerValue))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(format.IsSupported(bitsPerValue))) Debugging.ThrowAssert();
                 encodedSizes[bpv] = EncodedSize(format, packedIntsVersion, bitsPerValue);
                 encoders[bpv] = PackedInt32s.GetEncoder(format, packedIntsVersion, bitsPerValue);
                 decoders[bpv] = PackedInt32s.GetDecoder(format, packedIntsVersion, bitsPerValue);
@@ -169,12 +169,12 @@ namespace Lucene.Net.Codecs.Lucene41
             }
 
             int numBits = BitsRequired(data);
-            if (Debugging.ShouldAssert(numBits > 0 && numBits <= 32)) Debugging.ThrowAssert(numBits.ToString());
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numBits > 0 && numBits <= 32)) Debugging.ThrowAssert(numBits.ToString());
             PackedInt32s.IEncoder encoder = encoders[numBits];
             int iters = iterations[numBits];
-            if (Debugging.ShouldAssert(iters * encoder.ByteValueCount >= Lucene41PostingsFormat.BLOCK_SIZE)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(iters * encoder.ByteValueCount >= Lucene41PostingsFormat.BLOCK_SIZE)) Debugging.ThrowAssert();
             int encodedSize = encodedSizes[numBits];
-            if (Debugging.ShouldAssert(iters * encoder.ByteBlockCount >= encodedSize)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(iters * encoder.ByteBlockCount >= encodedSize)) Debugging.ThrowAssert();
 
             @out.WriteByte((byte)numBits);
 
@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.Lucene41
         internal void ReadBlock(IndexInput @in, byte[] encoded, int[] decoded)
         {
             int numBits = @in.ReadByte();
-            if (Debugging.ShouldAssert(numBits <= 32)) Debugging.ThrowAssert(numBits.ToString());
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numBits <= 32)) Debugging.ThrowAssert(numBits.ToString());
 
             if (numBits == ALL_VALUES_EQUAL)
             {
@@ -206,7 +206,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             PackedInt32s.IDecoder decoder = decoders[numBits];
             int iters = iterations[numBits];
-            if (Debugging.ShouldAssert(iters * decoder.ByteValueCount >= Lucene41PostingsFormat.BLOCK_SIZE)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(iters * decoder.ByteValueCount >= Lucene41PostingsFormat.BLOCK_SIZE)) Debugging.ThrowAssert();
 
             decoder.Decode(encoded, 0, decoded, 0, iters);
         }
@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 @in.ReadVInt32();
                 return;
             }
-            if (Debugging.ShouldAssert(numBits > 0 && numBits <= 32)) Debugging.ThrowAssert(numBits.ToString());
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numBits > 0 && numBits <= 32)) Debugging.ThrowAssert(numBits.ToString());
             int encodedSize = encodedSizes[numBits];
             @in.Seek(@in.GetFilePointer() + encodedSize);
         }
@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.Lucene41
             long or = 0;
             for (int i = 0; i < Lucene41PostingsFormat.BLOCK_SIZE; ++i)
             {
-                if (Debugging.ShouldAssert(data[i] >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(data[i] >= 0)) Debugging.ThrowAssert();
                 or |= (uint)data[i];
             }
             return PackedInt32s.BitsRequired(or);

@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
                     Debugging.ThrowAssertIf(packet.Any());
                     Debugging.ThrowAssertIf(CheckDeleteStats());
                     Debugging.ThrowAssertIf(packet.DelGen < nextGen);
-                    if (Debugging.ShouldAssert(updates.Count == 0 || updates[updates.Count - 1].DelGen < packet.DelGen)) Debugging.ThrowAssert("Delete packets must be in order");
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(updates.Count == 0 || updates[updates.Count - 1].DelGen < packet.DelGen)) Debugging.ThrowAssert("Delete packets must be in order");
                 }
                 updates.Add(packet);
                 numTerms.AddAndGet(packet.numTermDeletes);
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
                 {
                     infoStream.Message("BD", "push deletes " + packet + " delGen=" + packet.DelGen + " packetCount=" + updates.Count + " totBytesUsed=" + bytesUsed);
                 }
-                if (Debugging.ShouldAssert(CheckDeleteStats())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckDeleteStats())) Debugging.ThrowAssert();
                 return packet.DelGen;
             }
         }
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
                     return new ApplyDeletesResult(false, nextGen++, null);
                 }
 
-                if (Debugging.ShouldAssert(CheckDeleteStats())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckDeleteStats())) Debugging.ThrowAssert();
 
                 if (!Any())
                 {
@@ -239,11 +239,11 @@ namespace Lucene.Net.Index
                     }
                     else if (packet != null && segGen == packet.DelGen)
                     {
-                        if (Debugging.ShouldAssert(packet.isSegmentPrivate)) Debugging.ThrowAssert("Packet and Segments deletegen can only match on a segment private del packet gen={0}", segGen);
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(packet.isSegmentPrivate)) Debugging.ThrowAssert("Packet and Segments deletegen can only match on a segment private del packet gen={0}", segGen);
                         //System.out.println("  eq");
 
                         // Lock order: IW -> BD -> RP
-                        if (Debugging.ShouldAssert(readerPool.InfoIsLive(info))) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(readerPool.InfoIsLive(info))) Debugging.ThrowAssert();
                         ReadersAndUpdates rld = readerPool.Get(info, true);
                         SegmentReader reader = rld.GetReader(IOContext.READ);
                         int delCount = 0;
@@ -270,7 +270,7 @@ namespace Lucene.Net.Index
                                 rld.WriteFieldUpdates(info.Info.Dir, dvUpdates);
                             }
                             int fullDelCount = rld.Info.DelCount + rld.PendingDeleteCount;
-                            if (Debugging.ShouldAssert(fullDelCount <= rld.Info.Info.DocCount)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fullDelCount <= rld.Info.Info.DocCount)) Debugging.ThrowAssert();
                             segAllDeletes = fullDelCount == rld.Info.Info.DocCount;
                         }
                         finally
@@ -315,7 +315,7 @@ namespace Lucene.Net.Index
                         if (coalescedUpdates != null)
                         {
                             // Lock order: IW -> BD -> RP
-                            if (Debugging.ShouldAssert(readerPool.InfoIsLive(info))) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(readerPool.InfoIsLive(info))) Debugging.ThrowAssert();
                             ReadersAndUpdates rld = readerPool.Get(info, true);
                             SegmentReader reader = rld.GetReader(IOContext.READ);
                             int delCount = 0;
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
                                     rld.WriteFieldUpdates(info.Info.Dir, dvUpdates);
                                 }
                                 int fullDelCount = rld.Info.DelCount + rld.PendingDeleteCount;
-                                if (Debugging.ShouldAssert(fullDelCount <= rld.Info.Info.DocCount)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fullDelCount <= rld.Info.Info.DocCount)) Debugging.ThrowAssert();
                                 segAllDeletes = fullDelCount == rld.Info.Info.DocCount;
                             }
                             finally
@@ -362,7 +362,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                if (Debugging.ShouldAssert(CheckDeleteStats())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckDeleteStats())) Debugging.ThrowAssert();
                 if (infoStream.IsEnabled("BD"))
                 {
                     infoStream.Message("BD", "applyDeletes took " + (Environment.TickCount - t0) + " msec");
@@ -392,7 +392,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.ShouldAssert(CheckDeleteStats())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckDeleteStats())) Debugging.ThrowAssert();
                 long minGen = long.MaxValue;
                 foreach (SegmentCommitInfo info in segmentInfos.Segments)
                 {
@@ -409,7 +409,7 @@ namespace Lucene.Net.Index
                     if (updates[delIDX].DelGen >= minGen)
                     {
                         Prune(delIDX);
-                        if (Debugging.ShouldAssert(CheckDeleteStats())) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckDeleteStats())) Debugging.ThrowAssert();
                         return;
                     }
                 }
@@ -438,9 +438,9 @@ namespace Lucene.Net.Index
                     {
                         FrozenBufferedUpdates packet = updates[delIDX];
                         numTerms.AddAndGet(-packet.numTermDeletes);
-                        if (Debugging.ShouldAssert(numTerms >= 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numTerms >= 0)) Debugging.ThrowAssert();
                         bytesUsed.AddAndGet(-packet.bytesUsed);
-                        if (Debugging.ShouldAssert(bytesUsed >= 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytesUsed >= 0)) Debugging.ThrowAssert();
                     }
                     updates.SubList(0, count).Clear();
                 }
@@ -465,7 +465,7 @@ namespace Lucene.Net.Index
                 string currentField = null;
                 DocsEnum docs = null;
 
-                if (Debugging.ShouldAssert(CheckDeleteTerm(null))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckDeleteTerm(null))) Debugging.ThrowAssert();
 
                 bool any = false;
 
@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
                     // forwards
                     if (!string.Equals(term.Field, currentField, StringComparison.Ordinal))
                     {
-                        if (Debugging.ShouldAssert(currentField == null || currentField.CompareToOrdinal(term.Field) < 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentField == null || currentField.CompareToOrdinal(term.Field) < 0)) Debugging.ThrowAssert();
                         currentField = term.Field;
                         Terms terms = fields.GetTerms(currentField);
                         if (terms != null)
@@ -494,7 +494,7 @@ namespace Lucene.Net.Index
                     {
                         continue;
                     }
-                    if (Debugging.ShouldAssert(CheckDeleteTerm(term))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CheckDeleteTerm(term))) Debugging.ThrowAssert();
 
                     // System.out.println("  term=" + term);
 
@@ -688,7 +688,7 @@ namespace Lucene.Net.Index
         {
             if (term != null)
             {
-                if (Debugging.ShouldAssert(lastDeleteTerm == null || term.CompareTo(lastDeleteTerm) > 0)) Debugging.ThrowAssert("lastTerm={0} vs term={1}", lastDeleteTerm, term);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastDeleteTerm == null || term.CompareTo(lastDeleteTerm) > 0)) Debugging.ThrowAssert("lastTerm={0} vs term={1}", lastDeleteTerm, term);
             }
             // TODO: we re-use term now in our merged iterable, but we shouldn't clone, instead copy for this assert
             lastDeleteTerm = term == null ? null : new Term(term.Field, BytesRef.DeepCopyOf(term.Bytes));

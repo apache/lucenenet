@@ -284,7 +284,7 @@ namespace Lucene.Net.Join
                     }
 
                     //System.out.println("  parentDoc=" + parentDoc);
-                    if (Debugging.ShouldAssert(_parentDoc != -1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_parentDoc != -1)) Debugging.ThrowAssert();
 
                     //System.out.println("  nextChildDoc=" + nextChildDoc);
                     if (_acceptDocs != null && !_acceptDocs.Get(_parentDoc))
@@ -402,7 +402,7 @@ namespace Lucene.Net.Join
                 _prevParentDoc = _parentBits.PrevSetBit(parentTarget - 1);
 
                 //System.out.println("  rolled back to prevParentDoc=" + prevParentDoc + " vs parentDoc=" + parentDoc);
-                if (Debugging.ShouldAssert(_prevParentDoc >= _parentDoc)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_prevParentDoc >= _parentDoc)) Debugging.ThrowAssert();
                 if (_prevParentDoc > _nextChildDoc)
                 {
                     _nextChildDoc = _childScorer.Advance(_prevParentDoc);

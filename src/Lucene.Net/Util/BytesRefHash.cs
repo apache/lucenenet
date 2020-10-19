@@ -138,7 +138,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public int[] Compact()
         {
-            if (Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
             int upto = 0;
             for (int i = 0; i < hashSize; i++)
             {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            if (Debugging.ShouldAssert(upto == count)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto == count)) Debugging.ThrowAssert();
             lastCount = count;
             return ids;
         }
@@ -199,7 +199,7 @@ namespace Lucene.Net.Util
             protected override int Compare(int i, int j)
             {
                 int id1 = compact[i], id2 = compact[j];
-                if (Debugging.ShouldAssert(outerInstance.bytesStart.Length > id1 && outerInstance.bytesStart.Length > id2)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.bytesStart.Length > id1 && outerInstance.bytesStart.Length > id2)) Debugging.ThrowAssert();
                 outerInstance.pool.SetBytesRef(outerInstance.scratch1, outerInstance.bytesStart[id1]);
                 outerInstance.pool.SetBytesRef(scratch2, outerInstance.bytesStart[id2]);
                 return comp.Compare(outerInstance.scratch1, scratch2);
@@ -208,14 +208,14 @@ namespace Lucene.Net.Util
             protected override void SetPivot(int i)
             {
                 int id = compact[i];
-                if (Debugging.ShouldAssert(outerInstance.bytesStart.Length > id)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.bytesStart.Length > id)) Debugging.ThrowAssert();
                 outerInstance.pool.SetBytesRef(pivot, outerInstance.bytesStart[id]);
             }
 
             protected override int ComparePivot(int j)
             {
                 int id = compact[j];
-                if (Debugging.ShouldAssert(outerInstance.bytesStart.Length > id)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.bytesStart.Length > id)) Debugging.ThrowAssert();
                 outerInstance.pool.SetBytesRef(scratch2, outerInstance.bytesStart[id]);
                 return comp.Compare(pivot, scratch2);
             }
@@ -302,7 +302,7 @@ namespace Lucene.Net.Util
         ///           <see cref="ByteBlockPool.BYTE_BLOCK_SIZE"/> </exception>
         public int Add(BytesRef bytes)
         {
-            if (Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
             int length = bytes.Length;
             // final position
             int hashPos = FindHash(bytes);
@@ -325,7 +325,7 @@ namespace Lucene.Net.Util
                 if (count >= bytesStart.Length)
                 {
                     bytesStart = bytesStartArray.Grow();
-                    if (Debugging.ShouldAssert(count < bytesStart.Length + 1)) Debugging.ThrowAssert("count: {0} len: {1}", count, bytesStart.Length);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count < bytesStart.Length + 1)) Debugging.ThrowAssert("count: {0} len: {1}", count, bytesStart.Length);
                 }
                 e = count++;
 
@@ -340,7 +340,7 @@ namespace Lucene.Net.Util
                     // 1 byte to store length
                     buffer[bufferUpto] = (byte)length;
                     pool.ByteUpto += length + 1;
-                    if (Debugging.ShouldAssert(length >= 0)) Debugging.ThrowAssert("Length must be positive: {0}", length);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(length >= 0)) Debugging.ThrowAssert("Length must be positive: {0}", length);
                     System.Buffer.BlockCopy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 1, length);
                 }
                 else
@@ -351,7 +351,7 @@ namespace Lucene.Net.Util
                     pool.ByteUpto += length + 2;
                     System.Buffer.BlockCopy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 2, length);
                 }
-                if (Debugging.ShouldAssert(ids[hashPos] == -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ids[hashPos] == -1)) Debugging.ThrowAssert();
                 ids[hashPos] = e;
 
                 if (count == hashHalfSize)
@@ -378,7 +378,7 @@ namespace Lucene.Net.Util
 
         private int FindHash(BytesRef bytes)
         {
-            if (Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
 
             int code = DoHash(bytes.Bytes, bytes.Offset, bytes.Length);
 
@@ -410,7 +410,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public int AddByPoolOffset(int offset)
         {
-            if (Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
             // final position
             int code = offset;
             int hashPos = offset & hashMask;
@@ -432,11 +432,11 @@ namespace Lucene.Net.Util
                 if (count >= bytesStart.Length)
                 {
                     bytesStart = bytesStartArray.Grow();
-                    if (Debugging.ShouldAssert(count < bytesStart.Length + 1)) Debugging.ThrowAssert("count: {0} len: {1}", count, bytesStart.Length);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count < bytesStart.Length + 1)) Debugging.ThrowAssert("count: {0} len: {1}", count, bytesStart.Length);
                 }
                 e = count++;
                 bytesStart[e] = offset;
-                if (Debugging.ShouldAssert(ids[hashPos] == -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ids[hashPos] == -1)) Debugging.ThrowAssert();
                 ids[hashPos] = e;
 
                 if (count == hashHalfSize)
@@ -490,7 +490,7 @@ namespace Lucene.Net.Util
                     }
 
                     int hashPos = code & newMask;
-                    if (Debugging.ShouldAssert(hashPos >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(hashPos >= 0)) Debugging.ThrowAssert();
                     if (newHash[hashPos] != -1)
                     {
                         // Conflict; use linear probe to find an open slot
@@ -647,7 +647,7 @@ namespace Lucene.Net.Util
 
             public override int[] Grow()
             {
-                if (Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert();
                 return bytesStart = ArrayUtil.Grow(bytesStart, bytesStart.Length + 1);
             }
 

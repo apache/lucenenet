@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.PerField
                 string formatName = format.Name;
 
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName);
-                if (Debugging.ShouldAssert(previousValue == null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(previousValue == null)) Debugging.ThrowAssert();
 
                 int? suffix;
 
@@ -147,12 +147,12 @@ namespace Lucene.Net.Codecs.PerField
                 else
                 {
                     // we've already seen this format, so just grab its suffix
-                    if (Debugging.ShouldAssert(suffixes.ContainsKey(formatName))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(suffixes.ContainsKey(formatName))) Debugging.ThrowAssert();
                     suffix = consumer.Suffix;
                 }
 
                 previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix, CultureInfo.InvariantCulture));
-                if (Debugging.ShouldAssert(previousValue == null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(previousValue == null)) Debugging.ThrowAssert();
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this PF actually sees ... then stuff like
@@ -219,7 +219,7 @@ namespace Lucene.Net.Codecs.PerField
                             {
                                 // null formatName means the field is in fieldInfos, but has no postings!
                                 string suffix = fi.GetAttribute(PER_FIELD_SUFFIX_KEY);
-                                if (Debugging.ShouldAssert(suffix != null)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(suffix != null)) Debugging.ThrowAssert();
                                 PostingsFormat format = PostingsFormat.ForName(formatName);
                                 string segmentSuffix = GetSuffix(formatName, suffix);
                                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey

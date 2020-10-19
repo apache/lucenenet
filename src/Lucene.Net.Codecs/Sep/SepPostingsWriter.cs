@@ -262,10 +262,10 @@ namespace Lucene.Net.Codecs.Sep
         /// Add a new position &amp; payload. </summary>
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
-            if (Debugging.ShouldAssert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)) Debugging.ThrowAssert();
 
             int delta = position - lastPosition;
-            if (Debugging.ShouldAssert(delta >= 0)) Debugging.ThrowAssert("position={0} lastPosition={1}", position, lastPosition);            // not quite right (if pos=0 is repeated twice we don't catch it)
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(delta >= 0)) Debugging.ThrowAssert("position={0} lastPosition={1}", position, lastPosition);            // not quite right (if pos=0 is repeated twice we don't catch it)
             lastPosition = position;
 
             if (storePayloads)

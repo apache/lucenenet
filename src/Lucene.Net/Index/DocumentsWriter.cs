@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.ShouldAssert(!Monitor.IsEntered(writer))) Debugging.ThrowAssert("IndexWriter lock should never be hold when aborting");
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!Monitor.IsEntered(writer))) Debugging.ThrowAssert("IndexWriter lock should never be hold when aborting");
                 bool success = false;
                 JCG.HashSet<string> newFilesSet = new JCG.HashSet<string>();
                 try
@@ -287,7 +287,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.ShouldAssert(indexWriter.HoldsFullFlushLock)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexWriter.HoldsFullFlushLock)) Debugging.ThrowAssert();
                 if (infoStream.IsEnabled("DW"))
                 {
                     infoStream.Message("DW", "lockAndAbortAll");
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
 
         private void AbortThreadState(ThreadState perThread, ISet<string> newFiles)
         {
-            if (Debugging.ShouldAssert(perThread.IsHeldByCurrentThread)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(perThread.IsHeldByCurrentThread)) Debugging.ThrowAssert();
             if (perThread.IsActive) // we might be closed
             {
                 if (perThread.IsInitialized)
@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.ShouldAssert(closed)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(closed)) Debugging.ThrowAssert();
             }
         }
 
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.ShouldAssert(indexWriter.HoldsFullFlushLock)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexWriter.HoldsFullFlushLock)) Debugging.ThrowAssert();
                 if (infoStream.IsEnabled("DW"))
                 {
                     infoStream.Message("DW", "unlockAll");
@@ -498,10 +498,10 @@ namespace Lucene.Net.Index
                 if (!perThread.IsActive)
                 {
                     EnsureOpen();
-                    if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert("perThread is not active but we are still open");
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert("perThread is not active but we are still open");
                 }
                 EnsureInitialized(perThread);
-                if (Debugging.ShouldAssert(perThread.IsInitialized)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(perThread.IsInitialized)) Debugging.ThrowAssert();
                 DocumentsWriterPerThread dwpt = perThread.dwpt;
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
@@ -544,10 +544,10 @@ namespace Lucene.Net.Index
                 if (!perThread.IsActive)
                 {
                     EnsureOpen();
-                    if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert("perThread is not active but we are still open");
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert("perThread is not active but we are still open");
                 }
                 EnsureInitialized(perThread);
-                if (Debugging.ShouldAssert(perThread.IsInitialized)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(perThread.IsInitialized)) Debugging.ThrowAssert();
                 DocumentsWriterPerThread dwpt = perThread.dwpt;
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
@@ -588,7 +588,7 @@ namespace Lucene.Net.Index
                 SegmentFlushTicket ticket = null;
                 try
                 {
-                    if (Debugging.ShouldAssert(currentFullFlushDelQueue == null || flushingDWPT.deleteQueue == currentFullFlushDelQueue)) Debugging.ThrowAssert("expected: {0}but was: {1}", currentFullFlushDelQueue, flushingDWPT.deleteQueue + " " + flushControl.IsFullFlush);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentFullFlushDelQueue == null || flushingDWPT.deleteQueue == currentFullFlushDelQueue)) Debugging.ThrowAssert("expected: {0}but was: {1}", currentFullFlushDelQueue, flushingDWPT.deleteQueue + " " + flushControl.IsFullFlush);
                     /*
                      * Since with DWPT the flush process is concurrent and several DWPT
                      * could flush at the same time we must maintain the order of the
@@ -735,7 +735,7 @@ namespace Lucene.Net.Index
                  * otherwise a new DWPT could sneak into the loop with an already flushing
                  * delete queue */
                 flushControl.MarkForFullFlush(); // swaps the delQueue synced on FlushControl
-                if (Debugging.ShouldAssert(SetFlushingDeleteQueue(flushingDeleteQueue))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(SetFlushingDeleteQueue(flushingDeleteQueue))) Debugging.ThrowAssert();
             }
             if(Debugging.ShouldAssert(currentFullFlushDelQueue != null)) Debugging.ThrowAssert();
 
@@ -761,11 +761,11 @@ namespace Lucene.Net.Index
                     ticketQueue.AddDeletes(flushingDeleteQueue);
                 }
                 ticketQueue.ForcePurge(indexWriter);
-                if (Debugging.ShouldAssert(!flushingDeleteQueue.AnyChanges() && !ticketQueue.HasTickets)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!flushingDeleteQueue.AnyChanges() && !ticketQueue.HasTickets)) Debugging.ThrowAssert();
             }
             finally
             {
-                if (Debugging.ShouldAssert(flushingDeleteQueue == currentFullFlushDelQueue)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(flushingDeleteQueue == currentFullFlushDelQueue)) Debugging.ThrowAssert();
             }
             return anythingFlushed;
         }
@@ -778,7 +778,7 @@ namespace Lucene.Net.Index
                 {
                     infoStream.Message("DW", Thread.CurrentThread.Name + " finishFullFlush success=" + success);
                 }
-                if (Debugging.ShouldAssert(SetFlushingDeleteQueue(null))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(SetFlushingDeleteQueue(null))) Debugging.ThrowAssert();
                 if (success)
                 {
                     // Release the flush lock
@@ -811,7 +811,7 @@ namespace Lucene.Net.Index
 
             internal ApplyDeletesEvent()
             {
-                if (Debugging.ShouldAssert(instCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(instCount == 0)) Debugging.ThrowAssert();
                 instCount++;
             }
 
@@ -828,7 +828,7 @@ namespace Lucene.Net.Index
 
             internal MergePendingEvent()
             {
-                if (Debugging.ShouldAssert(instCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(instCount == 0)) Debugging.ThrowAssert();
                 instCount++;
             }
 
@@ -845,7 +845,7 @@ namespace Lucene.Net.Index
 
             internal ForcedPurgeEvent()
             {
-                if (Debugging.ShouldAssert(instCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(instCount == 0)) Debugging.ThrowAssert();
                 instCount++;
             }
 

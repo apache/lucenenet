@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
             }
             buffer.Append('(');
             var subReaders = GetSequentialSubReaders();
-            if (Debugging.ShouldAssert(subReaders != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(subReaders != null)) Debugging.ThrowAssert();
             if (subReaders.Count > 0)
             {
                 buffer.Append(subReaders[0]);
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
                 // lazy init without thread safety for perf reasons: Building the readerContext twice does not hurt!
                 if (readerContext == null)
                 {
-                    if (Debugging.ShouldAssert(GetSequentialSubReaders() != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(GetSequentialSubReaders() != null)) Debugging.ThrowAssert();
                     readerContext = CompositeReaderContext.Create(this);
                 }
                 return readerContext;

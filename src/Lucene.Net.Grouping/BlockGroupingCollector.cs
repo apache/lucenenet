@@ -222,7 +222,7 @@ namespace Lucene.Net.Search.Grouping
                 {
                     // Replace bottom element in PQ and then updateTop
                     OneGroup og = groupQueue.Top;
-                    if (Debugging.ShouldAssert(og != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(og != null)) Debugging.ThrowAssert();
                     og.count = subDocUpto;
                     og.topGroupDoc = docBase + topGroupDoc;
                     // Swap pending docs
@@ -522,7 +522,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 if (subDocUpto == 1)
                 {
-                    if (Debugging.ShouldAssert(!queueFull)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!queueFull)) Debugging.ThrowAssert();
 
                     //System.out.println("    init copy to bottomSlot=" + bottomSlot);
                     foreach (FieldComparer fc in comparers)

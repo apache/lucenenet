@@ -161,7 +161,7 @@ namespace Lucene.Net.Search
                 float score = scorer.GetScore();
 
                 // this collector cannot handle NaN
-                if (Debugging.ShouldAssert(!float.IsNaN(score))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!float.IsNaN(score))) Debugging.ThrowAssert();
 
                 m_totalHits++;
                 if (score < pqTop.Score)
@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
                 float score = scorer.GetScore();
 
                 // this collector cannot handle NaN
-                if (Debugging.ShouldAssert(!float.IsNaN(score))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!float.IsNaN(score))) Debugging.ThrowAssert();
 
                 m_totalHits++;
                 if (score > after.Score || (score == after.Score && doc <= afterDoc))

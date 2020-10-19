@@ -506,7 +506,7 @@ namespace Lucene.Net.Search
                         {
                             int g = tg[t];
                             tmp[g].Add(pp);
-                            if (Debugging.ShouldAssert(pp.rptGroup == -1 || pp.rptGroup == g)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pp.rptGroup == -1 || pp.rptGroup == g)) Debugging.ThrowAssert();
                             pp.rptGroup = g;
                         }
                     }
@@ -682,7 +682,7 @@ namespace Lucene.Net.Search
 
         public override int Advance(int target)
         {
-            if (Debugging.ShouldAssert(target > DocID)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(target > DocID)) Debugging.ThrowAssert();
             do
             {
                 if (!AdvanceMin(target))

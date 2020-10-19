@@ -116,7 +116,7 @@ namespace Lucene.Net.Index
 
         protected override Directory GetDirectory(Directory @in)
         {
-            if (Debugging.ShouldAssert(@in is MockDirectoryWrapper)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(@in is MockDirectoryWrapper)) Debugging.ThrowAssert();
             if (!useNonNrtReaders)
             {
                 ((MockDirectoryWrapper)@in).AssertNoDeleteOpenFile = true;

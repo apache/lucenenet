@@ -286,7 +286,7 @@ namespace Lucene.Net.Codecs
                 fieldCount++;
                 FieldInfo fieldInfo = mergeState.FieldInfos.FieldInfo(fieldName);
 
-                if (Debugging.ShouldAssert(lastFieldName == null || fieldName.CompareToOrdinal(lastFieldName) > 0)) Debugging.ThrowAssert("lastFieldName={0} fieldName={1}", lastFieldName, fieldName);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastFieldName == null || fieldName.CompareToOrdinal(lastFieldName) > 0)) Debugging.ThrowAssert("lastFieldName={0} fieldName={1}", lastFieldName, fieldName);
                 lastFieldName = fieldName;
 
                 Terms terms = vectors.GetTerms(fieldName);
@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs
                 bool hasPositions = terms.HasPositions;
                 bool hasOffsets = terms.HasOffsets;
                 bool hasPayloads = terms.HasPayloads;
-                if (Debugging.ShouldAssert(!hasPayloads || hasPositions)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!hasPayloads || hasPositions)) Debugging.ThrowAssert();
 
                 int numTerms = (int)terms.Count;
                 if (numTerms == -1)
@@ -328,7 +328,7 @@ namespace Lucene.Net.Codecs
                     if (hasPositions || hasOffsets)
                     {
                         docsAndPositionsEnum = termsEnum.DocsAndPositions(null, docsAndPositionsEnum);
-                        if (Debugging.ShouldAssert(docsAndPositionsEnum != null)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docsAndPositionsEnum != null)) Debugging.ThrowAssert();
 
                         int docID = docsAndPositionsEnum.NextDoc();
                         if(Debugging.ShouldAssert(docID != DocIdSetIterator.NO_MORE_DOCS)) Debugging.ThrowAssert();
@@ -343,16 +343,16 @@ namespace Lucene.Net.Codecs
 
                             BytesRef payload = docsAndPositionsEnum.GetPayload();
 
-                            if (Debugging.ShouldAssert(!hasPositions || pos >= 0)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!hasPositions || pos >= 0)) Debugging.ThrowAssert();
                             AddPosition(pos, startOffset, endOffset, payload);
                         }
                     }
                     FinishTerm();
                 }
-                if (Debugging.ShouldAssert(termCount == numTerms)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termCount == numTerms)) Debugging.ThrowAssert();
                 FinishField();
             }
-            if (Debugging.ShouldAssert(fieldCount == numFields)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldCount == numFields)) Debugging.ThrowAssert();
             FinishDocument();
         }
 

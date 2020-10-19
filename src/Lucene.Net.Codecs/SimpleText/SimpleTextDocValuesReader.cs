@@ -76,24 +76,24 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     break;
                 }
-                if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.FIELD))) Debugging.ThrowAssert(scratch.Utf8ToString());
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.FIELD))) Debugging.ThrowAssert(scratch.Utf8ToString());
                 var fieldName = StripPrefix(SimpleTextDocValuesWriter.FIELD);
                 var field = new OneField();
                 
                 fields[fieldName] = field;
 
                 ReadLine();
-                if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.TYPE))) Debugging.ThrowAssert(scratch.Utf8ToString());
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.TYPE))) Debugging.ThrowAssert(scratch.Utf8ToString());
 
                 var dvType = (DocValuesType)Enum.Parse(typeof(DocValuesType), StripPrefix(SimpleTextDocValuesWriter.TYPE));
-                // if (Debugging.ShouldAssert(dvType != null)) Debugging.ThrowAssert(); // LUCENENET: Not possible for an enum to be null in .NET
+                // if (Debugging.AssertsEnabled && Debugging.ShouldAssert(dvType != null)) Debugging.ThrowAssert(); // LUCENENET: Not possible for an enum to be null in .NET
                 if (dvType == DocValuesType.NUMERIC)
                 {
                     ReadLine();
-                    if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.MINVALUE))) Debugging.ThrowAssert("got {0} field={1} ext={2}", scratch.Utf8ToString(), fieldName, ext);
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.MINVALUE))) Debugging.ThrowAssert("got {0} field={1} ext={2}", scratch.Utf8ToString(), fieldName, ext);
                     field.MinValue = Convert.ToInt64(StripPrefix(SimpleTextDocValuesWriter.MINVALUE), CultureInfo.InvariantCulture);
                     ReadLine();
-                    if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.PATTERN))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.PATTERN))) Debugging.ThrowAssert();
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
                     field.DataStartFilePointer = data.GetFilePointer();
                     data.Seek(data.GetFilePointer() + (1 + field.Pattern.Length + 2)*maxDoc);
@@ -101,10 +101,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 else if (dvType == DocValuesType.BINARY)
                 {
                     ReadLine();
-                    if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH))) Debugging.ThrowAssert();
                     field.MaxLength = Convert.ToInt32(StripPrefix(SimpleTextDocValuesWriter.MAXLENGTH), CultureInfo.InvariantCulture);
                     ReadLine();
-                    if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.PATTERN))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.PATTERN))) Debugging.ThrowAssert();
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
                     field.DataStartFilePointer = data.GetFilePointer();
                     data.Seek(data.GetFilePointer() + (9 + field.Pattern.Length + field.MaxLength + 2)*maxDoc);
@@ -112,16 +112,16 @@ namespace Lucene.Net.Codecs.SimpleText
                 else if (dvType == DocValuesType.SORTED || dvType == DocValuesType.SORTED_SET)
                 {
                     ReadLine();
-                    if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.NUMVALUES))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.NUMVALUES))) Debugging.ThrowAssert();
                     field.NumValues = Convert.ToInt64(StripPrefix(SimpleTextDocValuesWriter.NUMVALUES), CultureInfo.InvariantCulture);
                     ReadLine();
-                    if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH))) Debugging.ThrowAssert();
                     field.MaxLength = Convert.ToInt32(StripPrefix(SimpleTextDocValuesWriter.MAXLENGTH), CultureInfo.InvariantCulture);
                     ReadLine();
-                    if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.PATTERN))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.PATTERN))) Debugging.ThrowAssert();
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
                     ReadLine();
-                    if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.ORDPATTERN))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.ORDPATTERN))) Debugging.ThrowAssert();
                     field.OrdPattern = StripPrefix(SimpleTextDocValuesWriter.ORDPATTERN);
                     field.DataStartFilePointer = data.GetFilePointer();
                     data.Seek(data.GetFilePointer() + (9 + field.Pattern.Length + field.MaxLength)*field.NumValues +
@@ -135,7 +135,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // We should only be called from above if at least one
             // field has DVs:
-            if (Debugging.ShouldAssert(fields.Count > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fields.Count > 0)) Debugging.ThrowAssert();
         }
 
         public override NumericDocValues GetNumeric(FieldInfo fieldInfo)
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 Debugging.ThrowAssertIf(field != null);
 
                 // SegmentCoreReaders already verifies this field is valid:
-                if (Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert("field={0} fields={1}", fieldInfo.Name, fields);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert("field={0} fields={1}", fieldInfo.Name, fields);
             }
 
             var @in = (IndexInput)data.Clone();
@@ -243,7 +243,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override BinaryDocValues GetBinary(FieldInfo fieldInfo)
         {
             var field = fields[fieldInfo.Name];
-            if (Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
             var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
 
@@ -367,7 +367,7 @@ namespace Lucene.Net.Codecs.SimpleText
             var field = fields[fieldInfo.Name];
 
             // SegmentCoreReaders already verifies this field is valid:
-            if (Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
             var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
 
@@ -435,7 +435,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
                     _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
                     SimpleTextUtil.ReadLine(_input, _scratch);
-                    if (Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH))) Debugging.ThrowAssert("got {0} in={1}", _scratch.Utf8ToString(), _input.ToString());
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH))) Debugging.ThrowAssert("got {0} in={1}", _scratch.Utf8ToString(), _input.ToString());
                     int len;
                     try
                     {
@@ -470,7 +470,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // SegmentCoreReaders already verifies this field is
             // valid:
-            if (Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
 
             var input = (IndexInput) data.Clone();
             var scratch = new BytesRef();
@@ -539,7 +539,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                     _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
                     SimpleTextUtil.ReadLine(_input, _scratch);
-                    if (Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH))) Debugging.ThrowAssert("got {0} in={1}", _scratch.Utf8ToString(), _input.ToString());
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH))) Debugging.ThrowAssert("got {0} in={1}", _scratch.Utf8ToString(), _input.ToString());
                     int len;
                     try
                     {

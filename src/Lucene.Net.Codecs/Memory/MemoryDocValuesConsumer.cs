@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Memory
 
                     ++count;
                 }
-                if (Debugging.ShouldAssert(count == maxDoc)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count == maxDoc)) Debugging.ThrowAssert();
             }
 
             if (missing)

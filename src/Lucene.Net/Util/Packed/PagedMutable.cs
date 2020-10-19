@@ -58,7 +58,7 @@ namespace Lucene.Net.Util.Packed
 
         protected override Mutable NewMutable(int valueCount, int bitsPerValue)
         {
-            if (Debugging.ShouldAssert(this.bitsPerValue >= bitsPerValue)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(this.bitsPerValue >= bitsPerValue)) Debugging.ThrowAssert();
             return PackedInt32s.GetMutable(valueCount, this.bitsPerValue, format);
         }
 

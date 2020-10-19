@@ -67,7 +67,7 @@ namespace Lucene.Net.Store
 
         private RateLimiter GetRateLimiter(IOContext.UsageContext context)
         {
-            //if (Debugging.ShouldAssert(context != null)) Debugging.ThrowAssert(); // LUCENENET NOTE: In .NET, enum can never be null
+            //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(context != null)) Debugging.ThrowAssert(); // LUCENENET NOTE: In .NET, enum can never be null
             RateLimiter ret;
             return _contextRateLimiters.TryGetValue(context, out ret) ? ret : null;
         }

@@ -234,7 +234,7 @@ namespace Lucene.Net.Search
 
             Filter filter = new QueryWrapperFilter(AssertingQuery.Wrap(Random, new TermQuery(new Term("field", "a"))));
             IndexSearcher s = NewSearcher(r);
-            if (Debugging.ShouldAssert(s is AssertingIndexSearcher)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(s is AssertingIndexSearcher)) Debugging.ThrowAssert();
             // this used to fail
             s.Search(new ConstantScoreQuery(filter), new TotalHitCountCollector());
 

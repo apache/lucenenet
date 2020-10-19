@@ -231,7 +231,7 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadVInt64()"/>
         public void WriteVInt64(long i)
         {
-            if (Debugging.ShouldAssert(i >= 0L)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(i >= 0L)) Debugging.ThrowAssert();
             while ((i & ~0x7FL) != 0L)
             {
                 WriteByte((byte)unchecked((sbyte)((i & 0x7FL) | 0x80L)));
@@ -262,7 +262,7 @@ namespace Lucene.Net.Store
         /// Copy numBytes bytes from input to ourself. </summary>
         public virtual void CopyBytes(DataInput input, long numBytes)
         {
-            if (Debugging.ShouldAssert(numBytes >= 0)) Debugging.ThrowAssert("numBytes={0}", numBytes);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numBytes >= 0)) Debugging.ThrowAssert("numBytes={0}", numBytes);
             long left = numBytes;
             if (copyBuffer == null)
             {

@@ -226,7 +226,7 @@ namespace Lucene.Net.Store
                         //    {
                         //        throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + m_end);
                         //    }
-                        //    if (Debugging.ShouldAssert(i > 0)) Debugging.ThrowAssert("RandomAccessFile.read with non zero-length toRead must always read at least one byte");
+                        //    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(i > 0)) Debugging.ThrowAssert("RandomAccessFile.read with non zero-length toRead must always read at least one byte");
                         //    total += i;
                         //}
 
@@ -235,7 +235,7 @@ namespace Lucene.Net.Store
                         // all we need to do is Read().
                         total = m_file.Read(b, offset, len);
 
-                        if (Debugging.ShouldAssert(total == len)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(total == len)) Debugging.ThrowAssert();
                     }
                     catch (IOException ioe)
                     {

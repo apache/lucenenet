@@ -32,15 +32,15 @@ namespace Lucene.Net.Codecs.Asserting
         public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
         {
             DocValuesConsumer consumer = @in.NormsConsumer(state);
-            if (Debugging.ShouldAssert(consumer != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(consumer != null)) Debugging.ThrowAssert();
             return new AssertingNormsConsumer(consumer, state.SegmentInfo.DocCount);
         }
 
         public override DocValuesProducer NormsProducer(SegmentReadState state)
         {
-            if (Debugging.ShouldAssert(state.FieldInfos.HasNorms)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state.FieldInfos.HasNorms)) Debugging.ThrowAssert();
             DocValuesProducer producer = @in.NormsProducer(state);
-            if (Debugging.ShouldAssert(producer != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(producer != null)) Debugging.ThrowAssert();
             return new AssertingDocValuesProducer(producer, state.SegmentInfo.DocCount);
         }
     }

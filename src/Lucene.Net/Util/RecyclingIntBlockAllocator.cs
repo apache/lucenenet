@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
                 blocks[i] = null;
             }
             bytesUsed.AddAndGet(-(end - stop) * (m_blockSize * RamUsageEstimator.NUM_BYTES_INT32));
-            if (Debugging.ShouldAssert(bytesUsed >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytesUsed >= 0)) Debugging.ThrowAssert();
         }
 
         /// <returns> The number of currently buffered blocks. </returns>
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
         /// <returns> The number of actually removed buffers. </returns>
         public int FreeBlocks(int num)
         {
-            if (Debugging.ShouldAssert(num >= 0)) Debugging.ThrowAssert("free blocks must be >= 0 but was: {0}", num);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(num >= 0)) Debugging.ThrowAssert("free blocks must be >= 0 but was: {0}", num);
             int stop;
             int count;
             if (num > freeBlocks)
@@ -158,7 +158,7 @@ namespace Lucene.Net.Util
                 freeByteBlocks[--freeBlocks] = null;
             }
             bytesUsed.AddAndGet(-count * m_blockSize * RamUsageEstimator.NUM_BYTES_INT32);
-            if (Debugging.ShouldAssert(bytesUsed >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytesUsed >= 0)) Debugging.ThrowAssert();
             return count;
         }
     }

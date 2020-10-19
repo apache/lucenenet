@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(DocValuesFieldUpdates other)
         {
-            if (Debugging.ShouldAssert(other is NumericDocValuesFieldUpdates)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(other is NumericDocValuesFieldUpdates)) Debugging.ThrowAssert();
             NumericDocValuesFieldUpdates otherUpdates = (NumericDocValuesFieldUpdates)other;
             if (size + otherUpdates.size > int.MaxValue)
             {

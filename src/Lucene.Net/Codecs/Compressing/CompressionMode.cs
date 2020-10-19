@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
             {
-                if (Debugging.ShouldAssert(offset + length <= originalLength)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(offset + length <= originalLength)) Debugging.ThrowAssert();
                 // add 7 padding bytes, this is not necessary but can help decompression run faster
                 if (bytes.Bytes.Length < originalLength + 7)
                 {
@@ -212,7 +212,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override void Decompress(DataInput input, int originalLength, int offset, int length, BytesRef bytes)
             {
-                if (Debugging.ShouldAssert(offset + length <= originalLength)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(offset + length <= originalLength)) Debugging.ThrowAssert();
                 if (length == 0)
                 {
                     bytes.Length = 0;
@@ -275,7 +275,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 if (resultArray.Length == 0)
                 {
-                    if (Debugging.ShouldAssert(len == 0)) Debugging.ThrowAssert(len.ToString());
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len == 0)) Debugging.ThrowAssert(len.ToString());
                     output.WriteVInt32(0);
                     return;
                 }

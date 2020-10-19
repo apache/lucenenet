@@ -120,7 +120,7 @@ namespace Lucene.Net.Store
             }
             else
             {
-                if (Debugging.ShouldAssert(!(directory is CompoundFileDirectory))) Debugging.ThrowAssert("compound file inside of compound file: {0}", fileName);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!(directory is CompoundFileDirectory))) Debugging.ThrowAssert("compound file inside of compound file: {0}", fileName);
                 this.entries = SENTINEL;
                 this.IsOpen = true;
                 writer = new CompoundFileWriter(directory, fileName);
@@ -295,7 +295,7 @@ namespace Lucene.Net.Store
                     IsOpen = false;
                     if (writer != null)
                     {
-                        if (Debugging.ShouldAssert(openForWrite)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(openForWrite)) Debugging.ThrowAssert();
                         writer.Dispose();
                     }
                     else
@@ -311,7 +311,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 EnsureOpen();
-                if (Debugging.ShouldAssert(!openForWrite)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!openForWrite)) Debugging.ThrowAssert();
                 string id = IndexFileNames.StripSegmentName(name);
                 if (!entries.TryGetValue(id, out FileEntry entry) || entry == null)
                 {
@@ -415,7 +415,7 @@ namespace Lucene.Net.Store
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
-            if (Debugging.ShouldAssert(!openForWrite)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!openForWrite)) Debugging.ThrowAssert();
             string id = IndexFileNames.StripSegmentName(name);
             if (!entries.TryGetValue(id, out FileEntry entry) || entry == null)
             {

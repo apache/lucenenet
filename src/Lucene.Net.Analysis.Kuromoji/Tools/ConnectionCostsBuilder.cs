@@ -41,12 +41,12 @@ namespace Lucene.Net.Analysis.Ja.Util
                 string line = streamReader.ReadLine();
                 string[] dimensions = whiteSpaceRegex.Split(line).TrimEnd();
 
-                if (Debugging.ShouldAssert(dimensions.Length == 2)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(dimensions.Length == 2)) Debugging.ThrowAssert();
 
                 int forwardSize = int.Parse(dimensions[0], CultureInfo.InvariantCulture);
                 int backwardSize = int.Parse(dimensions[1], CultureInfo.InvariantCulture);
 
-                if (Debugging.ShouldAssert(forwardSize > 0 && backwardSize > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(forwardSize > 0 && backwardSize > 0)) Debugging.ThrowAssert();
 
                 ConnectionCostsWriter costs = new ConnectionCostsWriter(forwardSize, backwardSize);
 
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                 {
                     string[] fields = whiteSpaceRegex.Split(line).TrimEnd();
 
-                    if (Debugging.ShouldAssert(fields.Length == 3)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fields.Length == 3)) Debugging.ThrowAssert();
 
                     int forwardId = int.Parse(fields[0], CultureInfo.InvariantCulture);
                     int backwardId = int.Parse(fields[1], CultureInfo.InvariantCulture);

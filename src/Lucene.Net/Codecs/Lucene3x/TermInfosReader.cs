@@ -65,7 +65,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             public TermInfoAndOrd(TermInfo ti, long termOrd)
                 : base(ti)
             {
-                if (Debugging.ShouldAssert(termOrd >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termOrd >= 0)) Debugging.ThrowAssert();
                 this.termOrd = termOrd;
             }
         }

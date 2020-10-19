@@ -138,7 +138,7 @@ namespace Lucene.Net.Util
                 nextPos++;
                 count++;
             }
-            if (Debugging.ShouldAssert(InBounds(pos))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(InBounds(pos))) Debugging.ThrowAssert();
             int index = GetIndex(pos);
             //System.out.println("  pos=" + pos + " nextPos=" + nextPos + " -> index=" + index);
             //assert buffer[index].pos == pos;
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled)
             {
                 Debugging.ThrowAssertIf(toFree >= 0);
-                if (Debugging.ShouldAssert(toFree <= count)) Debugging.ThrowAssert("toFree={0} count={1}", toFree, count);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(toFree <= count)) Debugging.ThrowAssert("toFree={0} count={1}", toFree, count);
             }
             int index = nextWrite - count;
             if (index < 0)

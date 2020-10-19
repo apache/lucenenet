@@ -113,7 +113,7 @@ namespace Lucene.Net.Spatial.Prefix
             protected virtual void CollectDocs(FixedBitSet bitSet)
             {
                 //WARN: keep this specialization in sync
-                if (Debugging.ShouldAssert(m_termsEnum != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_termsEnum != null)) Debugging.ThrowAssert();
                 m_docsEnum = m_termsEnum.Docs(m_acceptDocs, m_docsEnum, DocsFlags.NONE);
                 int docid;
                 while ((docid = m_docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)

@@ -74,7 +74,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public static T Get<T>(FST<T> fst, BytesRef input)
         {
-            if (Debugging.ShouldAssert(fst.InputType == FST.INPUT_TYPE.BYTE1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fst.InputType == FST.INPUT_TYPE.BYTE1)) Debugging.ThrowAssert();
 
             var fstReader = fst.GetBytesReader();
 
@@ -385,7 +385,7 @@ namespace Lucene.Net.Util.Fst
             /// </summary>
             protected virtual void AddIfCompetitive(FSTPath<T> path)
             {
-                if (Debugging.ShouldAssert(queue != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(queue != null)) Debugging.ThrowAssert();
 
                 T cost = fst.Outputs.Add(path.Cost, path.Arc.Output);
                 //System.out.println("  addIfCompetitive queue.size()=" + queue.size() + " path=" + path + " + label=" + path.arc.label);
@@ -408,7 +408,7 @@ namespace Lucene.Net.Util.Fst
                         path.Input.Length--;
 
                         // We should never see dups:
-                        if (Debugging.ShouldAssert(cmp != 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cmp != 0)) Debugging.ThrowAssert();
 
                         if (cmp < 0)
                         {
@@ -596,7 +596,7 @@ namespace Lucene.Net.Util.Fst
                             fst.ReadNextArc(path.Arc, fstReader);
                         }
 
-                        if (Debugging.ShouldAssert(foundZero)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(foundZero)) Debugging.ThrowAssert();
 
                         if (queue != null)
                         {
@@ -917,7 +917,7 @@ namespace Lucene.Net.Util.Fst
                                 arcColor = "black";
                             }
 
-                            if (Debugging.ShouldAssert(arc.Label != FST.END_LABEL)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.Label != FST.END_LABEL)) Debugging.ThrowAssert();
                             @out.Write("  " + node + " -> " + arc.Target + " [label=\"" + PrintableLabel(arc.Label) + outs + "\"" + (arc.IsFinal ? " style=\"bold\"" : "") + " color=\"" + arcColor + "\"]\n");
 
                             // Break the loop if we're on the last arc of this state.
@@ -1068,7 +1068,7 @@ namespace Lucene.Net.Util.Fst
             {
                 int value = input.Int32s[i + input.Offset];
                 // NOTE: we allow -128 to 255
-                if (Debugging.ShouldAssert(value >= sbyte.MinValue && value <= 255)) Debugging.ThrowAssert("value {0} doesn't fit into byte", value);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(value >= sbyte.MinValue && value <= 255)) Debugging.ThrowAssert("value {0} doesn't fit into byte", value);
                 scratch.Bytes[i] = (byte)value;
             }
             scratch.Length = input.Length;

@@ -61,12 +61,12 @@ namespace Lucene.Net.Index
             if (writer != null)
             {
                 int numDocs = state.SegmentInfo.DocCount;
-                if (Debugging.ShouldAssert(numDocs > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numDocs > 0)) Debugging.ThrowAssert();
                 // At least one doc in this run had term vectors enabled
                 try
                 {
                     Fill(numDocs);
-                    if (Debugging.ShouldAssert(state.SegmentInfo != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state.SegmentInfo != null)) Debugging.ThrowAssert();
                     writer.Finish(state.FieldInfos, numDocs);
                 }
                 finally
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument(TermsHash termsHash)
         {
-            if (Debugging.ShouldAssert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument start"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument start"))) Debugging.ThrowAssert();
 
             if (!hasVectors)
             {
@@ -133,13 +133,13 @@ namespace Lucene.Net.Index
             }
             writer.FinishDocument();
 
-            if (Debugging.ShouldAssert(lastDocID == docState.docID)) Debugging.ThrowAssert("lastDocID={0} docState.docID={1}", lastDocID, docState.docID);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastDocID == docState.docID)) Debugging.ThrowAssert("lastDocID={0} docState.docID={1}", lastDocID, docState.docID);
 
             lastDocID++;
 
             termsHash.Reset();
             Reset();
-            if (Debugging.ShouldAssert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument end"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument end"))) Debugging.ThrowAssert();
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
 
         internal override void StartDocument()
         {
-            if (Debugging.ShouldAssert(ClearLastVectorFieldName())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ClearLastVectorFieldName())) Debugging.ThrowAssert();
             Reset();
         }
 

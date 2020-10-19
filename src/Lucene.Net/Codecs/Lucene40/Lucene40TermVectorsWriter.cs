@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            if (Debugging.ShouldAssert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0)) Debugging.ThrowAssert("fieldName={0} lastFieldName={1}", info.Name, lastFieldName);
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0)) Debugging.ThrowAssert("fieldName={0} lastFieldName={1}", info.Name, lastFieldName);
             lastFieldName = info.Name;
             this.positions = positions;
             this.offsets = offsets;
@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene40
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void FinishDocument()
         {
-            if (Debugging.ShouldAssert(fieldCount == numVectorFields)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldCount == numVectorFields)) Debugging.ThrowAssert();
             for (int i = 1; i < fieldCount; i++)
             {
                 tvd.WriteVInt64(fps[i] - fps[i - 1]);

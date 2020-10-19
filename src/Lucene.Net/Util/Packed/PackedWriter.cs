@@ -76,7 +76,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Finish()
         {
-            if (Debugging.ShouldAssert(!finished)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!finished)) Debugging.ThrowAssert();
             if (m_valueCount != -1)
             {
                 while (written < m_valueCount)

@@ -721,7 +721,7 @@ namespace Lucene.Net.Util.Automaton
                     if (count == HASHMAP_CUTOVER)
                     {
                         // switch to HashMap on the fly
-                        if (Debugging.ShouldAssert(map.Count == 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(map.Count == 0)) Debugging.ThrowAssert();
                         for (int i = 0; i < count; i++)
                         {
                             map[points[i].point] = points[i];
@@ -845,7 +845,7 @@ namespace Lucene.Net.Util.Automaton
 
                     if (statesSet.upto > 0)
                     {
-                        if (Debugging.ShouldAssert(lastPoint != -1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastPoint != -1)) Debugging.ThrowAssert();
 
                         statesSet.ComputeHash();
 
@@ -868,7 +868,7 @@ namespace Lucene.Net.Util.Automaton
                         }
                         else
                         {
-                            if (Debugging.ShouldAssert((accCount > 0) == q.accept)) Debugging.ThrowAssert("accCount={0} vs existing accept={1}", accCount, q.accept + " states=" + statesSet);
+                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert((accCount > 0) == q.accept)) Debugging.ThrowAssert("accCount={0} vs existing accept={1}", accCount, q.accept + " states=" + statesSet);
                         }
 
                         r.AddTransition(new Transition(lastPoint, point - 1, q));
@@ -902,7 +902,7 @@ namespace Lucene.Net.Util.Automaton
                     points.points[i].starts.count = 0;
                 }
                 points.Reset();
-                if (Debugging.ShouldAssert(statesSet.upto == 0)) Debugging.ThrowAssert("upto={0}", statesSet.upto);
+                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(statesSet.upto == 0)) Debugging.ThrowAssert("upto={0}", statesSet.upto);
             }
             a.deterministic = true;
             a.SetNumberedStates(newStatesArray, newStateUpto);
