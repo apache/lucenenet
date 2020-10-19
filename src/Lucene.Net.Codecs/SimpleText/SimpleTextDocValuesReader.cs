@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.TYPE))) Debugging.ThrowAssert(scratch.Utf8ToString());
 
                 var dvType = (DocValuesType)Enum.Parse(typeof(DocValuesType), StripPrefix(SimpleTextDocValuesWriter.TYPE));
-                // if (Debugging.AssertsEnabled && Debugging.ShouldAssert(dvType != null)) Debugging.ThrowAssert(); // LUCENENET: Not possible for an enum to be null in .NET
+                // if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(dvType != null); // LUCENENET: Not possible for an enum to be null in .NET
                 if (dvType == DocValuesType.NUMERIC)
                 {
                     ReadLine();
@@ -135,7 +135,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // We should only be called from above if at least one
             // field has DVs:
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fields.Count > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fields.Count > 0);
         }
 
         public override NumericDocValues GetNumeric(FieldInfo fieldInfo)
@@ -243,7 +243,7 @@ namespace Lucene.Net.Codecs.SimpleText
         public override BinaryDocValues GetBinary(FieldInfo fieldInfo)
         {
             var field = fields[fieldInfo.Name];
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(field != null);
             var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
 
@@ -367,7 +367,7 @@ namespace Lucene.Net.Codecs.SimpleText
             var field = fields[fieldInfo.Name];
 
             // SegmentCoreReaders already verifies this field is valid:
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(field != null);
             var input = (IndexInput)data.Clone();
             var scratch = new BytesRef();
 
@@ -470,7 +470,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             // SegmentCoreReaders already verifies this field is
             // valid:
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(field != null);
 
             var input = (IndexInput) data.Clone();
             var scratch = new BytesRef();

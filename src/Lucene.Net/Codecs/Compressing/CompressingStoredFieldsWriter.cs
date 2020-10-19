@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// Sole constructor. </summary>
         public CompressingStoredFieldsWriter(Directory directory, SegmentInfo si, string segmentSuffix, IOContext context, string formatName, CompressionMode compressionMode, int chunkSize)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(directory != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(directory != null);
             this.directory = directory;
             this.segment = si.Name;
             this.segmentSuffix = segmentSuffix;
@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// </summary>
         private static void SaveInt32s(int[] values, int length, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(length > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(length > 0);
             if (length == 1)
             {
                 @out.WriteVInt32(values[0]);
@@ -250,7 +250,7 @@ namespace Lucene.Net.Codecs.Compressing
             for (int i = numBufferedDocs - 1; i > 0; --i)
             {
                 lengths[i] = endOffsets[i] - endOffsets[i - 1];
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lengths[i] >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lengths[i] >= 0);
             }
             WriteHeader(docBase, numBufferedDocs, numStoredFields, lengths);
 
@@ -378,7 +378,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
             else
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bufferedDocs.Length == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bufferedDocs.Length == 0);
             }
             if (docBase != numDocs)
             {
@@ -386,7 +386,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
             indexWriter.Finish(numDocs, fieldsStream.GetFilePointer());
             CodecUtil.WriteFooter(fieldsStream);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bufferedDocs.Length == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bufferedDocs.Length == 0);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -447,7 +447,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                             if (numBufferedDocs == 0 && startOffsets[it.chunkDocs - 1] < chunkSize && startOffsets[it.chunkDocs - 1] + it.lengths[it.chunkDocs - 1] >= chunkSize && NextDeletedDoc(it.docBase, liveDocs, it.docBase + it.chunkDocs) == it.docBase + it.chunkDocs) // no deletion in the chunk -  chunk is large enough -  chunk is small enough -  starting a new chunk
                             {
-                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docID == it.docBase)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID == it.docBase);
 
                                 // no need to decompress, just copy data
                                 indexWriter.WriteIndex(it.chunkDocs, fieldsStream.GetFilePointer());

@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!perThread.flushPending)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!perThread.flushPending);
                 if (perThread.dwpt.NumDocsInRAM > 0)
                 {
                     perThread.flushPending = true; // write access synced
@@ -376,7 +376,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(perThread.IsHeldByCurrentThread)) Debugging.ThrowAssert(); // LUCENENET specific: Since .NET Core doesn't use unfair locking, we need to ensure the current thread has a lock before calling InternalTryCheckoutForFlush.
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(perThread.IsHeldByCurrentThread); // LUCENENET specific: Since .NET Core doesn't use unfair locking, we need to ensure the current thread has a lock before calling InternalTryCheckoutForFlush.
                 return perThread.flushPending ? InternalTryCheckOutForFlush(perThread) : null;
             }
         }
@@ -417,7 +417,7 @@ namespace Lucene.Net.Index
                 // We are pending so all memory is already moved to flushBytes
                 if (perThread.IsInitialized)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(perThread.IsHeldByCurrentThread)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(perThread.IsHeldByCurrentThread);
                     DocumentsWriterPerThread dwpt;
                     long bytes = perThread.bytesUsed; // do that before
                     // replace!
@@ -769,7 +769,7 @@ namespace Lucene.Net.Index
                     {
                         if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertBlockedFlushes(documentsWriter.deleteQueue))) Debugging.ThrowAssert();
                         PruneBlockedQueue(documentsWriter.deleteQueue);
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(blockedFlushes.Count == 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(blockedFlushes.Count == 0);
                     }
                 }
                 finally
@@ -784,7 +784,7 @@ namespace Lucene.Net.Index
         {
             foreach (BlockedFlush blockedFlush in blockedFlushes)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(blockedFlush.Dwpt.deleteQueue == flushingQueue)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(blockedFlush.Dwpt.deleteQueue == flushingQueue);
             }
             return true;
         }

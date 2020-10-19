@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 if (payload != null && payload.Length > 0)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payload.Length != 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(payload.Length != 0);
                     _outerInstance.Write(PAYLOAD);
                     _outerInstance.Write(payload);
                     _outerInstance.Newline();

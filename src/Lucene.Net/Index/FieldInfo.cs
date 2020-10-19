@@ -102,10 +102,10 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexOptions != IndexOptions.NONE)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(indexOptions != IndexOptions.NONE);
                 if (omitNorms)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(normType == DocValuesType.NONE)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(normType == DocValuesType.NONE);
                 }
                 // Cannot store payloads unless positions are indexed:
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads)) Debugging.ThrowAssert();

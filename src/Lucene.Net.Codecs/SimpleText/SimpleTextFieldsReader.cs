@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override bool MoveNext()
             {
-                //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!ended)) Debugging.ThrowAssert(); // LUCENENET: Ended field is never set, so this can never fail
+                //if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!ended); // LUCENENET: Ended field is never set, so this can never fail
                 if (!_fstEnum.MoveNext()) return false;
 
                 var pair1 = _fstEnum.Current.Output;

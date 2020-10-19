@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(gen > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(gen > 0);
                 // The '6' part in the length is: 1 for '.', 1 for '_' and 4 as estimate
                 // to the gen length as string (hopefully an upper limit so SB won't
                 // expand in the middle.

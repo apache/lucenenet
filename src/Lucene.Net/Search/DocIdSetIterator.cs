@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
 
             public override int NextDoc()
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!exhausted)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!exhausted);
                 exhausted = true;
                 return NO_MORE_DOCS;
             }
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
         /// </summary>
         protected internal int SlowAdvance(int target)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(DocID == NO_MORE_DOCS || DocID < target)) Debugging.ThrowAssert(); // can happen when the enum is not positioned yet
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(DocID == NO_MORE_DOCS || DocID < target); // can happen when the enum is not positioned yet
             int doc;
             do
             {

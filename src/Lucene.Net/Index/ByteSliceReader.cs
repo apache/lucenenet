@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
 
         public bool Eof()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto + BufferOffset <= EndIndex)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto + BufferOffset <= EndIndex);
             return upto + BufferOffset == EndIndex;
         }
 
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
             {
                 if (limit + BufferOffset == EndIndex)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(EndIndex - BufferOffset >= upto)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(EndIndex - BufferOffset >= upto);
                     @out.WriteBytes(buffer, upto, limit - upto);
                     size += limit - upto;
                     break;
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
             if (nextIndex + newSize >= EndIndex)
             {
                 // We are advancing to the final slice
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(EndIndex - nextIndex > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(EndIndex - nextIndex > 0);
                 limit = EndIndex - BufferOffset;
             }
             else

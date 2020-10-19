@@ -142,7 +142,7 @@ namespace Lucene.Net.Codecs.Lucene40
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void FinishDocument()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldCount == numVectorFields)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldCount == numVectorFields);
             for (int i = 1; i < fieldCount; i++)
             {
                 tvd.WriteVInt64(fps[i] - fps[i - 1]);

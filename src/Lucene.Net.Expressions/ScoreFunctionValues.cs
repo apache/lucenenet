@@ -43,7 +43,7 @@ namespace Lucene.Net.Expressions
         {
             try
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(document == scorer.DocID)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(document == scorer.DocID);
                 return scorer.GetScore();
             }
             catch (IOException exception)

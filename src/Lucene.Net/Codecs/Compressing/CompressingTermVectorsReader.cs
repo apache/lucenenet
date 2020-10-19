@@ -216,7 +216,7 @@ namespace Lucene.Net.Codecs.Compressing
             int[] fieldNums;
             {
                 int token = vectorsStream.ReadByte() & 0xFF;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(token != 0)) Debugging.ThrowAssert(); // means no term vectors, cannot happen since we checked for numFields == 0
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(token != 0); // means no term vectors, cannot happen since we checked for numFields == 0
                 int bitsPerFieldNum = token & 0x1F;
                 int totalDistinctFields = (int)((uint)token >> 5);
                 if (totalDistinctFields == 0x07)
@@ -246,7 +246,7 @@ namespace Lucene.Net.Codecs.Compressing
                         for (int i = 0; i < totalFields; ++i)
                         {
                             int fieldNumOff = (int)allFieldNumOffs.Get(i);
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldNumOff >= 0 && fieldNumOff < fieldNums.Length)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldNumOff >= 0 && fieldNumOff < fieldNums.Length);
                             int fgs = (int)fieldFlags.Get(fieldNumOff);
                             f.Set(i, fgs);
                         }
@@ -516,7 +516,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 ++posIdx;
                             }
                         }
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(posIdx == totalFreq)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(posIdx == totalFreq);
                     }
                     termIndex += termCount;
                 }
@@ -732,7 +732,7 @@ namespace Lucene.Net.Codecs.Compressing
                         break;
                     }
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldLen >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldLen >= 0);
                 return new TVTerms(outerInstance, numTerms[idx], fieldFlags[idx], prefixLengths[idx], suffixLengths[idx], termFreqs[idx], positionIndex[idx], positions[idx], startOffsets[idx], lengths[idx], payloadIndex[idx], payloadBytes, new BytesRef(suffixBytes.Bytes, suffixBytes.Offset + fieldOff, fieldLen));
             }
 
@@ -847,7 +847,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ord < numTerms)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord < numTerms);
                     ++ord;
                 }
 

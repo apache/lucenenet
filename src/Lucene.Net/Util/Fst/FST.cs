@@ -393,7 +393,7 @@ namespace Lucene.Net.Util.Fst
                 ReadFirstRealTargetArc(arc.Target, arc, @in);
                 while (true)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.Label != FST.END_LABEL)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(arc.Label != FST.END_LABEL);
                     if (arc.Label < cachedRootArcs.Length)
                     {
                         arcs[arc.Label] = (new FST.Arc<T>()).CopyFrom(arc);
@@ -735,7 +735,7 @@ namespace Lucene.Net.Util.Fst
 
                 if (targetHasArcs && (flags & FST.BIT_TARGET_NEXT) == 0)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(target.Node > 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(target.Node > 0);
                     //System.out.println("    write target");
                     bytes.WriteVInt64(target.Node);
                 }
@@ -775,7 +775,7 @@ namespace Lucene.Net.Util.Fst
             if (doFixedArray)
             {
                 const int MAX_HEADER_SIZE = 11; // header(byte) + numArcs(vint) + numBytes(vint)
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(maxBytesPerArc > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(maxBytesPerArc > 0);
                 // 2nd pass just "expands" all arcs to take up a fixed
                 // byte size
 
@@ -795,7 +795,7 @@ namespace Lucene.Net.Util.Fst
                 // expand the arcs in place, backwards
                 long srcPos = bytes.Position;
                 long destPos = fixedArrayStart + nodeIn.NumArcs * maxBytesPerArc;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(destPos >= srcPos)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(destPos >= srcPos);
                 if (destPos > srcPos)
                 {
                     bytes.SkipBytes((int)(destPos - srcPos));
@@ -893,7 +893,7 @@ namespace Lucene.Net.Util.Fst
             if (!TargetHasArcs(follow))
             {
                 //System.out.println("  end node");
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(follow.IsFinal)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(follow.IsFinal);
                 arc.Label = FST.END_LABEL;
                 arc.Target = FST.FINAL_END_NODE;
                 arc.Output = follow.NextFinalOutput;
@@ -960,7 +960,7 @@ namespace Lucene.Net.Util.Fst
                     arc.NextArc = @in.Position;
                 }
                 ReadNextRealArc(arc, @in);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.IsLast)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(arc.IsLast);
                 return arc;
             }
         }
@@ -1094,7 +1094,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public int ReadNextArcLabel(FST.Arc<T> arc, FST.BytesReader @in)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!arc.IsLast)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!arc.IsLast);
 
             if (arc.Label == FST.END_LABEL)
             {
@@ -1159,7 +1159,7 @@ namespace Lucene.Net.Util.Fst
             {
                 // arcs are at fixed entries
                 arc.ArcIdx++;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.ArcIdx < arc.NumArcs)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(arc.ArcIdx < arc.NumArcs);
                 @in.Position = arc.PosArcsStart;
                 @in.SkipBytes(arc.ArcIdx * arc.BytesPerArc);
             }
@@ -1226,7 +1226,7 @@ namespace Lucene.Net.Util.Fst
                 else
                 {
                     arc.Target = arc.Node - 1;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.Target > 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(arc.Target > 0);
                 }
             }
             else
@@ -1872,7 +1872,7 @@ namespace Lucene.Net.Util.Fst
                                 absPtr = 0;
                             }
 
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(flags != FST.ARCS_AS_FIXED_ARRAY)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(flags != FST.ARCS_AS_FIXED_ARRAY);
                             writer.WriteByte((byte)(sbyte)flags);
 
                             fst.WriteLabel(writer, arc.Label);
@@ -1994,7 +1994,7 @@ namespace Lucene.Net.Util.Fst
                     // order) so nodes should only point forward to
                     // other nodes because we only produce acyclic FSTs
                     // w/ nodes only pointing "forwards":
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!negDelta)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!negDelta);
                     //System.out.println("TOT wasted=" + totWasted);
                     // Converged!
                     break;
@@ -2343,7 +2343,7 @@ namespace Lucene.Net.Util.Fst
             protected internal override bool LessThan(NodeAndInCount a, NodeAndInCount b)
             {
                 int cmp = a.CompareTo(b);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cmp != 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(cmp != 0);
                 return cmp < 0;
             }
         }

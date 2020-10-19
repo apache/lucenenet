@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
         internal void WriteProx(int termID, int proxCode)
         {
             //System.out.println("writeProx termID=" + termID + " proxCode=" + proxCode);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(hasProx)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(hasProx);
             BytesRef payload;
             if (payloadAttribute == null)
             {
@@ -182,11 +182,11 @@ namespace Lucene.Net.Index
 
         internal void WriteOffsets(int termID, int offsetAccum)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(hasOffsets)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(hasOffsets);
             int startOffset = offsetAccum + offsetAttribute.StartOffset;
             int endOffset = offsetAccum + offsetAttribute.EndOffset;
             FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(startOffset - postings.lastOffsets[termID] >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startOffset - postings.lastOffsets[termID] >= 0);
             termsHashPerField.WriteVInt32(1, startOffset - postings.lastOffsets[termID]);
             termsHashPerField.WriteVInt32(1, endOffset - startOffset);
 
@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!hasOffsets)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!hasOffsets);
                 }
             }
             fieldState.MaxTermFrequency = Math.Max(1, fieldState.MaxTermFrequency);
@@ -232,14 +232,14 @@ namespace Lucene.Net.Index
 
             FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!hasFreq || postings.termFreqs[termID] > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!hasFreq || postings.termFreqs[termID] > 0);
 
             if (!hasFreq)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(postings.termFreqs == null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(postings.termFreqs == null);
                 if (docState.docID != postings.lastDocIDs[termID])
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docState.docID > postings.lastDocIDs[termID])) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docState.docID > postings.lastDocIDs[termID]);
                     termsHashPerField.WriteVInt32(0, postings.lastDocCodes[termID]);
                     postings.lastDocCodes[termID] = docState.docID - postings.lastDocIDs[termID];
                     postings.lastDocIDs[termID] = docState.docID;
@@ -278,7 +278,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!hasOffsets)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!hasOffsets);
                 }
                 fieldState.UniqueTermCount++;
             }
@@ -322,7 +322,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!writeOffsets)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!writeOffsets);
                 }
                 //System.out.println("PA init freqs=" + writeFreqs + " pos=" + writeProx + " offs=" + writeOffsets);
             }
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
 
             internal override void CopyTo(ParallelPostingsArray toArray, int numToCopy)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(toArray is FreqProxPostingsArray)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(toArray is FreqProxPostingsArray);
                 FreqProxPostingsArray to = (FreqProxPostingsArray)toArray;
 
                 base.CopyTo(toArray, numToCopy);
@@ -349,17 +349,17 @@ namespace Lucene.Net.Index
                 Array.Copy(lastDocCodes, 0, to.lastDocCodes, 0, numToCopy);
                 if (lastPositions != null)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(to.lastPositions != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(to.lastPositions != null);
                     Array.Copy(lastPositions, 0, to.lastPositions, 0, numToCopy);
                 }
                 if (lastOffsets != null)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(to.lastOffsets != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(to.lastOffsets != null);
                     Array.Copy(lastOffsets, 0, to.lastOffsets, 0, numToCopy);
                 }
                 if (termFreqs != null)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(to.termFreqs != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(to.termFreqs != null);
                     Array.Copy(termFreqs, 0, to.termFreqs, 0, numToCopy);
                 }
             }
@@ -416,7 +416,7 @@ namespace Lucene.Net.Index
             // new segment to the directory according to
             // currentFieldIndexOptions:
             IndexOptions currentFieldIndexOptions = fieldInfo.IndexOptions;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentFieldIndexOptions != IndexOptions.NONE)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(currentFieldIndexOptions != IndexOptions.NONE);
 
             bool writeTermFreq = currentFieldIndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
             bool writePositions = currentFieldIndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
@@ -551,7 +551,7 @@ namespace Lucene.Net.Index
                             }
                         }
 
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docID != postings.lastDocIDs[termID])) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID != postings.lastDocIDs[termID]);
                     }
 
                     docFreq++;

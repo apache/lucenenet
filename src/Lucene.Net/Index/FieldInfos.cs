@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(byNumber.Count == byName.Count)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(byNumber.Count == byName.Count);
                 return byNumber.Count;
             }
         }
@@ -335,7 +335,7 @@ namespace Lucene.Net.Index
             /// </summary>
             internal Builder(FieldNumbers globalFieldNumbers)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(globalFieldNumbers != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(globalFieldNumbers != null);
                 this.globalFieldNumbers = globalFieldNumbers;
             }
 

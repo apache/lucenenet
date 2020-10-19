@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Sole constructor. </summary>
         public Lucene40StoredFieldsWriter(Directory directory, string segment, IOContext context)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(directory != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(directory != null);
             this.directory = directory;
             this.segment = segment;
 
@@ -328,7 +328,7 @@ namespace Lucene.Net.Codecs.Lucene40
             int docCount = 0;
             int maxDoc = reader.MaxDoc;
             IBits liveDocs = reader.LiveDocs;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(liveDocs != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(liveDocs != null);
             if (matchingFieldsReader != null)
             {
                 // We can bulk-copy because the fieldInfos are "congruent"

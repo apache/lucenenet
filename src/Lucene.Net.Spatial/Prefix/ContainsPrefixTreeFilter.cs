@@ -301,7 +301,7 @@ namespace Lucene.Net.Spatial.Prefix
                     }
                     docs[d++] = v;
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(d == intSet.Count)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(d == intSet.Count);
                 int size = d;
                 //sort them
                 Array.Sort(docs, 0, size);

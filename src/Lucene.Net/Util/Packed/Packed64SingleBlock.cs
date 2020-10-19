@@ -77,7 +77,7 @@ namespace Lucene.Net.Util.Packed
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
             }
             len = Math.Min(len, m_valueCount - index);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(off + len <= arr.Length);
 
             int originalIndex = index;
 
@@ -98,7 +98,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk get
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index % valuesPerBlock == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index % valuesPerBlock == 0);
             PackedInt32s.IDecoder decoder = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
             if(Debugging.ShouldAssert(decoder.Int64BlockCount == 1)) Debugging.ThrowAssert();
 
@@ -119,7 +119,7 @@ namespace Lucene.Net.Util.Packed
             {
                 // no progress so far => already at a block boundary but no full block to
                 // get
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index == originalIndex)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index == originalIndex);
                 return base.Get(index, arr, off, len);
             }
         }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Util.Packed
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
             }
             len = Math.Min(len, m_valueCount - index);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(off + len <= arr.Length);
 
             int originalIndex = index;
 
@@ -153,10 +153,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk set
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index % valuesPerBlock == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index % valuesPerBlock == 0);
             BulkOperation op = BulkOperation.Of(PackedInt32s.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(op.Int64BlockCount == 1)) Debugging.ThrowAssert();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(op.Int64ValueCount == valuesPerBlock)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(op.Int64BlockCount == 1);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(op.Int64ValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             op.Encode(arr, off, blocks, blockIndex, nblocks);
@@ -173,7 +173,7 @@ namespace Lucene.Net.Util.Packed
             {
                 // no progress so far => already at a block boundary but no full block to
                 // set
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index == originalIndex)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index == originalIndex);
                 return base.Set(index, arr, off, len);
             }
         }
@@ -204,13 +204,13 @@ namespace Lucene.Net.Util.Packed
                 {
                     Set(fromIndex++, val);
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fromIndex % valuesPerBlock == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fromIndex % valuesPerBlock == 0);
             }
 
             // bulk set of the inner blocks
             int fromBlock = fromIndex / valuesPerBlock;
             int toBlock = toIndex / valuesPerBlock;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fromBlock * valuesPerBlock == fromIndex)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fromBlock * valuesPerBlock == fromIndex);
 
             long blockValue = 0L;
             for (int i = 0; i < valuesPerBlock; ++i)

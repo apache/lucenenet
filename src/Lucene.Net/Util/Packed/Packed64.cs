@@ -157,7 +157,7 @@ namespace Lucene.Net.Util.Packed
             {
                 var mod = (long) ((ulong) (Blocks[elementPos]) >> (int) (-endBits)) & MaskRight;
                 var og = ((long) ((ulong) Blocks[elementPos] >> (int) -endBits)) & MaskRight;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(mod == og)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(mod == og);
 
                 //return (long)((ulong)(Blocks[elementPos]) >> (int)(-endBits)) & MaskRight;
                 return ((long)((ulong)Blocks[elementPos] >> (int)-endBits)) & MaskRight;
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util.Packed
             var a = (((Blocks[elementPos] << (int)endBits) | (long)(((ulong)(Blocks[elementPos + 1])) >> (int)(BLOCK_SIZE - endBits))) & MaskRight);
             var b = ((Blocks[elementPos] << (int)endBits) | ((long)((ulong)Blocks[elementPos + 1] >> (int)(BLOCK_SIZE - endBits)))) & MaskRight;
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(a == b)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(a == b);
 
             //return (((Blocks[elementPos] << (int)endBits) | (long)(((ulong)(Blocks[elementPos + 1])) >> (int)(BLOCK_SIZE - endBits))) & MaskRight);
             return ((Blocks[elementPos] << (int)endBits) | ((long)((ulong)Blocks[elementPos + 1] >> (int)(BLOCK_SIZE - endBits)))) & MaskRight;
@@ -175,9 +175,9 @@ namespace Lucene.Net.Util.Packed
         public override int Get(int index, long[] arr, int off, int len)
         {
             if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index >= 0 && index < m_valueCount)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
             len = Math.Min(len, m_valueCount - index);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(off + len <= arr.Length);
 
             int originalIndex = index;
             PackedInt32s.IDecoder decoder = BulkOperation.Of(PackedInt32s.Format.PACKED, m_bitsPerValue);
@@ -198,7 +198,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk get
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index % decoder.Int64ValueCount == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index % decoder.Int64ValueCount == 0);
             int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
             if (Debugging.AssertsEnabled && Debugging.ShouldAssert((((long)index * m_bitsPerValue) & MOD_MASK) == 0)) Debugging.ThrowAssert();
             int iterations = len / decoder.Int64ValueCount;
@@ -206,7 +206,7 @@ namespace Lucene.Net.Util.Packed
             int gotValues = iterations * decoder.Int64ValueCount;
             index += gotValues;
             len -= gotValues;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(len >= 0);
 
             if (index > originalIndex)
             {
@@ -216,7 +216,7 @@ namespace Lucene.Net.Util.Packed
             else
             {
                 // no progress so far => already at a block boundary but no full block to get
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index == originalIndex)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index == originalIndex);
                 return base.Get(index, arr, off, len);
             }
         }
@@ -243,9 +243,9 @@ namespace Lucene.Net.Util.Packed
         public override int Set(int index, long[] arr, int off, int len)
         {
             if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index >= 0 && index < m_valueCount)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < m_valueCount);
             len = Math.Min(len, m_valueCount - index);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(off + len <= arr.Length);
 
             int originalIndex = index;
             PackedInt32s.IEncoder encoder = BulkOperation.Of(PackedInt32s.Format.PACKED, m_bitsPerValue);
@@ -266,7 +266,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             // bulk set
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index % encoder.Int64ValueCount == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index % encoder.Int64ValueCount == 0);
             int blockIndex = (int)((ulong)((long)index * m_bitsPerValue) >> BLOCK_BITS);
             if (Debugging.AssertsEnabled && Debugging.ShouldAssert((((long)index * m_bitsPerValue) & MOD_MASK) == 0)) Debugging.ThrowAssert();
             int iterations = len / encoder.Int64ValueCount;
@@ -274,7 +274,7 @@ namespace Lucene.Net.Util.Packed
             int setValues = iterations * encoder.Int64ValueCount;
             index += setValues;
             len -= setValues;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(len >= 0);
 
             if (index > originalIndex)
             {
@@ -284,7 +284,7 @@ namespace Lucene.Net.Util.Packed
             else
             {
                 // no progress so far => already at a block boundary but no full block to get
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index == originalIndex)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index == originalIndex);
                 return base.Set(index, arr, off, len);
             }
         }
@@ -332,7 +332,7 @@ namespace Lucene.Net.Util.Packed
                     Set(fromIndex++, val);
                 }
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fromIndex % nAlignedValues == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fromIndex % nAlignedValues == 0);
 
             // compute the long[] blocks for nAlignedValues consecutive values and
             // use them to set as many values as possible without applying any mask
@@ -346,7 +346,7 @@ namespace Lucene.Net.Util.Packed
                     values.Set(i, val);
                 }
                 nAlignedValuesBlocks = values.blocks;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(nAlignedBlocks <= nAlignedValuesBlocks.Length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(nAlignedBlocks <= nAlignedValuesBlocks.Length);
             }
             int startBlock = (int)((ulong)((long)fromIndex * m_bitsPerValue) >> 6);
             int endBlock = (int)((ulong)((long)toIndex * m_bitsPerValue) >> 6);

@@ -270,7 +270,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 IList<Transition> newTransitions = new List<Transition>();
                 foreach (Transition t in state.GetTransitions())
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(t.Min == t.Max)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(t.Min == t.Max);
                     if (t.Min == TokenStreamToAutomaton.POS_SEP)
                     {
                         if (preserveSep)
@@ -665,7 +665,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         break;
                     }
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(sepIndex != -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(sepIndex != -1);
                 spare.Grow(sepIndex);
 
                 int payloadLen = output2.Length - sepIndex - 1;
@@ -711,7 +711,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(num > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(num > 0);
 
             if (onlyMorePopular)
             {
@@ -803,7 +803,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
 
                     var completions = searcher.Search();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(completions.IsComplete)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(completions.IsComplete);
 
                     // NOTE: this is rather inefficient: we enumerate
                     // every matching "exactly the same analyzed form"
@@ -846,7 +846,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
 
                 var completions2 = searcher2.Search();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(completions2.IsComplete)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(completions2.IsComplete);
 
                 foreach (Util.Fst.Util.Result<PairOutputs<long?, BytesRef>.Pair> completion in completions2)
                 {
@@ -924,7 +924,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         // We found exact match, which means we should
                         // have already found it in the first search:
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(results.Count == 1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(results.Count == 1);
                         return false;
                     }
                     else

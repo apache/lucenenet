@@ -284,7 +284,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 long offset;
                 int docID = startDocID + count + 1;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docID <= numTotalDocs)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID <= numTotalDocs);
                 if (docID < numTotalDocs)
                 {
                     offset = indexStream.ReadInt64();

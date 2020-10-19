@@ -275,7 +275,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(false);
             }
             Codec.Default = codec;
 

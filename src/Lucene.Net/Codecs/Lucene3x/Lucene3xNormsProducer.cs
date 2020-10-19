@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
             var dv = norms[field.Name];
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(dv != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(dv != null);
             return dv.Instance;
         }
 

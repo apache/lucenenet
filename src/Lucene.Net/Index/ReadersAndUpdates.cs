@@ -105,19 +105,19 @@ namespace Lucene.Net.Index
         public virtual void IncRef()
         {
             int rc = refCount.IncrementAndGet();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(rc > 1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(rc > 1);
         }
 
         public virtual void DecRef()
         {
             int rc = refCount.DecrementAndGet();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(rc >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(rc >= 0);
         }
 
         public virtual int RefCount()
         {
             int rc = refCount;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(rc >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(rc >= 0);
             return rc;
         }
 
@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Info == sr.SegmentInfo)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Info == sr.SegmentInfo);
                 sr.DecRef();
             }
         }
@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
                 if (reader == null)
                 {
                     GetReader(context).DecRef();
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(reader != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(reader != null);
                 }
                 liveDocsShared = true;
                 if (liveDocs != null)
@@ -309,7 +309,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(reader.LiveDocs == liveDocs)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(reader.LiveDocs == liveDocs);
                     reader.IncRef();
                     return reader;
                 }
@@ -404,7 +404,7 @@ namespace Lucene.Net.Index
                 }
 
                 // We have new deletes
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(liveDocs.Length == Info.Info.DocCount)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(liveDocs.Length == Info.Info.DocCount);
 
                 // Do this so we can delete any created files on
                 // exception; this saves all codecs from having to do
@@ -526,7 +526,7 @@ namespace Lucene.Net.Index
                                 string field = e.Key;
                                 NumericDocValuesFieldUpdates fieldUpdates = e.Value;
                                 FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldInfo != null)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldInfo != null);
 
                                 fieldInfo.DocValuesGen = nextFieldInfosGen;
                                 // write the numeric updates to a new gen'd docvalues file
@@ -539,7 +539,7 @@ namespace Lucene.Net.Index
                                 string field = e.Key;
                                 BinaryDocValuesFieldUpdates dvFieldUpdates = e.Value;
                                 FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldInfo != null)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldInfo != null);
 
                                 //          System.out.println("[" + Thread.currentThread().getName() + "] RAU.writeFieldUpdates: applying binary updates; seg=" + info + " f=" + dvFieldUpdates + ", updates=" + dvFieldUpdates);
 
@@ -695,7 +695,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {   // no update for this document
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(curDoc < updateDoc)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(curDoc < updateDoc);
                     if (currentValues != null && DocsWithField.Get(curDoc))
                     {
                         // only read the current value if the document had a value before
@@ -728,7 +728,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {   // no update for this document
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(curDoc < updateDoc)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(curDoc < updateDoc);
                     if (currentValues != null && DocsWithField.Get(curDoc))
                     {
                         // only read the current value if the document had a value before

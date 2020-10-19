@@ -61,7 +61,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             for (int i = 4; i < 8; i++)
             {
                 string part = entry[i];
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(part.Length > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(part.Length > 0);
                 if (!"*".Equals(part, StringComparison.Ordinal))
                 {
                     if (sb.Length > 0)
@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis.Ja.Util
 
             if ((flags & BinaryDictionary.HAS_BASEFORM) != 0)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(baseForm.Length < 16)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(baseForm.Length < 16);
                 int shared = SharedPrefix(entry[0], baseForm);
                 int suffix = baseForm.Length - shared;
                 m_buffer.Put((byte)(shared << 4 | suffix));
@@ -253,7 +253,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
             else
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(sourceId == lastSourceId)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(sourceId == lastSourceId);
             }
 
             targetMap = ArrayUtil.Grow(targetMap, targetMapEndOffset + 1);
@@ -308,7 +308,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                 for (int ofs = 0; ofs < targetMapEndOffset; ofs++)
                 {
                     int val = targetMap[ofs], delta = val - prev;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(delta >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(delta >= 0);
                     if (ofs == targetMapOffsets[sourceId])
                     {
                         @out.WriteVInt32((delta << 1) | 0x01);
@@ -373,7 +373,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     @out.WriteByte(m_buffer.Get());
                 }
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_buffer.Remaining == 0L)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(m_buffer.Remaining == 0L);
             }
         }
     }

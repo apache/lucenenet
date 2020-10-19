@@ -270,7 +270,7 @@ namespace Lucene.Net.Index
                                 rld.WriteFieldUpdates(info.Info.Dir, dvUpdates);
                             }
                             int fullDelCount = rld.Info.DelCount + rld.PendingDeleteCount;
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fullDelCount <= rld.Info.Info.DocCount)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fullDelCount <= rld.Info.Info.DocCount);
                             segAllDeletes = fullDelCount == rld.Info.Info.DocCount;
                         }
                         finally
@@ -332,7 +332,7 @@ namespace Lucene.Net.Index
                                     rld.WriteFieldUpdates(info.Info.Dir, dvUpdates);
                                 }
                                 int fullDelCount = rld.Info.DelCount + rld.PendingDeleteCount;
-                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fullDelCount <= rld.Info.Info.DocCount)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fullDelCount <= rld.Info.Info.DocCount);
                                 segAllDeletes = fullDelCount == rld.Info.Info.DocCount;
                             }
                             finally
@@ -438,9 +438,9 @@ namespace Lucene.Net.Index
                     {
                         FrozenBufferedUpdates packet = updates[delIDX];
                         numTerms.AddAndGet(-packet.numTermDeletes);
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numTerms >= 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numTerms >= 0);
                         bytesUsed.AddAndGet(-packet.bytesUsed);
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytesUsed >= 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bytesUsed >= 0);
                     }
                     updates.SubList(0, count).Clear();
                 }

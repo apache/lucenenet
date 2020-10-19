@@ -206,7 +206,7 @@ namespace Lucene.Net.Util.Fst
             {
                 node = fst.AddNode(nodeIn);
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(node != -2)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(node != -2);
 
             nodeIn.Clear();
 
@@ -668,7 +668,7 @@ namespace Lucene.Net.Util.Fst
 
             public void AddArc(int label, INode target)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(label >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(label >= 0);
                 if (NumArcs != 0)
                 {
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(label > Arcs[NumArcs - 1].Label)) Debugging.ThrowAssert("arc[-1].Label={0} new label={1}", Arcs[NumArcs - 1].Label, label + " numArcs=" + NumArcs);
@@ -692,7 +692,7 @@ namespace Lucene.Net.Util.Fst
 
             public void ReplaceLast(int labelToMatch, INode target, S nextFinalOutput, bool isFinal)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(NumArcs > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(NumArcs > 0);
                 Arc<S> arc = Arcs[NumArcs - 1];
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.Label == labelToMatch)) Debugging.ThrowAssert("arc.Label={0} vs {1}", arc.Label, labelToMatch);
                 arc.Target = target;
@@ -720,7 +720,7 @@ namespace Lucene.Net.Util.Fst
                     Debugging.ThrowAssertIf(NumArcs > 0);
                 }
                 Arc<S> arc = Arcs[NumArcs - 1];
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.Label == labelToMatch)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(arc.Label == labelToMatch);
                 arc.Output = newOutput;
             }
 
