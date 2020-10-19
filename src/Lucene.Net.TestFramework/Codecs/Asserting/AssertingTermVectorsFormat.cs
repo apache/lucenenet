@@ -103,8 +103,8 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void StartDocument(int numVectorFields)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldCount == 0);
-                if (Debugging.AssertsEnabled) Debugging.Assert(docStatus != Status.STARTED);
+                if (Debugging.ShouldAssert(fieldCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(docStatus != Status.STARTED)) Debugging.ThrowAssert();
                 @in.StartDocument(numVectorFields);
                 docStatus = Status.STARTED;
                 fieldCount = numVectorFields;
@@ -113,17 +113,17 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void FinishDocument()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldCount == 0);
-                if (Debugging.AssertsEnabled) Debugging.Assert(docStatus == Status.STARTED);
+                if (Debugging.ShouldAssert(fieldCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(docStatus == Status.STARTED)) Debugging.ThrowAssert();
                 @in.FinishDocument();
                 docStatus = Status.FINISHED;
             }
 
             public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(termCount == 0);
-                if (Debugging.AssertsEnabled) Debugging.Assert(docStatus == Status.STARTED);
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldStatus != Status.STARTED);
+                if (Debugging.ShouldAssert(termCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(docStatus == Status.STARTED)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(fieldStatus != Status.STARTED)) Debugging.ThrowAssert();
                 @in.StartField(info, numTerms, positions, offsets, payloads);
                 fieldStatus = Status.STARTED;
                 termCount = numTerms;
@@ -132,8 +132,8 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void FinishField()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(termCount == 0);
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldStatus == Status.STARTED);
+                if (Debugging.ShouldAssert(termCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(fieldStatus == Status.STARTED)) Debugging.ThrowAssert();
                 @in.FinishField();
                 fieldStatus = Status.FINISHED;
                 --fieldCount;
@@ -141,9 +141,9 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void StartTerm(BytesRef term, int freq)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(docStatus == Status.STARTED);
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldStatus == Status.STARTED);
-                if (Debugging.AssertsEnabled) Debugging.Assert(termStatus != Status.STARTED);
+                if (Debugging.ShouldAssert(docStatus == Status.STARTED)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(fieldStatus == Status.STARTED)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(termStatus != Status.STARTED)) Debugging.ThrowAssert();
                 @in.StartTerm(term, freq);
                 termStatus = Status.STARTED;
                 positionCount = hasPositions ? freq : 0;
@@ -151,10 +151,10 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void FinishTerm()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(positionCount == 0);
-                if (Debugging.AssertsEnabled) Debugging.Assert(docStatus == Status.STARTED);
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldStatus == Status.STARTED);
-                if (Debugging.AssertsEnabled) Debugging.Assert(termStatus == Status.STARTED);
+                if (Debugging.ShouldAssert(positionCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(docStatus == Status.STARTED)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(fieldStatus == Status.STARTED)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(termStatus == Status.STARTED)) Debugging.ThrowAssert();
                 @in.FinishTerm();
                 termStatus = Status.FINISHED;
                 --termCount;
@@ -162,9 +162,9 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(docStatus == Status.STARTED);
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldStatus == Status.STARTED);
-                if (Debugging.AssertsEnabled) Debugging.Assert(termStatus == Status.STARTED);
+                if (Debugging.ShouldAssert(docStatus == Status.STARTED)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(fieldStatus == Status.STARTED)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(termStatus == Status.STARTED)) Debugging.ThrowAssert();
                 @in.AddPosition(position, startOffset, endOffset, payload);
                 --positionCount;
             }
@@ -176,10 +176,10 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void Finish(FieldInfos fis, int numDocs)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(docCount == numDocs);
-                if (Debugging.AssertsEnabled) Debugging.Assert(docStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldStatus != Status.STARTED);
-                if (Debugging.AssertsEnabled) Debugging.Assert(termStatus != Status.STARTED);
+                if (Debugging.ShouldAssert(docCount == numDocs)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(docStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED))) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(fieldStatus != Status.STARTED)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(termStatus != Status.STARTED)) Debugging.ThrowAssert();
                 @in.Finish(fis, numDocs);
             }
 

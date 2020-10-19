@@ -182,7 +182,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     {
                         bool hasNext;
                         hasNext = buffer.IncrementToken();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
+                        if (Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
                         term = termAtt.ToString();
                     }
 #pragma warning disable 168
@@ -213,7 +213,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 try
                                 {
                                     bool hasNext = buffer.IncrementToken();
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
+                                    if (Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
                                     term = termAtt.ToString();
                                 }
 #pragma warning disable 168
@@ -240,7 +240,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                 try
                                 {
                                     bool hasNext = buffer.IncrementToken();
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
+                                    if (Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
                                     term = termAtt.ToString();
                                 }
 #pragma warning disable 168
@@ -307,7 +307,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             try
                             {
                                 bool hasNext = buffer.IncrementToken();
-                                if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
+                                if (Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
                                 term = termAtt.ToString();
                                 if (posIncrAtt != null)
                                 {
@@ -379,7 +379,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         try
                         {
                             bool hasNext = buffer.IncrementToken();
-                            if (Debugging.AssertsEnabled) Debugging.Assert(hasNext == true);
+                            if (Debugging.ShouldAssert(hasNext == true)) Debugging.ThrowAssert();
                             term = termAtt.ToString();
 
                             if (posIncrAtt != null)

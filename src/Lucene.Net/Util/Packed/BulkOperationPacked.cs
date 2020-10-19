@@ -36,7 +36,7 @@ namespace Lucene.Net.Util.Packed
         public BulkOperationPacked(int bitsPerValue)
         {
             this.bitsPerValue = bitsPerValue;
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64);
+            if (Debugging.ShouldAssert(bitsPerValue > 0 && bitsPerValue <= 64)) Debugging.ThrowAssert();
             int blocks = bitsPerValue;
             while ((blocks & 1) == 0)
             {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Util.Packed
                 this.mask = (1L << bitsPerValue) - 1;
             }
             this.intMask = (int)mask;
-            if (Debugging.AssertsEnabled) Debugging.Assert(longValueCount * bitsPerValue == 64 * longBlockCount);
+            if (Debugging.ShouldAssert(longValueCount * bitsPerValue == 64 * longBlockCount)) Debugging.ThrowAssert();
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util.Packed
                     nextValue = (bytes & ((1L << bits) - 1)) << bitsLeft;
                 }
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsLeft == bitsPerValue);
+            if (Debugging.ShouldAssert(bitsLeft == bitsPerValue)) Debugging.ThrowAssert();
         }
 
         public override void Decode(long[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations)
@@ -178,7 +178,7 @@ namespace Lucene.Net.Util.Packed
                     nextValue = (bytes & ((1 << bits) - 1)) << bitsLeft;
                 }
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsLeft == bitsPerValue);
+            if (Debugging.ShouldAssert(bitsLeft == bitsPerValue)) Debugging.ThrowAssert();
         }
 
         public override void Encode(long[] values, int valuesOffset, long[] blocks, int blocksOffset, int iterations)
@@ -244,7 +244,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < byteValueCount * iterations; ++i)
             {
                 long v = values[valuesOffset++];
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue == 64 || PackedInt32s.BitsRequired(v) <= bitsPerValue);
+                if (Debugging.ShouldAssert(bitsPerValue == 64 || PackedInt32s.BitsRequired(v) <= bitsPerValue)) Debugging.ThrowAssert();
                 if (bitsPerValue < bitsLeft)
                 {
                     // just buffer
@@ -266,7 +266,7 @@ namespace Lucene.Net.Util.Packed
                     nextBlock = (int)((v & ((1L << bits) - 1)) << bitsLeft);
                 }
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsLeft == 8);
+            if (Debugging.ShouldAssert(bitsLeft == 8)) Debugging.ThrowAssert();
         }
 
         public override void Encode(int[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations)
@@ -276,7 +276,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < byteValueCount * iterations; ++i)
             {
                 int v = values[valuesOffset++];
-                if (Debugging.AssertsEnabled) Debugging.Assert(PackedInt32s.BitsRequired(v & 0xFFFFFFFFL) <= bitsPerValue);
+                if (Debugging.ShouldAssert(PackedInt32s.BitsRequired(v & 0xFFFFFFFFL) <= bitsPerValue)) Debugging.ThrowAssert();
                 if (bitsPerValue < bitsLeft)
                 {
                     // just buffer
@@ -298,7 +298,7 @@ namespace Lucene.Net.Util.Packed
                     nextBlock = (v & ((1 << bits) - 1)) << bitsLeft;
                 }
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsLeft == 8);
+            if (Debugging.ShouldAssert(bitsLeft == 8)) Debugging.ThrowAssert();
         }
     }
 }

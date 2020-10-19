@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     int field = input.ReadVInt32();
                     long numTerms = input.ReadVInt64();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(numTerms >= 0);
+                    if (Debugging.ShouldAssert(numTerms >= 0)) Debugging.ThrowAssert();
                     long termsStartPointer = input.ReadVInt64();
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
                     long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? -1 : input.ReadVInt64();
@@ -233,7 +233,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override Terms GetTerms(string field)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
+            if (Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
 
             FieldReader result;
             fields.TryGetValue(field, out result);
@@ -257,7 +257,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public FieldReader(BlockTermsReader outerInstance, FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
                 long sumDocFreq, int docCount, int longsSize)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(numTerms > 0);
+                if (Debugging.ShouldAssert(numTerms > 0)) Debugging.ThrowAssert();
 
                 this.outerInstance = outerInstance;
 
@@ -448,7 +448,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                         // Block must exist since, at least, the indexed term
                         // is in the block:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(result);
+                        if (Debugging.ShouldAssert(result)) Debugging.ThrowAssert();
 
                         indexIsCurrent = true;
                         didIndexNext = false;
@@ -536,7 +536,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 // Target's prefix is before the common prefix
                                 // of this block, so we position to start of
                                 // block and return NOT_FOUND:
-                                if (Debugging.AssertsEnabled) Debugging.Assert(state.TermBlockOrd == 0);
+                                if (Debugging.ShouldAssert(state.TermBlockOrd == 0)) Debugging.ThrowAssert();
 
                                 int suffix = termSuffixesReader.ReadVInt32();
                                 term.Length = termBlockPrefix + suffix;
@@ -641,7 +641,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // cross another index term (besides the first
                         // one) while we are scanning:
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(indexIsCurrent);
+                        if (Debugging.ShouldAssert(indexIsCurrent)) Debugging.ThrowAssert();
 
                         if (!NextBlock())
                         {
@@ -664,7 +664,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // works properly:
                     if (seekPending)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!indexIsCurrent);
+                        if (Debugging.ShouldAssert(!indexIsCurrent)) Debugging.ThrowAssert();
                         input.Seek(state.BlockFilePointer);
                         int pendingSeekCount = state.TermBlockOrd;
                         bool result = NextBlock();
@@ -674,12 +674,12 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // Block must exist since seek(TermState) was called w/ a
                         // TermState previously returned by this enum when positioned
                         // on a real term:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(result);
+                        if (Debugging.ShouldAssert(result)) Debugging.ThrowAssert();
 
                         while (state.TermBlockOrd < pendingSeekCount)
                         {
                             BytesRef nextResult = _next();
-                            if (Debugging.AssertsEnabled) Debugging.Assert(nextResult != null);
+                            if (Debugging.ShouldAssert(nextResult != null)) Debugging.ThrowAssert();
                         }
                         seekPending = false;
                         state.Ord = savOrd;
@@ -827,7 +827,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         throw new InvalidOperationException("terms index was not loaded");
                     }
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ord < outerInstance.numTerms);
+                    if (Debugging.ShouldAssert(ord < outerInstance.numTerms)) Debugging.ThrowAssert();
 
                     // TODO: if ord is in same terms block and
                     // after current ord, we should avoid this seek just
@@ -836,7 +836,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     bool result = NextBlock();
 
                     // Block must exist since ord < numTerms:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(result);
+                    if (Debugging.ShouldAssert(result)) Debugging.ThrowAssert();
 
                     indexIsCurrent = true;
                     didIndexNext = false;
@@ -852,9 +852,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                     while (left > 0)
                     {
                         BytesRef term = _next();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
+                        if (Debugging.ShouldAssert(term != null)) Debugging.ThrowAssert();
                         left--;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(indexIsCurrent);
+                        if (Debugging.ShouldAssert(indexIsCurrent)) Debugging.ThrowAssert();
                     }
                 }
 

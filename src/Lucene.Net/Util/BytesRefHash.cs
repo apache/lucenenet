@@ -155,7 +155,7 @@ namespace Lucene.Net.Util
                 }
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(upto == count);
+            if (Debugging.ShouldAssert(upto == count)) Debugging.ThrowAssert();
             lastCount = count;
             return ids;
         }
@@ -201,7 +201,7 @@ namespace Lucene.Net.Util
             protected override int Compare(int i, int j)
             {
                 int id1 = compact[i], id2 = compact[j];
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.bytesStart.Length > id1 && outerInstance.bytesStart.Length > id2);
+                if (Debugging.ShouldAssert(outerInstance.bytesStart.Length > id1 && outerInstance.bytesStart.Length > id2)) Debugging.ThrowAssert();
                 outerInstance.pool.SetBytesRef(outerInstance.scratch1, outerInstance.bytesStart[id1]);
                 outerInstance.pool.SetBytesRef(scratch2, outerInstance.bytesStart[id2]);
                 return comp.Compare(outerInstance.scratch1, scratch2);
@@ -210,14 +210,14 @@ namespace Lucene.Net.Util
             protected override void SetPivot(int i)
             {
                 int id = compact[i];
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.bytesStart.Length > id);
+                if (Debugging.ShouldAssert(outerInstance.bytesStart.Length > id)) Debugging.ThrowAssert();
                 outerInstance.pool.SetBytesRef(pivot, outerInstance.bytesStart[id]);
             }
 
             protected override int ComparePivot(int j)
             {
                 int id = compact[j];
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.bytesStart.Length > id);
+                if (Debugging.ShouldAssert(outerInstance.bytesStart.Length > id)) Debugging.ThrowAssert();
                 outerInstance.pool.SetBytesRef(scratch2, outerInstance.bytesStart[id]);
                 return comp.Compare(pivot, scratch2);
             }
@@ -353,7 +353,7 @@ namespace Lucene.Net.Util
                     pool.ByteUpto += length + 2;
                     System.Buffer.BlockCopy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 2, length);
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(ids[hashPos] == -1);
+                if (Debugging.ShouldAssert(ids[hashPos] == -1)) Debugging.ThrowAssert();
                 ids[hashPos] = e;
 
                 if (count == hashHalfSize)
@@ -438,7 +438,7 @@ namespace Lucene.Net.Util
                 }
                 e = count++;
                 bytesStart[e] = offset;
-                if (Debugging.AssertsEnabled) Debugging.Assert(ids[hashPos] == -1);
+                if (Debugging.ShouldAssert(ids[hashPos] == -1)) Debugging.ThrowAssert();
                 ids[hashPos] = e;
 
                 if (count == hashHalfSize)
@@ -492,7 +492,7 @@ namespace Lucene.Net.Util
                     }
 
                     int hashPos = code & newMask;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(hashPos >= 0);
+                    if (Debugging.ShouldAssert(hashPos >= 0)) Debugging.ThrowAssert();
                     if (newHash[hashPos] != -1)
                     {
                         // Conflict; use linear probe to find an open slot
@@ -651,7 +651,7 @@ namespace Lucene.Net.Util
 
             public override int[] Grow()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null);
+                if (Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert();
                 return bytesStart = ArrayUtil.Grow(bytesStart, bytesStart.Length + 1);
             }
 

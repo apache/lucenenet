@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             tvf.WriteByte((byte)bits);
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(fieldCount <= numVectorFields);
+            if (Debugging.ShouldAssert(fieldCount <= numVectorFields)) Debugging.ThrowAssert();
             if (fieldCount == numVectorFields)
             {
                 // last field of the document
@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(payload == null);
+            if (Debugging.ShouldAssert(payload == null)) Debugging.ThrowAssert();
             if (positions && offsets)
             {
                 // write position delta

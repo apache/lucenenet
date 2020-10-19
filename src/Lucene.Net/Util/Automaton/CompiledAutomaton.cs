@@ -228,7 +228,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(maxTransition != null);
+            if (Debugging.ShouldAssert(maxTransition != null)) Debugging.ThrowAssert();
 
             // Append floorLabel
             int floorLabel;
@@ -256,7 +256,7 @@ namespace Lucene.Net.Util.Automaton
                 Transition[] transitions = sortedTransitions[state];
                 if (transitions.Length == 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(RunAutomaton.IsAccept(state));
+                    if (Debugging.ShouldAssert(RunAutomaton.IsAccept(state))) Debugging.ThrowAssert();
                     term.Length = idx;
                     //if (DEBUG) System.out.println("  return " + term.utf8ToString());
                     return term;
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     // We are pushing "top" -- so get last label of
                     // last transition:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(transitions.Length != 0);
+                    if (Debugging.ShouldAssert(transitions.Length != 0)) Debugging.ThrowAssert();
                     Transition lastTransition = transitions[transitions.Length - 1];
                     if (idx >= term.Bytes.Length)
                     {
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util.Automaton
                         Transition[] transitions = sortedTransitions[state];
                         if (transitions.Length == 0)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(RunAutomaton.IsAccept(state));
+                            if (Debugging.ShouldAssert(RunAutomaton.IsAccept(state))) Debugging.ThrowAssert();
                             output.Length = idx;
                             //if (DEBUG) System.out.println("  return " + output.utf8ToString());
                             return output;

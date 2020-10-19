@@ -133,7 +133,7 @@ namespace Lucene.Net.Analysis.Ja
 
             // Make katakana dakuten map from hiragana map
             char codePointDifference = (char)('\u30ab' - '\u304b'); // カ - か
-            if (Debugging.AssertsEnabled) Debugging.Assert(h2d.Length == k2d.Length);
+            if (Debugging.ShouldAssert(h2d.Length == k2d.Length)) Debugging.ThrowAssert();
             for (int i = 0; i < k2d.Length; i++)
             {
                 k2d[i] = (char)(h2d[i] + codePointDifference);

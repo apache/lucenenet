@@ -297,7 +297,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         public virtual void AssertTermsStatistics(Terms leftTerms, Terms rightTerms)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(leftTerms.Comparer == rightTerms.Comparer);
+            if (Debugging.ShouldAssert(leftTerms.Comparer == rightTerms.Comparer)) Debugging.ThrowAssert();
             if (leftTerms.DocCount != -1 && rightTerms.DocCount != -1)
             {
                 Assert.AreEqual(leftTerms.DocCount, rightTerms.DocCount);

@@ -364,7 +364,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     else
                     { 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false);
+                        if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
                         return false;
                     }
                 }

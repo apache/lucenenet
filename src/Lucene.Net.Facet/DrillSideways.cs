@@ -175,7 +175,7 @@ namespace Lucene.Net.Facet
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(clauses.Length == 1 + drillDownDims.Count);
+                if (Debugging.ShouldAssert(clauses.Length == 1 + drillDownDims.Count)) Debugging.ThrowAssert();
                 baseQuery = clauses[0].Query;
                 startClause = 1;
             }

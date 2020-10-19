@@ -161,7 +161,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     s = states[index];
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(s == GetState(label));
+                if (Debugging.ShouldAssert(s == GetState(label))) Debugging.ThrowAssert();
                 return s;
             }
 

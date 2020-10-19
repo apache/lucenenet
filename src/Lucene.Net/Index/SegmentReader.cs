@@ -100,7 +100,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(si.DelCount == 0);
+                    if (Debugging.ShouldAssert(si.DelCount == 0)) Debugging.ThrowAssert();
                     liveDocs = null;
                 }
                 numDocs = si.Info.DocCount - si.DelCount;
@@ -464,7 +464,7 @@ namespace Lucene.Net.Index
             {
                 DocValuesProducer dvProducer;
                 dvProducersByField.TryGetValue(field, out dvProducer);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
+                if (Debugging.ShouldAssert(dvProducer != null)) Debugging.ThrowAssert();
                 dvs = dvProducer.GetNumeric(fi);
                 dvFields[field] = dvs;
             }
@@ -494,7 +494,7 @@ namespace Lucene.Net.Index
             {
                 DocValuesProducer dvProducer;
                 dvProducersByField.TryGetValue(field, out dvProducer);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
+                if (Debugging.ShouldAssert(dvProducer != null)) Debugging.ThrowAssert();
                 dvs = dvProducer.GetDocsWithField(fi);
                 dvFields[field] = dvs;
             }
@@ -520,7 +520,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
+                if (Debugging.ShouldAssert(dvProducer != null)) Debugging.ThrowAssert();
                 dvs = dvProducer.GetBinary(fi);
                 dvFields[field] = dvs;
             }
@@ -546,7 +546,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
+                if (Debugging.ShouldAssert(dvProducer != null)) Debugging.ThrowAssert();
                 dvs = dvProducer.GetSorted(fi);
                 dvFields[field] = dvs;
             }
@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
             if (dvs == null)
             {
                 dvProducersByField.TryGetValue(field, out DocValuesProducer dvProducer);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvProducer != null);
+                if (Debugging.ShouldAssert(dvProducer != null)) Debugging.ThrowAssert();
                 dvs = dvProducer.GetSortedSet(fi);
                 dvFields[field] = dvs;
             }

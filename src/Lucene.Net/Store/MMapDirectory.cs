@@ -111,7 +111,7 @@ namespace Lucene.Net.Store
                 throw new ArgumentException("Maximum chunk size for mmap must be >0");
             }
             this.chunkSizePower = 31 - maxChunkSize.LeadingZeroCount();
-            if (Debugging.AssertsEnabled) Debugging.Assert(this.chunkSizePower >= 0 && this.chunkSizePower <= 30);
+            if (Debugging.ShouldAssert(this.chunkSizePower >= 0 && this.chunkSizePower <= 30)) Debugging.ThrowAssert();
         }
 
         /// <summary>

@@ -48,7 +48,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public SpatialPrefixTree(SpatialContext ctx, int maxLevels)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(maxLevels > 0);
+            if (Debugging.ShouldAssert(maxLevels > 0)) Debugging.ThrowAssert();
             this.m_ctx = ctx;
             this.m_maxLevels = maxLevels;
         }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
                 return new ReadOnlyCollection<Cell>(new[] { cell });
             }
             string endToken = cell.TokenString;
-            if (Debugging.AssertsEnabled) Debugging.Assert(endToken.Length == detailLevel);
+            if (Debugging.ShouldAssert(endToken.Length == detailLevel)) Debugging.ThrowAssert();
             IList<Cell> cells = new List<Cell>(detailLevel);
             for (int i = 1; i < detailLevel; i++)
             {

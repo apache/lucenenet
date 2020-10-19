@@ -80,7 +80,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public override void SetDefaultOperatorOR(ICommonQueryParserConfiguration cqpC)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(cqpC is StandardQueryParser);
+            if (Debugging.ShouldAssert(cqpC is StandardQueryParser)) Debugging.ThrowAssert();
             StandardQueryParser qp = (StandardQueryParser)cqpC;
             qp.DefaultOperator = (Operator.OR);
         }
@@ -88,7 +88,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         public override void SetDefaultOperatorAND(ICommonQueryParserConfiguration cqpC)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(cqpC is StandardQueryParser);
+            if (Debugging.ShouldAssert(cqpC is StandardQueryParser)) Debugging.ThrowAssert();
             StandardQueryParser qp = (StandardQueryParser)cqpC;
             qp.DefaultOperator = (Operator.AND);
         }
@@ -111,7 +111,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         public override void SetDateResolution(ICommonQueryParserConfiguration cqpC,
             string field, DateTools.Resolution value)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(cqpC is StandardQueryParser);
+            if (Debugging.ShouldAssert(cqpC is StandardQueryParser)) Debugging.ThrowAssert();
             StandardQueryParser qp = (StandardQueryParser)cqpC;
             qp.DateResolutionMap.Put(field, value);
         }

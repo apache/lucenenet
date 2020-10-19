@@ -143,7 +143,7 @@ namespace Lucene.Net.Facet.Taxonomy
         public static T OpenIfChanged<T>(T oldTaxoReader) where T : TaxonomyReader
         {
             T newTaxoReader = (T)oldTaxoReader.DoOpenIfChanged();
-            if (Debugging.AssertsEnabled) Debugging.Assert(newTaxoReader != oldTaxoReader);
+            if (Debugging.ShouldAssert(newTaxoReader != oldTaxoReader)) Debugging.ThrowAssert();
             return newTaxoReader;
         }
 

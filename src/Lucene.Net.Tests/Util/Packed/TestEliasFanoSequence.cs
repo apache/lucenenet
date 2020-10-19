@@ -91,7 +91,7 @@ namespace Lucene.Net.Util.Packed
         private static void TstDecodeAdvanceToMultiples(long[] values, EliasFanoDecoder efd, long m)
         {
             // test advancing to multiples of m
-            if (Debugging.AssertsEnabled) Debugging.Assert(m > 0);
+            if (Debugging.ShouldAssert(m > 0)) Debugging.ThrowAssert();
             long previousValue = -1L;
             long index = 0;
             long mm = m;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Util.Packed
         private static void TstDecodeBackToMultiples(long[] values, EliasFanoDecoder efd, long m)
         {
             // test backing to multiples of m
-            if (Debugging.AssertsEnabled) Debugging.Assert(m > 0);
+            if (Debugging.ShouldAssert(m > 0)) Debugging.ThrowAssert();
             efd.ToAfterSequence();
             int index = values.Length - 1;
             if (index < 0)
@@ -135,7 +135,7 @@ namespace Lucene.Net.Util.Packed
             while (index >= 0)
             {
                 expValue = values[index];
-                if (Debugging.AssertsEnabled) Debugging.Assert(mm < previousValue);
+                if (Debugging.ShouldAssert(mm < previousValue)) Debugging.ThrowAssert();
                 if (expValue <= mm)
                 {
                     long backValue_ = efd.BackToValue(mm);

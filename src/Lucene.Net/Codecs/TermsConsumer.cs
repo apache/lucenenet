@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs
         public virtual void Merge(MergeState mergeState, IndexOptions indexOptions, TermsEnum termsEnum)
         {
             BytesRef term;
-            if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
+            if (Debugging.ShouldAssert(termsEnum != null)) Debugging.ThrowAssert();
             long sumTotalTermFreq = 0;
             long sumDocFreq = 0;
             long sumDFsinceLastAbortCheck = 0;
@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs
                     // We can pass null for liveDocs, because the
                     // mapping enum will skip the non-live docs:
                     docsAndFreqsEnumIn = (MultiDocsEnum)termsEnum.Docs(null, docsAndFreqsEnumIn);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docsAndFreqsEnumIn != null);
+                    if (Debugging.ShouldAssert(docsAndFreqsEnumIn != null)) Debugging.ThrowAssert();
                     docsAndFreqsEnum.Reset(docsAndFreqsEnumIn);
                     PostingsConsumer postingsConsumer = StartTerm(term);
                     TermStats stats = postingsConsumer.Merge(mergeState, indexOptions, docsAndFreqsEnum, visitedDocs);
@@ -191,7 +191,7 @@ namespace Lucene.Net.Codecs
                     // We can pass null for liveDocs, because the
                     // mapping enum will skip the non-live docs:
                     postingsEnumIn = (MultiDocsAndPositionsEnum)termsEnum.DocsAndPositions(null, postingsEnumIn, DocsAndPositionsFlags.PAYLOADS);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(postingsEnumIn != null);
+                    if (Debugging.ShouldAssert(postingsEnumIn != null)) Debugging.ThrowAssert();
                     postingsEnum.Reset(postingsEnumIn);
 
                     PostingsConsumer postingsConsumer = StartTerm(term);
@@ -212,7 +212,7 @@ namespace Lucene.Net.Codecs
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+                if (Debugging.ShouldAssert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)) Debugging.ThrowAssert();
                 if (postingsEnum == null)
                 {
                     postingsEnum = new MappingMultiDocsAndPositionsEnum();
@@ -225,7 +225,7 @@ namespace Lucene.Net.Codecs
                     // We can pass null for liveDocs, because the
                     // mapping enum will skip the non-live docs:
                     postingsEnumIn = (MultiDocsAndPositionsEnum)termsEnum.DocsAndPositions(null, postingsEnumIn);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(postingsEnumIn != null);
+                    if (Debugging.ShouldAssert(postingsEnumIn != null)) Debugging.ThrowAssert();
                     postingsEnum.Reset(postingsEnumIn);
 
                     PostingsConsumer postingsConsumer = StartTerm(term);

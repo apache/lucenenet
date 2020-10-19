@@ -211,7 +211,7 @@ namespace Lucene.Net.Analysis.Core
 
             internal FactoryAnalyzer(TokenizerFactory tokenizer, TokenFilterFactory tokenfilter, CharFilterFactory charFilter)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(tokenizer != null);
+                if (Debugging.ShouldAssert(tokenizer != null)) Debugging.ThrowAssert();
                 this.tokenizer = tokenizer;
                 this.charFilter = charFilter;
                 this.tokenfilter = tokenfilter;

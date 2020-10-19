@@ -166,7 +166,7 @@ namespace Lucene.Net.Codecs.Memory
 
         public override Terms GetTerms(string field)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
+            if (Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
             TermsReader result;
             fields.TryGetValue(field, out result);
             return result;
@@ -369,7 +369,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         seekPending = false;
                         SeekStatus status = SeekCeil(term);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(status == SeekStatus.FOUND); // must positioned on valid term
+                        if (Debugging.ShouldAssert(status == SeekStatus.FOUND)) Debugging.ThrowAssert(); // must positioned on valid term
                     }
                     // LUCENENET specific - extracted logic of UpdateEnum() so we can eliminate the null check
                     var moved = fstEnum.MoveNext();
@@ -523,7 +523,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 internal override void DecodeMetaData()
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
+                    if (Debugging.ShouldAssert(term != null)) Debugging.ThrowAssert();
                     if (!decoded)
                     {
                         if (meta.bytes != null)
@@ -642,7 +642,7 @@ namespace Lucene.Net.Codecs.Memory
                         {
                             break;
                         }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(IsValid(frame)); // target must be fetched from automaton
+                        if (Debugging.ShouldAssert(IsValid(frame))) Debugging.ThrowAssert(); // target must be fetched from automaton
                         PushFrame(frame);
                         upto++;
                     }

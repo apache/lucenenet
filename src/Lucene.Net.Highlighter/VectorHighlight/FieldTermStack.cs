@@ -141,7 +141,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 TermInfo current = termList[i];
                 if (current.Position == currentPos)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(previous != null);
+                    if (Debugging.ShouldAssert(previous != null)) Debugging.ThrowAssert();
                     previous.SetNext(current);
                     previous = current;
                     //iterator.Remove();

@@ -191,7 +191,7 @@ namespace Lucene.Net.Sandbox.Queries
                         case Selector.MIDDLE_MAX: return new MiddleMaxValue(randomOrds);
                         case Selector.MIN:
                         default:
-                            if (Debugging.AssertsEnabled) Debugging.Assert(false);
+                            if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
                             return null;
                     }
                 }

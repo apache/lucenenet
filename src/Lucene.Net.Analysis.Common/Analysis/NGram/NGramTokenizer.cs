@@ -232,7 +232,7 @@ namespace Lucene.Net.Analysis.NGram
                 {
                     if (bufferStart + 1 + minGram > bufferEnd)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(exhausted);
+                        if (Debugging.ShouldAssert(exhausted)) Debugging.ThrowAssert();
                         return false;
                     }
                     Consume();
@@ -295,7 +295,7 @@ namespace Lucene.Net.Analysis.NGram
         public override sealed void End()
         {
             base.End();
-            if (Debugging.AssertsEnabled) Debugging.Assert(bufferStart <= bufferEnd);
+            if (Debugging.ShouldAssert(bufferStart <= bufferEnd)) Debugging.ThrowAssert();
             int endOffset = offset;
             for (int i = bufferStart; i < bufferEnd; ++i)
             {

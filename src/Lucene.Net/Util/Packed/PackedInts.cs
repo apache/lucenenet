@@ -142,7 +142,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public override float OverheadPerValue(int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(IsSupported(bitsPerValue));
+                if (Debugging.ShouldAssert(IsSupported(bitsPerValue))) Debugging.ThrowAssert();
                 int valuesPerBlock = 64 / bitsPerValue;
                 int overhead = 64 % bitsPerValue;
                 return (float)overhead / valuesPerBlock;
@@ -220,7 +220,7 @@ namespace Lucene.Net.Util.Packed
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, bitsPerValue.ToString(CultureInfo.InvariantCulture));
                 long byteCount = ByteCount(packedIntsVersion, valueCount, bitsPerValue);
-                if (Debugging.AssertsEnabled) Debugging.Assert(byteCount < 8L * int.MaxValue);
+                if (Debugging.ShouldAssert(byteCount < 8L * int.MaxValue)) Debugging.ThrowAssert();
                 if ((byteCount % 8) == 0)
                     return (int)(byteCount / 8);
                 else
@@ -241,7 +241,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual float OverheadPerValue(int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(IsSupported(bitsPerValue));
+                if (Debugging.ShouldAssert(IsSupported(bitsPerValue))) Debugging.ThrowAssert();
                 return 0f;
             }
 
@@ -250,7 +250,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual float OverheadRatio(int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(IsSupported(bitsPerValue));
+                if (Debugging.ShouldAssert(IsSupported(bitsPerValue))) Debugging.ThrowAssert();
                 return OverheadPerValue(bitsPerValue) / bitsPerValue;
             }
         }
@@ -575,7 +575,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public virtual object GetArray()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!HasArray);
+                if (Debugging.ShouldAssert(!HasArray)) Debugging.ThrowAssert();
                 return null;
             }
 
@@ -635,7 +635,7 @@ namespace Lucene.Net.Util.Packed
             public virtual long Next()
             {
                 Int64sRef nextValues = Next(1);
-                if (Debugging.AssertsEnabled) Debugging.Assert(nextValues.Length > 0);
+                if (Debugging.ShouldAssert(nextValues.Length > 0)) Debugging.ThrowAssert();
                 long result = nextValues.Int64s[nextValues.Offset];
                 ++nextValues.Offset;
                 --nextValues.Length;
@@ -678,7 +678,7 @@ namespace Lucene.Net.Util.Packed
                     Debugging.Assert(index >= 0 && index < Count);
                 }
                 len = Math.Min(len, Count - index);
-                if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
+                if (Debugging.ShouldAssert(off + len <= arr.Length)) Debugging.ThrowAssert();
 
                 for (int i = index, o = off, end = index + len; i < end; ++i, ++o)
                 {
@@ -839,7 +839,7 @@ namespace Lucene.Net.Util.Packed
 
             internal virtual void WriteHeader()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(m_valueCount != -1);
+                if (Debugging.ShouldAssert(m_valueCount != -1)) Debugging.ThrowAssert();
                 CodecUtil.WriteHeader(m_out, CODEC_NAME, VERSION_CURRENT);
                 m_out.WriteVInt32(m_bitsPerValue);
                 m_out.WriteVInt32(m_valueCount);
@@ -1064,7 +1064,7 @@ namespace Lucene.Net.Util.Packed
                 long byteCount = format.ByteCount(version, valueCount, bitsPerValue);
                 if (byteCount != format.ByteCount(VERSION_CURRENT, valueCount, bitsPerValue))
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(version == VERSION_START);
+                    if (Debugging.ShouldAssert(version == VERSION_START)) Debugging.ThrowAssert();
                     long endPointer = @in.GetFilePointer() + byteCount;
                     // Some consumers of direct readers assume that reading the last value
                     // will make the underlying IndexInput go to the end of the packed
@@ -1190,7 +1190,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public static Mutable GetMutable(int valueCount, int bitsPerValue, PackedInt32s.Format format)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(valueCount >= 0);
+            if (Debugging.ShouldAssert(valueCount >= 0)) Debugging.ThrowAssert();
 
             if (format == PackedInt32s.Format.PACKED_SINGLE_BLOCK)
             {
@@ -1317,7 +1317,7 @@ namespace Lucene.Net.Util.Packed
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
         public static Writer GetWriter(DataOutput @out, int valueCount, int bitsPerValue, float acceptableOverheadRatio)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(valueCount >= 0);
+            if (Debugging.ShouldAssert(valueCount >= 0)) Debugging.ThrowAssert();
 
             FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
             Writer writer = GetWriterNoHeader(@out, formatAndBits.Format, valueCount, formatAndBits.BitsPerValue, DEFAULT_BUFFER_SIZE);
@@ -1387,17 +1387,17 @@ namespace Lucene.Net.Util.Packed
         /// Same as <see cref="Copy(Reader, int, Mutable, int, int, int)"/> but using a pre-allocated buffer. </summary>
         internal static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, long[] buf)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(buf.Length > 0);
+            if (Debugging.ShouldAssert(buf.Length > 0)) Debugging.ThrowAssert();
             int remaining = 0;
             while (len > 0)
             {
                 int read = src.Get(srcPos, buf, remaining, Math.Min(len, buf.Length - remaining));
-                if (Debugging.AssertsEnabled) Debugging.Assert(read > 0);
+                if (Debugging.ShouldAssert(read > 0)) Debugging.ThrowAssert();
                 srcPos += read;
                 len -= read;
                 remaining += read;
                 int written = dest.Set(destPos, buf, 0, remaining);
-                if (Debugging.AssertsEnabled) Debugging.Assert(written > 0);
+                if (Debugging.ShouldAssert(written > 0)) Debugging.ThrowAssert();
                 destPos += written;
                 if (written < remaining)
                 {

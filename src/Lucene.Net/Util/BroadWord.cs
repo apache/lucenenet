@@ -150,7 +150,7 @@ namespace Lucene.Net.Util
         /// <returns> The index of the r-th 1 bit in x, or if no such bit exists, 72. </returns>
         public static int SelectNaive(long x, int r)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(r >= 1);
+            if (Debugging.ShouldAssert(r >= 1)) Debugging.ThrowAssert();
             int s = -1;
             while ((x != 0L) && (r > 0))
             {

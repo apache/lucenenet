@@ -365,14 +365,14 @@ namespace Lucene.Net.Search
                 this.sims = new SimScorer[(int)dv.ValueCount];
                 foreach (BooleanClause clause in bq.GetClauses())
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!clause.IsProhibited);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!clause.IsRequired);
+                    if (Debugging.ShouldAssert(!clause.IsProhibited)) Debugging.ThrowAssert();
+                    if (Debugging.ShouldAssert(!clause.IsRequired)) Debugging.ThrowAssert();
                     Term term = ((TermQuery)clause.Query).Term;
                     long ord = dv.LookupTerm(term.Bytes);
                     if (ord >= 0)
                     {
                         bool success = ords.Add(ord);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(success); // no dups
+                        if (Debugging.ShouldAssert(success)) Debugging.ThrowAssert(); // no dups
                         TermContext context = TermContext.Build(reader.Context, term);
                         SimWeight w = weight.Similarity.ComputeWeight(1f, searcher.CollectionStatistics("field"), searcher.TermStatistics(term, context));
                         var dummy = w.GetValueForNormalization(); // ignored
@@ -394,7 +394,7 @@ namespace Lucene.Net.Search
 
             public override int NextDoc()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(currentDoc != NO_MORE_DOCS);
+                if (Debugging.ShouldAssert(currentDoc != NO_MORE_DOCS)) Debugging.ThrowAssert();
                 for (currentDoc = currentDoc + 1; currentDoc < maxDoc; currentDoc++)
                 {
                     currentMatched = 0;

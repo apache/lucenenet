@@ -801,7 +801,7 @@ namespace Lucene.Net.Search
 
             public TopFieldDocs Call()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(slice.Leaves.Length == 1);
+                if (Debugging.ShouldAssert(slice.Leaves.Length == 1)) Debugging.ThrowAssert();
                 TopFieldDocs docs = searcher.Search(slice.Leaves, weight, after, nDocs, sort, true, doDocScores || sort.NeedsScores, doMaxScore);
                 @lock.Lock();
                 try
@@ -966,7 +966,7 @@ namespace Lucene.Net.Search
             long sumTotalTermFreq;
             long sumDocFreq;
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
+            if (Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert();
 
             Terms terms = MultiFields.GetTerms(reader, field);
             if (terms == null)

@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis
                 {
                     posInc = 1;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(pos > -1 || posInc > 0);
+                if (Debugging.ShouldAssert(pos > -1 || posInc > 0)) Debugging.ThrowAssert();
 
                 if (posInc > 0)
                 {
@@ -163,7 +163,7 @@ namespace Lucene.Net.Analysis
                     pos += posInc;
 
                     posData = positions.Get(pos);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(posData.leaving == null);
+                    if (Debugging.ShouldAssert(posData.leaving == null)) Debugging.ThrowAssert();
 
                     if (posData.arriving == null)
                     {

@@ -134,7 +134,7 @@ namespace Lucene.Net.Index.Sorter
                 {
                     return base.GetDocMap(mergeState);
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(mergeState.DocMaps.Length == 1); // we returned a singleton reader
+                if (Debugging.ShouldAssert(mergeState.DocMaps.Length == 1)) Debugging.ThrowAssert(); // we returned a singleton reader
                 MonotonicAppendingInt64Buffer deletes = GetDeletes(unsortedReaders);
                 return new DocMapAnonymousInnerClassHelper(this, mergeState, deletes);
             }

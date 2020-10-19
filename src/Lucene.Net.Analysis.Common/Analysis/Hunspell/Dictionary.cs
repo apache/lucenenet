@@ -375,7 +375,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 strip.CopyTo(0, stripData, currentOffset, strip.Length - 0);
                 currentOffset += strip.Length;
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(currentIndex == seenStrips.Count);
+            if (Debugging.ShouldAssert(currentIndex == seenStrips.Count)) Debugging.ThrowAssert();
             stripOffsets[currentIndex] = currentOffset;
         }
 
@@ -424,7 +424,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
             for (int i = 0; i < numLines; i++)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(affixWriter.Position == currentAffix << 3);
+                if (Debugging.ShouldAssert(affixWriter.Position == currentAffix << 3)) Debugging.ThrowAssert();
                 string line = reader.ReadLine();
                 string[] ruleArgs = whitespacePattern.Split(line).TrimEnd();
 

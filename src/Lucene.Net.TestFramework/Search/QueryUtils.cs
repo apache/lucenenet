@@ -294,7 +294,7 @@ namespace Lucene.Net.Search
 
         private static IndexReader MakeEmptyIndex(Random random, int numDocs)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(numDocs > 0);
+            if (Debugging.ShouldAssert(numDocs > 0)) Debugging.ThrowAssert();
             Directory d = new MockDirectoryWrapper(random, new RAMDirectory());
             IndexWriter w = new IndexWriter(d, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, new MockAnalyzer(random)));
             for (int i = 0; i < numDocs; i++)
@@ -487,7 +487,7 @@ namespace Lucene.Net.Search
                     leafPtr++;
                 }
                 lastReader[0] = (AtomicReader)context.Reader;
-                if (Debugging.AssertsEnabled) Debugging.Assert(readerContextArray[leafPtr].Reader == context.Reader);
+                if (Debugging.ShouldAssert(readerContextArray[leafPtr].Reader == context.Reader)) Debugging.ThrowAssert();
                 this.scorer = null;
                 lastDoc[0] = -1;
             }

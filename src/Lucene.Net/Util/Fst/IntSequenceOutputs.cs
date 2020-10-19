@@ -144,7 +144,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(Int32sRef prefix, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(prefix != null);
+            if (Debugging.ShouldAssert(prefix != null)) Debugging.ThrowAssert();
             @out.WriteVInt32(prefix.Length);
             for (int idx = 0; idx < prefix.Length; idx++)
             {

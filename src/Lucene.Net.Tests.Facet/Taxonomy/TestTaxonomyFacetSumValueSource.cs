@@ -385,7 +385,7 @@ namespace Lucene.Net.Facet.Taxonomy
             public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
             {
                 Scorer scorer = (Scorer)context["scorer"];
-                if (Debugging.AssertsEnabled) Debugging.Assert(scorer != null);
+                if (Debugging.ShouldAssert(scorer != null)) Debugging.ThrowAssert();
                 return new DoubleDocValuesAnonymousInnerClassHelper(this, scorer);
             }
 

@@ -559,7 +559,7 @@ namespace Lucene.Net.Search.Grouping
             Field[] facetFields;
             if (useDv)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!multipleFacetValuesPerDocument);
+                if (Debugging.ShouldAssert(!multipleFacetValuesPerDocument)) Debugging.ThrowAssert();
                 facetFields = new Field[2];
                 facetFields[0] = NewStringField("facet", "", Field.Store.NO);
                 doc.Add(facetFields[0]);

@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.PerField
             {
                 Document hitDoc = isearcher.Doc(hits.ScoreDocs[i].Doc);
                 Assert.AreEqual(text, hitDoc.Get("fieldname"));
-                if (Debugging.AssertsEnabled) Debugging.Assert(ireader.Leaves.Count == 1);
+                if (Debugging.ShouldAssert(ireader.Leaves.Count == 1)) Debugging.ThrowAssert();
                 NumericDocValues dv = ((AtomicReader)ireader.Leaves[0].Reader).GetNumericDocValues("dv1");
                 Assert.AreEqual(5, dv.Get(hits.ScoreDocs[i].Doc));
                 BinaryDocValues dv2 = ((AtomicReader)ireader.Leaves[0].Reader).GetBinaryDocValues("dv2");

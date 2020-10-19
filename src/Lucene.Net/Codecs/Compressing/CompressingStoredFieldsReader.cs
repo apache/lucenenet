@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs.Compressing
                 indexStream = d.OpenChecksumInput(indexStreamFN, context);
                 string codecNameIdx = formatName + CompressingStoredFieldsWriter.CODEC_SFX_IDX;
                 version = CodecUtil.CheckHeader(indexStream, codecNameIdx, CompressingStoredFieldsWriter.VERSION_START, CompressingStoredFieldsWriter.VERSION_CURRENT);
-                if (Debugging.AssertsEnabled) Debugging.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
+                if (Debugging.ShouldAssert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer())) Debugging.ThrowAssert();
                 indexReader = new CompressingStoredFieldsIndexReader(indexStream, si);
 
                 long maxPointer = -1;
@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     throw new CorruptIndexException("Version mismatch between stored fields index and data: " + version + " != " + fieldsVersion);
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.GetFilePointer());
+                if (Debugging.ShouldAssert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.GetFilePointer())) Debugging.ThrowAssert();
 
                 if (version >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS)
                 {
@@ -346,7 +346,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 BytesRef bytes = totalLength <= BUFFER_REUSE_THRESHOLD ? this.bytes : new BytesRef();
                 decompressor.Decompress(fieldsStream, totalLength, offset, length, bytes);
-                if (Debugging.AssertsEnabled) Debugging.Assert(bytes.Length == length);
+                if (Debugging.ShouldAssert(bytes.Length == length)) Debugging.ThrowAssert();
                 documentInput = new ByteArrayDataInput(bytes.Bytes, bytes.Offset, bytes.Length);
             }
 
@@ -394,7 +394,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             internal virtual void FillBuffer()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(decompressed <= length);
+                if (Debugging.ShouldAssert(decompressed <= length)) Debugging.ThrowAssert();
                 if (decompressed == length)
                 {
                     throw new Exception();
@@ -591,7 +591,7 @@ namespace Lucene.Net.Codecs.Compressing
             /// </summary>
             internal void CopyCompressedData(DataOutput @out)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.Version == CompressingStoredFieldsWriter.VERSION_CURRENT);
+                if (Debugging.ShouldAssert(outerInstance.Version == CompressingStoredFieldsWriter.VERSION_CURRENT)) Debugging.ThrowAssert();
                 long chunkEnd = docBase + chunkDocs == outerInstance.numDocs ? outerInstance.maxPointer : outerInstance.indexReader.GetStartPointer(docBase + chunkDocs);
                 @out.CopyBytes(fieldsStream, chunkEnd - fieldsStream.GetFilePointer());
             }

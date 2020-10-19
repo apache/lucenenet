@@ -866,7 +866,7 @@ namespace Lucene.Net.Facet
 
             public virtual void Collect(int doc)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(doc > lastDocID);
+                if (Debugging.ShouldAssert(doc > lastDocID)) Debugging.ThrowAssert();
                 lastDocID = doc;
             }
 
@@ -948,8 +948,8 @@ namespace Lucene.Net.Facet
 
             public virtual void Inc(int[] dims, int[] dims2, int onlyDim)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(dims.Length == counts.Length);
-                if (Debugging.AssertsEnabled) Debugging.Assert(dims2.Length == counts.Length);
+                if (Debugging.ShouldAssert(dims.Length == counts.Length)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(dims2.Length == counts.Length)) Debugging.ThrowAssert();
                 for (int dim = 0; dim < dims.Length; dim++)
                 {
                     if (onlyDim == -1 || dim == onlyDim)

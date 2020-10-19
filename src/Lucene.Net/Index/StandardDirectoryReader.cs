@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
                     // actual instance of SegmentInfoPerCommit in
                     // IndexWriter's segmentInfos:
                     SegmentCommitInfo info = infos.Info(i);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == dir);
+                    if (Debugging.ShouldAssert(info.Info.Dir == dir)) Debugging.ThrowAssert();
                     ReadersAndUpdates rld = writer.readerPool.Get(info, true);
                     try
                     {

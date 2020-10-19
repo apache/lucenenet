@@ -542,7 +542,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 AtomicReaderContext subContext = leaves[leaf];
                 AtomicReader r = subContext.AtomicReader;
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(leaf >= lastLeaf); // increasing order
+                if (Debugging.ShouldAssert(leaf >= lastLeaf)) Debugging.ThrowAssert(); // increasing order
 
                 // if the segment has changed, we must initialize new enums.
                 if (leaf != lastLeaf)
@@ -671,7 +671,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 // LUCENE-5166: this hit would span the content limit... however more valid 
                 // hits may exist (they are sorted by start). so we pretend like we never 
                 // saw this term, it won't cause a passage to be added to passageQueue or anything.
-                if (Debugging.AssertsEnabled) Debugging.Assert(EMPTY.StartOffset == int.MaxValue);
+                if (Debugging.ShouldAssert(EMPTY.StartOffset == int.MaxValue)) Debugging.ThrowAssert();
                 if (start < contentLength && end > contentLength)
                 {
                     continue;
@@ -714,7 +714,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                         return passages;
                     }
                     // advance breakiterator
-                    if (Debugging.AssertsEnabled) Debugging.Assert(BreakIterator.Done < 0);
+                    if (Debugging.ShouldAssert(BreakIterator.Done < 0)) Debugging.ThrowAssert();
                     current.startOffset = Math.Max(bi.Preceding(start + 1), 0);
                     current.endOffset = Math.Min(bi.Next(), contentLength);
                 }
@@ -727,7 +727,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                     {
                         // multitermquery match, pull from payload
                         term = off.dp.GetPayload();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
+                        if (Debugging.ShouldAssert(term != null)) Debugging.ThrowAssert();
                     }
                     current.AddMatch(start, end, term);
                     if (off.pos == dp.Freq)
@@ -751,7 +751,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             }
 
             // Dead code but compiler disagrees:
-            if (Debugging.AssertsEnabled) Debugging.Assert(false);
+            if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
             return null;
         }
 
@@ -766,7 +766,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             // BreakIterator should be un-next'd:
             List<Passage> passages = new List<Passage>();
             int pos = bi.Current;
-            if (Debugging.AssertsEnabled) Debugging.Assert(pos == 0);
+            if (Debugging.ShouldAssert(pos == 0)) Debugging.ThrowAssert();
             while (passages.Count < maxPassages)
             {
                 int next = bi.Next();
@@ -883,7 +883,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             public LimitedStoredFieldVisitor(string[] fields, char[] valueSeparators, int maxLength)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(fields.Length == valueSeparators.Length);
+                if (Debugging.ShouldAssert(fields.Length == valueSeparators.Length)) Debugging.ThrowAssert();
                 this.fields = fields;
                 this.valueSeparators = valueSeparators;
                 this.maxLength = maxLength;
@@ -896,7 +896,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             public override void StringField(Index.FieldInfo fieldInfo, string value)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(currentField >= 0);
+                if (Debugging.ShouldAssert(currentField >= 0)) Debugging.ThrowAssert();
                 StringBuilder builder = builders[currentField];
                 if (builder.Length > 0 && builder.Length < maxLength)
                 {

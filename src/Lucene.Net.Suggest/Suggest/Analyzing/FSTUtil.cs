@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         public static IList<Path<T>> IntersectPrefixPaths<T>(Automaton a, FST<T> fst)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(a.IsDeterministic);
+            if (Debugging.ShouldAssert(a.IsDeterministic)) Debugging.ThrowAssert();
             IList<Path<T>> queue = new List<Path<T>>();
             List<Path<T>> endNodes = new List<Path<T>>();
             queue.Add(new Path<T>(a.GetInitialState(), fst.GetFirstArc(new FST.Arc<T>()), fst.Outputs.NoOutput, new Int32sRef()));
@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         FST.Arc<T> nextArc = Lucene.Net.Util.Fst.Util.ReadCeilArc(min, fst, path.FstNode, scratchArc, fstReader);
                         while (nextArc != null && nextArc.Label <= max)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(nextArc.Label <= max);
+                            if (Debugging.ShouldAssert(nextArc.Label <= max)) Debugging.ThrowAssert();
                             if (Debugging.AssertsEnabled) Debugging.Assert(nextArc.Label >= min, "{0} {1}", nextArc.Label, min);
                             Int32sRef newInput = new Int32sRef(currentInput.Length + 1);
                             newInput.CopyInt32s(currentInput);

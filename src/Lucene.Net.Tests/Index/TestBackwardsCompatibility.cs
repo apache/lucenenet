@@ -434,7 +434,7 @@ namespace Lucene.Net.Index
             // true if this is a 4.2+ index
             bool is42Index = MultiFields.GetMergedFieldInfos(reader).FieldInfo("dvSortedSet") != null;
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(is40Index); // NOTE: currently we can only do this on trunk!
+            if (Debugging.ShouldAssert(is40Index)) Debugging.ThrowAssert(); // NOTE: currently we can only do this on trunk!
 
             IBits liveDocs = MultiFields.GetLiveDocs(reader);
 

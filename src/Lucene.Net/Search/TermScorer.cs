@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
 
         public override float GetScore()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(DocID != NO_MORE_DOCS);
+            if (Debugging.ShouldAssert(DocID != NO_MORE_DOCS)) Debugging.ThrowAssert();
             return docScorer.Score(docsEnum.DocID, docsEnum.Freq);
         }
 

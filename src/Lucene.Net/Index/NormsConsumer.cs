@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
                 if (state.FieldInfos.HasNorms)
                 {
                     NormsFormat normsFormat = state.SegmentInfo.Codec.NormsFormat;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(normsFormat != null);
+                    if (Debugging.ShouldAssert(normsFormat != null)) Debugging.ThrowAssert();
                     normsConsumer = normsFormat.NormsConsumer(state);
 
                     foreach (FieldInfo fi in state.FieldInfos)
@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
                             if (toWrite != null && !toWrite.IsEmpty)
                             {
                                 toWrite.Flush(state, normsConsumer);
-                                if (Debugging.AssertsEnabled) Debugging.Assert(fi.NormType == DocValuesType.NUMERIC);
+                                if (Debugging.ShouldAssert(fi.NormType == DocValuesType.NUMERIC)) Debugging.ThrowAssert();
                             }
                             else if (fi.IsIndexed)
                             {

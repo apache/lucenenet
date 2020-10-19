@@ -176,7 +176,7 @@ namespace Lucene.Net.Util.Fst
             }
             long? output2 = (long?)output;
             long? inc2 = (long?)inc;
-            if (Debugging.AssertsEnabled) Debugging.Assert(output2 >= inc2);
+            if (Debugging.ShouldAssert(output2 >= inc2)) Debugging.ThrowAssert();
 
             if (inc2 == NO_OUTPUT)
             {

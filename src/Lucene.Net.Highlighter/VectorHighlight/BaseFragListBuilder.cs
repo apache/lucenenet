@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.VectorHighlight
             {
                 this.iter = iter;
                 T removeTop = RemoveTop();
-                if (Debugging.AssertsEnabled) Debugging.Assert(removeTop == null);
+                if (Debugging.ShouldAssert(removeTop == null)) Debugging.ThrowAssert();
             }
 
             public T Top()

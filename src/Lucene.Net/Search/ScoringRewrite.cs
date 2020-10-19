@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
                 {
                     int pos = sort[i];
                     Term term = new Term(query.Field, col.terms.Get(pos, new BytesRef()));
-                    if (Debugging.AssertsEnabled) Debugging.Assert(reader.DocFreq(term) == termStates[pos].DocFreq);
+                    if (Debugging.ShouldAssert(reader.DocFreq(term) == termStates[pos].DocFreq)) Debugging.ThrowAssert();
                     AddClause(result, term, termStates[pos].DocFreq, query.Boost * boost[pos], termStates[pos]);
                 }
             }
@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
             {
                 int e = terms.Add(bytes);
                 TermState state = termsEnum.GetTermState();
-                if (Debugging.AssertsEnabled) Debugging.Assert(state != null);
+                if (Debugging.ShouldAssert(state != null)) Debugging.ThrowAssert();
                 if (e < 0)
                 {
                     // duplicate term: update docFreq
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
                 int[] ord = base.Init();
                 boost = new float[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_SINGLE)];
                 termState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                if (Debugging.AssertsEnabled) Debugging.Assert(termState.Length >= ord.Length && boost.Length >= ord.Length);
+                if (Debugging.ShouldAssert(termState.Length >= ord.Length && boost.Length >= ord.Length)) Debugging.ThrowAssert();
                 return ord;
             }
 
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
                     Array.Copy(termState, 0, tmpTermState, 0, termState.Length);
                     termState = tmpTermState;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(termState.Length >= ord.Length && boost.Length >= ord.Length);
+                if (Debugging.ShouldAssert(termState.Length >= ord.Length && boost.Length >= ord.Length)) Debugging.ThrowAssert();
                 return ord;
             }
 

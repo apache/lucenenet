@@ -285,7 +285,7 @@ namespace Lucene.Net.Index.Memory
 
                 public override void SeekExact(long ord)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ord < info.terms.Count);
+                    if (Debugging.ShouldAssert(ord < info.terms.Count)) Debugging.ThrowAssert();
                     termUpto = (int)ord;
                 }
 
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index.Memory
 
                 public override void SeekExact(BytesRef term, TermState state)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state != null);
+                    if (Debugging.ShouldAssert(state != null)) Debugging.ThrowAssert();
                     this.SeekExact(((OrdTermState)state).Ord);
                 }
 

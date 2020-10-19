@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         public IndexFormatTooOldException(string resourceDesc, string version)
             : base("Format version is not supported (resource: " + resourceDesc + "): " + version + ". this version of Lucene only supports indexes created with release 3.0 and later.")
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(resourceDesc != null);
+            if (Debugging.ShouldAssert(resourceDesc != null)) Debugging.ThrowAssert();
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
         public IndexFormatTooOldException(string resourceDesc, int version, int minVersion, int maxVersion)
             : base("Format version is not supported (resource: " + resourceDesc + "): " + version + " (needs to be between " + minVersion + " and " + maxVersion + "). this version of Lucene only supports indexes created with release 3.0 and later.")
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(resourceDesc != null);
+            if (Debugging.ShouldAssert(resourceDesc != null)) Debugging.ThrowAssert();
         }
 
         /// <summary>

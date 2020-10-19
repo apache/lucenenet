@@ -92,7 +92,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
                 DocsEnum docs = termsEnum.Docs(acceptDocs, null);
-                if (Debugging.AssertsEnabled) Debugging.Assert(docs != null);
+                if (Debugging.ShouldAssert(docs != null)) Debugging.ThrowAssert();
                 return new TermScorer(this, docs, similarity.GetSimScorer(stats, context));
             }
 
@@ -170,7 +170,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public TermQuery(Term t, TermContext states)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(states != null);
+            if (Debugging.ShouldAssert(states != null)) Debugging.ThrowAssert();
             term = t;
             docFreq = states.DocFreq;
             perReaderTermState = states;

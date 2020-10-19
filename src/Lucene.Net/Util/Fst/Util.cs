@@ -74,7 +74,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         public static T Get<T>(FST<T> fst, BytesRef input)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(fst.InputType == FST.INPUT_TYPE.BYTE1);
+            if (Debugging.ShouldAssert(fst.InputType == FST.INPUT_TYPE.BYTE1)) Debugging.ThrowAssert();
 
             var fstReader = fst.GetBytesReader();
 
@@ -385,7 +385,7 @@ namespace Lucene.Net.Util.Fst
             /// </summary>
             protected virtual void AddIfCompetitive(FSTPath<T> path)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(queue != null);
+                if (Debugging.ShouldAssert(queue != null)) Debugging.ThrowAssert();
 
                 T cost = fst.Outputs.Add(path.Cost, path.Arc.Output);
                 //System.out.println("  addIfCompetitive queue.size()=" + queue.size() + " path=" + path + " + label=" + path.arc.label);
@@ -408,7 +408,7 @@ namespace Lucene.Net.Util.Fst
                         path.Input.Length--;
 
                         // We should never see dups:
-                        if (Debugging.AssertsEnabled) Debugging.Assert(cmp != 0);
+                        if (Debugging.ShouldAssert(cmp != 0)) Debugging.ThrowAssert();
 
                         if (cmp < 0)
                         {
@@ -596,7 +596,7 @@ namespace Lucene.Net.Util.Fst
                             fst.ReadNextArc(path.Arc, fstReader);
                         }
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(foundZero);
+                        if (Debugging.ShouldAssert(foundZero)) Debugging.ThrowAssert();
 
                         if (queue != null)
                         {
@@ -917,7 +917,7 @@ namespace Lucene.Net.Util.Fst
                                 arcColor = "black";
                             }
 
-                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label != FST.END_LABEL);
+                            if (Debugging.ShouldAssert(arc.Label != FST.END_LABEL)) Debugging.ThrowAssert();
                             @out.Write("  " + node + " -> " + arc.Target + " [label=\"" + PrintableLabel(arc.Label) + outs + "\"" + (arc.IsFinal ? " style=\"bold\"" : "") + " color=\"" + arcColor + "\"]\n");
 
                             // Break the loop if we're on the last arc of this state.

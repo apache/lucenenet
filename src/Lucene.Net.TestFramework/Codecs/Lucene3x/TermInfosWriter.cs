@@ -135,7 +135,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 output.WriteInt32(indexInterval); // write indexInterval
                 output.WriteInt32(skipInterval); // write skipInterval
                 output.WriteInt32(maxSkipLevels); // write maxSkipLevels
-                if (Debugging.AssertsEnabled) Debugging.Assert(InitUTF16Results());
+                if (Debugging.ShouldAssert(InitUTF16Results())) Debugging.ThrowAssert();
                 success = true;
             }
             finally
@@ -202,10 +202,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             scratchBytes.CopyBytes(term);
-            if (Debugging.AssertsEnabled) Debugging.Assert(lastTerm.Offset == 0);
+            if (Debugging.ShouldAssert(lastTerm.Offset == 0)) Debugging.ThrowAssert();
             UnicodeUtil.UTF8toUTF16(lastTerm.Bytes, 0, lastTerm.Length, utf16Result1);
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(scratchBytes.Offset == 0);
+            if (Debugging.ShouldAssert(scratchBytes.Offset == 0)) Debugging.ThrowAssert();
             UnicodeUtil.UTF8toUTF16(scratchBytes.Bytes, 0, scratchBytes.Length, utf16Result2);
 
             int len;

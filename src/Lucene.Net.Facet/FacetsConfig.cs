@@ -694,7 +694,7 @@ namespace Lucene.Net.Facet
                 }
             }
             parts.Add(new string(buffer, 0, upto));
-            if (Debugging.AssertsEnabled) Debugging.Assert(!lastEscape);
+            if (Debugging.ShouldAssert(!lastEscape)) Debugging.ThrowAssert();
             return parts.ToArray();
         }
     }

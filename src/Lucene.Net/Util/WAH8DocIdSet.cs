@@ -154,7 +154,7 @@ namespace Lucene.Net.Util
                         wordNum = iterators[i].wordNum;
                         goto mainContinue;
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(iterators[i].wordNum == wordNum);
+                    if (Debugging.ShouldAssert(iterators[i].wordNum == wordNum)) Debugging.ThrowAssert();
                     word &= iterators[i].word;
                     if (word == 0)
                     {
@@ -164,7 +164,7 @@ namespace Lucene.Net.Util
                     }
                 }
                 // Found a common word
-                if (Debugging.AssertsEnabled) Debugging.Assert(word != 0);
+                if (Debugging.ShouldAssert(word != 0)) Debugging.ThrowAssert();
                 builder.AddWord(wordNum, word);
                 ++wordNum;
             mainContinue:;
@@ -250,7 +250,7 @@ namespace Lucene.Net.Util
 
         internal static int WordNum(int docID)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(docID >= 0);
+            if (Debugging.ShouldAssert(docID >= 0)) Debugging.ThrowAssert();
             return (int)((uint)docID >> 3);
         }
 
@@ -341,7 +341,7 @@ namespace Lucene.Net.Util
 
             internal virtual void WriteSequence()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(SequenceIsConsistent());
+                if (Debugging.ShouldAssert(SequenceIsConsistent())) Debugging.ThrowAssert();
                 try
                 {
                     WriteHeader(reverse, clean, dirtyWords.Length);
@@ -403,7 +403,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(lastWordNum >= 0);
+                    if (Debugging.ShouldAssert(lastWordNum >= 0)) Debugging.ThrowAssert();
                     switch (wordNum - lastWordNum)
                     {
                         case 1:
@@ -453,7 +453,7 @@ namespace Lucene.Net.Util
             {
                 if (cardinality == 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(lastWordNum == -1);
+                    if (Debugging.ShouldAssert(lastWordNum == -1)) Debugging.ThrowAssert();
                     return EMPTY;
                 }
                 WriteSequence();
@@ -487,7 +487,7 @@ namespace Lucene.Net.Util
                         for (int j = 0; j < indexInterval; ++j)
                         {
                             bool readSequence = it.ReadSequence();
-                            if (Debugging.AssertsEnabled) Debugging.Assert(readSequence);
+                            if (Debugging.ShouldAssert(readSequence)) Debugging.ThrowAssert();
                             it.SkipDirtyBytes();
                         }
                         int position = it.@in.Position;
@@ -744,7 +744,7 @@ namespace Lucene.Net.Util
                         word = @in.ReadByte();
                         ++wordNum;
                         --dirtyLength;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(word != 0); // never more than one consecutive 0
+                        if (Debugging.ShouldAssert(word != 0)) Debugging.ThrowAssert(); // never more than one consecutive 0
                         return;
                     }
                 }
@@ -804,7 +804,7 @@ namespace Lucene.Net.Util
 
             internal virtual void AdvanceWord(int targetWordNum)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(targetWordNum > wordNum);
+                if (Debugging.ShouldAssert(targetWordNum > wordNum)) Debugging.ThrowAssert();
                 int delta = targetWordNum - wordNum;
                 if (delta <= allOnesLength + dirtyLength + 1)
                 {
@@ -813,7 +813,7 @@ namespace Lucene.Net.Util
                 else
                 {
                     SkipDirtyBytes();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(dirtyLength == 0);
+                    if (Debugging.ShouldAssert(dirtyLength == 0)) Debugging.ThrowAssert();
                     if (delta > indexThreshold)
                     {
                         // use the index
@@ -865,7 +865,7 @@ namespace Lucene.Net.Util
                     return docID = NO_MORE_DOCS;
                 }
                 bitList = BitUtil.BitList(word);
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitList != 0);
+                if (Debugging.ShouldAssert(bitList != 0)) Debugging.ThrowAssert();
                 docID = (wordNum << 3) | ((bitList & 0x0F) - 1);
                 bitList = (int)((uint)bitList >> 4);
                 return docID;
@@ -873,7 +873,7 @@ namespace Lucene.Net.Util
 
             public override int Advance(int target)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(target > docID);
+                if (Debugging.ShouldAssert(target > docID)) Debugging.ThrowAssert();
                 int targetWordNum = WordNum(target);
                 if (targetWordNum > this.wordNum)
                 {

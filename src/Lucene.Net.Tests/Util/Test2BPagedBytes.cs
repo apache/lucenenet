@@ -57,7 +57,7 @@ namespace Lucene.Net.Util
                 r2.NextBytes(bytes);
                 dataOutput.WriteBytes(bytes, bytes.Length);
                 long fp = dataOutput.GetFilePointer();
-                if (Debugging.AssertsEnabled) Debugging.Assert(fp == lastFP + numBytes);
+                if (Debugging.ShouldAssert(fp == lastFP + numBytes)) Debugging.ThrowAssert();
                 lastFP = fp;
                 netBytes += numBytes;
             }

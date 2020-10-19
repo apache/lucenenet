@@ -78,7 +78,7 @@ namespace Lucene.Net.Codecs.Compressing
                 indexStream = d.OpenChecksumInput(indexStreamFN, context);
                 string codecNameIdx = formatName + CompressingTermVectorsWriter.CODEC_SFX_IDX;
                 version = CodecUtil.CheckHeader(indexStream, codecNameIdx, CompressingTermVectorsWriter.VERSION_START, CompressingTermVectorsWriter.VERSION_CURRENT);
-                if (Debugging.AssertsEnabled) Debugging.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
+                if (Debugging.ShouldAssert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer())) Debugging.ThrowAssert();
                 indexReader = new CompressingStoredFieldsIndexReader(indexStream, si);
 
                 if (version >= CompressingTermVectorsWriter.VERSION_CHECKSUM)
@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     throw new Exception("Version mismatch between stored fields index and data: " + version + " != " + version2);
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.GetFilePointer());
+                if (Debugging.ShouldAssert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.GetFilePointer())) Debugging.ThrowAssert();
 
                 packedIntsVersion = vectorsStream.ReadVInt32();
                 chunkSize = vectorsStream.ReadVInt32();
@@ -216,7 +216,7 @@ namespace Lucene.Net.Codecs.Compressing
             int[] fieldNums;
             {
                 int token = vectorsStream.ReadByte() & 0xFF;
-                if (Debugging.AssertsEnabled) Debugging.Assert(token != 0); // means no term vectors, cannot happen since we checked for numFields == 0
+                if (Debugging.ShouldAssert(token != 0)) Debugging.ThrowAssert(); // means no term vectors, cannot happen since we checked for numFields == 0
                 int bitsPerFieldNum = token & 0x1F;
                 int totalDistinctFields = (int)((uint)token >> 5);
                 if (totalDistinctFields == 0x07)
@@ -246,7 +246,7 @@ namespace Lucene.Net.Codecs.Compressing
                         for (int i = 0; i < totalFields; ++i)
                         {
                             int fieldNumOff = (int)allFieldNumOffs.Get(i);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(fieldNumOff >= 0 && fieldNumOff < fieldNums.Length);
+                            if (Debugging.ShouldAssert(fieldNumOff >= 0 && fieldNumOff < fieldNums.Length)) Debugging.ThrowAssert();
                             int fgs = (int)fieldFlags.Get(fieldNumOff);
                             f.Set(i, fgs);
                         }
@@ -516,7 +516,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 ++posIdx;
                             }
                         }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(posIdx == totalFreq);
+                        if (Debugging.ShouldAssert(posIdx == totalFreq)) Debugging.ThrowAssert();
                     }
                     termIndex += termCount;
                 }
@@ -732,7 +732,7 @@ namespace Lucene.Net.Codecs.Compressing
                         break;
                     }
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldLen >= 0);
+                if (Debugging.ShouldAssert(fieldLen >= 0)) Debugging.ThrowAssert();
                 return new TVTerms(outerInstance, numTerms[idx], fieldFlags[idx], prefixLengths[idx], suffixLengths[idx], termFreqs[idx], positionIndex[idx], positions[idx], startOffsets[idx], lengths[idx], payloadIndex[idx], payloadBytes, new BytesRef(suffixBytes.Bytes, suffixBytes.Offset + fieldOff, fieldLen));
             }
 
@@ -847,7 +847,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ord < numTerms);
+                    if (Debugging.ShouldAssert(ord < numTerms)) Debugging.ThrowAssert();
                     ++ord;
                 }
 

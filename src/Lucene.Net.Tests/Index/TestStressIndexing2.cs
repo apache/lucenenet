@@ -678,7 +678,7 @@ namespace Lucene.Net.Index
                 IIndexableField f2 = ff2[i];
                 if (f1.GetBinaryValue() != null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(f2.GetBinaryValue() != null);
+                    if (Debugging.ShouldAssert(f2.GetBinaryValue() != null)) Debugging.ThrowAssert();
                 }
                 else
                 {

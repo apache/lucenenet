@@ -279,7 +279,7 @@ namespace Lucene.Net.Queries
                         continue;
                     }
                     termsEnum = terms.GetEnumerator(termsEnum);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
+                    if (Debugging.ShouldAssert(termsEnum != null)) Debugging.ThrowAssert();
 
                     if (termsEnum == TermsEnum.EMPTY)
                     {

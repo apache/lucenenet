@@ -220,7 +220,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(searchAfter == null); // not supported yet
+                    if (Debugging.ShouldAssert(searchAfter == null)) Debugging.ThrowAssert(); // not supported yet
                     return s.LocalSearch(q, numHits, sort);
                 }
             }
@@ -348,7 +348,7 @@ namespace Lucene.Net.Search
 
                 public override TermStatistics TermStatistics(Term term, TermContext context)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
+                    if (Debugging.ShouldAssert(term != null)) Debugging.ThrowAssert();
                     long docFreq = 0;
                     long totalTermFreq = 0;
                     for (int nodeID = 0; nodeID < nodeVersions.Length; nodeID++)
@@ -364,7 +364,7 @@ namespace Lucene.Net.Search
                             subStats = outerInstance.termStatsCache[key];
                             // We pre-cached during rewrite so all terms
                             // better be here...
-                            if (Debugging.AssertsEnabled) Debugging.Assert(subStats != null);
+                            if (Debugging.ShouldAssert(subStats != null)) Debugging.ThrowAssert();
                         }
 
                         long nodeDocFreq = subStats.DocFreq;
@@ -451,7 +451,7 @@ namespace Lucene.Net.Search
                             sumDocFreq = -1;
                         }
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(nodeStats.MaxDoc >= 0);
+                        if (Debugging.ShouldAssert(nodeStats.MaxDoc >= 0)) Debugging.ThrowAssert();
                         maxDoc += nodeStats.MaxDoc;
                     }
 
@@ -551,7 +551,7 @@ namespace Lucene.Net.Search
 
                 public override TopFieldDocs Search(Query query, int numHits, Sort sort)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(sort != null);
+                    if (Debugging.ShouldAssert(sort != null)) Debugging.ThrowAssert();
                     TopDocs[] shardHits = new TopDocs[nodeVersions.Length];
                     for (int nodeID = 0; nodeID < nodeVersions.Length; nodeID++)
                     {
@@ -604,7 +604,7 @@ namespace Lucene.Net.Search
 
             public void InitSearcher(long[] nodeVersions)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(currentShardSearcher == null);
+                if (Debugging.ShouldAssert(currentShardSearcher == null)) Debugging.ThrowAssert();
                 Array.Copy(nodeVersions, 0, currentNodeVersions, 0, currentNodeVersions.Length);
                 currentShardSearcher = new ShardIndexSearcher(this, GetCurrentNodeVersions(), Mgr.Acquire().IndexReader, MyNodeID);
             }
@@ -781,8 +781,8 @@ namespace Lucene.Net.Search
             for (int nodeID = 0; nodeID < numNodes; nodeID++)
             {
                 IndexSearcher s = m_nodes[nodeID].Mgr.Acquire();
-                if (Debugging.AssertsEnabled) Debugging.Assert(nodeVersions[nodeID] == m_nodes[nodeID].Searchers.Record(s));
-                if (Debugging.AssertsEnabled) Debugging.Assert(s != null);
+                if (Debugging.ShouldAssert(nodeVersions[nodeID] == m_nodes[nodeID].Searchers.Record(s))) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(s != null)) Debugging.ThrowAssert();
                 try
                 {
                     BroadcastNodeReopen(nodeID, nodeVersions[nodeID], s);

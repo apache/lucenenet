@@ -78,7 +78,7 @@ namespace Lucene.Net.Analysis
 
             public virtual AttributeSource.State NextState()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(NextRead < InputTokens.Count);
+                if (Debugging.ShouldAssert(NextRead < InputTokens.Count)) Debugging.ThrowAssert();
                 return InputTokens[NextRead++];
             }
         }
@@ -141,7 +141,7 @@ namespace Lucene.Net.Analysis
                 m_positions.Get(m_inputPos).Add(CaptureState());
                 tokenPending = false;
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(!insertPending);
+            if (Debugging.ShouldAssert(!insertPending)) Debugging.ThrowAssert();
             insertPending = true;
         }
 
@@ -184,8 +184,8 @@ namespace Lucene.Net.Analysis
             {
                 Console.WriteLine("LTF.peekToken inputPos=" + m_inputPos + " outputPos=" + m_outputPos + " tokenPending=" + tokenPending);
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(!m_end);
-            if (Debugging.AssertsEnabled) Debugging.Assert(m_inputPos == -1 || m_outputPos <= m_inputPos);
+            if (Debugging.ShouldAssert(!m_end)) Debugging.ThrowAssert();
+            if (Debugging.ShouldAssert(m_inputPos == -1 || m_outputPos <= m_inputPos)) Debugging.ThrowAssert();
             if (tokenPending)
             {
                 m_positions.Get(m_inputPos).Add(CaptureState());
@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis
             if (gotToken)
             {
                 m_inputPos += m_posIncAtt.PositionIncrement;
-                if (Debugging.AssertsEnabled) Debugging.Assert(m_inputPos >= 0);
+                if (Debugging.ShouldAssert(m_inputPos >= 0)) Debugging.ThrowAssert();
                 if (DEBUG)
                 {
                     Console.WriteLine("  now inputPos=" + m_inputPos);
@@ -314,7 +314,7 @@ namespace Lucene.Net.Analysis
                             {
                                 Console.WriteLine("  return inserted token");
                             }
-                            if (Debugging.AssertsEnabled) Debugging.Assert(InsertedTokenConsistent());
+                            if (Debugging.ShouldAssert(InsertedTokenConsistent())) Debugging.ThrowAssert();
                             insertPending = false;
                             return true;
                         }
@@ -340,7 +340,7 @@ namespace Lucene.Net.Analysis
                             {
                                 Console.WriteLine("  return inserted token");
                             }
-                            if (Debugging.AssertsEnabled) Debugging.Assert(InsertedTokenConsistent());
+                            if (Debugging.ShouldAssert(InsertedTokenConsistent())) Debugging.ThrowAssert();
                             insertPending = false;
                             return true;
                         }
@@ -364,7 +364,7 @@ namespace Lucene.Net.Analysis
         {
             int posLen = m_posLenAtt.PositionLength;
             Position endPosData = m_positions.Get(m_outputPos + posLen);
-            if (Debugging.AssertsEnabled) Debugging.Assert(endPosData.EndOffset != -1);
+            if (Debugging.ShouldAssert(endPosData.EndOffset != -1)) Debugging.ThrowAssert();
             if (Debugging.AssertsEnabled) Debugging.Assert(m_offsetAtt.EndOffset == endPosData.EndOffset,"offsetAtt.endOffset={0} vs expected={1}", m_offsetAtt.EndOffset, endPosData.EndOffset);
             return true;
         }

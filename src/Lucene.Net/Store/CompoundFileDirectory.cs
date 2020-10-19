@@ -295,7 +295,7 @@ namespace Lucene.Net.Store
                     IsOpen = false;
                     if (writer != null)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(openForWrite);
+                        if (Debugging.ShouldAssert(openForWrite)) Debugging.ThrowAssert();
                         writer.Dispose();
                     }
                     else
@@ -311,7 +311,7 @@ namespace Lucene.Net.Store
             lock (this)
             {
                 EnsureOpen();
-                if (Debugging.AssertsEnabled) Debugging.Assert(!openForWrite);
+                if (Debugging.ShouldAssert(!openForWrite)) Debugging.ThrowAssert();
                 string id = IndexFileNames.StripSegmentName(name);
                 if (!entries.TryGetValue(id, out FileEntry entry) || entry == null)
                 {
@@ -415,7 +415,7 @@ namespace Lucene.Net.Store
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
-            if (Debugging.AssertsEnabled) Debugging.Assert(!openForWrite);
+            if (Debugging.ShouldAssert(!openForWrite)) Debugging.ThrowAssert();
             string id = IndexFileNames.StripSegmentName(name);
             if (!entries.TryGetValue(id, out FileEntry entry) || entry == null)
             {

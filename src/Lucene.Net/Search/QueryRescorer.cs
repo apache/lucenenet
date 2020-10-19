@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                 else
                 {
                     // Query did not match this doc:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(actualDoc > targetDoc);
+                    if (Debugging.ShouldAssert(actualDoc > targetDoc)) Debugging.ThrowAssert();
                     hit.Score = Combine(hit.Score, false, 0.0f);
                 }
 

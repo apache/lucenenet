@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 long count = 0;
                 foreach (long? nv in values)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(nv != null);
+                    if (Debugging.ShouldAssert(nv != null)) Debugging.ThrowAssert();
                     long v = nv.Value;
 
                     if (gcd != 1)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
                     ++count;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(count == maxDoc);
+                if (Debugging.ShouldAssert(count == maxDoc)) Debugging.ThrowAssert();
             }
 
             if (uniqueValues != null)

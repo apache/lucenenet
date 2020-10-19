@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     this.docStoreOffset = 0;
                     this.size = numTotalDocs;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(size == 0 || numTotalDocs == size);
+                    if (Debugging.ShouldAssert(size == 0 || numTotalDocs == size)) Debugging.ThrowAssert();
                 }
                 else
                 {
@@ -236,7 +236,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 outerInstance.tvd.Seek(outerInstance.tvx.ReadInt64());
 
                 int fieldCount = outerInstance.tvd.ReadVInt32();
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldCount >= 0);
+                if (Debugging.ShouldAssert(fieldCount >= 0)) Debugging.ThrowAssert();
                 if (fieldCount != 0)
                 {
                     fieldNumbers = new int[fieldCount];
@@ -704,7 +704,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(startOffsets != null);
+                        if (Debugging.ShouldAssert(startOffsets != null)) Debugging.ThrowAssert();
                         return startOffsets.Length;
                     }
                 }
@@ -755,7 +755,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int NextPosition()
             {
-                //if (Debugging.AssertsEnabled) Debugging.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
+                //if (Debugging.ShouldAssert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length)) Debugging.ThrowAssert();
 
                 // LUCENENET: The above assertion was for control flow when testing. In Java, it would throw an AssertionError, which is
                 // caught by the BaseTermVectorsFormatTestCase.assertEquals(RandomTokenStream tk, FieldType ft, Terms terms) method in the

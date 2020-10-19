@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 numTotalDocs = (int)(tvx.Length - HEADER_LENGTH_INDEX >> 4);
 
                 this.size = numTotalDocs;
-                if (Debugging.AssertsEnabled) Debugging.Assert(size == 0 || numTotalDocs == size);
+                if (Debugging.ShouldAssert(size == 0 || numTotalDocs == size)) Debugging.ThrowAssert();
 
                 this.fieldInfos = fieldInfos;
                 success = true;
@@ -203,7 +203,7 @@ namespace Lucene.Net.Codecs.Lucene40
             while (count < numDocs)
             {
                 int docID = startDocID + count + 1;
-                if (Debugging.AssertsEnabled) Debugging.Assert(docID <= numTotalDocs);
+                if (Debugging.ShouldAssert(docID <= numTotalDocs)) Debugging.ThrowAssert();
                 if (docID < numTotalDocs)
                 {
                     tvdPosition = tvx.ReadInt64();
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     tvdPosition = tvd.Length;
                     tvfPosition = tvf.Length;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(count == numDocs - 1);
+                    if (Debugging.ShouldAssert(count == numDocs - 1)) Debugging.ThrowAssert();
                 }
                 tvdLengths[count] = (int)(tvdPosition - lastTvdPosition);
                 tvfLengths[count] = (int)(tvfPosition - lastTvfPosition);
@@ -251,7 +251,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 outerInstance.tvd.Seek(outerInstance.tvx.ReadInt64());
 
                 int fieldCount = outerInstance.tvd.ReadVInt32();
-                if (Debugging.AssertsEnabled) Debugging.Assert(fieldCount >= 0);
+                if (Debugging.ShouldAssert(fieldCount >= 0)) Debugging.ThrowAssert();
                 if (fieldCount != 0)
                 {
                     fieldNumbers = new int[fieldCount];
@@ -528,7 +528,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         }
                         payloadOffsets[posUpto] = totalPayloadLength;
                         totalPayloadLength += lastPayloadLength;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(totalPayloadLength >= 0);
+                        if (Debugging.ShouldAssert(totalPayloadLength >= 0)) Debugging.ThrowAssert();
                     }
                     payloadData = new byte[totalPayloadLength];
                     tvf.ReadBytes(payloadData, 0, payloadData.Length);
@@ -686,7 +686,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(startOffsets != null);
+                        if (Debugging.ShouldAssert(startOffsets != null)) Debugging.ThrowAssert();
                         return startOffsets.Length;
                     }
                 }
@@ -748,7 +748,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public override int NextPosition()
             {
-                //if (Debugging.AssertsEnabled) Debugging.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
+                //if (Debugging.ShouldAssert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length)) Debugging.ThrowAssert();
 
                 // LUCENENET: The above assertion was for control flow when testing. In Java, it would throw an AssertionError, which is
                 // caught by the BaseTermVectorsFormatTestCase.assertEquals(RandomTokenStream tk, FieldType ft, Terms terms) method in the

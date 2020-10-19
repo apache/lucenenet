@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
 
         public MultiBits(IBits[] subs, int[] starts, bool defaultValue)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(starts.Length == 1 + subs.Length);
+            if (Debugging.ShouldAssert(starts.Length == 1 + subs.Length)) Debugging.ThrowAssert();
             this.subs = subs;
             this.starts = starts;
             this.sefaultValue = defaultValue;
@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
         public bool Get(int doc)
         {
             int reader = ReaderUtil.SubIndex(doc, starts);
-            if (Debugging.AssertsEnabled) Debugging.Assert(reader != -1);
+            if (Debugging.ShouldAssert(reader != -1)) Debugging.ThrowAssert();
             IBits bits = subs[reader];
             if (bits == null)
             {

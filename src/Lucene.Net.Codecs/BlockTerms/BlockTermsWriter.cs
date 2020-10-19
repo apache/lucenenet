@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public FieldMetaData(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
                 long sumDocFreq, int docCount, int int64sSize)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(numTerms > 0);
+                if (Debugging.ShouldAssert(numTerms > 0)) Debugging.ThrowAssert();
 
                 FieldInfo = fieldInfo;
                 TermsStartPointer = termsStartPointer;
@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public override TermsConsumer AddField(FieldInfo field)
         {
             //System.out.println("\nBTW.addField seg=" + segment + " field=" + field.name);
-            if (Debugging.AssertsEnabled) Debugging.Assert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
+            if (Debugging.ShouldAssert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0)) Debugging.ThrowAssert();
             currentField = field;
             TermsIndexWriterBase.FieldWriter fieldIndexWriter = termsIndexWriter.AddField(field, m_output.GetFilePointer());
             return new TermsWriter(this, fieldIndexWriter, field, postingsWriter);
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(stats.DocFreq > 0);
+                if (Debugging.ShouldAssert(stats.DocFreq > 0)) Debugging.ThrowAssert();
                 //System.out.println("BTW: finishTerm term=" + fieldInfo.name + ":" + text.utf8ToString() + " " + text + " seg=" + segment + " df=" + stats.docFreq);
 
                 bool isIndexTerm = fieldIndexWriter.CheckIndexTerm(text, stats);
@@ -362,7 +362,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 for (int termCount = 0; termCount < pendingCount; termCount++)
                 {
                     BlockTermState state = pendingTerms[termCount].State;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(state != null);
+                    if (Debugging.ShouldAssert(state != null)) Debugging.ThrowAssert();
                     bytesWriter.WriteVInt32(state.DocFreq);
                     if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {

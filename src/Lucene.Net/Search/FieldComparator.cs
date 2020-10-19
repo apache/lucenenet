@@ -927,7 +927,7 @@ namespace Lucene.Net.Search
             public override int CompareBottom(int doc)
             {
                 float score = scorer.GetScore();
-                if (Debugging.AssertsEnabled) Debugging.Assert(!float.IsNaN(score));
+                if (Debugging.ShouldAssert(!float.IsNaN(score))) Debugging.ThrowAssert();
 
                 // LUCENENET specific special case:
                 // In case of zero, we may have a "positive 0" or "negative 0"
@@ -938,7 +938,7 @@ namespace Lucene.Net.Search
             public override void Copy(int slot, int doc)
             {
                 scores[slot] = scorer.GetScore();
-                if (Debugging.AssertsEnabled) Debugging.Assert(!float.IsNaN(scores[slot]));
+                if (Debugging.ShouldAssert(!float.IsNaN(scores[slot]))) Debugging.ThrowAssert();
             }
 
             public override FieldComparer SetNextReader(AtomicReaderContext context)
@@ -988,7 +988,7 @@ namespace Lucene.Net.Search
             public override int CompareTop(int doc)
             {
                 float docValue = scorer.GetScore();
-                if (Debugging.AssertsEnabled) Debugging.Assert(!float.IsNaN(docValue));
+                if (Debugging.ShouldAssert(!float.IsNaN(docValue))) Debugging.ThrowAssert();
 
                 // LUCENENET specific special case:
                 // In case of zero, we may have a "positive 0" or "negative 0"
@@ -1216,7 +1216,7 @@ namespace Lucene.Net.Search
 
             public override int CompareBottom(int doc)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(bottomSlot != -1);
+                if (Debugging.ShouldAssert(bottomSlot != -1)) Debugging.ThrowAssert();
                 int docOrd = termsIndex.GetOrd(doc);
                 if (docOrd == -1)
                 {
@@ -1250,7 +1250,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ord >= 0);
+                    if (Debugging.ShouldAssert(ord >= 0)) Debugging.ThrowAssert();
                     if (values[slot] == null)
                     {
                         values[slot] = new BytesRef();
@@ -1319,7 +1319,7 @@ namespace Lucene.Net.Search
                     if (bottomValue == null)
                     {
                         // missingOrd is null for all segments
-                        if (Debugging.AssertsEnabled) Debugging.Assert(ords[bottomSlot] == missingOrd);
+                        if (Debugging.ShouldAssert(ords[bottomSlot] == missingOrd)) Debugging.ThrowAssert();
                         bottomOrd = missingOrd;
                         bottomSameReader = true;
                         readerGen[bottomSlot] = currentReaderGen;

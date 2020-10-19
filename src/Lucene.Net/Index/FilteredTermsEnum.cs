@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
         /// <param name="startWithSeek"> start with seek </param>
         public FilteredTermsEnum(TermsEnum tenum, bool startWithSeek)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(tenum != null);
+            if (Debugging.ShouldAssert(tenum != null)) Debugging.ThrowAssert();
             this.tenum = tenum;
             doSeek = startWithSeek;
         }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public override TermState GetTermState()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(tenum != null);
+            if (Debugging.ShouldAssert(tenum != null)) Debugging.ThrowAssert();
             return tenum.GetTermState();
         }
 

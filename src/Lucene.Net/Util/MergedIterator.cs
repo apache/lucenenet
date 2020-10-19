@@ -118,7 +118,7 @@ namespace Lucene.Net.Util
 
         private void PullTop()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(numTop == 0);
+            if (Debugging.ShouldAssert(numTop == 0)) Debugging.ThrowAssert();
             top[numTop++] = queue.Pop();
             if (removeDuplicates)
             {
@@ -280,7 +280,7 @@ namespace Lucene.Net.Util
 
         private void PullTop()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(numTop == 0);
+            if (Debugging.ShouldAssert(numTop == 0)) Debugging.ThrowAssert();
             top[numTop++] = queue.Pop();
             if (removeDuplicates)
             {

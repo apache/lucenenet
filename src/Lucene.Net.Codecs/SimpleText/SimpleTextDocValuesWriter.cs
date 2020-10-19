@@ -121,17 +121,17 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 long value = n.GetValueOrDefault();
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(value >= minValue);
+                if (Debugging.ShouldAssert(value >= minValue)) Debugging.ThrowAssert();
 
                 var delta = (decimal)value - (decimal)minValue; // LUCENENET specific - use decimal rather than BigInteger
                 string s = delta.ToString(patternString, CultureInfo.InvariantCulture);
-                if (Debugging.AssertsEnabled) Debugging.Assert(s.Length == patternString.Length);
+                if (Debugging.ShouldAssert(s.Length == patternString.Length)) Debugging.ThrowAssert();
                 SimpleTextUtil.Write(data, s, scratch);
                 SimpleTextUtil.WriteNewline(data);
                 SimpleTextUtil.Write(data, n == null ? "F" : "T", scratch);
                 SimpleTextUtil.WriteNewline(data);
                 numDocsWritten++;
-                if (Debugging.AssertsEnabled) Debugging.Assert(numDocsWritten <= numDocs);
+                if (Debugging.ShouldAssert(numDocsWritten <= numDocs)) Debugging.ThrowAssert();
             }
 
             if (Debugging.AssertsEnabled) Debugging.Assert(numDocs == numDocsWritten, "numDocs={0} numDocsWritten={1}", numDocs, numDocsWritten);
@@ -198,7 +198,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 numDocsWritten++;
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(numDocs == numDocsWritten);
+            if (Debugging.ShouldAssert(numDocs == numDocsWritten)) Debugging.ThrowAssert();
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
@@ -277,10 +277,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 SimpleTextUtil.WriteNewline(data);
                 valuesSeen++;
-                if (Debugging.AssertsEnabled) Debugging.Assert(valuesSeen <= valueCount);
+                if (Debugging.ShouldAssert(valuesSeen <= valueCount)) Debugging.ThrowAssert();
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(valuesSeen == valueCount);
+            if (Debugging.ShouldAssert(valuesSeen == valueCount)) Debugging.ThrowAssert();
 
             foreach (var ord in docToOrd)
             {
@@ -387,10 +387,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 SimpleTextUtil.WriteNewline(data);
                 valuesSeen++;
-                if (Debugging.AssertsEnabled) Debugging.Assert(valuesSeen <= valueCount);
+                if (Debugging.ShouldAssert(valuesSeen <= valueCount)) Debugging.ThrowAssert();
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(valuesSeen == valueCount);
+            if (Debugging.ShouldAssert(valuesSeen == valueCount)) Debugging.ThrowAssert();
 
             using (var ordStream = ords.GetEnumerator())
             {
@@ -438,7 +438,7 @@ namespace Lucene.Net.Codecs.SimpleText
             var success = false;
             try
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(_fieldsSeen.Count > 0);
+                if (Debugging.ShouldAssert(_fieldsSeen.Count > 0)) Debugging.ThrowAssert();
                 // java : sheisty to do this here?
                 SimpleTextUtil.Write(data, END);
                 SimpleTextUtil.WriteNewline(data);

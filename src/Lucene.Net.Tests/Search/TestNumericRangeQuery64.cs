@@ -501,13 +501,13 @@ namespace Lucene.Net.Search
             int count = 3000;
             long lower = (distance * 3 / 2) + startOffset, upper = lower + count * distance + (distance / 3);
             // test empty enum
-            if (Debugging.AssertsEnabled) Debugging.Assert(lower < upper);
+            if (Debugging.ShouldAssert(lower < upper)) Debugging.ThrowAssert();
             Assert.IsTrue(0 < CountTerms(NumericRangeQuery.NewInt64Range("field4", 4, lower, upper, true, true)));
             Assert.AreEqual(0, CountTerms(NumericRangeQuery.NewInt64Range("field4", 4, upper, lower, true, true)));
             // test empty enum outside of bounds
             lower = distance * noDocs + startOffset;
             upper = 2L * lower;
-            if (Debugging.AssertsEnabled) Debugging.Assert(lower < upper);
+            if (Debugging.ShouldAssert(lower < upper)) Debugging.ThrowAssert();
             Assert.AreEqual(0, CountTerms(NumericRangeQuery.NewInt64Range("field4", 4, lower, upper, true, true)));
         }
 

@@ -392,9 +392,9 @@ namespace Lucene.Net.Codecs.Lucene41
             : base()
         {
             this.minTermBlockSize = minTermBlockSize;
-            if (Debugging.AssertsEnabled) Debugging.Assert(minTermBlockSize > 1);
+            if (Debugging.ShouldAssert(minTermBlockSize > 1)) Debugging.ThrowAssert();
             this.maxTermBlockSize = maxTermBlockSize;
-            if (Debugging.AssertsEnabled) Debugging.Assert(minTermBlockSize <= maxTermBlockSize);
+            if (Debugging.ShouldAssert(minTermBlockSize <= maxTermBlockSize)) Debugging.ThrowAssert();
         }
 
         public override string ToString()

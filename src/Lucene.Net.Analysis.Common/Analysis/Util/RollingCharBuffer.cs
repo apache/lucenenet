@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Util
             else
             {
                 // Cannot read from future (except by 1):
-                if (Debugging.AssertsEnabled) Debugging.Assert(pos < nextPos);
+                if (Debugging.ShouldAssert(pos < nextPos)) Debugging.ThrowAssert();
 
                 // Cannot read from already freed past:
                 if (Debugging.AssertsEnabled) Debugging.Assert(nextPos - pos <= count, "nextPos={0} pos={1} count={2}", nextPos, pos, count);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // Wrap:
                 index += buffer.Length;
-                if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0);
+                if (Debugging.ShouldAssert(index >= 0)) Debugging.ThrowAssert();
             }
             return index;
         }

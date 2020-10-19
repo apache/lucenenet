@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+                if (Debugging.ShouldAssert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)) Debugging.ThrowAssert();
                 var postingsEnum = (DocsAndPositionsEnum)postings;
                 while (true)
                 {

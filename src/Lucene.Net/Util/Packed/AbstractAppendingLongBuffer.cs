@@ -110,7 +110,7 @@ namespace Lucene.Net.Util.Packed
 
         public override sealed long Get(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < Count);
+            if (Debugging.ShouldAssert(index >= 0 && index < Count)) Debugging.ThrowAssert();
             int block = (int)(index >> pageShift);
             int element = (int)(index & pageMask);
             return Get(block, element);
@@ -196,7 +196,7 @@ namespace Lucene.Net.Util.Packed
             /// Return the next long in the buffer. </summary>
             public long Next()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(HasNext);
+                if (Debugging.ShouldAssert(HasNext)) Debugging.ThrowAssert();
                 long result = currentValues[pOff++];
                 if (pOff == currentCount)
                 {

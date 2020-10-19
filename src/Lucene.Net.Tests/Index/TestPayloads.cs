@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
             // this test needs the random data to be valid unicode
             string s = TestUtil.RandomFixedByteLengthUnicodeString(Random, data.Length);
             var b = s.GetBytes(utf8);
-            if (Debugging.AssertsEnabled) Debugging.Assert(b.Length == data.Length);
+            if (Debugging.ShouldAssert(b.Length == data.Length)) Debugging.ThrowAssert();
             System.Buffer.BlockCopy(b, 0, data, 0, b.Length);
         }
 

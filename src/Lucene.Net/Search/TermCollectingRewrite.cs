@@ -68,7 +68,7 @@ namespace Lucene.Net.Search
                 }
 
                 TermsEnum termsEnum = GetTermsEnum(query, terms, collector.Attributes);
-                if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
+                if (Debugging.ShouldAssert(termsEnum != null)) Debugging.ThrowAssert();
 
                 if (termsEnum == TermsEnum.EMPTY)
                 {

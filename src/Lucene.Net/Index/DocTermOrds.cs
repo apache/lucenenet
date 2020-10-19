@@ -752,7 +752,7 @@ namespace Lucene.Net.Index
                 this.outerInstance = outerInstance;
 
                 InitializeInstanceFields();
-                if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.m_indexedTermsArray != null);
+                if (Debugging.ShouldAssert(outerInstance.m_indexedTermsArray != null)) Debugging.ThrowAssert();
                 termsEnum = reader.Fields.GetTerms(outerInstance.m_field).GetEnumerator();
             }
 
@@ -813,10 +813,10 @@ namespace Lucene.Net.Index
                 {
                     // we hit the term exactly... lucky us!
                     TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(target);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
+                    if (Debugging.ShouldAssert(seekStatus == TermsEnum.SeekStatus.FOUND)) Debugging.ThrowAssert();
                     ord = startIdx << outerInstance.indexIntervalBits;
                     SetTerm();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
+                    if (Debugging.ShouldAssert(term != null)) Debugging.ThrowAssert();
                     return SeekStatus.FOUND;
                 }
 
@@ -827,10 +827,10 @@ namespace Lucene.Net.Index
                 {
                     // our target occurs *before* the first term
                     TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(target);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(seekStatus == TermsEnum.SeekStatus.NOT_FOUND);
+                    if (Debugging.ShouldAssert(seekStatus == TermsEnum.SeekStatus.NOT_FOUND)) Debugging.ThrowAssert();
                     ord = 0;
                     SetTerm();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
+                    if (Debugging.ShouldAssert(term != null)) Debugging.ThrowAssert();
                     return SeekStatus.NOT_FOUND;
                 }
 
@@ -846,10 +846,10 @@ namespace Lucene.Net.Index
                 {
                     // seek to the right block
                     TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(outerInstance.m_indexedTermsArray[startIdx]);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
+                    if (Debugging.ShouldAssert(seekStatus == TermsEnum.SeekStatus.FOUND)) Debugging.ThrowAssert();
                     ord = startIdx << outerInstance.indexIntervalBits;
                     SetTerm();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(term != null); // should be non-null since it's in the index
+                    if (Debugging.ShouldAssert(term != null)) Debugging.ThrowAssert(); // should be non-null since it's in the index
                 }
 
                 while (term != null && term.CompareTo(target) < 0)
@@ -883,7 +883,7 @@ namespace Lucene.Net.Index
                     ord = idx << outerInstance.indexIntervalBits;
                     delta = (int)(targetOrd - ord);
                     TermsEnum.SeekStatus seekStatus = termsEnum.SeekCeil(@base);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(seekStatus == TermsEnum.SeekStatus.FOUND);
+                    if (Debugging.ShouldAssert(seekStatus == TermsEnum.SeekStatus.FOUND)) Debugging.ThrowAssert();
                 }
                 else
                 {
@@ -894,14 +894,14 @@ namespace Lucene.Net.Index
                 {
                     if (!termsEnum.MoveNext())
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false);
+                        if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
                         return;
                     }
                     ord++;
                 }
 
                 SetTerm();
-                if (Debugging.AssertsEnabled) Debugging.Assert(term != null);
+                if (Debugging.ShouldAssert(term != null)) Debugging.ThrowAssert();
             }
 
             private BytesRef SetTerm()

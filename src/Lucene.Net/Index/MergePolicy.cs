@@ -721,7 +721,7 @@ namespace Lucene.Net.Index
             long byteSize = info.GetSizeInBytes();
             int delCount = m_writer.Get().NumDeletedDocs(info);
             double delRatio = (info.Info.DocCount <= 0 ? 0.0f : ((float)delCount / (float)info.Info.DocCount));
-            if (Debugging.AssertsEnabled) Debugging.Assert(delRatio <= 1.0);
+            if (Debugging.ShouldAssert(delRatio <= 1.0)) Debugging.ThrowAssert();
             return (info.Info.DocCount <= 0 ? byteSize : (long)(byteSize * (1.0 - delRatio)));
         }
 
@@ -733,7 +733,7 @@ namespace Lucene.Net.Index
         protected bool IsMerged(SegmentInfos infos, SegmentCommitInfo info)
         {
             IndexWriter w = m_writer.Get();
-            if (Debugging.AssertsEnabled) Debugging.Assert(w != null);
+            if (Debugging.ShouldAssert(w != null)) Debugging.ThrowAssert();
             bool hasDeletions = w.NumDeletedDocs(info) > 0;
             return !hasDeletions
 #pragma warning disable 612, 618

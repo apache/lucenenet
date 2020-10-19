@@ -206,7 +206,7 @@ namespace Lucene.Net.Util.Fst
             {
                 node = fst.AddNode(nodeIn);
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(node != -2);
+            if (Debugging.ShouldAssert(node != -2)) Debugging.ThrowAssert();
 
             nodeIn.Clear();
 
@@ -444,7 +444,7 @@ namespace Lucene.Net.Util.Fst
                 UnCompiledNode<T> parentNode = frontier[idx - 1];
 
                 T lastOutput = parentNode.GetLastOutput(input.Int32s[input.Offset + idx - 1]);
-                if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(lastOutput));
+                if (Debugging.ShouldAssert(ValidOutput(lastOutput))) Debugging.ThrowAssert();
 
                 T commonOutputPrefix;
                 T wordSuffix;
@@ -452,9 +452,9 @@ namespace Lucene.Net.Util.Fst
                 if (!lastOutput.Equals(NO_OUTPUT))
                 {
                     commonOutputPrefix = fst.Outputs.Common(output, lastOutput);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(commonOutputPrefix));
+                    if (Debugging.ShouldAssert(ValidOutput(commonOutputPrefix))) Debugging.ThrowAssert();
                     wordSuffix = fst.Outputs.Subtract(lastOutput, commonOutputPrefix);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(wordSuffix));
+                    if (Debugging.ShouldAssert(ValidOutput(wordSuffix))) Debugging.ThrowAssert();
                     parentNode.SetLastOutput(input.Int32s[input.Offset + idx - 1], commonOutputPrefix);
                     node.PrependOutput(wordSuffix);
                 }
@@ -464,7 +464,7 @@ namespace Lucene.Net.Util.Fst
                 }
 
                 output = fst.Outputs.Subtract(output, commonOutputPrefix);
-                if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(output));
+                if (Debugging.ShouldAssert(ValidOutput(output))) Debugging.ThrowAssert();
             }
 
             if (lastInput.Length == input.Length && prefixLenPlus1 == 1 + input.Length)
@@ -670,7 +670,7 @@ namespace Lucene.Net.Util.Fst
 
             public void AddArc(int label, INode target)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(label >= 0);
+                if (Debugging.ShouldAssert(label >= 0)) Debugging.ThrowAssert();
                 if (NumArcs != 0)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(label > Arcs[NumArcs - 1].Label,"arc[-1].Label={0} new label={1}", Arcs[NumArcs - 1].Label, label + " numArcs=" + NumArcs);
@@ -694,7 +694,7 @@ namespace Lucene.Net.Util.Fst
 
             public void ReplaceLast(int labelToMatch, INode target, S nextFinalOutput, bool isFinal)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(NumArcs > 0);
+                if (Debugging.ShouldAssert(NumArcs > 0)) Debugging.ThrowAssert();
                 Arc<S> arc = Arcs[NumArcs - 1];
                 if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == labelToMatch,"arc.Label={0} vs {1}", arc.Label, labelToMatch);
                 arc.Target = target;
@@ -722,25 +722,25 @@ namespace Lucene.Net.Util.Fst
                     Debugging.Assert(NumArcs > 0);
                 }
                 Arc<S> arc = Arcs[NumArcs - 1];
-                if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == labelToMatch);
+                if (Debugging.ShouldAssert(arc.Label == labelToMatch)) Debugging.ThrowAssert();
                 arc.Output = newOutput;
             }
 
             // pushes an output prefix forward onto all arcs
             public void PrependOutput(S outputPrefix)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(Owner.ValidOutput(outputPrefix));
+                if (Debugging.ShouldAssert(Owner.ValidOutput(outputPrefix))) Debugging.ThrowAssert();
 
                 for (int arcIdx = 0; arcIdx < NumArcs; arcIdx++)
                 {
                     Arcs[arcIdx].Output = Owner.Fst.Outputs.Add(outputPrefix, Arcs[arcIdx].Output);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(Owner.ValidOutput(Arcs[arcIdx].Output));
+                    if (Debugging.ShouldAssert(Owner.ValidOutput(Arcs[arcIdx].Output))) Debugging.ThrowAssert();
                 }
 
                 if (IsFinal)
                 {
                     Output = Owner.Fst.Outputs.Add(outputPrefix, Output);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(Owner.ValidOutput(Output));
+                    if (Debugging.ShouldAssert(Owner.ValidOutput(Output))) Debugging.ThrowAssert();
                 }
             }
         }

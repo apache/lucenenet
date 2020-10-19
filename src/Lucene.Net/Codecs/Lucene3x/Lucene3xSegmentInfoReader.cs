@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             bool isCompoundFile = input.ReadByte() == SegmentInfo.YES;
 
             int delCount = input.ReadInt32();
-            if (Debugging.AssertsEnabled) Debugging.Assert(delCount <= docCount);
+            if (Debugging.ShouldAssert(delCount <= docCount)) Debugging.ThrowAssert();
 
             bool hasProx = input.ReadByte() == 1;
 
@@ -283,7 +283,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     else
                     {
                         // We should have already hit indexformat too old exception
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false);
+                        if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
                     }
                 }
             }

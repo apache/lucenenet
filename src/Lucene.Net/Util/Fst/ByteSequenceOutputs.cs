@@ -127,8 +127,8 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(prefix.Length > 0);
-                if (Debugging.AssertsEnabled) Debugging.Assert(output.Length > 0);
+                if (Debugging.ShouldAssert(prefix.Length > 0)) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(output.Length > 0)) Debugging.ThrowAssert();
                 BytesRef result = new BytesRef(prefix.Length + output.Length);
                 Array.Copy(prefix.Bytes, prefix.Offset, result.Bytes, 0, prefix.Length);
                 Array.Copy(output.Bytes, output.Offset, result.Bytes, prefix.Length, output.Length);
@@ -139,7 +139,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(BytesRef prefix, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(prefix != null);
+            if (Debugging.ShouldAssert(prefix != null)) Debugging.ThrowAssert();
             @out.WriteVInt32(prefix.Length);
             @out.WriteBytes(prefix.Bytes, prefix.Offset, prefix.Length);
         }

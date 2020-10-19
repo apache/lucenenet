@@ -187,7 +187,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 lastTermsPointer = termsFilePointer;
 
                 // save term length (in bytes)
-                if (Debugging.AssertsEnabled) Debugging.Assert(indexedTermLength <= short.MaxValue);
+                if (Debugging.ShouldAssert(indexedTermLength <= short.MaxValue)) Debugging.ThrowAssert();
                 termLengths[numIndexTerms] = (short)indexedTermLength;
                 totTermLength += indexedTermLength;
 

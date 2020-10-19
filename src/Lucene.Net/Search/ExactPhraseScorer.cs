@@ -263,7 +263,7 @@ namespace Lucene.Net.Search
                             cs.LastPos = cs.Pos;
                             int posIndex = cs.Pos - chunkStart;
                             counts[posIndex] = 1;
-                            if (Debugging.AssertsEnabled) Debugging.Assert(gens[posIndex] != gen);
+                            if (Debugging.ShouldAssert(gens[posIndex] != gen)) Debugging.ThrowAssert();
                             gens[posIndex] = gen;
                         }
 

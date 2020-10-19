@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(obj is SortedDocValuesWriter);
+                if (Debugging.ShouldAssert(obj is SortedDocValuesWriter)) Debugging.ThrowAssert();
                 return "sorted";
             }
         }

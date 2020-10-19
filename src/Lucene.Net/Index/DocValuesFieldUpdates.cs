@@ -114,14 +114,14 @@ namespace Lucene.Net.Index
                 {
                     case DocValuesFieldUpdatesType.NUMERIC:
                         NumericDocValuesFieldUpdates numericUpdates;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!numericDVUpdates.ContainsKey(field));
+                        if (Debugging.ShouldAssert(!numericDVUpdates.ContainsKey(field))) Debugging.ThrowAssert();
                         numericUpdates = new NumericDocValuesFieldUpdates(field, maxDoc);
                         numericDVUpdates[field] = numericUpdates;
                         return numericUpdates;
 
                     case DocValuesFieldUpdatesType.BINARY:
                         BinaryDocValuesFieldUpdates binaryUpdates;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!binaryDVUpdates.ContainsKey(field));
+                        if (Debugging.ShouldAssert(!binaryDVUpdates.ContainsKey(field))) Debugging.ThrowAssert();
                         binaryUpdates = new BinaryDocValuesFieldUpdates(field, maxDoc);
                         binaryDVUpdates[field] = binaryUpdates;
                         return binaryUpdates;

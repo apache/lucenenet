@@ -101,7 +101,7 @@ namespace Lucene.Net.Search
                 Int64BitSet termSet = new Int64BitSet(docTermOrds.ValueCount);
                 TermsEnum termsEnum = m_query.GetTermsEnum(new TermsAnonymousInnerClassHelper(docTermOrds));
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum != null);
+                if (Debugging.ShouldAssert(termsEnum != null)) Debugging.ThrowAssert();
                 if (termsEnum.MoveNext())
                 {
                     // fill into a bitset

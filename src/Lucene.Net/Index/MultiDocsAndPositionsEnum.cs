@@ -90,7 +90,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(current != null);
+                if (Debugging.ShouldAssert(current != null)) Debugging.ThrowAssert();
                 return current.Freq;
             }
         }
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
 
         public override int Advance(int target)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(target > doc);
+            if (Debugging.ShouldAssert(target > doc)) Debugging.ThrowAssert();
             while (true)
             {
                 if (current != null)

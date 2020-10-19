@@ -367,7 +367,7 @@ namespace Lucene.Net.Util
                 IBytesRefEnumerator iter = buffer.GetEnumerator(comparer);
                 while (iter.MoveNext())
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(iter.Current.Length <= ushort.MaxValue);
+                    if (Debugging.ShouldAssert(iter.Current.Length <= ushort.MaxValue)) Debugging.ThrowAssert();
                     @out.Write(iter.Current);
                 }
             }
@@ -532,7 +532,7 @@ namespace Lucene.Net.Util
             /// <seealso cref="Write(byte[], int, int)"/>
             public virtual void Write(BytesRef @ref)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(@ref != null);
+                if (Debugging.ShouldAssert(@ref != null)) Debugging.ThrowAssert();
                 Write(@ref.Bytes, @ref.Offset, @ref.Length);
             }
 

@@ -104,7 +104,7 @@ namespace Lucene.Net.Spatial.Vector
                 // make sure it has minX and area
                 if (validX.Get(doc))
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(validY.Get(doc));
+                    if (Debugging.ShouldAssert(validY.Get(doc))) Debugging.ThrowAssert();
                     return calculator.Distance(outerInstance.from, ptX.Get(doc), ptY.Get(doc)) * outerInstance.multiplier;
                 }
                 return nullValue;

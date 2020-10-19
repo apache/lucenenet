@@ -395,7 +395,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!Monitor.IsEntered(writer));
+                if (Debugging.ShouldAssert(!Monitor.IsEntered(writer))) Debugging.ThrowAssert();
 
                 this.m_writer = writer;
 

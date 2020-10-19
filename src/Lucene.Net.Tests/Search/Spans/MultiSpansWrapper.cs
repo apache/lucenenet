@@ -110,7 +110,7 @@ namespace Lucene.Net.Search.Spans
             }
 
             int subIndex = ReaderUtil.SubIndex(target, leaves);
-            if (Debugging.AssertsEnabled) Debugging.Assert(subIndex >= leafOrd);
+            if (Debugging.ShouldAssert(subIndex >= leafOrd)) Debugging.ThrowAssert();
             if (subIndex != leafOrd)
             {
                 AtomicReaderContext ctx = leaves[subIndex];

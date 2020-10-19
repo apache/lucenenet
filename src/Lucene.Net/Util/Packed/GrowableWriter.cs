@@ -76,7 +76,7 @@ namespace Lucene.Net.Util.Packed
                 return;
             }
             int bitsRequired = value < 0 ? 64 : PackedInt32s.BitsRequired(value);
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsRequired > current.BitsPerValue);
+            if (Debugging.ShouldAssert(bitsRequired > current.BitsPerValue)) Debugging.ThrowAssert();
             int valueCount = Count;
             PackedInt32s.Mutable next = PackedInt32s.GetMutable(valueCount, bitsRequired, acceptableOverheadRatio);
             PackedInt32s.Copy(current, 0, next, 0, valueCount, PackedInt32s.DEFAULT_BUFFER_SIZE);

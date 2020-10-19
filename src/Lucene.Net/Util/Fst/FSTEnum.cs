@@ -220,7 +220,7 @@ namespace Lucene.Net.Util.Fst
                         // Dead end
                         arc.ArcIdx = arc.NumArcs - 2;
                         m_fst.ReadNextRealArc(arc, @in);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsLast);
+                        if (Debugging.ShouldAssert(arc.IsLast)) Debugging.ThrowAssert();
                         // Dead end (target is after the last arc);
                         // rollback to last fork then push
                         m_upto--;
@@ -245,7 +245,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         arc.ArcIdx = (low > high ? low : high) - 1;
                         m_fst.ReadNextRealArc(arc, @in);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label > targetLabel);
+                        if (Debugging.ShouldAssert(arc.Label > targetLabel)) Debugging.ThrowAssert();
                         PushFirst();
                         return;
                     }
@@ -583,7 +583,7 @@ namespace Lucene.Net.Util.Fst
         private void PushFirst()
         {
             FST.Arc<T> arc = m_arcs[m_upto];
-            if (Debugging.AssertsEnabled) Debugging.Assert(arc != null);
+            if (Debugging.ShouldAssert(arc != null)) Debugging.ThrowAssert();
 
             while (true)
             {
@@ -610,7 +610,7 @@ namespace Lucene.Net.Util.Fst
         private void PushLast()
         {
             FST.Arc<T> arc = m_arcs[m_upto];
-            if (Debugging.AssertsEnabled) Debugging.Assert(arc != null);
+            if (Debugging.ShouldAssert(arc != null)) Debugging.ThrowAssert();
 
             while (true)
             {

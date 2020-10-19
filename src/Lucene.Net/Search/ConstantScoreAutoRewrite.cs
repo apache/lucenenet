@@ -163,7 +163,7 @@ namespace Lucene.Net.Search
                 }
 
                 TermState termState = termsEnum.GetTermState();
-                if (Debugging.AssertsEnabled) Debugging.Assert(termState != null);
+                if (Debugging.ShouldAssert(termState != null)) Debugging.ThrowAssert();
                 if (pos < 0)
                 {
                     pos = (-pos) - 1;
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search
             {
                 int[] ord = base.Init();
                 termState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                if (Debugging.AssertsEnabled) Debugging.Assert(termState.Length >= ord.Length);
+                if (Debugging.ShouldAssert(termState.Length >= ord.Length)) Debugging.ThrowAssert();
                 return ord;
             }
 
@@ -248,7 +248,7 @@ namespace Lucene.Net.Search
                     Array.Copy(termState, 0, tmpTermState, 0, termState.Length);
                     termState = tmpTermState;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(termState.Length >= ord.Length);
+                if (Debugging.ShouldAssert(termState.Length >= ord.Length)) Debugging.ThrowAssert();
                 return ord;
             }
 

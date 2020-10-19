@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
                 try
                 {
                     bool remaining = @in.Score(collector, DocsEnum.NO_MORE_DOCS);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!remaining);
+                    if (Debugging.ShouldAssert(!remaining)) Debugging.ThrowAssert();
                 }
 #pragma warning disable 168
                 catch (NotSupportedException e)

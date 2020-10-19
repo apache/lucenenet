@@ -231,7 +231,7 @@ namespace Lucene.Net.Store
         /// <seealso cref="DataInput.ReadVInt64()"/>
         public void WriteVInt64(long i)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(i >= 0L);
+            if (Debugging.ShouldAssert(i >= 0L)) Debugging.ThrowAssert();
             while ((i & ~0x7FL) != 0L)
             {
                 WriteByte((byte)unchecked((sbyte)((i & 0x7FL) | 0x80L)));

@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
                     posUpto = freq;
                     return 0;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(posUpto < freq);
+                if (Debugging.ShouldAssert(posUpto < freq)) Debugging.ThrowAssert();
 
                 if (posUpto == 0 && random.NextBoolean())
                 {

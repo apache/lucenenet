@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override TermsConsumer AddField(FieldInfo field)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(field.Number != -1);
+            if (Debugging.ShouldAssert(field.Number != -1)) Debugging.ThrowAssert();
             if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
                 throw new NotSupportedException("this codec cannot index offsets");
@@ -188,9 +188,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.outerInstance.proxOut != null);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(startOffset == -1);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(endOffset == -1);
+                    if (Debugging.ShouldAssert(outerInstance.outerInstance.proxOut != null)) Debugging.ThrowAssert();
+                    if (Debugging.ShouldAssert(startOffset == -1)) Debugging.ThrowAssert();
+                    if (Debugging.ShouldAssert(endOffset == -1)) Debugging.ThrowAssert();
                     //System.out.println("      w pos=" + position + " payl=" + payload);
                     int delta = position - lastPosition;
                     lastPosition = position;

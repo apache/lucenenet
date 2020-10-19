@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
             }
             starts[size] = r.MaxDoc;
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(anyReal);
+            if (Debugging.ShouldAssert(anyReal)) Debugging.ThrowAssert();
 
             return new NumericDocValuesAnonymousInnerClassHelper(values, starts);
         }

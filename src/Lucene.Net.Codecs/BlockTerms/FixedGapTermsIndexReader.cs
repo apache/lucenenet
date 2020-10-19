@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             this.termComp = termComp;
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(indexDivisor == -1 || indexDivisor > 0);
+            if (Debugging.ShouldAssert(indexDivisor == -1 || indexDivisor > 0)) Debugging.ThrowAssert();
 
             input = dir.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, FixedGapTermsIndexWriter.TERMS_INDEX_EXTENSION), context);
 
@@ -101,7 +101,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // In case terms index gets loaded, later, on demand
                     totalIndexInterval = indexInterval * indexDivisor;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(totalIndexInterval > 0);
+                if (Debugging.ShouldAssert(totalIndexInterval > 0)) Debugging.ThrowAssert();
 
                 SeekDir(input, dirOffset);
 
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(mid >= 0);
+                        if (Debugging.ShouldAssert(mid >= 0)) Debugging.ThrowAssert();
                         ord = mid * outerInstance.totalIndexInterval;
                         return fieldIndex.termsStart + fieldIndex.termsDictOffsets.Get(mid);
                     }
@@ -219,7 +219,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 if (hi < 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(hi == -1);
+                    if (Debugging.ShouldAssert(hi == -1)) Debugging.ThrowAssert();
                     hi = 0;
                 }
 
@@ -252,7 +252,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 int idx = (int)(ord / outerInstance.totalIndexInterval);
                 // caller must ensure ord is in bounds
-                if (Debugging.AssertsEnabled) Debugging.Assert(idx < fieldIndex.numIndexTerms);
+                if (Debugging.ShouldAssert(idx < fieldIndex.numIndexTerms)) Debugging.ThrowAssert();
                 long offset = fieldIndex.termOffsets.Get(idx);
                 int length = (int)(fieldIndex.termOffsets.Get(1 + idx) - offset);
                 outerInstance.termBytesReader.FillSlice(term, fieldIndex.termBytesStart + offset, length);
@@ -328,7 +328,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // -1 is passed to mean "don't load term index", but
                     // if we are then later loaded it's overwritten with
                     // a real value
-                    if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.outerInstance.indexDivisor > 0);
+                    if (Debugging.ShouldAssert(outerInstance.outerInstance.indexDivisor > 0)) Debugging.ThrowAssert();
 
                     this.numIndexTerms = 1 + (numIndexTerms - 1) / outerInstance.outerInstance.indexDivisor;
 
@@ -345,11 +345,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                             // records offsets into main terms dict file
                             termsDictOffsets = PackedInt32s.GetReader(clone);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(termsDictOffsets.Count == numIndexTerms);
+                            if (Debugging.ShouldAssert(termsDictOffsets.Count == numIndexTerms)) Debugging.ThrowAssert();
 
                             // records offsets into byte[] term data
                             termOffsets = PackedInt32s.GetReader(clone);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(termOffsets.Count == 1 + numIndexTerms);
+                            if (Debugging.ShouldAssert(termOffsets.Count == 1 + numIndexTerms)) Debugging.ThrowAssert();
                         }
                         finally
                         {

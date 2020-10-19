@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
         public IndexFormatTooNewException(string resourceDesc, int version, int minVersion, int maxVersion)
             : base("Format version is not supported (resource: " + resourceDesc + "): " + version + " (needs to be between " + minVersion + " and " + maxVersion + ")")
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(resourceDesc != null);
+            if (Debugging.ShouldAssert(resourceDesc != null)) Debugging.ThrowAssert();
         }
 
         /// <summary>

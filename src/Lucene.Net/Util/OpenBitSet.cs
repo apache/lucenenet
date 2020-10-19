@@ -200,7 +200,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual bool FastGet(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int i = index >> 6; // div 64
             // signed shift will keep a negative index and force an
             // array-index-out-of-bounds-exception, removing the need for an explicit check.
@@ -230,7 +230,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual bool FastGet(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int i = (int)(index >> 6); // div 64
             int bit = (int)index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual int GetBit(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int i = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
             return ((int)((long)((ulong)m_bits[i] >> bit))) & 0x01;
@@ -286,7 +286,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void FastSet(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -299,7 +299,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void FastSet(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int wordNum = (int)(index >> 6);
             int bit = (int)index & 0x3f;
             long bitmask = 1L << bit;
@@ -354,7 +354,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void FastClear(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int wordNum = index >> 6;
             int bit = index & 0x03f;
             long bitmask = 1L << bit;
@@ -374,7 +374,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void FastClear(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -493,7 +493,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual bool GetAndSet(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -508,7 +508,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual bool GetAndSet(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -523,7 +523,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void FastFlip(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -536,7 +536,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual void FastFlip(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -559,7 +559,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual bool FlipAndGet(int index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int wordNum = index >> 6; // div 64
             int bit = index & 0x3f; // mod 64
             long bitmask = 1L << bit;
@@ -573,7 +573,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public virtual bool FlipAndGet(long index)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < numBits);
+            if (Debugging.ShouldAssert(index >= 0 && index < numBits)) Debugging.ThrowAssert();
             int wordNum = (int)(index >> 6); // div 64
             int bit = (int)index & 0x3f; // mod 64
             long bitmask = 1L << bit;
