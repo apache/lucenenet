@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
         {
             int maxDoc = state.SegmentInfo.DocCount;
             int maxCountPerDoc = maxCount;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pendingCounts.Count == maxDoc)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pendingCounts.Count == maxDoc);
             int valueCount = hash.Count;
 
             int[] sortedValues = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);

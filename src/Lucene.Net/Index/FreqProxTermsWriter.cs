@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                     fieldWriter.Flush(fieldInfo.Name, consumer, state);
 
                     TermsHashPerField perField = fieldWriter.termsHashPerField;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termsHash == null || termsHash == perField.termsHash)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termsHash == null || termsHash == perField.termsHash);
                     termsHash = perField.termsHash;
                     int numPostings = perField.bytesHash.Count;
                     perField.Reset();

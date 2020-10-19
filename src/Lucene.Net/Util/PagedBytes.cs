@@ -146,7 +146,7 @@ namespace Lucene.Net.Util
                 {
                     b.Length = ((block[offset] & 0x7f) << 8) | (block[1 + offset] & 0xff);
                     b.Offset = offset + 2;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b.Length > 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b.Length > 0);
                 }
             }
 
@@ -224,7 +224,7 @@ namespace Lucene.Net.Util
                 currentBlock = new byte[blockSize];
                 upto = 0;
                 //left = blockSize; // LUCENENET: Unnecessary assignment
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytes.Length <= blockSize)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bytes.Length <= blockSize);
                 // TODO: we could also support variable block sizes
             }
 
@@ -378,7 +378,7 @@ namespace Lucene.Net.Util
 
             public override void ReadBytes(byte[] b, int offset, int len)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b.Length >= offset + len)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b.Length >= offset + len);
                 int offsetEnd = offset + len;
                 while (true)
                 {
@@ -434,7 +434,7 @@ namespace Lucene.Net.Util
 
             public override void WriteBytes(byte[] b, int offset, int length)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b.Length >= offset + length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b.Length >= offset + length);
                 if (length == 0)
                 {
                     return;

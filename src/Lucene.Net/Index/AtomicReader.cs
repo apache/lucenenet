@@ -237,8 +237,8 @@ namespace Lucene.Net.Index
         /// <seealso cref="TermsEnum.DocsAndPositions(IBits, DocsAndPositionsEnum)"/>
         public DocsAndPositionsEnum GetTermPositionsEnum(Term term) // LUCENENET specific: Renamed from TermPositionsEnum()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(term.Field != null)) Debugging.ThrowAssert();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(term.Bytes != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term.Field != null);
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term.Bytes != null);
             Fields fields = Fields;
             if (fields != null)
             {

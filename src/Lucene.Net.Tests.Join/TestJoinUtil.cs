@@ -1030,7 +1030,7 @@ namespace Lucene.Net.Tests.Join
                     {
                         DocsEnum docsEnum = MultiFields.GetTermDocsEnum(topLevelReader,
                             MultiFields.GetLiveDocs(topLevelReader), "id", new BytesRef(otherSideDoc.id), 0);
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docsEnum != null)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docsEnum != null);
                         int doc = docsEnum.NextDoc();
                         expectedResult.Set(doc);
                     }

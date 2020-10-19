@@ -315,7 +315,7 @@ namespace Lucene.Net.Index
                         }
                         for (int i = 0; i < merge.Segments.Count; i++)
                         {
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(merge.Segments[i].Info.DocCount < 20)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(merge.Segments[i].Info.DocCount < 20);
                         }
                         writer.Merge(merge);
                     }

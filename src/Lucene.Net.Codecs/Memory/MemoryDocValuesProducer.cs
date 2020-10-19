@@ -675,7 +675,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         var data = (IndexInput)this.data.Clone();
                         data.Seek(offset);
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(length % 8 == 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(length % 8 == 0);
                         var bits = new long[(int) length >> 3];
                         for (var i = 0; i < bits.Length; i++)
                         {

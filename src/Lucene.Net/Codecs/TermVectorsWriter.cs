@@ -299,7 +299,7 @@ namespace Lucene.Net.Codecs
                 bool hasPositions = terms.HasPositions;
                 bool hasOffsets = terms.HasOffsets;
                 bool hasPayloads = terms.HasPayloads;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!hasPayloads || hasPositions)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!hasPayloads || hasPositions);
 
                 int numTerms = (int)terms.Count;
                 if (numTerms == -1)
@@ -328,7 +328,7 @@ namespace Lucene.Net.Codecs
                     if (hasPositions || hasOffsets)
                     {
                         docsAndPositionsEnum = termsEnum.DocsAndPositions(null, docsAndPositionsEnum);
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docsAndPositionsEnum != null)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docsAndPositionsEnum != null);
 
                         int docID = docsAndPositionsEnum.NextDoc();
                         if(Debugging.ShouldAssert(docID != DocIdSetIterator.NO_MORE_DOCS)) Debugging.ThrowAssert();
@@ -343,16 +343,16 @@ namespace Lucene.Net.Codecs
 
                             BytesRef payload = docsAndPositionsEnum.GetPayload();
 
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!hasPositions || pos >= 0)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!hasPositions || pos >= 0);
                             AddPosition(pos, startOffset, endOffset, payload);
                         }
                     }
                     FinishTerm();
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termCount == numTerms)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termCount == numTerms);
                 FinishField();
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldCount == numFields)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldCount == numFields);
             FinishDocument();
         }
 

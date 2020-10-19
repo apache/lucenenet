@@ -202,10 +202,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             scratchBytes.CopyBytes(term);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastTerm.Offset == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lastTerm.Offset == 0);
             UnicodeUtil.UTF8toUTF16(lastTerm.Bytes, 0, lastTerm.Length, utf16Result1);
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(scratchBytes.Offset == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(scratchBytes.Offset == 0);
             UnicodeUtil.UTF8toUTF16(scratchBytes.Bytes, 0, scratchBytes.Length, utf16Result2);
 
             int len;

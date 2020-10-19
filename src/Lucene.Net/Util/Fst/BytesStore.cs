@@ -198,7 +198,7 @@ namespace Lucene.Net.Util.Fst
         public virtual void CopyBytes(long src, long dest, int len)
         {
             //System.out.println("BS.copyBytes src=" + src + " dest=" + dest + " len=" + len);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(src < dest)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(src < dest);
 
             // Note: weird: must go "backwards" because copyBytes
             // calls us with overlapping src/dest.  If we
@@ -375,7 +375,7 @@ namespace Lucene.Net.Util.Fst
             {
                 current = blocks[blockIndex];
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(newLen == Position)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(newLen == Position);
         }
 
         public virtual void Finish()

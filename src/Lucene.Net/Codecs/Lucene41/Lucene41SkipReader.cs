@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
             else
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(posBasePointer == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(posBasePointer == 0);
             }
         }
 

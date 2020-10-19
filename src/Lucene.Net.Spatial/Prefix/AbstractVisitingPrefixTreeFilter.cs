@@ -52,7 +52,7 @@ namespace Lucene.Net.Spatial.Prefix
             : base(queryShape, fieldName, grid, detailLevel)
         {
             this.m_prefixGridScanLevel = Math.Max(0, Math.Min(prefixGridScanLevel, grid.MaxLevels - 1));
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(detailLevel <= grid.MaxLevels)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(detailLevel <= grid.MaxLevels);
         }
 
         public override bool Equals(object o)
@@ -170,7 +170,7 @@ namespace Lucene.Net.Spatial.Prefix
                         // LUCENENET IMPORTANT: Must not call this inline with Debug.Assert
                         // because the compiler removes Debug.Assert statements in release mode!!
                         bool hasNext = curVNode.children.MoveNext();
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(hasNext)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(hasNext);
 
                         curVNode = curVNode.children.Current;
                     }
@@ -253,7 +253,7 @@ namespace Lucene.Net.Spatial.Prefix
             /// <exception cref="IOException"></exception>
             private void AddIntersectingChildren()
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(thisTerm != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(thisTerm != null);
                 Cell cell = curVNode.cell;
                 if (cell.Level >= m_outerInstance.m_detailLevel)
                 {
@@ -385,7 +385,7 @@ namespace Lucene.Net.Spatial.Prefix
 
                 public bool MoveNext()
                 {
-                    //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cellIter.Current != null)) Debugging.ThrowAssert();
+                    //if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(cellIter.Current != null);
 
                     // LUCENENET NOTE: The consumer of this class calls
                     // cellIter.MoveNext() before it is instantiated.
@@ -503,9 +503,9 @@ namespace Lucene.Net.Spatial.Prefix
 
             internal virtual void Reset(Cell cell)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(cell != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(cell != null);
                 this.cell = cell;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(children == null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(children == null);
             }
         }
 

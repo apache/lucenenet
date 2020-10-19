@@ -462,9 +462,9 @@ namespace Lucene.Net.Index
                 else
                 {
                     docs = postings = TestUtil.Docs(Random, r, "field", new BytesRef(term), null, null, DocsFlags.FREQS);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(postings != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(postings != null);
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docs != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docs != null);
 
                 int docID = -1;
                 while (docID < DocIdSetIterator.NO_MORE_DOCS)

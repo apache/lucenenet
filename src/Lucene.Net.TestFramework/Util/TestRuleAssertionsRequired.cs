@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
           {
             try
             {
-              if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
+              if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(false);
               string msg = "Test class requires enabled assertions, enable globally (-ea)" + " or for Solr/Lucene subpackages only: " + Description.ClassName;
               Console.Error.WriteLine(msg);
               throw new Exception(msg);

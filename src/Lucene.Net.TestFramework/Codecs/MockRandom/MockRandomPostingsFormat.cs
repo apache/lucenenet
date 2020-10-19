@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.MockRandom
             private static string GetExtension(string fileName)
             {
                 int idx = fileName.IndexOf('.');
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(idx != -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(idx != -1);
                 return fileName.Substring(idx);
             }
 

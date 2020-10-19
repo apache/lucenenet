@@ -573,7 +573,7 @@ namespace Lucene.Net.Util.Fst
                     long tMid = Environment.TickCount;
                     Console.WriteLine(((tMid - tStart) / 1000.0) + " sec to add all terms");
 
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(builder.TermCount == ord)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(builder.TermCount == ord);
                     FST<T> fst = builder.Finish();
                     long tEnd = Environment.TickCount;
                     Console.WriteLine(((tEnd - tMid) / 1000.0) + " sec to finish/pack");

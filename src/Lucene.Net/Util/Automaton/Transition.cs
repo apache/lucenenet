@@ -63,7 +63,7 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="to"> Destination state. </param>
         public Transition(int c, State to)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(c >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(c >= 0);
             min = max = c;
             this.to = to;
         }

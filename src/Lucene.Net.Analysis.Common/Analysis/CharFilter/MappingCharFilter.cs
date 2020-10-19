@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis.CharFilters
                         if (!FST.TargetHasArcs(arc))
                         {
                             // Fast pass for single character match:
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(arc.IsFinal)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(arc.IsFinal);
                             lastMatchLen = 1;
                             lastMatch = arc.Output;
                         }

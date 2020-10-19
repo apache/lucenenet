@@ -830,7 +830,7 @@ namespace Lucene.Net.Util
                 int b = utf8[offset++] & 0xff;
                 if (b < 0xc0)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b < 0x80)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b < 0x80);
                     @out[out_offset++] = (char)b;
                 }
                 else if (b < 0xe0)

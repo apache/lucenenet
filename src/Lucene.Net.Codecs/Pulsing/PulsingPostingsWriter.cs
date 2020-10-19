@@ -150,7 +150,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override void StartTerm()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_pendingCount == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(_pendingCount == 0);
         }
 
         // TODO: -- should we NOT reuse across fields?  would
@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
             if (_pendingCount != -1)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_pendingCount < _pending.Length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(_pendingCount < _pending.Length);
                 _currentDoc = _pending[_pendingCount];
                 _currentDoc.docID = docId;
                 if (_indexOptions == IndexOptions.DOCS_ONLY)
@@ -267,7 +267,7 @@ namespace Lucene.Net.Codecs.Pulsing
         {
             var state2 = (PulsingTermState)state;
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_pendingCount > 0 || _pendingCount == -1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(_pendingCount > 0 || _pendingCount == -1);
 
             if (_pendingCount == -1)
             {
@@ -318,7 +318,7 @@ namespace Lucene.Net.Codecs.Pulsing
                         for (var posIDX = 0; posIDX < doc.termFreq; posIDX++)
                         {
                             var pos = _pending[pendingIDX++];
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pos.docID == doc.docID)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pos.docID == doc.docID);
                             var posDelta = pos.pos - lastPos;
                             lastPos = pos.pos;
 
@@ -361,7 +361,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
                             if (payloadLength > 0)
                             {
-                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_storePayloads)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(_storePayloads);
                                 _buffer.WriteBytes(pos.payload.Bytes, 0, pos.payload.Length);
                             }
                         }
@@ -375,7 +375,7 @@ namespace Lucene.Net.Codecs.Pulsing
                         Position doc = _pending[posIdx];
                         int delta = doc.docID - lastDocId;
 
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(doc.termFreq != 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(doc.termFreq != 0);
 
                         if (doc.termFreq == 1)
                         {
@@ -411,7 +411,7 @@ namespace Lucene.Net.Codecs.Pulsing
             bool abs)
         {
             var _state = (PulsingTermState)state;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(empty.Length == 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(empty.Length == 0);
             _absolute = _absolute || abs;
             if (_state.bytes == null)
             {
@@ -469,7 +469,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// </summary>
         private void Push()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_pendingCount == _pending.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(_pendingCount == _pending.Length);
 
             _wrappedPostingsWriter.StartTerm();
 
@@ -487,7 +487,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     }
                     else if (doc.docID != pos.docID)
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pos.docID > doc.docID)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pos.docID > doc.docID);
                         _wrappedPostingsWriter.FinishDoc();
                         doc = pos;
                         _wrappedPostingsWriter.StartDoc(doc.docID, doc.termFreq);

@@ -76,7 +76,7 @@ namespace Lucene.Net.Search.Spans
 
         public override bool SkipTo(int target)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(target > m_doc)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(target > m_doc);
             m_doc = m_postings.Advance(target);
             if (m_doc == DocIdSetIterator.NO_MORE_DOCS)
             {

@@ -632,7 +632,7 @@ namespace Lucene.Net.Analysis.Util
 
         private void Rehash()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(keys.Length == values.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(keys.Length == values.Length);
             int newSize = 2 * keys.Length;
             char[][] oldkeys = keys;
             MapValue[] oldvalues = values;

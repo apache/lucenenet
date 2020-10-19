@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(firstSubReaders[i] is CompositeReader)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(firstSubReaders[i] is CompositeReader);
                         CompositeReader[] compositeSubs = new CompositeReader[readers.Length];
                         for (int j = 0; j < readers.Length; j++)
                         {

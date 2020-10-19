@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
                             break;
 
                         default:
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert(); // unknown dv type
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(false); // unknown dv type
                             break;
                     }
                     docValuesCount++;

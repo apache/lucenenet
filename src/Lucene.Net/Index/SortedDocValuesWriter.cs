@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         {
             int maxDoc = state.SegmentInfo.DocCount;
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pending.Count == maxDoc)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pending.Count == maxDoc);
             int valueCount = hash.Count;
 
             int[] sortedValues = hash.Sort(BytesRef.UTF8SortedAsUnicodeComparer);
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
         private IEnumerable<long?> GetOrdsEnumberable(int maxDoc, int[] ordMap)
         {
             AppendingDeltaPackedInt64Buffer.Iterator iter = pending.GetIterator();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pending.Count == maxDoc)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(pending.Count == maxDoc);
 
             for (int i = 0; i < maxDoc; ++i)
             {

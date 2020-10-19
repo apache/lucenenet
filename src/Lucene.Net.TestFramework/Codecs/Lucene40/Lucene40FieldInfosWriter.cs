@@ -113,12 +113,12 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             if (type == DocValuesType.NONE)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(legacyTypeAtt == null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(legacyTypeAtt == null);
                 return 0;
             }
             else
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(legacyTypeAtt != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(legacyTypeAtt != null);
                 //return (sbyte)LegacyDocValuesType.ordinalLookup[legacyTypeAtt];
                 return (byte)legacyTypeAtt.ToLegacyDocValuesType();
             }

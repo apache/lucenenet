@@ -284,7 +284,7 @@ namespace Lucene.Net.Analysis.Synonym
 
                     scratch.Grow(estimatedSize);
                     scratchOutput.Reset(scratch.Bytes, scratch.Offset, scratch.Bytes.Length);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(scratch.Offset == 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(scratch.Offset == 0);
 
                     // now write our output data:
                     int count = 0;

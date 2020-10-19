@@ -185,7 +185,7 @@ namespace Lucene.Net.Util
 
         internal void Rotate(int lo, int mid, int hi)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lo <= mid && mid <= hi)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lo <= mid && mid <= hi);
             if (lo == mid || mid == hi)
             {
                 return;

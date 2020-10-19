@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (count != -1)
                 {
                     count++;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count <= size)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(count <= size);
                 }
                 return false;
             }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (count != -1)
                 {
                     count--;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(count >= 0);
                 }
                 return true;
             }
@@ -471,7 +471,7 @@ namespace Lucene.Net.Codecs.Lucene40
         // asserts only
         private bool VerifyCount()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(count != -1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(count != -1);
             int countSav = count;
             count = -1;
             if (Debugging.AssertsEnabled && Debugging.ShouldAssert(countSav == Count())) Debugging.ThrowAssert("saved count was {0} but recomputed count is {1}", countSav, count);
@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 last += input.ReadVInt32();
                 bits[last] = input.ReadByte();
                 n -= BitUtil.BitCount(bits[last]);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(n >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(n >= 0);
             }
         }
 

@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Pulsing
             int minBlockSize, int maxBlockSize) 
             : base()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(minBlockSize > 1)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(minBlockSize > 1);
 
             _freqCutoff = freqCutoff;
             _minBlockSize = minBlockSize;

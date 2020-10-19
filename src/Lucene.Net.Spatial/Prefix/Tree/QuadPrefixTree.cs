@@ -171,7 +171,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             IShape shape, 
             int maxLevel)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(str.Length == level)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(str.Length == level);
             double w = levelW[level] / 2;
             double h = levelH[level] / 2;
 
@@ -197,7 +197,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             IShape shape, 
             int maxLevel)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(str.Length == level)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(str.Length == level);
             double w = levelW[level] / 2;
             double h = levelH[level] / 2;
 

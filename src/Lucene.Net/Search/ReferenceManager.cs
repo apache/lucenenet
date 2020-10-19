@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
                 }
                 if (GetRefCount(@ref) == 0 && (object)current == (object)@ref)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(@ref != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(@ref != null);
                     /* if we can't increment the reader but we are
                        still the current reference the RM is in a
                        illegal states since we can't make any progress

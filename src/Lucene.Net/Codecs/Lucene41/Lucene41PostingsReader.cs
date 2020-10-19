@@ -402,7 +402,7 @@ namespace Lucene.Net.Codecs.Lucene41
             private void RefillDocs()
             {
                 int left = docFreq - docUpto;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(left > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(left > 0);
 
                 if (left >= Lucene41PostingsFormat.BLOCK_SIZE)
                 {
@@ -511,7 +511,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     if (!skipped)
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(skipOffset != -1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(skipOffset != -1);
                         // this is the first time this enum has skipped
                         // since reset() was called; load the skip data:
                         skipper.Init(docTermStartFP + skipOffset, docTermStartFP, 0, 0, docFreq);
@@ -731,7 +731,7 @@ namespace Lucene.Net.Codecs.Lucene41
             private void RefillDocs()
             {
                 int left = docFreq - docUpto;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(left > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(left > 0);
 
                 if (left >= Lucene41PostingsFormat.BLOCK_SIZE)
                 {
@@ -875,7 +875,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     if (!skipped)
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(skipOffset != -1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(skipOffset != -1);
                         // this is the first time this enum has skipped
                         // since reset() was called; load the skip data:
                         // if (DEBUG) {
@@ -1236,7 +1236,7 @@ namespace Lucene.Net.Codecs.Lucene41
             private void RefillDocs()
             {
                 int left = docFreq - docUpto;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(left > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(left > 0);
 
                 if (left >= Lucene41PostingsFormat.BLOCK_SIZE)
                 {
@@ -1450,7 +1450,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                     if (!skipped)
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(skipOffset != -1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(skipOffset != -1);
                         // this is the first time this enum has skipped
                         // since reset() was called; load the skip data:
                         // if (DEBUG) {

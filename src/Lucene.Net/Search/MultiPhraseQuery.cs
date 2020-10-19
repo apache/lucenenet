@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
 
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.termArrays.Count > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(outerInstance.termArrays.Count > 0);
                 AtomicReader reader = (context.AtomicReader);
                 IBits liveDocs = acceptDocs;
 

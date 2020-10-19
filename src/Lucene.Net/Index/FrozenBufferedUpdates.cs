@@ -140,12 +140,12 @@ namespace Lucene.Net.Index
         {
             set
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(this.gen == -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(this.gen == -1);
                 this.gen = value;
             }
             get
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(gen != -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(gen != -1);
                 return gen;
             }
         }

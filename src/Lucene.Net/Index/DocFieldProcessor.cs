@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
                 childFields[f.FieldInfo.Name] = f;
             }
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fields.Count == totalFieldCount)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fields.Count == totalFieldCount);
 
             storedConsumer.Flush(state);
             consumer.Flush(childFields, state);
@@ -166,14 +166,14 @@ namespace Lucene.Net.Index
                     field = field.next;
                 }
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fields.Count == totalFieldCount)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fields.Count == totalFieldCount);
             return fields;
         }
 
         private void Rehash()
         {
             int newHashSize = (fieldHash.Length * 2);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(newHashSize > fieldHash.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(newHashSize > fieldHash.Length);
 
             DocFieldProcessorPerField[] newHashArray = new DocFieldProcessorPerField[newHashSize];
 

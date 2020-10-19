@@ -78,7 +78,7 @@ namespace Lucene.Net.Util.Packed
 
         public override long Get(long index)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index >= 0 && index < valueCount)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index >= 0 && index < valueCount);
             int block = (int)((long)((ulong)index >> blockShift));
             int idx = (int)(index & blockMask);
             // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86

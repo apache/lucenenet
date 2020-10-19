@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             input = dir.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, VariableGapTermsIndexWriter.TERMS_INDEX_EXTENSION), new IOContext(context, true));
             //this.segment = segment; // LUCENENET: Not used
             bool success = false;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexDivisor == -1 || indexDivisor > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(indexDivisor == -1 || indexDivisor > 0);
 
             try
             {

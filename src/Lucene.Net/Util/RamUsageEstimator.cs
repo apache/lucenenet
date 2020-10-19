@@ -866,7 +866,7 @@ namespace Lucene.Net.Util
             {
                 object[] oldKeys = this.keys;
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Assigned >= resizeThreshold)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Assigned >= resizeThreshold);
                 AllocateBuffers(NextCapacity(keys.Length));
 
                 /*

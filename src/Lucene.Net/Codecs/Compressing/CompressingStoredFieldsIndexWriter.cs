@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private void WriteBlock()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(blockChunks > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(blockChunks > 0);
             fieldsIndexOut.WriteVInt32(blockChunks);
 
             // The trick here is that we only store the difference from the average start
@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 firstStartPointer = maxStartPointer = startPointer;
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(firstStartPointer > 0 && startPointer >= firstStartPointer)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(firstStartPointer > 0 && startPointer >= firstStartPointer);
 
             docBaseDeltas[blockChunks] = numDocs;
             startPointerDeltas[blockChunks] = startPointer - maxStartPointer;

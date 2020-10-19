@@ -495,7 +495,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(current == 1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(current == 1);
                     ordsIter.MoveNext();
                     yield return ordsIter.Current;
                 }

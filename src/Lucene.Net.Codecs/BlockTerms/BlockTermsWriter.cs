@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public FieldMetaData(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
                 long sumDocFreq, int docCount, int int64sSize)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numTerms > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numTerms > 0);
 
                 FieldInfo = fieldInfo;
                 TermsStartPointer = termsStartPointer;
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(stats.DocFreq > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(stats.DocFreq > 0);
                 //System.out.println("BTW: finishTerm term=" + fieldInfo.name + ":" + text.utf8ToString() + " " + text + " seg=" + segment + " df=" + stats.docFreq);
 
                 bool isIndexTerm = fieldIndexWriter.CheckIndexTerm(text, stats);
@@ -360,7 +360,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 for (int termCount = 0; termCount < pendingCount; termCount++)
                 {
                     BlockTermState state = pendingTerms[termCount].State;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state != null);
                     bytesWriter.WriteVInt32(state.DocFreq);
                     if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {

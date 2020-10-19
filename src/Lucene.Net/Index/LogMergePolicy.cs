@@ -192,7 +192,7 @@ namespace Lucene.Net.Index
             if (m_calibrateSizeByDeletes)
             {
                 int delCount = m_writer.Get().NumDeletedDocs(info);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(delCount <= info.Info.DocCount)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(delCount <= info.Info.DocCount);
                 return (info.Info.DocCount - (long)delCount);
             }
             else
@@ -378,7 +378,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public override MergeSpecification FindForcedMerges(SegmentInfos infos, int maxNumSegments, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(maxNumSegments > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(maxNumSegments > 0);
             if (IsVerbose)
             {
                 Message("findForcedMerges: maxNumSegs=" + maxNumSegments + " segsToMerge=" + 
@@ -469,7 +469,7 @@ namespace Lucene.Net.Index
             var spec = new MergeSpecification();
             int firstSegmentWithDeletions = -1;
             IndexWriter w = m_writer.Get();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(w != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(w != null);
             for (int i = 0; i < numSegments; i++)
             {
                 SegmentCommitInfo info = segmentInfos.Info(i);

@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private static int CommonBytes(byte[] b, int o1, int o2, int limit)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(o1 < o2)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(o1 < o2);
             int count = 0;
             while (o2 < limit && b[o1++] == b[o2++])
             {
@@ -135,7 +135,7 @@ namespace Lucene.Net.Codecs.Compressing
                 var byte1 = compressed.ReadByte();
                 var byte2 = compressed.ReadByte();
                 int matchDec = (byte1 & 0xFF) | ((byte2 & 0xFF) << 8);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(matchDec > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(matchDec > 0);
 
                 int matchLen = token & 0x0F;
                 if (matchLen == 0x0F)
@@ -203,14 +203,14 @@ namespace Lucene.Net.Codecs.Compressing
         private static void EncodeSequence(byte[] bytes, int anchor, int matchRef, int matchOff, int matchLen, DataOutput @out)
         {
             int literalLen = matchOff - anchor;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(matchLen >= 4)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(matchLen >= 4);
             // encode token
             int token = (Math.Min(literalLen, 0x0F) << 4) | Math.Min(matchLen - 4, 0x0F);
             EncodeLiterals(bytes, token, anchor, literalLen, @out);
 
             // encode match dec
             int matchDec = matchOff - matchRef;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(matchDec > 0 && matchDec < 1 << 16)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(matchDec > 0 && matchDec < 1 << 16);
             @out.WriteByte((byte)(sbyte)matchDec);
             @out.WriteByte((byte)(sbyte)((int)((uint)matchDec >> 8)));
 
@@ -297,7 +297,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             // last literals
             int literalLen = end - anchor;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(literalLen >= LAST_LITERALS || literalLen == len)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(literalLen >= LAST_LITERALS || literalLen == len);
             EncodeLastLiterals(bytes, anchor, end - anchor, @out);
         }
 
@@ -513,7 +513,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 while (true)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(match1.start >= anchor)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(match1.start >= anchor);
                     if (match1.End() >= mfLimit || !ht.InsertAndFindWiderMatch(src, match1.End() - 2, match1.start + 1, matchLimit, match1.len, match2))
                     {
                         // no better match
@@ -529,7 +529,7 @@ namespace Lucene.Net.Codecs.Compressing
                             CopyTo(match0, match1);
                         }
                     }
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(match2.start > match1.start)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(match2.start > match1.start);
 
                     if (match2.start - match1.start < 3) // First Match too small : removed
                     {

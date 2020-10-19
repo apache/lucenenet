@@ -140,7 +140,7 @@ namespace Lucene.Net.Search
 
         public override int NextDoc()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(doc != NO_MORE_DOCS)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(doc != NO_MORE_DOCS);
             while (true)
             {
                 // to remove current doc, call next() on all subScorers on current doc within heap

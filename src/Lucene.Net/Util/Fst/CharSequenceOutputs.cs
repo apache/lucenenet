@@ -134,7 +134,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(CharsRef prefix, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(prefix != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(prefix != null);
             @out.WriteVInt32(prefix.Length);
             // TODO: maybe UTF8?
             for (int idx = 0; idx < prefix.Length; idx++)

@@ -721,7 +721,7 @@ namespace Lucene.Net.Util.Automaton
                     if (count == HASHMAP_CUTOVER)
                     {
                         // switch to HashMap on the fly
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(map.Count == 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(map.Count == 0);
                         for (int i = 0; i < count; i++)
                         {
                             map[points[i].point] = points[i];
@@ -845,7 +845,7 @@ namespace Lucene.Net.Util.Automaton
 
                     if (statesSet.upto > 0)
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastPoint != -1)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lastPoint != -1);
 
                         statesSet.ComputeHash();
 

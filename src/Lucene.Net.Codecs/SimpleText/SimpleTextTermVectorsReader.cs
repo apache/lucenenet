@@ -109,7 +109,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
             }
             SimpleTextUtil.CheckFooter(input);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto == _offsets.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto == _offsets.Length);
         }
 
         public override Fields Get(int doc)
@@ -451,7 +451,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_freqRenamed != -1)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(_freqRenamed != -1);
                     return _freqRenamed;
                 }
             }
@@ -502,7 +502,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     if (_positions != null)
                         return _positions.Length;
 
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_startOffsets != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(_startOffsets != null);
                     return _startOffsets.Length;
                 }
             }

@@ -107,7 +107,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
             public override void Write(DataOutput indexOut, bool absolute)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto >= 0);
                 if (absolute)
                 {
                     indexOut.WriteVInt32(upto);
@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 else if (fp == lastFP)
                 {
                     // same block
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto >= lastUpto)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto >= lastUpto);
                     int uptoDelta = upto - lastUpto;
                     indexOut.WriteVInt32(uptoDelta << 1 | 1);
                 }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.IntBlock
             hitExcDuringWrite = true;
             upto -= Add(v) - 1;
             hitExcDuringWrite = false;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto >= 0);
         }
 
         protected override void Dispose(bool disposing)
@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.IntBlock
                     while (upto > stuffed)
                     {
                         upto -= Add(0) - 1;
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto >= 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto >= 0);
                         stuffed += 1;
                     }
                 }

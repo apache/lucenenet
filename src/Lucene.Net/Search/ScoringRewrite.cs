@@ -173,7 +173,7 @@ namespace Lucene.Net.Search
             {
                 int e = terms.Add(bytes);
                 TermState state = termsEnum.GetTermState();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state != null);
                 if (e < 0)
                 {
                     // duplicate term: update docFreq
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search
                 int[] ord = base.Init();
                 boost = new float[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_SINGLE)];
                 termState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termState.Length >= ord.Length && boost.Length >= ord.Length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termState.Length >= ord.Length && boost.Length >= ord.Length);
                 return ord;
             }
 
@@ -223,7 +223,7 @@ namespace Lucene.Net.Search
                     Array.Copy(termState, 0, tmpTermState, 0, termState.Length);
                     termState = tmpTermState;
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termState.Length >= ord.Length && boost.Length >= ord.Length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termState.Length >= ord.Length && boost.Length >= ord.Length);
                 return ord;
             }
 

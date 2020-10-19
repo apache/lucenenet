@@ -76,7 +76,7 @@ namespace Lucene.Net.Util.Automaton
                 nonSurrogateCount = endCode - startCode + 1 - (UnicodeUtil.UNI_SUR_LOW_END - UnicodeUtil.UNI_SUR_HIGH_START + 1);
             }
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(nonSurrogateCount > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(nonSurrogateCount > 0);
 
             for (int iter = 0; iter < iters; iter++)
             {

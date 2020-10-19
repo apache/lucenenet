@@ -1452,7 +1452,7 @@ namespace Lucene.Net.Index
                     if (fieldTerms is BlockTreeTermsReader.FieldReader)
                     {
                         BlockTreeTermsReader.Stats stats = ((BlockTreeTermsReader.FieldReader)fieldTerms).ComputeStats();
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(stats != null)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(stats != null);
                         if (status.BlockTreeStats == null)
                         {
                             status.BlockTreeStats = new Dictionary<string, BlockTreeTermsReader.Stats>();
@@ -2154,25 +2154,25 @@ namespace Lucene.Net.Index
                                     if (hasProx)
                                     {
                                         postings = termsEnum.DocsAndPositions(null, postings);
-                                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(postings != null)) Debugging.ThrowAssert();
+                                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(postings != null);
                                         docs = null;
                                     }
                                     else
                                     {
                                         docs = termsEnum.Docs(null, docs);
-                                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docs != null)) Debugging.ThrowAssert();
+                                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docs != null);
                                         postings = null;
                                     }
 
                                     DocsEnum docs2;
                                     if (hasProx)
                                     {
-                                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(postings != null)) Debugging.ThrowAssert();
+                                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(postings != null);
                                         docs2 = postings;
                                     }
                                     else
                                     {
-                                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docs != null)) Debugging.ThrowAssert();
+                                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docs != null);
                                         docs2 = docs;
                                     }
 
@@ -2270,12 +2270,12 @@ namespace Lucene.Net.Index
 
                                                 if (payload != null)
                                                 {
-                                                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(vectorsHasPayload)) Debugging.ThrowAssert();
+                                                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(vectorsHasPayload);
                                                 }
 
                                                 if (postingsHasPayload && vectorsHasPayload)
                                                 {
-                                                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(postingsPostings != null)) Debugging.ThrowAssert();
+                                                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(postingsPostings != null);
 
                                                     if (payload == null)
                                                     {
@@ -2365,7 +2365,7 @@ namespace Lucene.Net.Index
 
         //private static bool AssertsOn()
         //{
-        //    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(TestAsserts)) Debugging.ThrowAssert();
+        //    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(TestAsserts);
         //    return assertsOn;
         //}
 

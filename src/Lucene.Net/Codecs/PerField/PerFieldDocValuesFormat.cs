@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.PerField
                             {
                                 // null formatName means the field is in fieldInfos, but has no docvalues!
                                 string suffix = fi.GetAttribute(PER_FIELD_SUFFIX_KEY);
-                                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(suffix != null)) Debugging.ThrowAssert();
+                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(suffix != null);
                                 DocValuesFormat format = DocValuesFormat.ForName(formatName);
                                 string segmentSuffix = GetFullSegmentSuffix(readState.SegmentSuffix, GetSuffix(formatName, suffix));
                                 // LUCENENET: Eliminated extra lookup by using TryGetValue instead of ContainsKey
@@ -306,7 +306,7 @@ namespace Lucene.Net.Codecs.PerField
                 {
                     DocValuesProducer producer;
                     oldToNew.TryGetValue(ent.Value, out producer);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(producer != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(producer != null);
                     fields[ent.Key] = producer;
                 }
             }

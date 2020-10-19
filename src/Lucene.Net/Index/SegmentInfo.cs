@@ -137,7 +137,7 @@ namespace Lucene.Net.Index
             get => codec;
             set
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(this.codec is null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(this.codec is null);
                 this.codec = value ?? throw new ArgumentNullException(nameof(value), "Codec must be non-null");
             }
         }

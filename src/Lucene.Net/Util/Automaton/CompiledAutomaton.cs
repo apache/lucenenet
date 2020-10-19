@@ -228,7 +228,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(maxTransition != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(maxTransition != null);
 
             // Append floorLabel
             int floorLabel;
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util.Automaton
                 {
                     // We are pushing "top" -- so get last label of
                     // last transition:
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(transitions.Length != 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(transitions.Length != 0);
                     Transition lastTransition = transitions[transitions.Length - 1];
                     if (idx >= term.Bytes.Length)
                     {

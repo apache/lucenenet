@@ -61,12 +61,12 @@ namespace Lucene.Net.Index
             if (writer != null)
             {
                 int numDocs = state.SegmentInfo.DocCount;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numDocs > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numDocs > 0);
                 // At least one doc in this run had term vectors enabled
                 try
                 {
                     Fill(numDocs);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state.SegmentInfo != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state.SegmentInfo != null);
                     writer.Finish(state.FieldInfos, numDocs);
                 }
                 finally

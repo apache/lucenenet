@@ -249,7 +249,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public virtual bool AdvanceToIndex(long index)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(index > efIndex)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(index > efIndex);
             if (index >= numEncoded)
             {
                 efIndex = numEncoded;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Util.Packed
             }
             if (!ToAfterCurrentHighBit())
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(false);
             }
             /* CHECKME: Add a (binary) search in the upperZeroBitPositions here. */
             int curSetBits = curHighLong.PopCount();
@@ -275,7 +275,7 @@ namespace Lucene.Net.Util.Packed
                  */
                 if (!ToAfterCurrentHighBit())
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(false);
                 }
                 ToNextHighValue();
             }
@@ -312,7 +312,7 @@ namespace Lucene.Net.Util.Packed
                     indexEntryIndex = numIndexEntries - 1; // no further than last index entry
                 }
                 long indexHighValue = (indexEntryIndex + 1) * efEncoder.indexInterval;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexHighValue <= highTarget)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(indexHighValue <= highTarget);
                 if (indexHighValue > (setBitForIndex - efIndex)) // advance to just after zero bit position of index entry.
                 {
                     setBitForIndex = UnPackValue(efEncoder.upperZeroBitPositionIndex, efEncoder.nIndexEntryBits, indexEntryIndex, indexMask);
@@ -321,7 +321,7 @@ namespace Lucene.Net.Util.Packed
                     upperLong = efEncoder.upperLongs[highIndex];
                     curHighLong = (long)((ulong)upperLong >> ((int)(setBitForIndex & ((sizeof(long) * 8) - 1)))); // may contain the unary 1 bit for efIndex
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(efIndex < numEncoded)) Debugging.ThrowAssert(); // there is a high value to be found.
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(efIndex < numEncoded); // there is a high value to be found.
             }
 
             int curSetBits = curHighLong.PopCount(); // shifted right.

@@ -344,7 +344,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 BytesRef bytes = totalLength <= BUFFER_REUSE_THRESHOLD ? this.bytes : new BytesRef();
                 decompressor.Decompress(fieldsStream, totalLength, offset, length, bytes);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytes.Length == length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bytes.Length == length);
                 documentInput = new ByteArrayDataInput(bytes.Bytes, bytes.Offset, bytes.Length);
             }
 
@@ -392,7 +392,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             internal virtual void FillBuffer()
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(decompressed <= length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(decompressed <= length);
                 if (decompressed == length)
                 {
                     throw new Exception();
@@ -589,7 +589,7 @@ namespace Lucene.Net.Codecs.Compressing
             /// </summary>
             internal void CopyCompressedData(DataOutput @out)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outerInstance.Version == CompressingStoredFieldsWriter.VERSION_CURRENT)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(outerInstance.Version == CompressingStoredFieldsWriter.VERSION_CURRENT);
                 long chunkEnd = docBase + chunkDocs == outerInstance.numDocs ? outerInstance.maxPointer : outerInstance.indexReader.GetStartPointer(docBase + chunkDocs);
                 @out.CopyBytes(fieldsStream, chunkEnd - fieldsStream.GetFilePointer());
             }

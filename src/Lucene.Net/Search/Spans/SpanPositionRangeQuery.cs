@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Spans
 
         protected override AcceptStatus AcceptPosition(Spans spans)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(spans.Start != spans.End)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(spans.Start != spans.End);
             if (spans.Start >= m_end)
             {
                 return AcceptStatus.NO_AND_ADVANCE;

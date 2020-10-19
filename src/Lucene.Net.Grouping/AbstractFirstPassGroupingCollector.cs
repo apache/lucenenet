@@ -248,7 +248,7 @@ namespace Lucene.Net.Search.Grouping
                     bottomGroup = m_orderedGroups.Last();
                     m_orderedGroups.Remove(bottomGroup);
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_orderedGroups.Count == topNGroups - 1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(m_orderedGroups.Count == topNGroups - 1);
 
                 groupMap.Remove(bottomGroup.GroupValue);
 
@@ -263,7 +263,7 @@ namespace Lucene.Net.Search.Grouping
 
                 groupMap[bottomGroup.GroupValue] = bottomGroup;
                 m_orderedGroups.Add(bottomGroup);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_orderedGroups.Count == topNGroups)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(m_orderedGroups.Count == topNGroups);
 
                 int lastComparerSlot = m_orderedGroups.Last().ComparerSlot;
                 foreach (FieldComparer fc in comparers)
@@ -315,7 +315,7 @@ namespace Lucene.Net.Search.Grouping
                     prevLast = m_orderedGroups.Last();
                     m_orderedGroups.Remove(group);
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_orderedGroups.Count == topNGroups - 1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(m_orderedGroups.Count == topNGroups - 1);
             }
             else
             {
@@ -333,7 +333,7 @@ namespace Lucene.Net.Search.Grouping
             if (m_orderedGroups != null)
             {
                 m_orderedGroups.Add(group);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_orderedGroups.Count == topNGroups)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(m_orderedGroups.Count == topNGroups);
                 var newLast = m_orderedGroups.Last();
                 // If we changed the value of the last group, or changed which group was last, then update bottom:
                 if (group == newLast || prevLast != newLast)
@@ -376,7 +376,7 @@ namespace Lucene.Net.Search.Grouping
             var comparer = new BuildSortedSetComparer(this);
             m_orderedGroups = new JCG.SortedSet<CollectedSearchGroup<TGroupValue>>(comparer);
             m_orderedGroups.UnionWith(groupMap.Values);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_orderedGroups.Count > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(m_orderedGroups.Count > 0);
 
             foreach (FieldComparer fc in comparers)
             {

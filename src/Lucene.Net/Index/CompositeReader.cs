@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
             }
             buffer.Append('(');
             var subReaders = GetSequentialSubReaders();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(subReaders != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(subReaders != null);
             if (subReaders.Count > 0)
             {
                 buffer.Append(subReaders[0]);

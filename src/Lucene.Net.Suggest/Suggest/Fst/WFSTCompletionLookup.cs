@@ -141,7 +141,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 throw new ArgumentException("this suggester doesn't support contexts");
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(num > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(num > 0);
 
             if (onlyMorePopular)
             {
@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             try
             {
                 completions = Lucene.Net.Util.Fst.Util.ShortestPaths(fst, arc, prefixOutput, weightComparer, num, !exactFirst);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(completions.IsComplete)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(completions.IsComplete);
             }
             catch (IOException bogus)
             {
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             internal WFSTInputEnumerator(IInputEnumerator source)
                 : base(source)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(source.HasPayloads == false)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(source.HasPayloads == false);
             }
 
             protected internal override void Encode(OfflineSorter.ByteSequencesWriter writer, ByteArrayDataOutput output, byte[] buffer, BytesRef spare, BytesRef payload, ICollection<BytesRef> contexts, long weight)

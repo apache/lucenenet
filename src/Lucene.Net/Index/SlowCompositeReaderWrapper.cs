@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(reader is AtomicReader)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(reader is AtomicReader);
                 return (AtomicReader)reader;
             }
         }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
             {
                 return null;
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(map != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(map != null);
             int size = @in.Leaves.Count;
             var values = new SortedSetDocValues[size];
             int[] starts = new int[size + 1];

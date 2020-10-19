@@ -170,7 +170,7 @@ namespace Lucene.Net.Index
 
             BytesRef flushTerm = termsWriter.flushTerm;
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numPostings >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numPostings >= 0);
 
             if (numPostings > maxNumPostings)
             {
@@ -344,7 +344,7 @@ namespace Lucene.Net.Index
 
             internal override void CopyTo(ParallelPostingsArray toArray, int numToCopy)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(toArray is TermVectorsPostingsArray)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(toArray is TermVectorsPostingsArray);
                 TermVectorsPostingsArray to = (TermVectorsPostingsArray)toArray;
 
                 base.CopyTo(toArray, numToCopy);

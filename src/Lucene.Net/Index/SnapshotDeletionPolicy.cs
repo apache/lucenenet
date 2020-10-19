@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
                 throw new ArgumentException("commit gen=" + gen + " is not currently snapshotted");
             }
             int refCountInt = (int)refCount;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(refCountInt > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(refCountInt > 0);
             refCountInt--;
             if (refCountInt == 0)
             {

@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.Memory
                 public override void StartDoc(int docID, int termDocFreq)
                 {
                     int delta = docID - lastDocID;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docID == 0 || delta > 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID == 0 || delta > 0);
                     lastDocID = docID;
                     docCount++;
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Codecs.Memory
                     else
                     {
                         buffer.WriteVInt32(delta << 1);
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termDocFreq > 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termDocFreq > 0);
                         buffer.WriteVInt32(termDocFreq);
                     }
 
@@ -171,12 +171,12 @@ namespace Lucene.Net.Codecs.Memory
 
                 public override void AddPosition(int pos, BytesRef payload, int startOffset, int endOffset)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payload == null || outerInstance.field.HasPayloads)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(payload == null || outerInstance.field.HasPayloads);
 
                     //System.out.println("      addPos pos=" + pos + " payload=" + payload);
 
                     int delta = pos - lastPos;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(delta >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(delta >= 0);
                     lastPos = pos;
 
                     int payloadLen = 0;
@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(postingsWriter.docCount == stats.DocFreq)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(postingsWriter.docCount == stats.DocFreq);
 
                 if (Debugging.AssertsEnabled && Debugging.ShouldAssert(buffer2.GetFilePointer() == 0)) Debugging.ThrowAssert();
 
@@ -402,7 +402,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public FSTDocsEnum Reset(BytesRef bufferIn, IBits liveDocs, int numDocs)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numDocs > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numDocs > 0);
                 if (buffer.Length < bufferIn.Length)
                 {
                     buffer = ArrayUtil.Grow(buffer, bufferIn.Length);
@@ -446,7 +446,7 @@ namespace Lucene.Net.Codecs.Memory
                         else
                         {
                             freq = @in.ReadVInt32();
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(freq > 0)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(freq > 0);
                         }
 
                         if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
@@ -555,7 +555,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public FSTDocsAndPositionsEnum Reset(BytesRef bufferIn, IBits liveDocs, int numDocs)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numDocs > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numDocs > 0);
 
                 // System.out.println("D&P reset bytes this=" + this);
                 // for(int i=bufferIn.offset;i<bufferIn.length;i++) {
@@ -606,7 +606,7 @@ namespace Lucene.Net.Codecs.Memory
                     else
                     {
                         freq = @in.ReadVInt32();
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(freq > 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(freq > 0);
                     }
 
                     if (liveDocs == null || liveDocs.Get(accum))
@@ -655,7 +655,7 @@ namespace Lucene.Net.Codecs.Memory
             public override int NextPosition()
             {
                 //System.out.println("    nextPos storePayloads=" + storePayloads + " this=" + this);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(posPending > 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(posPending > 0);
                 posPending--;
                 if (!storePayloads)
                 {

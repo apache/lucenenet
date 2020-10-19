@@ -47,26 +47,26 @@ namespace Lucene.Net.Index
         public void Init(int address)
         {
             slice = pool.Buffers[address >> ByteBlockPool.BYTE_BLOCK_SHIFT];
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(slice != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(slice != null);
             upto = address & ByteBlockPool.BYTE_BLOCK_MASK;
             offset0 = address;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto < slice.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto < slice.Length);
         }
 
         /// <summary>
         /// Write byte into byte slice stream </summary>
         public override void WriteByte(byte b)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(slice != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(slice != null);
             if (slice[upto] != 0)
             {
                 upto = pool.AllocSlice(slice, upto);
                 slice = pool.Buffer;
                 offset0 = pool.ByteOffset;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(slice != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(slice != null);
             }
             slice[upto++] = (byte)b;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto != slice.Length)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto != slice.Length);
         }
 
         public override void WriteBytes(byte[] b, int offset, int len)
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
                 }
 
                 slice[upto++] = (byte)b[offset++];
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto != slice.Length)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto != slice.Length);
             }
         }
 

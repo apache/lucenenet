@@ -287,7 +287,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexWriter.HoldsFullFlushLock)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(indexWriter.HoldsFullFlushLock);
                 if (infoStream.IsEnabled("DW"))
                 {
                     infoStream.Message("DW", "lockAndAbortAll");
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
 
         private void AbortThreadState(ThreadState perThread, ISet<string> newFiles)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(perThread.IsHeldByCurrentThread)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(perThread.IsHeldByCurrentThread);
             if (perThread.IsActive) // we might be closed
             {
                 if (perThread.IsInitialized)
@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(closed)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(closed);
             }
         }
 
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexWriter.HoldsFullFlushLock)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(indexWriter.HoldsFullFlushLock);
                 if (infoStream.IsEnabled("DW"))
                 {
                     infoStream.Message("DW", "unlockAll");
@@ -501,7 +501,7 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert("perThread is not active but we are still open");
                 }
                 EnsureInitialized(perThread);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(perThread.IsInitialized)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(perThread.IsInitialized);
                 DocumentsWriterPerThread dwpt = perThread.dwpt;
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
@@ -547,7 +547,7 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert("perThread is not active but we are still open");
                 }
                 EnsureInitialized(perThread);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(perThread.IsInitialized)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(perThread.IsInitialized);
                 DocumentsWriterPerThread dwpt = perThread.dwpt;
                 int dwptNumDocs = dwpt.NumDocsInRAM;
                 try
@@ -765,7 +765,7 @@ namespace Lucene.Net.Index
             }
             finally
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(flushingDeleteQueue == currentFullFlushDelQueue)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(flushingDeleteQueue == currentFullFlushDelQueue);
             }
             return anythingFlushed;
         }
@@ -811,7 +811,7 @@ namespace Lucene.Net.Index
 
             internal ApplyDeletesEvent()
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(instCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(instCount == 0);
                 instCount++;
             }
 
@@ -828,7 +828,7 @@ namespace Lucene.Net.Index
 
             internal MergePendingEvent()
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(instCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(instCount == 0);
                 instCount++;
             }
 
@@ -845,7 +845,7 @@ namespace Lucene.Net.Index
 
             internal ForcedPurgeEvent()
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(instCount == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(instCount == 0);
                 instCount++;
             }
 

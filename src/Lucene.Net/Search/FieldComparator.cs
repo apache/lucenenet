@@ -1216,7 +1216,7 @@ namespace Lucene.Net.Search
 
             public override int CompareBottom(int doc)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bottomSlot != -1)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bottomSlot != -1);
                 int docOrd = termsIndex.GetOrd(doc);
                 if (docOrd == -1)
                 {
@@ -1250,7 +1250,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ord >= 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord >= 0);
                     if (values[slot] == null)
                     {
                         values[slot] = new BytesRef();
@@ -1319,7 +1319,7 @@ namespace Lucene.Net.Search
                     if (bottomValue == null)
                     {
                         // missingOrd is null for all segments
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ords[bottomSlot] == missingOrd)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ords[bottomSlot] == missingOrd);
                         bottomOrd = missingOrd;
                         bottomSameReader = true;
                         readerGen[bottomSlot] = currentReaderGen;

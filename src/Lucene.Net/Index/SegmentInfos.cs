@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
                         segnOutput.WriteInt64(e.Key);
                         segnOutput.WriteStringSet(e.Value);
                     }
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(si.Dir == directory)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(si.Dir == directory);
 
                     // If this segment is pre-4.x, perform a one-time
                     // "ugprade" to write the .si file for it:
@@ -710,7 +710,7 @@ namespace Lucene.Net.Index
             sis.segments = new List<SegmentCommitInfo>(Count);
             foreach (SegmentCommitInfo info in segments)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(info.Info.Codec != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(info.Info.Codec != null);
                 // dont directly access segments, use add method!!!
                 sis.Add((SegmentCommitInfo)(info.Clone()));
             }
@@ -1153,7 +1153,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < size; i++)
             {
                 var info = Info(i);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(info.Info.Dir == dir)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(info.Info.Dir == dir);
                 if (info.Info.Dir == dir)
                 {
                     files.UnionWith(info.GetFiles());
@@ -1341,7 +1341,7 @@ namespace Lucene.Net.Index
             int newSegIdx = 0;
             for (int segIdx = 0, cnt = segments.Count; segIdx < cnt; segIdx++)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(segIdx >= newSegIdx)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(segIdx >= newSegIdx);
                 SegmentCommitInfo info = segments[segIdx];
                 if (mergedAway.Contains(info))
                 {
@@ -1378,7 +1378,7 @@ namespace Lucene.Net.Index
             var list = new List<SegmentCommitInfo>(Count);
             foreach (var info in segments)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(info.Info.Codec != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(info.Info.Codec != null);
                 list.Add((SegmentCommitInfo)(info.Clone()));
             }
             return list;

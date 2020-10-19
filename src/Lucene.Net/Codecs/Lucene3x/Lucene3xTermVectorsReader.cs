@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     this.docStoreOffset = 0;
                     this.size = numTotalDocs;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(size == 0 || numTotalDocs == size)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(size == 0 || numTotalDocs == size);
                 }
                 else
                 {
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 outerInstance.tvd.Seek(outerInstance.tvx.ReadInt64());
 
                 int fieldCount = outerInstance.tvd.ReadVInt32();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fieldCount >= 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldCount >= 0);
                 if (fieldCount != 0)
                 {
                     fieldNumbers = new int[fieldCount];
@@ -703,7 +703,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(startOffsets != null)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(startOffsets != null);
                         return startOffsets.Length;
                     }
                 }

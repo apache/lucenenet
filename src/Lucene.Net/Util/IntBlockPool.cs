@@ -337,7 +337,7 @@ namespace Lucene.Net.Util
             public virtual void WriteInt32(int value)
             {
                 int[] ints = pool.buffers[offset >> INT32_BLOCK_SHIFT];
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ints != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ints != null);
                 int relativeOffset = offset & INT32_BLOCK_MASK;
                 if (ints[relativeOffset] != 0)
                 {
@@ -427,7 +427,7 @@ namespace Lucene.Net.Util
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(upto + bufferOffset <= end)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(upto + bufferOffset <= end);
                     return upto + bufferOffset == end;
                 }
             }
@@ -466,7 +466,7 @@ namespace Lucene.Net.Util
                 if (nextIndex + newSize >= end)
                 {
                     // We are advancing to the final slice
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(end - nextIndex > 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(end - nextIndex > 0);
                     limit = end - bufferOffset;
                 }
                 else

@@ -604,7 +604,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(false)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(false);
                     return 0;
                 }
             }

@@ -143,7 +143,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override void AddPosition(int position, int startOffset, int endOffset, BytesRef payload)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_positions || _offsets)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(_positions || _offsets);
 
             if (_positions)
             {
@@ -156,7 +156,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     Write(PAYLOAD);
                     if (payload != null)
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(payload.Length > 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(payload.Length > 0);
                         Write(payload);
                     }
                     NewLine();

@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(info.HasDeletions)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(info.HasDeletions);
             var scratch = new BytesRef();
             var scratchUtf16 = new CharsRef();
 

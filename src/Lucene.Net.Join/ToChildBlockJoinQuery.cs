@@ -296,7 +296,7 @@ namespace Lucene.Net.Join
                     _parentDoc = _parentScorer.Advance(childTarget);
                     ValidateParentDoc();
                     //System.out.println("  advance to parentDoc=" + parentDoc);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(_parentDoc > childTarget)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(_parentDoc > childTarget);
                     if (_parentDoc == NO_MORE_DOCS)
                     {
                         //System.out.println("  END");
@@ -312,7 +312,7 @@ namespace Lucene.Net.Join
                     childTarget = Math.Max(childTarget, firstChild);
                 }
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(childTarget < _parentDoc)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(childTarget < _parentDoc);
 
                 // Advance within children of current parent:
                 _childDoc = childTarget;

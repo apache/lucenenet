@@ -66,14 +66,14 @@ namespace Lucene.Net.Util.Packed
 
         public override void Add(long l)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(l >= 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(l >= 0);
             base.Add(l);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected override void Flush()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(m_off > 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(m_off > 0);
 
             // TODO: perform a true linear regression?
             long min = m_values[0];

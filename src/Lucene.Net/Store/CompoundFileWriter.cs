@@ -153,7 +153,7 @@ namespace Lucene.Net.Store
                 closed = true;
                 // open the compound stream
                 GetOutput();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(dataOut != null)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(dataOut != null);
                 CodecUtil.WriteFooter(dataOut);
             }
             catch (IOException e)
@@ -278,7 +278,7 @@ namespace Lucene.Net.Store
                     entries.Remove(name);
                     if (outputLocked) // release the output lock if not successful
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(outputTaken)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(outputTaken);
                         ReleaseOutputLock();
                     }
                 }
@@ -308,7 +308,7 @@ namespace Lucene.Net.Store
                 finally
                 {
                     bool compareAndSet = outputTaken.CompareAndSet(true, false);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(compareAndSet)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(compareAndSet);
                 }
             }
         }
@@ -390,7 +390,7 @@ namespace Lucene.Net.Store
             [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
             public override void Seek(long pos)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!closed);
                 @delegate.Seek(offset + pos);
             }
 
@@ -398,21 +398,21 @@ namespace Lucene.Net.Store
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!closed);
                     return @delegate.Length - offset;
                 }
             }
 
             public override void WriteByte(byte b)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!closed);
                 writtenBytes++;
                 @delegate.WriteByte(b);
             }
 
             public override void WriteBytes(byte[] b, int offset, int length)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!closed)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!closed);
                 writtenBytes += length;
                 @delegate.WriteBytes(b, offset, length);
             }

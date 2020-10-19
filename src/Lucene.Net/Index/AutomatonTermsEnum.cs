@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
         {
             this.finite = compiled.Finite;
             this.runAutomaton = compiled.RunAutomaton;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(this.runAutomaton != null)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(this.runAutomaton != null);
             this.commonSuffixRef = compiled.CommonSuffixRef;
             this.allTransitions = compiled.SortedTransitions;
 
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
             //System.out.println("ATE.nextSeekTerm term=" + term);
             if (term == null)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(seekBytesRef.Length == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(seekBytesRef.Length == 0);
                 // return the empty term, as its valid
                 if (runAutomaton.IsAccept(runAutomaton.InitialState))
                 {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
         /// </summary>
         private void SetLinear(int position)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(linear == false)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(linear == false);
 
             int state = runAutomaton.InitialState;
             int maxInterval = 0xff;
