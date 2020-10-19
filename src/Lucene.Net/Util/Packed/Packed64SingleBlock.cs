@@ -73,7 +73,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                 Debugging.Assert(index >= 0 && index < m_valueCount);
             }
             len = Math.Min(len, m_valueCount - index);
@@ -130,7 +130,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                 Debugging.Assert(index >= 0 && index < m_valueCount);
             }
             len = Math.Min(len, m_valueCount - index);

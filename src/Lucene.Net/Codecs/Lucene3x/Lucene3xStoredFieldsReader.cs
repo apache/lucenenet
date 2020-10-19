@@ -193,7 +193,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     // Verify the file is long enough to hold all of our
                     // docs
-                    if (Debugging.AssertsEnabled) Debugging.Assert(((int)(indexSize / 8)) >= size + this.docStoreOffset, () => "indexSize=" + indexSize + " size=" + size + " docStoreOffset=" + docStoreOffset);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(((int)(indexSize / 8)) >= size + this.docStoreOffset,"indexSize={0} size={1}", indexSize, size + " docStoreOffset=" + docStoreOffset);
                 }
                 else
                 {
@@ -273,7 +273,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = fieldsStream.ReadByte() & 0xFF;
-                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= (FIELD_IS_NUMERIC_MASK | FIELD_IS_BINARY), () => "bits=" + bits.ToString("x"));
+                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= (FIELD_IS_NUMERIC_MASK | FIELD_IS_BINARY),"bits={0}", bits.ToString("x"));
 
                 switch (visitor.NeedsField(fieldInfo))
                 {

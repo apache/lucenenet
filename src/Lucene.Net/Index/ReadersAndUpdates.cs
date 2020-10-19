@@ -154,7 +154,7 @@ namespace Lucene.Net.Index
                     count = Info.Info.DocCount;
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(Info.Info.DocCount - Info.DelCount - pendingDeleteCount == count, () => "info.docCount=" + Info.Info.DocCount + " info.DelCount=" + Info.DelCount + " pendingDeleteCount=" + pendingDeleteCount + " count=" + count);
+                if (Debugging.AssertsEnabled) Debugging.Assert(Info.Info.DocCount - Info.DelCount - pendingDeleteCount == count,"info.docCount={0} info.DelCount={1}", Info.Info.DocCount, Info.DelCount + " pendingDeleteCount=" + pendingDeleteCount + " count=" + count);
                 return true;
             }
         }
@@ -234,7 +234,7 @@ namespace Lucene.Net.Index
                 {
                     Debugging.Assert(liveDocs != null);
                     Debugging.Assert(Monitor.IsEntered(writer));
-                    Debugging.Assert(docID >= 0 && docID < liveDocs.Length, () => "out of bounds: docid=" + docID + " liveDocsLength=" + liveDocs.Length + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
+                    Debugging.Assert(docID >= 0 && docID < liveDocs.Length,"out of bounds: docid={0} liveDocsLength={1}", docID, liveDocs.Length + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
                     Debugging.Assert(!liveDocsShared);
                 }
                 bool didDelete = liveDocs.Get(docID);

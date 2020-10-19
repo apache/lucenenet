@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
             foreach (ScoreTerm st in scoreTerms)
             {
                 Term term = new Term(query.m_field, st.Bytes);
-                if (Debugging.AssertsEnabled) Debugging.Assert(reader.DocFreq(term) == st.TermState.DocFreq, () => "reader DF is " + reader.DocFreq(term) + " vs " + st.TermState.DocFreq + " term=" + term);
+                if (Debugging.AssertsEnabled) Debugging.Assert(reader.DocFreq(term) == st.TermState.DocFreq,"reader DF is {0} vs {1}", reader.DocFreq(term), st.TermState.DocFreq + " term=" + term);
                 AddClause(q, term, st.TermState.DocFreq, query.Boost * st.Boost, st.TermState); // add to query
             }
             return q;
@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum.Comparer.Compare(lastTerm, t) < 0, () => "lastTerm=" + lastTerm + " t=" + t);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(termsEnum.Comparer.Compare(lastTerm, t) < 0, "lastTerm={0} t={1}", lastTerm, t);
                     lastTerm.CopyBytes(t);
                 }
                 return true;

@@ -86,7 +86,7 @@ namespace Lucene.Net.Util.Fst
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(prefix == NO_OUTPUT, () => "got " + prefix);
+                Debugging.Assert(prefix == NO_OUTPUT,"got {0}", prefix);
                 Debugging.Assert(output == NO_OUTPUT);
             }
             return NO_OUTPUT;

@@ -446,7 +446,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             // TODO: wasteful we are counting this (counting # docs
             // for this term) in two places?
-            if (Debugging.AssertsEnabled) Debugging.Assert(state2.DocFreq == docCount, () => state2.DocFreq + " vs " + docCount);
+            if (Debugging.AssertsEnabled) Debugging.Assert(state2.DocFreq == docCount, "{0} vs {1}", state2.DocFreq, docCount);
 
             // if (DEBUG) {
             //   System.out.println("FPW.finishTerm docFreq=" + state2.docFreq);

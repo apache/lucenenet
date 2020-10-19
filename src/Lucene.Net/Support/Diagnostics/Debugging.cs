@@ -96,6 +96,54 @@ namespace Lucene.Net.Diagnostics
         }
 
         /// <summary>
+        /// Checks for a condition; if the <paramref name="condition"/> is <c>false</c>, throws an <see cref="AssertionException"/> with the message formated 
+        /// from the specified <paramref name="messageToFormat"/>.
+        /// </summary>
+        /// <param name="condition">The conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
+        /// <param name="messageToFormat">A string format (i.e. with {0} that will be filled with the parameters</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Assert<T0, T1, T2, T3, T4>(bool condition, string messageToFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4)
+        {
+            if (AssertsEnabled && !condition) throw new AssertionException(string.Format(messageToFormat, p0, p1, p2, p3, p4));
+        }
+
+        /// <summary>
+        /// Checks for a condition; if the <paramref name="condition"/> is <c>false</c>, throws an <see cref="AssertionException"/> with the message formated 
+        /// from the specified <paramref name="messageToFormat"/>.
+        /// </summary>
+        /// <param name="condition">The conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
+        /// <param name="messageToFormat">A string format (i.e. with {0} that will be filled with the parameters</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Assert<T0, T1, T2, T3, T4, T5>(bool condition, string messageToFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
+        {
+            if (AssertsEnabled && !condition) throw new AssertionException(string.Format(messageToFormat, p0, p1, p2, p3, p4, p5));
+        }
+
+        /// <summary>
+        /// Checks for a condition; if the <paramref name="condition"/> is <c>false</c>, throws an <see cref="AssertionException"/> with the message formated 
+        /// from the specified <paramref name="messageToFormat"/>.
+        /// </summary>
+        /// <param name="condition">The conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
+        /// <param name="messageToFormat">A string format (i.e. with {0} that will be filled with the parameters</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Assert<T0, T1, T2, T3, T4, T5, T6>(bool condition, string messageToFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
+        {
+            if (AssertsEnabled && !condition) throw new AssertionException(string.Format(messageToFormat, p0, p1, p2, p3, p4, p5, p6));
+        }
+
+        /// <summary>
+        /// Checks for a condition; if the <paramref name="condition"/> is <c>false</c>, throws an <see cref="AssertionException"/> with the message formated 
+        /// from the specified <paramref name="messageToFormat"/>.
+        /// </summary>
+        /// <param name="condition">The conditional expression to evaluate. If the condition is <c>true</c>, no exception is thrown.</param>
+        /// <param name="messageToFormat">A string format (i.e. with {0} that will be filled with the parameters</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Assert<T0, T1, T2, T3, T4, T5, T6, T7>(bool condition, string messageToFormat, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
+        {
+            if (AssertsEnabled && !condition) throw new AssertionException(string.Format(messageToFormat, p0, p1, p2, p3, p4, p5, p6, p7));
+        }
+
+        /// <summary>
         /// Checks for a condition; if the <paramref name="condition"/> is <c>false</c>, throws an <see cref="AssertionException"/> with the given message.
         /// <para/>
         /// IMPORTANT: If you need to use string concatenation when building the message, use <see cref="Assert(bool, Func{string})"/> for better performance.

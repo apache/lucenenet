@@ -131,7 +131,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State NewState(int label)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(Array.BinarySearch(labels, label) < 0, () => "State already has transition labeled: " + label);
+                if (Debugging.AssertsEnabled) Debugging.Assert(Array.BinarySearch(labels, label) < 0, "State already has transition labeled: {0}", label);
 
                 labels = Arrays.CopyOf(labels, labels.Length + 1);
                 states = Arrays.CopyOf(states, states.Length + 1);
@@ -230,7 +230,7 @@ namespace Lucene.Net.Util.Automaton
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(stateRegistry != null, "Automaton already built.");
-                Debugging.Assert(previous == null || comparer.Compare(previous, current) <= 0, () => "Input must be in sorted UTF-8 order: " + previous + " >= " + current);
+                Debugging.Assert(previous == null || comparer.Compare(previous, current) <= 0, "Input must be in sorted UTF-8 order: {0} >= {1}", previous, current);
                 Debugging.Assert(SetPrevious(current));
             }
 

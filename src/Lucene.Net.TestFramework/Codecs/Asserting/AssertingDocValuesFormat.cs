@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.Asserting
                             if (Debugging.AssertsEnabled) Debugging.Assert(o != null);
                             long ord = o.Value;
                             if (Debugging.AssertsEnabled) Debugging.Assert(ord >= 0 && ord < valueCount);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(ord > lastOrd, () => "ord=" + ord + ",lastOrd=" + lastOrd);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(ord > lastOrd,"ord={0},lastOrd={1}", ord, lastOrd);
                             seenOrds.Set(ord);
                             lastOrd = ord;
                         }
