@@ -372,8 +372,8 @@ namespace Lucene.Net.Util.Fst
 
             if (Debugging.AssertsEnabled)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastInput.Length == 0 || input.CompareTo(lastInput) >= 0)) Debugging.ThrowAssert("inputs are added out of order lastInput={0} vs input={1}", lastInput, input);
-                if (Debugging.AssertsEnabled) Debugging.Assert(ValidOutput(output));
+                if(Debugging.ShouldAssert(lastInput.Length == 0 || input.CompareTo(lastInput) >= 0)) Debugging.ThrowAssert("inputs are added out of order lastInput={0} vs input={1}", lastInput, input);
+                Debugging.Assert(ValidOutput(output));
             }
 
             //System.out.println("\nadd: " + input);
@@ -660,9 +660,12 @@ namespace Lucene.Net.Util.Fst
 
             public S GetLastOutput(int labelToMatch)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(NumArcs > 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(NumArcs > 0);
+                    Debugging.Assert(Arcs[NumArcs - 1].Label == labelToMatch);
+                }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(Arcs[NumArcs - 1].Label == labelToMatch);
                 return Arcs[NumArcs - 1].Output;
             }
 

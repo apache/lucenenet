@@ -1248,9 +1248,11 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         return null;
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(lazyProxPointer == -1);
-
-                    if (Debugging.AssertsEnabled) Debugging.Assert(posPendingCount < freq);
+                    if (Debugging.AssertsEnabled)
+                    {
+                        Debugging.Assert(lazyProxPointer == -1);
+                        Debugging.Assert(posPendingCount < freq);
+                    }
 
                     if (payloadPending)
                     {

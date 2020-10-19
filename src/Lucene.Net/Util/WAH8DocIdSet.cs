@@ -300,9 +300,11 @@ namespace Lucene.Net.Util
             internal virtual void WriteHeader(bool reverse, int cleanLength, int dirtyLength)
             {
                 int cleanLengthMinus2 = cleanLength - 2;
-                if (Debugging.AssertsEnabled) Debugging.Assert(cleanLengthMinus2 >= 0);
-
-                if (Debugging.AssertsEnabled) Debugging.Assert(dirtyLength >= 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(cleanLengthMinus2 >= 0);
+                    Debugging.Assert(dirtyLength >= 0);
+                }
                 int token = ((cleanLengthMinus2 & 0x03) << 4) | (dirtyLength & 0x07);
                 if (reverse)
                 {
@@ -331,8 +333,11 @@ namespace Lucene.Net.Util
             {
                 for (int i = 1; i < dirtyWords.Length; ++i)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(dirtyWords.Bytes[i - 1] != 0 || dirtyWords.Bytes[i] != 0);
-                    if (Debugging.AssertsEnabled) Debugging.Assert((byte)dirtyWords.Bytes[i - 1] != 0xFF || (byte)dirtyWords.Bytes[i] != 0xFF);
+                    if (Debugging.AssertsEnabled)
+                    {
+                        Debugging.Assert(dirtyWords.Bytes[i - 1] != 0 || dirtyWords.Bytes[i] != 0);
+                        Debugging.Assert((byte)dirtyWords.Bytes[i - 1] != 0xFF || (byte)dirtyWords.Bytes[i] != 0xFF);
+                    }
                 }
                 return true;
             }
@@ -355,9 +360,11 @@ namespace Lucene.Net.Util
 
             internal virtual void AddWord(int wordNum, byte word)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(wordNum > lastWordNum);
-
-                if (Debugging.AssertsEnabled) Debugging.Assert(word != 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(wordNum > lastWordNum);
+                    Debugging.Assert(word != 0);
+                }
 
                 if (!reverse)
                 {
@@ -472,9 +479,11 @@ namespace Lucene.Net.Util
                     positions.Add(0L);
                     wordNums.Add(0L);
                     Iterator it = new Iterator(data, cardinality, int.MaxValue, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(it.@in.Position == 0);
-
-                    if (Debugging.AssertsEnabled) Debugging.Assert(it.wordNum == -1);
+                    if (Debugging.AssertsEnabled)
+                    {
+                        Debugging.Assert(it.@in.Position == 0);
+                        Debugging.Assert(it.wordNum == -1);
+                    }
                     for (int i = 1; i < valueCount; ++i)
                     {
                         // skip indexInterval sequences
@@ -688,9 +697,12 @@ namespace Lucene.Net.Util
 
             internal virtual void SkipDirtyBytes(int count)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(count >= 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(count >= 0);
+                    Debugging.Assert(count <= allOnesLength + dirtyLength);
+                }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(count <= allOnesLength + dirtyLength);
                 wordNum += count;
                 if (count <= allOnesLength)
                 {

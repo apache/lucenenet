@@ -533,9 +533,9 @@ namespace Lucene.Net.Util.Packed
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < Count);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
+                    if (Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
+                    Debugging.Assert(index >= 0 && index < Count);
+                    Debugging.Assert(off + len <= arr.Length);
                 }
 
                 int gets = Math.Min(Count - index, len);
@@ -674,8 +674,8 @@ namespace Lucene.Net.Util.Packed
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < Count);
+                    if (Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
+                    Debugging.Assert(index >= 0 && index < Count);
                 }
                 len = Math.Min(len, Count - index);
                 if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
@@ -827,9 +827,11 @@ namespace Lucene.Net.Util.Packed
 
             protected Writer(DataOutput @out, int valueCount, int bitsPerValue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue <= 64);
-
-                if (Debugging.AssertsEnabled) Debugging.Assert(valueCount >= 0 || valueCount == -1);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(bitsPerValue <= 64);
+                    Debugging.Assert(valueCount >= 0 || valueCount == -1);
+                }
                 this.m_out = @out;
                 this.m_valueCount = valueCount;
                 this.m_bitsPerValue = bitsPerValue;
@@ -1360,9 +1362,11 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, int mem)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(srcPos + len <= src.Count);
-
-            if (Debugging.AssertsEnabled) Debugging.Assert(destPos + len <= dest.Count);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(srcPos + len <= src.Count);
+                Debugging.Assert(destPos + len <= dest.Count);
+            }
             int capacity = (int)((uint)mem >> 3);
             if (capacity == 0)
             {

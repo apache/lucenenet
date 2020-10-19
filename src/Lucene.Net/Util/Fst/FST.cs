@@ -420,37 +420,40 @@ namespace Lucene.Net.Util.Fst
 
         private bool AssertRootArcs()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(cachedRootArcs != null);
-            if (Debugging.AssertsEnabled) Debugging.Assert(assertingCachedRootArcs != null);
+            bool assertsEnabled = Debugging.AssertsEnabled;
+            if (assertsEnabled)
+            {
+                Debugging.Assert(cachedRootArcs != null);
+                Debugging.Assert(assertingCachedRootArcs != null);
+            }
             for (int i = 0; i < cachedRootArcs.Length; i++)
             {
                 FST.Arc<T> root = cachedRootArcs[i];
                 FST.Arc<T> asserting = assertingCachedRootArcs[i];
                 if (root != null)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.ArcIdx == asserting.ArcIdx);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.BytesPerArc == asserting.BytesPerArc);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.Flags == asserting.Flags);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.Label == asserting.Label);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.NextArc == asserting.NextArc);
+                    if (assertsEnabled)
+                    {
+                        Debugging.Assert(root.ArcIdx == asserting.ArcIdx);
+                        Debugging.Assert(root.BytesPerArc == asserting.BytesPerArc);
+                        Debugging.Assert(root.Flags == asserting.Flags);
+                        Debugging.Assert(root.Label == asserting.Label);
+                        Debugging.Assert(root.NextArc == asserting.NextArc);
 
-                    // LUCENENET NOTE: In .NET, IEnumerable will not equal another identical IEnumerable
-                    // because it checks for reference equality, not that the list contents
-                    // are the same. StructuralEqualityComparer.Default.Equals() will make that check.
-                    if (Debugging.AssertsEnabled) Debugging.Assert(typeof(T).IsValueType 
-                        ? JCG.EqualityComparer<T>.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput)
-                        : StructuralEqualityComparer.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput));
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.Node == asserting.Node);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.NumArcs == asserting.NumArcs);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(typeof(T).IsValueType
-                        ? JCG.EqualityComparer<T>.Default.Equals(root.Output, asserting.Output)
-                        : StructuralEqualityComparer.Default.Equals(root.Output, asserting.Output));
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.PosArcsStart == asserting.PosArcsStart);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.Target == asserting.Target);
+                        // LUCENENET NOTE: In .NET, IEnumerable will not equal another identical IEnumerable
+                        // because it checks for reference equality, not that the list contents
+                        // are the same. StructuralEqualityComparer.Default.Equals() will make that check.
+                        Debugging.Assert(typeof(T).IsValueType ? JCG.EqualityComparer<T>.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput) : StructuralEqualityComparer.Default.Equals(root.NextFinalOutput, asserting.NextFinalOutput));
+                        Debugging.Assert(root.Node == asserting.Node);
+                        Debugging.Assert(root.NumArcs == asserting.NumArcs);
+                        Debugging.Assert(typeof(T).IsValueType ? JCG.EqualityComparer<T>.Default.Equals(root.Output, asserting.Output) : StructuralEqualityComparer.Default.Equals(root.Output, asserting.Output));
+                        Debugging.Assert(root.PosArcsStart == asserting.PosArcsStart);
+                        Debugging.Assert(root.Target == asserting.Target);
+                    }
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root == null && asserting == null);
+                    if (assertsEnabled) Debugging.Assert(root == null && asserting == null);
                 }
             }
             return true;

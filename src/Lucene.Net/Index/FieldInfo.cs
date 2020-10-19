@@ -94,21 +94,27 @@ namespace Lucene.Net.Index
         {
             if (!indexed)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!storeTermVector);
-                if (Debugging.AssertsEnabled) Debugging.Assert(!storePayloads);
-                if (Debugging.AssertsEnabled) Debugging.Assert(!omitNorms);
-                if (Debugging.AssertsEnabled) Debugging.Assert(normType == DocValuesType.NONE);
-                if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions == IndexOptions.NONE);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(!storeTermVector);
+                    Debugging.Assert(!storePayloads);
+                    Debugging.Assert(!omitNorms);
+                    Debugging.Assert(normType == DocValuesType.NONE);
+                    Debugging.Assert(indexOptions == IndexOptions.NONE);
+                }
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions != IndexOptions.NONE);
-                if (omitNorms)
+                if (Debugging.AssertsEnabled)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(normType == DocValuesType.NONE);
+                    Debugging.Assert(indexOptions != IndexOptions.NONE);
+                    if (omitNorms)
+                    {
+                        Debugging.Assert(normType == DocValuesType.NONE);
+                    }
+                    // Cannot store payloads unless positions are indexed:
+                    Debugging.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads);
                 }
-                // Cannot store payloads unless positions are indexed:
-                if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads);
             }
 
             return true;

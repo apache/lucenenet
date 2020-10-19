@@ -121,9 +121,12 @@ namespace Lucene.Net.Util
         ///         bytesID </returns>
         public BytesRef Get(int bytesID, BytesRef @ref)
         {
-            if(Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
+            if (Debugging.AssertsEnabled)
+            {
+                if (Debugging.ShouldAssert(bytesStart != null)) Debugging.ThrowAssert("bytesStart is null - not initialized");
+                if (Debugging.ShouldAssert(bytesID < bytesStart.Length)) Debugging.ThrowAssert("bytesID exceeds byteStart len: {0}", bytesStart.Length);
+            }
 
-            if(Debugging.ShouldAssert(bytesID < bytesStart.Length)) Debugging.ThrowAssert("bytesID exceeds byteStart len: {0}", bytesStart.Length);
             pool.SetBytesRef(@ref, bytesStart[bytesID]);
             return @ref;
         }

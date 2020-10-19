@@ -94,9 +94,11 @@ namespace Lucene.Net.Store
 
         private IOContext(UsageContext context, MergeInfo mergeInfo)
         {
-            if(Debugging.ShouldAssert(context != UsageContext.MERGE || mergeInfo != null)) Debugging.ThrowAssert("MergeInfo must not be null if context is MERGE");
-
-            if(Debugging.ShouldAssert(context != UsageContext.FLUSH)) Debugging.ThrowAssert("Use IOContext(FlushInfo) to create a FLUSH IOContext");
+            if (Debugging.AssertsEnabled)
+            {
+                if (Debugging.ShouldAssert(context != UsageContext.MERGE || mergeInfo != null)) Debugging.ThrowAssert("MergeInfo must not be null if context is MERGE");
+                if (Debugging.ShouldAssert(context != UsageContext.FLUSH)) Debugging.ThrowAssert("Use IOContext(FlushInfo) to create a FLUSH IOContext");
+            }
             this.Context = context;
             this.ReadOnce = false;
             this.MergeInfo = mergeInfo;

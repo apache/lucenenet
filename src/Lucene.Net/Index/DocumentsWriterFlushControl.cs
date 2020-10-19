@@ -406,9 +406,12 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled)
             {
                 // LUCENENET specific - Since we need to mimic the unfair behavior of ReentrantLock, we need to ensure that all threads that enter here hold the lock.
-                if (Debugging.AssertsEnabled) Debugging.Assert(perThread.IsHeldByCurrentThread);
-                if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(this));
-                if (Debugging.AssertsEnabled) Debugging.Assert(perThread.flushPending);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(perThread.IsHeldByCurrentThread);
+                    Debugging.Assert(Monitor.IsEntered(this));
+                    Debugging.Assert(perThread.flushPending);
+                }
             }
             try
             {
@@ -617,9 +620,11 @@ namespace Lucene.Net.Index
             DocumentsWriterDeleteQueue flushingQueue;
             lock (this)
             {
-                if(Debugging.ShouldAssert(!fullFlush)) Debugging.ThrowAssert("called DWFC#markForFullFlush() while full flush is still running");
-
-                if(Debugging.ShouldAssert(fullFlushBuffer.Count == 0)) Debugging.ThrowAssert("full flush buffer should be empty: {0}", fullFlushBuffer);
+                if (Debugging.AssertsEnabled)
+                {
+                    if(Debugging.ShouldAssert(!fullFlush)) Debugging.ThrowAssert("called DWFC#markForFullFlush() while full flush is still running");
+                    if(Debugging.ShouldAssert(fullFlushBuffer.Count == 0)) Debugging.ThrowAssert("full flush buffer should be empty: {0}", fullFlushBuffer);
+                }
                 fullFlush = true;
                 flushingQueue = documentsWriter.deleteQueue;
                 // Set a new delete queue - all subsequent DWPT will use this queue until
@@ -718,9 +723,11 @@ namespace Lucene.Net.Index
                         SetFlushPending(perThread);
                     }
                     DocumentsWriterPerThread flushingDWPT = InternalTryCheckOutForFlush(perThread);
-                    if(Debugging.ShouldAssert(flushingDWPT != null)) Debugging.ThrowAssert("DWPT must never be null here since we hold the lock and it holds documents");
-
-                    if(Debugging.ShouldAssert(dwpt == flushingDWPT)) Debugging.ThrowAssert("flushControl returned different DWPT");
+                    if (Debugging.AssertsEnabled)
+                    {
+                        if (Debugging.ShouldAssert(flushingDWPT != null)) Debugging.ThrowAssert("DWPT must never be null here since we hold the lock and it holds documents");
+                        if (Debugging.ShouldAssert(dwpt == flushingDWPT)) Debugging.ThrowAssert("flushControl returned different DWPT");
+                    }
                     fullFlushBuffer.Add(flushingDWPT);
                 }
             }

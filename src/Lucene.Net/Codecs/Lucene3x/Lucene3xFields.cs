@@ -304,11 +304,14 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 int savLength = term.Length;
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(term.Offset == 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(term.Offset == 0);
 
-                // The 3 bytes starting at downTo make up 1
-                // unicode character:
-                if (Debugging.AssertsEnabled) Debugging.Assert(IsHighBMPChar(term.Bytes, pos));
+                    // The 3 bytes starting at downTo make up 1
+                    // unicode character:
+                    Debugging.Assert(IsHighBMPChar(term.Bytes, pos));
+                }
 
                 // NOTE: we cannot make this assert, because
                 // AutomatonQuery legitimately sends us malformed UTF8
@@ -465,10 +468,11 @@ namespace Lucene.Net.Codecs.Lucene3x
                     Console.WriteLine("  try pop");
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(newSuffixStart <= prevTerm.Length);
-
-
-                if (Debugging.AssertsEnabled) Debugging.Assert(newSuffixStart < scratchTerm.Length || newSuffixStart == 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(newSuffixStart <= prevTerm.Length);
+                    Debugging.Assert(newSuffixStart < scratchTerm.Length || newSuffixStart == 0);
+                }
 
                 if (prevTerm.Length > newSuffixStart && IsNonBMPChar(prevTerm.Bytes, newSuffixStart) && IsHighBMPChar(scratchTerm.Bytes, newSuffixStart))
                 {
@@ -598,9 +602,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 // this code assumes TermInfosReader/SegmentTermEnum
                 // always use BytesRef.offset == 0
-                if (Debugging.AssertsEnabled) Debugging.Assert(prevTerm.Offset == 0);
-
-                if (Debugging.AssertsEnabled) Debugging.Assert(scratchTerm.Offset == 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(prevTerm.Offset == 0);
+                    Debugging.Assert(scratchTerm.Offset == 0);
+                }
 
                 // Need to loop here because we may need to do multiple
                 // pops, and possibly a continue in the end, ie:

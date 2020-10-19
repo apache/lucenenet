@@ -230,10 +230,13 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(liveDocs != null);
-                if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
-                if(Debugging.ShouldAssert(docID >= 0 && docID < liveDocs.Length)) Debugging.ThrowAssert("out of bounds: docid={0} liveDocsLength={1}", docID, liveDocs.Length + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
-                if (Debugging.AssertsEnabled) Debugging.Assert(!liveDocsShared);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(liveDocs != null);
+                    Debugging.Assert(Monitor.IsEntered(writer));
+                    if (Debugging.ShouldAssert(docID >= 0 && docID < liveDocs.Length)) Debugging.ThrowAssert("out of bounds: docid={0} liveDocsLength={1}", docID, liveDocs.Length + " seg=" + Info.Info.Name + " docCount=" + Info.Info.DocCount);
+                    Debugging.Assert(!liveDocsShared);
+                }
                 
                 bool didDelete = liveDocs.Get(docID);
                 if (didDelete)
@@ -320,8 +323,11 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
-                if (Debugging.AssertsEnabled) Debugging.Assert(Info.Info.DocCount > 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(Monitor.IsEntered(writer));
+                    Debugging.Assert(Info.Info.DocCount > 0);
+                }
 
                 //System.out.println("initWritableLivedocs seg=" + info + " liveDocs=" + liveDocs + " shared=" + shared);
                 if (liveDocsShared)
@@ -461,10 +467,13 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
-                //System.out.println("rld.writeFieldUpdates: seg=" + info + " numericFieldUpdates=" + numericFieldUpdates);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(Monitor.IsEntered(writer));
+                    //System.out.println("rld.writeFieldUpdates: seg=" + info + " numericFieldUpdates=" + numericFieldUpdates);
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(dvUpdates.Any());
+                    Debugging.Assert(dvUpdates.Any());
+                }
 
                 // Do this so we can delete any created files on
                 // exception; this saves all codecs from having to do

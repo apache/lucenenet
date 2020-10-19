@@ -705,9 +705,11 @@ namespace Lucene.Net.Index
                 numTerms2 += packet.numTermDeletes;
                 bytesUsed2 += packet.bytesUsed;
             }
-            if(Debugging.ShouldAssert(numTerms2 == numTerms)) Debugging.ThrowAssert("numTerms2={0} vs {1}", numTerms2, numTerms);
-
-            if(Debugging.ShouldAssert(bytesUsed2 == bytesUsed)) Debugging.ThrowAssert("bytesUsed2={0} vs {1}", bytesUsed2, bytesUsed);
+            if (Debugging.AssertsEnabled)
+            {
+                if (Debugging.ShouldAssert(numTerms2 == numTerms)) Debugging.ThrowAssert("numTerms2={0} vs {1}", numTerms2, numTerms);
+                if (Debugging.ShouldAssert(bytesUsed2 == bytesUsed)) Debugging.ThrowAssert("bytesUsed2={0} vs {1}", bytesUsed2, bytesUsed);
+            }
             return true;
         }
     }

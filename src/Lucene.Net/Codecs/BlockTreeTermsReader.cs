@@ -489,11 +489,12 @@ namespace Lucene.Net.Codecs
 
             internal virtual void Finish()
             {
-                if(Debugging.ShouldAssert(startBlockCount == endBlockCount)) Debugging.ThrowAssert("startBlockCount={0} endBlockCount={1}", startBlockCount, endBlockCount);
-
-                if(Debugging.ShouldAssert(TotalBlockCount == FloorSubBlockCount + NonFloorBlockCount)) Debugging.ThrowAssert("floorSubBlockCount={0} nonFloorBlockCount={1} totalBlockCount={2}", FloorSubBlockCount, NonFloorBlockCount, TotalBlockCount);
-
-                if(Debugging.ShouldAssert(TotalBlockCount == MixedBlockCount + TermsOnlyBlockCount + SubBlocksOnlyBlockCount)) Debugging.ThrowAssert("totalBlockCount={0} mixedBlockCount={1} subBlocksOnlyBlockCount={2} termsOnlyBlockCount={3}", TotalBlockCount, MixedBlockCount, SubBlocksOnlyBlockCount, TermsOnlyBlockCount);
+                if (Debugging.AssertsEnabled)
+                {
+                    if (Debugging.ShouldAssert(startBlockCount == endBlockCount)) Debugging.ThrowAssert("startBlockCount={0} endBlockCount={1}", startBlockCount, endBlockCount);
+                    if (Debugging.ShouldAssert(TotalBlockCount == FloorSubBlockCount + NonFloorBlockCount)) Debugging.ThrowAssert("floorSubBlockCount={0} nonFloorBlockCount={1} totalBlockCount={2}", FloorSubBlockCount, NonFloorBlockCount, TotalBlockCount);
+                    if (Debugging.ShouldAssert(TotalBlockCount == MixedBlockCount + TermsOnlyBlockCount + SubBlocksOnlyBlockCount)) Debugging.ThrowAssert("totalBlockCount={0} mixedBlockCount={1} subBlocksOnlyBlockCount={2} termsOnlyBlockCount={3}", TotalBlockCount, MixedBlockCount, SubBlocksOnlyBlockCount, TermsOnlyBlockCount);
+                }
             }
 
             public override string ToString()
@@ -1939,9 +1940,11 @@ namespace Lucene.Net.Codecs
                         arc = outerInstance.index.GetFirstArc(arcs[0]);
 
                         // Empty string prefix must have an output (block) in the index!
-                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
-
-                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.Output != null);
+                        if (Debugging.AssertsEnabled)
+                        {
+                            Debugging.Assert(arc.IsFinal);
+                            Debugging.Assert(arc.Output != null);
+                        }
 
                         // if (DEBUG) {
                         //   System.out.println("    no seek state; push root frame");
@@ -2225,9 +2228,11 @@ namespace Lucene.Net.Codecs
                         arc = outerInstance.index.GetFirstArc(arcs[0]);
 
                         // Empty string prefix must have an output (block) in the index!
-                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
-
-                        if (Debugging.AssertsEnabled) Debugging.Assert(arc.Output != null);
+                        if (Debugging.AssertsEnabled)
+                        {
+                            Debugging.Assert(arc.IsFinal);
+                            Debugging.Assert(arc.Output != null);
+                        }
 
                         //if (DEBUG) {
                         //System.out.println("    no seek state; push root frame");
@@ -3105,7 +3110,8 @@ namespace Lucene.Net.Codecs
                     /// </summary>
                     public void ScanToSubBlock(long subFP)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!isLeafBlock);
+                        bool assertsEnabled = Debugging.AssertsEnabled;
+                        if (assertsEnabled) Debugging.Assert(!isLeafBlock);
                         //if (DEBUG) System.out.println("  scanToSubBlock fp=" + fp + " subFP=" + subFP + " entCount=" + entCount + " lastSubFP=" + lastSubFP);
                         //assert nextEnt == 0;
                         if (lastSubFP == subFP)
@@ -3118,7 +3124,7 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) System.out.println("    targetSubCode=" + targetSubCode);
                         while (true)
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt < entCount);
+                            if (assertsEnabled) Debugging.Assert(nextEnt < entCount);
                             nextEnt++;
                             int code = suffixesReader.ReadVInt32();
                             suffixesReader.SkipBytes(isLeafBlock ? code : (int)((uint)code >> 1));

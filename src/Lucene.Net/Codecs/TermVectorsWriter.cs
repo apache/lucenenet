@@ -255,12 +255,16 @@ namespace Lucene.Net.Codecs
         /// </summary>
         protected void AddAllDocVectors(Fields vectors, MergeState mergeState)
         {
+
+
             if (vectors == null)
             {
                 StartDocument(0);
                 FinishDocument();
                 return;
             }
+
+            bool assertsEnabled = Debugging.AssertsEnabled;
 
             int numFields = vectors.Count;
             if (numFields == -1)
@@ -286,7 +290,7 @@ namespace Lucene.Net.Codecs
                 fieldCount++;
                 FieldInfo fieldInfo = mergeState.FieldInfos.FieldInfo(fieldName);
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(lastFieldName == null || fieldName.CompareToOrdinal(lastFieldName) > 0)) Debugging.ThrowAssert("lastFieldName={0} fieldName={1}", lastFieldName, fieldName);
+                if (assertsEnabled && Debugging.ShouldAssert(lastFieldName == null || fieldName.CompareToOrdinal(lastFieldName) > 0)) Debugging.ThrowAssert("lastFieldName={0} fieldName={1}", lastFieldName, fieldName);
                 lastFieldName = fieldName;
 
                 Terms terms = vectors.GetTerms(fieldName);
@@ -299,7 +303,7 @@ namespace Lucene.Net.Codecs
                 bool hasPositions = terms.HasPositions;
                 bool hasOffsets = terms.HasOffsets;
                 bool hasPayloads = terms.HasPayloads;
-                if (Debugging.AssertsEnabled) Debugging.Assert(!hasPayloads || hasPositions);
+                if (assertsEnabled) Debugging.Assert(!hasPayloads || hasPositions);
 
                 int numTerms = (int)terms.Count;
                 if (numTerms == -1)
@@ -328,12 +332,15 @@ namespace Lucene.Net.Codecs
                     if (hasPositions || hasOffsets)
                     {
                         docsAndPositionsEnum = termsEnum.DocsAndPositions(null, docsAndPositionsEnum);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(docsAndPositionsEnum != null);
+                        if (assertsEnabled) Debugging.Assert(docsAndPositionsEnum != null);
 
                         int docID = docsAndPositionsEnum.NextDoc();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(docID != DocIdSetIterator.NO_MORE_DOCS);
-
-                        if (Debugging.AssertsEnabled) Debugging.Assert(docsAndPositionsEnum.Freq == freq);
+                        
+                        if (assertsEnabled)
+                        {
+                            Debugging.Assert(docID != DocIdSetIterator.NO_MORE_DOCS);
+                            Debugging.Assert(docsAndPositionsEnum.Freq == freq);
+                        }
 
                         for (int posUpto = 0; posUpto < freq; posUpto++)
                         {
@@ -343,13 +350,13 @@ namespace Lucene.Net.Codecs
 
                             BytesRef payload = docsAndPositionsEnum.GetPayload();
 
-                            if (Debugging.AssertsEnabled) Debugging.Assert(!hasPositions || pos >= 0);
+                            if (assertsEnabled) Debugging.Assert(!hasPositions || pos >= 0);
                             AddPosition(pos, startOffset, endOffset, payload);
                         }
                     }
                     FinishTerm();
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(termCount == numTerms);
+                if (assertsEnabled) Debugging.Assert(termCount == numTerms);
                 FinishField();
             }
             if (Debugging.AssertsEnabled) Debugging.Assert(fieldCount == numFields);

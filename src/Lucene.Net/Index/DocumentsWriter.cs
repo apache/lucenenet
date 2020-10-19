@@ -737,9 +737,11 @@ namespace Lucene.Net.Index
                 flushControl.MarkForFullFlush(); // swaps the delQueue synced on FlushControl
                 if (Debugging.AssertsEnabled) Debugging.Assert(SetFlushingDeleteQueue(flushingDeleteQueue));
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(currentFullFlushDelQueue != null);
-
-            if (Debugging.AssertsEnabled) Debugging.Assert(currentFullFlushDelQueue != deleteQueue);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(currentFullFlushDelQueue != null);
+                Debugging.Assert(currentFullFlushDelQueue != deleteQueue);
+            }
 
             bool anythingFlushed = false;
             try

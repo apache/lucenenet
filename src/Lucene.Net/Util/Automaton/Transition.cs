@@ -76,9 +76,11 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="to"> Destination state. </param>
         public Transition(int min, int max, State to)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(min >= 0);
-
-            if (Debugging.AssertsEnabled) Debugging.Assert(max >= 0);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(min >= 0);
+                Debugging.Assert(max >= 0);
+            }
             if (max < min)
             {
                 int t = max;

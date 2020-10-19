@@ -333,9 +333,11 @@ namespace Lucene.Net.Codecs.Compressing
             DataInput documentInput;
             if (version >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS && totalLength >= 2 * chunkSize)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(chunkSize > 0);
-
-                if (Debugging.AssertsEnabled) Debugging.Assert(offset < chunkSize);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(chunkSize > 0);
+                    Debugging.Assert(offset < chunkSize);
+                }
 
                 decompressor.Decompress(fieldsStream, chunkSize, offset, Math.Min(length, chunkSize - offset), bytes);
                 documentInput = new DataInputAnonymousInnerClassHelper(this, offset, length);

@@ -96,9 +96,13 @@ namespace Lucene.Net.Util
             /// </summary>
             public void FillSlice(BytesRef b, long start, int length)
             {
-                if(Debugging.ShouldAssert(length >= 0)) Debugging.ThrowAssert("length={0}", length);
+                if (Debugging.AssertsEnabled)
+                {
 
-                if(Debugging.ShouldAssert(length <= blockSize + 1)) Debugging.ThrowAssert("length={0}", length);
+                    if (Debugging.ShouldAssert(length >= 0)) Debugging.ThrowAssert("length={0}", length);
+                    if (Debugging.ShouldAssert(length <= blockSize + 1)) Debugging.ThrowAssert("length={0}", length);
+                }
+
                 b.Length = length;
                 if (length == 0)
                 {

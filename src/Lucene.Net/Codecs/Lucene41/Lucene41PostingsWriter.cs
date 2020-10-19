@@ -377,9 +377,11 @@ namespace Lucene.Net.Codecs.Lucene41
 
             if (fieldHasOffsets)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(startOffset >= lastStartOffset);
-
-                if (Debugging.AssertsEnabled) Debugging.Assert(endOffset >= startOffset);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(startOffset >= lastStartOffset);
+                    Debugging.Assert(endOffset >= startOffset);
+                }
                 offsetStartDeltaBuffer[posBufferUpto] = startOffset - lastStartOffset;
                 offsetLengthBuffer[posBufferUpto] = endOffset - startOffset;
                 lastStartOffset = startOffset;
@@ -440,11 +442,13 @@ namespace Lucene.Net.Codecs.Lucene41
         public override void FinishTerm(BlockTermState state)
         {
             Int32BlockTermState state2 = (Int32BlockTermState)state;
-            if (Debugging.AssertsEnabled) Debugging.Assert(state2.DocFreq > 0);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(state2.DocFreq > 0);
 
-            // TODO: wasteful we are counting this (counting # docs
-            // for this term) in two places?
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state2.DocFreq == docCount)) Debugging.ThrowAssert("{0} vs {1}", state2.DocFreq, docCount);
+                // TODO: wasteful we are counting this (counting # docs for this term) in two places?
+                if (Debugging.ShouldAssert(state2.DocFreq == docCount)) Debugging.ThrowAssert("{0} vs {1}", state2.DocFreq, docCount);
+            }
 
             // if (DEBUG) {
             //   System.out.println("FPW.finishTerm docFreq=" + state2.docFreq);

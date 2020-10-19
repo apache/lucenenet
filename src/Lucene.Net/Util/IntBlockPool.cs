@@ -440,9 +440,12 @@ namespace Lucene.Net.Util
             /// <seealso cref="SliceReader.IsEndOfSlice"/>
             public int ReadInt32()
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!IsEndOfSlice);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(!IsEndOfSlice);
+                    Debugging.Assert(upto <= limit);
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(upto <= limit);
+                }
                 if (upto == limit)
                 {
                     NextSlice();

@@ -114,9 +114,12 @@ namespace Lucene.Net.Index
         public SubResult GetMatchingSub(ReaderSlice slice)
         {
             int reader = ReaderUtil.SubIndex(slice.Start, starts);
-            
-            if (Debugging.AssertsEnabled) Debugging.Assert(reader != -1);
-            if(Debugging.ShouldAssert(reader < subs.Length)) Debugging.ThrowAssert("slice={0} starts[-1]={1}", slice, starts[starts.Length - 1]);
+
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(reader != -1);
+                if (Debugging.ShouldAssert(reader < subs.Length)) Debugging.ThrowAssert("slice={0} starts[-1]={1}", slice, starts[starts.Length - 1]);
+            }
 
             SubResult subResult = new SubResult();
             if (starts[reader] == slice.Start && starts[1 + reader] == slice.Start + slice.Length)

@@ -779,10 +779,12 @@ namespace Lucene.Net.Util
             {
                 initialCapacity = Math.Max(MIN_CAPACITY, initialCapacity);
 
-                if(Debugging.ShouldAssert(initialCapacity > 0)) Debugging.ThrowAssert("Initial capacity must be between (0, {0}].", int.MaxValue);
+                if (Debugging.AssertsEnabled)
+                {
+                    if (Debugging.ShouldAssert(initialCapacity > 0)) Debugging.ThrowAssert("Initial capacity must be between (0, {0}].", int.MaxValue);
+                    if (Debugging.ShouldAssert(loadFactor > 0 && loadFactor < 1)) Debugging.ThrowAssert("Load factor must be between (0, 1).");
+                }
 
-
-                if(Debugging.ShouldAssert(loadFactor > 0 && loadFactor < 1)) Debugging.ThrowAssert("Load factor must be between (0, 1).");
                 this.LoadFactor = loadFactor;
                 AllocateBuffers(RoundCapacity(initialCapacity));
             }
@@ -907,8 +909,8 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(current > 0 && ((current & (current - 1)) == 0))) Debugging.ThrowAssert("Capacity must be a power of two.");
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert((current << 1) > 0)) Debugging.ThrowAssert("Maximum capacity exceeded ({0}", ((int)((uint)0x80000000 >> 1)) + ").");
+                    if (Debugging.ShouldAssert(current > 0 && ((current & (current - 1)) == 0))) Debugging.ThrowAssert("Capacity must be a power of two.");
+                    if (Debugging.ShouldAssert((current << 1) > 0)) Debugging.ThrowAssert("Maximum capacity exceeded ({0}", ((int)((uint)0x80000000 >> 1)) + ").");
                 }
 
                 if (current < MIN_CAPACITY / 2)

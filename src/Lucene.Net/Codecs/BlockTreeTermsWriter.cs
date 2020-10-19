@@ -480,9 +480,14 @@ namespace Lucene.Net.Codecs
             {
                 // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
                 // it might contain garbage that cannot be converted into text.
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null))) Debugging.ThrowAssert("isFloor={0} floorBlocks={1}", IsFloor , ToString(floorBlocks));
+                
+                bool assertsEnabled = Debugging.AssertsEnabled;
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(scratchBytes.GetFilePointer() == 0);
+                if (assertsEnabled) 
+                {
+                    Debugging.ShouldAssert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null))) Debugging.ThrowAssert("isFloor={0} floorBlocks={1}", IsFloor, ToString(floorBlocks));
+                    Debugging.Assert(scratchBytes.GetFilePointer() == 0);
+                }
 
                 // TODO: try writing the leading vLong in MSB order
                 // (opposite of what Lucene does today), for better
@@ -493,12 +498,12 @@ namespace Lucene.Net.Codecs
                     scratchBytes.WriteVInt32(floorBlocks.Count);
                     foreach (PendingBlock sub in floorBlocks)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(sub.FloorLeadByte != -1);
+                        if (assertsEnabled) Debugging.Assert(sub.FloorLeadByte != -1);
                         //if (DEBUG) {
                         //  System.out.println("    write floorLeadByte=" + Integer.toHexString(sub.floorLeadByte&0xff));
                         //}
                         scratchBytes.WriteByte((byte)(sbyte)sub.FloorLeadByte);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(sub.Fp > Fp);
+                        if (assertsEnabled) Debugging.Assert(sub.Fp > Fp);
                         scratchBytes.WriteVInt64((sub.Fp - Fp) << 1 | (uint)(sub.HasTerms ? 1 : 0));
                     }
                 }
@@ -506,7 +511,7 @@ namespace Lucene.Net.Codecs
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                 Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInt32s.COMPACT, true, 15);
                 var bytes = new byte[(int)scratchBytes.GetFilePointer()];
-                if (Debugging.AssertsEnabled) Debugging.Assert(bytes.Length > 0);
+                if (assertsEnabled) Debugging.Assert(bytes.Length > 0);
                 scratchBytes.WriteTo(bytes, 0);
                 indexBuilder.Add(Util.ToInt32sRef(Prefix, scratchIntsRef), new BytesRef(bytes, 0, bytes.Length));
                 scratchBytes.Reset();
@@ -1203,9 +1208,12 @@ namespace Lucene.Net.Codecs
                     // We better have one final "root" block:
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(pending.Count == 1 && !pending[0].IsTerm)) Debugging.ThrowAssert("pending.size()={0} pending={1}", pending.Count, pending);
                     PendingBlock root = (PendingBlock)pending[0];
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.Prefix.Length == 0);
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(root.Index.EmptyOutput != null);
+                    if (Debugging.AssertsEnabled)
+                    {
+                        Debugging.Assert(root.Prefix.Length == 0);
+                        Debugging.Assert(root.Index.EmptyOutput != null);
+                    }
 
                     this.sumTotalTermFreq = sumTotalTermFreq;
                     this.sumDocFreq = sumDocFreq;

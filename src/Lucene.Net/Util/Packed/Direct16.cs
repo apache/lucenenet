@@ -90,9 +90,9 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-                if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < m_valueCount);
-                if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
+                if (Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
+                Debugging.Assert(index >= 0 && index < m_valueCount);
+                Debugging.Assert(off + len <= arr.Length);
             }
 
             int gets = Math.Min(m_valueCount - index, len);
@@ -107,9 +107,9 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
-                if (Debugging.AssertsEnabled) Debugging.Assert(index >= 0 && index < m_valueCount);
-                if (Debugging.AssertsEnabled) Debugging.Assert(off + len <= arr.Length);
+                if(Debugging.ShouldAssert(len > 0)) Debugging.ThrowAssert("len must be > 0 (got {0})", len);
+                Debugging.Assert(index >= 0 && index < m_valueCount);
+                Debugging.Assert(off + len <= arr.Length);
             }
 
             int sets = Math.Min(m_valueCount - index, len);

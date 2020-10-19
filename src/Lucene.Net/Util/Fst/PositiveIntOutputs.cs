@@ -130,8 +130,11 @@ namespace Lucene.Net.Util.Fst
 
         private bool Valid(long? o)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(o != null)) Debugging.ThrowAssert("PositiveIntOutput precondition fail");
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(o == NO_OUTPUT || o > 0)) Debugging.ThrowAssert("o={0}", o);
+            if (Debugging.AssertsEnabled) 
+            {
+                if (Debugging.ShouldAssert(o != null)) Debugging.ThrowAssert("PositiveIntOutput precondition fail");
+                if (Debugging.ShouldAssert(o == NO_OUTPUT || o > 0)) Debugging.ThrowAssert("o={0}", o);
+            }
             return true;
         }
 
