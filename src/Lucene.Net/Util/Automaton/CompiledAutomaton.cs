@@ -256,7 +256,7 @@ namespace Lucene.Net.Util.Automaton
                 Transition[] transitions = sortedTransitions[state];
                 if (transitions.Length == 0)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(RunAutomaton.IsAccept(state))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(RunAutomaton.IsAccept(state));
                     term.Length = idx;
                     //if (DEBUG) System.out.println("  return " + term.utf8ToString());
                     return term;
@@ -364,7 +364,7 @@ namespace Lucene.Net.Util.Automaton
                         Transition[] transitions = sortedTransitions[state];
                         if (transitions.Length == 0)
                         {
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(RunAutomaton.IsAccept(state))) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(RunAutomaton.IsAccept(state));
                             output.Length = idx;
                             //if (DEBUG) System.out.println("  return " + output.utf8ToString());
                             return output;

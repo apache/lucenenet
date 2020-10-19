@@ -112,7 +112,7 @@ namespace Lucene.Net.Index
         private bool IncWaiters()
         {
             numWaiting++;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!waiting.ContainsKey(ThreadJob.CurrentThread))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!waiting.ContainsKey(ThreadJob.CurrentThread));
             waiting[ThreadJob.CurrentThread] = true;
 
             return numWaiting > 0;

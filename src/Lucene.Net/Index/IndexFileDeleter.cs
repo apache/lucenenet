@@ -531,7 +531,7 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsLocked);
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(Monitor.IsEntered(writer))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Monitor.IsEntered(writer));
             long t0 = 0;
             if (infoStream.IsEnabled("IFD"))
             {
@@ -723,7 +723,7 @@ namespace Lucene.Net.Index
                 // the file is open in another process, and queue
                 // the file for subsequent deletion.
 
-                //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(e.Message.Contains("cannot delete"))) Debugging.ThrowAssert();
+                //if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(e.Message.Contains("cannot delete"));
 
                 if (infoStream.IsEnabled("IFD"))
                 {

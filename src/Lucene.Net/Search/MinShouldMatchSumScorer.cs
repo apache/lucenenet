@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
                 this.subScorers[i] = this.sortedSubScorers[mm - 1 + i];
             }
             MinheapHeapify();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(MinheapCheck())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(MinheapCheck());
         }
 
         /// <summary>

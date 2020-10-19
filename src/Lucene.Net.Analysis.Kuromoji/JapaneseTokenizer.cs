@@ -356,7 +356,7 @@ namespace Lucene.Net.Analysis.Ja
             }
 
             //positions.get(endPos).add(leastCost, dict.getRightId(wordID), fromPosData.pos, leastIDX, wordID, type);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(leftID == dict.GetRightId(wordID))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(leftID == dict.GetRightId(wordID));
             positions.Get(endPos).Add(leastCost, leftID, fromPosData.pos, leastIDX, wordID, type);
         }
 
@@ -1436,7 +1436,7 @@ namespace Lucene.Net.Analysis.Ja
                 positions[nextWrite++].pos = nextPos++;
                 count++;
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(InBounds(pos))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(InBounds(pos));
             int index = GetIndex(pos);
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(positions[index].pos == pos);
             return positions[index];

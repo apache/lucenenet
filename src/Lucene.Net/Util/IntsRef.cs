@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
             this.ints = ints;
             this.Offset = offset;
             this.Length = length;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsValid());
         }
 
         /// <summary>

@@ -983,7 +983,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
                         // }
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(posIn.GetFilePointer() != lastPosBlockFP)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(posIn.GetFilePointer() != lastPosBlockFP);
                         outerInstance.forUtil.SkipBlock(posIn);
                         toSkip -= Lucene41PostingsFormat.BLOCK_SIZE;
                     }
@@ -1568,7 +1568,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
                         // }
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(posIn.GetFilePointer() != lastPosBlockFP)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(posIn.GetFilePointer() != lastPosBlockFP);
                         outerInstance.forUtil.SkipBlock(posIn);
 
                         if (indexHasPayloads)

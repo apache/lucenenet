@@ -3349,7 +3349,7 @@ namespace Lucene.Net.Util
         ////        if (TempDirBase == null)
         ////        {
         ////            DirectoryInfo directory = new DirectoryInfo(System.IO.Path.GetTempPath());
-        ////            //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(directory.Exists && directory.Directory != null && directory.CanWrite())) Debugging.ThrowAssert();
+        ////            //if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(directory.Exists && directory.Directory != null && directory.CanWrite());
 
         ////            RandomizedContext ctx = RandomizedContext.Current;
         ////            Type clazz = ctx.GetTargetType;

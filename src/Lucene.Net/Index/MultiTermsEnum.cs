@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
                 {
                     top[numTop++] = currentSubs[i];
                     current = currentSubs[i].Current = currentSubs[i].Terms.Term;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(term.Equals(currentSubs[i].Current))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term.Equals(currentSubs[i].Current));
                 }
             }
 

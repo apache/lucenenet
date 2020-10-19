@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
                 // lazy init without thread safety for perf reasons: Building the readerContext twice does not hurt!
                 if (readerContext == null)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(GetSequentialSubReaders() != null)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(GetSequentialSubReaders() != null);
                     readerContext = CompositeReaderContext.Create(this);
                 }
                 return readerContext;

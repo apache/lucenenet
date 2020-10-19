@@ -275,7 +275,7 @@ namespace Lucene.Net.Codecs.Compressing
                         int v = ReadInt32(bytes, off);
                         int h = Hash(v, hashLog);
                         @ref = @base + (int)hashTable.Get(h);
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(PackedInt32s.BitsRequired(off - @base) <= hashTable.BitsPerValue)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(PackedInt32s.BitsRequired(off - @base) <= hashTable.BitsPerValue);
                         hashTable.Set(h, off - @base);
                         if (off - @ref < MAX_DISTANCE && ReadInt32(bytes, @ref) == v)
                         {

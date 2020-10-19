@@ -314,7 +314,7 @@ namespace Lucene.Net.Analysis
                             {
                                 Console.WriteLine("  return inserted token");
                             }
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(InsertedTokenConsistent())) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(InsertedTokenConsistent());
                             insertPending = false;
                             return true;
                         }
@@ -340,7 +340,7 @@ namespace Lucene.Net.Analysis
                             {
                                 Console.WriteLine("  return inserted token");
                             }
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(InsertedTokenConsistent())) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(InsertedTokenConsistent());
                             insertPending = false;
                             return true;
                         }

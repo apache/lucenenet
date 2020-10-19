@@ -242,7 +242,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         private void ConsumeSubQuery(State state)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert((m_flags & Operator.PRECEDENCE_OPERATORS) != 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((m_flags & Operator.PRECEDENCE_OPERATORS) != 0);
             int start = ++state.Index;
             int precedence = 1;
             bool escaped = false;
@@ -315,7 +315,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         private void ConsumePhrase(State state)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert((m_flags & Operator.PHRASE_OPERATOR) != 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((m_flags & Operator.PHRASE_OPERATOR) != 0);
             int start = ++state.Index;
             int copied = 0;
             bool escaped = false;

@@ -218,7 +218,7 @@ namespace Lucene.Net.Codecs.Memory
                 this.longsSize = longsSize;
                 this.index = index;
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert((numTerms & (~0xffffffffL)) == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((numTerms & (~0xffffffffL)) == 0);
                 int numBlocks = (int)(numTerms + INTERVAL - 1) / INTERVAL;
                 this.numSkipInfo = longsSize + 3;
                 this.skipInfo = new long[numBlocks * numSkipInfo];
@@ -726,7 +726,7 @@ namespace Lucene.Net.Codecs.Memory
                         {
                             break;
                         }
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(IsValid(frame))) Debugging.ThrowAssert(); // target must be fetched from automaton
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsValid(frame)); // target must be fetched from automaton
                         PushFrame(frame);
                         upto++;
                     }

@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public void Write(Directory d, string name, IOContext context)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!(d is CompoundFileDirectory))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!(d is CompoundFileDirectory));
             IndexOutput output = d.CreateOutput(name, context);
             try
             {
@@ -275,7 +275,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     WriteBits(output);
                 }
                 CodecUtil.WriteFooter(output);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(VerifyCount())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(VerifyCount());
             }
             finally
             {
@@ -351,7 +351,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     output.WriteByte(bits[i]);
                     last = i;
                     numCleared -= (8 - BitUtil.BitCount(bits[i]));
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numCleared >= 0 || (i == (bits.Length - 1) && numCleared == -(8 - (size & 7))))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numCleared >= 0 || (i == (bits.Length - 1) && numCleared == -(8 - (size & 7))));
                 }
             }
         }
@@ -460,7 +460,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     CodecUtil.CheckEOF(input);
 #pragma warning restore 612, 618
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(VerifyCount())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(VerifyCount());
             }
             finally
             {
@@ -524,7 +524,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 last += input.ReadVInt32();
                 bits[last] = input.ReadByte();
                 numCleared -= 8 - BitUtil.BitCount(bits[last]);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numCleared >= 0 || (last == (bits.Length - 1) && numCleared == -(8 - (size & 7))))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numCleared >= 0 || (last == (bits.Length - 1) && numCleared == -(8 - (size & 7))));
             }
         }
     }

@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                     if (fi.IsIndexed)
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(fi.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fi.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads);
                         SimpleTextUtil.Write(output, INDEXOPTIONS);
                         SimpleTextUtil.Write(output, 
                             fi.IndexOptions != IndexOptions.NONE ? fi.IndexOptions.ToString() : string.Empty, 

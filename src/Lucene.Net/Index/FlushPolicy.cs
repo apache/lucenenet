@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertMessage("set largest ram consuming thread pending on lower watermark"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertMessage("set largest ram consuming thread pending on lower watermark"));
             return maxRamUsingThreadState;
         }
 

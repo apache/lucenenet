@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
             this.bytes = bytes;
             this.Offset = offset;
             this.Length = length;
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsValid());
         }
 
         /// <summary>

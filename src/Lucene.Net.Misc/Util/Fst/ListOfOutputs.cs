@@ -88,7 +88,7 @@ namespace Lucene.Net.Util.Fst
 
         public override object Add(object prefix, object output)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!(prefix is IList))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!(prefix is IList));
             if (!(output is IList))
             {
                 return outputs.Add((T)prefix, (T)output);
@@ -107,7 +107,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(object output, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!(output is IList))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!(output is IList));
             outputs.Write((T)output, @out);
         }
 

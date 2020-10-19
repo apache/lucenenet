@@ -927,7 +927,7 @@ namespace Lucene.Net.Search
             public override int CompareBottom(int doc)
             {
                 float score = scorer.GetScore();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!float.IsNaN(score))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!float.IsNaN(score));
 
                 // LUCENENET specific special case:
                 // In case of zero, we may have a "positive 0" or "negative 0"
@@ -938,7 +938,7 @@ namespace Lucene.Net.Search
             public override void Copy(int slot, int doc)
             {
                 scores[slot] = scorer.GetScore();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!float.IsNaN(scores[slot]))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!float.IsNaN(scores[slot]));
             }
 
             public override FieldComparer SetNextReader(AtomicReaderContext context)
@@ -988,7 +988,7 @@ namespace Lucene.Net.Search
             public override int CompareTop(int doc)
             {
                 float docValue = scorer.GetScore();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!float.IsNaN(docValue))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!float.IsNaN(docValue));
 
                 // LUCENENET specific special case:
                 // In case of zero, we may have a "positive 0" or "negative 0"

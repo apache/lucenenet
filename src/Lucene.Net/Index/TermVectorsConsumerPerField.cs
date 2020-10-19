@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal void FinishDocument()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docState.TestPoint("TermVectorsTermsWriterPerField.finish start"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docState.TestPoint("TermVectorsTermsWriterPerField.finish start"));
 
             int numPostings = termsHashPerField.bytesHash.Count;
 
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
             // of a given field in the doc.  At this point we flush
             // our hash into the DocWriter.
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(termsWriter.VectorFieldsInOrder(fieldInfo))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termsWriter.VectorFieldsInOrder(fieldInfo));
 
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
             TermVectorsWriter tv = termsWriter.writer;
@@ -293,7 +293,7 @@ namespace Lucene.Net.Index
 
         internal override void NewTerm(int termID)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docState.TestPoint("TermVectorsTermsWriterPerField.newTerm start"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docState.TestPoint("TermVectorsTermsWriterPerField.newTerm start"));
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
 
             postings.freqs[termID] = 1;
@@ -305,7 +305,7 @@ namespace Lucene.Net.Index
 
         internal override void AddTerm(int termID)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docState.TestPoint("TermVectorsTermsWriterPerField.addTerm start"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docState.TestPoint("TermVectorsTermsWriterPerField.addTerm start"));
             TermVectorsPostingsArray postings = (TermVectorsPostingsArray)termsHashPerField.postingsArray;
 
             postings.freqs[termID]++;

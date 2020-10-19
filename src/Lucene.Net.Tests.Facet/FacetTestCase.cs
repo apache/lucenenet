@@ -154,7 +154,7 @@ namespace Lucene.Net.Facet
                     if (numInRow > 1)
                     {
                         Array.Sort(labelValues, i - numInRow, i - (i - numInRow), Comparer<LabelAndValue>.Create((a,b)=> {
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert((double)a.Value == (double)b.Value)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((double)a.Value == (double)b.Value);
                             return (new BytesRef(a.Label)).CompareTo(new BytesRef(b.Label));
                         }));
                     }

@@ -178,7 +178,7 @@ namespace Lucene.Net.Util.Packed
             this.lowerLongs = new long[(int)numLongsForLowBits];
 
             long numHighBitsClear = (long)((ulong)((this.upperBound > 0) ? this.upperBound : 0) >> this.numLowBits);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(numHighBitsClear <= (2 * this.numValues))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numHighBitsClear <= (2 * this.numValues));
             long numHighBitsSet = this.numValues;
 
             long numLongsForHighBits = NumInt64sForBits(numHighBitsClear + numHighBitsSet);

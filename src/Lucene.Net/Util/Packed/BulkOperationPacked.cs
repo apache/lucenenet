@@ -244,7 +244,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < byteValueCount * iterations; ++i)
             {
                 long v = values[valuesOffset++];
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bitsPerValue == 64 || PackedInt32s.BitsRequired(v) <= bitsPerValue)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bitsPerValue == 64 || PackedInt32s.BitsRequired(v) <= bitsPerValue);
                 if (bitsPerValue < bitsLeft)
                 {
                     // just buffer
@@ -276,7 +276,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < byteValueCount * iterations; ++i)
             {
                 int v = values[valuesOffset++];
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(PackedInt32s.BitsRequired(v & 0xFFFFFFFFL) <= bitsPerValue)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(PackedInt32s.BitsRequired(v & 0xFFFFFFFFL) <= bitsPerValue);
                 if (bitsPerValue < bitsLeft)
                 {
                     // just buffer

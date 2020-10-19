@@ -781,7 +781,7 @@ namespace Lucene.Net.Search
             for (int nodeID = 0; nodeID < numNodes; nodeID++)
             {
                 IndexSearcher s = m_nodes[nodeID].Mgr.Acquire();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(nodeVersions[nodeID] == m_nodes[nodeID].Searchers.Record(s))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(nodeVersions[nodeID] == m_nodes[nodeID].Searchers.Record(s));
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(s != null);
                 try
                 {

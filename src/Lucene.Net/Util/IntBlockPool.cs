@@ -243,7 +243,7 @@ namespace Lucene.Net.Util
             if (Int32Upto > INT32_BLOCK_SIZE - size)
             {
                 NextBuffer();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertSliceBuffer(buffer))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertSliceBuffer(buffer));
             }
 
             int upto = Int32Upto;
@@ -292,7 +292,7 @@ namespace Lucene.Net.Util
             if (Int32Upto > INT32_BLOCK_SIZE - newSize)
             {
                 NextBuffer();
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertSliceBuffer(buffer))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertSliceBuffer(buffer));
             }
 
             int newUpto = Int32Upto;

@@ -226,7 +226,7 @@ namespace Lucene.Net.Index
                     return threadState;
                 }
                 // we are closed: unlock since the threadstate is not active anymore
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(AssertUnreleasedThreadStatesInactive())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(AssertUnreleasedThreadStatesInactive());
                 return null;
             }
             finally

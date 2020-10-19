@@ -642,7 +642,7 @@ namespace Lucene.Net.Codecs.Memory
                         {
                             break;
                         }
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(IsValid(frame))) Debugging.ThrowAssert(); // target must be fetched from automaton
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsValid(frame)); // target must be fetched from automaton
                         PushFrame(frame);
                         upto++;
                     }

@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument(TermsHash termsHash)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument start"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument start"));
 
             if (!hasVectors)
             {
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
 
             termsHash.Reset();
             Reset();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument end"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docWriter.TestPoint("TermVectorsTermsWriter.finishDocument end"));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
 
         internal override void StartDocument()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ClearLastVectorFieldName())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ClearLastVectorFieldName());
             Reset();
         }
 

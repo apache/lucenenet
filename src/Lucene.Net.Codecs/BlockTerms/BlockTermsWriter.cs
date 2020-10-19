@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public override TermsConsumer AddField(FieldInfo field)
         {
             //System.out.println("\nBTW.addField seg=" + segment + " field=" + field.name);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
             currentField = field;
             TermsIndexWriterBase.FieldWriter fieldIndexWriter = termsIndexWriter.AddField(field, m_output.GetFilePointer());
             return new TermsWriter(this, fieldIndexWriter, field, postingsWriter);

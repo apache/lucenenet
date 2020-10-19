@@ -106,12 +106,12 @@ namespace Lucene.Net.Search.Grouping
             {
                 this.shardIndex = shardIndex;
                 iter = shard.GetEnumerator();
-                //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(iter.hasNext())) Debugging.ThrowAssert(); // No reasonable way to do this in .NET
+                //if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(iter.hasNext()); // No reasonable way to do this in .NET
             }
 
             public ISearchGroup<T> Next()
             {
-                //if (Debugging.AssertsEnabled && Debugging.ShouldAssert(iter.hasNext())) Debugging.ThrowAssert(); // No reasonable way to do this in .NET
+                //if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(iter.hasNext()); // No reasonable way to do this in .NET
                 ISearchGroup<T> group = iter.Current;
                 if (group.SortValues == null)
                 {
@@ -206,7 +206,7 @@ namespace Lucene.Net.Search.Grouping
             {
                 // We never have another MergedGroup instance with
                 // same groupValue
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(NeverEquals(other))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(NeverEquals(other));
 
                 if (other is MergedGroup<T> otherMergedGroup)
                 {

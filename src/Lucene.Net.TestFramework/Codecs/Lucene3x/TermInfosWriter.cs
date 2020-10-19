@@ -135,7 +135,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 output.WriteInt32(indexInterval); // write indexInterval
                 output.WriteInt32(skipInterval); // write skipInterval
                 output.WriteInt32(maxSkipLevels); // write maxSkipLevels
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(InitUTF16Results())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(InitUTF16Results());
                 success = true;
             }
             finally

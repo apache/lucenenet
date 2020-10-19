@@ -120,7 +120,7 @@ namespace Lucene.Net.Search
                 this.termsEnum = termsEnum;
                 this.termComp = termsEnum.Comparer;
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CompareToLastTerm(null))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CompareToLastTerm(null));
 
                 // lazy init the initial ScoreTerm because comparer is not known on ctor:
                 if (st == null)
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search
 
                 // make sure within a single seg we always collect
                 // terms in order
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(CompareToLastTerm(bytes))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(CompareToLastTerm(bytes));
 
                 //System.out.println("TTR.collect term=" + bytes.utf8ToString() + " boost=" + boost + " ord=" + readerContext.ord);
                 // ignore uncompetitive hits

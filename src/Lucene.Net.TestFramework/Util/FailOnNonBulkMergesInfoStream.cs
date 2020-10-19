@@ -35,7 +35,7 @@ namespace Lucene.Net.Util
 
         public override void Message(string component, string message)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!message.Contains("non-bulk merges"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!message.Contains("non-bulk merges"));
         }
     }
 }

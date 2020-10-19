@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
         {
             TermsEnum termsEnum = m_input.Intersect(automaton, bytes);
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termsEnum != null);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bytes == null || bytes.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bytes == null || bytes.IsValid());
             return new AssertingAtomicReader.AssertingTermsEnum(termsEnum);
         }
 
@@ -214,9 +214,9 @@ namespace Lucene.Net.Index
         public override void Get(int docID, BytesRef result)
         {
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID >= 0 && docID < maxDoc);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(result.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
             @in.Get(docID, result);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(result.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
         }
     }
 
@@ -247,9 +247,9 @@ namespace Lucene.Net.Index
         public override void LookupOrd(int ord, BytesRef result)
         {
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord >= 0 && ord < valueCount);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(result.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
             @in.LookupOrd(ord, result);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(result.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
         }
 
         public override int ValueCount
@@ -265,17 +265,17 @@ namespace Lucene.Net.Index
         public override void Get(int docID, BytesRef result)
         {
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docID >= 0 && docID < maxDoc);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(result.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
             @in.Get(docID, result);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(result.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
         }
 
         public override int LookupTerm(BytesRef key)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(key.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(key.IsValid());
             int result = @in.LookupTerm(key);
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result < valueCount);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(key.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(key.IsValid());
             return result;
         }
     }
@@ -317,9 +317,9 @@ namespace Lucene.Net.Index
         public override void LookupOrd(long ord, BytesRef result)
         {
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ord >= 0 && ord < valueCount);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(result.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
             @in.LookupOrd(ord, result);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(result.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result.IsValid());
         }
 
         public override long ValueCount
@@ -334,10 +334,10 @@ namespace Lucene.Net.Index
 
         public override long LookupTerm(BytesRef key)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(key.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(key.IsValid());
             long result = @in.LookupTerm(key);
             if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(result < valueCount);
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(key.IsValid())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(key.IsValid());
             return result;
         }
     }
@@ -452,7 +452,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(base.Term.IsValid())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(base.Term.IsValid());
                     state = State.POSITIONED;
                     return true;
                 }
@@ -502,7 +502,7 @@ namespace Lucene.Net.Index
                 {
                     if (Debugging.AssertsEnabled && Debugging.ShouldAssert(state == State.POSITIONED)) Debugging.ThrowAssert("Term called on unpositioned TermsEnum");
                     BytesRef ret = base.Term;
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ret == null || ret.IsValid())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ret == null || ret.IsValid());
                     return ret;
                 }
             }
@@ -515,7 +515,7 @@ namespace Lucene.Net.Index
 
             public override SeekStatus SeekCeil(BytesRef term)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(term.IsValid())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term.IsValid());
                 SeekStatus result = base.SeekCeil(term);
                 if (result == SeekStatus.END)
                 {
@@ -530,7 +530,7 @@ namespace Lucene.Net.Index
 
             public override bool SeekExact(BytesRef text)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(text.IsValid())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(text.IsValid());
                 if (base.SeekExact(text))
                 {
                     state = State.POSITIONED;
@@ -551,7 +551,7 @@ namespace Lucene.Net.Index
 
             public override void SeekExact(BytesRef term, TermState state)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(term.IsValid())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(term.IsValid());
                 base.SeekExact(term, state);
                 this.state = State.POSITIONED;
             }

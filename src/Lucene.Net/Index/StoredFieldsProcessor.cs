@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docWriter.TestPoint("StoredFieldsWriter.finishDocument start"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docWriter.TestPoint("StoredFieldsWriter.finishDocument start"));
 
             InitFieldsWriter(IOContext.DEFAULT);
             Fill(docState.docID);
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
             }
 
             Reset();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docWriter.TestPoint("StoredFieldsWriter.finishDocument end"))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docWriter.TestPoint("StoredFieldsWriter.finishDocument end"));
         }
 
         public override void AddField(int docID, IIndexableField field, FieldInfo fieldInfo)
@@ -179,7 +179,7 @@ namespace Lucene.Net.Index
                 fieldInfos[numStoredFields] = fieldInfo;
                 numStoredFields++;
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docState.TestPoint("StoredFieldsWriterPerThread.processFields.writeField"))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docState.TestPoint("StoredFieldsWriterPerThread.processFields.writeField"));
             }
         }
     }

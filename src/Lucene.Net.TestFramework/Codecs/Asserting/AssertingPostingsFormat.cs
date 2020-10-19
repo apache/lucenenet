@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.Asserting
             {
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state == TermsConsumerState.START);
                 state = TermsConsumerState.INITIAL;
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(text.Equals(lastTerm))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(text.Equals(lastTerm));
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(stats.DocFreq > 0); // otherwise, this method should not be called.
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(stats.DocFreq == lastPostingsConsumer.docFreq);
                 sumDocFreq += stats.DocFreq;
@@ -176,7 +176,7 @@ namespace Lucene.Net.Codecs.Asserting
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(state == TermsConsumerState.INITIAL || state == TermsConsumerState.START && lastPostingsConsumer.docFreq == 0);
                 state = TermsConsumerState.FINISHED;
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docCount >= 0);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docCount == visitedDocs.Cardinality())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docCount == visitedDocs.Cardinality());
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(sumDocFreq >= docCount);
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(sumDocFreq == this.sumDocFreq);
                 if (fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY)

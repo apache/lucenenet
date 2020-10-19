@@ -2661,7 +2661,7 @@ namespace Lucene.Net.Index
                                 docValues.LookupOrd(ord, scratch);
                                 Assert.AreEqual(stringValues[j], scratch.Utf8ToString());
                             }
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docValues == null || docValues.NextOrd() == SortedSetDocValues.NO_MORE_ORDS)) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docValues == null || docValues.NextOrd() == SortedSetDocValues.NO_MORE_ORDS);
                         }
                     }
                 } // ir.Dispose();

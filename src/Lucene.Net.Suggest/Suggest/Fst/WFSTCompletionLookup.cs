@@ -214,7 +214,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         private long? LookupPrefix(BytesRef scratch, FST.Arc<long?> arc) //Bogus
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(0 == (long)fst.Outputs.NoOutput)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(0 == (long)fst.Outputs.NoOutput);
             long output = 0;
             var bytesReader = fst.GetBytesReader();
 

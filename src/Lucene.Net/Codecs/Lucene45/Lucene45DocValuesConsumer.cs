@@ -501,7 +501,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!ordsIter.MoveNext())) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!ordsIter.MoveNext());
         }
 
         protected override void Dispose(bool disposing)

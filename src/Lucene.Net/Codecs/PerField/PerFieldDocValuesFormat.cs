@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.PerField
                 else
                 {
                     // we've already seen this format, so just grab its suffix
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(suffixes.ContainsKey(formatName_))) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(suffixes.ContainsKey(formatName_));
                     suffix = consumer.Suffix;
                 }
 

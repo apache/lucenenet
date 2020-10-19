@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override void Finish(FieldInfos fis, int numDocs)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(docStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docStatus == (numDocs > 0 ? Status.FINISHED : Status.UNDEFINED));
                 @in.Finish(fis, numDocs);
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(fieldCount == 0);
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(numDocs == numWritten);

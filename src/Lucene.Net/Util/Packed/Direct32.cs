@@ -122,7 +122,7 @@ namespace Lucene.Net.Util.Packed
 
         public override void Fill(int fromIndex, int toIndex, long val)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(val == (val & 0xFFFFFFFFL))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(val == (val & 0xFFFFFFFFL));
             Arrays.Fill(values, fromIndex, toIndex, (int)val);
         }
     }

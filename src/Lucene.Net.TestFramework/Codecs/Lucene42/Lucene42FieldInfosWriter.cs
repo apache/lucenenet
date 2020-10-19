@@ -66,7 +66,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     if (fi.IsIndexed)
                     {
                         bits |= Lucene42FieldInfosFormat.IS_INDEXED;
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads);
                         if (indexOptions == IndexOptions.DOCS_ONLY)
                         {
                             bits |= Lucene42FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     // pack the DV types in one byte
                     var dv = DocValuesByte(fi.DocValuesType);
                     var nrm = DocValuesByte(fi.NormType);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
                     var val = (byte)(0xff & ((nrm << 4) | (byte)dv));
                     output.WriteByte(val);
                     output.WriteStringStringMap(fi.Attributes);

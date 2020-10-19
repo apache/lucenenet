@@ -280,7 +280,7 @@ namespace Lucene.Net.Join
 
             public override int Advance(int childTarget)
             {
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(childTarget >= _parentBits.Length || !_parentBits.Get(childTarget))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(childTarget >= _parentBits.Length || !_parentBits.Get(childTarget));
 
                 //System.out.println("Q.advance childTarget=" + childTarget);
                 if (childTarget == NO_MORE_DOCS)

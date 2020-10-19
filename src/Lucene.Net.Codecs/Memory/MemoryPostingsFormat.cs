@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 public virtual PostingsWriter Reset()
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(buffer.GetFilePointer() == 0)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(buffer.GetFilePointer() == 0);
                     lastDocID = 0;
                     docCount = 0;
                     lastPayloadLen = 0;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(postingsWriter.docCount == stats.DocFreq);
 
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(buffer2.GetFilePointer() == 0)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(buffer2.GetFilePointer() == 0);
 
                 buffer2.WriteVInt32(stats.DocFreq);
                 if (field.IndexOptions != IndexOptions.DOCS_ONLY)

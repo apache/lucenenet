@@ -735,7 +735,7 @@ namespace Lucene.Net.Index
                  * otherwise a new DWPT could sneak into the loop with an already flushing
                  * delete queue */
                 flushControl.MarkForFullFlush(); // swaps the delQueue synced on FlushControl
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(SetFlushingDeleteQueue(flushingDeleteQueue))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(SetFlushingDeleteQueue(flushingDeleteQueue));
             }
             if(Debugging.ShouldAssert(currentFullFlushDelQueue != null)) Debugging.ThrowAssert();
 
@@ -761,7 +761,7 @@ namespace Lucene.Net.Index
                     ticketQueue.AddDeletes(flushingDeleteQueue);
                 }
                 ticketQueue.ForcePurge(indexWriter);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!flushingDeleteQueue.AnyChanges() && !ticketQueue.HasTickets)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!flushingDeleteQueue.AnyChanges() && !ticketQueue.HasTickets);
             }
             finally
             {
@@ -778,7 +778,7 @@ namespace Lucene.Net.Index
                 {
                     infoStream.Message("DW", Thread.CurrentThread.Name + " finishFullFlush success=" + success);
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(SetFlushingDeleteQueue(null))) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(SetFlushingDeleteQueue(null));
                 if (success)
                 {
                     // Release the flush lock

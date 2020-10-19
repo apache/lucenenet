@@ -249,7 +249,7 @@ namespace Lucene.Net.Util
                 PushRunLen(NextRun());
             } while (RunEnd(0) < to);
             ExhaustStack();
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(RunEnd(0) == to)) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(RunEnd(0) == to);
         }
 
         internal override void DoRotate(int lo, int mid, int hi)

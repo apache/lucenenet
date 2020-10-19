@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Asserting
                 int count = 0;
                 foreach (BytesRef b in values)
                 {
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b == null || b.IsValid())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b == null || b.IsValid());
                     count++;
                 }
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(count == maxDoc);
@@ -95,10 +95,10 @@ namespace Lucene.Net.Codecs.Asserting
                 foreach (BytesRef b in values)
                 {
                     if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b != null);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b.IsValid())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b.IsValid());
                     if (valueCount > 0)
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b.CompareTo(lastValue) > 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b.CompareTo(lastValue) > 0);
                     }
                     lastValue = BytesRef.DeepCopyOf(b);
                     valueCount++;
@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Asserting
                 }
 
                 if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(count == maxDoc);
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(seenOrds.Cardinality() == valueCount)) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(seenOrds.Cardinality() == valueCount);
                 CheckIterator(values.GetEnumerator(), valueCount, false);
                 CheckIterator(docToOrd.GetEnumerator(), maxDoc, false);
                 @in.AddSortedField(field, values, docToOrd);
@@ -134,10 +134,10 @@ namespace Lucene.Net.Codecs.Asserting
                 foreach (BytesRef b in values)
                 {
                     if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b != null);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b.IsValid())) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b.IsValid());
                     if (valueCount > 0)
                     {
-                        if (Debugging.AssertsEnabled && Debugging.ShouldAssert(b.CompareTo(lastValue) > 0)) Debugging.ThrowAssert();
+                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(b.CompareTo(lastValue) > 0);
                     }
                     lastValue = BytesRef.DeepCopyOf(b);
                     valueCount++;
@@ -169,10 +169,10 @@ namespace Lucene.Net.Codecs.Asserting
                             lastOrd = ord;
                         }
                     }
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(ordIterator.MoveNext() == false)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(ordIterator.MoveNext() == false);
 
                     if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(docCount == maxDoc);
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(seenOrds.Cardinality() == valueCount)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(seenOrds.Cardinality() == valueCount);
                     CheckIterator(values.GetEnumerator(), valueCount, false);
                     CheckIterator(docToOrdCount.GetEnumerator(), maxDoc, false);
                     CheckIterator(ords.GetEnumerator(), ordCount, false);
@@ -255,7 +255,7 @@ namespace Lucene.Net.Codecs.Asserting
                     //    // ok
                     //}
                 }
-                if (Debugging.AssertsEnabled && Debugging.ShouldAssert(!iterator.MoveNext())) Debugging.ThrowAssert();
+                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(!iterator.MoveNext());
                 /*try
                 {
                   //iterator.next();

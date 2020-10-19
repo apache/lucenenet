@@ -134,7 +134,7 @@ namespace Lucene.Net.Search
                 {
                     int pos = sort[i];
                     Term term = new Term(query.Field, col.terms.Get(pos, new BytesRef()));
-                    if (Debugging.AssertsEnabled && Debugging.ShouldAssert(reader.DocFreq(term) == termStates[pos].DocFreq)) Debugging.ThrowAssert();
+                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(reader.DocFreq(term) == termStates[pos].DocFreq);
                     AddClause(result, term, termStates[pos].DocFreq, query.Boost * boost[pos], termStates[pos]);
                 }
             }

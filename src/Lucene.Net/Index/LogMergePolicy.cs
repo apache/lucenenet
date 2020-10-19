@@ -692,7 +692,7 @@ namespace Lucene.Net.Index
                         for (int i = start; i < end; i++)
                         {
                             mergeInfos.Add(levels[i].info);
-                            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(infos.Contains(levels[i].info))) Debugging.ThrowAssert();
+                            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(infos.Contains(levels[i].info));
                         }
                         if (IsVerbose)
                         {

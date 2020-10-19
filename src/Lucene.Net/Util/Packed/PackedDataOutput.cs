@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public void WriteInt64(long value, int bitsPerValue)
         {
-            if (Debugging.AssertsEnabled && Debugging.ShouldAssert(bitsPerValue == 64 || (value >= 0 && value <= PackedInt32s.MaxValue(bitsPerValue)))) Debugging.ThrowAssert();
+            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(bitsPerValue == 64 || (value >= 0 && value <= PackedInt32s.MaxValue(bitsPerValue)));
             while (bitsPerValue > 0)
             {
                 if (remainingBits == 0)
