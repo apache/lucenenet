@@ -76,14 +76,14 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     break;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(StartsWith(SimpleTextDocValuesWriter.FIELD), scratch.Utf8ToString());
+                if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.FIELD))) Debugging.ThrowAssert(scratch.Utf8ToString());
                 var fieldName = StripPrefix(SimpleTextDocValuesWriter.FIELD);
                 var field = new OneField();
                 
                 fields[fieldName] = field;
 
                 ReadLine();
-                if (Debugging.AssertsEnabled) Debugging.Assert(StartsWith(SimpleTextDocValuesWriter.TYPE), scratch.Utf8ToString());
+                if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.TYPE))) Debugging.ThrowAssert(scratch.Utf8ToString());
 
                 var dvType = (DocValuesType)Enum.Parse(typeof(DocValuesType), StripPrefix(SimpleTextDocValuesWriter.TYPE));
                 // if (Debugging.ShouldAssert(dvType != null)) Debugging.ThrowAssert(); // LUCENENET: Not possible for an enum to be null in .NET

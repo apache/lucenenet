@@ -166,9 +166,9 @@ namespace Lucene.Net.Codecs.SimpleText
                     if (Debugging.AssertsEnabled)
                     {
                         Debugging.ThrowAssertIf(endOffset >= startOffset);
-                        Debugging.Assert(startOffset >= _lastStartOffset,
-                            "startOffset={0} lastStartOffset={1}", startOffset, _lastStartOffset);
+                        if(Debugging.ShouldAssert(startOffset >= _lastStartOffset)) Debugging.ThrowAssert("startOffset={0} lastStartOffset={1}", startOffset, _lastStartOffset);
                     }
+
                     _lastStartOffset = startOffset;
                     _outerInstance.Write(START_OFFSET);
                     _outerInstance.Write(Convert.ToString(startOffset, CultureInfo.InvariantCulture));

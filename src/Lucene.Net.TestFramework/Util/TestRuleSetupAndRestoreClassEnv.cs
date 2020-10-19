@@ -180,7 +180,7 @@ namespace Lucene.Net.Util
                 codec = Codec.ForName("Lucene40");
                 LuceneTestCase.OldFormatImpersonationIsActive = true;
                 if (Debugging.ShouldAssert((codec is Lucene40RWCodec))) Debugging.ThrowAssert("fix your ICodecFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
-                if (Debugging.AssertsEnabled) Debugging.Assert((PostingsFormat.ForName("Lucene40") is Lucene40RWPostingsFormat), "fix your IPostingsFormatFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
+                if (Debugging.ShouldAssert((PostingsFormat.ForName("Lucene40") is Lucene40RWPostingsFormat))) Debugging.ThrowAssert("fix your IPostingsFormatFactory to scan Lucene.Net.Tests before Lucene.Net.TestFramework");
             }
             else if ("Lucene41".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) &&
                                                                     "random".Equals(LuceneTestCase.TestPostingsFormat, StringComparison.Ordinal) &&

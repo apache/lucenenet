@@ -34,7 +34,7 @@ namespace Lucene.Net.Diagnostics
         /// <see cref="Index.FreqProxTermsWriterPerField"/>, <see cref="Index.StoredFieldsProcessor"/>,
         /// <see cref="Index.TermVectorsConsumer"/>, and <see cref="Index.TermVectorsConsumerPerField"/>.
         /// </summary>
-        private static bool AssertsEnabled = SystemProperties.GetPropertyAsBoolean("assert", false);
+        public static bool AssertsEnabled = SystemProperties.GetPropertyAsBoolean("assert", false);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ShouldAssert(bool condition)

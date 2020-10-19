@@ -291,9 +291,12 @@ namespace Lucene.Net.Util.Fst
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override object Merge(object first, object second)
         {
-            if(Debugging.ShouldAssert(Valid(first)) Debugging.ThrowAssert(false));
+            if (Debugging.AssertsEnabled)
+            {
+                if (Debugging.ShouldAssert(Valid(first, false))) Debugging.ThrowAssert();
+                if (Debugging.ShouldAssert(Valid(second, false))) Debugging.ThrowAssert();
+            }
 
-            if(Debugging.ShouldAssert(Valid(second)) Debugging.ThrowAssert(false));
             return new TwoInt64s(((long?)first).GetValueOrDefault(), ((long?)second).GetValueOrDefault());
         }
     }
