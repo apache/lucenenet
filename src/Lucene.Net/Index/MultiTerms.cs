@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
             this.subSlices = subSlices;
 
             IComparer<BytesRef> _termComp = null;
-            if (Debugging.ShouldAssert(subs.Length > 0) Debugging.ThrowAssert("inefficient: don't use MultiTerms over one sub");
+            if (Debugging.ShouldAssert(subs.Length > 0)) Debugging.ThrowAssert("inefficient: don't use MultiTerms over one sub");
             bool _hasFreqs = true;
             bool _hasOffsets = true;
             bool _hasPositions = true;

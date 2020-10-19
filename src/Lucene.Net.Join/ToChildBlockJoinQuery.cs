@@ -246,7 +246,7 @@ namespace Lucene.Net.Join
                         }
                     }
 
-                    if (Debugging.ShouldAssert(_childDoc < _parentDoc) Debugging.ThrowAssert("childDoc={0} parentDoc={1}", _childDoc, _parentDoc);
+                    if (Debugging.ShouldAssert(_childDoc < _parentDoc)) Debugging.ThrowAssert("childDoc={0} parentDoc={1}", _childDoc, _parentDoc);
                     _childDoc++;
                     if (_acceptDocs != null && !_acceptDocs.Get(_childDoc))
                     {
@@ -289,7 +289,7 @@ namespace Lucene.Net.Join
                     return _childDoc = _parentDoc = NO_MORE_DOCS;
                 }
 
-                if (Debugging.ShouldAssert(_childDoc == -1 || childTarget != _parentDoc) Debugging.ThrowAssert("childTarget={0}", childTarget);
+                if (Debugging.ShouldAssert(_childDoc == -1 || childTarget != _parentDoc)) Debugging.ThrowAssert("childTarget={0}", childTarget);
                 if (_childDoc == -1 || childTarget > _parentDoc)
                 {
                     // Advance to new parent:

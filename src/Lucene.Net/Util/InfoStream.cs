@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
         {
             public override void Message(string component, string message)
             {
-                if (Debugging.ShouldAssert(false) Debugging.ThrowAssert("Message() should not be called when IsEnabled returns false");
+                if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert("Message() should not be called when IsEnabled returns false");
             }
 
             public override bool IsEnabled(string component)

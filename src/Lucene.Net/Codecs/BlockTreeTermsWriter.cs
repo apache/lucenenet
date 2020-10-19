@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs
             {
                 if (Debugging.ShouldAssert(numTerms > 0)) Debugging.ThrowAssert();
                 this.FieldInfo = fieldInfo;
-                if (Debugging.ShouldAssert(rootCode != null) Debugging.ThrowAssert("field={0} numTerms={1}", fieldInfo.Name, numTerms);
+                if (Debugging.ShouldAssert(rootCode != null)) Debugging.ThrowAssert("field={0} numTerms={1}", fieldInfo.Name, numTerms);
                 this.RootCode = rootCode;
                 this.IndexStartFP = indexStartFP;
                 this.NumTerms = numTerms;
@@ -862,7 +862,7 @@ namespace Lucene.Net.Codecs
                             //System.out.println("    = " + pendingCount);
                             pendingCount = 0;
 
-                            if (Debugging.ShouldAssert(outerInstance.minItemsInBlock == 1 || subCount > 1) Debugging.ThrowAssert("minItemsInBlock={0} subCount={1}", outerInstance.minItemsInBlock, subCount + " sub=" + sub + " of " + numSubs + " subTermCount=" + subTermCountSums[sub] + " subSubCount=" + subSubCounts[sub] + " depth=" + prefixLength);
+                            if (Debugging.ShouldAssert(outerInstance.minItemsInBlock == 1 || subCount > 1)) Debugging.ThrowAssert("minItemsInBlock={0} subCount={1}", outerInstance.minItemsInBlock, subCount + " sub=" + sub + " of " + numSubs + " subTermCount=" + subTermCountSums[sub] + " subSubCount=" + subSubCounts[sub] + " depth=" + prefixLength);
                             subCount = 0;
                             startLabel = subBytes[sub + 1];
 
@@ -934,7 +934,7 @@ namespace Lucene.Net.Codecs
 
                 int start = pending.Count - startBackwards;
 
-                if (Debugging.ShouldAssert(start >= 0) Debugging.ThrowAssert("pending.Count={0} startBackwards={1}", pending.Count, startBackwards + " length=" + length);
+                if (Debugging.ShouldAssert(start >= 0)) Debugging.ThrowAssert("pending.Count={0} startBackwards={1}", pending.Count, startBackwards + " length=" + length);
 
                 IList<PendingEntry> slice = pending.SubList(start, start + length);
 
@@ -1011,7 +1011,7 @@ namespace Lucene.Net.Codecs
                         statsWriter.WriteVInt32(state.DocFreq);
                         if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                         {
-                            if (Debugging.ShouldAssert(state.TotalTermFreq >= state.DocFreq) Debugging.ThrowAssert("{0} vs {1}", state.TotalTermFreq, state.DocFreq);
+                            if (Debugging.ShouldAssert(state.TotalTermFreq >= state.DocFreq)) Debugging.ThrowAssert("{0} vs {1}", state.TotalTermFreq, state.DocFreq);
                             statsWriter.WriteVInt64(state.TotalTermFreq - state.DocFreq);
                         }
 
@@ -1205,7 +1205,7 @@ namespace Lucene.Net.Codecs
                     blockBuilder.Finish();
 
                     // We better have one final "root" block:
-                    if (Debugging.ShouldAssert(pending.Count == 1 && !pending[0].IsTerm) Debugging.ThrowAssert("pending.size()={0} pending={1}", pending.Count, pending);
+                    if (Debugging.ShouldAssert(pending.Count == 1 && !pending[0].IsTerm)) Debugging.ThrowAssert("pending.size()={0} pending={1}", pending.Count, pending);
                     PendingBlock root = (PendingBlock)pending[0];
                     if (Debugging.AssertsEnabled)
                     {

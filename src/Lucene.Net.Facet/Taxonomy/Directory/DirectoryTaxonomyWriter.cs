@@ -826,7 +826,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                                 FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(t.Utf8ToString()));
                                 docsEnum = termsEnum.Docs(null, docsEnum, DocsFlags.NONE);
                                 bool res = cache.Put(cp, docsEnum.NextDoc() + ctx.DocBase);
-                                if (Debugging.ShouldAssert(!res) Debugging.ThrowAssert("entries should not have been evicted from the cache");
+                                if (Debugging.ShouldAssert(!res)) Debugging.ThrowAssert("entries should not have been evicted from the cache");
                             }
                             else
                             {
@@ -907,7 +907,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
 
             int[] parents = GetTaxoArrays().Parents;
-            if (Debugging.ShouldAssert(ordinal < parents.Length) Debugging.ThrowAssert("requested ordinal ({0}); parents.length ({1}) !", ordinal, parents.Length);
+            if (Debugging.ShouldAssert(ordinal < parents.Length)) Debugging.ThrowAssert("requested ordinal ({0}); parents.length ({1}) !", ordinal, parents.Length);
             return parents[ordinal];
         }
 

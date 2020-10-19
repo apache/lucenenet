@@ -495,7 +495,7 @@ namespace Lucene.Net.Index
                     b = null;
                 }
 
-                if (Debugging.ShouldAssert(entry.Index < docsEnum.subDocsEnum.Length) Debugging.ThrowAssert("{0} vs {1}; {2}", entry.Index, docsEnum.subDocsEnum.Length, subs.Length);
+                if (Debugging.ShouldAssert(entry.Index < docsEnum.subDocsEnum.Length)) Debugging.ThrowAssert("{0} vs {1}; {2}", entry.Index, docsEnum.subDocsEnum.Length, subs.Length);
                 DocsEnum subDocsEnum = entry.Terms.Docs(b, docsEnum.subDocsEnum[entry.Index], flags);
                 if (subDocsEnum != null)
                 {
@@ -507,7 +507,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // should this be an error?
-                    if (Debugging.ShouldAssert(false) Debugging.ThrowAssert("One of our subs cannot provide a docsenum");
+                    if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert("One of our subs cannot provide a docsenum");
                 }
             }
 
@@ -587,7 +587,7 @@ namespace Lucene.Net.Index
                     b = null;
                 }
 
-                if (Debugging.ShouldAssert(entry.Index < docsAndPositionsEnum.subDocsAndPositionsEnum.Length) Debugging.ThrowAssert("{0} vs {1}; {2}", entry.Index, docsAndPositionsEnum.subDocsAndPositionsEnum.Length, subs.Length);
+                if (Debugging.ShouldAssert(entry.Index < docsAndPositionsEnum.subDocsAndPositionsEnum.Length)) Debugging.ThrowAssert("{0} vs {1}; {2}", entry.Index, docsAndPositionsEnum.subDocsAndPositionsEnum.Length, subs.Length);
                 DocsAndPositionsEnum subPostings = entry.Terms.DocsAndPositions(b, docsAndPositionsEnum.subDocsAndPositionsEnum[entry.Index], flags);
 
                 if (subPostings != null)
@@ -630,7 +630,7 @@ namespace Lucene.Net.Index
             {
                 this.SubSlice = subSlice;
                 this.Index = index;
-                if (Debugging.ShouldAssert(subSlice.Length >= 0) Debugging.ThrowAssert("length={0}", subSlice.Length);
+                if (Debugging.ShouldAssert(subSlice.Length >= 0)) Debugging.ThrowAssert("length={0}", subSlice.Length);
             }
 
             public void Reset(TermsEnum terms, BytesRef term)

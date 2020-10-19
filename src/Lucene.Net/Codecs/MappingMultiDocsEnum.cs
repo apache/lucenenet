@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs
                         current = subs[upto].DocsEnum;
                         currentBase = mergeState.DocBase[reader];
                         currentMap = mergeState.DocMaps[reader];
-                        if (Debugging.ShouldAssert(currentMap.MaxDoc == subs[upto].Slice.Length) Debugging.ThrowAssert("readerIndex={0} subs.len={1}", reader, subs.Length + " len1=" + currentMap.MaxDoc + " vs " + subs[upto].Slice.Length);
+                        if (Debugging.ShouldAssert(currentMap.MaxDoc == subs[upto].Slice.Length)) Debugging.ThrowAssert("readerIndex={0} subs.len={1}", reader, subs.Length + " len1=" + currentMap.MaxDoc + " vs " + subs[upto].Slice.Length);
                     }
                 }
 

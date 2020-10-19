@@ -145,7 +145,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State LastChild() // LUCENENET NOTE: Kept this a method because there is another overload
             {
-                if (Debugging.ShouldAssert(HasChildren) Debugging.ThrowAssert("No outgoing transitions.");
+                if (Debugging.ShouldAssert(HasChildren)) Debugging.ThrowAssert("No outgoing transitions.");
                 return states[states.Length - 1];
             }
 
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal void ReplaceLastChild(State state)
             {
-                if (Debugging.ShouldAssert(HasChildren) Debugging.ThrowAssert("No outgoing transitions.");
+                if (Debugging.ShouldAssert(HasChildren)) Debugging.ThrowAssert("No outgoing transitions.");
                 states[states.Length - 1] = state;
             }
 

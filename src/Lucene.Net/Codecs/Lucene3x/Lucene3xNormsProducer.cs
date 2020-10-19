@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                 }
                 // TODO: change to a real check? see LUCENE-3619
-                if (Debugging.ShouldAssert(singleNormStream == null || nextNormSeek == singleNormStream.Length) Debugging.ThrowAssert(singleNormStream != null ? "len: {0} expected: {1}" : "null", singleNormStream?.Length ?? 0, nextNormSeek);
+                if (Debugging.ShouldAssert(singleNormStream == null || nextNormSeek == singleNormStream.Length)) Debugging.ThrowAssert(singleNormStream != null ? "len: {0} expected: {1}" : "null", singleNormStream?.Length ?? 0, nextNormSeek);
                 success = true;
             }
             finally

@@ -160,7 +160,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     this.size = size;
                     // Verify the file is long enough to hold all of our
                     // docs
-                    if (Debugging.ShouldAssert(numTotalDocs >= size + docStoreOffset) Debugging.ThrowAssert("numTotalDocs={0} size={1}", numTotalDocs, size + " docStoreOffset=" + docStoreOffset);
+                    if (Debugging.ShouldAssert(numTotalDocs >= size + docStoreOffset)) Debugging.ThrowAssert("numTotalDocs={0} size={1}", numTotalDocs, size + " docStoreOffset=" + docStoreOffset);
                 }
 
                 this.fieldInfos = fieldInfos;

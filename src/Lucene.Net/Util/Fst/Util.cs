@@ -1068,7 +1068,7 @@ namespace Lucene.Net.Util.Fst
             {
                 int value = input.Int32s[i + input.Offset];
                 // NOTE: we allow -128 to 255
-                if (Debugging.ShouldAssert(value >= sbyte.MinValue && value <= 255) Debugging.ThrowAssert("value {0} doesn't fit into byte", value);
+                if (Debugging.ShouldAssert(value >= sbyte.MinValue && value <= 255)) Debugging.ThrowAssert("value {0} doesn't fit into byte", value);
                 scratch.Bytes[i] = (byte)value;
             }
             scratch.Length = input.Length;

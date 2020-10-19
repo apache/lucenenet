@@ -316,7 +316,7 @@ namespace Lucene.Net.Util
 
                 ++numBlocks;
 
-                if (Debugging.ShouldAssert(data.Length - originalLength == blockSize) Debugging.ThrowAssert((data.Length - originalLength) + " <> " + blockSize);
+                if (Debugging.ShouldAssert(data.Length - originalLength == blockSize)) Debugging.ThrowAssert((data.Length - originalLength) + " <> " + blockSize);
             }
 
             /// <summary>

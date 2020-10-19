@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < position; i++)
             {
                 state = runAutomaton.Step(state, seekBytesRef.Bytes[i] & 0xff);
-                if (Debugging.ShouldAssert(state >= 0) Debugging.ThrowAssert("state={0}", state);
+                if (Debugging.ShouldAssert(state >= 0)) Debugging.ThrowAssert("state={0}", state);
             }
             for (int i = 0; i < allTransitions[state].Length; i++)
             {

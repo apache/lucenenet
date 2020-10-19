@@ -691,7 +691,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    if (Debugging.ShouldAssert(info.Info.Dir == outerInstance.directory) Debugging.ThrowAssert("info.dir={0} vs {1}", info.Info.Dir, outerInstance.directory);
+                    if (Debugging.ShouldAssert(info.Info.Dir == outerInstance.directory)) Debugging.ThrowAssert("info.dir={0} vs {1}", info.Info.Dir, outerInstance.directory);
 
                     ReadersAndUpdates rld;
                     readerMap.TryGetValue(info, out rld);
@@ -707,7 +707,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        if (Debugging.ShouldAssert(rld.Info == info) Debugging.ThrowAssert("rld.info={0} info={1}", rld.Info, info + " isLive?=" + InfoIsLive(rld.Info) + " vs " + InfoIsLive(info));
+                        if (Debugging.ShouldAssert(rld.Info == info)) Debugging.ThrowAssert("rld.info={0} info={1}", rld.Info, info + " isLive?=" + InfoIsLive(rld.Info) + " vs " + InfoIsLive(info));
                     }
 
                     if (create)
@@ -1109,7 +1109,7 @@ namespace Lucene.Net.Index
             }
             foreach (IEvent e in eventQueue)
             {
-                if (Debugging.ShouldAssert(e is DocumentsWriter.MergePendingEvent) Debugging.ThrowAssert(e.ToString());
+                if (Debugging.ShouldAssert(e is DocumentsWriter.MergePendingEvent)) Debugging.ThrowAssert(e.ToString());
             }
             return true;
         }
@@ -2402,7 +2402,7 @@ namespace Lucene.Net.Index
                 MergePolicy.MergeSpecification spec;
                 if (maxNumSegments != UNBOUNDED_MAX_MERGE_SEGMENTS)
                 {
-                    if (Debugging.ShouldAssert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED) Debugging.ThrowAssert("Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: {0}", trigger.ToString());
+                    if (Debugging.ShouldAssert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED)) Debugging.ThrowAssert("Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: {0}", trigger.ToString());
                     spec = mergePolicy.FindForcedMerges(segmentInfos, maxNumSegments, segmentsToMerge);
                     newMergesFound = spec != null;
                     if (newMergesFound)
@@ -4018,7 +4018,7 @@ namespace Lucene.Net.Index
                 // when entering the method, all iterators must already be beyond the
                 // deleted document, or right on it, in which case we advance them over
                 // and they must be beyond it now.
-                if (Debugging.ShouldAssert(iter.Doc > deletedDoc) Debugging.ThrowAssert("updateDoc={0} deletedDoc={1}", iter.Doc, deletedDoc);
+                if (Debugging.ShouldAssert(iter.Doc > deletedDoc)) Debugging.ThrowAssert("updateDoc={0} deletedDoc={1}", iter.Doc, deletedDoc);
             }
         }
 
@@ -4070,7 +4070,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.ShouldAssert(updatesIter.Doc > curDoc) Debugging.ThrowAssert("field={0} updateDoc={1}", mergingFields[idx], updatesIter.Doc + " curDoc=" + curDoc);
+                    if (Debugging.ShouldAssert(updatesIter.Doc > curDoc)) Debugging.ThrowAssert("field={0} updateDoc={1}", mergingFields[idx], updatesIter.Doc + " curDoc=" + curDoc);
                 }
             }
         }
@@ -4115,7 +4115,7 @@ namespace Lucene.Net.Index
                     IBits prevLiveDocs = merge.readers[i].LiveDocs;
                     ReadersAndUpdates rld = readerPool.Get(info, false);
                     // We hold a ref so it should still be in the pool:
-                    if (Debugging.ShouldAssert(rld != null) Debugging.ThrowAssert("seg={0}", info.Info.Name);
+                    if (Debugging.ShouldAssert(rld != null)) Debugging.ThrowAssert("seg={0}", info.Info.Name);
                     IBits currentLiveDocs = rld.LiveDocs;
                     IDictionary<string, DocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
                     string[] mergingFields;
@@ -5037,7 +5037,7 @@ namespace Lucene.Net.Index
                     }
 
                     merge.readers.Add(reader);
-                    if (Debugging.ShouldAssert(delCount <= info.Info.DocCount) Debugging.ThrowAssert("delCount={0} info.docCount={1}", delCount, info.Info.DocCount + " rld.pendingDeleteCount=" + rld.PendingDeleteCount + " info.getDelCount()=" + info.DelCount);
+                    if (Debugging.ShouldAssert(delCount <= info.Info.DocCount)) Debugging.ThrowAssert("delCount={0} info.docCount={1}", delCount, info.Info.DocCount + " rld.pendingDeleteCount=" + rld.PendingDeleteCount + " info.getDelCount()=" + info.DelCount);
                     segUpto++;
                 }
 
@@ -5445,7 +5445,7 @@ namespace Lucene.Net.Index
 
                 lock (this)
                 {
-                    if (Debugging.ShouldAssert(lastCommitChangeCount <= changeCount) Debugging.ThrowAssert("lastCommitChangeCount={0} changeCount={1}", lastCommitChangeCount, changeCount);
+                    if (Debugging.ShouldAssert(lastCommitChangeCount <= changeCount)) Debugging.ThrowAssert("lastCommitChangeCount={0} changeCount={1}", lastCommitChangeCount, changeCount);
 
                     if (pendingCommitChangeCount == lastCommitChangeCount)
                     {

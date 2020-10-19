@@ -232,7 +232,7 @@ namespace Lucene.Net.Analysis
                     }
                     else
                     {
-                        if (Debugging.ShouldAssert(false) Debugging.ThrowAssert("stream ends with unpaired high surrogate: {0}", ch.ToString("x"));
+                        if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert("stream ends with unpaired high surrogate: {0}", ch.ToString("x"));
                     }
                 }
                 return ch;
@@ -300,7 +300,7 @@ namespace Lucene.Net.Analysis
             state = runAutomaton.InitialState;
             lastOffset = off = 0;
             bufferedCodePoint = -1;
-            if (Debugging.ShouldAssert(!enableChecks || streamState != State.RESET) Debugging.ThrowAssert("Double Reset()");
+            if (Debugging.ShouldAssert(!enableChecks || streamState != State.RESET)) Debugging.ThrowAssert("Double Reset()");
             streamState = State.RESET;
         }
 
@@ -312,14 +312,14 @@ namespace Lucene.Net.Analysis
                 // in some exceptional cases (e.g. TestIndexWriterExceptions) a test can prematurely close()
                 // these tests should disable this check, by default we check the normal workflow.
                 // TODO: investigate the CachingTokenFilter "double-close"... for now we ignore this
-                if (Debugging.ShouldAssert(!enableChecks || streamState == State.END || streamState == State.CLOSE) Debugging.ThrowAssert("Dispose() called in wrong state: {0}", streamState);
+                if (Debugging.ShouldAssert(!enableChecks || streamState == State.END || streamState == State.CLOSE)) Debugging.ThrowAssert("Dispose() called in wrong state: {0}", streamState);
                 streamState = State.CLOSE;
             }
         }
 
         internal override bool SetReaderTestPoint()
         {
-            if (Debugging.ShouldAssert(!enableChecks || streamState == State.CLOSE) Debugging.ThrowAssert("SetReader() called in wrong state: {0}", streamState);
+            if (Debugging.ShouldAssert(!enableChecks || streamState == State.CLOSE)) Debugging.ThrowAssert("SetReader() called in wrong state: {0}", streamState);
             streamState = State.SETREADER;
             return true;
         }
@@ -333,7 +333,7 @@ namespace Lucene.Net.Analysis
             // these tests should disable this check (in general you should consume the entire stream)
             try
             {
-                if (Debugging.ShouldAssert(!enableChecks || streamState == State.INCREMENT_FALSE) Debugging.ThrowAssert("End() called before IncrementToken() returned false!");
+                if (Debugging.ShouldAssert(!enableChecks || streamState == State.INCREMENT_FALSE)) Debugging.ThrowAssert("End() called before IncrementToken() returned false!");
             }
             finally
             {

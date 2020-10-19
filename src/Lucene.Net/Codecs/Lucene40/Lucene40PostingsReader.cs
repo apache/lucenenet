@@ -933,7 +933,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 posPendingCount--;
 
-                if (Debugging.ShouldAssert(posPendingCount >= 0) Debugging.ThrowAssert("nextPosition() was called too many times (more than freq() times) posPendingCount={0}", posPendingCount);
+                if (Debugging.ShouldAssert(posPendingCount >= 0)) Debugging.ThrowAssert("nextPosition() was called too many times (more than freq() times) posPendingCount={0}", posPendingCount);
 
                 return position;
             }
@@ -1228,7 +1228,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 posPendingCount--;
 
-                if (Debugging.ShouldAssert(posPendingCount >= 0) Debugging.ThrowAssert("nextPosition() was called too many times (more than freq() times) posPendingCount={0}", posPendingCount);
+                if (Debugging.ShouldAssert(posPendingCount >= 0)) Debugging.ThrowAssert("nextPosition() was called too many times (more than freq() times) posPendingCount={0}", posPendingCount);
 
                 //System.out.println("StandardR.D&PE nextPos   return pos=" + position);
                 return position;

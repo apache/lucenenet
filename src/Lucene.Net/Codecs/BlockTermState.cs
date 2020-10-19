@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs
 
         public override void CopyFrom(TermState other)
         {
-            if (Debugging.ShouldAssert(other is BlockTermState) Debugging.ThrowAssert("can not copy from {0}", other.GetType().Name);
+            if (Debugging.ShouldAssert(other is BlockTermState)) Debugging.ThrowAssert("can not copy from {0}", other.GetType().Name);
             BlockTermState other2 = (BlockTermState)other;
             base.CopyFrom(other);
             DocFreq = other2.DocFreq;

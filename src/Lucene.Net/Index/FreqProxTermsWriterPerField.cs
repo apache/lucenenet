@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
             }
             else if (docState.docID != postings.lastDocIDs[termID])
             {
-                if (Debugging.ShouldAssert(docState.docID > postings.lastDocIDs[termID]) Debugging.ThrowAssert("id: {0} postings ID: {1}", docState.docID, postings.lastDocIDs[termID] + " termID: " + termID);
+                if (Debugging.ShouldAssert(docState.docID > postings.lastDocIDs[termID])) Debugging.ThrowAssert("id: {0} postings ID: {1}", docState.docID, postings.lastDocIDs[termID] + " termID: " + termID);
                 // Term not yet seen in the current doc but previously
                 // seen in other doc(s) since the last flush
 
@@ -559,7 +559,7 @@ namespace Lucene.Net.Index
                     }
 
                     docFreq++;
-                    if (Debugging.ShouldAssert(docID < state.SegmentInfo.DocCount) Debugging.ThrowAssert("doc={0} maxDoc={1}", docID, state.SegmentInfo.DocCount);
+                    if (Debugging.ShouldAssert(docID < state.SegmentInfo.DocCount)) Debugging.ThrowAssert("doc={0} maxDoc={1}", docID, state.SegmentInfo.DocCount);
 
                     // NOTE: we could check here if the docID was
                     // deleted, and skip it.  However, this is somewhat
@@ -644,7 +644,7 @@ namespace Lucene.Net.Index
                                     {
                                         if (writeOffsets)
                                         {
-                                            if (Debugging.ShouldAssert(startOffset >= 0 && endOffset >= startOffset) Debugging.ThrowAssert("startOffset={0},endOffset={1}", startOffset, endOffset + ",offset=" + offset);
+                                            if (Debugging.ShouldAssert(startOffset >= 0 && endOffset >= startOffset)) Debugging.ThrowAssert("startOffset={0},endOffset={1}", startOffset, endOffset + ",offset=" + offset);
                                             postingsConsumer.AddPosition(position, thisPayload, startOffset, endOffset);
                                         }
                                         else

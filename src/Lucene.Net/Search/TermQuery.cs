@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
             public TermWeight(TermQuery outerInstance, IndexSearcher searcher, TermContext termStates)
             {
                 this.outerInstance = outerInstance;
-                if (Debugging.ShouldAssert(termStates != null) Debugging.ThrowAssert("TermContext must not be null");
+                if (Debugging.ShouldAssert(termStates != null)) Debugging.ThrowAssert("TermContext must not be null");
                 this.termStates = termStates;
                 this.similarity = searcher.Similarity;
                 this.stats = similarity.ComputeWeight(outerInstance.Boost, searcher.CollectionStatistics(outerInstance.term.Field), searcher.TermStatistics(outerInstance.term, termStates));

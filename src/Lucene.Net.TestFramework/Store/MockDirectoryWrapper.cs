@@ -1024,7 +1024,7 @@ namespace Lucene.Net.Store
                                         extras += "\n\nThese files we had previously tried to delete, but couldn't: " + pendingDeletions;
                                     }
 
-                                    if (Debugging.ShouldAssert(false) Debugging.ThrowAssert("unreferenced files: before delete:\n    {0}\n  after delete:\n    {1}", Arrays.ToString(startFiles), Arrays.ToString(endFiles) + extras);
+                                    if (Debugging.ShouldAssert(false)) Debugging.ThrowAssert("unreferenced files: before delete:\n    {0}\n  after delete:\n    {1}", Arrays.ToString(startFiles), Arrays.ToString(endFiles) + extras);
                                 }
 
                                 DirectoryReader ir1 = DirectoryReader.Open(this);
@@ -1034,7 +1034,7 @@ namespace Lucene.Net.Store
                                 DirectoryReader ir2 = DirectoryReader.Open(this);
                                 int numDocs2 = ir2.NumDocs;
                                 ir2.Dispose();
-                                if (Debugging.ShouldAssert(numDocs1 == numDocs2) Debugging.ThrowAssert("numDocs changed after opening/closing IW: before={0} after={1}", numDocs1, numDocs2);
+                                if (Debugging.ShouldAssert(numDocs1 == numDocs2)) Debugging.ThrowAssert("numDocs changed after opening/closing IW: before={0} after={1}", numDocs1, numDocs2);
                             }
                         }
                     }

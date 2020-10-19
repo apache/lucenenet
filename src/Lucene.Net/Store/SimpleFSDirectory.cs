@@ -226,7 +226,7 @@ namespace Lucene.Net.Store
                         //    {
                         //        throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + m_end);
                         //    }
-                        //    if (Debugging.ShouldAssert(i > 0) Debugging.ThrowAssert("RandomAccessFile.read with non zero-length toRead must always read at least one byte");
+                        //    if (Debugging.ShouldAssert(i > 0)) Debugging.ThrowAssert("RandomAccessFile.read with non zero-length toRead must always read at least one byte");
                         //    total += i;
                         //}
 

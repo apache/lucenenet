@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
         private bool CheckLength(int reader, int doc)
         {
             int length = starts[1 + reader] - starts[reader];
-            if (Debugging.ShouldAssert(doc - starts[reader] < length) Debugging.ThrowAssert("doc={0} reader={1}", doc, reader + " starts[reader]=" + starts[reader] + " length=" + length);
+            if (Debugging.ShouldAssert(doc - starts[reader] < length)) Debugging.ThrowAssert("doc={0} reader={1}", doc, reader + " starts[reader]=" + starts[reader] + " length=" + length);
             return true;
         }
 

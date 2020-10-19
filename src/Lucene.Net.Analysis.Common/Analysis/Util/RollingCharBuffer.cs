@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Util
                 if (Debugging.ShouldAssert(pos < nextPos)) Debugging.ThrowAssert();
 
                 // Cannot read from already freed past:
-                if (Debugging.ShouldAssert(nextPos - pos <= count) Debugging.ThrowAssert("nextPos={0} pos={1} count={2}", nextPos, pos, count);
+                if (Debugging.ShouldAssert(nextPos - pos <= count)) Debugging.ThrowAssert("nextPos={0} pos={1} count={2}", nextPos, pos, count);
 
                 return buffer[GetIndex(pos)];
             }

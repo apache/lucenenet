@@ -135,7 +135,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="IndexReader.Context"/>
         public IndexSearcher(IndexReaderContext context, TaskScheduler executor)
         {
-            if (Debugging.ShouldAssert(context.IsTopLevel) Debugging.ThrowAssert("IndexSearcher's ReaderContext must be topLevel for reader{0}", context.Reader);
+            if (Debugging.ShouldAssert(context.IsTopLevel)) Debugging.ThrowAssert("IndexSearcher's ReaderContext must be topLevel for reader{0}", context.Reader);
             reader = context.Reader;
             this.executor = executor;
             this.m_readerContext = context;

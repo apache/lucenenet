@@ -173,7 +173,7 @@ namespace Lucene.Net.Codecs
                     @in.ReadBytes(rootCode.Bytes, 0, numBytes);
                     rootCode.Length = numBytes;
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                    if (Debugging.ShouldAssert(fieldInfo != null) Debugging.ThrowAssert("field={0}", field);
+                    if (Debugging.ShouldAssert(fieldInfo != null)) Debugging.ThrowAssert("field={0}", field);
                     long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? -1 : @in.ReadVInt64();
                     long sumDocFreq = @in.ReadVInt64();
                     int docCount = @in.ReadVInt32();
@@ -478,7 +478,7 @@ namespace Lucene.Net.Codecs
                 }
                 endBlockCount++;
                 long otherBytes = frame.fpEnd - frame.fp - frame.suffixesReader.Length - frame.statsReader.Length;
-                if (Debugging.ShouldAssert(otherBytes > 0) Debugging.ThrowAssert("otherBytes={0} frame.fp={1} frame.fpEnd={2}", otherBytes, frame.fp, frame.fpEnd);
+                if (Debugging.ShouldAssert(otherBytes > 0)) Debugging.ThrowAssert("otherBytes={0} frame.fp={1} frame.fpEnd={2}", otherBytes, frame.fp, frame.fpEnd);
                 TotalBlockOtherBytes += otherBytes;
             }
 
@@ -909,7 +909,7 @@ namespace Lucene.Net.Codecs
                     public bool NextLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.ShouldAssert(nextEnt != -1 && nextEnt < entCount) Debugging.ThrowAssert("nextEnt={0} entCount={1} fp={2}", nextEnt, entCount, fp);
+                        if (Debugging.ShouldAssert(nextEnt != -1 && nextEnt < entCount)) Debugging.ThrowAssert("nextEnt={0} entCount={1} fp={2}", nextEnt, entCount, fp);
                         nextEnt++;
                         suffix = suffixesReader.ReadVInt32();
                         startBytePos = suffixesReader.Position;
@@ -920,7 +920,7 @@ namespace Lucene.Net.Codecs
                     public bool NextNonLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.ShouldAssert(nextEnt != -1 && nextEnt < entCount) Debugging.ThrowAssert("nextEnt={0} entCount={1} fp={2}", nextEnt, entCount, fp);
+                        if (Debugging.ShouldAssert(nextEnt != -1 && nextEnt < entCount)) Debugging.ThrowAssert("nextEnt={0} entCount={1} fp={2}", nextEnt, entCount, fp);
                         nextEnt++;
                         int code = suffixesReader.ReadVInt32();
                         suffix = (int)((uint)code >> 1);
@@ -2388,7 +2388,7 @@ namespace Lucene.Net.Codecs
                 //            }
                 //            if (OuterInstance.Index != null)
                 //            {
-                //                if (Debugging.ShouldAssert(!isSeekFrame || f.Arc != null) Debugging.ThrowAssert("isSeekFrame=" + isSeekFrame + " f.arc=" + f.Arc);
+                //                if (Debugging.ShouldAssert(!isSeekFrame || f.Arc != null)) Debugging.ThrowAssert("isSeekFrame=" + isSeekFrame + " f.arc=" + f.Arc);
                 //                if (f.Prefix > 0 && isSeekFrame && f.Arc.Label != (term.Bytes[f.Prefix - 1] & 0xFF))
                 //                {
                 //                    @out.println("      broken seek state: arc.label=" + (char)f.Arc.Label + " vs term byte=" + (char)(term.Bytes[f.Prefix - 1] & 0xFF));
@@ -2760,7 +2760,7 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) {
                         //System.out.println("    loadNextFloorBlock fp=" + fp + " fpEnd=" + fpEnd);
                         //}
-                        if (Debugging.ShouldAssert(arc == null || isFloor) Debugging.ThrowAssert("arc={0} isFloor={1}", arc, isFloor);
+                        if (Debugging.ShouldAssert(arc == null || isFloor)) Debugging.ThrowAssert("arc={0} isFloor={1}", arc, isFloor);
                         fp = fpEnd;
                         nextEnt = -1;
                         LoadBlock();
@@ -2917,7 +2917,7 @@ namespace Lucene.Net.Codecs
                     public bool NextLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.ShouldAssert(nextEnt != -1 && nextEnt < entCount) Debugging.ThrowAssert("nextEnt={0} entCount={1}", nextEnt, entCount + " fp=" + fp);
+                        if (Debugging.ShouldAssert(nextEnt != -1 && nextEnt < entCount)) Debugging.ThrowAssert("nextEnt={0} entCount={1}", nextEnt, entCount + " fp=" + fp);
                         nextEnt++;
                         suffix = suffixesReader.ReadVInt32();
                         startBytePos = suffixesReader.Position;
@@ -2935,7 +2935,7 @@ namespace Lucene.Net.Codecs
                     public bool NextNonLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.ShouldAssert(nextEnt != -1 && nextEnt < entCount) Debugging.ThrowAssert("nextEnt={0} entCount={1}", nextEnt, entCount + " fp=" + fp);
+                        if (Debugging.ShouldAssert(nextEnt != -1 && nextEnt < entCount)) Debugging.ThrowAssert("nextEnt={0} entCount={1}", nextEnt, entCount + " fp=" + fp);
                         nextEnt++;
                         int code = suffixesReader.ReadVInt32();
                         suffix = (int)((uint)code >> 1);
@@ -3118,7 +3118,7 @@ namespace Lucene.Net.Codecs
                             //if (DEBUG) System.out.println("    already positioned");
                             return;
                         }
-                        if (Debugging.ShouldAssert(subFP < fp) Debugging.ThrowAssert("fp={0} subFP={1}", fp, subFP);
+                        if (Debugging.ShouldAssert(subFP < fp)) Debugging.ThrowAssert("fp={0} subFP={1}", fp, subFP);
                         long targetSubCode = fp - subFP;
                         //if (DEBUG) System.out.println("    targetSubCode=" + targetSubCode);
                         while (true)

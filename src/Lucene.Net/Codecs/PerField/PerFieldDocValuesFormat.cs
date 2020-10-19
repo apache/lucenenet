@@ -155,7 +155,7 @@ namespace Lucene.Net.Codecs.PerField
                 string formatName_ = format.Name;
 
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName_);
-                if (Debugging.ShouldAssert(field.DocValuesGen != -1 || previousValue == null) Debugging.ThrowAssert("formatName={0} prevValue={1}", formatName_, previousValue);
+                if (Debugging.ShouldAssert(field.DocValuesGen != -1 || previousValue == null)) Debugging.ThrowAssert("formatName={0} prevValue={1}", formatName_, previousValue);
 
                 int? suffix = null;
 
@@ -204,7 +204,7 @@ namespace Lucene.Net.Codecs.PerField
                 }
 
                 previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix, CultureInfo.InvariantCulture));
-                if (Debugging.ShouldAssert(field.DocValuesGen != -1 || previousValue == null) Debugging.ThrowAssert("suffix={0} prevValue={1}", Convert.ToString(suffix, CultureInfo.InvariantCulture), previousValue);
+                if (Debugging.ShouldAssert(field.DocValuesGen != -1 || previousValue == null)) Debugging.ThrowAssert("suffix={0} prevValue={1}", Convert.ToString(suffix, CultureInfo.InvariantCulture), previousValue);
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this DVF actually sees ...

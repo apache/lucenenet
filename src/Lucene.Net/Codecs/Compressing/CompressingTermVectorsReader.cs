@@ -383,7 +383,7 @@ namespace Lucene.Net.Codecs.Compressing
                         totalPayloads += freq;
                     }
                 }
-                if (Debugging.ShouldAssert(i != totalFields - 1 || termIndex == totalTerms) Debugging.ThrowAssert("{0} {1}", termIndex, totalTerms);
+                if (Debugging.ShouldAssert(i != totalFields - 1 || termIndex == totalTerms)) Debugging.ThrowAssert("{0} {1}", termIndex, totalTerms);
             }
 
             int[][] positionIndex = PositionIndex(skip, numFields, numTerms, termFreqs);
@@ -538,7 +538,7 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                     termIndex += termCount;
                 }
-                if (Debugging.ShouldAssert(termIndex == totalTerms) Debugging.ThrowAssert("{0} {1}", termIndex, totalTerms);
+                if (Debugging.ShouldAssert(termIndex == totalTerms)) Debugging.ThrowAssert("{0} {1}", termIndex, totalTerms);
             }
 
             // decompress data

@@ -240,11 +240,11 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         public virtual void AddMapping(int sourceId, int wordId)
         {
-            if (Debugging.ShouldAssert(wordId > lastWordId) Debugging.ThrowAssert("words out of order: {0} vs lastID: {1}", wordId, lastWordId);
+            if (Debugging.ShouldAssert(wordId > lastWordId)) Debugging.ThrowAssert("words out of order: {0} vs lastID: {1}", wordId, lastWordId);
 
             if (sourceId > lastSourceId)
             {
-                if (Debugging.ShouldAssert(sourceId > lastSourceId) Debugging.ThrowAssert("source ids out of order: lastSourceId={0} vs sourceId={1}", lastSourceId, sourceId);
+                if (Debugging.ShouldAssert(sourceId > lastSourceId)) Debugging.ThrowAssert("source ids out of order: lastSourceId={0} vs sourceId={1}", lastSourceId, sourceId);
                 targetMapOffsets = ArrayUtil.Grow(targetMapOffsets, sourceId + 1);
                 for (int i = lastSourceId + 1; i <= sourceId; i++)
                 {
@@ -320,7 +320,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     }
                     prev += delta;
                 }
-                if (Debugging.ShouldAssert(sourceId == numSourceIds) Debugging.ThrowAssert("sourceId:{0} != numSourceIds:{1}", sourceId, numSourceIds);
+                if (Debugging.ShouldAssert(sourceId == numSourceIds)) Debugging.ThrowAssert("sourceId:{0} != numSourceIds:{1}", sourceId, numSourceIds);
             }
         }
 
@@ -344,7 +344,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     else
                     {
                         string[] data = CSVUtil.Parse(s);
-                        if (Debugging.ShouldAssert(data.Length == 3) Debugging.ThrowAssert("malformed pos/inflection: {0}", s);
+                        if (Debugging.ShouldAssert(data.Length == 3)) Debugging.ThrowAssert("malformed pos/inflection: {0}", s);
                         @out.WriteString(data[0]);
                         @out.WriteString(data[1]);
                         @out.WriteString(data[2]);

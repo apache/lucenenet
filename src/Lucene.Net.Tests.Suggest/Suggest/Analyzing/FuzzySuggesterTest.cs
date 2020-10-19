@@ -1314,7 +1314,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 else
                 {
                     int c = CHARSEQUENCE_COMPARER.Compare(a.Key, b.Key);
-                    if (Debugging.ShouldAssert(c != 0) Debugging.ThrowAssert("term={0}", a.Key);
+                    if (Debugging.ShouldAssert(c != 0)) Debugging.ThrowAssert("term={0}", a.Key);
                     return c;
                 }
             }
