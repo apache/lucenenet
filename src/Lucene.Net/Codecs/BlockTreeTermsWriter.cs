@@ -485,7 +485,7 @@ namespace Lucene.Net.Codecs
 
                 if (assertsEnabled) 
                 {
-                    Debugging.ShouldAssert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null))) Debugging.ThrowAssert("isFloor={0} floorBlocks={1}", IsFloor, ToString(floorBlocks));
+                    if (Debugging.ShouldAssert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null))) Debugging.ThrowAssert("isFloor={0} floorBlocks={1}", IsFloor, ToString(floorBlocks));
                     Debugging.Assert(scratchBytes.GetFilePointer() == 0);
                 }
 
