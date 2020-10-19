@@ -448,7 +448,7 @@ namespace Lucene.Net.Search
                 if (Debugging.ShouldAssert(rangeBounds.Count % 2 == 0)) Debugging.ThrowAssert();
 
                 currentLowerBound = rangeBounds.Dequeue();
-                if (Debugging.AssertsEnabled) Debugging.Assert(currentUpperBound == null || termComp.Compare(currentUpperBound, currentLowerBound) <= 0, "The current upper bound must be <= the new lower bound");
+                if (Debugging.ShouldAssert(currentUpperBound == null || termComp.Compare(currentUpperBound, currentLowerBound) <= 0)) Debugging.ThrowAssert("The current upper bound must be <= the new lower bound");
 
                 currentUpperBound = rangeBounds.Dequeue();
             }

@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Ja.Util
             }
 
             string existing = posDict[leftId];
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(existing == null || existing.Equals(fullPOSData, StringComparison.Ordinal));
+            Debugging.ThrowAssertIf(existing == null || existing.Equals(fullPOSData, StringComparison.Ordinal));
             posDict[leftId] = fullPOSData;
 
             m_buffer.PutInt16((short)(leftId << 3 | flags));

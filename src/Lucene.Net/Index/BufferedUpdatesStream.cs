@@ -688,7 +688,7 @@ namespace Lucene.Net.Index
         {
             if (term != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(lastDeleteTerm == null || term.CompareTo(lastDeleteTerm) > 0,"lastTerm={0} vs term={1}", lastDeleteTerm, term);
+                if (Debugging.ShouldAssert(lastDeleteTerm == null || term.CompareTo(lastDeleteTerm) > 0)) Debugging.ThrowAssert("lastTerm={0} vs term={1}", lastDeleteTerm, term);
             }
             // TODO: we re-use term now in our merged iterable, but we shouldn't clone, instead copy for this assert
             lastDeleteTerm = term == null ? null : new Term(term.Field, BytesRef.DeepCopyOf(term.Bytes));

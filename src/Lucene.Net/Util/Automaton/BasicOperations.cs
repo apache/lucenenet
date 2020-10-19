@@ -868,7 +868,7 @@ namespace Lucene.Net.Util.Automaton
                         }
                         else
                         {
-                            if (Debugging.AssertsEnabled) Debugging.Assert((accCount > 0) == q.accept,"accCount={0} vs existing accept={1}", accCount, q.accept + " states=" + statesSet);
+                            if (Debugging.ShouldAssert((accCount > 0) == q.accept)) Debugging.ThrowAssert("accCount={0} vs existing accept={1}", accCount, q.accept + " states=" + statesSet);
                         }
 
                         r.AddTransition(new Transition(lastPoint, point - 1, q));

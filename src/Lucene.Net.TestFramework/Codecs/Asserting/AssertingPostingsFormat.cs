@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.Asserting
             {
                 if (Debugging.ShouldAssert(state == TermsConsumerState.INITIAL || state == TermsConsumerState.START && lastPostingsConsumer.docFreq == 0)) Debugging.ThrowAssert();
                 state = TermsConsumerState.START;
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(lastTerm == null || @in.Comparer.Compare(text, lastTerm) > 0);
+                Debugging.ThrowAssertIf(lastTerm == null || @in.Comparer.Compare(text, lastTerm) > 0);
                 lastTerm = BytesRef.DeepCopyOf(text);
                 return lastPostingsConsumer = new AssertingPostingsConsumer(@in.StartTerm(text), fieldInfo, visitedDocs);
             }

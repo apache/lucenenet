@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 if (dvType == DocValuesType.NUMERIC)
                 {
                     ReadLine();
-                    if (Debugging.AssertsEnabled) Debugging.Assert(StartsWith(SimpleTextDocValuesWriter.MINVALUE), "got {0} field={1} ext={2}", scratch.Utf8ToString(), fieldName, ext);
+                    if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.MINVALUE))) Debugging.ThrowAssert("got {0} field={1} ext={2}", scratch.Utf8ToString(), fieldName, ext);
                     field.MinValue = Convert.ToInt64(StripPrefix(SimpleTextDocValuesWriter.MINVALUE), CultureInfo.InvariantCulture);
                     ReadLine();
                     if (Debugging.ShouldAssert(StartsWith(SimpleTextDocValuesWriter.PATTERN))) Debugging.ThrowAssert();
@@ -277,7 +277,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                     _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * docId);
                     SimpleTextUtil.ReadLine(_input, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
+                    Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
                     int len;
                     try
                     {
@@ -334,7 +334,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * index);
                     SimpleTextUtil.ReadLine(_input, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
+                    Debugging.ThrowAssertIf(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
                     int len;
                     try
                     {
@@ -435,7 +435,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
                     _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
                     SimpleTextUtil.ReadLine(_input, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH), "got {0} in={1}", _scratch.Utf8ToString(), _input.ToString());
+                    if (Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH))) Debugging.ThrowAssert("got {0} in={1}", _scratch.Utf8ToString(), _input.ToString());
                     int len;
                     try
                     {
@@ -539,7 +539,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                     _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
                     SimpleTextUtil.ReadLine(_input, _scratch);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH), "got {0} in={1}", _scratch.Utf8ToString(), _input.ToString());
+                    if (Debugging.ShouldAssert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH))) Debugging.ThrowAssert("got {0} in={1}", _scratch.Utf8ToString(), _input.ToString());
                     int len;
                     try
                     {

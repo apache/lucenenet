@@ -126,7 +126,7 @@ namespace Lucene.Net.Util.Packed
         ///  <returns> The low value for the current decoding index. </returns>
         private long CurrentLowValue()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(((efIndex >= 0) && (efIndex < numEncoded)), "efIndex {0}", efIndex.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.ShouldAssert(((efIndex >= 0) && (efIndex < numEncoded)))) Debugging.ThrowAssert("efIndex {0}", efIndex.ToString(CultureInfo.InvariantCulture));
             return UnPackValue(efEncoder.lowerLongs, efEncoder.numLowBits, efIndex, efEncoder.lowerBitsMask);
         }
 
@@ -356,7 +356,7 @@ namespace Lucene.Net.Util.Packed
 
             // curHighLong has enough clear bits to reach highTarget, has at least 1 set bit, and may not have enough set bits.
             int rank = (int)(highTarget - (setBitForIndex - efIndex)); // the rank of the zero bit for highValue.
-            if (Debugging.AssertsEnabled) Debugging.Assert((rank <= (sizeof(long) * 8)), "rank {0}", rank);
+            if (Debugging.ShouldAssert((rank <= (sizeof(long) * 8)))) Debugging.ThrowAssert("rank {0}", rank);
             if (rank >= 1)
             {
                 long invCurHighLong = ~curHighLong;

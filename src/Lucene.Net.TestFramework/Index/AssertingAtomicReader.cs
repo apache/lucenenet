@@ -677,7 +677,7 @@ namespace Lucene.Net.Index
                 if (Debugging.ShouldAssert(state != DocsEnumState.FINISHED)) Debugging.ThrowAssert("GetPayload() called after NO_MORE_DOCS");
                 if (Debugging.ShouldAssert(positionCount > 0)) Debugging.ThrowAssert("GetPayload() called before NextPosition()!");
                 BytesRef payload = base.GetPayload();
-                if (Debugging.AssertsEnabled) Debugging.Assert(payload == null || payload.IsValid() && payload.Length > 0, "GetPayload() returned payload with invalid length!");
+                if (Debugging.ShouldAssert(payload == null || payload.IsValid() && payload.Length > 0)) Debugging.ThrowAssert("GetPayload() returned payload with invalid length!");
                 return payload;
             }
         }

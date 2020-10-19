@@ -308,7 +308,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 // The 3 bytes starting at downTo make up 1
                 // unicode character:
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(IsHighBMPChar(term.Bytes, pos));
+                Debugging.ThrowAssertIf(IsHighBMPChar(term.Bytes, pos));
 
                 // NOTE: we cannot make this assert, because
                 // AutomatonQuery legitimately sends us malformed UTF8
@@ -916,14 +916,14 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t2 == null || t2.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(t2 == null || !t2.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        Debugging.ThrowAssertIf(t2 == null || !t2.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         current = null;
                         return SeekStatus.END;
                     }
                     else
                     {
                         current = t2.Bytes;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!unicodeSortOrder || term.CompareTo(current) < 0,"term={0} vs current={1}", UnicodeUtil.ToHexString(term.Utf8ToString()), UnicodeUtil.ToHexString(current.Utf8ToString()));
+                        if (Debugging.ShouldAssert(!unicodeSortOrder || term.CompareTo(current) < 0)) Debugging.ThrowAssert("term={0} vs current={1}", UnicodeUtil.ToHexString(term.Utf8ToString()), UnicodeUtil.ToHexString(current.Utf8ToString()));
                         return SeekStatus.NOT_FOUND;
                     }
                 }
@@ -1000,7 +1000,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t == null || t.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        Debugging.ThrowAssertIf(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         current = null;
                         return false;
                     }
@@ -1026,7 +1026,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t == null || t.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
+                        Debugging.ThrowAssertIf(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         return false;
                     }
                     else

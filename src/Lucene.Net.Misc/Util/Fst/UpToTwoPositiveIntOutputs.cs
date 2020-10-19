@@ -216,7 +216,7 @@ namespace Lucene.Net.Util.Fst
 
         public override void Write(object output, DataOutput @out)
         {
-            if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Valid(output, true));
+            Debugging.ThrowAssertIf(Valid(output, true));
             if (output is long?)
             {
                 long? output2 = (long?)output;

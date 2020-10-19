@@ -190,7 +190,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // verify (to some extent) that merge policy in effect would preserve category docids 
             if (indexWriter != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!(indexWriter.Config.MergePolicy is TieredMergePolicy), "for preserving category docids, merging none-adjacent segments is not allowed");
+                if (Debugging.ShouldAssert(!(indexWriter.Config.MergePolicy is TieredMergePolicy))) Debugging.ThrowAssert("for preserving category docids, merging none-adjacent segments is not allowed");
             }
 
             // after we opened the writer, and the index is locked, it's safe to check

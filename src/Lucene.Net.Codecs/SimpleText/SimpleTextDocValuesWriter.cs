@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.SimpleText
         /// </summary>
         private bool FieldSeen(string field)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!_fieldsSeen.Contains(field), "field \"{0}\" was added more than once during flush", field);
+            if (Debugging.ShouldAssert(!_fieldsSeen.Contains(field))) Debugging.ThrowAssert("field \"{0}\" was added more than once during flush", field);
             _fieldsSeen.Add(field);
             return true;
         }

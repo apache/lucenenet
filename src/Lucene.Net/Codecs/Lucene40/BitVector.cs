@@ -474,7 +474,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (Debugging.ShouldAssert(count != -1)) Debugging.ThrowAssert();
             int countSav = count;
             count = -1;
-            if (Debugging.AssertsEnabled) Debugging.Assert(countSav == Count(),"saved count was {0} but recomputed count is {1}", countSav, count);
+            if (Debugging.ShouldAssert(countSav == Count())) Debugging.ThrowAssert("saved count was {0} but recomputed count is {1}", countSav, count);
             return true;
         }
 

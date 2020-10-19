@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!Monitor.IsEntered(writer), "IndexWriter lock should never be hold when aborting");
+                if (Debugging.ShouldAssert(!Monitor.IsEntered(writer))) Debugging.ThrowAssert("IndexWriter lock should never be hold when aborting");
                 bool success = false;
                 JCG.HashSet<string> newFilesSet = new JCG.HashSet<string>();
                 try

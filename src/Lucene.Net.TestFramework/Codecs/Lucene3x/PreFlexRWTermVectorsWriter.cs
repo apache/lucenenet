@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0,"fieldName={0} lastFieldName={1}", info.Name, lastFieldName);
+            if (Debugging.ShouldAssert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0)) Debugging.ThrowAssert("fieldName={0} lastFieldName={1}", info.Name, lastFieldName);
             lastFieldName = info.Name;
             if (payloads)
             {

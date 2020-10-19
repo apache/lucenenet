@@ -577,7 +577,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(Sum(fieldLengths) == docLen, "{0} != {1}", Sum(fieldLengths), docLen);
+            if (Debugging.ShouldAssert(Sum(fieldLengths) == docLen)) Debugging.ThrowAssert("{0} != {1}", Sum(fieldLengths), docLen);
 
             return new TVFields(this, fieldNums, FieldFlags, fieldNumOffs, fieldNumTerms, fieldLengths, prefixLengths, suffixLengths, fieldTermFreqs, positionIndex, positions, startOffsets, lengths, payloadBytes, payloadIndex, suffixBytes);
         }

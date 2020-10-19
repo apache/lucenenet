@@ -207,7 +207,7 @@ namespace Lucene.Net.Spatial.Prefix
                     if (compare > 0)
                     {
                         // leap frog (termsEnum is beyond where we would otherwise seek)
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!m_context.AtomicReader.GetTerms(m_outerInstance.m_fieldName).GetEnumerator().SeekExact(curVNodeTerm), "should be absent");
+                        if (Debugging.ShouldAssert(!m_context.AtomicReader.GetTerms(m_outerInstance.m_fieldName).GetEnumerator().SeekExact(curVNodeTerm))) Debugging.ThrowAssert("should be absent");
                     }
                     else
                     {
@@ -264,7 +264,7 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     //If the next indexed term just adds a leaf marker ('+') to cell,
                     // then add all of those docs
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(StringHelper.StartsWith(thisTerm, curVNodeTerm));//TODO refactor to use method on curVNode.cell
+                    Debugging.ThrowAssertIf(StringHelper.StartsWith(thisTerm, curVNodeTerm));//TODO refactor to use method on curVNode.cell
                     scanCell = m_outerInstance.m_grid.GetCell(thisTerm.Bytes, thisTerm.Offset, thisTerm.Length, scanCell);
                     if (scanCell.Level == cell.Level && scanCell.IsLeaf)
                     {

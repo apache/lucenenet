@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis
 
         public sealed override bool IncrementToken()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || (streamState == State.RESET || streamState == State.INCREMENT),"IncrementToken() called while in wrong state: {0}", streamState);
+            if (Debugging.ShouldAssert(!enableChecks || (streamState == State.RESET || streamState == State.INCREMENT))) Debugging.ThrowAssert("IncrementToken() called while in wrong state: {0}", streamState);
             ClearAttributes();
             for (; ; )
             {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!char.IsLowSurrogate((char)ch),"unpaired low surrogate: {0}", ch.ToString("x"));
+                if (Debugging.ShouldAssert(!char.IsLowSurrogate((char)ch))) Debugging.ThrowAssert("unpaired low surrogate: {0}", ch.ToString("x"));
                 off++;
                 if (char.IsHighSurrogate((char)ch))
                 {
@@ -227,7 +227,7 @@ namespace Lucene.Net.Analysis
                     if (ch2 >= 0)
                     {
                         off++;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(char.IsLowSurrogate((char)ch2),"unpaired high surrogate: {0}, followed by: {1}", ch.ToString("x"), ch2.ToString("x"));
+                        if (Debugging.ShouldAssert(char.IsLowSurrogate((char)ch2))) Debugging.ThrowAssert("unpaired high surrogate: {0}, followed by: {1}", ch.ToString("x"), ch2.ToString("x"));
                         return Character.ToCodePoint((char)ch, (char)ch2);
                     }
                     else

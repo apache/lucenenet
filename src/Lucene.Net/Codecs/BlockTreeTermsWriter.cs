@@ -480,7 +480,7 @@ namespace Lucene.Net.Codecs
             {
                 // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
                 // it might contain garbage that cannot be converted into text.
-                if (Debugging.AssertsEnabled) Debugging.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor={0} floorBlocks={1}", IsFloor , ToString(floorBlocks));
+                if (Debugging.ShouldAssert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null))) Debugging.ThrowAssert("isFloor={0} floorBlocks={1}", IsFloor , ToString(floorBlocks));
 
                 if (Debugging.ShouldAssert(scratchBytes.GetFilePointer() == 0)) Debugging.ThrowAssert();
 

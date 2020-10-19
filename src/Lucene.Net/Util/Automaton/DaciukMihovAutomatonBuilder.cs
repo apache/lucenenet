@@ -131,7 +131,7 @@ namespace Lucene.Net.Util.Automaton
             /// </summary>
             internal State NewState(int label)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(Array.BinarySearch(labels, label) < 0, "State already has transition labeled: {0}", label);
+                if (Debugging.ShouldAssert(Array.BinarySearch(labels, label) < 0)) Debugging.ThrowAssert("State already has transition labeled: {0}", label);
 
                 labels = Arrays.CopyOf(labels, labels.Length + 1);
                 states = Arrays.CopyOf(states, states.Length + 1);

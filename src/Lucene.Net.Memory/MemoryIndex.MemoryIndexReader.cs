@@ -250,7 +250,7 @@ namespace Lucene.Net.Index.Memory
                             return mid;
                         }
                     }
-                    if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(comparer.Compare(bytesRef, b) != 0);
+                    Debugging.ThrowAssertIf(comparer.Compare(bytesRef, b) != 0);
                     return -(low + 1);
                 }
 

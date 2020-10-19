@@ -188,7 +188,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(Convert.ToInt64(v, CultureInfo.InvariantCulture) != SegmentInfo.NO);
+                Debugging.ThrowAssertIf(Convert.ToInt64(v, CultureInfo.InvariantCulture) != SegmentInfo.NO);
                 return true;
             }
         }

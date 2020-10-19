@@ -370,7 +370,7 @@ namespace Lucene.Net.Replicator
                 // make sure to preserve revisionFiles order
                 List<RevisionFile> res = new List<RevisionFile>();
                 string source = e.Key;
-                if (Debugging.AssertsEnabled) Debugging.Assert(newRevisionFiles.ContainsKey(source), "source not found in newRevisionFiles: {0}", newRevisionFiles);
+                if (Debugging.ShouldAssert(newRevisionFiles.ContainsKey(source))) Debugging.ThrowAssert("source not found in newRevisionFiles: {0}", newRevisionFiles);
                 foreach (RevisionFile file in newRevisionFiles[source])
                 {
                     if (!handlerFiles.Contains(file.FileName))

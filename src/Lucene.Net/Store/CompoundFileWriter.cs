@@ -255,7 +255,7 @@ namespace Lucene.Net.Store
                 entry.File = name;
                 entries[name] = entry;
                 string id = IndexFileNames.StripSegmentName(name);
-                if (Debugging.AssertsEnabled) Debugging.Assert(!seenIDs.Contains(id), "file=\"{0}\" maps to id=\"{1}\", which was already written", name, id);
+                if (Debugging.ShouldAssert(!seenIDs.Contains(id))) Debugging.ThrowAssert("file=\"{0}\" maps to id=\"{1}\", which was already written", name, id);
                 seenIDs.Add(id);
                 DirectCFSIndexOutput @out;
 

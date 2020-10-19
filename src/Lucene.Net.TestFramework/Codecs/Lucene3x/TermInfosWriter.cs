@@ -243,7 +243,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// </summary>
         public void Add(int fieldNumber, BytesRef term, TermInfo ti)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(CompareToLastTerm(fieldNumber, term) < 0 || (isIndex && term.Length == 0 && lastTerm.Length == 0), "Terms are out of order: field={0} (number {1}) lastField={2} (number {3}) text={4} lastText={5}", FieldName(fieldInfos, fieldNumber), fieldNumber, FieldName(fieldInfos, lastFieldNumber), lastFieldNumber, term.Utf8ToString(), lastTerm.Utf8ToString());
+            if (Debugging.ShouldAssert(CompareToLastTerm(fieldNumber, term) < 0 || (isIndex && term.Length == 0 && lastTerm.Length == 0))) Debugging.ThrowAssert("Terms are out of order: field={0} (number {1}) lastField={2} (number {3}) text={4} lastText={5}", FieldName(fieldInfos, fieldNumber), fieldNumber, FieldName(fieldInfos, lastFieldNumber), lastFieldNumber, term.Utf8ToString(), lastTerm.Utf8ToString());
 
             if (Debugging.ShouldAssert(ti.FreqPointer >= lastTi.FreqPointer)) Debugging.ThrowAssert("freqPointer out of order ({0} < {1})", ti.FreqPointer, lastTi.FreqPointer);
             if (Debugging.ShouldAssert(ti.ProxPointer >= lastTi.ProxPointer)) Debugging.ThrowAssert("proxPointer out of order ({0} < {1})", ti.ProxPointer, lastTi.ProxPointer);

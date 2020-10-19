@@ -1310,7 +1310,7 @@ namespace Lucene.Net.Codecs.Memory
                                             while (termOrd < outerInstance.terms.Length &&
                                                    outerInstance.Compare(termOrd, startTerm) <= 0)
                                             {
-                                                if (Debugging.AssertsEnabled) Debugging.ThrowAssertIf(termOrd == startTermOrd ||
+                                                Debugging.ThrowAssertIf(termOrd == startTermOrd ||
                                                              outerInstance.skipOffsets[termOrd] ==
                                                              outerInstance.skipOffsets[termOrd + 1]);
                                                 termOrd++;

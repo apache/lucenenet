@@ -422,7 +422,7 @@ namespace Lucene.Net.Index
                     long bytes = perThread.bytesUsed; // do that before
                     // replace!
                     dwpt = perThreadPool.Reset(perThread, closed);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!flushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
+                    if (Debugging.ShouldAssert(!flushingWriters.ContainsKey(dwpt))) Debugging.ThrowAssert("DWPT is already flushing");
                     // Record the flushing DWPT to reduce flushBytes in doAfterFlush
                     flushingWriters[dwpt] = bytes;
                     numPending--; // write access synced
@@ -743,7 +743,7 @@ namespace Lucene.Net.Index
                 if (blockedFlush.Dwpt.deleteQueue == flushingQueue)
                 {
                     blockedFlushes.Remove(node);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(!flushingWriters.ContainsKey(blockedFlush.Dwpt), "DWPT is already flushing");
+                    if (Debugging.ShouldAssert(!flushingWriters.ContainsKey(blockedFlush.Dwpt))) Debugging.ThrowAssert("DWPT is already flushing");
                     // Record the flushing DWPT to reduce flushBytes in doAfterFlush
                     flushingWriters[blockedFlush.Dwpt] = blockedFlush.Bytes;
                     // don't decr pending here - its already done when DWPT is blocked

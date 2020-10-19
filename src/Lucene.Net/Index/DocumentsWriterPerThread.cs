@@ -400,7 +400,7 @@ namespace Lucene.Net.Index
                 if (delTerm != null)
                 {
                     deleteQueue.Add(delTerm, deleteSlice);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(deleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
+                    if (Debugging.ShouldAssert(deleteSlice.IsTailItem(delTerm))) Debugging.ThrowAssert("expected the delete term as the tail item");
                     deleteSlice.Apply(pendingUpdates, numDocsInRAM - docCount);
                 }
             }
@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
             if (delTerm != null)
             {
                 deleteQueue.Add(delTerm, deleteSlice);
-                if (Debugging.AssertsEnabled) Debugging.Assert(deleteSlice.IsTailItem(delTerm), "expected the delete term as the tail item");
+                if (Debugging.ShouldAssert(deleteSlice.IsTailItem(delTerm))) Debugging.ThrowAssert("expected the delete term as the tail item");
             }
             else
             {

@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
             {
                 for (int i = numThreadStatesActive; i < threadStates.Length; i++)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(threadStates[i].TryLock(), "unreleased threadstate should not be locked");
+                    if (Debugging.ShouldAssert(threadStates[i].TryLock())) Debugging.ThrowAssert("unreleased threadstate should not be locked");
                     try
                     {
                         if (Debugging.ShouldAssert(!threadStates[i].IsInitialized)) Debugging.ThrowAssert("expected unreleased thread state to be inactive");

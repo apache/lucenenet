@@ -489,12 +489,11 @@ namespace Lucene.Net.Codecs
 
             internal virtual void Finish()
             {
-                if (Debugging.AssertsEnabled)
-                {
-                    Debugging.Assert(startBlockCount == endBlockCount, "startBlockCount={0} endBlockCount={1}", startBlockCount, endBlockCount);
-                    Debugging.Assert(TotalBlockCount == FloorSubBlockCount + NonFloorBlockCount, "floorSubBlockCount={0} nonFloorBlockCount={1} totalBlockCount={2}", FloorSubBlockCount, NonFloorBlockCount, TotalBlockCount);
-                    Debugging.Assert(TotalBlockCount == MixedBlockCount + TermsOnlyBlockCount + SubBlocksOnlyBlockCount, "totalBlockCount={0} mixedBlockCount={1} subBlocksOnlyBlockCount={2} termsOnlyBlockCount={3}", TotalBlockCount, MixedBlockCount, SubBlocksOnlyBlockCount, TermsOnlyBlockCount);
-                }
+                if(Debugging.ShouldAssert(startBlockCount == endBlockCount)) Debugging.ThrowAssert("startBlockCount={0} endBlockCount={1}", startBlockCount, endBlockCount);
+
+                if(Debugging.ShouldAssert(TotalBlockCount == FloorSubBlockCount + NonFloorBlockCount)) Debugging.ThrowAssert("floorSubBlockCount={0} nonFloorBlockCount={1} totalBlockCount={2}", FloorSubBlockCount, NonFloorBlockCount, TotalBlockCount);
+
+                if(Debugging.ShouldAssert(TotalBlockCount == MixedBlockCount + TermsOnlyBlockCount + SubBlocksOnlyBlockCount)) Debugging.ThrowAssert("totalBlockCount={0} mixedBlockCount={1} subBlocksOnlyBlockCount={2} termsOnlyBlockCount={3}", TotalBlockCount, MixedBlockCount, SubBlocksOnlyBlockCount, TermsOnlyBlockCount);
             }
 
             public override string ToString()
@@ -1430,7 +1429,7 @@ namespace Lucene.Net.Codecs
                         {
                             CopyTerm();
                             //if (DEBUG) System.out.println("      term match to state=" + state + "; return term=" + brToString(term));
-                            if (Debugging.AssertsEnabled) Debugging.Assert(savedStartTerm == null || term.CompareTo(savedStartTerm) > 0, "saveStartTerm={0} term={1}", savedStartTerm.Utf8ToString(), term.Utf8ToString());
+                            if (Debugging.ShouldAssert(savedStartTerm == null || term.CompareTo(savedStartTerm) > 0)) Debugging.ThrowAssert("saveStartTerm={0} term={1}", savedStartTerm.Utf8ToString(), term.Utf8ToString());
                             return true;
                         }
                         else
@@ -1848,7 +1847,7 @@ namespace Lucene.Net.Codecs
                             //if (arc.label != (target.bytes[target.offset + targetUpto] & 0xFF)) {
                             //System.out.println("FAIL: arc.label=" + (char) arc.label + " targetLabel=" + (char) (target.bytes[target.offset + targetUpto] & 0xFF));
                             //}
-                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF), "arc.label={0} targetLabel={1}", (char)arc.Label, (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
+                            if (Debugging.ShouldAssert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF))) Debugging.ThrowAssert("arc.label={0} targetLabel={1}", (char)arc.Label, (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
                             if (arc.Output != outerInstance.outerInstance.NO_OUTPUT)
                             {
                                 output = outerInstance.outerInstance.fstOutputs.Add(output, arc.Output);
@@ -2135,7 +2134,7 @@ namespace Lucene.Net.Codecs
                                 break;
                             }
                             arc = arcs[1 + targetUpto];
-                            if (Debugging.AssertsEnabled) Debugging.Assert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF),"arc.label={0} targetLabel={1}", (char)arc.Label, (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
+                            if (Debugging.ShouldAssert(arc.Label == (target.Bytes[target.Offset + targetUpto] & 0xFF))) Debugging.ThrowAssert("arc.label={0} targetLabel={1}", (char)arc.Label, (char)(target.Bytes[target.Offset + targetUpto] & 0xFF));
                             // TOOD: we could save the outputs in local
                             // byte[][] instead of making new objs ever
                             // seek; but, often the FST doesn't have any
