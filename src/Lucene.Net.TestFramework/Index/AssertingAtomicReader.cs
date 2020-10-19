@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
             try
             {
                 int docid = @in.DocID;
-                if (Debugging.AssertsEnabled) Debugging.Assert(docid == -1, () => @in.GetType() + ": invalid initial doc id: " + docid);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docid == -1, "{0}: invalid initial doc id: {1}", @in.GetType(), docid);
             }
             catch (NotSupportedException /*e*/)
             {
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(state != DocsEnumState.FINISHED, "NextDoc() called after NO_MORE_DOCS");
             int nextDoc = base.NextDoc();
-            if (Debugging.AssertsEnabled) Debugging.Assert(nextDoc > doc,"backwards NextDoc from {0} to {1}", doc, nextDoc + " " + m_input);
+            if (Debugging.AssertsEnabled) Debugging.Assert(nextDoc > doc, "backwards NextDoc from {0} to {1} {2}", doc, nextDoc, m_input);
             if (nextDoc == DocIdSetIterator.NO_MORE_DOCS)
             {
                 state = DocsEnumState.FINISHED;

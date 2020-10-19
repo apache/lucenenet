@@ -242,7 +242,7 @@ namespace Lucene.Net.Benchmarks.Quality
                     }
                 }
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(m > 0, () => "Fishy: no \"good\" queries!");
+            if (Debugging.AssertsEnabled) Debugging.Assert(m > 0, "Fishy: no \"good\" queries!");
             // take average: times go by all queries, other measures go by "good" queries only.
             avg.searchTime /= stats.Length;
             avg.docNamesExtractTime /= stats.Length;

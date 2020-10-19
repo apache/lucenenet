@@ -1035,7 +1035,7 @@ namespace Lucene.Net.Analysis.Ja
                     // The pruning we did when we created the altToken
                     // ensures that the back trace will align back with
                     // the start of the altToken:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(altToken.Position == backPos, () => altToken.Position + " vs " + backPos);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(altToken.Position == backPos, "{0} vs {1}", altToken.Position, backPos);
 
                     // NOTE: not quite right: the compound token may
                     // have had all punctuation back traced so far, but
