@@ -45,7 +45,7 @@ namespace Lucene.Net.Diagnostics
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ThrowAssertIf(bool condition)
         {
-            if (ShouldAssert(condition))
+            if (AssertsEnabled && condition)
             {
                 ThrowAssert();
             }
