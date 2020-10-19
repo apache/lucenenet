@@ -83,9 +83,11 @@ namespace Lucene.Net.Index.Sorter
             {
                 int newID = docMap.OldToNew(i);
                 int oldID = docMap.NewToOld(newID);
-                if(Debugging.ShouldAssert(newID >= 0 && newID < maxDoc)) Debugging.ThrowAssert("doc IDs must be in [0-{0}[, got {1}", maxDoc, newID);
-
-                if(Debugging.ShouldAssert(i == oldID)) Debugging.ThrowAssert("mapping is inconsistent: {0} --oldToNew--> {1} --newToOld--> {2}", i, newID, oldID);
+                if (Debugging.AssertsEnabled)
+                {
+                    if (Debugging.ShouldAssert(newID >= 0 && newID < maxDoc)) Debugging.ThrowAssert("doc IDs must be in [0-{0}[, got {1}", maxDoc, newID);
+                    if (Debugging.ShouldAssert(i == oldID)) Debugging.ThrowAssert("mapping is inconsistent: {0} --oldToNew--> {1} --newToOld--> {2}", i, newID, oldID);
+                }
                 if (i != oldID || newID < 0 || newID >= maxDoc)
                 {
                     return false;

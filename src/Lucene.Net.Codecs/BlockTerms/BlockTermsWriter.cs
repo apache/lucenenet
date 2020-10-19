@@ -302,9 +302,12 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private int SharedPrefix(BytesRef term1, BytesRef term2)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(term1.Offset == 0);
+                if (Debugging.AssertsEnabled)
+                {
+                    Debugging.Assert(term1.Offset == 0);
+                    Debugging.Assert(term2.Offset == 0);
+                }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(term2.Offset == 0);
                 int pos1 = 0;
                 int pos1End = pos1 + Math.Min(term1.Length, term2.Length);
                 int pos2 = 0;
