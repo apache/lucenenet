@@ -99,7 +99,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(inc.Length < output.Length,"inc.length={0} vs output.length={1}", inc.Length, output.Length);
+                    if (Debugging.ShouldAssert(inc.Length < output.Length)) Debugging.ThrowAssert("inc.length={0} vs output.length={1}", inc.Length, output.Length);
                     Debugging.ThrowAssertIf(inc.Length > 0);
                 }
                 return new BytesRef(output.Bytes, output.Offset + inc.Length, output.Length - inc.Length);

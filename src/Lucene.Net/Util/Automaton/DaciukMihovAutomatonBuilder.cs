@@ -229,8 +229,8 @@ namespace Lucene.Net.Util.Automaton
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(stateRegistry != null, "Automaton already built.");
-                Debugging.Assert(previous == null || comparer.Compare(previous, current) <= 0, "Input must be in sorted UTF-8 order: {0} >= {1}", previous, current);
+                if (Debugging.ShouldAssert(stateRegistry != null)) Debugging.ThrowAssert("Automaton already built.");
+                if (Debugging.ShouldAssert(previous == null || comparer.Compare(previous, current) <= 0)) Debugging.ThrowAssert("Input must be in sorted UTF-8 order: {0} >= {1}", previous, current);
                 Debugging.ThrowAssertIf(SetPrevious(current));
             }
 

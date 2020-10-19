@@ -175,8 +175,8 @@ namespace Lucene.Net.Analysis.Synonym
 
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(!HasHoles(input), "input has holes: {0}", input);
-                    Debugging.Assert(!HasHoles(output), "output has holes: {0}", output);
+                    if (Debugging.ShouldAssert(!HasHoles(input))) Debugging.ThrowAssert("input has holes: {0}", input);
+                    if (Debugging.ShouldAssert(!HasHoles(output))) Debugging.ThrowAssert("output has holes: {0}", output);
                 }
 
                 //System.out.println("fmap.add input=" + input + " numInputWords=" + numInputWords + " output=" + output + " numOutputWords=" + numOutputWords);

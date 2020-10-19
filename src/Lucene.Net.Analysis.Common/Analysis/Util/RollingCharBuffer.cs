@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Util
             if (Debugging.AssertsEnabled)
             {
                 Debugging.ThrowAssertIf(length > 0);
-                Debugging.Assert(InBounds(posStart), "posStart={0} length={1}", posStart, length);
+                if (Debugging.ShouldAssert(InBounds(posStart))) Debugging.ThrowAssert("posStart={0} length={1}", posStart, length);
             }
             //System.out.println("    buffer.Get posStart=" + posStart + " len=" + length);
 

@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 Debugging.ThrowAssertIf(field != null);
 
                 // SegmentCoreReaders already verifies this field is valid:
-                Debugging.Assert(field != null, "field={0} fields={1}", fieldInfo.Name, fields);
+                if (Debugging.ShouldAssert(field != null)) Debugging.ThrowAssert("field={0} fields={1}", fieldInfo.Name, fields);
             }
 
             var @in = (IndexInput)data.Clone();

@@ -2025,9 +2025,9 @@ namespace Lucene.Net.Util.Fst
 
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(fst.nodeCount == nodeCount,"fst.nodeCount={0} nodeCount={1}", fst.nodeCount, nodeCount);
+                if (Debugging.ShouldAssert(fst.nodeCount == nodeCount)) Debugging.ThrowAssert("fst.nodeCount={0} nodeCount={1}", fst.nodeCount, nodeCount);
                 Debugging.ThrowAssertIf(fst.arcCount == arcCount);
-                Debugging.Assert(fst.arcWithOutputCount == arcWithOutputCount,"fst.arcWithOutputCount={0} arcWithOutputCount={1}", fst.arcWithOutputCount, arcWithOutputCount);
+                if (Debugging.ShouldAssert(fst.arcWithOutputCount == arcWithOutputCount)) Debugging.ThrowAssert("fst.arcWithOutputCount={0} arcWithOutputCount={1}", fst.arcWithOutputCount, arcWithOutputCount);
             }
 
             fst.bytes.Finish();

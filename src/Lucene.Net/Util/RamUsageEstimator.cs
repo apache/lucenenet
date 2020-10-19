@@ -907,8 +907,8 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(current > 0 && ((current & (current - 1)) == 0), "Capacity must be a power of two.");
-                    Debugging.Assert((current << 1) > 0,"Maximum capacity exceeded ({0}", ((int)((uint)0x80000000 >> 1)) + ").");
+                    if (Debugging.ShouldAssert(current > 0 && ((current & (current - 1)) == 0))) Debugging.ThrowAssert("Capacity must be a power of two.");
+                    if (Debugging.ShouldAssert((current << 1) > 0)) Debugging.ThrowAssert("Maximum capacity exceeded ({0}", ((int)((uint)0x80000000 >> 1)) + ").");
                 }
 
                 if (current < MIN_CAPACITY / 2)

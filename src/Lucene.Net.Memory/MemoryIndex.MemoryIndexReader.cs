@@ -461,7 +461,7 @@ namespace Lucene.Net.Index.Memory
                     if (Debugging.AssertsEnabled)
                     {
                         Debugging.ThrowAssertIf(posUpto++ < freq);
-                        Debugging.Assert(!sliceReader.IsEndOfSlice, " stores offsets : {0}", startOffset);
+                        if (Debugging.ShouldAssert(!sliceReader.IsEndOfSlice)) Debugging.ThrowAssert(" stores offsets : {0}", startOffset);
                     }
                     if (outerInstance.outerInstance.storeOffsets)
                     {
