@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using System;
 using System.Diagnostics;
 

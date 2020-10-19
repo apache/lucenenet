@@ -206,7 +206,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // undefined
             }
 
-            if (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+            if (fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
             {
                 termState2.proxOffset += @in.ReadVInt64();
                 // if (DEBUG) System.out.println("  proxFP=" + termState2.proxOffset);
@@ -254,7 +254,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
-            bool hasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            bool hasOffsets = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
             // TODO: can we optimize if FLAG_PAYLOADS / FLAG_OFFSETS
             // isn't passed?
@@ -347,7 +347,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 m_indexOmitsTF = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY;
                 m_storePayloads = fieldInfo.HasPayloads;
-                m_storeOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                m_storeOffsets = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 m_freqOffset = termState.freqOffset;
                 m_skipOffset = termState.skipOffset;
 
@@ -1004,11 +1004,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
             public virtual SegmentFullPositionsEnum Reset(FieldInfo fieldInfo, StandardTermState termState, IBits liveDocs)
             {
-                storeOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                storeOffsets = fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 storePayloads = fieldInfo.HasPayloads;
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0);
+                    Debugging.Assert(fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0);
                     Debugging.Assert(storePayloads || storeOffsets);
                 }
                 if (payload == null)

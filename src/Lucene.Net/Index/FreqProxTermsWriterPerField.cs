@@ -112,9 +112,9 @@ namespace Lucene.Net.Index
             }
             else
             {
-                hasFreq = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-                hasProx = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-                hasOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                hasFreq = indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS) >= 0;
+                hasProx = indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                hasOffsets = indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
         }
 
@@ -418,9 +418,9 @@ namespace Lucene.Net.Index
             IndexOptions currentFieldIndexOptions = fieldInfo.IndexOptions;
             if (Debugging.AssertsEnabled) Debugging.Assert(currentFieldIndexOptions != IndexOptions.NONE);
 
-            bool writeTermFreq = currentFieldIndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-            bool writePositions = currentFieldIndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-            bool writeOffsets = currentFieldIndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            bool writeTermFreq = currentFieldIndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS) >= 0;
+            bool writePositions = currentFieldIndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            bool writeOffsets = currentFieldIndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
             bool readTermFreq = this.hasFreq;
             bool readPositions = this.hasProx;

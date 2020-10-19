@@ -242,19 +242,19 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int DocCount => -1;
 
-            public override bool HasFreqs => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+            public override bool HasFreqs => fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS) >= 0;
 
             public override bool HasOffsets
             {
                 get
                 {
                     // preflex doesn't support this
-                    if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0);
                     return false;
                 }
             }
 
-            public override bool HasPositions => fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            public override bool HasPositions => fieldInfo.IndexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
             public override bool HasPayloads => fieldInfo.HasPayloads;
         }

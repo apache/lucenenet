@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -117,8 +118,8 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 _outerInstance = outerInstance;
                 _indexOptions = field.IndexOptions;
-                _writePositions = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-                _writeOffsets = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                _writePositions = _indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                _writeOffsets = _indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             public override void StartDoc(int docId, int termDocFreq)

@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled) Debugging.Assert(normType == DocValuesType.NONE);
                 }
                 // Cannot store payloads unless positions are indexed:
-                if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads);
+                if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads);
             }
 
             return true;
@@ -154,9 +154,9 @@ namespace Lucene.Net.Index
                     else
                     {
                         // downgrade
-                        this.indexOptions = this.indexOptions.CompareTo(indexOptions) < 0 ? this.indexOptions : indexOptions;
+                        this.indexOptions = this.indexOptions.CompareAgainst(indexOptions) < 0 ? this.indexOptions : indexOptions;
                     }
-                    if (this.indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                    if (this.indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {
                         // cannot store payloads if we don't store positions:
                         this.storePayloads = false;
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
 
         internal void SetStorePayloads()
         {
-            if (indexed && indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+            if (indexed && indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
             {
                 storePayloads = true;
             }

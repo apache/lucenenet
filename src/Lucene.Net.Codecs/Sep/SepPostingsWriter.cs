@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.Sep
         {
             this.fieldInfo = fieldInfo;
             this.indexOptions = fieldInfo.IndexOptions;
-            if (indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+            if (indexOptions.CompareAgainst(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
                 throw new NotSupportedException("this codec cannot index offsets");
             }
