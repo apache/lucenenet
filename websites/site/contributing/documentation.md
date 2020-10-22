@@ -2,8 +2,6 @@
 uid: contributing/documentation
 ---
 
-<span id="forkongithub"><a href="https://github.com/apache/lucenenet">Fork me on GitHub</a></span>
-
 # Documentation & Website
 
 ---

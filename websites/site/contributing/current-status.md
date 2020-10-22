@@ -2,8 +2,6 @@
 uid: contributing/current-status
 ---
 
-<span id="forkongithub"><a href="https://github.com/apache/lucenenet">Fork me on GitHub</a></span>
-
 # The current status of the Lucene.Net project
 
 ---

@@ -2,8 +2,6 @@
 uid: download/4.8.0-beta00007
 ---
 
-<span id="forkongithub"><a href="https://github.com/apache/lucenenet">Fork me on GitHub</a></span>
-
 # Download Lucene.Net 4.8.0-beta00007
 
 ---
