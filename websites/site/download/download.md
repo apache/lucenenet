@@ -2,8 +2,6 @@
 uid: download
 ---
 
-<span id="forkongithub"><a href="https://github.com/apache/lucenenet">Fork me on GitHub</a></span>
-
 # Download Lucene.Net
 
 ---

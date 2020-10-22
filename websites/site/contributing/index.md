@@ -2,8 +2,6 @@
 uid: contributing
 ---
 
-<span id="forkongithub"><a href="https://github.com/apache/lucenenet">Fork me on GitHub</a></span>
-
 # Lucene.Net project contributing guide
 
 ---

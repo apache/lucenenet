@@ -2,8 +2,6 @@
 uid: contributing/make-release
 ---
 
-<span id="forkongithub"><a href="https://github.com/apache/lucenenet">Fork me on GitHub</a></span>
-
 # Making a release of Lucene.Net
 
 > [!NOTE]

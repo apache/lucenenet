@@ -2,8 +2,6 @@
 uid: contributing/mailing-lists
 ---
 
-<span id="forkongithub"><a href="https://github.com/apache/lucenenet">Fork me on GitHub</a></span>
-
 # Mailing Lists
 
 Our mailing lists help to keep you informed of the latest activities and discussions in the Lucene.NET community.
