@@ -1,25 +1,30 @@
 <section id="quick-start" class="home-section">
 <div class="container">
 <div class="row">
-<div class="col-xs-12 col-md-6">
+<div class="col-xs-12 col-lg-6">
 <p class="text-center">Create an index and define a text analyzer</p>
 <pre class="clean">
-<code class="csharp">// Ensures index backwards compatibility
-var AppLuceneVersion = LuceneVersion.LUCENE_48;
+<code class="csharp">
+// Ensures index backwards compatibility
+const LuceneVersion AppLuceneVersion = LuceneVersion.LUCENE_48;
 
-var indexLocation = @"C:\Index";
-var dir = FSDirectory.Open(indexLocation);
+// Construct a machine-independent path for the index
+var personalFolder = Environment.SpecialFolder.Personal;
+var basePath = Environment.GetFolderPath(personalFolder);
+var indexPath = Path.Combine(basePath, "index");
 
-//create an analyzer to process the text
+using var dir = FSDirectory.Open(indexPath);
+
+// Create an analyzer to process the text
 var analyzer = new StandardAnalyzer(AppLuceneVersion);
 
-//create an index writer
+// Create an index writer
 var indexConfig = new IndexWriterConfig(AppLuceneVersion, analyzer);
-var writer = new IndexWriter(dir, indexConfig);
+using var writer = new IndexWriter(dir, indexConfig);
 </code>
 </pre>
 </div>
-<div class="col-xs-12 col-md-6">
+<div class="col-xs-12 col-lg-6">
 <p class="text-center">Add to the index</p>
 <pre class="clean">
 <code class="csharp">var source = new
@@ -27,7 +32,7 @@ var writer = new IndexWriter(dir, indexConfig);
     Name = "Kermit the Frog",
     FavoritePhrase = "The quick brown fox jumps over the lazy dog"
 };
-Document doc = new Document
+var doc = new Document
 {
     // StringField indexes but doesn't tokenize
     new StringField("name", 
@@ -41,13 +46,14 @@ Document doc = new Document
 writer.AddDocument(doc);
 writer.Flush(triggerMerge: false, applyAllDeletes: false);
 </code>
+</pre>
 </div>
 </div>
 <div class="row">
-<div class="col-xs-12 col-md-6">
+<div class="col-xs-12 col-lg-6">
 <p class="text-center">Construct a query</p>
 <pre class="clean">
-<code class="csharp">// search with a phrase
+<code class="csharp">// Search with a phrase
 var phrase = new MultiPhraseQuery
 {
     new Term("favoritePhrase", "brown"),
@@ -56,11 +62,12 @@ var phrase = new MultiPhraseQuery
 </code>
 </pre>
 </div>                    
-<div class="col-xs-12 col-md-6">
+<div class="col-xs-12 col-lg-6">
 <p class="text-center">Fetch the results</p>
 <pre class="clean">
-<code class="csharp">// re-use the writer to get real-time updates
-var searcher = new IndexSearcher(writer.GetReader(applyAllDeletes: true));
+<code class="csharp">// Re-use the writer to get real-time updates
+using var reader = writer.GetReader(applyAllDeletes: true);
+var searcher = new IndexSearcher(reader);
 var hits = searcher.Search(phrase, 20 /* top 20 */).ScoreDocs;
 foreach (var hit in hits)
 {
