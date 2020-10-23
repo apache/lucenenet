@@ -112,6 +112,20 @@ pre.clean {
   margin: 0 0 10px;
   margin-bottom: 2rem;
 }
+/* hack for issue with padding disappearing in middle 2 sizes */
+@media screen and (max-width: 1200px) {
+  #intro .container {
+    padding-top: 50px;
+  }
+}
+@media screen and (max-width: 750px) {
+  #intro {
+    margin-top: 0px;
+  }
+  #intro .container {
+    padding-top: 0px;
+  }
+}
 
 .project-links {
   margin-top: 20px;
