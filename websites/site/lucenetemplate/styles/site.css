@@ -66,13 +66,19 @@ pre.clean {
   background-color: #f8f8f8;
   overflow: auto;
   display: block;
-  padding: 9.5px;
+  padding: 5px;
   margin: 0 0 10px;
   font-size: 13px;
   line-height: 1.42857143;
   color: #333;
   word-break: break-all;
   word-wrap: break-word;
+}
+
+@media screen and (max-width: 1200px) {
+  pre.clean {
+	padding: 9.5px;
+  }
 }
 
 #intro {
