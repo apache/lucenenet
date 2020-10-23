@@ -74,6 +74,11 @@ header ul.navbar-nav {
   float: right;
   font-weight: 600;
 }
+@media screen and (min-width: 768px) {
+  header ul.navbar-nav {
+    padding-right: 100px;
+  }	
+}
 
 .sidefilter {
   top: 120px;
@@ -125,7 +130,7 @@ body .toc {
   bottom: 1px;
   top: auto;
 }
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 768px) {
   #forkongithub {
     position: fixed;
     display: block;
