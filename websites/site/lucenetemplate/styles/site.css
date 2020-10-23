@@ -112,10 +112,13 @@ pre.clean {
   margin: 0 0 10px;
   margin-bottom: 2rem;
 }
-/* hack for issue with padding disappearing in middle 2 sizes */
+/* hack for issue with padding disappearing in middle 2 sizes on home page */
 @media screen and (max-width: 1200px) {
   #intro .container {
-    padding-top: 50px;
+    margin-top: 80px;
+  }
+  #intro.home-section .container {
+    margin-top: 50px;
   }
 }
 @media screen and (max-width: 750px) {
@@ -123,8 +126,26 @@ pre.clean {
     margin-top: 0px;
   }
   #intro .container {
-    padding-top: 0px;
+    margin-top: 0px;
   }
+  #intro.home-section {
+    padding-top: 1px;
+  }
+}
+
+/* hack for issue with title being overlapped by breadcrumb in middle 2 sizes */
+@media screen and (max-width: 1200px) {
+    div.body-content, div.contribution {
+        margin-top: 50px;
+    }
+}
+@media screen and (max-width: 750px) {
+    div.body-content, div.contribution {
+        margin-top: 0px;
+    }
+    div.body-content {
+        padding-bottom: 30px;
+    }
 }
 
 .project-links {
