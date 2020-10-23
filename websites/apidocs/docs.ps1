@@ -29,7 +29,9 @@ param (
     [Parameter(Mandatory = $false)]
     [string] $LogLevel = 'Warning',
     [Parameter(Mandatory = $false)]
-    [string] $BaseUrl = 'http://localhost:8080'
+    [string] $BaseUrl = 'http://localhost:8080',
+    [Parameter(Mandatory = $false)]
+    [int] $StagingPort = 8080
 )
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -225,7 +227,7 @@ if ($?) {
     else {
         # build + serve (for testing)
         Write-Host "starting website..."
-        & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --serve --debug
+        & $DocFxExe $DocFxJsonSite --log "$DocFxLog" --loglevel $LogLevel --serve --port $StagingPort --debug
     }
 }
 
