@@ -209,7 +209,7 @@ pre.clean {
   bottom: 1px;
   top: auto;
 }
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 768px) {
   #forkongithub {
     position: fixed;
     display: block;
