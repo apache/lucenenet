@@ -27,7 +27,10 @@ param (
 	# LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
 	[Parameter(Mandatory=$false)]
 	[string]
-	$LogLevel = 'Info'
+	$LogLevel = 'Info',
+	[Parameter(Mandatory=$false)]
+	[int]
+	$StagingPort = 8081
 )
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -81,6 +84,6 @@ if($?) {
 	else {
 		# build + serve (for testing)
 		Write-Host "starting website..."
-		& $DocFxExe $DocFxJson --serve --port 8081
+		& $DocFxExe $DocFxJson --serve --port $StagingPort
 	}
 }
