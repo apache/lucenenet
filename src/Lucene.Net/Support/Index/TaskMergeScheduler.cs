@@ -2,6 +2,7 @@
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -49,8 +50,8 @@ namespace Lucene.Net.Index
         private readonly ManualResetEventSlim _manualResetEvent = new ManualResetEventSlim();
         /// <summary>
         /// List of currently active <see cref="MergeThread"/>s.</summary>
-        private readonly IList<MergeThread> _mergeThreads = new List<MergeThread>();
-
+        //private readonly IList<MergeThread> _mergeThreads = new List<MergeThread>();
+        private BlockingCollection<MergeThread> _mergeThreads = new BlockingCollection<MergeThread>();
         /// <summary>
         /// How many <see cref="MergeThread"/>s have kicked off (this is use
         /// to name them).
@@ -140,12 +141,13 @@ namespace Lucene.Net.Index
         /// </summary>
         private void UpdateMergeThreads()
         {
-            foreach (var merge in _mergeThreads.ToArray())
+            foreach (var merge in _mergeThreads.GetConsumingEnumerable(CancellationToken.None))
             {
                 // Prune any dead threads
                 if (!merge.IsAlive)
                 {
-                    _mergeThreads.Remove(merge);
+                    _mergeThreads.Take(1);
+                   // _mergeThreads.Remove(merge);
                     merge.Dispose();
                 }
             }
@@ -184,7 +186,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual void Sync()
         {
-            foreach (var merge in _mergeThreads.ToArray())
+            foreach (var merge in _mergeThreads.GetConsumingEnumerable())
             {
                 if (merge == null || !merge.IsAlive)
                 {
@@ -427,7 +429,8 @@ namespace Lucene.Net.Index
             TaskMergeScheduler clone = (TaskMergeScheduler)base.Clone();
             clone._writer = null;
             clone._directory = null;
-            clone._mergeThreads.Clear();
+            if(clone._mergeThreads.Count>0)
+            clone._mergeThreads.Take(clone._mergeThreads.Count);
             return clone;
         }
 

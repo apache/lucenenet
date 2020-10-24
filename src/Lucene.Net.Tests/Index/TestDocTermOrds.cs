@@ -391,6 +391,7 @@ namespace Lucene.Net.Index
                 }
                 return;
             }
+       
 
             if (Verbose)
             {
