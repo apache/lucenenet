@@ -399,7 +399,7 @@ namespace Lucene.Net.Index
                 te.SeekExact(0);
                 while (true)
                 {
-                    Console.WriteLine("  ord=" + te.Ord + " term=" + te.Term.Utf8ToString());
+                    Console.WriteLine("  ord=" + te.Ord + " term=" + te?.Term?.Utf8ToString());
                     if (!te.MoveNext())
                     {
                         break;
