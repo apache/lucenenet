@@ -1,8 +1,6 @@
-﻿using J2N.Collections.Generic.Extensions;
-using Lucene.Net.Support.Threading;
+﻿using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -50,8 +48,7 @@ namespace Lucene.Net.Index
         private readonly ManualResetEventSlim _manualResetEvent = new ManualResetEventSlim();
         /// <summary>
         /// List of currently active <see cref="MergeThread"/>s.</summary>
-        //private readonly IList<MergeThread> _mergeThreads = new List<MergeThread>();
-        private BlockingCollection<MergeThread> _mergeThreads = new BlockingCollection<MergeThread>();
+        private readonly IList<MergeThread> _mergeThreads = new List<MergeThread>();        
         /// <summary>
         /// How many <see cref="MergeThread"/>s have kicked off (this is use
         /// to name them).
@@ -140,17 +137,16 @@ namespace Lucene.Net.Index
         /// that way, smaller merges are guaranteed to run before larger ones.
         /// </summary>
         private void UpdateMergeThreads()
-        {
-            foreach (var merge in _mergeThreads.GetConsumingEnumerable(CancellationToken.None))
+        {            
+            foreach(var merge in _mergeThreads.Where(c => !c.IsAlive))
             {
-                // Prune any dead threads
-                if (!merge.IsAlive)
+                using (_lock.Write())
                 {
-                    _mergeThreads.Take(1);
-                   // _mergeThreads.Remove(merge);
-                    merge.Dispose();
+                    _mergeThreads.Remove(merge);
                 }
-            }
+                 merge.Dispose();
+                //_manualResetEvent.Set();
+            }           
         }
 
         /// <summary>
@@ -186,13 +182,8 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual void Sync()
         {
-            foreach (var merge in _mergeThreads.GetConsumingEnumerable())
+          foreach(var merge in _mergeThreads.Where(merge => merge != null || !merge.IsAlive))
             {
-                if (merge == null || !merge.IsAlive)
-                {
-                    continue;
-                }
-
                 try
                 {
                     merge.Wait();
@@ -210,11 +201,11 @@ namespace Lucene.Net.Index
                             HandleMergeException(ex);
                             return true;
                         }
-
                         return false;
                     });
                 }
             }
+                     
         }
 
         /// <summary>
@@ -428,9 +419,8 @@ namespace Lucene.Net.Index
         {
             TaskMergeScheduler clone = (TaskMergeScheduler)base.Clone();
             clone._writer = null;
-            clone._directory = null;
-            if(clone._mergeThreads.Count>0)
-            clone._mergeThreads.Take(clone._mergeThreads.Count);
+            clone._directory = null;            
+            clone._mergeThreads.Clear();           
             return clone;
         }
 
