@@ -9,8 +9,8 @@
 const LuceneVersion AppLuceneVersion = LuceneVersion.LUCENE_48;
 
 // Construct a machine-independent path for the index
-var personalFolder = Environment.SpecialFolder.Personal;
-var basePath = Environment.GetFolderPath(personalFolder);
+var appDataFolder = Environment.SpecialFolder.CommonApplicationData;
+var basePath = Environment.GetFolderPath(appDataFolder);
 var indexPath = Path.Combine(basePath, "index");
 
 using var dir = FSDirectory.Open(indexPath);
