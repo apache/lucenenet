@@ -23,8 +23,7 @@
       },
       {
         "files": [
-          "doap_Lucene_Net.rdf",
-          "ads.txt"
+          "doap_Lucene_Net.rdf"
         ],
         "src": "lucenetemplate"
       }
