@@ -5,12 +5,12 @@
 <p class="text-center">Create an index and define a text analyzer</p>
 <pre class="clean">
 <code class="csharp">
-// Ensures index backwards compatibility
+// Ensures index backward compatibility
 const LuceneVersion AppLuceneVersion = LuceneVersion.LUCENE_48;
 
 // Construct a machine-independent path for the index
-var appDataFolder = Environment.SpecialFolder.CommonApplicationData;
-var basePath = Environment.GetFolderPath(appDataFolder);
+var basePath = Environment.GetFolderPath(
+    Environment.SpecialFolder.CommonApplicationData);
 var indexPath = Path.Combine(basePath, "index");
 
 using var dir = FSDirectory.Open(indexPath);
