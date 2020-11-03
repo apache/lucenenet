@@ -31636,9 +31636,9 @@ namespace Lucene.Net.Analysis.CharFilters
                                 {
                                     codePoint = int.Parse(hexCharRef, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
                                 }
-                                catch (Exception /*e*/)
+                                catch (Exception e)
                                 {
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing hex code point '{0}'");
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "Exception parsing hex code point '{0}'", e);
                                 }
                                 if (codePoint <= 0x10FFFF)
                                 {

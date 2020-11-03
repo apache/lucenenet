@@ -275,7 +275,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 if (resultArray.Length == 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(len == 0, len.ToString());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(len == 0, "{0}", len);
                     output.WriteVInt32(0);
                     return;
                 }

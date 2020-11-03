@@ -529,9 +529,12 @@ namespace Lucene.Net.Index
         /// </summary>
         public void Checkpoint(SegmentInfos segmentInfos, bool isCommit)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(IsLocked);
+            if (Debugging.AssertsEnabled)
+            {
+                Debugging.Assert(IsLocked);
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(Monitor.IsEntered(writer));
+                Debugging.Assert(Monitor.IsEntered(writer));
+            }
             long t0 = 0;
             if (infoStream.IsEnabled("IFD"))
             {
@@ -722,8 +725,6 @@ namespace Lucene.Net.Index
                 // we assume that when a delete fails it is because
                 // the file is open in another process, and queue
                 // the file for subsequent deletion.
-
-                //if (Debugging.AssertsEnabled) Debugging.Assert(e.Message.Contains("cannot delete"));
 
                 if (infoStream.IsEnabled("IFD"))
                 {

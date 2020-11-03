@@ -152,7 +152,11 @@ namespace Lucene.Net.Index
                      * fail. To prevent this we only assert if the the largest document seen
                      * is smaller than the 1/2 of the maxRamBufferMB
                      */
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ram <= expected, "actual mem: {0} byte, expected mem: {1} byte, flush mem: {2}, active mem: {3}, pending DWPT: {4}, flushing DWPT: {5}, blocked DWPT: {6}, peakDelta mem: {7} byte", ram, expected, flushBytes, activeBytes, numPending, NumFlushingDWPT, NumBlockedFlushes, peakDelta);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(ram <= expected,
+                        "actual mem: {0} byte, expected mem: {1}"
+                        + " byte, flush mem: {2}, active mem: {3}"
+                        + ", pending DWPT: {4}, flushing DWPT: {5}"
+                        + ", blocked DWPT: {6}, peakDelta mem: {7} byte", ram, expected, flushBytes, activeBytes, numPending, NumFlushingDWPT, NumBlockedFlushes, peakDelta);
                 }
             }
             return true;
@@ -609,8 +613,8 @@ namespace Lucene.Net.Index
             {
                 if (!success) // make sure we unlock if this fails
                 {
-						perThreadPool.Release(perThread);
-					}
+                    perThreadPool.Release(perThread);
+                }
             }
         }
 
@@ -646,7 +650,10 @@ namespace Lucene.Net.Index
                         }
                         continue;
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(next.dwpt.deleteQueue == flushingQueue || next.dwpt.deleteQueue == documentsWriter.deleteQueue," flushingQueue: {0} currentqueue: {1}", flushingQueue, documentsWriter.deleteQueue + " perThread queue: " + next.dwpt.deleteQueue + " numDocsInRam: " + next.dwpt.NumDocsInRAM);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(next.dwpt.deleteQueue == flushingQueue
+                        || next.dwpt.deleteQueue == documentsWriter.deleteQueue,
+                        " flushingQueue: {0} currentqueue: {1} perThread queue: {2} numDocsInRam: {3}",
+                        flushingQueue, documentsWriter.deleteQueue, next.dwpt.deleteQueue, next.dwpt.NumDocsInRAM);
                     if (next.dwpt.deleteQueue != flushingQueue)
                     {
                         // this one is already a new DWPT

@@ -220,7 +220,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         private static long NumInt64sForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(numBits >= 0, numBits.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.AssertsEnabled) Debugging.Assert(numBits >= 0, "{0}", numBits);
             return (long)((ulong)(numBits + (sizeof(long) * 8 - 1)) >> LOG2_INT64_SIZE);
         }
 

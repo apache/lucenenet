@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(doc == base.DocID," invalid DocID in {0} {1}", m_input.GetType(), base.DocID + " instead of " + doc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(doc == base.DocID, " invalid DocID in {0} {1} instead of {2}", m_input.GetType(), base.DocID, doc);
                 return doc;
             }
         }
@@ -621,7 +621,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(doc == base.DocID," invalid DocID in {0} {1}", m_input.GetType(), base.DocID + " instead of " + doc);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(doc == base.DocID, " invalid DocID in {0} {1} instead of {2}", m_input.GetType(), base.DocID, doc);
                     return doc;
                 }
             }

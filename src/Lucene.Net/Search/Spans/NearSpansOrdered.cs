@@ -285,7 +285,7 @@ namespace Lucene.Net.Search.Spans
             }
             for (int i = 0; i < subSpansByDoc.Length; i++)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(subSpansByDoc[i].Doc == maxDoc," NearSpansOrdered.toSameDoc() spans {0}\n at doc {1}", subSpansByDoc[0], subSpansByDoc[i].Doc + ", but should be at " + maxDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(subSpansByDoc[i].Doc == maxDoc, " NearSpansOrdered.ToSameDoc() spans {0}\n at doc {1}, but should be at {2}", subSpansByDoc[0], subSpansByDoc[i].Doc, maxDoc);
             }
             inSameDoc = true;
             return true;

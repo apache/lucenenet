@@ -219,7 +219,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!char.IsLowSurrogate((char)ch),"unpaired low surrogate: {0}", ch.ToString("x"));
+                if (Debugging.AssertsEnabled) Debugging.Assert(!char.IsLowSurrogate((char)ch),"unpaired low surrogate: {0:x}", ch);
                 off++;
                 if (char.IsHighSurrogate((char)ch))
                 {
@@ -227,12 +227,12 @@ namespace Lucene.Net.Analysis
                     if (ch2 >= 0)
                     {
                         off++;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(char.IsLowSurrogate((char)ch2),"unpaired high surrogate: {0}, followed by: {1}", ch.ToString("x"), ch2.ToString("x"));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(char.IsLowSurrogate((char)ch2),"unpaired high surrogate: {0:x}, followed by: {1:x}", ch, ch2);
                         return Character.ToCodePoint((char)ch, (char)ch2);
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false,"stream ends with unpaired high surrogate: {0}", ch.ToString("x"));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(false,"stream ends with unpaired high surrogate: {0:x}", ch);
                     }
                 }
                 return ch;

@@ -372,7 +372,7 @@ namespace Lucene.Net.Util.Fst
 
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(lastInput.Length == 0 || input.CompareTo(lastInput) >= 0,"inputs are added out of order lastInput={0} vs input={1}", lastInput, input);
+                Debugging.Assert(lastInput.Length == 0 || input.CompareTo(lastInput) >= 0, "inputs are added out of order lastInput={0} vs input={1}", lastInput, input);
                 Debugging.Assert(ValidOutput(output));
             }
 
@@ -673,7 +673,7 @@ namespace Lucene.Net.Util.Fst
                 if (Debugging.AssertsEnabled) Debugging.Assert(label >= 0);
                 if (NumArcs != 0)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(label > Arcs[NumArcs - 1].Label,"arc[-1].Label={0} new label={1}", Arcs[NumArcs - 1].Label, label + " numArcs=" + NumArcs);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(label > Arcs[NumArcs - 1].Label, "arc[-1].Label={0} new label={1} numArcs={2}", Arcs[NumArcs - 1].Label, label, NumArcs);
                 }
                 if (NumArcs == Arcs.Length)
                 {

@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(numTerms > 0);
                 this.FieldInfo = fieldInfo;
-                if (Debugging.AssertsEnabled) Debugging.Assert(rootCode != null,"field={0} numTerms={1}", fieldInfo.Name, numTerms);
+                if (Debugging.AssertsEnabled) Debugging.Assert(rootCode != null, "field={0} numTerms={1}", fieldInfo.Name, numTerms);
                 this.RootCode = rootCode;
                 this.IndexStartFP = indexStartFP;
                 this.NumTerms = numTerms;
@@ -490,11 +490,14 @@ namespace Lucene.Net.Codecs
 
             public void CompileIndex(IList<PendingBlock> floorBlocks, RAMOutputStream scratchBytes)
             {
-                // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
-                // it might contain garbage that cannot be converted into text.
-                if (Debugging.AssertsEnabled) Debugging.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor={0} floorBlocks={1}", IsFloor , new PendingBlocksFormatter(floorBlocks));
+                if (Debugging.AssertsEnabled)
+                {
+                    // LUCENENET specific - we use a custom wrapper struct to display floorBlocks, since
+                    // it might contain garbage that cannot be converted into text.
+                    Debugging.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor={0} floorBlocks={1}", IsFloor, new PendingBlocksFormatter(floorBlocks));
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(scratchBytes.GetFilePointer() == 0);
+                    Debugging.Assert(scratchBytes.GetFilePointer() == 0);
+                }
 
                 // TODO: try writing the leading vLong in MSB order
                 // (opposite of what Lucene does today), for better
@@ -874,7 +877,7 @@ namespace Lucene.Net.Codecs
                             //System.out.println("    = " + pendingCount);
                             pendingCount = 0;
 
-                            if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.minItemsInBlock == 1 || subCount > 1,"minItemsInBlock={0} subCount={1}", outerInstance.minItemsInBlock, subCount + " sub=" + sub + " of " + numSubs + " subTermCount=" + subTermCountSums[sub] + " subSubCount=" + subSubCounts[sub] + " depth=" + prefixLength);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.minItemsInBlock == 1 || subCount > 1, "minItemsInBlock={0} subCount={1} sub={2} of {3} subTermCount={4} subSubCount={5} depth={6}", outerInstance.minItemsInBlock, subCount, sub, numSubs, subTermCountSums[sub], subSubCounts[sub], prefixLength);
                             subCount = 0;
                             startLabel = subBytes[sub + 1];
 
@@ -946,7 +949,7 @@ namespace Lucene.Net.Codecs
 
                 int start = pending.Count - startBackwards;
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(start >= 0,"pending.Count={0} startBackwards={1}", pending.Count, startBackwards + " length=" + length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(start >= 0, "pending.Count={0} startBackwards={1} length={2}", pending.Count, startBackwards, length);
 
                 IList<PendingEntry> slice = pending.SubList(start, start + length);
 
@@ -1217,7 +1220,7 @@ namespace Lucene.Net.Codecs
                     blockBuilder.Finish();
 
                     // We better have one final "root" block:
-                    if (Debugging.AssertsEnabled) Debugging.Assert(pending.Count == 1 && !pending[0].IsTerm,"pending.size()={0} pending={1}", pending.Count, pending);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(pending.Count == 1 && !pending[0].IsTerm, "pending.Count={0} pending={1}", pending.Count, pending);
                     PendingBlock root = (PendingBlock)pending[0];
                     if (Debugging.AssertsEnabled)
                     {

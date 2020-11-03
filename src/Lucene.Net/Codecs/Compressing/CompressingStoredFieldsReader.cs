@@ -357,7 +357,7 @@ namespace Lucene.Net.Codecs.Compressing
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = (int)(infoAndBits & CompressingStoredFieldsWriter.TYPE_MASK);
-                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= CompressingStoredFieldsWriter.NUMERIC_DOUBLE,"bits={0}", bits.ToString("x"));
+                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= CompressingStoredFieldsWriter.NUMERIC_DOUBLE,"bits={0:x}", bits);
 
                 switch (visitor.NeedsField(fieldInfo))
                 {
