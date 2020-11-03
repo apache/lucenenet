@@ -288,7 +288,8 @@ namespace Lucene.Net.Codecs.Pulsing
                 // given codec wants to store other interesting
                 // stuff, it could use this pulsing codec to do so
 
-                if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                if (IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
                 {
                     var lastDocID = 0;
                     var pendingIDX = 0;
@@ -341,7 +342,8 @@ namespace Lucene.Net.Codecs.Pulsing
                                 _buffer.WriteVInt32(posDelta);
                             }
 
-                            if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+                            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                            if (IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                             {
                                 //System.out.println("write=" + pos.startOffset + "," + pos.endOffset);
                                 var offsetDelta = pos.startOffset - lastOffset;
@@ -474,7 +476,8 @@ namespace Lucene.Net.Codecs.Pulsing
             _wrappedPostingsWriter.StartTerm();
 
             // Flush all buffered docs
-            if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            if (IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
             {
                 Position doc = null;
 

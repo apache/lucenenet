@@ -171,14 +171,15 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override IComparer<BytesRef> Comparer => reverseUnicodeComparer;
 
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
             public override bool HasFreqs
-                => info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                => IndexOptionsComparer.Default.Compare(info.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
 
             public override bool HasOffsets
-                => info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                => IndexOptionsComparer.Default.Compare(info.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
             public override bool HasPositions
-                => info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                => IndexOptionsComparer.Default.Compare(info.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
             public override bool HasPayloads => info.HasPayloads;
         }
@@ -250,7 +251,8 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override TermsConsumer AddField(FieldInfo field)
             {
-                if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                if (IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                 {
                     throw new NotSupportedException("this codec cannot index offsets");
                 }

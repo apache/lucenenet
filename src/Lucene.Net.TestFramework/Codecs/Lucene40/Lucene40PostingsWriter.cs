@@ -180,7 +180,8 @@ namespace Lucene.Net.Codecs.Lucene40
             this.fieldInfo = fieldInfo;
             indexOptions = fieldInfo.IndexOptions;
 
-            storeOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            storeOffsets = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             storePayloads = fieldInfo.HasPayloads;
             lastState = emptyState;
             //System.out.println("  set init blockFreqStart=" + freqStart);
@@ -234,7 +235,8 @@ namespace Lucene.Net.Codecs.Lucene40
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
             //if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.Length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
-            if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0,"invalid indexOptions: {0}", indexOptions);
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            if (Debugging.AssertsEnabled) Debugging.Assert(IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0, "invalid indexOptions: {0}", indexOptions);
             if (Debugging.AssertsEnabled) Debugging.Assert(proxOut != null);
 
             int delta = position - lastPosition;
@@ -340,7 +342,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (Debugging.AssertsEnabled) Debugging.Assert(state_.SkipOffset > 0);
                 @out.WriteVInt64(state_.SkipOffset);
             }
-            if (indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            if (IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
             {
                 @out.WriteVInt64(state_.ProxStart - lastState.ProxStart);
             }

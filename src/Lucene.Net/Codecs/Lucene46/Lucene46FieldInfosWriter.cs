@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using System;
 using System.Diagnostics;
 
@@ -73,7 +74,8 @@ namespace Lucene.Net.Codecs.Lucene46
                     if (fi.IsIndexed)
                     {
                         bits |= Lucene46FieldInfosFormat.IS_INDEXED;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads);
+                        // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                        if (Debugging.AssertsEnabled) Debugging.Assert(IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads);
                         if (indexOptions == IndexOptions.DOCS_ONLY)
                         {
                             bits |= Lucene46FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS;

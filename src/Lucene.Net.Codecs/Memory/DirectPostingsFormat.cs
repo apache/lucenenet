@@ -388,9 +388,10 @@ namespace Lucene.Net.Codecs.Memory
 
                 this.minSkipCount = minSkipCount;
 
-                hasFreq = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_ONLY) > 0;
-                hasPos = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) > 0;
-                hasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) > 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                hasFreq = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_ONLY) > 0;
+                hasPos = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) > 0;
+                hasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) > 0;
                 hasPayloads = fieldInfo.HasPayloads;
 
                 BytesRef term;

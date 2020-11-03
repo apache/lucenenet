@@ -21,10 +21,13 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
+    /// Represents an <see cref="IndexOptions"/> comparison operation that uses <see cref="int"/> comparison rules.
+    /// <para/>
     /// Since in .NET the standard comparers will do boxing when comparing enum types,
-    /// this class was created as a more performant workaround than calling <c>CompareTo()</c> on <see cref="IndexOptions"/>.
+    /// this class was created as a more performant alternative than calling <c>CompareTo()</c> on <see cref="IndexOptions"/>.
     /// </summary>
-    internal class IndexOptionsComparer : IComparer<IndexOptions>
+    // See: GH-376
+    public sealed class IndexOptionsComparer : IComparer<IndexOptions>
     {
         private IndexOptionsComparer() { } // No instance
 

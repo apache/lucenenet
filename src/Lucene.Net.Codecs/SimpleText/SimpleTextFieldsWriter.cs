@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace Lucene.Net.Codecs.SimpleText
@@ -23,11 +23,11 @@ namespace Lucene.Net.Codecs.SimpleText
      * limitations under the License.
      */
 
-    using IndexOptions = Index.IndexOptions;
-    using FieldInfo = Index.FieldInfo;
-    using SegmentWriteState = Index.SegmentWriteState;
-    using IndexOutput = Store.IndexOutput;
     using BytesRef = Util.BytesRef;
+    using FieldInfo = Index.FieldInfo;
+    using IndexOptions = Index.IndexOptions;
+    using IndexOutput = Store.IndexOutput;
+    using SegmentWriteState = Index.SegmentWriteState;
 
     internal class SimpleTextFieldsWriter : FieldsConsumer
     {
@@ -117,8 +117,9 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 _outerInstance = outerInstance;
                 _indexOptions = field.IndexOptions;
-                _writePositions = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-                _writeOffsets = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                _writePositions = IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                _writeOffsets = IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
 
             public override void StartDoc(int docId, int termDocFreq)
