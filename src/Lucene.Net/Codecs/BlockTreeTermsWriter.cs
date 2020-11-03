@@ -437,41 +437,53 @@ namespace Lucene.Net.Codecs
             }
 
             // LUCENENET specific - to keep the Debug.Assert statement from throwing exceptions
-            // because of invalid UTF8 code in Prefix, we have a wrapper method that falls back
-            // to using PendingBlock.Prefix.ToString() if PendingBlock.ToString()
-            private string ToString(IList<PendingBlock> blocks) // For assert
+            // because of invalid UTF8 code in Prefix, we have a wrapper class that falls back
+            // to using PendingBlock.Prefix.ToString() if PendingBlock.ToString() errors.
+            // This struct defers formatting the string until it is actually used as a parameter
+            // in string.Format().
+            private struct PendingBlocksFormatter // For assert
             {
-                if (blocks == null)
-                    return "null";
-
-
-                if (blocks.Count == 0)
-                    return "[]";
-
-                using (var it = blocks.GetEnumerator())
+#pragma warning disable IDE0044 // Add readonly modifier
+                private IList<PendingBlock> blocks;
+#pragma warning restore IDE0044 // Add readonly modifier
+                public PendingBlocksFormatter(IList<PendingBlock> blocks)
                 {
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append('[');
-                    it.MoveNext();
-                    while (true)
+                    this.blocks = blocks; // May be null
+                }
+
+                public override string ToString() // For assert
+                {
+                    if (blocks == null)
+                        return "null";
+
+                    if (blocks.Count == 0)
+                        return "[]";
+
+                    using (var it = blocks.GetEnumerator())
                     {
-                        var e = it.Current;
-                        // There is a chance that the Prefix will contain invalid UTF8,
-                        // so we catch that and use the alternative way of displaying it
-                        try
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append('[');
+                        it.MoveNext();
+                        while (true)
                         {
-                            sb.Append(e.ToString());
+                            var e = it.Current;
+                            // There is a chance that the Prefix will contain invalid UTF8,
+                            // so we catch that and use the alternative way of displaying it
+                            try
+                            {
+                                sb.Append(e.ToString());
+                            }
+                            catch (IndexOutOfRangeException)
+                            {
+                                sb.Append("BLOCK: ");
+                                sb.Append(e.Prefix.ToString());
+                            }
+                            if (!it.MoveNext())
+                            {
+                                return sb.Append(']').ToString();
+                            }
+                            sb.Append(',').Append(' ');
                         }
-                        catch (IndexOutOfRangeException)
-                        {
-                            sb.Append("BLOCK: ");
-                            sb.Append(e.Prefix.ToString());
-                        }
-                        if (!it.MoveNext())
-                        {
-                            return sb.Append(']').ToString();
-                        }
-                        sb.Append(',').Append(' ');
                     }
                 }
             }
@@ -480,7 +492,7 @@ namespace Lucene.Net.Codecs
             {
                 // LUCENENET specific - we use a custom wrapper function to display floorBlocks, since
                 // it might contain garbage that cannot be converted into text.
-                if (Debugging.AssertsEnabled) Debugging.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor={0} floorBlocks={1}", IsFloor , ToString(floorBlocks));
+                if (Debugging.AssertsEnabled) Debugging.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor={0} floorBlocks={1}", IsFloor , new PendingBlocksFormatter(floorBlocks));
 
                 if (Debugging.AssertsEnabled) Debugging.Assert(scratchBytes.GetFilePointer() == 0);
 
