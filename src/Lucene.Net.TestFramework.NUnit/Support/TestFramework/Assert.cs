@@ -974,6 +974,16 @@ namespace Lucene.Net.TestFramework
                 _NUnit.Assert.Greater(arg1, arg2);
         }
 
+        public static void DoesNotThrow(Action action, string message, params object[] args)
+        {
+            _NUnit.Assert.DoesNotThrow(() => action(), message, args);
+        }
+
+        public static void DoesNotThrow(Action action)
+        {
+            _NUnit.Assert.DoesNotThrow(() => action());
+        }
+
         public static Exception Throws<TException>(Action action, string message, params object[] args)
         {
             return Throws(typeof(TException), action, message, args);
