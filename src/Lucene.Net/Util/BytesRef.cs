@@ -484,4 +484,53 @@ namespace Lucene.Net.Util
             return a.Length - b.Length;
         }
     }
+
+    // LUCENENET specific
+    internal enum BytesRefFormat // For assert/test/logging
+    {
+        UTF8,
+        UTF8AsHex
+    }
+
+    // LUCENENET specific - when this object is a parameter of 
+    // a method that calls string.Format(),
+    // defers execution of building a string until
+    // string.Format() is called.
+    // This struct is meant to wrap a directory parameter when passed as a string.Format() argument.
+    internal struct BytesRefFormatter // For assert/test/logging
+    {
+#pragma warning disable IDE0044 // Add readonly modifier
+        private BytesRef bytesRef;
+        private BytesRefFormat format;
+#pragma warning restore IDE0044 // Add readonly modifier
+        public BytesRefFormatter(BytesRef bytesRef, BytesRefFormat format)
+        {
+            this.bytesRef = bytesRef; // Allow null
+            this.format = format;
+        }
+
+        public override string ToString()
+        {
+            // Special case: null
+            if (bytesRef is null)
+                return "null";
+
+            switch (format)
+            {
+                case BytesRefFormat.UTF8:
+                    try
+                    {
+                        return bytesRef.Utf8ToString();
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        return bytesRef.ToString();
+                    }
+                case BytesRefFormat.UTF8AsHex:
+                    return UnicodeUtil.ToHexString(bytesRef.Utf8ToString());
+                default:
+                    return bytesRef.ToString();
+            }
+        }
+    }
 }
