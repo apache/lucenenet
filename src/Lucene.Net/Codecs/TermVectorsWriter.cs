@@ -286,7 +286,7 @@ namespace Lucene.Net.Codecs
                 fieldCount++;
                 FieldInfo fieldInfo = mergeState.FieldInfos.FieldInfo(fieldName);
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(lastFieldName == null || fieldName.CompareToOrdinal(lastFieldName) > 0,"lastFieldName={0} fieldName={1}", lastFieldName, fieldName);
+                if (Debugging.AssertsEnabled) Debugging.Assert(lastFieldName == null || fieldName.CompareToOrdinal(lastFieldName) > 0, "lastFieldName={0} fieldName={1}", lastFieldName, fieldName);
                 lastFieldName = fieldName;
 
                 Terms terms = vectors.GetTerms(fieldName);

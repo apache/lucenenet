@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
@@ -1430,7 +1431,9 @@ namespace Lucene.Net.Codecs
                         {
                             CopyTerm();
                             //if (DEBUG) System.out.println("      term match to state=" + state + "; return term=" + brToString(term));
-                            if (Debugging.AssertsEnabled) Debugging.Assert(savedStartTerm == null || term.CompareTo(savedStartTerm) > 0, "saveStartTerm={0} term={1}", savedStartTerm.Utf8ToString(), term.Utf8ToString());
+                            if (Debugging.AssertsEnabled) Debugging.Assert(savedStartTerm == null || term.CompareTo(savedStartTerm) > 0, "saveStartTerm={0} term={1}",
+                                // LUCENENET specific - use wrapper BytesRefFormatter struct to defer building the string unless string.Format() is called
+                                new BytesRefFormatter(savedStartTerm, BytesRefFormat.UTF8), new BytesRefFormatter(term, BytesRefFormat.UTF8));
                             return true;
                         }
                         else
@@ -2388,7 +2391,7 @@ namespace Lucene.Net.Codecs
                 //            }
                 //            if (OuterInstance.Index != null)
                 //            {
-                //                if (Debugging.AssertsEnabled) Debugging.Assert(!isSeekFrame || f.Arc != null, "isSeekFrame=" + isSeekFrame + " f.arc=" + f.Arc);
+                //                if (Debugging.AssertsEnabled) Debugging.Assert(!isSeekFrame || f.Arc != null, "isSeekFrame={0} f.arc={1}", isSeekFrame, f.Arc);
                 //                if (f.Prefix > 0 && isSeekFrame && f.Arc.Label != (term.Bytes[f.Prefix - 1] & 0xFF))
                 //                {
                 //                    @out.println("      broken seek state: arc.label=" + (char)f.Arc.Label + " vs term byte=" + (char)(term.Bytes[f.Prefix - 1] & 0xFF));
@@ -2760,7 +2763,7 @@ namespace Lucene.Net.Codecs
                         //if (DEBUG) {
                         //System.out.println("    loadNextFloorBlock fp=" + fp + " fpEnd=" + fpEnd);
                         //}
-                        if (Debugging.AssertsEnabled) Debugging.Assert(arc == null || isFloor,"arc={0} isFloor={1}", arc, isFloor);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(arc == null || isFloor, "arc={0} isFloor={1}", arc, isFloor);
                         fp = fpEnd;
                         nextEnt = -1;
                         LoadBlock();
@@ -2917,7 +2920,7 @@ namespace Lucene.Net.Codecs
                     public bool NextLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount,"nextEnt={0} entCount={1}", nextEnt, entCount + " fp=" + fp);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount, "nextEnt={0} entCount={1} fp={2}", nextEnt, entCount, fp);
                         nextEnt++;
                         suffix = suffixesReader.ReadVInt32();
                         startBytePos = suffixesReader.Position;
@@ -2935,7 +2938,7 @@ namespace Lucene.Net.Codecs
                     public bool NextNonLeaf()
                     {
                         //if (DEBUG) System.out.println("  frame.next ord=" + ord + " nextEnt=" + nextEnt + " entCount=" + entCount);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount,"nextEnt={0} entCount={1}", nextEnt, entCount + " fp=" + fp);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(nextEnt != -1 && nextEnt < entCount, "nextEnt={0} entCount={1} fp={2}", nextEnt, entCount, fp);
                         nextEnt++;
                         int code = suffixesReader.ReadVInt32();
                         suffix = (int)((uint)code >> 1);

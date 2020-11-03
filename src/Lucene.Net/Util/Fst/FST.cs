@@ -807,7 +807,7 @@ namespace Lucene.Net.Util.Fst
                         if (srcPos != destPos)
                         {
                             //System.out.println("  copy len=" + bytesPerArc[arcIdx]);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(destPos > srcPos,"destPos={0} srcPos={1}", destPos, srcPos + " arcIdx=" + arcIdx + " maxBytesPerArc=" + maxBytesPerArc + " bytesPerArc[arcIdx]=" + bytesPerArc[arcIdx] + " nodeIn.numArcs=" + nodeIn.NumArcs);
+                            if (Debugging.AssertsEnabled) Debugging.Assert(destPos > srcPos, "destPos={0} srcPos={1} arcIdx={2} maxBytesPerArc={3} bytesPerArc[arcIdx]={4} nodeIn.numArcs={5}", destPos, srcPos, arcIdx, maxBytesPerArc, bytesPerArc[arcIdx], nodeIn.NumArcs);
                             bytes.CopyBytes(srcPos, destPos, bytesPerArc[arcIdx]);
                         }
                     }

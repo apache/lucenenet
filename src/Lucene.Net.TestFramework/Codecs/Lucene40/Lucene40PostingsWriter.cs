@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 // and the numbers aren't that much smaller anyways.
                 int offsetDelta = startOffset - lastOffset;
                 int offsetLength = endOffset - startOffset;
-                if (Debugging.AssertsEnabled) Debugging.Assert(offsetDelta >= 0 && offsetLength >= 0,"startOffset={0},lastOffset={1}", startOffset, lastOffset + ",endOffset=" + endOffset);
+                if (Debugging.AssertsEnabled) Debugging.Assert(offsetDelta >= 0 && offsetLength >= 0, "startOffset={0},lastOffset={1},endOffset={2}", startOffset, lastOffset, endOffset);
                 if (offsetLength != lastOffsetLength)
                 {
                     proxOut.WriteVInt32(offsetDelta << 1 | 1);

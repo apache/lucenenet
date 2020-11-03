@@ -1024,7 +1024,7 @@ namespace Lucene.Net.Store
                                         extras += "\n\nThese files we had previously tried to delete, but couldn't: " + pendingDeletions;
                                     }
 
-                                    if (Debugging.AssertsEnabled) Debugging.Assert(false,"unreferenced files: before delete:\n    {0}\n  after delete:\n    {1}", Arrays.ToString(startFiles), Arrays.ToString(endFiles) + extras);
+                                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "unreferenced files: before delete:\n    {0}\n  after delete:\n    {1}{2}", startFiles, endFiles, extras);
                                 }
 
                                 DirectoryReader ir1 = DirectoryReader.Open(this);

@@ -1,4 +1,5 @@
 using J2N;
+using J2N.Text;
 using J2N.Threading;
 using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
@@ -707,7 +708,8 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(rld.Info == info,"rld.info={0} info={1}", rld.Info, info + " isLive?=" + InfoIsLive(rld.Info) + " vs " + InfoIsLive(info));
+                        if (Debugging.AssertsEnabled && !(rld.Info == info))
+                            throw new AssertionException(string.Format("rld.info={0} info={1} isLive?={2} vs {3}", rld.Info, info, InfoIsLive(rld.Info),InfoIsLive(info)));
                     }
 
                     if (create)
@@ -1109,7 +1111,7 @@ namespace Lucene.Net.Index
             }
             foreach (IEvent e in eventQueue)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(e is DocumentsWriter.MergePendingEvent, e.ToString());
+                if (Debugging.AssertsEnabled) Debugging.Assert(e is DocumentsWriter.MergePendingEvent, "{0}", e);
             }
             return true;
         }
@@ -1276,7 +1278,12 @@ namespace Lucene.Net.Index
                 {
                     closed = true;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates,"{0} {1}", docWriter.perThreadPool.NumDeactivatedThreadStates(), docWriter.perThreadPool.MaxThreadStates);
+                if (Debugging.AssertsEnabled)
+                {
+                    // LUCENENET specific - store the number of states so we don't have to call this method twice
+                    int numDeactivatedThreadStates = docWriter.perThreadPool.NumDeactivatedThreadStates();
+                    Debugging.Assert(numDeactivatedThreadStates == docWriter.perThreadPool.MaxThreadStates, "{0} {1}", numDeactivatedThreadStates, docWriter.perThreadPool.MaxThreadStates);
+                }
             }
             catch (OutOfMemoryException oom)
             {
@@ -2402,7 +2409,7 @@ namespace Lucene.Net.Index
                 MergePolicy.MergeSpecification spec;
                 if (maxNumSegments != UNBOUNDED_MAX_MERGE_SEGMENTS)
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED,"Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: {0}", trigger.ToString());
+                    if (Debugging.AssertsEnabled) Debugging.Assert(trigger == MergeTrigger.EXPLICIT || trigger == MergeTrigger.MERGE_FINISHED,"Expected EXPLICT or MERGE_FINISHED as trigger even with maxNumSegments set but was: {0}", trigger);
                     spec = mergePolicy.FindForcedMerges(segmentInfos, maxNumSegments, segmentsToMerge);
                     newMergesFound = spec != null;
                     if (newMergesFound)
@@ -2587,7 +2594,12 @@ namespace Lucene.Net.Index
                     IOUtils.Dispose(writeLock); // release write lock
                     writeLock = null;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates,"{0} {1}", docWriter.perThreadPool.NumDeactivatedThreadStates(), docWriter.perThreadPool.MaxThreadStates);
+                    if (Debugging.AssertsEnabled)
+                    {
+                        // LUCENENET specific - store the number of states so we don't have to call this method twice
+                        int numDeactivatedThreadStates = docWriter.perThreadPool.NumDeactivatedThreadStates();
+                        Debugging.Assert(numDeactivatedThreadStates == docWriter.perThreadPool.MaxThreadStates, "{0} {1}", numDeactivatedThreadStates, docWriter.perThreadPool.MaxThreadStates);
+                    }
                 }
 
                 success = true;
@@ -3450,7 +3462,7 @@ namespace Lucene.Net.Index
 
                     if (Debugging.AssertsEnabled)
                     {
-                        Debugging.Assert(!SlowFileExists(directory, newFileName), "file \"{0}\" already exists; siFiles={1}", newFileName, string.Format(J2N.Text.StringFormatter.InvariantCulture, "{0}", siFiles));
+                        Debugging.Assert(!SlowFileExists(directory, newFileName), "file \"{0}\" already exists; siFiles={1}", newFileName, siFiles);
                         Debugging.Assert(!copiedFiles.Contains(file), "file \"{0}\" is being copied more than once", file);
                     }
                     copiedFiles.Add(file);
@@ -4070,7 +4082,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (Debugging.AssertsEnabled) Debugging.Assert(updatesIter.Doc > curDoc,"field={0} updateDoc={1}", mergingFields[idx], updatesIter.Doc + " curDoc=" + curDoc);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(updatesIter.Doc > curDoc, "field={0} updateDoc={1} curDoc={2}", mergingFields[idx], updatesIter.Doc, curDoc);
                 }
             }
         }
@@ -5037,7 +5049,7 @@ namespace Lucene.Net.Index
                     }
 
                     merge.readers.Add(reader);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(delCount <= info.Info.DocCount,"delCount={0} info.docCount={1}", delCount, info.Info.DocCount + " rld.pendingDeleteCount=" + rld.PendingDeleteCount + " info.getDelCount()=" + info.DelCount);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(delCount <= info.Info.DocCount, "delCount={0} info.DocCount={1} rld.PendingDeleteCount={2} info.DelCount=", delCount, info.Info.DocCount, rld.PendingDeleteCount, info.DelCount);
                     segUpto++;
                 }
 
@@ -5379,13 +5391,17 @@ namespace Lucene.Net.Index
             ICollection<string> files = toSync.GetFiles(directory, false);
             foreach (string fileName in files)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(SlowFileExists(directory, fileName), "file {0} does not exist; files={1}, ", fileName, Arrays.ToString(directory.ListAll()));
-                // If this trips it means we are missing a call to
-                // .checkpoint somewhere, because by the time we
-                // are called, deleter should know about every
-                // file referenced by the current head
-                // segmentInfos:
-                if (Debugging.AssertsEnabled) Debugging.Assert(deleter.Exists(fileName),"IndexFileDeleter doesn't know about file {0}", fileName);
+                if (Debugging.AssertsEnabled)
+                {
+                    // LUCENENET specific - use Directory.ListAllFormatter to defer directory listing/string building until after the condition fails
+                    Debugging.Assert(SlowFileExists(directory, fileName), "file {0} does not exist; files={1}", fileName, new Directory.ListAllFormatter(directory));
+                    // If this trips it means we are missing a call to
+                    // .checkpoint somewhere, because by the time we
+                    // are called, deleter should know about every
+                    // file referenced by the current head
+                    // segmentInfos:
+                    Debugging.Assert(deleter.Exists(fileName), "IndexFileDeleter doesn't know about file {0}", fileName);
+                }
             }
             return true;
         }

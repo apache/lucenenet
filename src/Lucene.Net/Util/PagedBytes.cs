@@ -166,7 +166,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public PagedBytes(int blockBits)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(blockBits > 0 && blockBits <= 31, blockBits.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.AssertsEnabled) Debugging.Assert(blockBits > 0 && blockBits <= 31, "{0}", blockBits);
             this.blockSize = 1 << blockBits;
             this.blockBits = blockBits;
             blockMask = blockSize - 1;

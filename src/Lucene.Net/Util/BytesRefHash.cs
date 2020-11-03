@@ -552,7 +552,7 @@ namespace Lucene.Net.Util
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(bytesStart != null, "bytesStart is null - not initialized");
-                Debugging.Assert(bytesID >= 0 && bytesID < count, bytesID.ToString());
+                Debugging.Assert(bytesID >= 0 && bytesID < count, "{0}", bytesID);
             }
             return bytesStart[bytesID];
         }

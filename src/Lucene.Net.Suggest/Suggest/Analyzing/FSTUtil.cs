@@ -130,7 +130,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                               .CopyFrom(nextArc), fst.Outputs.Add(path.Output, nextArc.Output), newInput));
                             int label = nextArc.Label; // used in assert
                             nextArc = nextArc.IsLast ? null : fst.ReadNextRealArc(nextArc, fstReader);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(nextArc == null || label < nextArc.Label, "last: {0} next: {1}", label, (nextArc == null ? "" : nextArc.Label.ToString()));
+                            if (Debugging.AssertsEnabled) Debugging.Assert(nextArc == null || label < nextArc.Label, "last: {0} next: {1}", label, nextArc?.Label);
                         }
                     }
                 }

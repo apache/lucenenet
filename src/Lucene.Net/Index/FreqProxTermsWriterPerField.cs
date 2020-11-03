@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
             }
             else if (docState.docID != postings.lastDocIDs[termID])
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(docState.docID > postings.lastDocIDs[termID],"id: {0} postings ID: {1}", docState.docID, postings.lastDocIDs[termID] + " termID: " + termID);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docState.docID > postings.lastDocIDs[termID], "id: {0} postings ID: {1} termID: {2}", docState.docID, postings.lastDocIDs[termID], termID);
                 // Term not yet seen in the current doc but previously
                 // seen in other doc(s) since the last flush
 
@@ -644,7 +644,7 @@ namespace Lucene.Net.Index
                                     {
                                         if (writeOffsets)
                                         {
-                                            if (Debugging.AssertsEnabled) Debugging.Assert(startOffset >= 0 && endOffset >= startOffset,"startOffset={0},endOffset={1}", startOffset, endOffset + ",offset=" + offset);
+                                            if (Debugging.AssertsEnabled) Debugging.Assert(startOffset >= 0 && endOffset >= startOffset, "startOffset={0},endOffset={1},offset={2}", startOffset, endOffset, offset);
                                             postingsConsumer.AddPosition(position, thisPayload, startOffset, endOffset);
                                         }
                                         else

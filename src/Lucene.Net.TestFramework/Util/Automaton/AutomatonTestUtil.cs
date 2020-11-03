@@ -399,7 +399,7 @@ namespace Lucene.Net.Util.Automaton
         {
             int numStates = a.GetNumberOfStates();
             a.ClearNumberedStates(); // force recomputation of cached numbered states
-            if (Debugging.AssertsEnabled) Debugging.Assert(numStates == a.GetNumberOfStates(),"automaton has {0}", (numStates - a.GetNumberOfStates()) + " detached states");
+            if (Debugging.AssertsEnabled) Debugging.Assert(numStates == a.GetNumberOfStates(), "automaton has {0} detached states", numStates - a.GetNumberOfStates());
         }
     }
 

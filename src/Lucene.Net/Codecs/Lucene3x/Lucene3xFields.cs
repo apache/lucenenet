@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -926,7 +927,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     else
                     {
                         current = t2.Bytes;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(!unicodeSortOrder || term.CompareTo(current) < 0,"term={0} vs current={1}", UnicodeUtil.ToHexString(term.Utf8ToString()), UnicodeUtil.ToHexString(current.Utf8ToString()));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(!unicodeSortOrder || term.CompareTo(current) < 0,"term={0} vs current={1}",
+                            // LUCENENET specific - use wrapper BytesRefFormatter struct to defer building the string unless string.Format() is called
+                            new BytesRefFormatter(term, BytesRefFormat.UTF8AsHex), new BytesRefFormatter(current, BytesRefFormat.UTF8AsHex));
                         return SeekStatus.NOT_FOUND;
                     }
                 }
