@@ -1046,7 +1046,8 @@ namespace Lucene.Net.Index
                 bool hasOffsets = terms.HasOffsets;
 
                 // term vectors cannot omit TF:
-                bool expectedHasFreqs = (isVectors || fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0);
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                bool expectedHasFreqs = (isVectors || IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0);
 
                 if (hasFreqs != expectedHasFreqs)
                 {
@@ -1063,7 +1064,8 @@ namespace Lucene.Net.Index
 
                 if (!isVectors)
                 {
-                    bool expectedHasPositions = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                    // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                    bool expectedHasPositions = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
                     if (hasPositions != expectedHasPositions)
                     {
                         throw new Exception("field \"" + field + "\" should have hasPositions=" + expectedHasPositions + " but got " + hasPositions);
@@ -1075,7 +1077,8 @@ namespace Lucene.Net.Index
                         throw new Exception("field \"" + field + "\" should have hasPayloads=" + expectedHasPayloads + " but got " + hasPayloads);
                     }
 
-                    bool expectedHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                    // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                    bool expectedHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                     if (hasOffsets != expectedHasOffsets)
                     {
                         throw new Exception("field \"" + field + "\" should have hasOffsets=" + expectedHasOffsets + " but got " + hasOffsets);
@@ -2135,7 +2138,8 @@ namespace Lucene.Net.Index
                             {
                                 Terms terms = tfv.GetTerms(field);
                                 termsEnum = terms.GetEnumerator(termsEnum);
-                                bool postingsHasFreq = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                                bool postingsHasFreq = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
                                 bool postingsHasPayload = fieldInfo.HasPayloads;
                                 bool vectorsHasPayload = terms.HasPayloads;
 

@@ -111,7 +111,8 @@ namespace Lucene.Net.Index
                     if (Debugging.AssertsEnabled) Debugging.Assert(normType == DocValuesType.NONE);
                 }
                 // Cannot store payloads unless positions are indexed:
-                if (Debugging.AssertsEnabled) Debugging.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads);
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                if (Debugging.AssertsEnabled) Debugging.Assert(IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads);
             }
 
             return true;
@@ -154,9 +155,11 @@ namespace Lucene.Net.Index
                     else
                     {
                         // downgrade
-                        this.indexOptions = this.indexOptions.CompareTo(indexOptions) < 0 ? this.indexOptions : indexOptions;
+                        // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                        this.indexOptions = IndexOptionsComparer.Default.Compare(this.indexOptions, indexOptions) < 0 ? this.indexOptions : indexOptions;
                     }
-                    if (this.indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                    // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                    if (IndexOptionsComparer.Default.Compare(this.indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {
                         // cannot store payloads if we don't store positions:
                         this.storePayloads = false;
@@ -222,7 +225,8 @@ namespace Lucene.Net.Index
 
         internal void SetStorePayloads()
         {
-            if (indexed && indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            if (indexed && IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
             {
                 storePayloads = true;
             }

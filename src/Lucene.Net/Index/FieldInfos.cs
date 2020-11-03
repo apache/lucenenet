@@ -81,9 +81,10 @@ namespace Lucene.Net.Index
                 byName[info.Name] = info;
 
                 hasVectors |= info.HasVectors;
-                hasProx |= info.IsIndexed && info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                hasProx |= info.IsIndexed && IndexOptionsComparer.Default.Compare(info.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
                 hasFreq |= info.IsIndexed && info.IndexOptions != IndexOptions.DOCS_ONLY;
-                hasOffsets |= info.IsIndexed && info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                hasOffsets |= info.IsIndexed && IndexOptionsComparer.Default.Compare(info.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 hasNorms |= info.HasNorms;
                 hasDocValues |= info.HasDocValues;
                 hasPayloads |= info.HasPayloads;

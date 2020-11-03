@@ -1,6 +1,6 @@
 using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -249,9 +249,10 @@ namespace Lucene.Net.Codecs.Lucene41
         public override int SetField(FieldInfo fieldInfo)
         {
             IndexOptions indexOptions = fieldInfo.IndexOptions;
-            fieldHasFreqs = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-            fieldHasPositions = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-            fieldHasOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            fieldHasFreqs = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
+            fieldHasPositions = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            fieldHasOffsets = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             fieldHasPayloads = fieldInfo.HasPayloads;
             skipWriter.SetField(fieldHasPositions, fieldHasOffsets, fieldHasPayloads);
             lastState = emptyState;

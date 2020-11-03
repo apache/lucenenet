@@ -1,6 +1,6 @@
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -22,8 +22,8 @@ namespace Lucene.Net.Codecs.Lucene40
      */
 
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
-    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using Directory = Lucene.Net.Store.Directory;
+    using DocValuesType = Lucene.Net.Index.DocValuesType;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
@@ -94,7 +94,8 @@ namespace Lucene.Net.Codecs.Lucene40
                     // LUCENE-3027: past indices were able to write
                     // storePayloads=true when omitTFAP is also true,
                     // which is invalid.  We correct that, here:
-                    if (isIndexed && indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                    // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                    if (isIndexed && IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {
                         storePayloads = false;
                     }
