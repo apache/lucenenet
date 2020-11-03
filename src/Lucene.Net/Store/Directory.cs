@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -391,6 +392,24 @@ namespace Lucene.Net.Store
             }
 
             public override long Length => length;
+        }
+
+        // LUCENENET specific - formatter to defer building the string of directory contents in string.Format().
+        // This struct is meant to wrap a directory parameter when passed as a string.Format() argument.
+        internal struct ListAllFormatter // For assert/test/debug
+        {
+#pragma warning disable IDE0044 // Add readonly modifier
+            private Directory directory;
+#pragma warning restore IDE0044 // Add readonly modifier
+            public ListAllFormatter(Directory directory)
+            {
+                this.directory = directory ?? throw new ArgumentNullException(nameof(directory));
+            }
+
+            public override string ToString()
+            {
+                return Arrays.ToString(directory.ListAll());
+            }
         }
     }
 }
