@@ -796,6 +796,26 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
+        /// Prints a <see cref="Field"/> for human consumption.
+        /// </summary>
+        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        public virtual string ToString(IFormatProvider provider)
+        {
+            StringBuilder result = new StringBuilder();
+
+            if(FieldsData != null)
+            {
+                result.AppendFormat(provider, "{0}<{1}:{3}>", m_type.ToString(), m_name.ToString(), FieldsData);
+            }
+            else
+            {
+                result.AppendFormat(provider, "{0}<{1}:>", m_type.ToString(), m_name.ToString());
+            }
+
+            return result.ToString();
+        }
+
+        /// <summary>
         /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="Documents.FieldType"/>. </summary>
         // LUCENENET specific property to prevent the need to cast. The FieldType property was renamed IndexableFieldType
         // in order to accommodate this (more Lucene like) property.
