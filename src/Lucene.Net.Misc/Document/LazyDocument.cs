@@ -354,6 +354,11 @@ namespace Lucene.Net.Documents
             {
                 return GetRealValue().GetTokenStream(analyzer);
             }
+
+            public virtual string ToString(IFormatProvider provider)
+            {
+                return GetRealValue().ToString(provider);
+            }
         }
     }
 }

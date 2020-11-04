@@ -2043,6 +2043,11 @@ namespace Lucene.Net.Index
             {
                 return null;
             }
+
+            public virtual string ToString(IFormatProvider provider)
+            {
+                return GetStringValue().ToString(provider);
+            }
         }
 
         // See LUCENE-4870 TooManyOpenFiles errors are thrown as
