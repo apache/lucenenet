@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class State : IComparable<State>, IEquatable<State> // LUCENENET specific: Implemented IEquatable, since this class is used in hashtables
+    public class State : IComparable<State>
     {
         internal bool accept;
         [WritableArray]
@@ -355,60 +355,16 @@ namespace Lucene.Net.Util.Automaton
             return s.id - id;
         }
 
-        #region Equality
-        // LUCENENET specific - implemented IEquatable.
-        public bool Equals(State other)
-        {
-            if (other == null)
-                return false;
-            return id.Equals(other.id);
-        }
+        // LUCENENET NOTE: DO NOT IMPLEMENT Equals()!!!
+        // Although it doesn't match GetHashCode(), checking for
+        // reference equality is by design.
+        // Implementing Equals() causes difficult to diagnose
+        // IndexOutOfRangeExceptions when using FuzzyTermsEnum.
+        // See GH-296.
 
         public override int GetHashCode()
         {
             return id;
         }
-
-        public override bool Equals(object obj)
-        {
-            return ReferenceEquals(this, obj) || obj is State other && Equals(other);
-        }
-
-        public static bool operator ==(State left, State right)
-        {
-            if (left is null)
-            {
-                return right is null;
-            }
-
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(State left, State right)
-        {
-            return !(left == right);
-        }
-
-        public static bool operator <(State left, State right)
-        {
-            return left is null ? !(right is null) : left.CompareTo(right) < 0;
-        }
-
-        public static bool operator <=(State left, State right)
-        {
-            return left is null || left.CompareTo(right) <= 0;
-        }
-
-        public static bool operator >(State left, State right)
-        {
-            return !(left is null) && left.CompareTo(right) > 0;
-        }
-
-        public static bool operator >=(State left, State right)
-        {
-            return left is null ? right is null : left.CompareTo(right) >= 0;
-        }
-
-        #endregion
     }
 }
