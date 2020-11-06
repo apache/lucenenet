@@ -135,7 +135,7 @@ namespace Lucene.Net.Analysis
         /// Calls <c>MockTokenizer(AttributeFactory, TextReader, WHITESPACE, true)</c>
         /// </summary>
         public MockTokenizer(AttributeFactory factory, TextReader input)
-            : this(input, WHITESPACE, true)
+            : this(factory, input, WHITESPACE, true) // LUCENENET specific - added missing factory parameter, as it is clearly a bug
         { }
 
         public sealed override bool IncrementToken()
