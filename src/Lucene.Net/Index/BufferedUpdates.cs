@@ -203,8 +203,7 @@ namespace Lucene.Net.Index
 
         public virtual void AddQuery(Query query, int docIDUpto)
         {
-            int? prev;
-            queries.TryGetValue(query, out prev);
+            queries.TryGetValue(query, out int? prev);
             queries[query] = docIDUpto;
             // increment bytes used only if the query wasn't added so far.
             if (prev == null)
@@ -221,8 +220,7 @@ namespace Lucene.Net.Index
 
         public virtual void AddTerm(Term term, int docIDUpto)
         {
-            int? current;
-            terms.TryGetValue(term, out current);
+            terms.TryGetValue(term, out int? current);
             if (current != null && docIDUpto < current)
             {
                 // Only record the new number if it's greater than the

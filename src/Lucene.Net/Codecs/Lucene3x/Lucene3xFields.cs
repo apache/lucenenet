@@ -156,8 +156,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override Terms GetTerms(string field)
         {
-            Terms result;
-            preTerms.TryGetValue(field, out result);
+            preTerms.TryGetValue(field, out Terms result);
             return result;
         }
 

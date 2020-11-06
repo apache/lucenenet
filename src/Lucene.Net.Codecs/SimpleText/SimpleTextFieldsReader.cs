@@ -692,11 +692,9 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             lock (this)
             {
-                SimpleTextTerms terms;
-                if (!_termsCache.TryGetValue(field, out terms) || terms == null)
+                if (!_termsCache.TryGetValue(field, out SimpleTextTerms terms) || terms == null)
                 {
-                    long? fp;
-                    if (!_fields.TryGetValue(field, out fp) || !fp.HasValue)
+                    if (!_fields.TryGetValue(field, out long? fp) || !fp.HasValue)
                     {
                         return null;
                     }

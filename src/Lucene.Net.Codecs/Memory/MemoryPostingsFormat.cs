@@ -1014,8 +1014,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override Terms GetTerms(string field)
             {
-                TermsReader result;
-                _fields.TryGetValue(field, out result);
+                _fields.TryGetValue(field, out TermsReader result);
                 return result;
             }
 

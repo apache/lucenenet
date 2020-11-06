@@ -74,8 +74,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             lock (this)
             {
-                NumericDocValues instance;
-                if (!numericInstances.TryGetValue(field.Number, out instance))
+                if (!numericInstances.TryGetValue(field.Number, out NumericDocValues instance))
                 {
                     string fileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "dat");
                     IndexInput input = dir.OpenInput(fileName, state.Context);
@@ -424,8 +423,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             lock (this)
             {
-                BinaryDocValues instance;
-                if (!binaryInstances.TryGetValue(field.Number, out instance))
+                if (!binaryInstances.TryGetValue(field.Number, out BinaryDocValues instance))
                 {
                     var type = field.GetAttribute(legacyKey).ToLegacyDocValuesType();
 
@@ -690,8 +688,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             lock (this)
             {
-                SortedDocValues instance;
-                if (!sortedInstances.TryGetValue(field.Number, out instance))
+                if (!sortedInstances.TryGetValue(field.Number, out SortedDocValues instance))
                 {
                     string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "dat");
                     string indexName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "idx");

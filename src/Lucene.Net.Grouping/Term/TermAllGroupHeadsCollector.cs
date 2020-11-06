@@ -171,8 +171,7 @@ namespace Lucene.Net.Search.Grouping.Terms
                 groupIndex.LookupOrd(ord, scratchBytesRef);
                 groupValue = scratchBytesRef;
             }
-            GroupHead groupHead;
-            if (!groups.TryGetValue(groupValue, out groupHead))
+            if (!groups.TryGetValue(groupValue, out GroupHead groupHead))
             {
                 groupHead = new GroupHead(this, groupValue, sortWithinGroup, doc);
                 groups[groupValue == null ? null : BytesRef.DeepCopyOf(groupValue)] = groupHead;

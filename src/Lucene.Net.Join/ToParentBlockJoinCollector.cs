@@ -320,10 +320,9 @@ namespace Lucene.Net.Join
         private void Enroll(ToParentBlockJoinQuery query, ToParentBlockJoinQuery.BlockJoinScorer scorer)
         {
             scorer.TrackPendingChildHits();
-            int? slot;
-            if (joinQueryID.TryGetValue(query, out slot))
+            if (joinQueryID.TryGetValue(query, out int? slot))
             {
-                joinScorers[(int) slot] = scorer;
+                joinScorers[(int)slot] = scorer;
             }
             else
             {
@@ -398,8 +397,7 @@ namespace Lucene.Net.Join
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public virtual ITopGroups<int> GetTopGroups(ToParentBlockJoinQuery query, Sort withinGroupSort, int offset, int maxDocsPerGroup, int withinGroupOffset, bool fillSortFields)
         {
-            int? slot;
-            if (!joinQueryID.TryGetValue(query, out slot))
+            if (!joinQueryID.TryGetValue(query, out int? slot))
             {
                 if (totalHitCount == 0)
                 {

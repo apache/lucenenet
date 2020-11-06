@@ -197,8 +197,7 @@ namespace Lucene.Net.Search
         public virtual IndexSearcher Acquire(long version)
         {
             EnsureOpen();
-            Lazy<SearcherTracker> tracker;
-            if (_searchers.TryGetValue(version, out tracker) && tracker.IsValueCreated && tracker.Value.Searcher.IndexReader.TryIncRef())
+            if (_searchers.TryGetValue(version, out Lazy<SearcherTracker> tracker) && tracker.IsValueCreated && tracker.Value.Searcher.IndexReader.TryIncRef())
             {
                 return tracker.Value.Searcher;
             }

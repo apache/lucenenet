@@ -87,11 +87,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             this.props = new Dictionary<string, string>();
             writer.Flush();
             ms.Position = 0;
-            props.LoadProperties(ms); 
+            props.LoadProperties(ms);
 
             // make sure work dir is set properly 
-            string temp;
-            if (!props.TryGetValue("work.dir", out temp) || temp == null)
+            if (!props.TryGetValue("work.dir", out string temp) || temp == null)
             {
                 // LUCENENET specific - reformatted with :
                 props["work.dir"] = SystemProperties.GetProperty("benchmark:work:dir", "work");
@@ -126,8 +125,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         public Config(IDictionary<string, string> props)
         {
             this.props = props;
-            string temp;
-            if (props.TryGetValue("print.props", out temp))
+            if (props.TryGetValue("print.props", out string temp))
             {
                 if (temp.Equals("true", StringComparison.OrdinalIgnoreCase))
                 {
@@ -161,15 +159,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         public virtual string Get(string name, string dflt)
         {
             string[] vals;
-            object temp;
-            if (valByRound.TryGetValue(name, out temp) && temp != null)
+            if (valByRound.TryGetValue(name, out object temp) && temp != null)
             {
                 vals = (string[])temp;
                 return vals[roundNumber % vals.Length];
             }
             // done if not by round
-            string sval;
-            if (!props.TryGetValue(name, out sval))
+            if (!props.TryGetValue(name, out string sval))
             {
                 sval = dflt;
             }
@@ -206,8 +202,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         /// <param name="value">Either single or multiple property value (multiple values are separated by ":")</param>
         public virtual void Set(string name, string value)
         {
-            object temp;
-            if (valByRound.TryGetValue(name, out temp) && temp != null)
+            if (valByRound.TryGetValue(name, out object temp) && temp != null)
             {
                 throw new Exception("Cannot modify a multi value property!");
             }
@@ -228,15 +223,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         {
             // use value by round if already parsed
             int[] vals;
-            object temp;
-            if (valByRound.TryGetValue(name, out temp) && temp != null)
+            if (valByRound.TryGetValue(name, out object temp) && temp != null)
             {
                 vals = (int[])temp;
                 return vals[roundNumber % vals.Length];
             }
             // done if not by round 
-            string sval;
-            if (!props.TryGetValue(name, out sval))
+            if (!props.TryGetValue(name, out string sval))
             {
                 sval = dflt.ToString(CultureInfo.InvariantCulture);
             }
@@ -268,15 +261,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         {
             // use value by round if already parsed
             double[] vals;
-            object temp;
-            if (valByRound.TryGetValue(name, out temp) && temp != null)
+            if (valByRound.TryGetValue(name, out object temp) && temp != null)
             {
                 vals = (double[])temp;
                 return vals[roundNumber % vals.Length];
             }
             // done if not by round 
-            string sval;
-            if (!props.TryGetValue(name, out sval))
+            if (!props.TryGetValue(name, out string sval))
             {
                 sval = dflt.ToString(CultureInfo.InvariantCulture);
             }
@@ -307,15 +298,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
         {
             // use value by round if already parsed
             bool[] vals;
-            object temp;
-            if (valByRound.TryGetValue(name, out temp) && temp != null)
+            if (valByRound.TryGetValue(name, out object temp) && temp != null)
             {
                 vals = (bool[])temp;
                 return vals[roundNumber % vals.Length];
             }
             // done if not by round 
-            string sval;
-            if (!props.TryGetValue(name, out sval))
+            if (!props.TryGetValue(name, out string sval))
             {
                 sval = dflt.ToString(); // LUCENENET NOTE: bool ignores the IFormatProvider argument, it returns the values of constants
             }
@@ -514,8 +503,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 else
                 {
                     // append actual values, for that round
-                    object a;
-                    valByRound.TryGetValue(name, out a);
+                    // LUCENENET TODO: Boxing with value types in object type
+                    valByRound.TryGetValue(name, out object a);
                     if (a is int[])
                     {
                         int[] ai = (int[])a;

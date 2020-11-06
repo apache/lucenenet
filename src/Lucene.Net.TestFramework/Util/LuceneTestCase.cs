@@ -3516,8 +3516,7 @@ namespace Lucene.Net.Util
             // and leave them there.
             if (LuceneTestCase.SuiteFailureMarker /*.WasSuccessful()*/)
             {
-                string f;
-                while (cleanupQueue.TryDequeue(out f))
+                while (cleanupQueue.TryDequeue(out string f))
                 {
                     try
                     {

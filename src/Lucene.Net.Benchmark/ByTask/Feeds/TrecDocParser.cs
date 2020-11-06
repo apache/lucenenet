@@ -66,8 +66,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public static ParsePathType PathType(FileInfo f)
         {
             int pathLength = 0;
-            ParsePathType? ppt;
-            if (pathName2Type.TryGetValue(f.Name.ToUpperInvariant(), out ppt) && ppt != null)
+            if (pathName2Type.TryGetValue(f.Name.ToUpperInvariant(), out ParsePathType? ppt) && ppt != null)
             {
                 return ppt.Value;
             }

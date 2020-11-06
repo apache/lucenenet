@@ -123,8 +123,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     return new Field(name, "", ft);
                 }
 
-                Field f;
-                if (!fields.TryGetValue(name, out f) || f == null)
+                if (!fields.TryGetValue(name, out Field f) || f == null)
                 {
                     f = new Field(name, "", ft);
                     fields[name] = f;
@@ -249,13 +248,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             if (dateString != null)
             {
                 // LUCENENET: TryParseExact needs a non-nullable DateTime to work.
-                DateTime temp;
                 if (DateTime.TryParseExact(dateString, new string[] {
                     // Original format from Java
                     "dd-MMM-yyyy HH:mm:ss",
                     // Actual format from the test files...
                     "yyyyMMddHHmmss"
-                    }, CultureInfo.InvariantCulture, DateTimeStyles.None, out temp))
+                    }, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime temp))
                 {
                     date = temp;
                 }

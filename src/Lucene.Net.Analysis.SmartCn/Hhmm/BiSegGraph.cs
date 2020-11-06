@@ -140,8 +140,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <returns><see cref="T:IList{SegTokenPair}"/> of token pairs. </returns>
         public virtual IList<SegTokenPair> GetToList(int to)
         {
-            IList<SegTokenPair> result;
-            tokenPairListTable.TryGetValue(to, out result);
+            tokenPairListTable.TryGetValue(to, out IList<SegTokenPair> result);
             return result;
         }
 

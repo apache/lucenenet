@@ -306,8 +306,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     return null;
                 }
 
-                int fieldIndex;
-                if (!fieldNumberToIndex.TryGetValue(fieldInfo.Number, out fieldIndex))
+                if (!fieldNumberToIndex.TryGetValue(fieldInfo.Number, out int fieldIndex))
                 {
                     // Term vectors were not indexed for this field
                     return null;

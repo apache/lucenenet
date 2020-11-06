@@ -45,8 +45,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
             if (fieldBoostMap != null)
             {
-                float? boost;
-                if (fieldBoostMap.TryGetValue(fieldConfig.Field, out boost) && boost != null)
+                if (fieldBoostMap.TryGetValue(fieldConfig.Field, out float? boost) && boost != null)
                 {
                     fieldConfig.Set(ConfigurationKeys.BOOST, boost);
                 }

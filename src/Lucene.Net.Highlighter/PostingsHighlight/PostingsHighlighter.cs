@@ -219,8 +219,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         public virtual string[] Highlight(string field, Query query, IndexSearcher searcher, TopDocs topDocs, int maxPassages)
         {
             IDictionary<string, string[]> res = HighlightFields(new string[] { field }, query, searcher, topDocs, new int[] { maxPassages });
-            string[] result;
-            res.TryGetValue(field, out result);
+            res.TryGetValue(field, out string[] result);
             return result;
         }
 

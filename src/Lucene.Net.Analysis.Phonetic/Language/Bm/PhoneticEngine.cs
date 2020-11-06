@@ -237,8 +237,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             {
                 this.found = false;
                 int patternLength = 1;
-                IList<Rule> rules;
-                if (this.finalRules.TryGetValue(input.Substring(i, patternLength), out rules) && rules != null)
+                if (this.finalRules.TryGetValue(input.Substring(i, patternLength), out IList<Rule> rules) && rules != null)
                 {
                     foreach (Rule rule in rules)
                     {

@@ -67,8 +67,7 @@ namespace Lucene.Net.Documents
         public virtual IIndexableField GetField(FieldInfo fieldInfo)
         {
             fieldNames.Add(fieldInfo.Name);
-            IList<LazyField> values;
-            if (!fields.TryGetValue(fieldInfo.Number, out values) || null == values)
+            if (!fields.TryGetValue(fieldInfo.Number, out IList<LazyField> values) || null == values)
             {
                 values = new List<LazyField>();
                 fields[fieldInfo.Number] = values;
@@ -116,8 +115,7 @@ namespace Lucene.Net.Documents
         {
             Document d = GetDocument();
 
-            IList<LazyField> lazyValues;
-            fields.TryGetValue(fieldNum, out lazyValues);
+            fields.TryGetValue(fieldNum, out IList<LazyField> lazyValues);
             IIndexableField[] realValues = d.GetFields(name);
 
             if (Debugging.AssertsEnabled) Debugging.Assert(realValues.Length <= lazyValues.Count,

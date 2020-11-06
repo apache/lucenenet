@@ -447,8 +447,7 @@ namespace Lucene.Net.Analysis
                 var componentsPerField = (IDictionary<string, TokenStreamComponents>)GetStoredValue(analyzer);
                 if (componentsPerField != null)
                 {
-                    TokenStreamComponents ret;
-                    componentsPerField.TryGetValue(fieldName, out ret);
+                    componentsPerField.TryGetValue(fieldName, out TokenStreamComponents ret);
                     return ret;
                 }
                 return null;

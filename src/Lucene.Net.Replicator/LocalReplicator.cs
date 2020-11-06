@@ -144,10 +144,9 @@ namespace Lucene.Net.Replicator
         /// <exception cref="InvalidOperationException"></exception>
         private void ReleaseSession(string sessionId)
         {
-            ReplicationSession session;
             // if we're called concurrently by close() and release(), could be that one
             // thread beats the other to release the session.
-            if (sessions.TryGetValue(sessionId, out session))
+            if (sessions.TryGetValue(sessionId, out ReplicationSession session))
             {
                 sessions.Remove(sessionId);
                 session.Revision.DecRef();
@@ -237,8 +236,7 @@ namespace Lucene.Net.Replicator
             {
                 EnsureOpen();
 
-                ReplicationSession session;
-                if (sessions.TryGetValue(sessionId, out session) && session != null && session.IsExpired(ExpirationThreshold))
+                if (sessions.TryGetValue(sessionId, out ReplicationSession session) && session != null && session.IsExpired(ExpirationThreshold))
                 {
                     ReleaseSession(sessionId);
                     session = null;

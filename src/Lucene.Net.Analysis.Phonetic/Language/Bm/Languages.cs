@@ -82,8 +82,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         public static Languages GetInstance(NameType nameType)
         {
-            Languages result;
-            LANGUAGES.TryGetValue(nameType, out result);
+            LANGUAGES.TryGetValue(nameType, out Languages result);
             return result;
         }
 

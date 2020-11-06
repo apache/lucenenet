@@ -61,8 +61,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         private DateTime? ParseDate(string dateStr)
         {
-            DateTime temp;
-            if (DateTime.TryParseExact(dateStr, "dd-MMM-yyyy hh:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out temp))
+            if (DateTime.TryParseExact(dateStr, "dd-MMM-yyyy hh:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime temp))
             {
                 return temp;
             }

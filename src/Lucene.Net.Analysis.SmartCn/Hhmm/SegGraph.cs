@@ -45,8 +45,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         public virtual bool IsStartExist(int s)
         {
             //return tokenListTable.get(s) != null;
-            IList<SegToken> result;
-            return tokenListTable.TryGetValue(s, out result) && result != null;
+            return tokenListTable.TryGetValue(s, out IList<SegToken> result) && result != null;
         }
 
         /// <summary>
@@ -56,8 +55,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <returns><see cref="T:IList{SegToken}"/> of tokens at the specified start offset.</returns>
         public virtual IList<SegToken> GetStartList(int s)
         {
-            IList<SegToken> result;
-            tokenListTable.TryGetValue(s, out result);
+            tokenListTable.TryGetValue(s, out IList<SegToken> result);
             return result;
         }
 

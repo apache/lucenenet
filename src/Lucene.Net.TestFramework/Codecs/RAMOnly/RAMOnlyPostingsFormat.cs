@@ -98,8 +98,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override Terms GetTerms(string field)
             {
-                RAMField result;
-                fieldToTerms.TryGetValue(field, out result);
+                fieldToTerms.TryGetValue(field, out RAMField result);
                 return result;
             }
 

@@ -183,8 +183,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         {
             if (typeof(IQueryNode).IsAssignableFrom(clazz))
             {
-                IQueryBuilder<TQuery> result;
-                this.queryNodeBuilders.TryGetValue(clazz, out result);
+                this.queryNodeBuilders.TryGetValue(clazz, out IQueryBuilder<TQuery> result);
                 return result;
             }
 

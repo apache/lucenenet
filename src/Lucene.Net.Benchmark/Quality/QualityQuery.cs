@@ -68,8 +68,7 @@ namespace Lucene.Net.Benchmarks.Quality
         /// <returns></returns>
         public virtual string GetValue(string name)
         {
-            string result;
-            nameValPairs.TryGetValue(name, out result);
+            nameValPairs.TryGetValue(name, out string result);
             return result;
         }
 

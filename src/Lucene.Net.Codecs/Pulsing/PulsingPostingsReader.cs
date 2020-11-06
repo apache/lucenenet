@@ -653,8 +653,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 return null;
 
             var atts = de.Attributes;
-            DocsEnum result;
-            atts.AddAttribute<IPulsingEnumAttribute>().Enums.TryGetValue(this, out result);
+            atts.AddAttribute<IPulsingEnumAttribute>().Enums.TryGetValue(this, out DocsEnum result);
             return result;
         }
 

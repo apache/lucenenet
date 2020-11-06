@@ -313,8 +313,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                string attribute;
-                attributes.TryGetValue(key, out attribute);
+                attributes.TryGetValue(key, out string attribute);
                 return attribute;
             }
         }

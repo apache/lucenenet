@@ -76,9 +76,8 @@ namespace Lucene.Net.Expressions
 
         public override ValueSource GetValueSource(string name)
         {
-            object o;
             // LUCENENET NOTE: Directly looking up a missing key will throw a KeyNotFoundException
-            if (!map.TryGetValue(name, out o))
+            if (!map.TryGetValue(name, out object o))
             {
                 throw new ArgumentException("Invalid reference '" + name + "'");
             }

@@ -135,8 +135,7 @@ namespace Lucene.Net.Analysis.Ja
                     sb.Append(toNodeID);
 
                     string attrs;
-                    string path;
-                    bestPathMap.TryGetValue(fromNodeID, out path);
+                    bestPathMap.TryGetValue(fromNodeID, out string path);
                     if (toNodeID.Equals(path, StringComparison.Ordinal))
                     {
                         // This arc is on best path

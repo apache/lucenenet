@@ -159,8 +159,7 @@ namespace Lucene.Net.Codecs.PerField
 
                 int? suffix = null;
 
-                ConsumerAndSuffix consumer;
-                if (!formats.TryGetValue(format, out consumer) || consumer == null)
+                if (!formats.TryGetValue(format, out ConsumerAndSuffix consumer) || consumer == null)
                 {
                     // First time we are seeing this format; create a new instance
 
@@ -304,8 +303,7 @@ namespace Lucene.Net.Codecs.PerField
                 // Then rebuild fields:
                 foreach (KeyValuePair<string, DocValuesProducer> ent in other.fields)
                 {
-                    DocValuesProducer producer;
-                    oldToNew.TryGetValue(ent.Value, out producer);
+                    oldToNew.TryGetValue(ent.Value, out DocValuesProducer producer);
                     if (Debugging.AssertsEnabled) Debugging.Assert(producer != null);
                     fields[ent.Key] = producer;
                 }
@@ -313,8 +311,7 @@ namespace Lucene.Net.Codecs.PerField
 
             public override NumericDocValues GetNumeric(FieldInfo field)
             {
-                DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out DocValuesProducer producer) && producer != null)
                 {
                     return producer.GetNumeric(field);
                 }
@@ -323,8 +320,7 @@ namespace Lucene.Net.Codecs.PerField
 
             public override BinaryDocValues GetBinary(FieldInfo field)
             {
-                DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out DocValuesProducer producer) && producer != null)
                 {
                     return producer.GetBinary(field);
                 }
@@ -333,8 +329,7 @@ namespace Lucene.Net.Codecs.PerField
 
             public override SortedDocValues GetSorted(FieldInfo field)
             {
-                DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out DocValuesProducer producer) && producer != null)
                 {
                     return producer.GetSorted(field);
                 }
@@ -343,8 +338,7 @@ namespace Lucene.Net.Codecs.PerField
 
             public override SortedSetDocValues GetSortedSet(FieldInfo field)
             {
-                DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out DocValuesProducer producer) && producer != null)
                 {
                     return producer.GetSortedSet(field);
                 }
@@ -353,8 +347,7 @@ namespace Lucene.Net.Codecs.PerField
 
             public override IBits GetDocsWithField(FieldInfo field)
             {
-                DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out DocValuesProducer producer) && producer != null)
                 {
                     return producer.GetDocsWithField(field);
                 }

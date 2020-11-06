@@ -283,8 +283,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             public override int GetOrdinal(FacetLabel label)
             {
-                int value;
-                if (map.TryGetValue(label, out value))
+                if (map.TryGetValue(label, out int value))
                 {
                     return value;
                 }

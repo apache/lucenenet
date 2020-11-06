@@ -107,8 +107,7 @@ namespace Lucene.Net.Analysis
         {
             lock (this)
             {
-                int? val;
-                previousMappings.TryGetValue(fieldName, out val);
+                previousMappings.TryGetValue(fieldName, out int? val);
                 if (val == null)
                 {
                     val = -1; // no payloads

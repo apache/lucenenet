@@ -86,10 +86,9 @@ namespace Lucene.Net.Codecs.Memory
                     var index = new FST<long?>(indexIn, PositiveInt32Outputs.Singleton);
 
                     var current = new TermsReader(this, fieldInfo, blockIn, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize, index);
-                    TermsReader previous;
                     // LUCENENET NOTE: This simulates a put operation in Java,
                     // getting the prior value first before setting it.
-                    fields.TryGetValue(fieldInfo.Name, out previous);
+                    fields.TryGetValue(fieldInfo.Name, out TermsReader previous);
                     fields[fieldInfo.Name] = current;
                     CheckFieldSummary(state.SegmentInfo, indexIn, blockIn, current, previous);
                 }
@@ -167,8 +166,7 @@ namespace Lucene.Net.Codecs.Memory
         public override Terms GetTerms(string field)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
-            TermsReader result;
-            fields.TryGetValue(field, out result);
+            fields.TryGetValue(field, out TermsReader result);
             return result;
         }
 

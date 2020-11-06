@@ -422,10 +422,9 @@ namespace Lucene.Net.Index.Memory
                 int pos = -1;
                 BytesRefHash terms;
                 SliceByteStartArray sliceArray;
-                Info info = null;
                 long sumTotalTermFreq = 0;
                 int offset = 0;
-                if (fields.TryGetValue(fieldName, out info))
+                if (fields.TryGetValue(fieldName, out Info info))
                 {
                     numTokens = info.numTokens;
                     numOverlapTokens = info.numOverlapTokens;

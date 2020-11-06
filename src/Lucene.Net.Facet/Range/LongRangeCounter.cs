@@ -54,8 +54,7 @@ namespace Lucene.Net.Facet.Range
 
             foreach (Int64Range range in ranges)
             {
-                int? cur;
-                if (!endsMap.TryGetValue(range.minIncl, out cur))
+                if (!endsMap.TryGetValue(range.minIncl, out int? cur))
                 {
                     endsMap[range.minIncl] = 1;
                 }

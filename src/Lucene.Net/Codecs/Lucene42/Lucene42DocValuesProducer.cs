@@ -223,8 +223,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             lock (this)
             {
-                NumericDocValues instance;
-                if (!numericInstances.TryGetValue(field.Number, out instance) || instance == null)
+                if (!numericInstances.TryGetValue(field.Number, out NumericDocValues instance) || instance == null)
                 {
                     instance = LoadNumeric(field);
                     numericInstances[field.Number] = instance;
@@ -346,8 +345,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             lock (this)
             {
-                BinaryDocValues instance;
-                if (!binaryInstances.TryGetValue(field.Number, out instance) || instance == null)
+                if (!binaryInstances.TryGetValue(field.Number, out BinaryDocValues instance) || instance == null)
                 {
                     instance = LoadBinary(field);
                     binaryInstances[field.Number] = instance;

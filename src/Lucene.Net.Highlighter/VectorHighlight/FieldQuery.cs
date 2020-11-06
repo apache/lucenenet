@@ -300,8 +300,7 @@ namespace Lucene.Net.Search.VectorHighlight
         internal QueryPhraseMap GetRootMap(Query query)
         {
             string key = GetKey(query);
-            QueryPhraseMap map;
-            if (!rootMaps.TryGetValue(key, out map) || map == null)
+            if (!rootMaps.TryGetValue(key, out QueryPhraseMap map) || map == null)
             {
                 map = new QueryPhraseMap(this);
                 rootMaps[key] = map;
@@ -483,8 +482,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
             public virtual QueryPhraseMap GetTermMap(string term)
             {
-                QueryPhraseMap result;
-                subMap.TryGetValue(term, out result);
+                subMap.TryGetValue(term, out QueryPhraseMap result);
                 return result;
             }
 

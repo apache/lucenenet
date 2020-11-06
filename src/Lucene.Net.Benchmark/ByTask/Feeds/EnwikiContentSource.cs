@@ -329,8 +329,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// </summary>
         private static int GetElementType(string elem)
         {
-            int? val;
-            ELEMENTS.TryGetValue(elem, out val);
+            ELEMENTS.TryGetValue(elem, out int? val);
             return val == null ? -1 : val.Value;
         }
 

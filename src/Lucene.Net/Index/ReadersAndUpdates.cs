@@ -607,8 +607,7 @@ namespace Lucene.Net.Index
                 {
                     foreach (KeyValuePair<string, NumericDocValuesFieldUpdates> e in dvUpdates.numericDVUpdates)
                     {
-                        DocValuesFieldUpdates updates;
-                        if (!mergingDVUpdates.TryGetValue(e.Key, out updates))
+                        if (!mergingDVUpdates.TryGetValue(e.Key, out DocValuesFieldUpdates updates))
                         {
                             mergingDVUpdates[e.Key] = e.Value;
                         }
@@ -619,8 +618,7 @@ namespace Lucene.Net.Index
                     }
                     foreach (KeyValuePair<string, BinaryDocValuesFieldUpdates> e in dvUpdates.binaryDVUpdates)
                     {
-                        DocValuesFieldUpdates updates;
-                        if (!mergingDVUpdates.TryGetValue(e.Key, out updates))
+                        if (!mergingDVUpdates.TryGetValue(e.Key, out DocValuesFieldUpdates updates))
                         {
                             mergingDVUpdates[e.Key] = e.Value;
                         }

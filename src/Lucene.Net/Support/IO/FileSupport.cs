@@ -264,8 +264,7 @@ namespace Lucene.Net.Support.IO
             string absPath = path.FullName; // LUCENENET NOTE: This internally calls GetFullPath(), which resolves relative paths
             byte[] result = Encoding.UTF8.GetBytes(absPath);
 
-            string canonPath;
-            if (fileCanonPathCache.TryGetValue(absPath, out canonPath) && canonPath != null)
+            if (fileCanonPathCache.TryGetValue(absPath, out string canonPath) && canonPath != null)
             {
                 return canonPath;
             }

@@ -202,8 +202,7 @@ namespace Lucene.Net.Search.Grouping
             // under null group)?
             TGroupValue groupValue = GetDocGroupValue(doc);
 
-            CollectedSearchGroup<TGroupValue> group;
-            if (!groupMap.TryGetValue(groupValue, out group))
+            if (!groupMap.TryGetValue(groupValue, out CollectedSearchGroup<TGroupValue> group))
             {
 
                 // First time we are seeing this group, or, we've seen

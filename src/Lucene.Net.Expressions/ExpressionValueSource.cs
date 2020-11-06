@@ -92,8 +92,7 @@ namespace Lucene.Net.Expressions
             for (int i = 0; i < variables.Length; ++i)
             {
                 string externalName = expression.Variables[i];
-                FunctionValues values;
-                if (!valuesCache.TryGetValue(externalName,out values))
+                if (!valuesCache.TryGetValue(externalName, out FunctionValues values))
                 {
                     values = variables[i].GetValues(context, readerContext);
                     if (values == null)

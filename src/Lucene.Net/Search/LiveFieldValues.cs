@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
@@ -128,16 +129,15 @@ namespace Lucene.Net.Search
         public virtual T Get(string id)
         {
             // First try to get the "live" value:
-            T value;
-            current.TryGetValue(id, out value);
-            var comparer = EqualityComparer<T>.Default;
+            current.TryGetValue(id, out T value);
+            var comparer = JCG.EqualityComparer<T>.Default;
             if (comparer.Equals(value, missingValue))
             {
                 // Deleted but the deletion is not yet reflected in
                 // the reader:
-                return default(T);
+                return default;
             }
-            else if (!comparer.Equals(value, default(T)))
+            else if (!comparer.Equals(value, default))
             {
                 return value;
             }
@@ -148,9 +148,9 @@ namespace Lucene.Net.Search
                 {
                     // Deleted but the deletion is not yet reflected in
                     // the reader:
-                    return default(T);
+                    return default;
                 }
-                else if (!comparer.Equals(value, default(T)))
+                else if (!comparer.Equals(value, default))
                 {
                     return value;
                 }

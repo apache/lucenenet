@@ -120,8 +120,7 @@ namespace Lucene.Net.Codecs.PerField
 
                 int? suffix;
 
-                FieldsConsumerAndSuffix consumer;
-                if (!formats.TryGetValue(format, out consumer) || consumer == null)
+                if (!formats.TryGetValue(format, out FieldsConsumerAndSuffix consumer) || consumer == null)
                 {
                     // First time we are seeing this format; create a new instance
 
@@ -136,8 +135,8 @@ namespace Lucene.Net.Codecs.PerField
                     }
                     suffixes[formatName] = suffix;
 
-                    string segmentSuffix = GetFullSegmentSuffix(field.Name, 
-                                                                segmentWriteState.SegmentSuffix, 
+                    string segmentSuffix = GetFullSegmentSuffix(field.Name,
+                                                                segmentWriteState.SegmentSuffix,
                                                                 GetSuffix(formatName, Convert.ToString(suffix, CultureInfo.InvariantCulture)));
                     consumer = new FieldsConsumerAndSuffix();
                     consumer.Consumer = format.FieldsConsumer(new SegmentWriteState(segmentWriteState, segmentSuffix));
@@ -245,12 +244,11 @@ namespace Lucene.Net.Codecs.PerField
 
             public override Terms GetTerms(string field)
             {
-                FieldsProducer fieldsProducer;
-                if (fields.TryGetValue(field, out fieldsProducer) && fieldsProducer != null)
+                if (fields.TryGetValue(field, out FieldsProducer fieldsProducer) && fieldsProducer != null)
                 {
                     return fieldsProducer.GetTerms(field);
                 }
-                
+
                 return null;
             }
 

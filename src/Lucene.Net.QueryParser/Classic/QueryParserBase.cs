@@ -487,8 +487,6 @@ namespace Lucene.Net.QueryParsers.Classic
             }
 
             string shortDateFormat = Locale.DateTimeFormat.ShortDatePattern;
-            DateTime d1;
-            DateTime d2 = DateTime.MaxValue; // We really don't care what we set this to, but we need something or the compiler will complain below
             DateTools.Resolution resolution = GetDateResolution(field);
 
             // LUCENENET specific: This doesn't emulate java perfectly.
@@ -512,12 +510,12 @@ namespace Lucene.Net.QueryParsers.Classic
             // to DateTime.TryParse(part1, Locale, DateTimeStyles.None, out d1);
             // rather than TryParseExact
 
-            if (DateTime.TryParseExact(part1, shortDateFormat, Locale, DateTimeStyles.None, out d1))
+            if (DateTime.TryParseExact(part1, shortDateFormat, Locale, DateTimeStyles.None, out DateTime d1))
             {
                 part1 = DateTools.DateToString(d1, resolution);
             }
 
-            if (DateTime.TryParseExact(part2, shortDateFormat, Locale, DateTimeStyles.None, out d2))
+            if (DateTime.TryParseExact(part2, shortDateFormat, Locale, DateTimeStyles.None, out DateTime d2))
             {
                 if (endInclusive)
                 {

@@ -196,9 +196,7 @@ namespace Lucene.Net.Search
                 {
                     foreach (Term term in terms)
                     {
-                        TermContext termContext;
-                        termContexts.TryGetValue(term, out termContext);
-                        if (termContext == null)
+                        if (!termContexts.TryGetValue(term, out TermContext termContext) || termContext == null)
                         {
                             termContext = TermContext.Build(context, term);
                             termContexts[term] = termContext;

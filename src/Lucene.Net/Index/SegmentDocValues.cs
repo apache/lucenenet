@@ -81,8 +81,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                RefCount<DocValuesProducer> dvp;
-                if (!(genDVProducers.TryGetValue(gen, out dvp)))
+                if (!genDVProducers.TryGetValue(gen, out RefCount<DocValuesProducer> dvp))
                 {
                     dvp = NewDocValuesProducer(si, context, dir, dvFormat, gen, infos, termsIndexDivisor);
                     if (Debugging.AssertsEnabled) Debugging.Assert(dvp != null);

@@ -69,8 +69,7 @@ namespace Lucene.Net.Spatial.Util
             public override double DoubleVal(int doc)
             {
                 int key = docBase + doc;
-                double v;
-                if (!cache.TryGetValue(key, out v))
+                if (!cache.TryGetValue(key, out double v))
                 {
                     v = values.DoubleVal(doc);
                     cache[key] = v;

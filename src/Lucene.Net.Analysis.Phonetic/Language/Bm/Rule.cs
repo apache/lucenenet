@@ -331,13 +331,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         public static IDictionary<string, IList<Rule>> GetInstanceMap(NameType nameType, RuleType rt,
                                                              string lang)
         {
-            IDictionary<RuleType, IDictionary<string, IDictionary<string, IList<Rule>>>> nameTypes;
-            IDictionary<string, IDictionary<string, IList<Rule>>> ruleTypes;
-            IDictionary<string, IList<Rule>> rules = null;
-
-            if (RULES.TryGetValue(nameType, out nameTypes) && nameTypes != null &&
-                nameTypes.TryGetValue(rt, out ruleTypes) && ruleTypes != null &&
-                ruleTypes.TryGetValue(lang, out rules) && rules != null)
+            if (RULES.TryGetValue(nameType, out var nameTypes) && nameTypes != null &&
+                nameTypes.TryGetValue(rt, out var ruleTypes) && ruleTypes != null &&
+                ruleTypes.TryGetValue(lang, out var rules) && rules != null)
             {
             }
             else
@@ -500,8 +496,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                                         Rule r = new RuleAnonymousHelper(pat, lCon, rCon, ph, cLine, location);
 
                                         string patternKey = r.pattern.Substring(0, 1 - 0);
-                                        IList<Rule> rules;
-                                        if (!lines.TryGetValue(patternKey, out rules) || rules == null)
+                                        if (!lines.TryGetValue(patternKey, out IList<Rule> rules) || rules == null)
                                         {
                                             rules = new List<Rule>();
                                             lines[patternKey] = rules;

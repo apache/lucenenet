@@ -446,8 +446,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
         {
-            FieldIndexData fieldData;
-            if (!fields.TryGetValue(fieldInfo, out fieldData) || fieldData == null || fieldData.coreIndex == null)
+            if (!fields.TryGetValue(fieldInfo, out FieldIndexData fieldData) || fieldData == null || fieldData.coreIndex == null)
             {
                 return null;
             }

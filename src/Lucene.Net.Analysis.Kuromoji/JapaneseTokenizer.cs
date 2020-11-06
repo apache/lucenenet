@@ -1177,8 +1177,7 @@ namespace Lucene.Net.Analysis.Ja
 
         internal IDictionary GetDict(JapaneseTokenizerType type)
         {
-            IDictionary result;
-            dictionaryMap.TryGetValue(type, out result);
+            dictionaryMap.TryGetValue(type, out IDictionary result);
             return result;
         }
 

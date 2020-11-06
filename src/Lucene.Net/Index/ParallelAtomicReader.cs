@@ -213,8 +213,7 @@ namespace Lucene.Net.Index
 
             public override Terms GetTerms(string field)
             {
-                Terms result;
-                fields.TryGetValue(field, out result);
+                fields.TryGetValue(field, out Terms result);
                 return result;
             }
 
@@ -325,44 +324,38 @@ namespace Lucene.Net.Index
         public override NumericDocValues GetNumericDocValues(string field)
         {
             EnsureOpen();
-            AtomicReader reader;
-            return fieldToReader.TryGetValue(field, out reader) ? reader.GetNumericDocValues(field) : null;
+            return fieldToReader.TryGetValue(field, out AtomicReader reader) ? reader.GetNumericDocValues(field) : null;
         }
 
         public override BinaryDocValues GetBinaryDocValues(string field)
         {
             EnsureOpen();
-            AtomicReader reader;
-            return fieldToReader.TryGetValue(field, out reader) ? reader.GetBinaryDocValues(field) : null;
+            return fieldToReader.TryGetValue(field, out AtomicReader reader) ? reader.GetBinaryDocValues(field) : null;
         }
 
         public override SortedDocValues GetSortedDocValues(string field)
         {
             EnsureOpen();
-            AtomicReader reader;
-            return fieldToReader.TryGetValue(field, out reader) ? reader.GetSortedDocValues(field) : null;
+            return fieldToReader.TryGetValue(field, out AtomicReader reader) ? reader.GetSortedDocValues(field) : null;
         }
 
         public override SortedSetDocValues GetSortedSetDocValues(string field)
         {
             EnsureOpen();
-            AtomicReader reader;
-            return fieldToReader.TryGetValue(field, out reader) ? reader.GetSortedSetDocValues(field) : null;
+            return fieldToReader.TryGetValue(field, out AtomicReader reader) ? reader.GetSortedSetDocValues(field) : null;
         }
 
         public override IBits GetDocsWithField(string field)
         {
             EnsureOpen();
-            AtomicReader reader;
-            return fieldToReader.TryGetValue(field, out reader) ? reader.GetDocsWithField(field) : null;
+            return fieldToReader.TryGetValue(field, out AtomicReader reader) ? reader.GetDocsWithField(field) : null;
         }
 
         public override NumericDocValues GetNormValues(string field)
         {
             EnsureOpen();
-            AtomicReader reader;
             NumericDocValues values = null;
-            if (fieldToReader.TryGetValue(field, out reader))
+            if (fieldToReader.TryGetValue(field, out AtomicReader reader))
             {
                 values = reader.GetNormValues(field);
             }

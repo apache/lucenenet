@@ -209,8 +209,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             lock (this)
             {
-                NumericDocValues instance;
-                if (!numericInstances.TryGetValue(field.Number, out instance))
+                if (!numericInstances.TryGetValue(field.Number, out NumericDocValues instance))
                 {
                     instance = LoadNumeric(field);
                     numericInstances[field.Number] = instance;
@@ -334,8 +333,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             lock (this)
             {
-                BinaryDocValues instance;
-                if (!binaryInstances.TryGetValue(field.Number, out instance))
+                if (!binaryInstances.TryGetValue(field.Number, out BinaryDocValues instance))
                 {
                     instance = LoadBinary(field);
                     binaryInstances[field.Number] = instance;

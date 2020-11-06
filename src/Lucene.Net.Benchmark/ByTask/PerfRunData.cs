@@ -211,8 +211,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         {
             lock (this)
             {
-                object result;
-                perfObjects.TryGetValue(key, out result);
+                perfObjects.TryGetValue(key, out object result);
                 return result;
             }
         }
@@ -447,8 +446,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                 // mapping the query maker by task class allows extending/adding new search/read tasks
                 // without needing to modify this class.
                 Type readTaskClass = readTask.GetType();
-                IQueryMaker qm;
-                if (!readTaskQueryMaker.TryGetValue(readTaskClass, out qm) || qm == null)
+                if (!readTaskQueryMaker.TryGetValue(readTaskClass, out IQueryMaker qm) || qm == null)
                 {
                     try
                     {

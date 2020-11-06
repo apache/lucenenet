@@ -235,8 +235,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
 
-            FieldReader result;
-            fields.TryGetValue(field, out result);
+            fields.TryGetValue(field, out FieldReader result);
             return result;
         }
 

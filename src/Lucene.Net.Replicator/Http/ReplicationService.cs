@@ -139,14 +139,12 @@ namespace Lucene.Net.Replicator.Http
                 throw new InvalidOperationException("invalid path, must contain shard ID and action, e.g. */s1/update");
             }
 
-            ReplicationAction action;
-            if (!Enum.TryParse(pathElements[ACTION_IDX], true, out action))
+            if (!Enum.TryParse(pathElements[ACTION_IDX], true, out ReplicationAction action))
             {
                 throw new InvalidOperationException("Unsupported action provided: " + pathElements[ACTION_IDX]);
             }
 
-            IReplicator replicator;
-            if (!replicators.TryGetValue(pathElements[SHARD_IDX], out replicator))
+            if (!replicators.TryGetValue(pathElements[SHARD_IDX], out IReplicator replicator))
             {
                 throw new InvalidOperationException("unrecognized shard ID " + pathElements[SHARD_IDX]);
             }

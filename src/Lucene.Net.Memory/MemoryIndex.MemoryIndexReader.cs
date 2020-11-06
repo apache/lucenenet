@@ -562,8 +562,7 @@ namespace Lucene.Net.Index.Memory
 
             public override NumericDocValues GetNormValues(string field)
             {
-                FieldInfo fieldInfo;
-                if (!outerInstance.fieldInfos.TryGetValue(field, out fieldInfo) || fieldInfo.OmitsNorms)
+                if (!outerInstance.fieldInfos.TryGetValue(field, out FieldInfo fieldInfo) || fieldInfo.OmitsNorms)
                 {
                     return null;
                 }

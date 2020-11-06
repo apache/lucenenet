@@ -152,8 +152,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override Terms GetTerms(string field)
             {
-                DirectField result;
-                fields.TryGetValue(field, out result);
+                fields.TryGetValue(field, out DirectField result);
                 return result;
             }
 

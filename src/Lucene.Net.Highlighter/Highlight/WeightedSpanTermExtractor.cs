@@ -319,8 +319,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 if (FieldNameComparer(queryTerm.Field))
                 {
-                    WeightedSpanTerm weightedSpanTerm;
-                    if (!terms.TryGetValue(queryTerm.Text(), out weightedSpanTerm) || weightedSpanTerm == null)
+                    if (!terms.TryGetValue(queryTerm.Text(), out WeightedSpanTerm weightedSpanTerm) || weightedSpanTerm == null)
                     {
                         weightedSpanTerm = new WeightedSpanTerm(spanQuery.Boost, queryTerm.Text());
                         weightedSpanTerm.AddPositionSpans(spanPositions);
@@ -524,8 +523,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 foreach (var wt in weightedTerms)
                 {
-                    WeightedSpanTerm weightedSpanTerm;
-                    terms.TryGetValue(wt, out weightedSpanTerm);
+                    terms.TryGetValue(wt, out WeightedSpanTerm weightedSpanTerm);
                     int docFreq = reader.DocFreq(new Term(fieldName, weightedSpanTerm.Term));
                     // IDF algorithm taken from DefaultSimilarity class
                     float idf = (float)(Math.Log((float)totalNumDocs / (double)(docFreq + 1)) + 1.0);
@@ -643,8 +641,7 @@ namespace Lucene.Net.Search.Highlight
 
                 set
                 {
-                    WeightedSpanTerm prev = null;
-                    wrapped.TryGetValue(key, out prev);
+                    wrapped.TryGetValue(key, out WeightedSpanTerm prev);
                     wrapped[key] = value;
 
                     if (prev == null) return;

@@ -291,8 +291,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override Terms GetTerms(string field)
             {
-                SimpleTVTerms result;
-                _fields.TryGetValue(field, out result);
+                _fields.TryGetValue(field, out SimpleTVTerms result);
                 return result;
             }
 

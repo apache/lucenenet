@@ -97,8 +97,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         // inherit javadocs
         public virtual bool IsRelevant(string docName, QualityQuery query)
         {
-            QRelJudgement qrj;// = judgements.get(query.getQueryID());
-            judgements.TryGetValue(query.QueryID, out qrj);
+            judgements.TryGetValue(query.QueryID, out QRelJudgement qrj);
             return qrj != null && qrj.IsRelevant(docName);
         }
 
@@ -171,8 +170,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         // inherit javadocs
         public virtual int MaxRecall(QualityQuery query)
         {
-            QRelJudgement qrj;
-            if (judgements.TryGetValue(query.QueryID, out qrj) && qrj != null)
+            if (judgements.TryGetValue(query.QueryID, out QRelJudgement qrj) && qrj != null)
             {
                 return qrj.MaxRecall;
             }

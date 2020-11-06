@@ -77,8 +77,7 @@ namespace Egothor.Stemmer
 
         internal static int Get(int i, string s)
         {
-            int result;
-            if (!int.TryParse(s.Substring(i, 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out result))
+            if (!int.TryParse(s.Substring(i, 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out int result))
             {
                 return 1;
             }

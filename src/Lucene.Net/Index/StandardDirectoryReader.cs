@@ -195,9 +195,7 @@ namespace Lucene.Net.Index
             for (int i = infos.Count - 1; i >= 0; i--)
             {
                 // find SegmentReader for this segment
-                int? oldReaderIndex;
-                segmentReaders.TryGetValue(infos.Info(i).Info.Name, out oldReaderIndex);
-                if (oldReaderIndex == null)
+                if (!segmentReaders.TryGetValue(infos.Info(i).Info.Name, out int? oldReaderIndex) || oldReaderIndex == null)
                 {
                     // this is a new segment, no old SegmentReader can be reused
                     newReaders[i] = null;

@@ -237,8 +237,7 @@ namespace Lucene.Net.Expressions.JS
                         ITree identifier = current.GetChild(0);
                         string call = identifier.Text;
                         int arguments = current.ChildCount - 1;
-                        MethodInfo method;
-                        if (!functions.TryGetValue(call, out method) || method == null)
+                        if (!functions.TryGetValue(call, out MethodInfo method) || method == null)
                         {
                             throw new ArgumentException("Unrecognized method call (" + call + ").");
                         }
@@ -290,14 +289,13 @@ namespace Lucene.Net.Expressions.JS
 
                         if (bitwiseOps.Any(s => sourceText.Contains(s)))
                         {
-                            int val;
-                            if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out val))
+                            if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int val))
                             {
                                 gen.Emit(OpCodes.Ldc_I4, val);
                             }
                             else
                             {
-                                gen.Emit(OpCodes.Ldc_I8,long.Parse(text, CultureInfo.InvariantCulture));
+                                gen.Emit(OpCodes.Ldc_I8, long.Parse(text, CultureInfo.InvariantCulture));
                                 gen.Emit(OpCodes.Conv_Ovf_U4_Un);
                             }
                         }

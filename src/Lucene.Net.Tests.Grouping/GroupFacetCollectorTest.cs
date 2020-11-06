@@ -732,8 +732,7 @@ namespace Lucene.Net.Search.Grouping
 
         private GroupedFacetResult CreateExpectedFacetResult(string searchTerm, IndexContext context, int offset, int limit, int minCount, bool orderByCount, string facetPrefix)
         {
-            JCG.Dictionary<string, ISet<string>> facetGroups;
-            if (!context.searchTermToFacetGroups.TryGetValue(searchTerm, out facetGroups))
+            if (!context.searchTermToFacetGroups.TryGetValue(searchTerm, out var facetGroups))
             {
                 facetGroups = new JCG.Dictionary<string, ISet<string>>();
             }

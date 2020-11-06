@@ -500,8 +500,7 @@ namespace Lucene.Net.Codecs.Lucene45
             MonotonicBlockPackedReader addresses;
             lock (addressInstances)
             {
-                MonotonicBlockPackedReader addrInstance;
-                if (!addressInstances.TryGetValue(field.Number, out addrInstance) || addrInstance == null)
+                if (!addressInstances.TryGetValue(field.Number, out MonotonicBlockPackedReader addrInstance) || addrInstance == null)
                 {
                     data.Seek(bytes.AddressesOffset);
                     addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedInt32sVersion, bytes.BlockSize, bytes.Count, false);
@@ -569,8 +568,7 @@ namespace Lucene.Net.Codecs.Lucene45
             long interval = bytes.AddressInterval;
             lock (addressInstances)
             {
-                MonotonicBlockPackedReader addrInstance;
-                if (!addressInstances.TryGetValue(field.Number, out addrInstance))
+                if (!addressInstances.TryGetValue(field.Number, out MonotonicBlockPackedReader addrInstance))
                 {
                     data.Seek(bytes.AddressesOffset);
                     long size;
@@ -672,8 +670,7 @@ namespace Lucene.Net.Codecs.Lucene45
             MonotonicBlockPackedReader ordIndex;
             lock (ordIndexInstances)
             {
-                MonotonicBlockPackedReader ordIndexInstance;
-                if (!ordIndexInstances.TryGetValue(field.Number, out ordIndexInstance))
+                if (!ordIndexInstances.TryGetValue(field.Number, out MonotonicBlockPackedReader ordIndexInstance))
                 {
                     data.Seek(entry.Offset);
                     ordIndexInstance = new MonotonicBlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, false);

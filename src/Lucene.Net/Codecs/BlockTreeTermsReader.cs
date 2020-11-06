@@ -295,8 +295,7 @@ namespace Lucene.Net.Codecs
         public override Terms GetTerms(string field)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
-            FieldReader ret;
-            fields.TryGetValue(field, out ret);
+            fields.TryGetValue(field, out FieldReader ret);
             return ret;
         }
 

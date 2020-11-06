@@ -95,10 +95,9 @@ namespace Lucene.Net.Codecs.Memory
                     int docCount = @in.ReadVInt32();
                     int longsSize = @in.ReadVInt32();
                     TermsReader current = new TermsReader(this, fieldInfo, @in, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize);
-                    TermsReader previous;
                     // LUCENENET NOTE: This simulates a put operation in Java,
                     // getting the prior value first before setting it.
-                    fields.TryGetValue(fieldInfo.Name, out previous);
+                    fields.TryGetValue(fieldInfo.Name, out TermsReader previous);
                     fields[fieldInfo.Name] = current;
                     CheckFieldSummary(state.SegmentInfo, @in, current, previous);
                 }
@@ -167,8 +166,7 @@ namespace Lucene.Net.Codecs.Memory
         public override Terms GetTerms(string field)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
-            TermsReader result;
-            fields.TryGetValue(field, out result);
+            fields.TryGetValue(field, out TermsReader result);
             return result;
         }
 

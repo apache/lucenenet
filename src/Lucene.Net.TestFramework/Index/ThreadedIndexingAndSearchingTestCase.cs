@@ -468,8 +468,7 @@ namespace Lucene.Net.Index
                                 SegmentReader segReader = (SegmentReader)sub.Reader;
                                 IDictionary<string, string> diagnostics = segReader.SegmentInfo.Info.Diagnostics;
                                 assertNotNull(diagnostics);
-                                string source;
-                                diagnostics.TryGetValue("source", out source);
+                                diagnostics.TryGetValue("source", out string source);
                                 assertNotNull(source);
                                 if (source.Equals("merge", StringComparison.Ordinal))
                                 {

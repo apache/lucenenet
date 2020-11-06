@@ -536,8 +536,7 @@ namespace Lucene.Net.Search
             {
                 foreach (Term t in pp.terms)
                 {
-                    int? cnt0;
-                    tcnt.TryGetValue(t, out cnt0);
+                    tcnt.TryGetValue(t, out int? cnt0);
                     int? cnt = cnt0 == null ? new int?(1) : new int?(1 + (int)cnt0);
                     tcnt[t] = cnt;
                     if (cnt == 2)

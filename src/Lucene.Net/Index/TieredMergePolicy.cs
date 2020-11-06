@@ -581,8 +581,7 @@ namespace Lucene.Net.Index
             bool? segmentIsOriginal = false;
             foreach (SegmentCommitInfo info in infos.Segments)
             {
-                bool? isOriginal;
-                if (segmentsToMerge.TryGetValue(info, out isOriginal))
+                if (segmentsToMerge.TryGetValue(info, out bool? isOriginal))
                 {
                     segmentIsOriginal = isOriginal;
                     if (!merging.Contains(info))

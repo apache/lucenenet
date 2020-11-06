@@ -352,8 +352,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
                                 Rule r = new Rule(pattern, replacement1, replacement2, replacement3);
                                 char patternKey = r.Pattern[0];
-                                IList<Rule> rules;
-                                if (!ruleMapping.TryGetValue(patternKey, out rules) || rules == null)
+                                if (!ruleMapping.TryGetValue(patternKey, out IList<Rule> rules) || rules == null)
                                 {
                                     rules = new List<Rule>();
                                     ruleMapping[patternKey] = rules;
@@ -547,8 +546,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
 
                 string inputContext = input.Substring(index);
-                IList<Rule> rules;
-                if (!RULES.TryGetValue(ch, out rules) || rules == null)
+                if (!RULES.TryGetValue(ch, out IList<Rule> rules) || rules == null)
                 {
                     continue;
                 }
