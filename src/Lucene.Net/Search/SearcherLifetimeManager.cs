@@ -312,27 +312,43 @@ namespace Lucene.Net.Search
         /// otherwise it's possible not all searcher references
         /// will be freed.
         /// </summary>
-        public virtual void Dispose()
+        public void Dispose()
         {
-            lock (this)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="SearcherLifetimeManager"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific - implemented proper dispose pattern
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                _closed = true;
-                IList<SearcherTracker> toClose = new List<SearcherTracker>(_searchers.Values.Select(item => item.Value));
-
-                // Remove up front in case exc below, so we don't
-                // over-decRef on double-close:
-                foreach (var tracker in toClose)
+                lock (this)
                 {
-                    Lazy<SearcherTracker> _;
-                    _searchers.TryRemove(tracker.Version, out _);
-                }
+                    _closed = true;
+                    IList<SearcherTracker> toClose = new List<SearcherTracker>(_searchers.Values.Select(item => item.Value));
 
-                IOUtils.Dispose(toClose);
+                    // Remove up front in case exc below, so we don't
+                    // over-decRef on double-close:
+                    foreach (var tracker in toClose)
+                    {
+                        _searchers.TryRemove(tracker.Version, out Lazy<SearcherTracker> _);
+                    }
 
-                // Make some effort to catch mis-use:
-                if (_searchers.Count != 0)
-                {
-                    throw new InvalidOperationException("another thread called record while this SearcherLifetimeManager instance was being closed; not all searchers were closed");
+                    IOUtils.Dispose(toClose);
+
+                    // Make some effort to catch mis-use:
+                    if (_searchers.Count != 0)
+                    {
+                        throw new InvalidOperationException("another thread called record while this SearcherLifetimeManager instance was being disposed; not all searchers were disposed");
+                    }
                 }
             }
         }

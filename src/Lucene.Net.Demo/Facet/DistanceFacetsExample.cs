@@ -45,7 +45,7 @@ namespace Lucene.Net.Demo.Facet
     /// Shows simple usage of dynamic range faceting, using the
     /// expressions module to calculate distance.
     /// </summary>
-    public class DistanceFacetsExample : IDisposable
+    public sealed class DistanceFacetsExample : IDisposable
     {
         /// <summary>
         /// Using a constant for all functionality related to a specific index

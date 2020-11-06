@@ -46,7 +46,6 @@ namespace Lucene.Net.Search.Spell
     /// </summary>
     public class SpellChecker : IDisposable
     {
-
         /// <summary>
         /// The default minimum score to use, if not specified by setting <see cref="Accuracy"/>
         /// or overriding with <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/> .
@@ -650,25 +649,36 @@ namespace Lucene.Net.Search.Spell
         {
             if (disposed)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been closed");
+                throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been disposed.");
             }
         }
 
         /// <summary>
-        /// Dispose the underlying IndexSearcher used by this SpellChecker </summary>
+        /// Dispose the underlying <see cref="IndexSearcher"/> used by this <see cref="SpellChecker"/>. </summary>
         /// <exception cref="IOException"> if the close operation causes an <see cref="IOException"/> </exception>
         /// <exception cref="ObjectDisposedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         public void Dispose()
         {
-            if (!disposed)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="SpellChecker"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific - implemented proper dispose pattern
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && !disposed)
             {
                 lock (searcherLock)
                 {
                     disposed = true;
-                    if (searcher != null)
-                    {
-                        searcher.IndexReader.Dispose();
-                    }
+                    searcher?.IndexReader?.Dispose();
                     searcher = null;
                 }
             }
@@ -687,12 +697,9 @@ namespace Lucene.Net.Search.Spell
                 if (disposed)
                 {
                     indexSearcher.IndexReader.Dispose();
-                    throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been closed");
+                    throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been disposed.");
                 }
-                if (searcher != null)
-                {
-                    searcher.IndexReader.Dispose();
-                }
+                searcher?.IndexReader?.Dispose();
                 // set the spellindex in the sync block - ensure consistency.
                 searcher = indexSearcher;
                 this.spellIndex = dir;

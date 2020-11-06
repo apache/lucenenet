@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
     /// <summary>
     /// Writer for <see cref="Lucene45DocValuesFormat"/> </summary>
-    public class Lucene45DocValuesConsumer : DocValuesConsumer, IDisposable
+    public class Lucene45DocValuesConsumer : DocValuesConsumer // LUCENENET specific - removed IDisposable, it is already implemented in base class
     {
         internal static readonly int BLOCK_SIZE = 16384;
         internal static readonly int ADDRESS_INTERVAL = 16;

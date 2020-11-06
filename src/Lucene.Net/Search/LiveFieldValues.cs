@@ -33,7 +33,6 @@ namespace Lucene.Net.Search
     /// the same time by two threads, because in this case you
     /// cannot in general know which thread "won".
     /// </summary>
-
     public abstract class LiveFieldValues<S, T> : ReferenceManager.IRefreshListener, IDisposable
         where S : class
     {
@@ -49,9 +48,29 @@ namespace Lucene.Net.Search
             mgr.AddListener(this);
         }
 
+        /// <summary>
+        /// Releases all resources used by the <see cref="LiveFieldValues{S, T}"/>.
+        /// </summary>
         public void Dispose()
         {
-            mgr.RemoveListener(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="LiveFieldValues{S, T}"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific - implemented proper dispose pattern
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                mgr.RemoveListener(this);
+            }
         }
 
         public virtual void BeforeRefresh()

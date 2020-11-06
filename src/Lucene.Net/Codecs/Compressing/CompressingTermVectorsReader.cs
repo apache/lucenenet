@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs.Compressing
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed class CompressingTermVectorsReader : TermVectorsReader, IDisposable
+    public sealed class CompressingTermVectorsReader : TermVectorsReader // LUCENENET specific - removed IDisposable, it is already implemented in base class
     {
         private readonly FieldInfos fieldInfos;
         internal readonly CompressingStoredFieldsIndexReader indexReader;

@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
     /// <summary>
     /// Reader for <see cref="Lucene45DocValuesFormat"/>. </summary>
-    public class Lucene45DocValuesProducer : DocValuesProducer, IDisposable
+    public class Lucene45DocValuesProducer : DocValuesProducer // LUCENENET specific - removed IDisposable, it is already implemented in base class
     {
         private readonly IDictionary<int, NumericEntry> numerics;
         private readonly IDictionary<int, BinaryEntry> binaries;

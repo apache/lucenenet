@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// @lucene.internal
     /// </summary>
     /// <seealso cref="Lucene40StoredFieldsFormat"/>
-    public sealed class Lucene40StoredFieldsReader : StoredFieldsReader, IDisposable
+    public sealed class Lucene40StoredFieldsReader : StoredFieldsReader // LUCENENET specific - removed IDisposable, it is already implemented in base class
 #if FEATURE_CLONEABLE
         , System.ICloneable
 #endif

@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// It reads .tvd, .tvf, and .tvx files.
     /// </summary>
     /// <seealso cref="Lucene40TermVectorsFormat"/>
-    public class Lucene40TermVectorsReader : TermVectorsReader, IDisposable
+    public class Lucene40TermVectorsReader : TermVectorsReader // LUCENENET specific - removed IDisposable, it is already implemented in base class
     {
         internal const sbyte STORE_POSITIONS_WITH_TERMVECTOR = 0x1;
 

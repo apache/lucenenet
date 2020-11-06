@@ -35,7 +35,7 @@ namespace Lucene.Net.Demo.Facet
     /// <summary>
     /// Shows simple usage of dynamic range faceting.
     /// </summary>
-    public class RangeFacetsExample : IDisposable
+    public sealed class RangeFacetsExample : IDisposable
     {
         /// <summary>
         /// Using a constant for all functionality related to a specific index

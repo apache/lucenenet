@@ -113,25 +113,45 @@ namespace Lucene.Net.Search
             reopenCond.Reset();
         }
 
+        /// <summary>
+        /// Releases all resources used by the <see cref="ControlledRealTimeReopenThread{T}"/>.
+        /// </summary>
         public void Dispose()
         {
-            finish = true;
-            reopenCond.Set();
-//#if FEATURE_THREAD_INTERRUPT
-//            try
-//            {
-//#endif
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="ControlledRealTimeReopenThread{T}"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific - implemented proper dispose pattern
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                finish = true;
+                reopenCond.Set();
+                //#if FEATURE_THREAD_INTERRUPT
+                //            try
+                //            {
+                //#endif
                 Join();
-//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//            }
-//            catch (ThreadInterruptedException ie)
-//            {
-//                throw new ThreadInterruptedException(ie.ToString(), ie);
-//            }
-//#endif
-            // LUCENENET specific: dispose reset event
-            reopenCond.Dispose();
-            available.Dispose();
+                //#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+                //            }
+                //            catch (ThreadInterruptedException ie)
+                //            {
+                //                throw new ThreadInterruptedException(ie.ToString(), ie);
+                //            }
+                //#endif
+                // LUCENENET specific: dispose reset event
+                reopenCond.Dispose();
+                available.Dispose();
+            }
         }
 
         /// <summary>
