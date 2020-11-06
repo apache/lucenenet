@@ -158,7 +158,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         internal virtual void OpenNextFile()
         {
-            Dispose();
+            DoClose();
             //currPathType = null; 
             while (true)
             {
@@ -216,7 +216,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             return null;
         }
 
-        protected override void Dispose(bool disposing)
+        private void DoClose() // LUCENENET specific - separate disposing from closing so those tasks that "reopen" can continue
         {
             if (reader == null)
             {
@@ -225,7 +225,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             try
             {
-                reader.Dispose();
+                reader?.Dispose();
             }
             catch (IOException e)
             {
@@ -236,6 +236,21 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
             }
             reader = null;
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="TrecContentSource"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                DoClose();
+                trecDocBuffer?.Dispose(); // LUCENENET specific
+            }
         }
 
         public override DocData GetNextDocData(DocData docData)
@@ -293,7 +308,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             lock (@lock)
             {
                 base.ResetInputs();
-                Dispose();
+                DoClose();
                 nextFile = 0;
                 iteration = 0;
             }

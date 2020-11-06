@@ -76,7 +76,9 @@ namespace Lucene.Net.Store
         // all entries that are written to a sep. file but not yet moved into CFS
         private readonly LinkedList<FileEntry> pendingEntries = new LinkedList<FileEntry>();
         private bool closed = false;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput dataOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly AtomicBoolean outputTaken = new AtomicBoolean(false);
         internal readonly string entryTableName;
         internal readonly string dataFileName;

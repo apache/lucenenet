@@ -370,7 +370,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             DirectoryInfo dataDir = CreateTempDir("trecFeedAllTypes");
             using (var stream = GetDataFile("trecdocs.zip"))
                 TestUtil.Unzip(stream, dataDir);
-            TrecContentSource tcs = new TrecContentSource();
+            using TrecContentSource tcs = new TrecContentSource();
             Dictionary<string, string> props = new Dictionary<string, string>();
             props["print.props"] = "false";
             props["content.source.verbose"] = "false";

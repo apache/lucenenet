@@ -48,7 +48,9 @@ namespace Lucene.Net.Codecs.BlockTerms
         /// <summary>Extension of terms file</summary>
         public readonly static string TERMS_EXTENSION = "tib";
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         protected IndexOutput m_output;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly PostingsWriterBase postingsWriter;
         //private readonly FieldInfos fieldInfos; // LUCENENET: Not used
         private FieldInfo currentField;

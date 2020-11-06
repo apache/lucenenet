@@ -40,7 +40,9 @@ namespace Lucene.Net.Codecs.Lucene42
 #pragma warning disable 612, 618
     internal class Lucene42DocValuesConsumer : DocValuesConsumer
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal readonly IndexOutput data, meta;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         internal readonly int maxDoc;
         internal readonly float acceptableOverheadRatio;
 

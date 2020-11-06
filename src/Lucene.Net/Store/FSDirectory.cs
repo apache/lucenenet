@@ -477,7 +477,9 @@ namespace Lucene.Net.Store
 
             private readonly FSDirectory parent;
             internal readonly string name;
+#pragma warning disable CA2213 // Disposable fields should be disposed
             private readonly FileStream file;
+#pragma warning restore CA2213 // Disposable fields should be disposed
             private volatile bool isOpen; // remember if the file is open, so that we don't try to close it more than once
             private readonly CRC32 crc = new CRC32();
 

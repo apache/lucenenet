@@ -400,10 +400,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 readerManager = null;
                 initializedReaderManager = false;
             }
-            if (cache != null)
-            {
-                cache.Dispose();
-            }
+            cache?.Dispose();
+            parentStream.Dispose(); // LUCENENET specific
         }
 
         /// <summary>

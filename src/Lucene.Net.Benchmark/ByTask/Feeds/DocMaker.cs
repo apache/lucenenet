@@ -385,7 +385,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             if (disposing)
             {
-                m_source.Dispose();
+                m_source?.Dispose();
+                leftovr?.Dispose(); // LUCENENET specific
+                docState?.Dispose(); // LUCENENET specific
             }
         }
 

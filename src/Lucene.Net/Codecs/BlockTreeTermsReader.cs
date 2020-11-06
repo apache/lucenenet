@@ -92,7 +92,9 @@ namespace Lucene.Net.Codecs
         }
 
         // Open input to the main terms dict file (_X.tib)
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput @in;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         //private static final boolean DEBUG = BlockTreeTermsWriter.DEBUG;
 

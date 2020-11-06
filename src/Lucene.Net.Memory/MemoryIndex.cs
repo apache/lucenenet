@@ -315,6 +315,30 @@ namespace Lucene.Net.Index.Memory
                 start += term.Length + 1; // separate words by 1 (blank) character
                 return true;
             }
+
+            /// <summary>
+            /// Releases resources used by the <see cref="TokenStreamAnonymousInnerClassHelper{T}"/> and
+            /// if overridden in a derived class, optionally releases unmanaged resources.
+            /// </summary>
+            /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+            /// <c>false</c> to release only unmanaged resources.</param>
+
+            // LUCENENET specific
+            protected override void Dispose(bool disposing)
+            {
+                try
+                {
+                    if (disposing)
+                    {
+                        iter?.Dispose(); // LUCENENET specific - dispose iter and set to null
+                        iter = null;
+                    }
+                }
+                finally
+                {
+                    base.Dispose(disposing);
+                }
+            }
         }
 
         /// <summary>

@@ -233,8 +233,10 @@ namespace Lucene.Net.Codecs
 
         internal const string TERMS_INDEX_CODEC_NAME = "BLOCK_TREE_TERMS_INDEX";
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexOutput @out;
         private readonly IndexOutput indexOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         internal readonly int minItemsInBlock;
         internal readonly int maxItemsInBlock;
 
@@ -580,7 +582,9 @@ namespace Lucene.Net.Codecs
             }
         }
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal readonly RAMOutputStream scratchBytes = new RAMOutputStream();
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         internal class TermsWriter : TermsConsumer
         {
@@ -1308,7 +1312,7 @@ namespace Lucene.Net.Codecs
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ioe, @out, indexOut, postingsWriter);
+                    IOUtils.DisposeWhileHandlingException(ioe, @out, indexOut, postingsWriter, scratchBytes); // LUCENENET: Added scratchBytes
                 }
             }
         }

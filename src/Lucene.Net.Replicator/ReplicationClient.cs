@@ -390,6 +390,7 @@ namespace Lucene.Net.Replicator
                 return;
 
             StopUpdateThread();
+            infoStream.Dispose(); // LUCENENET specific
             disposed = true;
         }
 

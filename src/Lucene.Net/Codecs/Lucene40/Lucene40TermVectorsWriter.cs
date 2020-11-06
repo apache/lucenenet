@@ -60,7 +60,9 @@ namespace Lucene.Net.Codecs.Lucene40
     {
         private readonly Directory directory;
         private readonly string segment;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput tvx = null, tvd = null, tvf = null;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         /// <summary>
         /// Sole constructor. </summary>

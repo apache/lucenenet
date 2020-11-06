@@ -434,35 +434,41 @@ namespace Lucene.Net.Codecs.Pulsing
             }
         }
 
+        private bool disposed = false; // LUCENENET specific
         protected override void Dispose(bool disposing)
         {
-            _wrappedPostingsWriter.Dispose();
-
-            if (_wrappedPostingsWriter is PulsingPostingsWriter ||
-                VERSION_CURRENT < VERSION_META_ARRAY)
+            if (disposing && !disposed)
             {
-                return;
-            }
+                disposed = true;
+                _wrappedPostingsWriter.Dispose();
+                _buffer.Dispose(); // LUCENENET specific
 
-            var summaryFileName = IndexFileNames.SegmentFileName(_segmentState.SegmentInfo.Name,
-                _segmentState.SegmentSuffix, SUMMARY_EXTENSION);
-            IndexOutput output = null;
-            try
-            {
-                output =
-                    _segmentState.Directory.CreateOutput(summaryFileName, _segmentState.Context);
-                CodecUtil.WriteHeader(output, CODEC, VERSION_CURRENT);
-                output.WriteVInt32(_fields.Count);
-                foreach (var field in _fields)
+                if (_wrappedPostingsWriter is PulsingPostingsWriter ||
+                    VERSION_CURRENT < VERSION_META_ARRAY)
                 {
-                    output.WriteVInt32(field.FieldNumber);
-                    output.WriteVInt32(field.Int64sSize);
+                    return;
                 }
-                output.Dispose();
-            }
-            finally
-            {
-                IOUtils.DisposeWhileHandlingException(output);
+
+                var summaryFileName = IndexFileNames.SegmentFileName(_segmentState.SegmentInfo.Name,
+                    _segmentState.SegmentSuffix, SUMMARY_EXTENSION);
+                IndexOutput output = null;
+                try
+                {
+                    output =
+                        _segmentState.Directory.CreateOutput(summaryFileName, _segmentState.Context);
+                    CodecUtil.WriteHeader(output, CODEC, VERSION_CURRENT);
+                    output.WriteVInt32(_fields.Count);
+                    foreach (var field in _fields)
+                    {
+                        output.WriteVInt32(field.FieldNumber);
+                        output.WriteVInt32(field.Int64sSize);
+                    }
+                    output.Dispose();
+                }
+                finally
+                {
+                    IOUtils.DisposeWhileHandlingException(output);
+                }
             }
         }
 

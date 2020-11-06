@@ -48,7 +48,9 @@ namespace Lucene.Net.Codecs.Lucene42
         internal const sbyte UNCOMPRESSED = 2;
         internal const sbyte GCD_COMPRESSED = 3;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal IndexOutput data, meta;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         internal readonly int maxDoc;
         internal readonly float acceptableOverheadRatio;
 

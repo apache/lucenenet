@@ -150,8 +150,10 @@ namespace Lucene.Net.Codecs.Memory
         private readonly PostingsWriterBase postingsWriter;
         //private readonly FieldInfos fieldInfos; // LUCENENET: Never read
         private readonly IList<FieldMetaData> _fields = new List<FieldMetaData>();
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput blockOut = null;
         private IndexOutput indexOut = null;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         public FSTOrdTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter)
         {

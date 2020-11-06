@@ -181,17 +181,14 @@ namespace Lucene.Net.Search
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                return new TokenStreamComponents(new TokenizerAnonymousInnerClassHelper(this, reader));
+                return new TokenStreamComponents(new TokenizerAnonymousInnerClassHelper(reader));
             }
 
             private class TokenizerAnonymousInnerClassHelper : Tokenizer
             {
-                private readonly AnalyzerAnonymousInnerClassHelper outerInstance;
-
-                public TokenizerAnonymousInnerClassHelper(AnalyzerAnonymousInnerClassHelper outerInstance, TextReader reader)
+                public TokenizerAnonymousInnerClassHelper(TextReader reader)
                     : base(reader)
                 {
-                    this.outerInstance = outerInstance;
                     TOKENS = new string[] { "1", "2", "3", "4", "5" };
                     INCREMENTS = new int[] { 1, 2, 1, 0, 1 };
                     i = 0;

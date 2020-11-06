@@ -74,8 +74,10 @@ namespace Lucene.Net.Codecs.Compressing
         private readonly Directory directory;
         private readonly string segment;
         private readonly string segmentSuffix;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private CompressingStoredFieldsIndexWriter indexWriter;
         private IndexOutput fieldsStream;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         private readonly CompressionMode compressionMode;
         private readonly Compressor compressor;

@@ -81,7 +81,9 @@ namespace Lucene.Net.Codecs.Lucene45
         /// </summary>
         public static readonly int SORTED_SET_SINGLE_VALUED_SORTED = 1;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal IndexOutput data, meta;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         internal readonly int maxDoc;
 
         /// <summary>

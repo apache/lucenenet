@@ -81,9 +81,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private FieldInfos fieldInfos;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexInput tvx;
         private IndexInput tvd;
         private IndexInput tvf;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private int size;
         private int numTotalDocs;
 

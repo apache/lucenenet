@@ -34,7 +34,9 @@ namespace Lucene.Net.Codecs.Memory
     /// </summary>
     internal class DirectDocValuesConsumer : DocValuesConsumer
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput data, meta;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         //private readonly int maxDoc; // LUCENENET: Not used
 
         internal DirectDocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension,

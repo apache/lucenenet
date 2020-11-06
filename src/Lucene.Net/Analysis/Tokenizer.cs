@@ -73,6 +73,7 @@ namespace Lucene.Net.Analysis
             if (disposing)
             {
                 m_input.Dispose();
+                inputPending.Dispose(); // LUCENENET specific: call dispose on input pending
                 // LUCENE-2387: don't hold onto TextReader after close, so
                 // GC can reclaim
                 inputPending = ILLEGAL_STATE_READER;
@@ -131,7 +132,7 @@ namespace Lucene.Net.Analysis
             {
                 throw new InvalidOperationException("TokenStream contract violation: Reset()/Dispose() call missing, " 
                     + "Reset() called multiple times, or subclass does not call base.Reset(). "
-                    + "Please see Javadocs of TokenStream class for more information about the correct consuming workflow.");
+                    + "Please see the documentation of TokenStream class for more information about the correct consuming workflow.");
             }
 
             protected override void Dispose(bool disposing)

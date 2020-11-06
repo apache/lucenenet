@@ -51,7 +51,7 @@ namespace Lucene.Net.Replicator
         public class SnapshotDirectoryTaxonomyWriter : DirectoryTaxonomyWriter
         {
             private SnapshotDeletionPolicy sdp;
-            private IndexWriter writer;
+            private IndexWriter writer; // LUCENENET TODO: Why does disposing this in Dispose(true) throw an excpetion?
 
             /// <summary>
             /// <see cref="DirectoryTaxonomyWriter(Directory, OpenMode, ITaxonomyWriterCache)"/>

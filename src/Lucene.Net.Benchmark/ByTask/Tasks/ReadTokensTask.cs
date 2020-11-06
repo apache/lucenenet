@@ -156,5 +156,29 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
             protected override void Dispose(bool disposing) { }
         }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="ReadTokensTask"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    stringReader?.Dispose(); // LUCENENET specific - dispose stringReader and set to null
+                    stringReader = null;
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
+        }
     }
 }

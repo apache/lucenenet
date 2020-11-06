@@ -31,8 +31,10 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         private readonly Directory directory;
         private readonly string segment;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput fieldsStream;
         private IndexOutput indexStream;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         public PreFlexRWStoredFieldsWriter(Directory directory, string segment, IOContext context)
         {

@@ -30,7 +30,9 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         private readonly Directory directory;
         private readonly string segment;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput tvx = null, tvd = null, tvf = null;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         public PreFlexRWTermVectorsWriter(Directory directory, string segment, IOContext context)
         {
@@ -217,10 +219,13 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Close all streams. </summary>
         protected override void Dispose(bool disposing)
         {
-            // make an effort to close all streams we can but remember and re-throw
-            // the first exception encountered in this process
-            IOUtils.Dispose(tvx, tvd, tvf);
-            tvx = tvd = tvf = null;
+            if (disposing)
+            {
+                // make an effort to close all streams we can but remember and re-throw
+                // the first exception encountered in this process
+                IOUtils.Dispose(tvx, tvd, tvf);
+                tvx = tvd = tvf = null;
+            }
         }
 
         public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUTF16Comparer;

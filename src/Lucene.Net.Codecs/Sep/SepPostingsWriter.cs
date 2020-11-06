@@ -44,6 +44,7 @@ namespace Lucene.Net.Codecs.Sep
         internal readonly static int VERSION_START = 0;
         internal readonly static int VERSION_CURRENT = VERSION_START;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private Int32IndexOutput freqOut;
         private Int32IndexOutput.Index freqIndex;
 
@@ -56,6 +57,7 @@ namespace Lucene.Net.Codecs.Sep
         private IndexOutput payloadOut;
 
         private IndexOutput skipOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         private readonly SepSkipListWriter skipListWriter;
 

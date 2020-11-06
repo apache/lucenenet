@@ -27,9 +27,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning disable 612, 618
     internal class PreFlexRWFieldsWriter : FieldsConsumer
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly TermInfosWriter termsOut;
         private readonly IndexOutput freqOut;
         private readonly IndexOutput proxOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly PreFlexRWSkipListWriter skipListWriter;
         private readonly int totalNumDocs;
 

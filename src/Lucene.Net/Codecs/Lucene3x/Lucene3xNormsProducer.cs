@@ -161,6 +161,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     norms.Clear();
                     openFiles.Clear();
+                    singleNormStream?.Dispose(); // LUCENENET: Dispose singleNormStream and set to null
+                    singleNormStream = null;
                 }
             }
         }

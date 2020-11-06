@@ -33,9 +33,11 @@ namespace Lucene.Net.Codecs.Lucene41
     /// <seealso cref="Lucene41SkipReader"/>
     public sealed class Lucene41PostingsReader : PostingsReaderBase
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput docIn;
         private readonly IndexInput posIn;
         private readonly IndexInput payIn;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         private readonly ForUtil forUtil;
         private int version;

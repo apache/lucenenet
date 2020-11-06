@@ -194,6 +194,30 @@ namespace Lucene.Net.Spatial.Prefix
                 }
                 return false;
             }
+
+            /// <summary>
+            /// Releases resources used by the <see cref="CellTokenStream"/> and
+            /// if overridden in a derived class, optionally releases unmanaged resources.
+            /// </summary>
+            /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+            /// <c>false</c> to release only unmanaged resources.</param>
+
+            // LUCENENET specific
+            protected override void Dispose(bool disposing)
+            {
+                try
+                {
+                    if (disposing)
+                    {
+                        iter?.Dispose(); // LUCENENET specific - dispose iter and set to null
+                        iter = null;
+                    }
+                }
+                finally
+                {
+                    base.Dispose(disposing);
+                }
+            }
         }
 
         public override ValueSource MakeDistanceValueSource(IPoint queryPoint, double multiplier)

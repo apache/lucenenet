@@ -66,8 +66,10 @@ namespace Lucene.Net.Benchmarks.ByTask
 
         // objects used during performance test run
         // directory, analyzer, docMaker - created at startup.
-        // reader, writer, searcher - maintained by basic tasks. 
+        // reader, writer, searcher - maintained by basic tasks.
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private Store.Directory directory;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private IDictionary<string, AnalyzerFactory> analyzerFactories = new Dictionary<string, AnalyzerFactory>();
         private Analyzer analyzer;
         private DocMaker docMaker;
@@ -75,7 +77,9 @@ namespace Lucene.Net.Benchmarks.ByTask
         private FacetSource facetSource;
         private CultureInfo locale;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private Store.Directory taxonomyDir;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private ITaxonomyWriter taxonomyWriter;
         private TaxonomyReader taxonomyReader;
 

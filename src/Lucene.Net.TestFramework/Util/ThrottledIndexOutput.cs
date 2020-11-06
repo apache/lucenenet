@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
                 }
                 finally
                 {
-                    @delegate.Dispose();
+                    @delegate?.Dispose(); // LUCENENET specific - only call if non-null
                 }
             }
         }

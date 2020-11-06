@@ -80,9 +80,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private readonly FieldInfos fieldInfos;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexInput tvx;
         private IndexInput tvd;
         private IndexInput tvf;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private int size;
         private int numTotalDocs;
 
@@ -94,7 +96,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         // (lucene 3.0 indexes only), we privately open our own fd.
         // TODO: if we are worried, maybe we could eliminate the
         // extra fd somehow when you also have vectors...
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly CompoundFileDirectory storeCFSReader;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         private readonly int format;
 

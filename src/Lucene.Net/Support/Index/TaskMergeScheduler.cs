@@ -176,6 +176,7 @@ namespace Lucene.Net.Index
         {
             Sync();
             _manualResetEvent.Dispose();
+            _lock.Dispose();
         }
 
         /// <summary>

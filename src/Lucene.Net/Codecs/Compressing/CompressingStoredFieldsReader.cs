@@ -57,7 +57,9 @@ namespace Lucene.Net.Codecs.Compressing
         private readonly FieldInfos fieldInfos;
         private readonly CompressingStoredFieldsIndexReader indexReader;
         private readonly long maxPointer;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput fieldsStream;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly int chunkSize;
         private readonly int packedIntsVersion;
         private readonly CompressionMode compressionMode;

@@ -62,9 +62,11 @@ namespace Lucene.Net.Codecs.Lucene41
         internal const int VERSION_CHECKSUM = 2;
         internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal IndexOutput docOut;
         internal IndexOutput posOut;
         internal IndexOutput payOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         internal static readonly Int32BlockTermState emptyState = new Int32BlockTermState();
         internal Int32BlockTermState lastState;

@@ -1039,6 +1039,7 @@ namespace Lucene.Net.Store
                         }
                     }
                     m_input.Dispose(); // LUCENENET TODO: using blocks in this entire class
+                    throttledOutput.Dispose(); // LUCENENET specific
                 }
             }
         }

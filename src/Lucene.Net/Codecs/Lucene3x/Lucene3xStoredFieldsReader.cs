@@ -85,8 +85,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         public const int FIELD_IS_NUMERIC_DOUBLE = 4 << _NUMERIC_BIT_SHIFT;
 
         private readonly FieldInfos fieldInfos;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput fieldsStream;
         private readonly IndexInput indexStream;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private int numTotalDocs;
         private int size;
         private bool closed;
@@ -98,7 +100,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         // when we are inside a compound share doc store (CFX),
         // (lucene 3.0 indexes only), we privately open our own fd.
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly CompoundFileDirectory storeCFSReader;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         /// <summary>
         /// Returns a cloned FieldsReader that shares open

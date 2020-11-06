@@ -87,7 +87,9 @@ namespace Lucene.Net.Store
         private readonly bool openForWrite;
         private static readonly IDictionary<string, FileEntry> SENTINEL = Collections.EmptyMap<string, FileEntry>();
         private readonly CompoundFileWriter writer;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInputSlicer handle;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         /// <summary>
         /// Create a new <see cref="CompoundFileDirectory"/>.

@@ -45,7 +45,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         [Obsolete("Only for reading existing 3.x indexes")]
         private const string SEPARATE_NORMS_EXTENSION = "s";
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexOutput @out;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private int lastFieldNumber = -1; // only for assert
 
         public PreFlexRWNormsConsumer(Directory directory, string segment, IOContext context)

@@ -46,8 +46,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly string segment;
         private readonly FieldInfos fieldInfos;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly DisposableThreadLocal<ThreadResources> threadResources = new DisposableThreadLocal<ThreadResources>();
         private readonly SegmentTermEnum origEnum;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly long size;
 
         private readonly TermInfosReaderIndex index;

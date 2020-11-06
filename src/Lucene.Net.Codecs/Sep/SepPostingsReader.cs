@@ -35,11 +35,13 @@ namespace Lucene.Net.Codecs.Sep
     /// </summary>
     public class SepPostingsReader : PostingsReaderBase
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly Int32IndexInput freqIn;
         private readonly Int32IndexInput docIn;
         private readonly Int32IndexInput posIn;
         private readonly IndexInput payloadIn;
         private readonly IndexInput skipIn;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         private int skipInterval;
         private int maxSkipLevels;

@@ -47,8 +47,10 @@ namespace Lucene.Net.Codecs.Lucene40
 #endif
     {
         private readonly FieldInfos fieldInfos;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput fieldsStream;
         private readonly IndexInput indexStream;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private int numTotalDocs;
         private int size;
         private bool closed;

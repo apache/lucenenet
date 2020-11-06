@@ -247,7 +247,9 @@ namespace Lucene.Net.Store
     // Reference: https://stackoverflow.com/q/46380483
     internal class FallbackNativeFSLock : Lock
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private FileStream channel;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly string path;
         private readonly DirectoryInfo lockDir;
 
@@ -416,7 +418,9 @@ namespace Lucene.Net.Store
     // Locks the entire file. macOS requires this approach.
     internal class SharingNativeFSLock : Lock
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private FileStream channel;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly string path;
         private readonly DirectoryInfo lockDir;
 
@@ -576,7 +580,9 @@ namespace Lucene.Net.Store
     // Uses FileStream locking of file pages.
     internal class NativeFSLock : Lock
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private FileStream channel;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly string path;
         private readonly DirectoryInfo lockDir;
 

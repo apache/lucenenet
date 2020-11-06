@@ -84,8 +84,18 @@ namespace Lucene.Net.Index
 
             public virtual Term Current => term;
 
-            public virtual void Dispose()
+            public void Dispose()
             {
+                Dispose(true);
+                GC.SuppressFinalize(true);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    input?.Dispose(); // LUCENENET specific - call dispose on input
+                }
             }
 
             object IEnumerator.Current => Current;

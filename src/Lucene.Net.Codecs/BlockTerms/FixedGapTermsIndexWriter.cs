@@ -37,7 +37,9 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class FixedGapTermsIndexWriter : TermsIndexWriterBase
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         protected IndexOutput m_output;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         /// <summary>Extension of terms index file</summary>
         internal readonly static string TERMS_INDEX_EXTENSION = "tii";
