@@ -62,18 +62,18 @@ namespace Lucene.Net.Codecs.Lucene3x
         public IndexInput FreqStream { get; private set; }
         public IndexInput ProxStream { get; private set; }
         private readonly FieldInfos fieldInfos;
-        private readonly SegmentInfo si;
+        //private readonly SegmentInfo si; // LUCENENET: Never read
 
         // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
         internal readonly IDictionary<string, FieldInfo> fields = new JCG.SortedDictionary<string, FieldInfo>(StringComparer.Ordinal);
         internal readonly IDictionary<string, Terms> preTerms = new Dictionary<string, Terms>();
-        private readonly Directory dir;
-        private readonly IOContext context;
+        //private readonly Directory dir; // LUCENENET: Never read
+        //private readonly IOContext context; // LUCENENET: Never read
         //private Directory cfsReader; // LUCENENET NOTE: cfsReader not used
 
         public Lucene3xFields(Directory dir, FieldInfos fieldInfos, SegmentInfo info, IOContext context, int indexDivisor)
         {
-            si = info;
+            //si = info; // LUCENENET: Never read
 
             // NOTE: we must always load terms index, even for
             // "sequential" scan during merging, because what is
@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     TisNoIndex = null;
                     Tis = r;
                 }
-                this.context = context;
+                //this.context = context; // LUCENENET: Never read
                 this.fieldInfos = fieldInfos;
 
                 // make sure that all index files have been read or are kept open
@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     Dispose();
                 }
             }
-            this.dir = dir;
+            //this.dir = dir; // LUCENENET: Never read
         }
 
         // If this returns, we do the surrogates dance so that the

@@ -63,7 +63,9 @@ namespace Lucene.Net.Documents
         /// <param name="bytes"> binary content </param>
         /// <param name="isFixedLength"> (ignored) </param>
         /// <exception cref="ArgumentNullException"> if the field name is null </exception>
+#pragma warning disable IDE0060 // Remove unused parameter
         public DerefBytesDocValuesField(string name, BytesRef bytes, bool isFixedLength)
+#pragma warning restore IDE0060 // Remove unused parameter
             : base(name, bytes)
         {
         }

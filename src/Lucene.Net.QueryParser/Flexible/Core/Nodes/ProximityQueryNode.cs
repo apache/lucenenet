@@ -218,7 +218,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     {
         internal int pDistance = 0;
 
-        ProximityQueryNode.Type pType/* = null*/;
+#pragma warning disable IDE0052 // Assigned never read
+        internal ProximityQueryNode.Type pType/* = null*/; // LUCENENET: Not nullable
+#pragma warning restore IDE0052 // Assigned never read
 
         public ProximityType(ProximityQueryNode.Type type)
                 : this(type, 0)

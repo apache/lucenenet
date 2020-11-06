@@ -91,17 +91,11 @@ namespace Lucene.Net.Tests.Queries
 
         private Filter GetEmptyFilter()
         {
-            return new AnonymousFilter(this);
+            return new AnonymousFilter();
         }
 
         private sealed class AnonymousFilter : Filter
         {
-            public AnonymousFilter(BooleanFilterTest parent)
-            {
-                this.parent = parent;
-            }
-
-            private readonly BooleanFilterTest parent;
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new FixedBitSet(context.AtomicReader.MaxDoc);
@@ -110,17 +104,11 @@ namespace Lucene.Net.Tests.Queries
 
         private Filter GetNullDISFilter()
         {
-            return new AnonymousFilter1(this);
+            return new AnonymousFilter1();
         }
 
         private sealed class AnonymousFilter1 : Filter
         {
-            public AnonymousFilter1(BooleanFilterTest parent)
-            {
-                this.parent = parent;
-            }
-
-            private readonly BooleanFilterTest parent;
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return null;
@@ -129,7 +117,7 @@ namespace Lucene.Net.Tests.Queries
 
         private Filter GetNullDISIFilter()
         {
-            return new AnonymousFilter2(this);
+            return new AnonymousFilter2();
         }
 
         private sealed class AnonymousDocIdSet : DocIdSet
@@ -144,12 +132,6 @@ namespace Lucene.Net.Tests.Queries
 
         private sealed class AnonymousFilter2 : Filter
         {
-            public AnonymousFilter2(BooleanFilterTest parent)
-            {
-                this.parent = parent;
-            }
-
-            private readonly BooleanFilterTest parent;
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 return new AnonymousDocIdSet();

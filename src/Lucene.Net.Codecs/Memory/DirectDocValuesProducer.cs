@@ -246,7 +246,7 @@ namespace Lucene.Net.Codecs.Memory
                             values[i] = data.ReadInt16();
                         }
                         ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
-                        return new NumericDocValuesAnonymousInnerClassHelper2(this, values);
+                        return new NumericDocValuesAnonymousInnerClassHelper2(values);
                     }
 
                 case 4:
@@ -295,7 +295,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             private readonly short[] values;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(DirectDocValuesProducer outerInstance, short[] values)
+            public NumericDocValuesAnonymousInnerClassHelper2(short[] values)
             {
                 this.values = values;
             }
@@ -410,20 +410,17 @@ namespace Lucene.Net.Codecs.Memory
             NumericDocValues docToOrd = LoadNumeric(entry.docToOrd);
             BinaryDocValues values = LoadBinary(entry.values);
 
-            return new SortedDocValuesAnonymousInnerClassHelper(this, entry, docToOrd, values);
+            return new SortedDocValuesAnonymousInnerClassHelper(entry, docToOrd, values);
         }
 
         private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
         {
-            private readonly DirectDocValuesProducer outerInstance;
-
             private readonly SortedEntry entry;
             private readonly NumericDocValues docToOrd;
             private readonly BinaryDocValues values;
 
-            public SortedDocValuesAnonymousInnerClassHelper(DirectDocValuesProducer outerInstance, SortedEntry entry, NumericDocValues docToOrd, BinaryDocValues values)
+            public SortedDocValuesAnonymousInnerClassHelper(SortedEntry entry, NumericDocValues docToOrd, BinaryDocValues values)
             {
-                this.outerInstance = outerInstance;
                 this.entry = entry;
                 this.docToOrd = docToOrd;
                 this.values = values;
@@ -465,7 +462,7 @@ namespace Lucene.Net.Codecs.Memory
                 var values = instance.values;
 
                 // Must make a new instance since the iterator has state:
-                return new RandomAccessOrdsAnonymousInnerClassHelper(this, entry, docToOrdAddress, ords, values);
+                return new RandomAccessOrdsAnonymousInnerClassHelper(entry, docToOrdAddress, ords, values);
             }
         }
 
@@ -476,7 +473,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly NumericDocValues ords;
             private readonly BinaryDocValues values;
 
-            public RandomAccessOrdsAnonymousInnerClassHelper(DirectDocValuesProducer outerInstance, SortedSetEntry entry, NumericDocValues docToOrdAddress, NumericDocValues ords, BinaryDocValues values)
+            public RandomAccessOrdsAnonymousInnerClassHelper(SortedSetEntry entry, NumericDocValues docToOrdAddress, NumericDocValues ords, BinaryDocValues values)
             {
                 this.entry = entry;
                 this.docToOrdAddress = docToOrdAddress;

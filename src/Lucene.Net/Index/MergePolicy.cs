@@ -213,18 +213,11 @@ namespace Lucene.Net.Index
             /// </summary>
             public virtual DocMap GetDocMap(MergeState mergeState)
             {
-                return new DocMapAnonymousInnerClassHelper(this);
+                return new DocMapAnonymousInnerClassHelper();
             }
 
             private class DocMapAnonymousInnerClassHelper : DocMap
             {
-                private readonly OneMerge outerInstance;
-
-                public DocMapAnonymousInnerClassHelper(OneMerge outerInstance)
-                {
-                    this.outerInstance = outerInstance;
-                }
-
                 public override int Map(int docID)
                 {
                     return docID;

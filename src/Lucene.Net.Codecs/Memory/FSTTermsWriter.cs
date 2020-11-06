@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Memory
         public const int TERMS_VERSION_CURRENT = TERMS_VERSION_CHECKSUM;
 
         private readonly PostingsWriterBase _postingsWriter;
-        private readonly FieldInfos _fieldInfos;
+        //private readonly FieldInfos _fieldInfos; // LUCENENET: Never read
         private IndexOutput _output;
         private readonly IList<FieldMetaData> _fields = new List<FieldMetaData>();
 
@@ -131,7 +131,7 @@ namespace Lucene.Net.Codecs.Memory
                 TERMS_EXTENSION);
 
             _postingsWriter = postingsWriter;
-            _fieldInfos = state.FieldInfos;
+            //_fieldInfos = state.FieldInfos; // LUCENENET: Never read
             _output = state.Directory.CreateOutput(termsFileName, state.Context);
 
             var success = false;
@@ -243,7 +243,7 @@ namespace Lucene.Net.Codecs.Memory
             private long _numTerms;
 
             private readonly Int32sRef _scratchTerm = new Int32sRef();
-            private readonly RAMOutputStream _statsWriter = new RAMOutputStream();
+            //private readonly RAMOutputStream _statsWriter = new RAMOutputStream(); // LUCENENET: Never read
             private readonly RAMOutputStream _metaWriter = new RAMOutputStream();
 
             internal TermsWriter(FSTTermsWriter outerInstance, FieldInfo fieldInfo)

@@ -688,7 +688,7 @@ namespace Lucene.Net.Codecs
                     // and we found 30 terms/sub-blocks starting w/ that
                     // prefix, and minItemsInBlock <= 30 <=
                     // maxItemsInBlock.
-                    PendingBlock nonFloorBlock = WriteBlock(prevTerm, prefixLength, prefixLength, count, count, 0, false, -1, true);
+                    PendingBlock nonFloorBlock = WriteBlock(prevTerm, prefixLength, prefixLength, count, count, /*0, LUCENENET: Never read */ false, -1, true);
                     nonFloorBlock.CompileIndex(null, outerInstance.scratchBytes);
                     pending.Add(nonFloorBlock);
                 }
@@ -864,7 +864,7 @@ namespace Lucene.Net.Codecs
                                 prevTerm.Int32s[prevTerm.Offset + prefixLength] = startLabel;
                             }
                             //System.out.println("  " + subCount + " subs");
-                            PendingBlock floorBlock = WriteBlock(prevTerm, prefixLength, curPrefixLength, curStart, pendingCount, subTermCountSums[1 + sub], true, startLabel, curStart == pendingCount);
+                            PendingBlock floorBlock = WriteBlock(prevTerm, prefixLength, curPrefixLength, curStart, pendingCount, /*subTermCountSums[1 + sub], LUCENENET: Never read */ true, startLabel, curStart == pendingCount);
                             if (firstBlock == null)
                             {
                                 firstBlock = floorBlock;
@@ -908,7 +908,7 @@ namespace Lucene.Net.Codecs
                                   System.out.println("      **");
                                 }
                                 */
-                                floorBlocks.Add(WriteBlock(prevTerm, prefixLength, prefixLength + 1, curStart, curStart, 0, true, startLabel, true));
+                                floorBlocks.Add(WriteBlock(prevTerm, prefixLength, prefixLength + 1, curStart,curStart, /* 0, LUCENENET: Never read */ true, startLabel, true));
                                 break;
                             }
                         }
@@ -943,7 +943,9 @@ namespace Lucene.Net.Codecs
 
             // Writes all entries in the pending slice as a single
             // block:
-            private PendingBlock WriteBlock(Int32sRef prevTerm, int prefixLength, int indexPrefixLength, int startBackwards, int length, int futureTermCount, bool isFloor, int floorLeadByte, bool isLastInFloor)
+            private PendingBlock WriteBlock(Int32sRef prevTerm, int prefixLength, int indexPrefixLength,
+                int startBackwards, int length, /*int futureTermCount, // LUCENENET: Not used*/
+                bool isFloor, int floorLeadByte, bool isLastInFloor)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(length > 0);
 

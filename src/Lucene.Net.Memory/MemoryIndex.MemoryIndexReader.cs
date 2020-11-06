@@ -322,7 +322,7 @@ namespace Lucene.Net.Index.Memory
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     if (reuse is null || !(reuse is MemoryDocsEnum toReuse))
-                        toReuse = new MemoryDocsEnum(outerInstance);
+                        toReuse = new MemoryDocsEnum();
 
                     return toReuse.Reset(liveDocs, info.sliceArray.freq[info.sortedTerms[termUpto]]);
                 }
@@ -354,11 +354,8 @@ namespace Lucene.Net.Index.Memory
 
             private class MemoryDocsEnum : DocsEnum
             {
-                private readonly MemoryIndex.MemoryIndexReader outerInstance;
-
-                public MemoryDocsEnum(MemoryIndex.MemoryIndexReader outerInstance)
+                public MemoryDocsEnum()
                 {
-                    this.outerInstance = outerInstance;
                 }
 
                 internal bool hasNext;

@@ -1455,19 +1455,16 @@ namespace Lucene.Net.Index
 
         private void DoTestNumericsVsStoredFields(long minValue, long maxValue)
         {
-            DoTestNumericsVsStoredFields(new Int64ProducerAnonymousInnerClassHelper(this, minValue, maxValue));
+            DoTestNumericsVsStoredFields(new Int64ProducerAnonymousInnerClassHelper(minValue, maxValue));
         }
 
         private class Int64ProducerAnonymousInnerClassHelper : Int64Producer
         {
-            private readonly BaseDocValuesFormatTestCase outerInstance;
-
             private long minValue;
             private long maxValue;
 
-            public Int64ProducerAnonymousInnerClassHelper(BaseDocValuesFormatTestCase outerInstance, long minValue, long maxValue)
+            public Int64ProducerAnonymousInnerClassHelper(long minValue, long maxValue)
             {
-                this.outerInstance = outerInstance;
                 this.minValue = minValue;
                 this.maxValue = maxValue;
             }
@@ -1544,19 +1541,16 @@ namespace Lucene.Net.Index
 
         private void DoTestMissingVsFieldCache(long minValue, long maxValue)
         {
-            DoTestMissingVsFieldCache(new Int64ProducerAnonymousInnerClassHelper2(this, minValue, maxValue));
+            DoTestMissingVsFieldCache(new Int64ProducerAnonymousInnerClassHelper2(minValue, maxValue));
         }
 
         private class Int64ProducerAnonymousInnerClassHelper2 : Int64Producer
         {
-            private readonly BaseDocValuesFormatTestCase outerInstance;
-
             private long minValue;
             private long maxValue;
 
-            public Int64ProducerAnonymousInnerClassHelper2(BaseDocValuesFormatTestCase outerInstance, long minValue, long maxValue)
+            public Int64ProducerAnonymousInnerClassHelper2(long minValue, long maxValue)
             {
-                this.outerInstance = outerInstance;
                 this.minValue = minValue;
                 this.maxValue = maxValue;
             }
@@ -2958,21 +2952,18 @@ namespace Lucene.Net.Index
             {
                 long min = -(((long)Random.Next(1 << 30)) << 32);
                 long mul = Random.Next() & 0xFFFFFFFFL;
-                Int64Producer longs = new Int64ProducerAnonymousInnerClassHelper3(this, min, mul);
+                Int64Producer longs = new Int64ProducerAnonymousInnerClassHelper3(min, mul);
                 DoTestNumericsVsStoredFields(longs);
             }
         }
 
         private class Int64ProducerAnonymousInnerClassHelper3 : Int64Producer
         {
-            private readonly BaseDocValuesFormatTestCase outerInstance;
-
             private long min;
             private long mul;
 
-            public Int64ProducerAnonymousInnerClassHelper3(BaseDocValuesFormatTestCase outerInstance, long min, long mul)
+            public Int64ProducerAnonymousInnerClassHelper3(long min, long mul)
             {
-                this.outerInstance = outerInstance;
                 this.min = min;
                 this.mul = mul;
             }
@@ -2997,20 +2988,13 @@ namespace Lucene.Net.Index
             int numIterations = AtLeast(1);
             for (int i = 0; i < numIterations; i++)
             {
-                Int64Producer longs = new Int64ProducerAnonymousInnerClassHelper4(this);
+                Int64Producer longs = new Int64ProducerAnonymousInnerClassHelper4();
                 DoTestNumericsVsStoredFields(longs);
             }
         }
 
         private class Int64ProducerAnonymousInnerClassHelper4 : Int64Producer
         {
-            private readonly BaseDocValuesFormatTestCase outerInstance;
-
-            public Int64ProducerAnonymousInnerClassHelper4(BaseDocValuesFormatTestCase outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             internal override long Next()
             {
                 return Random.NextBoolean() ? 0 : long.MinValue;
@@ -3554,7 +3538,7 @@ namespace Lucene.Net.Index
 
                         for (int i = 0; i < threads.Length; i++)
                         {
-                            threads[i] = new ThreadAnonymousInnerClassHelper(this, ir, startingGun);
+                            threads[i] = new ThreadAnonymousInnerClassHelper(ir, startingGun);
                             threads[i].Start();
                         }
                         startingGun.Signal();
@@ -3569,14 +3553,11 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly BaseDocValuesFormatTestCase outerInstance;
-
             private DirectoryReader ir;
             private CountdownEvent startingGun;
 
-            public ThreadAnonymousInnerClassHelper(BaseDocValuesFormatTestCase outerInstance, DirectoryReader ir, CountdownEvent startingGun)
+            public ThreadAnonymousInnerClassHelper(DirectoryReader ir, CountdownEvent startingGun)
             {
-                this.outerInstance = outerInstance;
                 this.ir = ir;
                 this.startingGun = startingGun;
             }
@@ -3700,7 +3681,7 @@ namespace Lucene.Net.Index
 
                         for (int i = 0; i < threads.Length; i++)
                         {
-                            threads[i] = new ThreadAnonymousInnerClassHelper2(this, ir, startingGun);
+                            threads[i] = new ThreadAnonymousInnerClassHelper2(ir, startingGun);
                             threads[i].Start();
                         }
                         startingGun.Signal();
@@ -3715,14 +3696,11 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
-            private readonly BaseDocValuesFormatTestCase outerInstance;
-
             private DirectoryReader ir;
             private CountdownEvent startingGun;
 
-            public ThreadAnonymousInnerClassHelper2(BaseDocValuesFormatTestCase outerInstance, DirectoryReader ir, CountdownEvent startingGun)
+            public ThreadAnonymousInnerClassHelper2(DirectoryReader ir, CountdownEvent startingGun)
             {
-                this.outerInstance = outerInstance;
                 this.ir = ir;
                 this.startingGun = startingGun;
             }

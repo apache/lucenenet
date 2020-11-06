@@ -297,14 +297,14 @@ namespace Lucene.Net.Index
             return dwpt;
         }
 
-        internal void Recycle(DocumentsWriterPerThread dwpt)
+        internal void Recycle(/* DocumentsWriterPerThread dwpt // LUCENENET: Not referenced */)
         {
             // don't recycle DWPT by default
         }
 
         // you cannot subclass this without being in o.a.l.index package anyway, so
         // the class is already pkg-private... fix me: see LUCENE-4013
-        public ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
+        public ThreadState GetAndLock(/* Thread requestingThread, DocumentsWriter documentsWriter // LUCENENET: Not referenced */)
         {
             ThreadState threadState = null;
             lock (this)

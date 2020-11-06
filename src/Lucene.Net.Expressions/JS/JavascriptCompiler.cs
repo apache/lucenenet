@@ -511,7 +511,9 @@ namespace Lucene.Net.Expressions.JS
             gen.Emit(OpCodes.Conv_R8);
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         private void PushArith(OpCode op, ITree current, Type expected)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             PushBinaryOp(op, current, typeof(double), typeof(double));
         }

@@ -80,7 +80,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
                     case StreamTokenizer.TokenType_Word:
                         string s = stok.StringValue;
-                        PerfTask task = (PerfTask)Activator.CreateInstance(TaskClass(config, s), runData);
+                        PerfTask task = (PerfTask)Activator.CreateInstance(TaskClass(/*config, // LUCENENET: Not referenced */ s), runData);
                         task.AlgLineNum = stok.LineNumber;
                         task.DisableCounting = isDisableCountNextTask;
                         isDisableCountNextTask = false;
@@ -384,7 +384,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             return result.ToArray();
         }
 
-        private Type TaskClass(Config config, string taskName)
+        private Type TaskClass(/*Config config, // LUCENENET: Not referenced */ string taskName)
         {
             foreach (string pkg in taskPackages)
             {

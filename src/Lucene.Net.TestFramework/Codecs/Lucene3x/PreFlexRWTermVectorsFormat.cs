@@ -32,17 +32,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override TermVectorsReader VectorsReader(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
         {
-            return new Lucene3xTermVectorsReaderAnonymousInnerClassHelper(this, directory, segmentInfo, fieldInfos, context);
+            return new Lucene3xTermVectorsReaderAnonymousInnerClassHelper(directory, segmentInfo, fieldInfos, context);
         }
 
         private class Lucene3xTermVectorsReaderAnonymousInnerClassHelper : Lucene3xTermVectorsReader
         {
-            private readonly PreFlexRWTermVectorsFormat outerInstance;
-
-            public Lucene3xTermVectorsReaderAnonymousInnerClassHelper(PreFlexRWTermVectorsFormat outerInstance, Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
+            public Lucene3xTermVectorsReaderAnonymousInnerClassHelper(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
                 : base(directory, segmentInfo, fieldInfos, context)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected internal override bool SortTermsByUnicode()

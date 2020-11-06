@@ -70,14 +70,14 @@ namespace Lucene.Net.Queries.Function
         {
             private readonly BoostedQuery outerInstance;
 
-            private readonly IndexSearcher searcher;
+            //private readonly IndexSearcher searcher; // LUCENENET: Never read
             internal readonly Weight qWeight;
             internal readonly IDictionary fcontext;
 
             public BoostedWeight(BoostedQuery outerInstance, IndexSearcher searcher)
             {
                 this.outerInstance = outerInstance;
-                this.searcher = searcher;
+                //this.searcher = searcher; // LUCENENET: Never read
                 this.qWeight = outerInstance.q.CreateWeight(searcher);
                 this.fcontext = ValueSource.NewContext(searcher);
                 outerInstance.boostVal.CreateWeight(fcontext, searcher);

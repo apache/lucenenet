@@ -101,16 +101,13 @@ namespace Lucene.Net.Tests.Queries
 
             protected override CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
             {
-                return new CustomScoreProviderAnonymousInnerClassHelper(this, context);
+                return new CustomScoreProviderAnonymousInnerClassHelper(context);
             }
 
             private class CustomScoreProviderAnonymousInnerClassHelper : CustomScoreProvider
             {
-                private readonly CustomAddQuery outerInstance;
-
-                public CustomScoreProviderAnonymousInnerClassHelper(CustomAddQuery outerInstance, AtomicReaderContext context) : base(context)
+                public CustomScoreProviderAnonymousInnerClassHelper(AtomicReaderContext context) : base(context)
                 {
-                    this.outerInstance = outerInstance;
                 }
 
                 public override float CustomScore(int doc, float subQueryScore, float valSrcScore)
@@ -144,16 +141,13 @@ namespace Lucene.Net.Tests.Queries
 
             protected override CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
             {
-                return new CustomScoreProviderAnonymousInnerClassHelper(this, context);
+                return new CustomScoreProviderAnonymousInnerClassHelper(context);
             }
 
             private class CustomScoreProviderAnonymousInnerClassHelper : CustomScoreProvider
             {
-                private readonly CustomMulAddQuery outerInstance;
-
-                public CustomScoreProviderAnonymousInnerClassHelper(CustomMulAddQuery outerInstance, AtomicReaderContext context) : base(context)
+                public CustomScoreProviderAnonymousInnerClassHelper(AtomicReaderContext context) : base(context)
                 {
-                    this.outerInstance = outerInstance;
                 }
 
                 public override float CustomScore(int doc, float subQueryScore, float[] valSrcScores)
@@ -195,23 +189,18 @@ namespace Lucene.Net.Tests.Queries
 
         private sealed class CustomExternalQuery : CustomScoreQuery
         {
-            private readonly TestCustomScoreQuery outerInstance;
-
             protected override CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
             {
                 FieldCache.Int32s values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, INT_FIELD, false);
-                return new CustomScoreProviderAnonymousInnerClassHelper(this, context, values);
+                return new CustomScoreProviderAnonymousInnerClassHelper(context, values);
             }
             
             private class CustomScoreProviderAnonymousInnerClassHelper : CustomScoreProvider
             {
-                private readonly CustomExternalQuery outerInstance;
-
                 private FieldCache.Int32s values;
 
-                public CustomScoreProviderAnonymousInnerClassHelper(CustomExternalQuery outerInstance, AtomicReaderContext context, FieldCache.Int32s values) : base(context)
+                public CustomScoreProviderAnonymousInnerClassHelper(AtomicReaderContext context, FieldCache.Int32s values) : base(context)
                 {
-                    this.outerInstance = outerInstance;
                     this.values = values;
                 }
 
@@ -222,9 +211,8 @@ namespace Lucene.Net.Tests.Queries
                 }
             }
 
-            public CustomExternalQuery(TestCustomScoreQuery outerInstance, Query q) : base(q)
+            public CustomExternalQuery(Query q) : base(q)
             {
-                this.outerInstance = outerInstance;
             }
         }
         
@@ -236,7 +224,7 @@ namespace Lucene.Net.Tests.Queries
             q1.Add(new TermQuery(new Term(TEXT_FIELD, "aid")), Occur.SHOULD);
             q1.Add(new TermQuery(new Term(TEXT_FIELD, "text")), Occur.SHOULD);
 
-            Query q = new CustomExternalQuery(this, q1);
+            Query q = new CustomExternalQuery(q1);
             Log(q);
 
             IndexReader r = DirectoryReader.Open(dir);

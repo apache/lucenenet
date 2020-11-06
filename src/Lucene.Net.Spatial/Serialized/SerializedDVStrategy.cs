@@ -126,7 +126,7 @@ namespace Lucene.Net.Spatial.Serialized
         //TODO raise to SpatialStrategy
         public virtual ValueSource MakeShapeValueSource()
         {
-            return new ShapeDocValueSource(this, FieldName, m_ctx.BinaryCodec);
+            return new ShapeDocValueSource(FieldName, m_ctx.BinaryCodec);
         }
 
         /// <summary>
@@ -174,20 +174,18 @@ namespace Lucene.Net.Spatial.Serialized
                         //null Map context -- we simply don't have one. That's ok.
                         FunctionValues predFuncValues = outerInstance.predicateValueSource.GetValues(null, context);
 
-                        return new BitsAnonymousHelper(this, predFuncValues, context, acceptDocs);
+                        return new BitsAnonymousHelper(predFuncValues, context, acceptDocs);
                     }
                 }
 
                 internal class BitsAnonymousHelper : IBits
                 {
-                    private readonly DocIdSetAnonymousHelper outerInstance;
                     private readonly FunctionValues predFuncValues;
                     private readonly AtomicReaderContext context;
                     private readonly IBits acceptDocs;
 
-                    public BitsAnonymousHelper(DocIdSetAnonymousHelper outerInstance, FunctionValues predFuncValues, AtomicReaderContext context, IBits acceptDocs)
+                    public BitsAnonymousHelper(FunctionValues predFuncValues, AtomicReaderContext context, IBits acceptDocs)
                     {
-                        this.outerInstance = outerInstance;
                         this.predFuncValues = predFuncValues;
                         this.context = context;
                         this.acceptDocs = acceptDocs;
@@ -229,13 +227,11 @@ namespace Lucene.Net.Spatial.Serialized
         /// <seealso cref="MakeShapeValueSource()"/>
         internal class ShapeDocValueSource : ValueSource
         {
-            private readonly SerializedDVStrategy outerInstance;
             private readonly string fieldName;
             private readonly BinaryCodec binaryCodec;//spatial4n
 
-            internal ShapeDocValueSource(SerializedDVStrategy outerInstance, string fieldName, BinaryCodec binaryCodec)
+            internal ShapeDocValueSource(string fieldName, BinaryCodec binaryCodec)
             {
-                this.outerInstance = outerInstance;
                 this.fieldName = fieldName;
                 this.binaryCodec = binaryCodec;
             }

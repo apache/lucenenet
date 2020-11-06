@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private int max = 0;
 
-        private int repeat = 0;
+        //private int repeat = 0; // LUCENENET: Never read
 
         // static Logger log = Logger.getLogger(BigramDictionary.class);
 
@@ -400,13 +400,13 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 hash2 = PRIME_BIGRAM_LENGTH + hash2;
             int index = hash1;
             int i = 1;
-            repeat++;
+            //repeat++; // LUCENENET: Never read
             while (bigramHashTable[index] != 0 && bigramHashTable[index] != hashId
                 && i < PRIME_BIGRAM_LENGTH)
             {
                 index = (hash1 + i * hash2) % PRIME_BIGRAM_LENGTH;
                 i++;
-                repeat++;
+                //repeat++; // LUCENENET: Never read
                 if (i > max)
                     max = i;
             }

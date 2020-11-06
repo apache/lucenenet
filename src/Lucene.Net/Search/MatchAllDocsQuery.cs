@@ -33,17 +33,14 @@ namespace Lucene.Net.Search
     {
         private class MatchAllScorer : Scorer
         {
-            private readonly MatchAllDocsQuery outerInstance;
-
             internal readonly float score;
             private int doc = -1;
             private readonly int maxDoc;
             private readonly IBits liveDocs;
 
-            internal MatchAllScorer(MatchAllDocsQuery outerInstance, IndexReader reader, IBits liveDocs, Weight w, float score)
+            internal MatchAllScorer(IndexReader reader, IBits liveDocs, Weight w, float score)
                 : base(w)
             {
-                this.outerInstance = outerInstance;
                 this.liveDocs = liveDocs;
                 this.score = score;
                 maxDoc = reader.MaxDoc;
@@ -91,7 +88,7 @@ namespace Lucene.Net.Search
             private float queryWeight;
             private float queryNorm;
 
-            public MatchAllDocsWeight(MatchAllDocsQuery outerInstance, IndexSearcher searcher)
+            public MatchAllDocsWeight(MatchAllDocsQuery outerInstance /*, IndexSearcher searcher // LUCENENET: Never read */)
             {
                 this.outerInstance = outerInstance;
             }
@@ -117,7 +114,7 @@ namespace Lucene.Net.Search
 
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                return new MatchAllScorer(outerInstance, context.Reader, acceptDocs, this, queryWeight);
+                return new MatchAllScorer(context.Reader, acceptDocs, this, queryWeight);
             }
 
             public override Explanation Explain(AtomicReaderContext context, int doc)
@@ -136,7 +133,7 @@ namespace Lucene.Net.Search
 
         public override Weight CreateWeight(IndexSearcher searcher)
         {
-            return new MatchAllDocsWeight(this, searcher);
+            return new MatchAllDocsWeight(this /*, searcher // LUCENENET: Never read */);
         }
 
         public override void ExtractTerms(ISet<Term> terms)

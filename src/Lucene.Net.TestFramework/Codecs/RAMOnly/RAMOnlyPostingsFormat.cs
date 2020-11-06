@@ -452,9 +452,8 @@ namespace Lucene.Net.Codecs.RAMOnly
             private readonly IBits liveDocs;
             private RAMDoc current;
             private int upto = -1;
-#pragma warning disable 414
-            private int posUpto = 0; // LUCENENET NOTE: Not used
-#pragma warning restore 414
+            //private int posUpto = 0; // LUCENENET: Never read
+
 
             public RAMDocsEnum(RAMTerm ramTerm, IBits liveDocs)
             {
@@ -478,7 +477,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                         current = ramTerm.docs[upto];
                         if (liveDocs == null || liveDocs.Get(current.docID))
                         {
-                            posUpto = 0;
+                            //posUpto = 0; // LUCENENET: Never read
                             return current.docID;
                         }
                     }

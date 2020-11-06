@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             private readonly bool fixedPayloads;
             private readonly IBits liveDocs;
             private readonly BytesRef payload;
-            private readonly IndexOptions options;
+            //private readonly IndexOptions options; // LUCENENET: Never read
             private readonly bool doPositions;
 
             private int docID;
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
                 fixedPayloads = random.NextBoolean();
                 var payloadBytes = new byte[payloadSize];
                 payload = new BytesRef(payloadBytes);
-                this.options = options;
+                //this.options = options; // LUCENENET: Never read
                 // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
                 doPositions = IndexOptionsComparer.Default.Compare(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, options) <= 0;
             }

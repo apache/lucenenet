@@ -230,12 +230,10 @@ namespace Lucene.Net.Store
         {
             internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
             private readonly FileStream fc;
-            private readonly MMapDirectory outerInstance;
 
             internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc)
                 : base(resourceDescription, null, fc.Length, outerInstance.chunkSizePower, true)
             {
-                this.outerInstance = outerInstance;
                 this.fc = fc ?? throw new ArgumentNullException(nameof(fc));
                 this.SetBuffers(outerInstance.Map(this, fc, 0, fc.Length));
             }

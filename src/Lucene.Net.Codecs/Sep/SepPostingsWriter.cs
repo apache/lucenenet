@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.Sep
         private bool storePayloads;
         private IndexOptions indexOptions;
 
-        private FieldInfo fieldInfo;
+        //private FieldInfo fieldInfo; // LUCENENET: Never read
 
         private int lastPayloadLength;
         private int lastPosition;
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Sep
         // our parent calls setField whenever the field changes
         public override int SetField(FieldInfo fieldInfo)
         {
-            this.fieldInfo = fieldInfo;
+            //this.fieldInfo = fieldInfo; // LUCENENET: Never read
             this.indexOptions = fieldInfo.IndexOptions;
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
             if (IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)

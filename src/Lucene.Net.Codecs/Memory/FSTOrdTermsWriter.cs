@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs.Memory
         public const int SKIP_INTERVAL = 8;
 
         private readonly PostingsWriterBase postingsWriter;
-        private readonly FieldInfos fieldInfos;
+        //private readonly FieldInfos fieldInfos; // LUCENENET: Never read
         private readonly IList<FieldMetaData> _fields = new List<FieldMetaData>();
         private IndexOutput blockOut = null;
         private IndexOutput indexOut = null;
@@ -161,7 +161,7 @@ namespace Lucene.Net.Codecs.Memory
                 TERMS_BLOCK_EXTENSION);
 
             this.postingsWriter = postingsWriter;
-            fieldInfos = state.FieldInfos;
+            //fieldInfos = state.FieldInfos; // LUCENENET: Never read
 
             var success = false;
             try

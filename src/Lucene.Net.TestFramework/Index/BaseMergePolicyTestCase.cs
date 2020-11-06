@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
             using (Directory dir = NewDirectory())
             {
                 AtomicBoolean mayMerge = new AtomicBoolean(true);
-                MergeScheduler mergeScheduler = new SerialMergeSchedulerAnonymousInnerClassHelper(this, mayMerge);
+                MergeScheduler mergeScheduler = new SerialMergeSchedulerAnonymousInnerClassHelper(mayMerge);
                 using (IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(mergeScheduler).SetMergePolicy(NewMergePolicy())))
                 {
                     writer.Config.MergePolicy.NoCFSRatio = Random.NextBoolean() ? 0 : 1;
@@ -84,13 +84,10 @@ namespace Lucene.Net.Index
 
         private class SerialMergeSchedulerAnonymousInnerClassHelper : SerialMergeScheduler
         {
-            private readonly BaseMergePolicyTestCase outerInstance;
-
             private AtomicBoolean mayMerge;
 
-            public SerialMergeSchedulerAnonymousInnerClassHelper(BaseMergePolicyTestCase outerInstance, AtomicBoolean mayMerge)
+            public SerialMergeSchedulerAnonymousInnerClassHelper(AtomicBoolean mayMerge)
             {
-                this.outerInstance = outerInstance;
                 this.mayMerge = mayMerge;
             }
 

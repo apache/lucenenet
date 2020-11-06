@@ -951,7 +951,7 @@ namespace Lucene.Net.Index
 #pragma warning disable 612, 618
                         if (Debugging.AssertsEnabled) Debugging.Assert(reader.HasNorms(info.Name)); // deprecated path
 #pragma warning restore 612, 618
-                        CheckNorms(info, reader, infoStream);
+                        CheckNorms(info, reader /*, infoStream // LUCENENET: Not used */);
                         ++status.TotFields;
                     }
                     else
@@ -2031,7 +2031,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private static void CheckNorms(FieldInfo fi, AtomicReader reader, TextWriter infoStream)
+        private static void CheckNorms(FieldInfo fi, AtomicReader reader /*, TextWriter infoStream // LUCENENET: Not used */)
         {
             switch (fi.NormType)
             {

@@ -182,7 +182,7 @@ namespace Lucene.Net.Util
 
             private IComparer<BytesRef> comp;
             private int[] compact;
-            private readonly BytesRef pivot = new BytesRef(), scratch1 = new BytesRef(), scratch2 = new BytesRef();
+            private readonly BytesRef pivot = new BytesRef(), /*scratch1 = new BytesRef(), // LUCENENET: Never read */ scratch2 = new BytesRef();
 
             public IntroSorterAnonymousInnerClassHelper(BytesRefHash outerInstance, IComparer<BytesRef> comp, int[] compact)
             {
@@ -202,6 +202,7 @@ namespace Lucene.Net.Util
             {
                 int id1 = compact[i], id2 = compact[j];
                 if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.bytesStart.Length > id1 && outerInstance.bytesStart.Length > id2);
+                // LUCENENET NOTE: It is critical that this be outerInstance.scratch1 instead of scratch1
                 outerInstance.pool.SetBytesRef(outerInstance.scratch1, outerInstance.bytesStart[id1]);
                 outerInstance.pool.SetBytesRef(scratch2, outerInstance.bytesStart[id2]);
                 return comp.Compare(outerInstance.scratch1, scratch2);

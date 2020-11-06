@@ -63,7 +63,9 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             }
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         private string[] BestQueries(string field, int numQueries)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             string[] words = BestTerms("body", 4 * numQueries);
             int n = words.Length;

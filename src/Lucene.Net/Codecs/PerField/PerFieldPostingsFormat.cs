@@ -194,16 +194,12 @@ namespace Lucene.Net.Codecs.PerField
 
         private class FieldsReader : FieldsProducer
         {
-            private readonly PerFieldPostingsFormat outerInstance;
-
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
             internal readonly IDictionary<string, FieldsProducer> fields = new JCG.SortedDictionary<string, FieldsProducer>(StringComparer.Ordinal);
             internal readonly IDictionary<string, FieldsProducer> formats = new Dictionary<string, FieldsProducer>();
 
-            public FieldsReader(PerFieldPostingsFormat outerInstance, SegmentReadState readState)
+            public FieldsReader(SegmentReadState readState)
             {
-                this.outerInstance = outerInstance;
-
                 // Read _X.per and init each format:
                 bool success = false;
                 try
@@ -290,7 +286,7 @@ namespace Lucene.Net.Codecs.PerField
 
         public override sealed FieldsProducer FieldsProducer(SegmentReadState state)
         {
-            return new FieldsReader(this, state);
+            return new FieldsReader(state);
         }
 
         /// <summary>

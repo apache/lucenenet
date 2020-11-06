@@ -44,12 +44,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         private class ValuesAnonymousInnerClassHelper : Values
         {
-            private readonly DefFunction outerInstance;
-
             public ValuesAnonymousInnerClassHelper(DefFunction outerInstance, FunctionValues[] valsArr)
                 : base(outerInstance, valsArr)
             {
-                this.outerInstance = outerInstance;
                 upto = valsArr.Length - 1;
             }
 

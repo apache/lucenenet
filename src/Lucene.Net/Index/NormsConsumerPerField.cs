@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
         private readonly FieldInvertState fieldState;
         private NumericDocValuesWriter consumer;
 
-        public NormsConsumerPerField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo, NormsConsumer parent)
+        public NormsConsumerPerField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo /*, NormsConsumer parent // LUCENENET: Not referenced */)
         {
             this.fieldInfo = fieldInfo;
             docState = docInverterPerField.docState;

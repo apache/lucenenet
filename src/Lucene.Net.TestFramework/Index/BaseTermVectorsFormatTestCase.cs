@@ -250,8 +250,6 @@ namespace Lucene.Net.Index
         // TODO: use CannedTokenStream?
         protected internal class RandomTokenStream : TokenStream
         {
-            private readonly BaseTermVectorsFormatTestCase outerInstance;
-
             internal readonly string[] terms;
             internal readonly BytesRef[] termBytes;
             internal readonly int[] positionsIncrements;
@@ -269,15 +267,13 @@ namespace Lucene.Net.Index
             internal readonly IPayloadAttribute pAtt;
             internal int i = 0;
 
-            protected internal RandomTokenStream(BaseTermVectorsFormatTestCase outerInstance, int len, string[] sampleTerms, BytesRef[] sampleTermBytes)
-                : this(outerInstance, len, sampleTerms, sampleTermBytes, Rarely())
+            protected internal RandomTokenStream(BaseTermVectorsFormatTestCase baseTermVectorsFormatTestCase, int len, string[] sampleTerms, BytesRef[] sampleTermBytes)
+                : this(baseTermVectorsFormatTestCase, len, sampleTerms, sampleTermBytes, Rarely())
             {
-                this.outerInstance = outerInstance;
             }
 
-            protected internal RandomTokenStream(BaseTermVectorsFormatTestCase outerInstance, int len, string[] sampleTerms, BytesRef[] sampleTermBytes, bool offsetsGoBackwards)
+            protected internal RandomTokenStream(BaseTermVectorsFormatTestCase baseTermVectorsFormatTestCase, int len, string[] sampleTerms, BytesRef[] sampleTermBytes, bool offsetsGoBackwards)
             {
-                this.outerInstance = outerInstance;
                 terms = new string[len];
                 termBytes = new BytesRef[len];
                 positionsIncrements = new int[len];
@@ -323,13 +319,13 @@ namespace Lucene.Net.Index
                 }
                 if (Rarely())
                 {
-                    Arrays.Fill(payloads, outerInstance.RandomPayload());
+                    Arrays.Fill(payloads, baseTermVectorsFormatTestCase.RandomPayload());
                 }
                 else
                 {
                     for (int i = 0; i < len; ++i)
                     {
-                        payloads[i] = outerInstance.RandomPayload();
+                        payloads[i] = baseTermVectorsFormatTestCase.RandomPayload();
                     }
                 }
 
@@ -402,15 +398,12 @@ namespace Lucene.Net.Index
 
         protected internal class RandomDocument
         {
-            private readonly BaseTermVectorsFormatTestCase outerInstance;
-
             internal readonly string[] fieldNames;
             internal readonly FieldType[] fieldTypes;
             internal readonly RandomTokenStream[] tokenStreams;
 
-            protected internal RandomDocument(BaseTermVectorsFormatTestCase outerInstance, int fieldCount, int maxTermCount, Options options, string[] fieldNames, string[] sampleTerms, BytesRef[] sampleTermBytes)
+            protected internal RandomDocument(BaseTermVectorsFormatTestCase baseTermVectorsFormaTestCase, int fieldCount, int maxTermCount, Options options, string[] fieldNames, string[] sampleTerms, BytesRef[] sampleTermBytes)
             {
-                this.outerInstance = outerInstance;
                 if (fieldCount > fieldNames.Length)
                 {
                     throw new ArgumentException();
@@ -418,7 +411,7 @@ namespace Lucene.Net.Index
                 this.fieldNames = new string[fieldCount];
                 fieldTypes = new FieldType[fieldCount];
                 tokenStreams = new RandomTokenStream[fieldCount];
-                Arrays.Fill(fieldTypes, outerInstance.FieldType(options));
+                Arrays.Fill(fieldTypes, baseTermVectorsFormaTestCase.FieldType(options));
                 ISet<string> usedFileNames = new JCG.HashSet<string>();
                 for (int i = 0; i < fieldCount; ++i)
                 {
@@ -431,7 +424,7 @@ namespace Lucene.Net.Index
                     //} while (usedFileNames.Contains(this.FieldNames[i]));
 
                     usedFileNames.Add(this.fieldNames[i]);
-                    tokenStreams[i] = new RandomTokenStream(outerInstance, TestUtil.NextInt32(Random, 1, maxTermCount), sampleTerms, sampleTermBytes);
+                    tokenStreams[i] = new RandomTokenStream(baseTermVectorsFormaTestCase, TestUtil.NextInt32(Random, 1, maxTermCount), sampleTerms, sampleTermBytes);
                 }
             }
 
@@ -454,9 +447,9 @@ namespace Lucene.Net.Index
             private readonly string[] terms;
             private readonly BytesRef[] termBytes;
 
-            protected internal RandomDocumentFactory(BaseTermVectorsFormatTestCase outerInstance, int distinctFieldNames, int disctinctTerms)
+            protected internal RandomDocumentFactory(BaseTermVectorsFormatTestCase baseTermVectorsFormatTestCase, int distinctFieldNames, int disctinctTerms)
             {
-                this.outerInstance = outerInstance;
+                this.outerInstance = baseTermVectorsFormatTestCase;
                 ISet<string> fieldNames = new JCG.HashSet<string>();
                 while (fieldNames.Count < distinctFieldNames)
                 {
@@ -951,7 +944,7 @@ namespace Lucene.Net.Index
                         ThreadJob[] threads = new ThreadJob[2];
                         for (int i = 0; i < threads.Length; ++i)
                         {
-                            threads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, docs, reader, exception, i);
+                            threads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, docs, reader, exception);
                         }
                         foreach (ThreadJob thread in threads)
                         {
@@ -975,16 +968,14 @@ namespace Lucene.Net.Index
             private readonly RandomDocument[] docs;
             private readonly IndexReader reader;
             private readonly AtomicReference<Exception> exception;
-            private readonly int i;
 
-            public ThreadAnonymousInnerClassHelper(BaseTermVectorsFormatTestCase outerInstance, int numDocs, RandomDocument[] docs, IndexReader reader, AtomicReference<Exception> exception, int i)
+            public ThreadAnonymousInnerClassHelper(BaseTermVectorsFormatTestCase outerInstance, int numDocs, RandomDocument[] docs, IndexReader reader, AtomicReference<Exception> exception)
             {
                 this.outerInstance = outerInstance;
                 this.numDocs = numDocs;
                 this.docs = docs;
                 this.reader = reader;
                 this.exception = exception;
-                this.i = i;
             }
 
             public override void Run()

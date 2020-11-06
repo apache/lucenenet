@@ -559,8 +559,6 @@ namespace Lucene.Net.Codecs.Memory
             // Iterates intersect result with automaton (cannot seek!)
             private sealed class IntersectTermsEnum : BaseTermsEnum
             {
-                private readonly FSTOrdTermsReader.TermsReader outerInstance;
-
                 /// <summary>True when current term's metadata is decoded.</summary>
                 private bool decoded;
 
@@ -607,7 +605,6 @@ namespace Lucene.Net.Codecs.Memory
                 internal IntersectTermsEnum(TermsReader outerInstance, CompiledAutomaton compiled, BytesRef startTerm) : base(outerInstance)
                 {
                     //if (TEST) System.out.println("Enum init, startTerm=" + startTerm);
-                    this.outerInstance = outerInstance;
                     this.fst = outerInstance.index;
                     this.fstReader = fst.GetBytesReader();
                     this.fstOutputs = outerInstance.index.Outputs;

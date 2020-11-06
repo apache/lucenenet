@@ -98,8 +98,8 @@ namespace Lucene.Net.Search.Spell
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
             IComparer<SuggestWordArrayWrapper> queueComparer = sortMethod == BreakSuggestionSortMethod.NUM_CHANGES_THEN_MAX_FREQUENCY 
-                ? (IComparer<SuggestWordArrayWrapper>)new LengthThenMaxFreqComparer(this) 
-                : new LengthThenSumFreqComparer(this);
+                ? (IComparer<SuggestWordArrayWrapper>)new LengthThenMaxFreqComparer() 
+                : new LengthThenSumFreqComparer();
             JCG.PriorityQueue<SuggestWordArrayWrapper> suggestions = new JCG.PriorityQueue<SuggestWordArrayWrapper>(queueInitialCapacity, queueComparer);
 
             int origFreq = ir.DocFreq(term);
@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.Spell
             }
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
-            IComparer<CombineSuggestionWrapper> queueComparer = new CombinationsThenFreqComparer(this);
+            IComparer<CombineSuggestionWrapper> queueComparer = new CombinationsThenFreqComparer();
             JCG.PriorityQueue<CombineSuggestionWrapper> suggestions = new JCG.PriorityQueue<CombineSuggestionWrapper>(queueInitialCapacity, queueComparer);
 
             int thisTimeEvaluations = 0;
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search.Spell
                                 word.Freq = combinedTermFreq;
                                 word.Score = origIndexes.Length - 1;
                                 word.String = combinedTerm.Text();
-                                CombineSuggestionWrapper suggestion = new CombineSuggestionWrapper(this, new CombineSuggestion(word, origIndexes), (origIndexes.Length - 1));
+                                CombineSuggestionWrapper suggestion = new CombineSuggestionWrapper(new CombineSuggestion(word, origIndexes), (origIndexes.Length - 1));
                                 suggestions.Enqueue(suggestion);
                                 if (suggestions.Count > maxSuggestions)
                                 {
@@ -290,7 +290,7 @@ namespace Lucene.Net.Search.Spell
                     SuggestWord rightWord = GenerateSuggestWord(ir, term.Field, rightText);
                     if (rightWord.Freq >= useMinSuggestionFrequency)
                     {
-                        SuggestWordArrayWrapper suggestion = new SuggestWordArrayWrapper(this, NewSuggestion(prefix, leftWord, rightWord));
+                        SuggestWordArrayWrapper suggestion = new SuggestWordArrayWrapper(NewSuggestion(prefix, leftWord, rightWord));
                         suggestions.Enqueue(suggestion);
                         if (suggestions.Count > maxSuggestions)
                         {
@@ -408,13 +408,6 @@ namespace Lucene.Net.Search.Spell
 
         private sealed class LengthThenMaxFreqComparer : IComparer<SuggestWordArrayWrapper>
         {
-            private readonly WordBreakSpellChecker outerInstance;
-
-            public LengthThenMaxFreqComparer(WordBreakSpellChecker outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public int Compare(SuggestWordArrayWrapper o1, SuggestWordArrayWrapper o2)
             {
                 if (o1.SuggestWords.Length != o2.SuggestWords.Length)
@@ -431,13 +424,6 @@ namespace Lucene.Net.Search.Spell
 
         private sealed class LengthThenSumFreqComparer : IComparer<SuggestWordArrayWrapper>
         {
-            private readonly WordBreakSpellChecker outerInstance;
-
-            public LengthThenSumFreqComparer(WordBreakSpellChecker outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             public int Compare(SuggestWordArrayWrapper o1, SuggestWordArrayWrapper o2)
             {
                 if (o1.SuggestWords.Length != o2.SuggestWords.Length)
@@ -454,11 +440,8 @@ namespace Lucene.Net.Search.Spell
 
         private sealed class CombinationsThenFreqComparer : IComparer<CombineSuggestionWrapper>
         {
-            private readonly WordBreakSpellChecker outerInstance;
-
-            public CombinationsThenFreqComparer(WordBreakSpellChecker outerInstance)
+            public CombinationsThenFreqComparer()
             {
-                this.outerInstance = outerInstance;
             }
 
             public int Compare(CombineSuggestionWrapper o1, CombineSuggestionWrapper o2)
@@ -477,15 +460,12 @@ namespace Lucene.Net.Search.Spell
 
         private class SuggestWordArrayWrapper : IComparable<SuggestWordArrayWrapper>
         {
-            private readonly WordBreakSpellChecker outerInstance;
-
             private readonly SuggestWord[] suggestWords;
             private readonly int freqMax;
             private readonly int freqSum;
 
-            internal SuggestWordArrayWrapper(WordBreakSpellChecker outerInstance, SuggestWord[] suggestWords)
+            internal SuggestWordArrayWrapper(SuggestWord[] suggestWords)
             {
-                this.outerInstance = outerInstance;
                 this.suggestWords = suggestWords;
                 int aFreqSum = 0;
                 int aFreqMax = 0;
@@ -516,14 +496,11 @@ namespace Lucene.Net.Search.Spell
 
         private class CombineSuggestionWrapper : IComparable<CombineSuggestionWrapper>
         {
-            private readonly WordBreakSpellChecker outerInstance;
-
             private readonly CombineSuggestion combineSuggestion;
             private readonly int numCombinations;
 
-            internal CombineSuggestionWrapper(WordBreakSpellChecker outerInstance, CombineSuggestion combineSuggestion, int numCombinations)
+            internal CombineSuggestionWrapper(CombineSuggestion combineSuggestion, int numCombinations)
             {
-                this.outerInstance = outerInstance;
                 this.combineSuggestion = combineSuggestion;
                 this.numCombinations = numCombinations;
             }

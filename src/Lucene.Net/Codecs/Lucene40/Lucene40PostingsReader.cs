@@ -542,12 +542,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private sealed class AllDocsSegmentDocsEnum : SegmentDocsEnumBase
         {
-            private readonly Lucene40PostingsReader outerInstance;
-
             internal AllDocsSegmentDocsEnum(Lucene40PostingsReader outerInstance, IndexInput startFreqIn)
                 : base(outerInstance, startFreqIn, null)
             {
-                this.outerInstance = outerInstance;
                 if (Debugging.AssertsEnabled) Debugging.Assert(m_liveDocs == null);
             }
 
@@ -635,12 +632,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private sealed class LiveDocsSegmentDocsEnum : SegmentDocsEnumBase
         {
-            private readonly Lucene40PostingsReader outerInstance;
-
             internal LiveDocsSegmentDocsEnum(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, IBits liveDocs)
                 : base(outerInstance, startFreqIn, liveDocs)
             {
-                this.outerInstance = outerInstance;
                 if (Debugging.AssertsEnabled) Debugging.Assert(liveDocs != null);
             }
 

@@ -733,7 +733,7 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                 }
                 if (Debugging.AssertsEnabled) Debugging.Assert(fieldLen >= 0);
-                return new TVTerms(outerInstance, numTerms[idx], fieldFlags[idx], prefixLengths[idx], suffixLengths[idx], termFreqs[idx], positionIndex[idx], positions[idx], startOffsets[idx], lengths[idx], payloadIndex[idx], payloadBytes, new BytesRef(suffixBytes.Bytes, suffixBytes.Offset + fieldOff, fieldLen));
+                return new TVTerms(numTerms[idx], fieldFlags[idx], prefixLengths[idx], suffixLengths[idx], termFreqs[idx], positionIndex[idx], positions[idx], startOffsets[idx], lengths[idx], payloadIndex[idx], payloadBytes, new BytesRef(suffixBytes.Bytes, suffixBytes.Offset + fieldOff, fieldLen));
             }
 
             public override int Count => fieldNumOffs.Length;
@@ -741,15 +741,12 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class TVTerms : Terms
         {
-            private readonly CompressingTermVectorsReader outerInstance;
-
             private readonly int numTerms, flags;
             private readonly int[] prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex;
             private readonly BytesRef termBytes, payloadBytes;
 
-            internal TVTerms(CompressingTermVectorsReader outerInstance, int numTerms, int flags, int[] prefixLengths, int[] suffixLengths, int[] termFreqs, int[] positionIndex, int[] positions, int[] startOffsets, int[] lengths, int[] payloadIndex, BytesRef payloadBytes, BytesRef termBytes)
+            internal TVTerms(int numTerms, int flags, int[] prefixLengths, int[] suffixLengths, int[] termFreqs, int[] positionIndex, int[] positions, int[] startOffsets, int[] lengths, int[] payloadIndex, BytesRef payloadBytes, BytesRef termBytes)
             {
-                this.outerInstance = outerInstance;
                 this.numTerms = numTerms;
                 this.flags = flags;
                 this.prefixLengths = prefixLengths;

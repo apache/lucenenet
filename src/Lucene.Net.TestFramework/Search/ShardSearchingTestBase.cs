@@ -579,7 +579,9 @@ namespace Lucene.Net.Search
 
             internal volatile ShardIndexSearcher currentShardSearcher;
 
+#pragma warning disable IDE0060 // Remove unused parameter
             public NodeState(ShardSearchingTestBase shardSearchingTestBase, Random random, int nodeID, int numNodes)
+#pragma warning restore IDE0060 // Remove unused parameter
             {
                 this.outerInstance = shardSearchingTestBase;
                 MyNodeID = nodeID;

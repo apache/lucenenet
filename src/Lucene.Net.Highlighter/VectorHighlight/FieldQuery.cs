@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.VectorHighlight
             foreach (Query flatQuery in expandQueries)
             {
                 QueryPhraseMap rootMap = GetRootMap(flatQuery);
-                rootMap.Add(flatQuery, reader);
+                rootMap.Add(flatQuery /*, reader // LUCENENET: Never read */);
                 if (!phraseHighlight && flatQuery is PhraseQuery)
                 {
                     PhraseQuery pq = (PhraseQuery)flatQuery;
@@ -458,7 +458,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 return map;
             }
 
-            internal void Add(Query query, IndexReader reader)
+            internal void Add(Query query /*, IndexReader reader // LUCENENET: Never read */)
             {
                 if (query is TermQuery)
                 {

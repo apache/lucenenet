@@ -189,7 +189,9 @@ namespace Lucene.Net.Index
         /// and the similarity score; returns the <see cref="SegmentInfo"/>
         /// describing the new segment.
         /// </summary>
+#pragma warning disable IDE0060 // Remove unused parameter
         public static SegmentCommitInfo WriteDoc(Random random, Directory dir, Analyzer analyzer, Similarity similarity, Document doc)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             using (IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(Util.LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity ?? IndexSearcher.DefaultSimilarity))) // LuceneTestCase.newIndexWriterConfig(random,
             {

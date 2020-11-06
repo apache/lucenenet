@@ -56,12 +56,9 @@ namespace Lucene.Net.Search.Spans
 
         private class CellQueue : Util.PriorityQueue<SpansCell>
         {
-            private readonly NearSpansUnordered outerInstance;
-
-            public CellQueue(NearSpansUnordered outerInstance, int size)
+            public CellQueue(int size)
                 : base(size)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected internal override bool LessThan(SpansCell spans1, SpansCell spans2)
@@ -157,7 +154,7 @@ namespace Lucene.Net.Search.Spans
             this.slop = query.Slop;
 
             SpanQuery[] clauses = query.GetClauses();
-            queue = new CellQueue(this, clauses.Length);
+            queue = new CellQueue(clauses.Length);
             subSpans = new Spans[clauses.Length];
             for (int i = 0; i < clauses.Length; i++)
             {

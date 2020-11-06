@@ -305,7 +305,7 @@ namespace Lucene.Net.Analysis
             ThreadJob[] threads = new ThreadJob[numThreads];
             for (int i = 0; i < numThreads; i++)
             {
-                threads[i] = new ThreadAnonymousInnerClassHelper(this, analyzer, map);
+                threads[i] = new ThreadAnonymousInnerClassHelper(analyzer, map);
             }
             for (int i = 0; i < numThreads; i++)
             {
@@ -319,14 +319,11 @@ namespace Lucene.Net.Analysis
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private readonly CollationTestBase outerInstance;
-
             private Analyzer analyzer;
             private IDictionary<string, BytesRef> map;
 
-            public ThreadAnonymousInnerClassHelper(CollationTestBase outerInstance, Analyzer analyzer, IDictionary<string, BytesRef> map)
+            public ThreadAnonymousInnerClassHelper(Analyzer analyzer, IDictionary<string, BytesRef> map)
             {
-                this.outerInstance = outerInstance;
                 this.analyzer = analyzer;
                 this.map = map;
             }

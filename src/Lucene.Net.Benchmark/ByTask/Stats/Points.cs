@@ -38,7 +38,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         /// <summary>
         /// Create a Points statistics object.
         /// </summary>
+#pragma warning disable IDE0060 // Remove unused parameter
         public Points(Config config)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
         }
 

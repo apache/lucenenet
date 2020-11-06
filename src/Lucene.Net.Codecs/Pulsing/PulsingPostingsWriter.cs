@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.Pulsing
         internal static readonly int VERSION_CURRENT = VERSION_META_ARRAY;
 
         private readonly SegmentWriteState _segmentState;
-        private IndexOutput _termsOut;
+        //private IndexOutput _termsOut; // LUCENENET: Never read
         private readonly List<FieldMetaData> _fields;
         private IndexOptions _indexOptions;
         private bool _storePayloads;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override void Init(IndexOutput termsOut)
         {
-            _termsOut = termsOut;
+            //_termsOut = termsOut; // LUCENENET: Never read
             CodecUtil.WriteHeader(termsOut, CODEC, VERSION_CURRENT);
             termsOut.WriteVInt32(_pending.Length); // encode maxPositions in header
             _wrappedPostingsWriter.Init(termsOut);

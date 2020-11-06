@@ -27,7 +27,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     public class StandardSyntaxParserTokenManager /*: StandardSyntaxParserConstants*/
     {
         /// <summary>Debug output.</summary>
+#pragma warning disable IDE0052 // Remove unread private members
         private TextWriter debugStream = Console.Out; // LUCENENET specific - made private, since we already have a setter
+#pragma warning restore IDE0052 // Remove unread private members
         /// <summary>Set debug output.</summary>
         public void SetDebugStream(TextWriter ds) { debugStream = new SafeTextWriterWrapper(ds); }
         private int JjStopStringLiteralDfa_2(int pos, long active0)
@@ -786,9 +788,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         static readonly long[] jjtoToken = {
            0x3ffffff01L,
         };
-        static readonly long[] jjtoSkip = {
-           0x80L,
-        };
+        //static readonly long[] jjtoSkip = { // LUCENENET: Never read
+        //   0x80L,
+        //};
         protected ICharStream m_input_stream;
         private readonly uint[] jjrounds = new uint[33];
         private readonly int[] jjstateSet = new int[66];

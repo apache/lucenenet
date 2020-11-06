@@ -63,7 +63,9 @@ namespace Lucene.Net.Util
         /// <param name="inputLength"> Number of bytes in <paramref name="inputArray"/> </param>
         /// <returns> The number of chars required to encode the number of <see cref="byte"/>s. </returns>
         // LUCENENET specific overload for CLS compliance
+#pragma warning disable IDE0060 // Remove unused parameter
         public static int GetEncodedLength(byte[] inputArray, int inputOffset, int inputLength)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             // Use long for intermediaries to protect against overflow
             return (int)((8L * inputLength + 14L) / 15L) + 1;
@@ -77,7 +79,9 @@ namespace Lucene.Net.Util
         /// <param name="inputLength"> Number of sbytes in <paramref name="inputArray"/> </param>
         /// <returns> The number of chars required to encode the number of <see cref="sbyte"/>s. </returns>
         [CLSCompliant(false)]
+#pragma warning disable IDE0060 // Remove unused parameter
         public static int GetEncodedLength(sbyte[] inputArray, int inputOffset, int inputLength)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             // Use long for intermediaries to protect against overflow
             return (int)((8L * inputLength + 14L) / 15L) + 1;

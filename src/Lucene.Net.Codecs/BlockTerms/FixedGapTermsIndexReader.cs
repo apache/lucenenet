@@ -129,7 +129,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                         throw new CorruptIndexException("invalid packedIndexStart: " + packedIndexStart + " indexStart: " + indexStart + "numIndexTerms: " + numIndexTerms + " (resource=" + input + ")");
                     }
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                    FieldIndexData previous = fields.Put(fieldInfo, new FieldIndexData(this, fieldInfo, numIndexTerms, indexStart, termsStart, packedIndexStart, packedOffsetsStart));
+                    FieldIndexData previous = fields.Put(fieldInfo, new FieldIndexData(this, /* fieldInfo, // LUCENENET: Not referenced */
+                        numIndexTerms, indexStart, termsStart, packedIndexStart, packedOffsetsStart));
                     if (previous != null)
                     {
                         throw new CorruptIndexException("duplicate field: " + fieldInfo.Name + " (resource=" + input + ")");
@@ -276,7 +277,8 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private readonly int numIndexTerms;
 
-            public FieldIndexData(FixedGapTermsIndexReader outerInstance, FieldInfo fieldInfo, int numIndexTerms, long indexStart, long termsStart,
+            public FieldIndexData(FixedGapTermsIndexReader outerInstance, /*FieldInfo fieldInfo, // LUCENENET: Not Referenced */
+                int numIndexTerms, long indexStart, long termsStart,
                 long packedIndexStart, long packedOffsetsStart)
             {
                 this.outerInstance = outerInstance;

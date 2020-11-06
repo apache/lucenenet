@@ -27,6 +27,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Programmatic
     /// </summary>
     public class Sample
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Sample shows optional args[] parameter")]
         public static void Main(string[] args)
         {
             var p = InitProps();

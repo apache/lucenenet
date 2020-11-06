@@ -343,7 +343,7 @@ namespace Lucene.Net.Codecs.Lucene42
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
             // write the ordinals as a binary field
-            AddBinaryField(field, new IterableAnonymousInnerClassHelper(this, docToOrdCount, ords));
+            AddBinaryField(field, new IterableAnonymousInnerClassHelper(docToOrdCount, ords));
 
             // write the values as FST
             WriteFST(field, values);
@@ -351,14 +351,11 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
         {
-            private readonly Lucene42DocValuesConsumer outerInstance;
-
             private IEnumerable<long?> docToOrdCount;
             private IEnumerable<long?> ords;
 
-            public IterableAnonymousInnerClassHelper(Lucene42DocValuesConsumer outerInstance, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
+            public IterableAnonymousInnerClassHelper(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
-                this.outerInstance = outerInstance;
                 this.docToOrdCount = docToOrdCount;
                 this.ords = ords;
             }

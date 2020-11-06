@@ -164,7 +164,9 @@ namespace Lucene.Net.Demo.Facet
             return DrillDown();
         }
 
+
         /// <summary>Runs the sum int/float associations examples and prints the results.</summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Demo shows use of optional args argument")]
         public static void Main(string[] args)
         {
             Console.WriteLine("Sum associations example:");

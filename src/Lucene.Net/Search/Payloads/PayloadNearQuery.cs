@@ -211,7 +211,9 @@ namespace Lucene.Net.Search.Payloads
             protected internal float m_payloadScore;
             internal int payloadsSeen;
 
+#pragma warning disable IDE0060 // Remove unused parameter
             protected internal PayloadNearSpanScorer(PayloadNearQuery outerInstance, Spans spans, Weight weight, Similarity similarity, Similarity.SimScorer docScorer)
+#pragma warning restore IDE0060 // Remove unused parameter
                 : base(spans, weight, docScorer)
             {
                 this.outerInstance = outerInstance;

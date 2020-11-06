@@ -56,11 +56,8 @@ namespace Lucene.Net.Codecs
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<BytesRef>
             {
-                private readonly IterableAnonymousInnerClassHelper outerInstance;
-
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance)
                 {
-                    this.outerInstance = outerInstance;
                     seenEmpty = false;
                     @in = outerInstance.iterable.GetEnumerator();
                 }
@@ -125,11 +122,8 @@ namespace Lucene.Net.Codecs
 
             private class IteratorAnonymousInnerClassHelper2 : IEnumerator<long?>
             {
-                private readonly IterableAnonymousInnerClassHelper2 outerInstance;
-
                 public IteratorAnonymousInnerClassHelper2(IterableAnonymousInnerClassHelper2 outerInstance)
                 {
-                    this.outerInstance = outerInstance;
                     @in = outerInstance.iterable.GetEnumerator();
                 }
 
@@ -188,11 +182,8 @@ namespace Lucene.Net.Codecs
 
             private class IteratorAnonymousInnerClassHelper3 : IEnumerator<long?>
             {
-                private readonly IterableAnonymousInnerClassHelper3 outerInstance;
-
                 public IteratorAnonymousInnerClassHelper3(IterableAnonymousInnerClassHelper3 outerInstance)
                 {
-                    this.outerInstance = outerInstance;
                     @in = outerInstance.iterable.GetEnumerator();
                 }
 

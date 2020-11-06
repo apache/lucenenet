@@ -277,19 +277,13 @@ namespace Lucene.Net.Index.Memory
                 throw new ArgumentException("keywords must not be null");
             }
 
-            return new TokenStreamAnonymousInnerClassHelper<T>(this, keywords);
+            return new TokenStreamAnonymousInnerClassHelper<T>(keywords);
         }
 
         private sealed class TokenStreamAnonymousInnerClassHelper<T> : TokenStream
         {
-            private readonly MemoryIndex outerInstance;
-
-            private ICollection<T> keywords;
-
-            public TokenStreamAnonymousInnerClassHelper(MemoryIndex outerInstance, ICollection<T> keywords)
+            public TokenStreamAnonymousInnerClassHelper(ICollection<T> keywords)
             {
-                this.outerInstance = outerInstance;
-                this.keywords = keywords;
                 iter = keywords.GetEnumerator();
                 start = 0;
                 termAtt = AddAttribute<ICharTermAttribute>();
@@ -540,7 +534,7 @@ namespace Lucene.Net.Index.Memory
             try
             {
                 float[] scores = new float[1]; // inits to 0.0f (no match)
-                searcher.Search(query, new CollectorAnonymousInnerClassHelper(this, scores));
+                searcher.Search(query, new CollectorAnonymousInnerClassHelper(scores));
                 float score = scores[0];
                 return score;
             } // can never happen (RAMDirectory)
@@ -569,13 +563,10 @@ namespace Lucene.Net.Index.Memory
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private readonly MemoryIndex outerInstance;
-
             private float[] scores;
 
-            public CollectorAnonymousInnerClassHelper(MemoryIndex outerInstance, float[] scores)
+            public CollectorAnonymousInnerClassHelper(float[] scores)
             {
-                this.outerInstance = outerInstance;
                 this.scores = scores;
             }
 

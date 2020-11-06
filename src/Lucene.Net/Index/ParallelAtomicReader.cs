@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
     {
         private void InitializeInstanceFields()
         {
-            fields = new ParallelFields(this);
+            fields = new ParallelFields();
         }
 
         private readonly FieldInfos fieldInfos;
@@ -194,14 +194,11 @@ namespace Lucene.Net.Index
         // Single instance of this, per ParallelReader instance
         private sealed class ParallelFields : Fields
         {
-            private readonly ParallelAtomicReader outerInstance;
-
             // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
             internal readonly IDictionary<string, Terms> fields = new JCG.SortedDictionary<string, Terms>(StringComparer.Ordinal);
 
-            internal ParallelFields(ParallelAtomicReader outerInstance)
+            internal ParallelFields()
             {
-                this.outerInstance = outerInstance;
             }
 
             internal void AddField(string fieldName, Terms terms)
@@ -282,7 +279,7 @@ namespace Lucene.Net.Index
                 {
                     if (fields == null)
                     {
-                        fields = new ParallelFields(this);
+                        fields = new ParallelFields();
                     }
                     fields.AddField(fieldName, vector);
                 }

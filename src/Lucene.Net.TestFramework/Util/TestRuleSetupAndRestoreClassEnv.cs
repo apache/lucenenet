@@ -61,10 +61,10 @@ namespace Lucene.Net.Util
     // we didn't port over the entire test suite from Java.
     internal sealed class TestRuleSetupAndRestoreClassEnv : AbstractBeforeAfterRule
     {
-        /// <summary>
-        /// Restore these system property values.
-        /// </summary>
-        private Dictionary<string, string> restoreProperties = new Dictionary<string, string>();
+        ///// <summary>
+        ///// Restore these system property values.
+        ///// </summary>
+        //private Dictionary<string, string> restoreProperties = new Dictionary<string, string>(); // LUCENENET: Never read
 
         private Codec savedCodec;
         private CultureInfo savedLocale;
@@ -242,7 +242,7 @@ namespace Lucene.Net.Util
                     dvFormat = DocValuesFormat.ForName(LuceneTestCase.TestDocValuesFormat);
                 }
 
-                codec = new Lucene46CodecAnonymousInnerClassHelper(this, format, dvFormat);
+                codec = new Lucene46CodecAnonymousInnerClassHelper(format, dvFormat);
             }
             else if ("SimpleText".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) 
                 || ("random".Equals(LuceneTestCase.TestCodec, StringComparison.Ordinal) && randomVal == 9 && LuceneTestCase.Rarely(random) && !ShouldAvoidCodec("SimpleText")))
@@ -317,14 +317,11 @@ namespace Lucene.Net.Util
 
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
-            private readonly TestRuleSetupAndRestoreClassEnv outerInstance;
-
             private PostingsFormat format;
             private DocValuesFormat dvFormat;
 
-            public Lucene46CodecAnonymousInnerClassHelper(TestRuleSetupAndRestoreClassEnv outerInstance, PostingsFormat format, DocValuesFormat dvFormat)
+            public Lucene46CodecAnonymousInnerClassHelper(PostingsFormat format, DocValuesFormat dvFormat)
             {
-                this.outerInstance = outerInstance;
                 this.format = format;
                 this.dvFormat = dvFormat;
             }

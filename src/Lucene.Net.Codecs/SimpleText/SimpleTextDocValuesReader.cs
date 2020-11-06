@@ -385,8 +385,6 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly OneField _field;
             private readonly IndexInput _input;
             private readonly BytesRef _scratch;
-            private readonly string _decoderFormat;
-            private readonly string _ordDecoderFormat;
 
             public SortedDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
                 OneField field, IndexInput input, BytesRef scratch)
@@ -395,8 +393,6 @@ namespace Lucene.Net.Codecs.SimpleText
                 _field = field;
                 _input = input;
                 _scratch = scratch;
-                _decoderFormat = field.Pattern;
-                _ordDecoderFormat = field.OrdPattern;
             }
 
             public override int GetOrd(int docId)
@@ -490,7 +486,6 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly OneField _field;
             private readonly IndexInput _input;
             private readonly BytesRef _scratch;
-            private readonly string _decoderFormat;
 
             public SortedSetDocValuesAnonymousInnerClassHelper(SimpleTextDocValuesReader outerInstance,
                 OneField field, IndexInput input, BytesRef scratch)
@@ -499,7 +494,6 @@ namespace Lucene.Net.Codecs.SimpleText
                 _field = field;
                 _input = input;
                 _scratch = scratch;
-                _decoderFormat = field.Pattern;
                 _currentOrds = Arrays.Empty<string>();
                 _currentIndex = 0;
             }

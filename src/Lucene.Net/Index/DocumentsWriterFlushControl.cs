@@ -274,7 +274,7 @@ namespace Lucene.Net.Index
                     long? bytes = flushingWriters[dwpt];
                     flushingWriters.Remove(dwpt);
                     flushBytes -= (long)bytes;
-                    perThreadPool.Recycle(dwpt);
+                    perThreadPool.Recycle(/* dwpt // LUCENENET: Not referenced */);
                     if (Debugging.AssertsEnabled) Debugging.Assert(AssertMemory());
                 }
                 finally
@@ -594,7 +594,7 @@ namespace Lucene.Net.Index
 
         internal ThreadState ObtainAndLock()
         {
-            ThreadState perThread = perThreadPool.GetAndLock(Thread.CurrentThread, documentsWriter);
+            ThreadState perThread = perThreadPool.GetAndLock(/* Thread.CurrentThread, documentsWriter // LUCENENET: Not used */);
             bool success = false;
             try
             {

@@ -232,7 +232,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                                 file.Dispose();
                             }
                             outerInstance.ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
-                            instance = new NumericDocValuesAnonymousInnerClassHelper(this, bytes);
+                            instance = new NumericDocValuesAnonymousInnerClassHelper(bytes);
                         }
                         return instance;
                     }
@@ -243,7 +243,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 private readonly byte[] bytes;
 
-                public NumericDocValuesAnonymousInnerClassHelper(NormsDocValues outerInstance, byte[] bytes)
+                public NumericDocValuesAnonymousInnerClassHelper(byte[] bytes)
                 {
                     this.bytes = bytes;
                 }

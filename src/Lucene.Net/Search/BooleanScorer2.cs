@@ -40,13 +40,10 @@ namespace Lucene.Net.Search
 
         private class Coordinator
         {
-            private readonly BooleanScorer2 outerInstance;
-
             internal readonly float[] coordFactors;
 
             internal Coordinator(BooleanScorer2 outerInstance, int maxCoord, bool disableCoord)
             {
-                this.outerInstance = outerInstance;
                 coordFactors = new float[outerInstance.optionalScorers.Count + outerInstance.requiredScorers.Count + 1];
                 for (int i = 0; i < coordFactors.Length; i++)
                 {
@@ -107,7 +104,7 @@ namespace Lucene.Net.Search
             prohibitedScorers = prohibited;
             coordinator = new Coordinator(this, maxCoord, disableCoord);
 
-            countingSumScorer = MakeCountingSumScorer(disableCoord);
+            countingSumScorer = MakeCountingSumScorer(/* disableCoord // LUCENENET: Not referenced */);
         }
 
         /// <summary>
@@ -183,7 +180,7 @@ namespace Lucene.Net.Search
         {
             private readonly BooleanScorer2 outerInstance;
 
-            public MinShouldMatchSumScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Lucene.Net.Search.Weight weight, IList<Scorer> scorers, int minNrShouldMatch)
+            public MinShouldMatchSumScorerAnonymousInnerClassHelper(BooleanScorer2 outerInstance, Weight weight, IList<Scorer> scorers, int minNrShouldMatch)
                 : base(weight, scorers, minNrShouldMatch)
             {
                 this.outerInstance = outerInstance;
@@ -213,7 +210,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private Scorer CountingConjunctionSumScorer(bool disableCoord, IList<Scorer> requiredScorers)
+        private Scorer CountingConjunctionSumScorer(/* bool disableCoord, // LUCENENET: Not Referenced */ IList<Scorer> requiredScorers)
         {
             // each scorer from the list counted as a single matcher
             int requiredNrMatchers = requiredScorers.Count;
@@ -261,7 +258,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private Scorer DualConjunctionSumScorer(bool disableCoord, Scorer req1, Scorer req2) // non counting.
+        private Scorer DualConjunctionSumScorer(/* bool disableCoord, // LUCENENET: Not Referenced */ Scorer req1, Scorer req2) // non counting.
         {
             return new ConjunctionScorer(m_weight, new Scorer[] { req1, req2 });
             // All scorers match, so defaultSimilarity always has 1 as
@@ -274,14 +271,14 @@ namespace Lucene.Net.Search
         /// Returns the scorer to be used for match counting and score summing.
         /// Uses requiredScorers, optionalScorers and prohibitedScorers.
         /// </summary>
-        private Scorer MakeCountingSumScorer(bool disableCoord) // each scorer counted as a single matcher
+        private Scorer MakeCountingSumScorer(/* bool disableCoord // LUCENENET: Not Referenced */) // each scorer counted as a single matcher
         {
             return (requiredScorers.Count == 0) 
-                ? MakeCountingSumScorerNoReq(disableCoord) 
-                : MakeCountingSumScorerSomeReq(disableCoord);
+                ? MakeCountingSumScorerNoReq(/* disableCoord // LUCENENET: Not Referenced */)
+                : MakeCountingSumScorerSomeReq(/* disableCoord // LUCENENET: Not Referenced */);
         }
 
-        private Scorer MakeCountingSumScorerNoReq(bool disableCoord) // No required scorers
+        private Scorer MakeCountingSumScorerNoReq(/* bool disableCoord // LUCENENET: Not Referenced */) // No required scorers
         {
             // minNrShouldMatch optional scorers are required, but at least 1
             int nrOptRequired = (minNrShouldMatch < 1) ? 1 : minNrShouldMatch;
@@ -296,25 +293,25 @@ namespace Lucene.Net.Search
             }
             else
             {
-                requiredCountingSumScorer = CountingConjunctionSumScorer(disableCoord, optionalScorers);
+                requiredCountingSumScorer = CountingConjunctionSumScorer(/* disableCoord, // LUCENENET: Not Referenced */ optionalScorers);
             }
             return AddProhibitedScorers(requiredCountingSumScorer);
         }
 
-        private Scorer MakeCountingSumScorerSomeReq(bool disableCoord) // At least one required scorer.
+        private Scorer MakeCountingSumScorerSomeReq(/* bool disableCoord // LUCENENET: Not Referenced */) // At least one required scorer.
         {
             if (optionalScorers.Count == minNrShouldMatch) // all optional scorers also required.
             {
                 List<Scorer> allReq = new List<Scorer>(requiredScorers);
                 allReq.AddRange(optionalScorers);
-                return AddProhibitedScorers(CountingConjunctionSumScorer(disableCoord, allReq));
+                return AddProhibitedScorers(CountingConjunctionSumScorer(/* disableCoord, // LUCENENET: Not Referenced */ allReq));
             } // optionalScorers.size() > minNrShouldMatch, and at least one required scorer
             else
             {
-                Scorer requiredCountingSumScorer = requiredScorers.Count == 1 ? new SingleMatchScorer(this, requiredScorers[0]) : CountingConjunctionSumScorer(disableCoord, requiredScorers);
+                Scorer requiredCountingSumScorer = requiredScorers.Count == 1 ? new SingleMatchScorer(this, requiredScorers[0]) : CountingConjunctionSumScorer(/* disableCoord, // LUCENENET: Not Referenced */ requiredScorers);
                 if (minNrShouldMatch > 0) // use a required disjunction scorer over the optional scorers
                 {
-                    return AddProhibitedScorers(DualConjunctionSumScorer(disableCoord, requiredCountingSumScorer, CountingDisjunctionSumScorer(optionalScorers, minNrShouldMatch))); // non counting
+                    return AddProhibitedScorers(DualConjunctionSumScorer(/* disableCoord, // LUCENENET: Not Referenced */ requiredCountingSumScorer, CountingDisjunctionSumScorer(optionalScorers, minNrShouldMatch))); // non counting
                 } // minNrShouldMatch == 0
                 else
                 {

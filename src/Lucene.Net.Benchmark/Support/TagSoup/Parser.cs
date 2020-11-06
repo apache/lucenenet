@@ -541,7 +541,9 @@ namespace TagSoup
         /// <param name="publicid"></param>
         /// <param name="systemid"></param>
         /// <returns></returns>
+#pragma warning disable IDE0060 // Remove unused parameter
         private Stream GetInputStream(string publicid, string systemid)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             var basis = new Uri("file://" + Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
             var url = new Uri(basis, systemid);
@@ -1305,7 +1307,7 @@ namespace TagSoup
             ETagBasic(buff, offset, length);
         }
 
-        private char[] theCommentBuffer = new char[2000];
+        //private char[] theCommentBuffer = new char[2000]; // LUCENENET: Never read
         public virtual void Cmnt(char[] buff, int offset, int length)
         {
             theLexicalHandler.Comment(buff, offset, length);

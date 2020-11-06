@@ -226,7 +226,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
                 }
             }
-            return new SimpleTVFields(this, fields);
+            return new SimpleTVFields(fields);
         }
 
         public override object Clone()
@@ -275,12 +275,10 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTVFields : Fields
         {
-            private readonly SimpleTextTermVectorsReader _outerInstance;
             private readonly IDictionary<string, SimpleTVTerms> _fields;
 
-            internal SimpleTVFields(SimpleTextTermVectorsReader outerInstance, IDictionary<string, SimpleTVTerms> fields)
+            internal SimpleTVFields(IDictionary<string, SimpleTVTerms> fields)
             {
-                _outerInstance = outerInstance;
                 _fields = fields;
             }
 

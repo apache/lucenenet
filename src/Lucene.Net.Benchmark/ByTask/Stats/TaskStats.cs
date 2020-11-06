@@ -40,8 +40,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         /// <summary>Round in which task run started.</summary>
         private int round;
 
-        /// <summary>Task start time.</summary>
-        private long start;
+        ///// <summary>Task start time.</summary>
+        //private long start; // LUCENENET: Never read
 
         /// <summary>Task elapsed time.  elapsed >= 0 indicates run completion!</summary>
         private long elapsed = -1;
@@ -83,7 +83,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             this.round = round;
             maxTotMem = GC.GetTotalMemory(false); //Runtime.getRuntime().totalMemory();
             maxUsedMem = maxTotMem; // - Runtime.getRuntime().freeMemory(); // LUCENENET TODO: available RAM
-            start = Stopwatch.GetTimestamp();
+            //start = Stopwatch.GetTimestamp(); // LUCENENET: Never read
         }
 
         /// <summary>

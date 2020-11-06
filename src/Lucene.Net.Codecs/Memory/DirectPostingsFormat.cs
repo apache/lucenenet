@@ -1159,13 +1159,6 @@ namespace Lucene.Net.Codecs.Memory
 
                 private sealed class State
                 {
-                    private readonly DirectPostingsFormat.DirectField.DirectIntersectTermsEnum outerInstance;
-
-                    public State(DirectPostingsFormat.DirectField.DirectIntersectTermsEnum outerInstance)
-                    {
-                        this.outerInstance = outerInstance;
-                    }
-
                     internal int changeOrd;
                     internal int state;
                     internal Transition[] transitions;
@@ -1185,7 +1178,7 @@ namespace Lucene.Net.Codecs.Memory
                     compiledAutomaton = compiled;
                     termOrd = -1;
                     states = new State[1];
-                    states[0] = new State(this);
+                    states[0] = new State();
                     states[0].changeOrd = outerInstance.terms.Length;
                     states[0].state = runAutomaton.InitialState;
                     states[0].transitions = compiledAutomaton.SortedTransitions[states[0].state];
@@ -1380,7 +1373,7 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         State[] newStates = new State[states.Length + 1];
                         Array.Copy(states, 0, newStates, 0, states.Length);
-                        newStates[states.Length] = new State(this);
+                        newStates[states.Length] = new State();
                         states = newStates;
                     }
                 }

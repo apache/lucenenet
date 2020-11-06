@@ -227,7 +227,7 @@ namespace Lucene.Net.Index
 
         internal void ShrinkHash()
         {
-            termsHashPerField.ShrinkHash(maxNumPostings);
+            termsHashPerField.ShrinkHash(/* maxNumPostings // LUCENENET: Not used */);
             maxNumPostings = 0;
         }
 

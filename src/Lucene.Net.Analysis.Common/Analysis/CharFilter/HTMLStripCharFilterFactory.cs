@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.CharFilters
     public class HTMLStripCharFilterFactory : CharFilterFactory
     {
         private readonly ICollection<string> escapedTags;
-        private static readonly Regex TAG_NAME_PATTERN = new Regex(@"[^\\s,]+", RegexOptions.Compiled);
+        //private static readonly Regex TAG_NAME_PATTERN = new Regex(@"[^\\s,]+", RegexOptions.Compiled); // LUCENENET: Never read
 
         /// <summary>
         /// Creates a new <see cref="HTMLStripCharFilterFactory"/> </summary>

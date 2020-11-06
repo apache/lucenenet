@@ -199,12 +199,12 @@ namespace Lucene.Net.Search
         // Any time a prohibited clause matches we set bit 0:
         private const int PROHIBITED_MASK = 1;
 
-        private readonly Weight weight;
+        //private readonly Weight weight; // LUCENENET: Never read
 
         internal BooleanScorer(BooleanWeight weight, bool disableCoord, int minNrShouldMatch, IList<BulkScorer> optionalScorers, IList<BulkScorer> prohibitedScorers, int maxCoord)
         {
             this.minNrShouldMatch = minNrShouldMatch;
-            this.weight = weight;
+            //this.weight = weight; // LUCENENET: Never read
 
             foreach (BulkScorer scorer in optionalScorers)
             {

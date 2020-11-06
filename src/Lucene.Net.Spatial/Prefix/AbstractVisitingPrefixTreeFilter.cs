@@ -294,7 +294,7 @@ namespace Lucene.Net.Spatial.Prefix
                     {
                         return;//not expected
                     }
-                    curVNode.children = new VNodeCellIterator(this, subCellsIter, new VNode(curVNode));
+                    curVNode.children = new VNodeCellIterator(subCellsIter, new VNode(curVNode));
                 }
                 else
                 {
@@ -360,15 +360,12 @@ namespace Lucene.Net.Spatial.Prefix
             /// </summary>
             private class VNodeCellIterator : IEnumerator<VNode>
             {
-                private readonly VisitorTemplate outerInstance;
-
                 internal readonly IEnumerator<Cell> cellIter;
                 private readonly VNode vNode;
                 private bool first = true;
 
-                internal VNodeCellIterator(VisitorTemplate outerInstance, IEnumerator<Cell> cellIter, VNode vNode)
+                internal VNodeCellIterator(IEnumerator<Cell> cellIter, VNode vNode)
                 {
-                    this.outerInstance = outerInstance;
                     //term loop
                     this.cellIter = cellIter;
                     this.vNode = vNode;

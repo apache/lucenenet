@@ -31,7 +31,9 @@
     <Description>Query parsers and parsing framework for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
     <PackageTags>$(PackageTags);query;queryparser</PackageTags>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
+    <NoWarn Label="Remove unused parameter">$(NoWarn);IDE0060</NoWarn>
   </PropertyGroup>
   
   <ItemGroup>

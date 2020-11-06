@@ -32,9 +32,11 @@ namespace Lucene.Net.QueryParsers.Classic
             temp_writer.AutoFlush = true;
             debugStream = temp_writer;
         }
-        
+
         /// <summary>Debug output. </summary>
+#pragma warning disable IDE0052 // Remove unread private members
         private TextWriter debugStream; // LUCENENET specific - made private, since we already have a setter
+#pragma warning restore IDE0052 // Remove unread private members
         /// <summary>Set debug output. </summary>
         public virtual void SetDebugStream(TextWriter ds)
         {

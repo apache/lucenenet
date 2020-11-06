@@ -108,8 +108,8 @@ namespace Lucene.Net.Codecs.Memory
             private readonly FieldInfo field;
             private readonly Builder<BytesRef> builder;
             private readonly ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
-            private readonly bool doPackFST;
-            private readonly float acceptableOverheadRatio;
+            //private readonly bool doPackFST; // LUCENENET: Never read
+            //private readonly float acceptableOverheadRatio; // LUCENENET: Never read
             private int termCount;
 
             public TermsWriter(IndexOutput @out, FieldInfo field, bool doPackFST, float acceptableOverheadRatio)
@@ -118,8 +118,8 @@ namespace Lucene.Net.Codecs.Memory
 
                 this.@out = @out;
                 this.field = field;
-                this.doPackFST = doPackFST;
-                this.acceptableOverheadRatio = acceptableOverheadRatio;
+                //this.doPackFST = doPackFST; // LUCENENET: Never read
+                //this.acceptableOverheadRatio = acceptableOverheadRatio; // LUCENENET: Never read
                 builder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPackFST, acceptableOverheadRatio, true, 15);
             }
 

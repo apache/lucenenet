@@ -58,7 +58,9 @@ namespace Lucene.Net.Analysis.Ja.Util
             characterCategoryMap[codePoint] = CharacterDefinition.LookupCharacterClass(characterClassName);
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         public void PutInvokeDefinition(string characterClassName, int invoke, int group, int length)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             byte characterClass = CharacterDefinition.LookupCharacterClass(characterClassName);
             invokeMap[characterClass] = invoke == 1;

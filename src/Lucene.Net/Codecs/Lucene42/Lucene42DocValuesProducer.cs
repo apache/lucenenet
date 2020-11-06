@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 numerics = new Dictionary<int, NumericEntry>();
                 binaries = new Dictionary<int, BinaryEntry>();
                 fsts = new Dictionary<int, FSTEntry>();
-                ReadFields(@in, state.FieldInfos);
+                ReadFields(@in /*, state.FieldInfos // LUCENENET: Never read */);
 
                 if (version >= VERSION_CHECKSUM)
                 {
@@ -154,7 +154,7 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        private void ReadFields(IndexInput meta, FieldInfos infos)
+        private void ReadFields(IndexInput meta /*, FieldInfos infos // LUCENENET: Never read */)
         {
             int fieldNumber = meta.ReadVInt32();
             while (fieldNumber != -1)
@@ -276,7 +276,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     byte[] bytes = new byte[maxDoc];
                     data.ReadBytes(bytes, 0, bytes.Length);
                     ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
-                    return new NumericDocValuesAnonymousInnerClassHelper2(this, bytes);
+                    return new NumericDocValuesAnonymousInnerClassHelper2(bytes);
 
                 case GCD_COMPRESSED:
                     long min = data.ReadInt64();
@@ -312,7 +312,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             private readonly byte[] bytes;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(Lucene42DocValuesProducer outerInstance, byte[] bytes)
+            public NumericDocValuesAnonymousInnerClassHelper2(byte[] bytes)
             {
                 this.bytes = bytes;
             }

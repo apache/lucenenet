@@ -420,7 +420,9 @@ namespace Lucene.Net.Analysis
             }
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, bool[] keywordAtts, bool offsetsAreCorrect)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             AssertTokenStreamContents(ts, output, startOffsets, endOffsets, types, posIncrements, posLengths, finalOffset, null, null, offsetsAreCorrect, null);
         }

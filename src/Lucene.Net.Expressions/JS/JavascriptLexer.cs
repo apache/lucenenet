@@ -2173,7 +2173,9 @@ loop2_break: ;
             public override string Description
                 => "346:1: DECIMAL : ( DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )? | AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )? | DECIMALINTEGER ( EXPONENT )? );";
 
+#pragma warning disable IDE0052 // Remove unread private members
             private readonly JavascriptLexer _enclosing;
+#pragma warning restore IDE0052 // Remove unread private members
         }
     }
 
