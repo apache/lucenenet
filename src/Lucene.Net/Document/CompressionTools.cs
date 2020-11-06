@@ -114,7 +114,7 @@ namespace Lucene.Net.Documents
 
             using (MemoryStream decompressedStream = new MemoryStream())
             {
-                using (MemoryStream compressedStream = new MemoryStream(value))
+                using (MemoryStream compressedStream = new MemoryStream(value, offset, length))
                 {
                     using (DeflateStream dStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
                     {
