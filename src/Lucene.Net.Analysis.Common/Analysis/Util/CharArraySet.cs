@@ -412,7 +412,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (IsReadOnly)
             {
@@ -439,7 +439,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (IsReadOnly)
             {
@@ -465,7 +465,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (IsReadOnly)
             {
@@ -487,7 +487,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (IsReadOnly)
             {
@@ -559,7 +559,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (this.Count == 0)
             {
@@ -591,7 +591,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (this.Count == 0)
             {
@@ -614,7 +614,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             ICollection<string> is2 = other as ICollection<string>;
             if (is2 != null)
@@ -641,7 +641,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             ICollection<T> is2 = other as ICollection<T>;
             if (is2 != null && is2.Count == 0)
@@ -660,7 +660,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             ICollection<string> is2 = other as ICollection<string>;
             if (is2 != null)
@@ -696,7 +696,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             ICollection<T> is2 = other as ICollection<T>;
             if (is2 != null && this.Count == 0)
@@ -720,7 +720,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (this.Count == 0)
             {
@@ -757,7 +757,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (this.Count == 0)
             {
@@ -782,7 +782,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (this.Count != 0)
             {
@@ -806,7 +806,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (this.Count != 0)
             {
@@ -1144,7 +1144,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (set.IsReadOnly)
             {
@@ -1172,7 +1172,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (set.IsReadOnly)
             {
@@ -1200,7 +1200,7 @@ namespace Lucene.Net.Analysis.Util
         //{
         //    if (other == null)
         //    {
-        //        throw new ArgumentNullException("other");
+        //        throw new ArgumentNullException(nameof(other));
         //    }
         //    if (set.IsReadOnly)
         //    {
@@ -1228,7 +1228,7 @@ namespace Lucene.Net.Analysis.Util
         //{
         //    if (other == null)
         //    {
-        //        throw new ArgumentNullException("other");
+        //        throw new ArgumentNullException(nameof(other));
         //    }
         //    if (set.IsReadOnly)
         //    {
@@ -1256,7 +1256,7 @@ namespace Lucene.Net.Analysis.Util
         //{
         //    if (other == null)
         //    {
-        //        throw new ArgumentNullException("other");
+        //        throw new ArgumentNullException(nameof(other));
         //    }
         //    if (set.IsReadOnly)
         //    {
@@ -1284,7 +1284,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (set.IsReadOnly)
             {
@@ -1312,7 +1312,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (set.IsReadOnly)
             {
@@ -1341,7 +1341,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (set.IsReadOnly)
             {
@@ -1369,7 +1369,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (set.IsReadOnly)
             {
@@ -1398,7 +1398,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (set.IsReadOnly)
             {
@@ -1427,7 +1427,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (set.IsReadOnly)
             {
@@ -1456,7 +1456,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
             if (set.IsReadOnly)
             {

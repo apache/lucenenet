@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Icu
         {
             if (normalizer == null)
             {
-                throw new ArgumentNullException("normalizer");
+                throw new ArgumentNullException(nameof(normalizer));
             }
             this.normalizer = normalizer;
         }
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Icu
         {
             if (normalizer == null)
             {
-                throw new ArgumentNullException("normalizer");
+                throw new ArgumentNullException(nameof(normalizer));
             }
             this.normalizer = normalizer;
             this.tmpBuffer = CharacterUtils.NewCharacterBuffer(bufferSize);

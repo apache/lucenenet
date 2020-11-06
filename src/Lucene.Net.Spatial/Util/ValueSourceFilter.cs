@@ -44,7 +44,7 @@ namespace Lucene.Net.Spatial.Util
         {
             if (startingFilter == null)
             {
-                throw new ArgumentException("please provide a non-null startingFilter; you can use QueryWrapperFilter(MatchAllDocsQuery) as a no-op filter", "startingFilter");
+                throw new ArgumentException("please provide a non-null startingFilter; you can use QueryWrapperFilter(MatchAllDocsQuery) as a no-op filter", nameof(startingFilter));
             }
             this.startingFilter = startingFilter;
             this.source = source;

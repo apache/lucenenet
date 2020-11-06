@@ -45,7 +45,7 @@ namespace Lucene.Net.Replicator
         /// <param name="length">Optional, the length of the file.</param>
         public RevisionFile(string fileName, long length = -1)
         {
-            if (string.IsNullOrEmpty(fileName)) throw new ArgumentException("fileName must not be null or empty", "fileName");
+            if (string.IsNullOrEmpty(fileName)) throw new ArgumentException("fileName must not be null or empty", nameof(fileName));
 
             FileName = fileName;
             Length = length;

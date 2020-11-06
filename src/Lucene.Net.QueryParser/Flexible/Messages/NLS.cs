@@ -75,7 +75,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         {
             if (resourceManagerFactory == null)
             {
-                throw new ArgumentNullException("resourceManagerFactory");
+                throw new ArgumentNullException(nameof(resourceManagerFactory));
             }
             NLS.resourceManagerFactory = resourceManagerFactory;
         }

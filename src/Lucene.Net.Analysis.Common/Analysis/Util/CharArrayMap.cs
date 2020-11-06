@@ -286,7 +286,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (o == null)
             {
-                throw new ArgumentException("o can't be null", "o");
+                throw new ArgumentException("o can't be null", nameof(o));
             }
 
             var c = o as char[];
@@ -802,7 +802,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (text == null)
             {
-                throw new ArgumentException("text can't be null", "text");
+                throw new ArgumentException("text can't be null", nameof(text));
             }
             int code = 0;
             int stop = offset + length;
@@ -829,7 +829,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (text == null)
             {
-                throw new ArgumentException("text can't be null", "text");
+                throw new ArgumentException("text can't be null", nameof(text));
             }
 
             int code = 0;
@@ -857,7 +857,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (text == null)
             {
-                throw new ArgumentException("text can't be null", "text");
+                throw new ArgumentException("text can't be null", nameof(text));
             }
 
             int code = 0;
@@ -1805,7 +1805,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (map == null)
             {
-                throw new ArgumentException("Given map is null", "map");
+                throw new ArgumentException("Given map is null", nameof(map));
             }
             if (map == CharArrayMap<TValue>.EmptyMap() || map.Count == 0)
             {
@@ -1826,7 +1826,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (map == null)
             {
-                throw new ArgumentException("Given map is null", "map");
+                throw new ArgumentException("Given map is null", nameof(map));
             }
             if (map == CharArrayMap<TValue>.EmptyMap() || map.Count == 0)
             {
@@ -1971,7 +1971,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
                 return false;
             }
@@ -1980,7 +1980,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
                 return false;
             }
@@ -1989,7 +1989,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
                 return false;
             }
@@ -1998,7 +1998,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (o == null)
                 {
-                    throw new ArgumentNullException("o");
+                    throw new ArgumentNullException(nameof(o));
                 }
                 return false;
             }
@@ -2007,7 +2007,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
                 return default(V);
             }
@@ -2016,7 +2016,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
                 return default(V);
             }
@@ -2025,7 +2025,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
                 return default(V);
             }
@@ -2034,7 +2034,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (o == null)
                 {
-                    throw new ArgumentNullException("o");
+                    throw new ArgumentNullException(nameof(o));
                 }
                 return default(V);
             }

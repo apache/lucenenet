@@ -270,7 +270,7 @@ namespace Lucene.Net.Replicator
                     if (compare < 0)
                     {
                         revision.Release();
-                        throw new ArgumentException(string.Format("Cannot publish an older revision: rev={0} current={1}", revision, currentRevision), "revision");
+                        throw new ArgumentException(string.Format("Cannot publish an older revision: rev={0} current={1}", revision, currentRevision), nameof(revision));
                     }
                 }
 

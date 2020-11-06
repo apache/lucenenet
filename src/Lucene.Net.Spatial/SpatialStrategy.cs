@@ -60,10 +60,10 @@ namespace Lucene.Net.Spatial
         protected SpatialStrategy(SpatialContext ctx, string fieldName)
         {
             if (ctx == null)
-                throw new ArgumentException("ctx is required", "ctx");
+                throw new ArgumentException("ctx is required", nameof(ctx));
             this.m_ctx = ctx;
             if (string.IsNullOrEmpty(fieldName))
-                throw new ArgumentException("fieldName is required", "fieldName");
+                throw new ArgumentException("fieldName is required", nameof(fieldName));
             this.fieldName = fieldName;
         }
 
