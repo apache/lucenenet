@@ -125,89 +125,81 @@ namespace Lucene.Net.Index
 
         internal void AddBinaryField(FieldInfo fieldInfo, int docID, BytesRef value)
         {
-            DocValuesWriter writer;
-            writers.TryGetValue(fieldInfo.Name, out writer);
             BinaryDocValuesWriter binaryWriter;
-            if (writer == null)
+            if (!writers.TryGetValue(fieldInfo.Name, out DocValuesWriter writer) || writer is null)
             {
                 binaryWriter = new BinaryDocValuesWriter(fieldInfo, bytesUsed);
                 writers[fieldInfo.Name] = binaryWriter;
             }
-            else if (!(writer is BinaryDocValuesWriter))
+            else if (writer is BinaryDocValuesWriter temp)
             {
-                throw new ArgumentException("Incompatible DocValues type: field \"" + fieldInfo.Name + "\" changed from " + GetTypeDesc(writer) + " to binary");
+                binaryWriter = temp;
             }
             else
             {
-                binaryWriter = (BinaryDocValuesWriter)writer;
+                throw new ArgumentException($"Incompatible DocValues type: field \"{fieldInfo.Name}\" changed from {GetTypeDesc(writer)} to binary");
             }
             binaryWriter.AddValue(docID, value);
         }
 
         internal void AddSortedField(FieldInfo fieldInfo, int docID, BytesRef value)
         {
-            DocValuesWriter writer;
-            writers.TryGetValue(fieldInfo.Name, out writer);
             SortedDocValuesWriter sortedWriter;
-            if (writer == null)
+            if (!writers.TryGetValue(fieldInfo.Name, out DocValuesWriter writer) || writer is null)
             {
                 sortedWriter = new SortedDocValuesWriter(fieldInfo, bytesUsed);
                 writers[fieldInfo.Name] = sortedWriter;
             }
-            else if (!(writer is SortedDocValuesWriter))
+            else if (writer is SortedDocValuesWriter temp)
             {
-                throw new ArgumentException("Incompatible DocValues type: field \"" + fieldInfo.Name + "\" changed from " + GetTypeDesc(writer) + " to sorted");
+                sortedWriter = temp;
             }
             else
             {
-                sortedWriter = (SortedDocValuesWriter)writer;
+                throw new ArgumentException($"Incompatible DocValues type: field \"{fieldInfo.Name}\" changed from {GetTypeDesc(writer)} to sorted");
             }
             sortedWriter.AddValue(docID, value);
         }
 
         internal void AddSortedSetField(FieldInfo fieldInfo, int docID, BytesRef value)
         {
-            DocValuesWriter writer;
-            writers.TryGetValue(fieldInfo.Name, out writer);
             SortedSetDocValuesWriter sortedSetWriter;
-            if (writer == null)
+            if (!writers.TryGetValue(fieldInfo.Name, out DocValuesWriter writer) || writer is null)
             {
                 sortedSetWriter = new SortedSetDocValuesWriter(fieldInfo, bytesUsed);
                 writers[fieldInfo.Name] = sortedSetWriter;
             }
-            else if (!(writer is SortedSetDocValuesWriter))
+            else if (writer is SortedSetDocValuesWriter temp)
             {
-                throw new ArgumentException("Incompatible DocValues type: field \"" + fieldInfo.Name + "\" changed from " + GetTypeDesc(writer) + " to sorted");
+                sortedSetWriter = temp;
             }
             else
             {
-                sortedSetWriter = (SortedSetDocValuesWriter)writer;
+                throw new ArgumentException($"Incompatible DocValues type: field \"{fieldInfo.Name}\" changed from {GetTypeDesc(writer)} to sorted");
             }
             sortedSetWriter.AddValue(docID, value);
         }
 
         internal void AddNumericField(FieldInfo fieldInfo, int docID, long value)
         {
-            DocValuesWriter writer;
-            writers.TryGetValue(fieldInfo.Name, out writer);
             NumericDocValuesWriter numericWriter;
-            if (writer == null)
+            if (!writers.TryGetValue(fieldInfo.Name, out DocValuesWriter writer) || writer is null)
             {
                 numericWriter = new NumericDocValuesWriter(fieldInfo, bytesUsed, true);
                 writers[fieldInfo.Name] = numericWriter;
             }
-            else if (!(writer is NumericDocValuesWriter))
+            else if (writer is NumericDocValuesWriter temp)
             {
-                throw new ArgumentException("Incompatible DocValues type: field \"" + fieldInfo.Name + "\" changed from " + GetTypeDesc(writer) + " to numeric");
+                numericWriter = temp;
             }
             else
             {
-                numericWriter = (NumericDocValuesWriter)writer;
+                throw new ArgumentException($"Incompatible DocValues type: field \"{fieldInfo.Name}\" changed from {GetTypeDesc(writer)} to numeric");
             }
             numericWriter.AddValue(docID, value);
         }
 
-        private string GetTypeDesc(DocValuesWriter obj)
+        private static string GetTypeDesc(DocValuesWriter obj) // LUCENENET specific - made static
         {
             if (obj is BinaryDocValuesWriter)
             {
