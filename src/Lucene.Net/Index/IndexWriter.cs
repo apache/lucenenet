@@ -473,9 +473,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    ReadersAndUpdates rld;
-                    readerMap.TryGetValue(info, out rld);
-                    if (rld != null)
+                    if (readerMap.TryGetValue(info, out ReadersAndUpdates rld) && rld != null)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(info == rld.Info);
                         //        System.out.println("[" + Thread.currentThread().getName() + "] ReaderPool.drop: " + info);
@@ -661,8 +659,7 @@ namespace Lucene.Net.Index
                 {
                     foreach (SegmentCommitInfo info in infos.Segments)
                     {
-                        ReadersAndUpdates rld;
-                        if (readerMap.TryGetValue(info, out rld))
+                        if (readerMap.TryGetValue(info, out ReadersAndUpdates rld))
                         {
                             if (Debugging.AssertsEnabled) Debugging.Assert(rld.Info == info);
                             if (rld.WriteLiveDocs(outerInstance.directory))
@@ -694,9 +691,7 @@ namespace Lucene.Net.Index
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == outerInstance.directory,"info.dir={0} vs {1}", info.Info.Dir, outerInstance.directory);
 
-                    ReadersAndUpdates rld;
-                    readerMap.TryGetValue(info, out rld);
-                    if (rld == null)
+                    if (!readerMap.TryGetValue(info, out ReadersAndUpdates rld) || rld == null)
                     {
                         if (!create)
                         {
@@ -5420,8 +5415,7 @@ namespace Lucene.Net.Index
                 foreach (SegmentCommitInfo info in sis.Segments)
                 {
                     SegmentCommitInfo infoMod = info;
-                    SegmentCommitInfo liveInfo;
-                    if (liveSIS.TryGetValue(info, out liveInfo))
+                    if (liveSIS.TryGetValue(info, out SegmentCommitInfo liveInfo))
                     {
                         infoMod = liveInfo;
                     }
@@ -5869,9 +5863,8 @@ namespace Lucene.Net.Index
 
         private bool ProcessEvents(ConcurrentQueue<IEvent> queue, bool triggerMerge, bool forcePurge)
         {
-            IEvent @event;
             bool processed = false;
-            while (queue.TryDequeue(out @event))
+            while (queue.TryDequeue(out IEvent @event))
             {
                 processed = true;
                 @event.Process(this, triggerMerge, forcePurge);

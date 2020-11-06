@@ -230,9 +230,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numSegments && numToMerge <= maxNumSegments; i++)
             {
                 SegmentCommitInfo info = infos.Info(i);
-                bool? isOriginal;
-                segmentsToMerge.TryGetValue(info, out isOriginal);
-                if (isOriginal != null)
+                if (segmentsToMerge.TryGetValue(info, out bool? isOriginal) && isOriginal != null)
                 {
                     segmentIsOriginal = isOriginal.Value;
                     numToMerge++;
