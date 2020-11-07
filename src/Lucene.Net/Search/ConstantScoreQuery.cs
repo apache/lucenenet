@@ -256,9 +256,9 @@ namespace Lucene.Net.Search
             {
                 private readonly ConstantBulkScorer outerInstance;
 
-                private ICollector collector;
+                private readonly ICollector collector;
 
-                public CollectorAnonymousInnerClassHelper(ConstantBulkScorer outerInstance, Lucene.Net.Search.ICollector collector)
+                public CollectorAnonymousInnerClassHelper(ConstantBulkScorer outerInstance, ICollector collector)
                 {
                     this.outerInstance = outerInstance;
                     this.collector = collector;

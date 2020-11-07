@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.Highlight
         public static readonly int DEFAULT_MAX_CHARS_TO_ANALYZE = 50 * 1024;
 
         private int _maxDocCharsToAnalyze = DEFAULT_MAX_CHARS_TO_ANALYZE;
-        private IFormatter _formatter;
+        private readonly IFormatter _formatter; // LUCENENET: marked readonly
         private IEncoder _encoder;
         private IFragmenter _textFragmenter = new SimpleFragmenter();
         private IScorer _fragmentScorer = null;

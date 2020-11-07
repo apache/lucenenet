@@ -341,7 +341,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             private readonly MemoryPostingsFormat outerInstance;
 
-            private IndexOutput @out;
+            private readonly IndexOutput @out;
 
             public FieldsConsumerAnonymousInnerClassHelper(MemoryPostingsFormat outerInstance, IndexOutput @out)
             {
@@ -378,7 +378,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly IndexOptions indexOptions;
             private readonly bool storePayloads;
             private byte[] buffer = new byte[16];
-            private ByteArrayDataInput @in;
+            private readonly ByteArrayDataInput @in; // LUCENENET: marked readonly
 
             private IBits liveDocs;
             private int docUpto;
@@ -524,7 +524,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             private readonly bool storePayloads;
             private byte[] buffer = new byte[16];
-            private ByteArrayDataInput @in;
+            private readonly ByteArrayDataInput @in; // LUCENENET: marked readonly
 
             private IBits liveDocs;
             private int docUpto;
@@ -735,7 +735,7 @@ namespace Lucene.Net.Codecs.Memory
             private int docFreq;
             private long totalTermFreq;
             private BytesRefFSTEnum.InputOutput<BytesRef> current;
-            private BytesRef postingsSpare = new BytesRef();
+            private readonly BytesRef postingsSpare = new BytesRef(); // LUCENENET: marked readonly
 
             public FSTTermsEnum(FieldInfo field, FST<BytesRef> fst)
             {

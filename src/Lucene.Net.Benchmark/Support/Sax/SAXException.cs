@@ -167,7 +167,7 @@ namespace Sax
         /// The embedded exception if tunnelling, or null.
         /// </summary>
         [NonSerialized]
-        private Exception exception;
+        private readonly Exception exception; // LUCENENET: marked readonly
 
     }
 }

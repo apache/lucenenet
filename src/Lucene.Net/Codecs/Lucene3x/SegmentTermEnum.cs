@@ -58,8 +58,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal TermInfo termInfo = new TermInfo();
 
-        private int format;
-        private bool isIndex = false;
+        private readonly int format; // LUCENENET: marked readonly
+        private readonly bool isIndex = false; // LUCENENET: marked readonly
         internal long indexPointer = 0;
         internal int indexInterval; // LUCENENET NOTE: Changed from public field to internal (class is internal anyway)
         internal int skipInterval;

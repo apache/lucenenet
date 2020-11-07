@@ -83,7 +83,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         private class Int64DocValuesAnonymousInnerClassHelper : Int64DocValues
         {
-            private long ttf;
+            private readonly long ttf;
 
             public Int64DocValuesAnonymousInnerClassHelper(SumTotalTermFreqValueSource @this, long ttf)
                 : base(@this)

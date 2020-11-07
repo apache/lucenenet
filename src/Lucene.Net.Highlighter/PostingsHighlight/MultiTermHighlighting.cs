@@ -157,10 +157,10 @@ namespace Lucene.Net.Search.PostingsHighlight
             private readonly CharsRef lowerBound;
             private readonly CharsRef upperBound;
 
-            private bool includeLower;
-            private bool includeUpper;
+            private readonly bool includeLower;
+            private readonly bool includeUpper;
 #pragma warning disable 612, 618
-            private IComparer<CharsRef> comparer = CharsRef.UTF16SortedAsUTF8Comparer;
+            private static readonly IComparer<CharsRef> comparer = CharsRef.UTF16SortedAsUTF8Comparer; // LUCENENET specific - made static
 #pragma warning restore 612, 618
 
             public SimpleCharacterRunAutomatonAnonymousHelper(Automaton a, TermRangeQuery tq)

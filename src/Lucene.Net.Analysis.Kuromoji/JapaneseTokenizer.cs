@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.Ja
 
 
 #pragma warning disable CA1802 // Use literals where appropriate
-        private static /*readonly*/ bool VERBOSE = false; // For debugging
+        private static readonly bool VERBOSE = false; // For debugging
 #pragma warning restore CA1802 // Use literals where appropriate
 
         private const int SEARCH_MODE_KANJI_LENGTH = 2;

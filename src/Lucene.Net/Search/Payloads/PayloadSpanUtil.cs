@@ -40,7 +40,7 @@ namespace Lucene.Net.Search.Payloads
     /// </summary>
     public class PayloadSpanUtil
     {
-        private IndexReaderContext context;
+        private readonly IndexReaderContext context; // LUCENENET: marked readonly
 
         /// <param name="context">
         ///          that contains doc with payloads to extract

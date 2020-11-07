@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Memory
         // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
         private readonly IDictionary<string, TermsReader> fields = new JCG.SortedDictionary<string, TermsReader>(StringComparer.Ordinal);
         private readonly PostingsReaderBase postingsReader;
-        private int version;
+        private readonly int version; // LUCENENET: marked readonly
         //static final boolean TEST = false;
 
         public FSTOrdTermsReader(SegmentReadState state, PostingsReaderBase postingsReader)
@@ -292,13 +292,13 @@ namespace Lucene.Net.Codecs.Memory
                 private int metaBlockOrd;
 
                 /* Current buffered metadata (long[] & byte[]) */
-                private long[][] longs;
-                private int[] bytesStart;
-                private int[] bytesLength;
+                private readonly long[][] longs; // LUCENENET: marked readonly
+                private readonly int[] bytesStart; // LUCENENET: marked readonly
+                private readonly int[] bytesLength; // LUCENENET: marked readonly
 
                 /* Current buffered stats (df & ttf) */
-                private int[] docFreq;
-                private long[] totalTermFreq;
+                private readonly int[] docFreq; // LUCENENET: marked readonly
+                private readonly long[] totalTermFreq; // LUCENENET: marked readonly
 
                 internal BaseTermsEnum(TermsReader outerInstance)
                 {

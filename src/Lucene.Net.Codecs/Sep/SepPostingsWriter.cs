@@ -45,18 +45,18 @@ namespace Lucene.Net.Codecs.Sep
         internal const int VERSION_CURRENT = VERSION_START;
 
 #pragma warning disable CA2213 // Disposable fields should be disposed
-        private Int32IndexOutput freqOut;
-        private Int32IndexOutput.Index freqIndex;
+        private readonly Int32IndexOutput freqOut; // LUCENENET: marked readonly
+        private readonly Int32IndexOutput.Index freqIndex; // LUCENENET: marked readonly
 
-        private Int32IndexOutput posOut;
-        private Int32IndexOutput.Index posIndex;
+        private readonly Int32IndexOutput posOut; // LUCENENET: marked readonly
+        private readonly Int32IndexOutput.Index posIndex; // LUCENENET: marked readonly
 
-        private Int32IndexOutput docOut;
-        private Int32IndexOutput.Index docIndex;
+        private readonly Int32IndexOutput docOut; // LUCENENET: marked readonly
+        private readonly Int32IndexOutput.Index docIndex; // LUCENENET: marked readonly
 
-        private IndexOutput payloadOut;
+        private readonly IndexOutput payloadOut; // LUCENENET: marked readonly
 
-        private IndexOutput skipOut;
+        private readonly IndexOutput skipOut; // LUCENENET: marked readonly
 #pragma warning restore CA2213 // Disposable fields should be disposed
 
         private readonly SepSkipListWriter skipListWriter;

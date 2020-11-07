@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         private readonly ITypeAttribute typeAtt;
         private readonly IKeywordAttribute keywordAtt;
         private readonly IFlagsAttribute flagsAtt;
-        private IList<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>();
+        private readonly IList<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>(); // LUCENENET: marked readonly
         private IEnumerator<AttributeSource> sentenceTokenAttrsIter = null;
         private bool moreTokensAvailable = true;
         private string[] sentenceTokens = null;     // non-keyword tokens

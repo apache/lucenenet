@@ -555,11 +555,11 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private int numDocs;
+            private readonly int numDocs;
             private readonly DirectoryReader rd;
             private readonly IndexSearcher searcher;
-            private int readsPerThread;
-            private AtomicReference<Exception> ex;
+            private readonly int readsPerThread;
+            private readonly AtomicReference<Exception> ex;
             private readonly int[] queries;
 
             public ThreadAnonymousInnerClassHelper(int numDocs, DirectoryReader rd, IndexSearcher searcher, int readsPerThread, AtomicReference<Exception> ex)

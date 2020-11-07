@@ -62,8 +62,8 @@ namespace Lucene.Net.Search
     {
         private sealed class BooleanScorerCollector : ICollector
         {
-            private BucketTable bucketTable;
-            private int mask;
+            private readonly BucketTable bucketTable; // LUCENENET: marked readonly
+            private readonly int mask; // LUCENENET: marked readonly
             private Scorer scorer;
 
             public BooleanScorerCollector(int mask, BucketTable bucketTable)
@@ -185,8 +185,8 @@ namespace Lucene.Net.Search
             }
         }
 
-        private SubScorer scorers = null;
-        private BucketTable bucketTable = new BucketTable();
+        private readonly SubScorer scorers = null; // LUCENENET: marked readonly
+        private readonly BucketTable bucketTable = new BucketTable(); // LUCENENET: marked readonly
         private readonly float[] coordFactors;
 
         // TODO: re-enable this if BQ ever sends us required clauses

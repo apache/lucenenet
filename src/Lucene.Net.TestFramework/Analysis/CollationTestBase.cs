@@ -319,8 +319,8 @@ namespace Lucene.Net.Analysis
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private Analyzer analyzer;
-            private IDictionary<string, BytesRef> map;
+            private readonly Analyzer analyzer;
+            private readonly IDictionary<string, BytesRef> map;
 
             public ThreadAnonymousInnerClassHelper(Analyzer analyzer, IDictionary<string, BytesRef> map)
             {

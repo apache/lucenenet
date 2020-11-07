@@ -39,8 +39,8 @@ namespace Lucene.Net.Benchmarks.Quality
     /// </summary>
     public class QualityQuery : IComparable<QualityQuery>
     {
-        private string queryID;
-        private IDictionary<string, string> nameValPairs;
+        private readonly string queryID; // LUCENENET: marked readonly
+        private readonly IDictionary<string, string> nameValPairs; // LUCENENET: marked readonly
 
         /// <summary>
         /// Create a <see cref="QualityQuery"/> with given ID and name-value pairs.

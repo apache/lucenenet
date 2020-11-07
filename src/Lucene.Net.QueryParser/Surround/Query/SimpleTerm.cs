@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             quoted = q; 
         }
 
-        private bool quoted;
+        private readonly bool quoted; // LUCENENET: marked readonly
         internal bool IsQuoted => quoted;
 
         public virtual string Quote => "\"";

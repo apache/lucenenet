@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     /// <seealso cref="IFieldConfigListener"/>
     public class FieldBoostMapFCListener : IFieldConfigListener
     {
-        private QueryConfigHandler config = null;
+        private readonly QueryConfigHandler config = null; // LUCENENET: marked readonly
 
         public FieldBoostMapFCListener(QueryConfigHandler config)
         {

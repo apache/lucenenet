@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
             readerContext = new AtomicReaderContext(this);
         }
 
-        private AtomicReaderContext readerContext;
+        private readonly AtomicReaderContext readerContext; // LUCENENET: marked readonly
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass

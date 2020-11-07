@@ -81,16 +81,16 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly FieldInfos fieldInfos;
 
 #pragma warning disable CA2213 // Disposable fields should be disposed
-        private IndexInput tvx;
-        private IndexInput tvd;
-        private IndexInput tvf;
+        private readonly IndexInput tvx; // LUCENENET: marked readonly
+        private readonly IndexInput tvd; // LUCENENET: marked readonly
+        private readonly IndexInput tvf; // LUCENENET: marked readonly
 #pragma warning restore CA2213 // Disposable fields should be disposed
-        private int size;
-        private int numTotalDocs;
+        private readonly int size; // LUCENENET: marked readonly
+        private readonly int numTotalDocs; // LUCENENET: marked readonly
 
         // The docID offset where our docs begin in the index
         // file.  this will be 0 if we have our own private file.
-        private int docStoreOffset;
+        private readonly int docStoreOffset; // LUCENENET: marked readonly
 
         // when we are inside a compound share doc store (CFX),
         // (lucene 3.0 indexes only), we privately open our own fd.
@@ -279,7 +279,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 private readonly TVFields outerInstance;
                 private string current;
-                private int i, upTo;
+                private int i;
+                private readonly int upTo;
 
                 public IteratorAnonymousInnerClassHelper(TVFields outerInstance)
                 {

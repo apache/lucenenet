@@ -143,8 +143,8 @@ namespace Lucene.Net.Index.Sorter
             {
                 private readonly SortingOneMerge outerInstance;
 
-                private MergeState mergeState;
-                private MonotonicAppendingInt64Buffer deletes;
+                private readonly MergeState mergeState;
+                private readonly MonotonicAppendingInt64Buffer deletes;
 
                 public DocMapAnonymousInnerClassHelper(SortingOneMerge outerInstance, MergeState mergeState, MonotonicAppendingInt64Buffer deletes)
                 {

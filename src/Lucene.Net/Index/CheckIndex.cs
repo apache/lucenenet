@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
     public class CheckIndex
     {
         private TextWriter infoStream;
-        private Directory dir;
+        private readonly Directory dir; // LUCENENET: marked readonly
 
         /// <summary>
         /// Returned from <see cref="CheckIndex.DoCheckIndex()"/> detailing the health and status of the index.

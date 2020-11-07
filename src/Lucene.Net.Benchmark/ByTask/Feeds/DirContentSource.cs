@@ -82,7 +82,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             /* this seems silly ... there must be a better way ...
                not that this is good, but can it matter? */
 
-            private Comparer c = new Comparer();
+            private readonly Comparer c = new Comparer(); // LUCENENET: marked readonly
 
             private FileInfo current;
 

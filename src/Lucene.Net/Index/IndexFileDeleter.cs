@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
         /// Reference count for all files in the index.
         /// Counts how many existing commits reference a file.
         /// </summary>
-        private IDictionary<string, RefCount> refCounts = new Dictionary<string, RefCount>();
+        private readonly IDictionary<string, RefCount> refCounts = new Dictionary<string, RefCount>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Holds all commits (segments_N) currently in the index.
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
         /// Other policies may leave commit points live for longer
         /// in which case this list would be longer than 1:
         /// </summary>
-        private IList<CommitPoint> commits = new List<CommitPoint>();
+        private readonly IList<CommitPoint> commits = new List<CommitPoint>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Holds files we had incref'd from the previous
@@ -98,14 +98,14 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Commits that the IndexDeletionPolicy have decided to delete:
         /// </summary>
-        private IList<CommitPoint> commitsToDelete = new List<CommitPoint>();
+        private readonly IList<CommitPoint> commitsToDelete = new List<CommitPoint>(); // LUCENENET: marked readonly
 
         private readonly InfoStream infoStream;
-        private Directory directory;
-        private IndexDeletionPolicy policy;
+        private readonly Directory directory; // LUCENENET: marked readonly
+        private readonly IndexDeletionPolicy policy; // LUCENENET: marked readonly
 
         internal readonly bool startingCommitDeleted;
-        private SegmentInfos lastSegmentInfos;
+        private readonly SegmentInfos lastSegmentInfos; // LUCENENET: marked readonly
 
         /// <summary>
         /// Change to true to see details of reference counts when

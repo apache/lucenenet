@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
         {
             private readonly FilteredDocIdSet outerInstance;
 
-            private IBits bits;
+            private readonly IBits bits;
 
             public BitsAnonymousInnerClassHelper(FilteredDocIdSet outerInstance, IBits bits)
             {

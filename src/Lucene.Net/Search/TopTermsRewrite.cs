@@ -92,8 +92,8 @@ namespace Lucene.Net.Search
 
         private class TermCollectorAnonymousInnerClassHelper : TermCollector
         {
-            private int maxSize;
-            private JCG.PriorityQueue<ScoreTerm> stQueue;
+            private readonly int maxSize;
+            private readonly JCG.PriorityQueue<ScoreTerm> stQueue;
 
             public TermCollectorAnonymousInnerClassHelper(int maxSize, JCG.PriorityQueue<ScoreTerm> stQueue)
             {

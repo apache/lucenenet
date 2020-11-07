@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private FieldInfos fieldInfos;
         private IndexOutput output;
-        private TermInfo lastTi = new TermInfo();
+        private readonly TermInfo lastTi = new TermInfo(); // LUCENENET: marked readonly
         private long size;
 
         // TODO: the default values for these two parameters should be settable from

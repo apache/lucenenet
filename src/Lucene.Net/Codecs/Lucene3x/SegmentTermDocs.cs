@@ -45,8 +45,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         internal int doc = 0;
         internal int freq;
 
-        private int skipInterval;
-        private int maxSkipLevels;
+        private readonly int skipInterval; // LUCENENET: marked readonly
+        private readonly int maxSkipLevels; // LUCENENET: marked readonly
         private Lucene3xSkipListReader skipListReader;
 
         private long freqBasePointer;

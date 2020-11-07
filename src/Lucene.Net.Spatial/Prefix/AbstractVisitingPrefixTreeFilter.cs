@@ -121,7 +121,7 @@ namespace Lucene.Net.Spatial.Prefix
             protected readonly bool m_hasIndexedLeaves;//if false then we can skip looking for them
 
             private VNode curVNode;//current pointer, derived from query shape
-            private BytesRef curVNodeTerm = new BytesRef();//curVNode.cell's term.
+            private readonly BytesRef curVNodeTerm = new BytesRef();//curVNode.cell's term. // LUCENENET: marked readonly
             private Cell scanCell;
 
             private BytesRef thisTerm; //the result of termsEnum.term()

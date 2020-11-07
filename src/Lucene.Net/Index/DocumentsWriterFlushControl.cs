@@ -518,7 +518,7 @@ namespace Lucene.Net.Index
         {
             private readonly DocumentsWriterFlushControl outerInstance;
             private ThreadState current;
-            private int upto;
+            private readonly int upto;
             private int i;
 
             public IteratorAnonymousInnerClassHelper(DocumentsWriterFlushControl outerInstance, int upto)

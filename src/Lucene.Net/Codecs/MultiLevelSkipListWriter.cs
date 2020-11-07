@@ -61,11 +61,11 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// The skip interval in the list with level = 0. </summary>
-        private int skipInterval;
+        private readonly int skipInterval; // LUCENENET: marked readonly
 
         /// <summary>
         /// SkipInterval used for level &gt; 0. </summary>
-        private int skipMultiplier;
+        private readonly int skipMultiplier; // LUCENENET: marked readonly
 
         /// <summary>
         /// For every skip level a different buffer is used. </summary>

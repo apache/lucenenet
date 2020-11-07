@@ -32,7 +32,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// </summary>
     public class SortableSingleDocSource : SingleDocSource
     {
-        private static string[] COUNTRIES = new string[] {
+        private static readonly string[] COUNTRIES = new string[] { // LUCENENET: marked readonly
             "European Union", "United States", "Japan", "Germany", "China (PRC)",
             "United Kingdom", "France", "Italy", "Spain", "Canada", "Brazil", "Russia",
             "India", "South Korea", "Australia", "Mexico", "Netherlands", "Turkey",

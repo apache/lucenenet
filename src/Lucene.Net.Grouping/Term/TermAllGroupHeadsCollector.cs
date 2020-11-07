@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private readonly IList<GroupHead> collectedGroups;
         private readonly SortField[] fields;
 
-        private SortedDocValues[] sortsIndex;
+        private readonly SortedDocValues[] sortsIndex; // LUCENENET: marked readonly
         private Scorer scorer;
         private GroupHead[] segmentGroupHeads;
 
@@ -491,7 +491,7 @@ namespace Lucene.Net.Search.Grouping.Terms
         private readonly IList<GroupHead> collectedGroups;
         private readonly SortField[] fields;
 
-        private SortedDocValues[] sortsIndex;
+        private readonly SortedDocValues[] sortsIndex; // LUCENENET: marked readonly
         private GroupHead[] segmentGroupHeads;
 
         internal OrdAllGroupHeadsCollector(string groupField, Sort sortWithinGroup, int initialSize)

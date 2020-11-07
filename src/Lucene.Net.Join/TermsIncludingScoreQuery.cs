@@ -123,7 +123,7 @@ namespace Lucene.Net.Join
         {
             private readonly TermsIncludingScoreQuery outerInstance;
 
-            private Weight originalWeight;
+            private readonly Weight originalWeight;
 
             public WeightAnonymousInnerClassHelper(TermsIncludingScoreQuery outerInstance, Weight originalWeight)
             {

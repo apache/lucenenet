@@ -41,9 +41,9 @@ namespace Lucene.Net.Sandbox.Queries
         public const int defaultPrefixLength = 0;
         public const int defaultMaxExpansions = 50;
 
-        private float minimumSimilarity;
-        private int prefixLength;
-        private bool termLongEnough = false;
+        private readonly float minimumSimilarity; // LUCENENET: marked readonly
+        private readonly int prefixLength; // LUCENENET: marked readonly
+        private readonly bool termLongEnough = false; // LUCENENET: marked readonly
 
         protected Term m_term;
 

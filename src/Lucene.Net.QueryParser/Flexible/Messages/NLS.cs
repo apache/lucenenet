@@ -46,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         /// into this class.
         /// </summary>
         private static IResourceManagerFactory resourceManagerFactory = new BundleResourceManagerFactory();
-        private static IDictionary<string, Type> bundles = new Dictionary<string, Type>(0);
+        private static readonly IDictionary<string, Type> bundles = new Dictionary<string, Type>(0); // LUCENENET: marked readonly
 
         protected NLS()
         {

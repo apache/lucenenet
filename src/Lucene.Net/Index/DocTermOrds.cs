@@ -118,9 +118,9 @@ namespace Lucene.Net.Index
         /// Every 128th term is indexed, by default. </summary>
         public const int DEFAULT_INDEX_INTERVAL_BITS = 7; // decrease to a low number like 2 for testing
 
-        private int indexIntervalBits;
-        private int indexIntervalMask;
-        private int indexInterval;
+        private readonly int indexIntervalBits; // LUCENENET: marked readonly
+        private readonly int indexIntervalMask; // LUCENENET: marked readonly
+        private readonly int indexInterval; // LUCENENET: marked readonly
 
         /// <summary>
         /// Don't uninvert terms that exceed this count. </summary>

@@ -1460,8 +1460,8 @@ namespace Lucene.Net.Index
 
         private class Int64ProducerAnonymousInnerClassHelper : Int64Producer
         {
-            private long minValue;
-            private long maxValue;
+            private readonly long minValue;
+            private readonly long maxValue;
 
             public Int64ProducerAnonymousInnerClassHelper(long minValue, long maxValue)
             {
@@ -1546,8 +1546,8 @@ namespace Lucene.Net.Index
 
         private class Int64ProducerAnonymousInnerClassHelper2 : Int64Producer
         {
-            private long minValue;
-            private long maxValue;
+            private readonly long minValue;
+            private readonly long maxValue;
 
             public Int64ProducerAnonymousInnerClassHelper2(long minValue, long maxValue)
             {
@@ -2959,8 +2959,8 @@ namespace Lucene.Net.Index
 
         private class Int64ProducerAnonymousInnerClassHelper3 : Int64Producer
         {
-            private long min;
-            private long mul;
+            private readonly long min;
+            private readonly long mul;
 
             public Int64ProducerAnonymousInnerClassHelper3(long min, long mul)
             {
@@ -3553,8 +3553,8 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private DirectoryReader ir;
-            private CountdownEvent startingGun;
+            private readonly DirectoryReader ir;
+            private readonly CountdownEvent startingGun;
 
             public ThreadAnonymousInnerClassHelper(DirectoryReader ir, CountdownEvent startingGun)
             {
@@ -3696,8 +3696,8 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadJob
         {
-            private DirectoryReader ir;
-            private CountdownEvent startingGun;
+            private readonly DirectoryReader ir;
+            private readonly CountdownEvent startingGun;
 
             public ThreadAnonymousInnerClassHelper2(DirectoryReader ir, CountdownEvent startingGun)
             {

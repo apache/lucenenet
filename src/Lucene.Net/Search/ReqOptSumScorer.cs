@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
         /// The scorers passed from the constructor.
         /// These are set to <c>null</c> as soon as their Next() or SkipTo() returns <c>false</c>.
         /// </summary>
-        private Scorer reqScorer;
+        private readonly Scorer reqScorer; // LUCENENET: marked readonly
 
         private Scorer optScorer;
 

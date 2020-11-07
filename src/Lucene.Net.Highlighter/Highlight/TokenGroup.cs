@@ -55,8 +55,8 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         public virtual float TotalScore { get; private set; }
 
-        private IOffsetAttribute offsetAtt;
-        private ICharTermAttribute termAtt;
+        private readonly IOffsetAttribute offsetAtt; // LUCENENET: marked readonly
+        private readonly ICharTermAttribute termAtt; // LUCENENET: marked readonly
 
         public TokenGroup(TokenStream tokenStream)
         {

@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
     /// </summary>
     public class HHMMSegmenter
     {
-        private static WordDictionary wordDict = WordDictionary.GetInstance();
+        private static readonly WordDictionary wordDict = WordDictionary.GetInstance(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Create the <see cref="SegGraph"/> for a sentence.

@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs
         /// File offset where the directory starts in the index file. </summary>
         private long indexDirOffset;
 
-        private string segment;
+        private readonly string segment; // LUCENENET: marked readonly
 
         private readonly int version;
 

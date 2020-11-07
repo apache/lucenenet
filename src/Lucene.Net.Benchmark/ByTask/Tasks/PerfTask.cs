@@ -65,14 +65,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     {
         internal const int DEFAULT_LOG_STEP = 1000;
 
-        private PerfRunData runData;
+        private readonly PerfRunData runData;
 
         // propeties that all tasks have
         private string name;
         private int depth = 0;
         protected int m_logStep;
         private int logStepCount = 0;
-        private int maxDepthLogStart = 0;
+        private readonly int maxDepthLogStart = 0; // LUCENENET: marked readonly
         private bool disableCounting = false;
         protected string m_params = null;
 

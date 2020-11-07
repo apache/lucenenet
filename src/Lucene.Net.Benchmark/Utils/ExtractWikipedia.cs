@@ -32,7 +32,7 @@ namespace Lucene.Net.Benchmarks.Utils
     /// </summary>
     public class ExtractWikipedia
     {
-        private DirectoryInfo outputDir;
+        private readonly DirectoryInfo outputDir; // LUCENENET: marked readonly
 
         public static int count = 0;
 

@@ -33,8 +33,8 @@ namespace Lucene.Net.Analysis.Stempel
     /// </summary>
     public class StempelStemmer
     {
-        private Trie stemmer = null;
-        private StringBuilder buffer = new StringBuilder();
+        private readonly Trie stemmer = null; // LUCENENET: marked readonly
+        private readonly StringBuilder buffer = new StringBuilder(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Create a Stemmer using selected stemmer table

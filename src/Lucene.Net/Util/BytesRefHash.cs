@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
         private int lastCount = -1;
         private int[] ids;
         private readonly BytesStartArray bytesStartArray;
-        private Counter bytesUsed;
+        private readonly Counter bytesUsed; // LUCENENET: marked readonly
 
         /// <summary>
         /// Creates a new <see cref="BytesRefHash"/> with a <see cref="ByteBlockPool"/> using a
@@ -178,10 +178,10 @@ namespace Lucene.Net.Util
 
         private class IntroSorterAnonymousInnerClassHelper : IntroSorter
         {
-            private BytesRefHash outerInstance;
+            private readonly BytesRefHash outerInstance;
 
-            private IComparer<BytesRef> comp;
-            private int[] compact;
+            private readonly IComparer<BytesRef> comp;
+            private readonly int[] compact;
             private readonly BytesRef pivot = new BytesRef(), /*scratch1 = new BytesRef(), // LUCENENET: Never read */ scratch2 = new BytesRef();
 
             public IntroSorterAnonymousInnerClassHelper(BytesRefHash outerInstance, IComparer<BytesRef> comp, int[] compact)

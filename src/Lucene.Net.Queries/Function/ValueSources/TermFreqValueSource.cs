@@ -53,7 +53,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             private readonly TermFreqValueSource outerInstance;
 
-            private Terms terms;
+            private readonly Terms terms;
 
             public Int32DocValuesAnonymousInnerClassHelper(TermFreqValueSource outerInstance, TermFreqValueSource @this, Terms terms)
                 : base(@this)

@@ -1413,7 +1413,7 @@ namespace Lucene.Net.Search
 
             private static readonly byte[] NON_MISSING_BYTES = Arrays.Empty<byte>();
 
-            private BytesRef[] values;
+            private readonly BytesRef[] values; // LUCENENET: marked readonly
             private BinaryDocValues docTerms;
             private IBits docsWithField;
             private readonly string field;

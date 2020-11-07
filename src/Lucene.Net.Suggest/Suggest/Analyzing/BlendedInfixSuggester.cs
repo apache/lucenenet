@@ -284,11 +284,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return coefficient;
         }
 
-        private static IComparer<Lookup.LookupResult> LOOKUP_COMP = new LookUpComparer();
+        private static readonly IComparer<Lookup.LookupResult> LOOKUP_COMP = new LookUpComparer(); // LUCENENET: marked readonly
 
         private class LookUpComparer : IComparer<Lookup.LookupResult>
         {
-
             public virtual int Compare(Lookup.LookupResult o1, Lookup.LookupResult o2)
             {
                 // order on weight

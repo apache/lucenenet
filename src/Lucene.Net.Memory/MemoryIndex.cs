@@ -179,9 +179,9 @@ namespace Lucene.Net.Index.Memory
         //  private final IntBlockPool.SliceReader postingsReader;
         private readonly Int32BlockPool.SliceWriter postingsWriter;
 
-        private Dictionary<string, FieldInfo> fieldInfos = new Dictionary<string, FieldInfo>();
+        private readonly Dictionary<string, FieldInfo> fieldInfos = new Dictionary<string, FieldInfo>(); // LUCENENET: marked readonly
 
-        private Counter bytesUsed;
+        private readonly Counter bytesUsed; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructs an empty instance.
@@ -586,7 +586,7 @@ namespace Lucene.Net.Index.Memory
 
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
-            private float[] scores;
+            private readonly float[] scores;
 
             public CollectorAnonymousInnerClassHelper(float[] scores)
             {

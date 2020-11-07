@@ -35,7 +35,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
     /// </summary>
     public class Algorithm
     {
-        private TaskSequence sequence;
+        private readonly TaskSequence sequence; // LUCENENET: marked readonly
         private readonly string[] taskPackages;
 
         /// <summary>

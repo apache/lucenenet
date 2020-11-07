@@ -113,7 +113,7 @@ namespace Lucene.Net.Store
         private ISet<string> openFilesForWrite = new JCG.HashSet<string>(StringComparer.Ordinal);
         internal ISet<string> openLocks = new ConcurrentHashSet<string>(StringComparer.Ordinal);
         internal volatile bool crashed;
-        private ThrottledIndexOutput throttledOutput;
+        private readonly ThrottledIndexOutput throttledOutput; // LUCENENET: marked readonly
         private Throttling throttling = Throttling.SOMETIMES;
         protected LockFactory m_lockFactory;
 
@@ -1245,8 +1245,8 @@ namespace Lucene.Net.Store
         {
             private readonly MockDirectoryWrapper outerInstance;
 
-            private string name;
-            private IndexInputSlicer delegateHandle;
+            private readonly string name;
+            private readonly IndexInputSlicer delegateHandle;
 
             public IndexInputSlicerAnonymousInnerClassHelper(MockDirectoryWrapper outerInstance, string name, IndexInputSlicer delegateHandle)
             {

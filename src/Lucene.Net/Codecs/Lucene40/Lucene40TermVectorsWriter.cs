@@ -158,7 +158,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private int[] offsetStartBuffer = new int[10];
 
         private int[] offsetEndBuffer = new int[10];
-        private BytesRef payloadData = new BytesRef(10);
+        private readonly BytesRef payloadData = new BytesRef(10); // LUCENENET: marked readonly
         private int bufferedIndex = 0;
         private int bufferedFreq = 0;
         private bool positions = false;

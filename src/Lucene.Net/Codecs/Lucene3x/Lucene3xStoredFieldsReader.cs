@@ -89,14 +89,14 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly IndexInput fieldsStream;
         private readonly IndexInput indexStream;
 #pragma warning restore CA2213 // Disposable fields should be disposed
-        private int numTotalDocs;
-        private int size;
+        private readonly int numTotalDocs; // LUCENENET: marked readonly
+        private readonly int size; // LUCENENET: marked readonly
         private bool closed;
         private readonly int format;
 
         // The docID offset where our docs begin in the index
         // file.  this will be 0 if we have our own private file.
-        private int docStoreOffset;
+        private readonly int docStoreOffset; // LUCENENET: marked readonly
 
         // when we are inside a compound share doc store (CFX),
         // (lucene 3.0 indexes only), we privately open our own fd.

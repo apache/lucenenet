@@ -464,7 +464,7 @@ namespace Lucene.Net.Index
 #endif
         public class MergeException : Exception
         {
-            private Directory dir;
+            private readonly Directory dir; // LUCENENET: marked readonly
 
             /// <summary>
             /// Create a <see cref="MergeException"/>. </summary>

@@ -30,9 +30,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
 #endif
     public class Message : IMessage
     {
-        private string key;
+        private readonly string key; // LUCENENET: marked readonly
 
-        private object[] arguments = new object[0];
+        private readonly object[] arguments = new object[0]; // LUCENENET: marked readonly
 
         public Message(string key)
         {

@@ -24,7 +24,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
     /// </summary>
     public class Formatter // LUCENENET specific - renamed from Format because of method name collision
     {
-        private static string[] numFormat = {
+        private static readonly string[] numFormat = {
             "N0",
             "N1",
             "N2"

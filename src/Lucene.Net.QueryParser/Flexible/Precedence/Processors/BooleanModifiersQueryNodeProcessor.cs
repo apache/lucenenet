@@ -37,7 +37,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence.Processors
     /// <seealso cref="ConfigurationKeys.DEFAULT_OPERATOR"/>
     public class BooleanModifiersQueryNodeProcessor : QueryNodeProcessor
     {
-        private List<IQueryNode> childrenBuffer = new List<IQueryNode>();
+        private readonly List<IQueryNode> childrenBuffer = new List<IQueryNode>(); // LUCENENET: marked readonly
 
         private bool usingAnd = false;
 

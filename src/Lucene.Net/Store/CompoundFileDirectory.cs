@@ -434,7 +434,7 @@ namespace Lucene.Net.Store
         {
             private readonly CompoundFileDirectory outerInstance;
 
-            private FileEntry entry;
+            private readonly FileEntry entry;
 
             public IndexInputSlicerAnonymousInnerClassHelper(CompoundFileDirectory outerInstance, FileEntry entry)
             {

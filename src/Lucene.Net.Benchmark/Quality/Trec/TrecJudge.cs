@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
     /// </summary>
     public class TrecJudge : IJudge
     {
-        IDictionary<string, QRelJudgement> judgements;
+        private readonly IDictionary<string, QRelJudgement> judgements; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructor from a reader.
@@ -107,7 +107,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         private class QRelJudgement
         {
             internal string queryID;
-            private IDictionary<string, string> relevantDocs;
+            private readonly IDictionary<string, string> relevantDocs; // LUCENENET: marked readonly
 
             internal QRelJudgement(string queryID)
             {

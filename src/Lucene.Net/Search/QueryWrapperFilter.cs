@@ -58,9 +58,9 @@ namespace Lucene.Net.Search
 
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {
-            private IBits acceptDocs;
-            private AtomicReaderContext privateContext;
-            private Weight weight;
+            private readonly IBits acceptDocs;
+            private readonly AtomicReaderContext privateContext;
+            private readonly Weight weight;
 
             public DocIdSetAnonymousInnerClassHelper(IBits acceptDocs, AtomicReaderContext privateContext, Weight weight)
             {

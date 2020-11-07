@@ -42,9 +42,9 @@ namespace Lucene.Net.Codecs.Lucene3x
     internal class TermInfosReaderIndex
     {
         private const int MAX_PAGE_BITS = 18; // 256 KB block
-        private Term[] fields;
-        private int totalIndexInterval;
-        private IComparer<BytesRef> comparer = BytesRef.UTF8SortedAsUTF16Comparer;
+        private readonly Term[] fields; // LUCENENET: marked readonly
+        private readonly int totalIndexInterval; // LUCENENET: marked readonly
+        private readonly IComparer<BytesRef> comparer = BytesRef.UTF8SortedAsUTF16Comparer; // LUCENENET: marked readonly
         private readonly PagedBytesDataInput dataInput;
         private readonly PackedInt32s.Reader indexToDataOffset;
         private readonly int indexSize;

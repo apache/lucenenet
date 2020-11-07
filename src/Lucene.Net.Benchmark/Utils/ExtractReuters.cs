@@ -28,8 +28,8 @@ namespace Lucene.Net.Benchmarks.Utils
     /// </summary>
     public class ExtractReuters
     {
-        private DirectoryInfo reutersDir;
-        private DirectoryInfo outputDir;
+        private readonly DirectoryInfo reutersDir; // LUCENENET: marked readonly
+        private readonly DirectoryInfo outputDir; // LUCENENET: marked readonly
         private static readonly string LINE_SEPARATOR = Environment.NewLine;
 
         public ExtractReuters(DirectoryInfo reutersDir, DirectoryInfo outputDir)
@@ -59,11 +59,11 @@ namespace Lucene.Net.Benchmarks.Utils
             }
         }
 
-        internal Regex EXTRACTION_PATTERN = new Regex("<TITLE>(.*?)</TITLE>|<DATE>(.*?)</DATE>|<BODY>(.*?)</BODY>", RegexOptions.Compiled);
+        internal static readonly Regex EXTRACTION_PATTERN = new Regex("<TITLE>(.*?)</TITLE>|<DATE>(.*?)</DATE>|<BODY>(.*?)</BODY>", RegexOptions.Compiled);
 
-        private static string[] META_CHARS = { "&", "<", ">", "\"", "'" };
+        private static readonly string[] META_CHARS = { "&", "<", ">", "\"", "'" };
 
-        private static string[] META_CHARS_SERIALIZATIONS = { "&amp;", "&lt;",
+        private static readonly string[] META_CHARS_SERIALIZATIONS = { "&amp;", "&lt;",
             "&gt;", "&quot;", "&apos;" };
 
         /// <summary>

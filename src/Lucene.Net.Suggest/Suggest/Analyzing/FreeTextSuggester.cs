@@ -826,7 +826,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
 
 
-            private BytesRef scratchBytes;
+            private readonly BytesRef scratchBytes;
 
             protected override void AddIfCompetitive(Util.Fst.Util.FSTPath<long?> path)
             {

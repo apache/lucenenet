@@ -67,7 +67,7 @@ namespace Egothor.Stemmer
     /// </summary>
     public class Lift : Reduce
     {
-        bool changeSkip;
+        private readonly bool changeSkip; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructor for the Lift object.

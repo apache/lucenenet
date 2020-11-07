@@ -29,7 +29,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         // stat points ordered by their start time. 
         // for now we collect points as TaskStats objects.
         // later might optimize to collect only native data.
-        private List<TaskStats> points = new List<TaskStats>();
+        private readonly List<TaskStats> points = new List<TaskStats>(); // LUCENENET: marked readonly
 
         private int nextTaskRunNum = 0;
 

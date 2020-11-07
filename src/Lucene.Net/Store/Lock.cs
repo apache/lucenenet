@@ -178,8 +178,8 @@ namespace Lucene.Net.Store
         /// Utility class for executing code with exclusive access. </summary>
         public abstract class With<T> // LUCENENET specific - made generic so we don't need to deal with casting
         {
-            private Lock @lock;
-            private long lockWaitTimeout;
+            private readonly Lock @lock; // LUCENENET: marked readonly
+            private readonly long lockWaitTimeout; // LUCENENET: marked readonly
 
             /// <summary>
             /// Constructs an executor that will grab the named <paramref name="lock"/>. </summary>

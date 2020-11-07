@@ -253,7 +253,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class DeflateCompressor : Compressor
         {
-            private CompressionLevel compressionLevel;
+            private readonly CompressionLevel compressionLevel; // LUCENENET: marked readonly
             internal DeflateCompressor(CompressionLevel level)
             {
                 compressionLevel = level;

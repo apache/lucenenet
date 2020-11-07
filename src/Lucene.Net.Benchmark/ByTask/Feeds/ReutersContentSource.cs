@@ -39,7 +39,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         // LUCENENET specific: DateFormatInfo not used
 
         private DirectoryInfo dataDir = null;
-        private List<FileInfo> inputFiles = new List<FileInfo>();
+        private readonly List<FileInfo> inputFiles = new List<FileInfo>(); // LUCENENET: marked readonly
         private int nextFile = 0;
         private int iteration = 0;
 

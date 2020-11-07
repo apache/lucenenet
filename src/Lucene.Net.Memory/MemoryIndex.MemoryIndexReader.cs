@@ -168,7 +168,7 @@ namespace Lucene.Net.Index.Memory
                 {
                     private readonly MemoryFields outerInstance;
 
-                    private MemoryIndex.Info info;
+                    private readonly MemoryIndex.Info info;
 
                     public TermsAnonymousInnerClassHelper(MemoryFields outerInstance, MemoryIndex.Info info)
                     {

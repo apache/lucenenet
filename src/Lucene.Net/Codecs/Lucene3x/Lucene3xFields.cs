@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     internal class Lucene3xFields : FieldsProducer
     {
 #pragma warning disable CA1802 // Use literals where appropriate
-        private static bool DEBUG_SURROGATES = false;
+        private static readonly bool DEBUG_SURROGATES = false;
 #pragma warning restore CA1802 // Use literals where appropriate
 
         public TermInfosReader Tis { get; set; }

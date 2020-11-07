@@ -33,12 +33,12 @@ namespace Lucene.Net.Analysis.Ja.Util
         /// <summary>Internal word id - incrementally assigned as entries are read and added. This will be byte offset of dictionary file</summary>
         private int offset = 0;
 
-        private string encoding = "euc-jp";
+        private readonly string encoding = "euc-jp"; // LUCENENET: marked readonly
 
-        private bool normalizeEntries = false;
+        private readonly bool normalizeEntries = false; // LUCENENET: marked readonly
         //private Normalizer2 normalizer;
 
-        private DictionaryBuilder.DictionaryFormat format = DictionaryBuilder.DictionaryFormat.IPADIC;
+        private readonly DictionaryBuilder.DictionaryFormat format = DictionaryBuilder.DictionaryFormat.IPADIC; // LUCENENET: marked readonly
 
         public TokenInfoDictionaryBuilder(DictionaryBuilder.DictionaryFormat format, string encoding, bool normalizeEntries)
         {

@@ -66,9 +66,9 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Boost value for start and end grams
         /// </summary>
-        private float bStart = 2.0f;
+        private readonly float bStart = 2.0f; // LUCENENET: marked readonly
 
-        private float bEnd = 1.0f;
+        private readonly float bEnd = 1.0f; // LUCENENET: marked readonly
 
         // don't use this searcher directly - see SwapSearcher()
         private IndexSearcher searcher;

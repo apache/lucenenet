@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
         internal bool aborting = false; // True if an abort is pending
         internal bool hasAborted = false; // True if the last exception throws by #updateDocument was aborting
 
-        private FieldInfos.Builder fieldInfos;
+        private readonly FieldInfos.Builder fieldInfos; // LUCENENET: marked readonly
         private readonly InfoStream infoStream;
         private int numDocsInRAM;
         internal readonly DocumentsWriterDeleteQueue deleteQueue;

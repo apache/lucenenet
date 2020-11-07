@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Xml
     /// </summary>
     public class FilterBuilderFactory : IFilterBuilder
     {
-        IDictionary<string, IFilterBuilder> builders = new Dictionary<string, IFilterBuilder>();
+        private readonly IDictionary<string, IFilterBuilder> builders = new Dictionary<string, IFilterBuilder>(); // LUCENENET: marked readonly
 
         public virtual Filter GetFilter(XmlElement n)
         {

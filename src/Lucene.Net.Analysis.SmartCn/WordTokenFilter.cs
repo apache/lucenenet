@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
     [Obsolete("Use HMMChineseTokenizer instead.")]
     public sealed class WordTokenFilter : TokenFilter
     {
-        private WordSegmenter wordSegmenter;
+        private readonly WordSegmenter wordSegmenter; // LUCENENET: marked readonly
 
         private IEnumerator<SegToken> tokenIter;
 

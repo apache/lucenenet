@@ -89,7 +89,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private readonly List<FileInfo> inputFiles = new List<FileInfo>();
         private int nextFile = 0;
         // Use to synchronize threads on reading from the TREC documents.
-        private object @lock = new object();
+        private readonly object @lock = new object(); // LUCENENET: marked readonly
 
         // Required for test
         internal TextReader reader;

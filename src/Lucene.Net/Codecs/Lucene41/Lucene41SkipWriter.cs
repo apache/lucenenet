@@ -44,11 +44,11 @@ namespace Lucene.Net.Codecs.Lucene41
     {
         // private boolean DEBUG = Lucene41PostingsReader.DEBUG;
 
-        private int[] lastSkipDoc;
-        private long[] lastSkipDocPointer;
-        private long[] lastSkipPosPointer;
-        private long[] lastSkipPayPointer;
-        private int[] lastPayloadByteUpto;
+        private readonly int[] lastSkipDoc; // LUCENENET: marked readonly
+        private readonly long[] lastSkipDocPointer; // LUCENENET: marked readonly
+        private readonly long[] lastSkipPosPointer; // LUCENENET: marked readonly
+        private readonly long[] lastSkipPayPointer; // LUCENENET: marked readonly
+        private readonly int[] lastPayloadByteUpto; // LUCENENET: marked readonly
 
         private readonly IndexOutput docOut;
         private readonly IndexOutput posOut;

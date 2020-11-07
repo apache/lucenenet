@@ -136,10 +136,10 @@ namespace Lucene.Net.Search.Spans
                 moreExclude = excludeSpans.MoveNext();
             }
 
-            private Spans includeSpans;
+            private readonly Spans includeSpans; // LUCENENET: marked readonly
             private bool moreInclude;
 
-            private Spans excludeSpans;
+            private readonly Spans excludeSpans; // LUCENENET: marked readonly
             private bool moreExclude;
 
             public override bool MoveNext()

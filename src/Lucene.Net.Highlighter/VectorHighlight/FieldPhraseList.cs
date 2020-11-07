@@ -226,12 +226,12 @@ namespace Lucene.Net.Search.VectorHighlight
         /// </summary>
         public class WeightedPhraseInfo : IComparable<WeightedPhraseInfo>
         {
-            private List<Toffs> termsOffsets;   // usually termsOffsets.size() == 1,
-                                                // but if position-gap > 1 and slop > 0 then size() could be greater than 1
-            private float boost;  // query boost
-            private int seqnum;
+            private readonly List<Toffs> termsOffsets;   // usually termsOffsets.size() == 1, // LUCENENET: marked readonly
+                                                         // but if position-gap > 1 and slop > 0 then size() could be greater than 1
+            private readonly float boost;  // query boost // LUCENENET: marked readonly
+            private readonly int seqnum; // LUCENENET: marked readonly
 
-            private List<TermInfo> termsInfos;
+            private readonly List<TermInfo> termsInfos; // LUCENENET: marked readonly
 
             /// <summary>
             /// Text of the match, calculated on the fly.  Use for debugging only.
@@ -470,7 +470,7 @@ namespace Lucene.Net.Search.VectorHighlight
             /// </summary>
             public class Toffs : IComparable<Toffs>
             {
-                private int startOffset;
+                private readonly int startOffset; // LUCENENET: marked readonly
                 private int endOffset;
                 public Toffs(int startOffset, int endOffset)
                 {

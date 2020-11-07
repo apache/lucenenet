@@ -35,7 +35,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// </summary>
     public class ReutersQueryMaker : AbstractQueryMaker, IQueryMaker
     {
-        private static string[] STANDARD_QUERIES = {
+        private static readonly string[] STANDARD_QUERIES = { // LUCENENET: marked readonly
             //Start with some short queries
             "Salomon", "Comex", "night trading", "Japan Sony",
             //Try some Phrase Queries

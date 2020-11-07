@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis
 
         private class RollingBufferAnonymousInnerClassHelper : RollingBuffer<T>
         {
-            private LookaheadTokenFilter<T> outerInstance;
+            private readonly LookaheadTokenFilter<T> outerInstance;
 
             public RollingBufferAnonymousInnerClassHelper(LookaheadTokenFilter<T> outerInstance)
                 : base(outerInstance.NewPosition)

@@ -27,13 +27,13 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// </summary>
     public class PreFlexRWSkipListWriter : MultiLevelSkipListWriter
     {
-        private int[] lastSkipDoc;
-        private int[] lastSkipPayloadLength;
-        private long[] lastSkipFreqPointer;
-        private long[] lastSkipProxPointer;
+        private readonly int[] lastSkipDoc; // LUCENENET: marked readonly
+        private readonly int[] lastSkipPayloadLength; // LUCENENET: marked readonly
+        private readonly long[] lastSkipFreqPointer; // LUCENENET: marked readonly
+        private readonly long[] lastSkipProxPointer; // LUCENENET: marked readonly
 
-        private IndexOutput freqOutput;
-        private IndexOutput proxOutput;
+        private readonly IndexOutput freqOutput; // LUCENENET: marked readonly
+        private readonly IndexOutput proxOutput; // LUCENENET: marked readonly
 
         private int curDoc;
         private bool curStorePayloads;

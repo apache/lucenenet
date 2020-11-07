@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Asserting
             private AssertingPostingsConsumer lastPostingsConsumer = null;
             private long sumTotalTermFreq = 0;
             private long sumDocFreq = 0;
-            private OpenBitSet visitedDocs = new OpenBitSet();
+            private readonly OpenBitSet visitedDocs = new OpenBitSet(); // LUCENENET: marked readonly
 
             internal AssertingTermsConsumer(TermsConsumer @in, FieldInfo fieldInfo)
             {

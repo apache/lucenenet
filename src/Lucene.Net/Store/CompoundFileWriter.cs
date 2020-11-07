@@ -342,7 +342,7 @@ namespace Lucene.Net.Store
             private readonly IndexOutput @delegate;
             private readonly long offset;
             private bool closed;
-            private FileEntry entry;
+            private readonly FileEntry entry; // LUCENENET: marked readonly
             private long writtenBytes;
             private readonly bool isSeparate;
 

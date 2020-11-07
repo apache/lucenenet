@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
 
         private class AutomatonTermsEnumAnonymousInnerClassHelper : AutomatonTermsEnum
         {
-            private BytesRef startTerm;
+            private readonly BytesRef startTerm;
 
             public AutomatonTermsEnumAnonymousInnerClassHelper(TermsEnum iterator, CompiledAutomaton compiled, BytesRef startTerm)
                 : base(iterator, compiled)

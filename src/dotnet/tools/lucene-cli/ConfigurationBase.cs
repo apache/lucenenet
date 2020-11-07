@@ -25,7 +25,7 @@ namespace Lucene.Net.Cli
 
     public abstract class ConfigurationBase : CommandLineApplication
     {
-        private static Assembly thisAssembly = typeof(ConfigurationBase).Assembly;
+        private static readonly Assembly thisAssembly = typeof(ConfigurationBase).Assembly;
         protected static string HELP_VALUE_NAME = "help";
 
         protected ConfigurationBase()

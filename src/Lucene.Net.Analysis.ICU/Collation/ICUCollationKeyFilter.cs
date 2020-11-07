@@ -59,8 +59,8 @@ namespace Lucene.Net.Collation
     [ExceptionToClassNameConvention]
     public sealed class ICUCollationKeyFilter : TokenFilter
     {
-        private Collator collator = null;
-        private RawCollationKey reusableKey = new RawCollationKey();
+        private readonly Collator collator = null; // LUCENENET: marked readonly
+        private readonly RawCollationKey reusableKey = new RawCollationKey(); // LUCENENET: marked readonly
         private readonly ICharTermAttribute termAtt;
 
         /// <summary>

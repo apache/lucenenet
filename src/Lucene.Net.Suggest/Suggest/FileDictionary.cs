@@ -59,7 +59,7 @@ namespace Lucene.Net.Search.Suggest
         /// Tab-delimited fields are most common thus the default, but one can override this via the constructor
         /// </summary>
         public const string DEFAULT_FIELD_DELIMITER = "\t";
-        private TextReader @in;
+        private readonly TextReader @in; // LUCENENET: marked readonly
         private string line;
         private bool done = false;
         private readonly string fieldDelimiter;

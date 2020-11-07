@@ -32,11 +32,11 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
     /// </summary>
     internal class BiSegGraph
     {
-        private IDictionary<int, IList<SegTokenPair>> tokenPairListTable = new Dictionary<int, IList<SegTokenPair>>();
+        private readonly IDictionary<int, IList<SegTokenPair>> tokenPairListTable = new Dictionary<int, IList<SegTokenPair>>(); // LUCENENET: marked readonly
 
         private IList<SegToken> segTokenList;
 
-        private static BigramDictionary bigramDict = BigramDictionary.GetInstance();
+        private static readonly BigramDictionary bigramDict = BigramDictionary.GetInstance(); // LUCENENET: marked readonly
 
         public BiSegGraph(SegGraph segGraph)
         {

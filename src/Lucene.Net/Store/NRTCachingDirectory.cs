@@ -73,7 +73,7 @@ namespace Lucene.Net.Store
         private readonly long maxCachedBytes;
 
 #pragma warning disable CA1802 // Use literals where appropriate
-        private static /*readonly*/ bool VERBOSE = false; // For debugging
+        private static readonly bool VERBOSE = false; // For debugging
 #pragma warning restore CA1802 // Use literals where appropriate
 
         /// <summary>

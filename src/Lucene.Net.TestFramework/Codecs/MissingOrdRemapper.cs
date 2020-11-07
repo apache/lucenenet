@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs
 
         private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
         {
-            private IEnumerable<BytesRef> iterable;
+            private readonly IEnumerable<BytesRef> iterable;
 
             public IterableAnonymousInnerClassHelper(IEnumerable<BytesRef> iterable)
             {
@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs
 
         private class IterableAnonymousInnerClassHelper2 : IEnumerable<long?>
         {
-            private IEnumerable<long?> iterable;
+            private readonly IEnumerable<long?> iterable;
 
             public IterableAnonymousInnerClassHelper2(IEnumerable<long?> iterable)
             {
@@ -165,7 +165,7 @@ namespace Lucene.Net.Codecs
 
         private class IterableAnonymousInnerClassHelper3 : IEnumerable<long?>
         {
-            private IEnumerable<long?> iterable;
+            private readonly IEnumerable<long?> iterable;
 
             public IterableAnonymousInnerClassHelper3(IEnumerable<long?> iterable)
             {

@@ -62,7 +62,7 @@ namespace Lucene.Net.Benchmarks.ByTask
     /// </remarks>
     public class PerfRunData : IDisposable
     {
-        private Points points;
+        private readonly Points points; // LUCENENET: marked readonly
 
         // objects used during performance test run
         // directory, analyzer, docMaker - created at startup.
@@ -70,11 +70,11 @@ namespace Lucene.Net.Benchmarks.ByTask
 #pragma warning disable CA2213 // Disposable fields should be disposed
         private Store.Directory directory;
 #pragma warning restore CA2213 // Disposable fields should be disposed
-        private IDictionary<string, AnalyzerFactory> analyzerFactories = new Dictionary<string, AnalyzerFactory>();
+        private readonly IDictionary<string, AnalyzerFactory> analyzerFactories = new Dictionary<string, AnalyzerFactory>(); // LUCENENET: marked readonly
         private Analyzer analyzer;
-        private DocMaker docMaker;
-        private ContentSource contentSource;
-        private FacetSource facetSource;
+        private readonly DocMaker docMaker; // LUCENENET: marked readonly
+        private readonly ContentSource contentSource; // LUCENENET: marked readonly
+        private readonly FacetSource facetSource; // LUCENENET: marked readonly
         private CultureInfo locale;
 
 #pragma warning disable CA2213 // Disposable fields should be disposed
@@ -84,13 +84,13 @@ namespace Lucene.Net.Benchmarks.ByTask
         private TaxonomyReader taxonomyReader;
 
         // we use separate (identical) instances for each "read" task type, so each can iterate the quries separately.
-        private IDictionary<Type, IQueryMaker> readTaskQueryMaker;
-        private Type qmkrClass;
+        private readonly IDictionary<Type, IQueryMaker> readTaskQueryMaker;
+        private readonly Type qmkrClass;
 
         private DirectoryReader indexReader;
         private IndexSearcher indexSearcher;
         private IndexWriter indexWriter;
-        private Config config;
+        private readonly Config config;
         private long startTimeMillis;
 
         private readonly IDictionary<string, object> perfObjects = new Dictionary<string, object>();

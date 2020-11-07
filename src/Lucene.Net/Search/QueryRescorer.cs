@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
 
         private class QueryRescorerAnonymousInnerClassHelper : QueryRescorer
         {
-            private double weight;
+            private readonly double weight;
 
             public QueryRescorerAnonymousInnerClassHelper(Lucene.Net.Search.Query query, double weight)
                 : base(query)

@@ -116,7 +116,7 @@ namespace Lucene.Net.Search.Spans
         {
             private readonly SpanPositionCheckQuery outerInstance;
 
-            private Spans spans;
+            private readonly Spans spans; // LUCENENET: marked readonly
 
             public PositionCheckSpan(SpanPositionCheckQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {

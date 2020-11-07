@@ -37,18 +37,18 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class NearSpansUnordered : Spans
     {
-        private SpanNearQuery query;
+        private readonly SpanNearQuery query; // LUCENENET: marked readonly
 
-        private IList<SpansCell> ordered = new List<SpansCell>(); // spans in query order
-        private Spans[] subSpans;
-        private int slop; // from query
+        private readonly IList<SpansCell> ordered = new List<SpansCell>(); // spans in query order // LUCENENET: marked readonly
+        private readonly Spans[] subSpans; // LUCENENET: marked readonly
+        private readonly int slop; // from query // LUCENENET: marked readonly
 
         private SpansCell first; // linked list of spans
         private SpansCell last; // sorted by doc only
 
         private int totalLength; // sum of current lengths
 
-        private CellQueue queue; // sorted queue of spans
+        private readonly CellQueue queue; // sorted queue of spans // LUCENENET: marked readonly
         private SpansCell max; // max element in queue
 
         private bool more = true; // true iff not done
@@ -83,7 +83,7 @@ namespace Lucene.Net.Search.Spans
             internal Spans spans;
             internal SpansCell next;
             private int length = -1;
-            private int index;
+            private readonly int index; // LUCENENET: marked readonly
 
             public SpansCell(NearSpansUnordered outerInstance, Spans spans, int index)
             {

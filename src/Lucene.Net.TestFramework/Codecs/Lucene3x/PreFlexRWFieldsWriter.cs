@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             private readonly bool storePayloads;
 
             private readonly TermInfo termInfo = new TermInfo();
-            private PostingsWriter postingsWriter;
+            private readonly PostingsWriter postingsWriter; // LUCENENET: marked readonly
 
             public PreFlexTermsWriter(PreFlexRWFieldsWriter outerInstance, FieldInfo fieldInfo)
             {

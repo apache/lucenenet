@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private byte[] bits;
         private int size;
         private int count;
-        private int version;
+        private readonly int version; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructs a vector capable of holding <paramref name="n"/> bits. </summary>

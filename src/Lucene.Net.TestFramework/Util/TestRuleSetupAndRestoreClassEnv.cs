@@ -317,8 +317,8 @@ namespace Lucene.Net.Util
 
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
-            private PostingsFormat format;
-            private DocValuesFormat dvFormat;
+            private readonly PostingsFormat format;
+            private readonly DocValuesFormat dvFormat;
 
             public Lucene46CodecAnonymousInnerClassHelper(PostingsFormat format, DocValuesFormat dvFormat)
             {

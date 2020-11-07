@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.CharFilters
             }
         }
 
-        private char[] @out = new char[256];
+        private readonly char[] @out = new char[256]; // LUCENENET: marked readonly
 
         protected internal virtual string ParseString(string s)
         {

@@ -54,11 +54,11 @@ namespace Lucene.Net.Codecs.Lucene41
         // private boolean DEBUG = Lucene41PostingsReader.DEBUG;
         private readonly int blockSize;
 
-        private long[] docPointer;
-        private long[] posPointer;
-        private long[] payPointer;
-        private int[] posBufferUpto;
-        private int[] payloadByteUpto;
+        private readonly long[] docPointer; // LUCENENET: marked readonly
+        private readonly long[] posPointer; // LUCENENET: marked readonly
+        private readonly long[] payPointer; // LUCENENET: marked readonly
+        private readonly int[] posBufferUpto; // LUCENENET: marked readonly
+        private readonly int[] payloadByteUpto; // LUCENENET: marked readonly
 
         private long lastPosPointer;
         private long lastPayPointer;

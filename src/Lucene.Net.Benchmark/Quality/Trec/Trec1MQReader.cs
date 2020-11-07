@@ -35,7 +35,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
     /// </summary>
     public class Trec1MQReader
     {
-        private string name;
+        private readonly string name; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructor for Trec's 1MQ TopicsReader

@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         // static Logger log = Logger.getLogger(WordDictionary.class);
 
-        private static object syncLock = new object();
+        private static readonly object syncLock = new object();
 
         /// <summary>
         /// Get the singleton dictionary instance.

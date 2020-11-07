@@ -1156,8 +1156,8 @@ namespace Lucene.Net.QueryParsers.Classic
         internal static readonly ulong[] jjtoToken = new ulong[] { 0x1ffffff01L };
         internal static readonly long[] jjtoSkip = new long[] { 0x80L };
         protected ICharStream m_input_stream;
-        private uint[] jjrounds = new uint[49];
-        private int[] jjstateSet = new int[98];
+        private readonly uint[] jjrounds = new uint[49]; // LUCENENET: marked readonly
+        private readonly int[] jjstateSet = new int[98]; // LUCENENET: marked readonly
         protected char m_curChar;
         /// <summary>Constructor. </summary>
         public QueryParserTokenManager(ICharStream stream)

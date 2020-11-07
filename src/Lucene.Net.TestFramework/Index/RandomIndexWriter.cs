@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 
         private class TestPointAnonymousInnerClassHelper : ITestPoint
         {
-            private Random random;
+            private readonly Random random;
 
             public TestPointAnonymousInnerClassHelper(Random random)
             {
@@ -305,7 +305,7 @@ namespace Lucene.Net.Index
 
         private class IterableAnonymousInnerClassHelper2 : IEnumerable<IEnumerable<IIndexableField>>
         {
-            private IEnumerable<IIndexableField> doc;
+            private readonly IEnumerable<IIndexableField> doc;
 
             public IterableAnonymousInnerClassHelper2(IEnumerable<IIndexableField> doc)
             {

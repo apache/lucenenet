@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
     public class QualityQueriesFinder
     {
         private static readonly string newline = Environment.NewLine;
-        private Store.Directory dir;
+        private readonly Store.Directory dir; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructor over a directory containing the index.

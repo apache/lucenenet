@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         private CharacterIterator text;
         private int currentSentence;
         private int[] sentenceStarts;
-        private NLPSentenceDetectorOp sentenceOp;
+        private readonly NLPSentenceDetectorOp sentenceOp; // LUCENENET: marked readonly
 
         public OpenNLPSentenceBreakIterator(NLPSentenceDetectorOp sentenceOp)
         {

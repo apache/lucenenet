@@ -26,9 +26,9 @@ namespace Lucene.Net.Store
     /// </summary>
     public class MockIndexInputWrapper : IndexInput
     {
-        private MockDirectoryWrapper dir;
+        private readonly MockDirectoryWrapper dir; // LUCENENET: marked readonly
         internal readonly string name;
-        private IndexInput @delegate;
+        private readonly IndexInput @delegate; // LUCENENET: marked readonly
         private bool isClone;
         private bool closed;
 

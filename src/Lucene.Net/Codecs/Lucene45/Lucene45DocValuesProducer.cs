@@ -398,9 +398,9 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class Int64ValuesAnonymousInnerClassHelper : Int64Values
         {
-            private long min;
-            private long mult;
-            private BlockPackedReader quotientReader;
+            private readonly long min;
+            private readonly long mult;
+            private readonly BlockPackedReader quotientReader;
 
             public Int64ValuesAnonymousInnerClassHelper(long min, long mult, BlockPackedReader quotientReader)
             {
@@ -417,8 +417,8 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class Int64ValuesAnonymousInnerClassHelper2 : Int64Values
         {
-            private long[] table;
-            private PackedInt32s.Reader ords;
+            private readonly long[] table;
+            private readonly PackedInt32s.Reader ords;
 
             public Int64ValuesAnonymousInnerClassHelper2(long[] table, PackedInt32s.Reader ords)
             {
@@ -460,8 +460,8 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class Int64BinaryDocValuesAnonymousInnerClassHelper : Int64BinaryDocValues
         {
-            private Lucene45DocValuesProducer.BinaryEntry bytes;
-            private IndexInput data;
+            private readonly Lucene45DocValuesProducer.BinaryEntry bytes;
+            private readonly IndexInput data;
 
             public Int64BinaryDocValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data)
             {
@@ -523,9 +523,9 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class Int64BinaryDocValuesAnonymousInnerClassHelper2 : Int64BinaryDocValues
         {
-            private Lucene45DocValuesProducer.BinaryEntry bytes;
-            private IndexInput data;
-            private MonotonicBlockPackedReader addresses;
+            private readonly Lucene45DocValuesProducer.BinaryEntry bytes;
+            private readonly IndexInput data;
+            private readonly MonotonicBlockPackedReader addresses;
 
             public Int64BinaryDocValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data, MonotonicBlockPackedReader addresses)
             {
@@ -612,9 +612,9 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
         {
-            private int valueCount;
-            private BinaryDocValues binary;
-            private BlockPackedReader ordinals;
+            private readonly int valueCount;
+            private readonly BinaryDocValues binary;
+            private readonly BlockPackedReader ordinals;
 
             public SortedDocValuesAnonymousInnerClassHelper(int valueCount, BinaryDocValues binary, BlockPackedReader ordinals)
             {
@@ -708,10 +708,10 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class RandomAccessOrdsAnonymousInnerClassHelper : RandomAccessOrds
         {
-            private long valueCount;
-            private Lucene45DocValuesProducer.Int64BinaryDocValues binary;
-            private Int64Values ordinals;
-            private MonotonicBlockPackedReader ordIndex;
+            private readonly long valueCount;
+            private readonly Lucene45DocValuesProducer.Int64BinaryDocValues binary;
+            private readonly Int64Values ordinals;
+            private readonly MonotonicBlockPackedReader ordIndex;
 
             public RandomAccessOrdsAnonymousInnerClassHelper(long valueCount, Lucene45DocValuesProducer.Int64BinaryDocValues binary, Int64Values ordinals, MonotonicBlockPackedReader ordIndex)
             {
@@ -804,8 +804,8 @@ namespace Lucene.Net.Codecs.Lucene45
         {
             private readonly Lucene45DocValuesProducer outerInstance;
 
-            private long offset;
-            private IndexInput @in;
+            private readonly long offset;
+            private readonly IndexInput @in;
 
             public BitsAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long offset, IndexInput @in)
             {

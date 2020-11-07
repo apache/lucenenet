@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.Lucene41
 #pragma warning restore CA2213 // Disposable fields should be disposed
 
         private readonly ForUtil forUtil;
-        private int version;
+        private readonly int version; // LUCENENET: marked readonly
 
         // public static boolean DEBUG = false;
 

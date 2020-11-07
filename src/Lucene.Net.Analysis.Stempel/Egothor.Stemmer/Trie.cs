@@ -429,9 +429,9 @@ namespace Egothor.Stemmer
         /// </summary>
         internal class StrEnum
         {
-            private string s;
+            private readonly string s; // LUCENENET: marked readonly
             private int from;
-            private int by;
+            private readonly int by; // LUCENENET: marked readonly
 
             /// <summary>
             /// Constructor for the <see cref="StrEnum"/> object

@@ -587,8 +587,8 @@ namespace Lucene.Net.Util
 
         private class AttributeReflectorAnonymousInnerClassHelper : IAttributeReflector
         {
-            private bool prependAttClass;
-            private StringBuilder buffer;
+            private readonly bool prependAttClass;
+            private readonly StringBuilder buffer;
 
             public AttributeReflectorAnonymousInnerClassHelper(bool prependAttClass, StringBuilder buffer)
             {

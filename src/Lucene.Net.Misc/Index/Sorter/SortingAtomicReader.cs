@@ -392,8 +392,8 @@ namespace Lucene.Net.Index.Sorter
 
             private readonly int maxDoc;
             private readonly DocFreqSorter sorter;
-            private int[] docs;
-            private int[] freqs;
+            private readonly int[] docs; // LUCENENET: marked readonly
+            private readonly int[] freqs; // LUCENENET: marked readonly
             private int docIt = -1;
             private readonly int upto;
             private readonly bool withFreqs;
@@ -565,8 +565,8 @@ namespace Lucene.Net.Index.Sorter
 
             private readonly int maxDoc;
             private readonly DocOffsetSorter sorter;
-            private int[] docs;
-            private long[] offsets;
+            private readonly int[] docs; // LUCENENET: marked readonly
+            private readonly long[] offsets; // LUCENENET: marked readonly
             private readonly int upto;
 
             private readonly IndexInput postingInput;

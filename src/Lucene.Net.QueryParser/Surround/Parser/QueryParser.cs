@@ -605,7 +605,8 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
         private int jj_la;
         private int jj_gen;
         private readonly int[] jj_la1 = new int[10];
-        private static int[] jj_la1_0 = new int[] { 0x100, 0x200, 0x400, 0x1000, 0x800, 0x7c3b00, 0x1b00, 0x8000, 0x7c0000, 0x20000, };// LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+        private static readonly int[] jj_la1_0 = new int[] { // LUCENENET: marked readonly // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
+            0x100, 0x200, 0x400, 0x1000, 0x800, 0x7c3b00, 0x1b00, 0x8000, 0x7c0000, 0x20000, };
 
         // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         //static QueryParser()
@@ -779,10 +780,10 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
                 return (jj_ntk = Jj_nt.Kind);
         }
 
-        private IList<int[]> jj_expentries = new List<int[]>();
+        private readonly IList<int[]> jj_expentries = new List<int[]>(); // LUCENENET: marked readonly
         private int[] jj_expentry;
         private int jj_kind = -1;
-        private int[] jj_lasttokens = new int[100];
+        private readonly int[] jj_lasttokens = new int[100]; // LUCENENET: marked readonly
         private int jj_endpos;
 
         private void Jj_add_error_token(int kind, int pos)

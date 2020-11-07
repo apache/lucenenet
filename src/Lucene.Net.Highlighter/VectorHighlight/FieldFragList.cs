@@ -29,7 +29,7 @@ namespace Lucene.Net.Search.VectorHighlight
     /// </summary>
     public abstract class FieldFragList
     {
-        private List<WeightedFragInfo> fragInfos = new List<WeightedFragInfo>();
+        private readonly List<WeightedFragInfo> fragInfos = new List<WeightedFragInfo>();
 
         /// <summary>
         /// a constructor.
@@ -59,10 +59,10 @@ namespace Lucene.Net.Search.VectorHighlight
         /// </summary>
         public class WeightedFragInfo
         {
-            private IList<SubInfo> subInfos;
-            private float totalBoost;
-            private int startOffset;
-            private int endOffset;
+            private readonly IList<SubInfo> subInfos; // LUCENENET: marked readonly
+            private readonly float totalBoost; // LUCENENET: marked readonly
+            private readonly int startOffset; // LUCENENET: marked readonly
+            private readonly int endOffset; // LUCENENET: marked readonly
 
             public WeightedFragInfo(int startOffset, int endOffset, IList<SubInfo> subInfos, float totalBoost)
             {

@@ -35,7 +35,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
 #endif
     {
         /// <summary>Task for which data was collected.</summary>
-        private PerfTask task;
+        private readonly PerfTask task; // LUCENENET: marked readonly
 
         /// <summary>Round in which task run started.</summary>
         private int round;
@@ -53,7 +53,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
         private long maxUsedMem;
 
         /// <summary>Serial run number of this task run in the perf run.</summary>
-        private int taskRunNum;
+        private readonly int taskRunNum; // LUCENENET: marked readonly
 
         /// <summary>Number of other tasks that started to run while this task was still running.</summary>
         private int numParallelTasks;

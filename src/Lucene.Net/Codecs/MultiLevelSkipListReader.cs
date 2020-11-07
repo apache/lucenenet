@@ -52,26 +52,26 @@ namespace Lucene.Net.Codecs
         // the skipInterval. The top level can not contain more than
         // skipLevel entries, the second top level can not contain more
         // than skipLevel^2 entries and so forth.
-        private int numberOfLevelsToBuffer = 1;
+        private readonly int numberOfLevelsToBuffer = 1; // LUCENENET: marked readonly
 
         private int docCount;
         private bool haveSkipped;
 
         /// <summary>
         /// SkipStream for each level. </summary>
-        private IndexInput[] skipStream;
+        private readonly IndexInput[] skipStream;
 
         /// <summary>
         /// The start pointer of each skip level. </summary>
-        private long[] skipPointer;
+        private readonly long[] skipPointer;
 
         /// <summary>
         /// SkipInterval of each level. </summary>
-        private int[] skipInterval;
+        private readonly int[] skipInterval;
 
         /// <summary>
         /// Number of docs skipped per level. </summary>
-        private int[] numSkipped;
+        private readonly int[] numSkipped;
 
         /// <summary>
         /// Doc id of current skip entry per level. </summary>
@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Child pointer of current skip entry per level. </summary>
-        private long[] childPointer;
+        private readonly long[] childPointer;
 
         /// <summary>
         /// childPointer of last read skip entry with docId &lt;=
@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs
         /// </summary>
         private long lastChildPointer;
 
-        private bool inputIsBuffered;
+        private readonly bool inputIsBuffered;
         private readonly int skipMultiplier;
 
         /// <summary>
@@ -338,7 +338,7 @@ namespace Lucene.Net.Codecs
         private sealed class SkipBuffer : IndexInput
         {
             private byte[] data;
-            private long pointer;
+            private readonly long pointer;
             private int pos;
 
             internal SkipBuffer(IndexInput input, int length)

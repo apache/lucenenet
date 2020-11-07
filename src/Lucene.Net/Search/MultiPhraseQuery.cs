@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
     public class MultiPhraseQuery : Query, IEnumerable<Term[]> // LUCENENET specific - implemented IEnumerable<Term[]>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
-        private IList<Term[]> termArrays = new JCG.List<Term[]>();
+        private readonly IList<Term[]> termArrays = new JCG.List<Term[]>(); // LUCENENET: marked readonly
         private readonly IList<int> positions = new JCG.List<int>();
 
         private int slop = 0;

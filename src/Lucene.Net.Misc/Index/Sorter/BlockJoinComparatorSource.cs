@@ -103,12 +103,12 @@ namespace Lucene.Net.Index.Sorter
         {
             private readonly BlockJoinComparerSource outerInstance;
 
-            private int[] parentSlots;
-            private int[] childSlots;
-            private int[] parentReverseMul;
-            private FieldComparer[] parentComparers;
-            private int[] childReverseMul;
-            private FieldComparer[] childComparers;
+            private readonly int[] parentSlots;
+            private readonly int[] childSlots;
+            private readonly int[] parentReverseMul;
+            private readonly FieldComparer[] parentComparers;
+            private readonly int[] childReverseMul;
+            private readonly FieldComparer[] childComparers;
 
             public FieldComparerAnonymousInnerClassHelper(BlockJoinComparerSource outerInstance,
                 int[] parentSlots, int[] childSlots, int[] parentReverseMul, FieldComparer[] parentComparers,

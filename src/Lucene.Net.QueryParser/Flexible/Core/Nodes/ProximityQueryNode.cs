@@ -48,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         private ProximityQueryNode.Type proximityType = ProximityQueryNode.Type.SENTENCE;
         private int distance = -1;
-        private bool inorder = false;
+        private readonly bool inorder = false; // LUCENENET: marked readonly
         private string field = null;
 
         /// <summary>

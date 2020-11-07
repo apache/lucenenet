@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     internal sealed class SegmentTermPositions : SegmentTermDocs
     {
         private IndexInput proxStream;
-        private IndexInput proxStreamOrig;
+        private readonly IndexInput proxStreamOrig; // LUCENENET: marked readonly
         private int proxCount;
         private int position;
 

@@ -214,9 +214,9 @@ namespace Lucene.Net.Index.Sorter
 
         private class DocMapAnonymousInnerClassHelper : Sorter.DocMap
         {
-            private int maxDoc;
-            private MonotonicAppendingInt64Buffer newToOld;
-            private MonotonicAppendingInt64Buffer oldToNew;
+            private readonly int maxDoc;
+            private readonly MonotonicAppendingInt64Buffer newToOld;
+            private readonly MonotonicAppendingInt64Buffer oldToNew;
 
             public DocMapAnonymousInnerClassHelper(int maxDoc, MonotonicAppendingInt64Buffer newToOld, MonotonicAppendingInt64Buffer oldToNew)
             {
@@ -272,8 +272,8 @@ namespace Lucene.Net.Index.Sorter
 
         private class DocComparerAnonymousInnerClassHelper : DocComparer
         {
-            private int[] reverseMul;
-            private FieldComparer[] comparers;
+            private readonly int[] reverseMul;
+            private readonly FieldComparer[] comparers;
 
             public DocComparerAnonymousInnerClassHelper(int[] reverseMul, FieldComparer[] comparers)
             {

@@ -1109,10 +1109,10 @@ namespace Lucene.Net.Index
         private class TestThread : ThreadJob
         {
             private Fields fieldsSource;
-            private ISet<Option> options;
-            private IndexOptions maxIndexOptions;
-            private IndexOptions maxTestOptions;
-            private bool alwaysTestMax;
+            private readonly ISet<Option> options; // LUCENENET: marked readonly
+            private readonly IndexOptions maxIndexOptions; // LUCENENET: marked readonly
+            private readonly IndexOptions maxTestOptions; // LUCENENET: marked readonly
+            private readonly bool alwaysTestMax; // LUCENENET: marked readonly
             private BasePostingsFormatTestCase testCase;
 
             public TestThread(BasePostingsFormatTestCase testCase, Fields fieldsSource, ISet<Option> options, IndexOptions maxTestOptions, IndexOptions maxIndexOptions, bool alwaysTestMax)

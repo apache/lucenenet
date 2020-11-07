@@ -255,7 +255,7 @@ namespace Lucene.Net.Spatial.Serialized
                 }
 
                 private int bytesRefDoc = -1;
-                private BytesRef bytesRef = new BytesRef();//scratch
+                private readonly BytesRef bytesRef = new BytesRef();//scratch
 
                 internal bool FillBytes(int doc)
                 {

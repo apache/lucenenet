@@ -160,7 +160,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Whether position holes should appear in the automaton. </summary>
-        private bool preservePositionIncrements;
+        private readonly bool preservePositionIncrements; // LUCENENET: marked readonly
 
         /// <summary>
         /// Number of entries the lookup was built with </summary>

@@ -196,7 +196,7 @@ namespace Lucene.Net.Store
         {
             private readonly MMapDirectory outerInstance;
 
-            private MMapIndexInput full;
+            private readonly MMapIndexInput full;
 
             public IndexInputSlicerAnonymousInnerClassHelper(MMapDirectory outerInstance, MMapIndexInput full)
             {

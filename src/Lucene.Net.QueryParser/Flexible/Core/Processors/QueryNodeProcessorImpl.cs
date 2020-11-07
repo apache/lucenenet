@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
     /// <seealso cref="IQueryNodeProcessor"/>
     public abstract class QueryNodeProcessor : IQueryNodeProcessor
     {
-        private List<ChildrenList> childrenListPool = new List<ChildrenList>();
+        private readonly List<ChildrenList> childrenListPool = new List<ChildrenList>(); // LUCENENET: marked readonly
 
         private QueryConfigHandler queryConfig;
 

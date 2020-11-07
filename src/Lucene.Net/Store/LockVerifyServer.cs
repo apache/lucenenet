@@ -100,10 +100,10 @@ namespace Lucene.Net.Store
 
         private class ThreadAnonymousInnerClassHelper : ThreadJob
         {
-            private object localLock;
-            private int[] lockedID;
-            private CountdownEvent startingGun;
-            private Socket cs;
+            private readonly object localLock;
+            private readonly int[] lockedID;
+            private readonly CountdownEvent startingGun;
+            private readonly Socket cs;
 
             public ThreadAnonymousInnerClassHelper(object localLock, int[] lockedID, CountdownEvent startingGun, Socket cs)
             {

@@ -24,7 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
     /// </summary>
     public class FieldConfig : AbstractQueryConfig
     {
-        private string fieldName;
+        private readonly string fieldName; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructs a <see cref="FieldConfig"/>

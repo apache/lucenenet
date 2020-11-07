@@ -60,10 +60,10 @@ namespace Lucene.Net.Analysis.Ja
         private const char FULL_STOP_PUNCTUATION = '\u3002';           // 。
 
         // Hiragana to dakuten map (lookup using code point - 0x30ab（か）*/
-        private static char[] h2d = new char[50];
+        private static readonly char[] h2d = new char[50]; // LUCENENET: marked readonly
 
         // Katakana to dakuten map (lookup using code point - 0x30ab（カ
-        private static char[] k2d = new char[50];
+        private static readonly char[] k2d = new char[50]; // LUCENENET: marked readonly
 
         private readonly RollingCharBuffer buffer = new RollingCharBuffer();
 
@@ -73,9 +73,9 @@ namespace Lucene.Net.Analysis.Ja
 
         private int iterationMarkSpanEndPosition = 0;
 
-        private bool normalizeKanji;
+        private readonly bool normalizeKanji; // LUCENENET: marked readonly
 
-        private bool normalizeKana;
+        private readonly bool normalizeKana; // LUCENENET: marked readonly
 
         static JapaneseIterationMarkCharFilter()
         {

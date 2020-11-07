@@ -31,14 +31,11 @@ namespace Lucene.Net.QueryParsers.Xml
     /// be easily changed/optimized by a DBA.
     /// The static methods can be used on their own or by creating an instance of this class you can store and
     /// re-use compiled stylesheets for fast use (e.g. in a server environment)
-    /// 
-    /// LUCENENET (.NET Core):  This is not compiled this because .NET Standard
-    /// does not currently support XSL Transform.
     /// </summary>
     public class QueryTemplateManager
     {
-        IDictionary<string, XslCompiledTransform> compiledTemplatesCache = new Dictionary<string, XslCompiledTransform>();
-        XslCompiledTransform defaultCompiledTemplates = null;
+        private readonly IDictionary<string, XslCompiledTransform> compiledTemplatesCache = new Dictionary<string, XslCompiledTransform>(); // LUCENENET: marked readonly
+        private XslCompiledTransform defaultCompiledTemplates;
 
         public QueryTemplateManager()
         {

@@ -43,7 +43,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public static readonly string SPATIAL_FIELD = "spatial";
 
         //cache spatialStrategy by round number
-        private static IDictionary<int, SpatialStrategy> spatialStrategyCache = new Dictionary<int, SpatialStrategy>();
+        private static readonly IDictionary<int, SpatialStrategy> spatialStrategyCache = new Dictionary<int, SpatialStrategy>(); // LUCENENET: marked readonly
 
         private SpatialStrategy strategy;
         private IShapeConverter shapeConverter;

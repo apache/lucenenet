@@ -353,8 +353,8 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
         {
-            private IEnumerable<long?> docToOrdCount;
-            private IEnumerable<long?> ords;
+            private readonly IEnumerable<long?> docToOrdCount;
+            private readonly IEnumerable<long?> ords;
 
             public IterableAnonymousInnerClassHelper(IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {

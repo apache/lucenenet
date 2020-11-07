@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Xml
     /// </summary>
     public class QueryBuilderFactory : IQueryBuilder
     {
-        IDictionary<string, IQueryBuilder> builders = new Dictionary<string, IQueryBuilder>();
+        private readonly IDictionary<string, IQueryBuilder> builders = new Dictionary<string, IQueryBuilder>(); // LUCENENET: marked readonly
 
         public virtual Query GetQuery(XmlElement n)
         {

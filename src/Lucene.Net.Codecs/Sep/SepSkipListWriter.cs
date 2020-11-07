@@ -35,15 +35,15 @@ namespace Lucene.Net.Codecs.Sep
     /// </summary>
     internal class SepSkipListWriter : MultiLevelSkipListWriter
     {
-        private int[] lastSkipDoc;
-        private int[] lastSkipPayloadLength;
-        private long[] lastSkipPayloadPointer;
+        private readonly int[] lastSkipDoc; // LUCENENET: marked readonly
+        private readonly int[] lastSkipPayloadLength; // LUCENENET: marked readonly
+        private readonly long[] lastSkipPayloadPointer; // LUCENENET: marked readonly
 
-        private Int32IndexOutput.Index[] docIndex;
-        private Int32IndexOutput.Index[] freqIndex;
-        private Int32IndexOutput.Index[] posIndex;
+        private readonly Int32IndexOutput.Index[] docIndex; // LUCENENET: marked readonly
+        private readonly Int32IndexOutput.Index[] freqIndex; // LUCENENET: marked readonly
+        private readonly Int32IndexOutput.Index[] posIndex; // LUCENENET: marked readonly
 
-        private Int32IndexOutput freqOutput;
+        private readonly Int32IndexOutput freqOutput; // LUCENENET: marked readonly
         // TODO: -- private again
         internal Int32IndexOutput posOutput;
         // TODO: -- private again

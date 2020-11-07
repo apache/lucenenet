@@ -218,9 +218,9 @@ namespace Lucene.Net.Search.Spans
         {
             private readonly SpanOrQuery outerInstance;
 
-            private AtomicReaderContext context;
-            private IBits acceptDocs;
-            private IDictionary<Term, TermContext> termContexts;
+            private readonly AtomicReaderContext context;
+            private readonly IBits acceptDocs;
+            private readonly IDictionary<Term, TermContext> termContexts;
 
             public SpansAnonymousInnerClassHelper(SpanOrQuery outerInstance, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             {

@@ -72,7 +72,7 @@ namespace Egothor.Stemmer
 
         protected List<Trie> m_tries = new List<Trie>();
 
-        int BY = 1;
+        private readonly int BY = 1; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructor for the <see cref="MultiTrie"/> object.

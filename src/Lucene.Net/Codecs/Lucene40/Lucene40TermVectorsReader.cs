@@ -79,15 +79,15 @@ namespace Lucene.Net.Codecs.Lucene40
         internal static readonly long HEADER_LENGTH_DOCS = CodecUtil.HeaderLength(CODEC_NAME_DOCS);
         internal static readonly long HEADER_LENGTH_INDEX = CodecUtil.HeaderLength(CODEC_NAME_INDEX);
 
-        private FieldInfos fieldInfos;
+        private readonly FieldInfos fieldInfos; // LUCENENET: marked readonly
 
 #pragma warning disable CA2213 // Disposable fields should be disposed
-        private IndexInput tvx;
-        private IndexInput tvd;
-        private IndexInput tvf;
+        private readonly IndexInput tvx; // LUCENENET: marked readonly
+        private readonly IndexInput tvd; // LUCENENET: marked readonly
+        private readonly IndexInput tvf; // LUCENENET: marked readonly
 #pragma warning restore CA2213 // Disposable fields should be disposed
-        private int size;
-        private int numTotalDocs;
+        private readonly int size; // LUCENENET: marked readonly
+        private readonly int numTotalDocs; // LUCENENET: marked readonly
 
         /// <summary>
         /// Used by clone. </summary>
