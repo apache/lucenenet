@@ -99,9 +99,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             {
                 IQueryNode child = GetChild();
 
-                if (child is IFieldableNode)
+                if (child is IFieldableNode fieldableNode)
                 {
-                    return ((IFieldableNode)child).Field;
+                    return fieldableNode.Field;
                 }
 
                 return null;
@@ -110,9 +110,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
             {
                 IQueryNode child = GetChild();
 
-                if (child is IFieldableNode)
+                if (child is IFieldableNode fieldableNode)
                 {
-                    ((IFieldableNode)child).Field = value;
+                    fieldableNode.Field = value;
                 }
             }
         }

@@ -292,9 +292,8 @@ namespace Lucene.Net.Util
             {
                 // Cover the case where this attribute is applied to the whole test fixture
                 var currentTest = context.CurrentTest;
-                if (!TestNightly && currentTest is NUnit.Framework.Internal.TestFixture)
+                if (!TestNightly && currentTest is NUnit.Framework.Internal.TestFixture fixture)
                 {
-                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
                     foreach (var testInterface in fixture.Tests)
                     {
                         var test = (NUnit.Framework.Internal.Test)testInterface;
@@ -337,9 +336,8 @@ namespace Lucene.Net.Util
             {
                 // Cover the case where this attribute is applied to the whole test fixture
                 var currentTest = context.CurrentTest;
-                if (!TestWeekly && currentTest is NUnit.Framework.Internal.TestFixture)
+                if (!TestWeekly && currentTest is NUnit.Framework.Internal.TestFixture fixture)
                 {
-                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
                     foreach (var testInterface in fixture.Tests)
                     {
                         var test = (NUnit.Framework.Internal.Test)testInterface;
@@ -380,9 +378,8 @@ namespace Lucene.Net.Util
             {
                 // Cover the case where this attribute is applied to the whole test fixture
                 var currentTest = context.CurrentTest;
-                if (!TestAwaitsFix && currentTest is NUnit.Framework.Internal.TestFixture)
+                if (!TestAwaitsFix && currentTest is NUnit.Framework.Internal.TestFixture fixture)
                 {
-                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
                     foreach (var testInterface in fixture.Tests)
                     {
                         var test = (NUnit.Framework.Internal.Test)testInterface;
@@ -427,9 +424,8 @@ namespace Lucene.Net.Util
             {
                 // Cover the case where this attribute is applied to the whole test fixture
                 var currentTest = context.CurrentTest;
-                if (!TestSlow && currentTest is NUnit.Framework.Internal.TestFixture)
+                if (!TestSlow && currentTest is NUnit.Framework.Internal.TestFixture fixture)
                 {
-                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
                     foreach (var testInterface in fixture.Tests)
                     {
                         var test = (NUnit.Framework.Internal.Test)testInterface;
@@ -2150,7 +2146,7 @@ namespace Lucene.Net.Util
 
                         case 1:
                             // will create no FC insanity in atomic case, as ParallelAtomicReader has own cache key:
-                            r = (r is AtomicReader) ? (IndexReader)new ParallelAtomicReader((AtomicReader)r) : new ParallelCompositeReader((CompositeReader)r);
+                            r = (r is AtomicReader atomicReader) ? (IndexReader)new ParallelAtomicReader(atomicReader) : new ParallelCompositeReader((CompositeReader)r);
                             break;
 
                         case 2:
@@ -2178,13 +2174,13 @@ namespace Lucene.Net.Util
                             // Häckidy-Hick-Hack: a standard Reader will cause FC insanity, so we use
                             // QueryUtils' reader with a fake cache key, so insanity checker cannot walk
                             // along our reader:
-                            if (r is AtomicReader)
+                            if (r is AtomicReader atomicReader2)
                             {
-                                r = new AssertingAtomicReader((AtomicReader)r);
+                                r = new AssertingAtomicReader(atomicReader2);
                             }
-                            else if (r is DirectoryReader)
+                            else if (r is DirectoryReader directoryReader)
                             {
-                                r = new AssertingDirectoryReader((DirectoryReader)r);
+                                r = new AssertingDirectoryReader(directoryReader);
                             }
                             break;
 

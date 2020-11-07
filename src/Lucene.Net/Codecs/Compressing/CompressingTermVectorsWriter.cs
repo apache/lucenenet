@@ -888,9 +888,9 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     TermVectorsReader vectorsReader = matchingSegmentReader.TermVectorsReader;
                     // we can only bulk-copy if the matching reader is also a CompressingTermVectorsReader
-                    if (vectorsReader != null && vectorsReader is CompressingTermVectorsReader)
+                    if (vectorsReader != null && vectorsReader is CompressingTermVectorsReader compressingTermVectorsReader)
                     {
-                        matchingVectorsReader = (CompressingTermVectorsReader)vectorsReader;
+                        matchingVectorsReader = compressingTermVectorsReader;
                     }
                 }
 

@@ -204,18 +204,18 @@ namespace Lucene.Net.Search
 
         private void InitReader(AtomicReader reader)
         {
-            if (reader is SegmentReader)
+            if (reader is SegmentReader segmentReader)
             {
-                ((SegmentReader)reader).AddCoreDisposedListener(purgeCore);
+                segmentReader.AddCoreDisposedListener(purgeCore);
             }
             else
             {
                 // we have a slow reader of some sort, try to register a purge event
                 // rather than relying on gc:
                 object key = reader.CoreCacheKey;
-                if (key is AtomicReader)
+                if (key is AtomicReader atomicReader)
                 {
-                    ((AtomicReader)key).AddReaderClosedListener(purgeReader);
+                    atomicReader.AddReaderClosedListener(purgeReader);
                 }
                 else
                 {
@@ -322,11 +322,10 @@ namespace Lucene.Net.Search
                 }
 #endif
                 object value = innerCache.GetOrAdd(key, (cacheKey) => new FieldCache.CreationPlaceholder<TValue>());
-                if (value is FieldCache.CreationPlaceholder<TValue>)
+                if (value is FieldCache.CreationPlaceholder<TValue> progress)
                 {
                     lock (value)
                     {
-                        var progress = (FieldCache.CreationPlaceholder<TValue>)value;
                         if (progress.Value is null)
                         {
                             progress.Value = CreateValue(reader, key, setDocsWithField);
@@ -538,9 +537,9 @@ namespace Lucene.Net.Search
             {
                 bits = new Lucene.Net.Util.Bits.MatchNoBits(maxDoc);
             }
-            else if (docsWithField is FixedBitSet)
+            else if (docsWithField is FixedBitSet fixedBitSet)
             {
-                int numSet = ((FixedBitSet)docsWithField).Cardinality();
+                int numSet = fixedBitSet.Cardinality();
                 if (numSet >= maxDoc)
                 {
                     // The cardinality of the BitSet is maxDoc if all documents have a value.

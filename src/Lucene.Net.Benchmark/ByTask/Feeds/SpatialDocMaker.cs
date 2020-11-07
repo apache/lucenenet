@@ -162,9 +162,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             public IShape Convert(IShape shape)
             {
-                if (shape is IPoint && (radiusDegrees != 0.0 || plusMinus != 0.0))
+                if ((radiusDegrees != 0.0 || plusMinus != 0.0) && shape is IPoint point)
                 {
-                    IPoint point = (IPoint)shape;
                     double radius = radiusDegrees;
                     if (plusMinus > 0.0)
                     {

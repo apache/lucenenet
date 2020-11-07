@@ -224,9 +224,9 @@ namespace Lucene.Net.Store
         private bool MustSync()
         {
             Directory @delegate = m_input;
-            while (@delegate is FilterDirectory)
+            while (@delegate is FilterDirectory filterDirectory)
             {
-                @delegate = ((FilterDirectory)@delegate).Delegate;
+                @delegate = filterDirectory.Delegate;
             }
             return @delegate is NRTCachingDirectory;
         }
@@ -264,9 +264,9 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                if (m_input is RAMDirectory)
+                if (m_input is RAMDirectory ramDirectory)
                 {
-                    return ((RAMDirectory)m_input).GetSizeInBytes();
+                    return ramDirectory.GetSizeInBytes();
                 }
                 else
                 {
@@ -521,12 +521,12 @@ namespace Lucene.Net.Store
             {
                 foreach (var ent in openFileHandles)
                 {
-                    if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).name.Equals(name, StringComparison.Ordinal))
+                    if (input && ent.Key is MockIndexInputWrapper mockIndexInputWrapper && mockIndexInputWrapper.name.Equals(name, StringComparison.Ordinal))
                     {
                         t = CreateException(t, ent.Value);
                         break;
                     }
-                    else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper)ent.Key).name.Equals(name, StringComparison.Ordinal))
+                    else if (!input && ent.Key is MockIndexOutputWrapper mockIndexOutputWrapper && mockIndexOutputWrapper.name.Equals(name, StringComparison.Ordinal))
                     {
                         t = CreateException(t, ent.Value);
                         break;

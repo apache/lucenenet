@@ -80,8 +80,8 @@ namespace Lucene.Net.Support
             if (cmp == null)
                 return ReverseOrder<T>();
 
-            if (cmp is ReverseComparer2<T>)
-                return ((ReverseComparer2<T>)cmp).cmp;
+            if (cmp is ReverseComparer2<T> reverseComparer2)
+                return reverseComparer2.cmp;
 
             return new ReverseComparer2<T>(cmp);
         }
@@ -282,8 +282,8 @@ namespace Lucene.Net.Support
             public override bool Equals(object o)
             {
                 return (o == this) ||
-                    (o is ReverseComparer2<T> &&
-                     cmp.Equals(((ReverseComparer2<T>)o).cmp));
+                    (o is ReverseComparer2<T> reverseComparer2 &&
+                     cmp.Equals(reverseComparer2.cmp));
             }
 
             public override int GetHashCode()

@@ -43,9 +43,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             while (sqi.MoveNext())
             {
                 SrndQuery leq = sqi.Current;
-                if (leq is IDistanceSubQuery)
+                if (leq is IDistanceSubQuery distanceSubQuery)
                 {
-                    string m = ((IDistanceSubQuery)leq).DistanceSubQueryNotAllowed();
+                    string m = distanceSubQuery.DistanceSubQueryNotAllowed();
                     if (m != null)
                     {
                         return m;

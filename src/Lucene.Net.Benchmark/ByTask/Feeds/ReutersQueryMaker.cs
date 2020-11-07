@@ -79,18 +79,16 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             {
                 try
                 {
-
                     object query = qs[i];
                     Query q = null;
-                    if (query is string)
+                    if (query is string queryString)
                     {
-                        q = qp.Parse((string)query);
+                        q = qp.Parse(queryString);
 
                     }
-                    else if (query is Query)
+                    else if (query is Query queryObj)
                     {
-                        q = (Query)query;
-
+                        q = queryObj;
                     }
                     else
                     {

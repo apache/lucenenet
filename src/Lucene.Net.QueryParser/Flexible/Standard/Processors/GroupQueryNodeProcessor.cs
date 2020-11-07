@@ -67,9 +67,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
             this.usingAnd = Operator.AND == defaultOperator;
 
-            if (queryTree is GroupQueryNode)
+            if (queryTree is GroupQueryNode groupQueryNode)
             {
-                queryTree = ((GroupQueryNode)queryTree).GetChild();
+                queryTree = groupQueryNode.GetChild();
             }
 
             this.queryNodeList = new List<IQueryNode>();

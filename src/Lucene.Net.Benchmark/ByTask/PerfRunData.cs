@@ -150,9 +150,9 @@ namespace Lucene.Net.Benchmarks.ByTask
                 List<IDisposable> perfObjectsToClose = new List<IDisposable>();
                 foreach (object obj in perfObjects.Values)
                 {
-                    if (obj is IDisposable)
+                    if (obj is IDisposable disposable)
                     {
-                        perfObjectsToClose.Add((IDisposable)obj);
+                        perfObjectsToClose.Add(disposable);
                     }
                 }
                 IOUtils.Dispose(perfObjectsToClose);

@@ -462,13 +462,13 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             Query query = GetFieldQuery(field, queryText, true);
 
-            if (query is PhraseQuery)
+            if (query is PhraseQuery phraseQuery)
             {
-                ((PhraseQuery)query).Slop = slop;
+                phraseQuery.Slop = slop;
             }
-            if (query is MultiPhraseQuery)
+            if (query is MultiPhraseQuery multiPhraseQuery)
             {
-                ((MultiPhraseQuery)query).Slop = slop;
+                multiPhraseQuery.Slop = slop;
             }
 
             return query;

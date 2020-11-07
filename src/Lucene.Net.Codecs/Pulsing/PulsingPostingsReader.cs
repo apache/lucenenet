@@ -228,10 +228,8 @@ namespace Lucene.Net.Codecs.Pulsing
             var termState2 = (PulsingTermState) termState;
             if (termState2.PostingsSize != -1)
             {
-                PulsingDocsEnum postings;
-                if (reuse is PulsingDocsEnum)
+                if (reuse is PulsingDocsEnum postings)
                 {
-                    postings = (PulsingDocsEnum) reuse;
                     if (!postings.CanReuse(field))
                     {
                         postings = new PulsingDocsEnum(field);
@@ -276,10 +274,8 @@ namespace Lucene.Net.Codecs.Pulsing
 
             if (termState2.PostingsSize != -1)
             {
-                PulsingDocsAndPositionsEnum postings;
-                if (reuse is PulsingDocsAndPositionsEnum)
+                if (reuse is PulsingDocsAndPositionsEnum postings)
                 {
-                    postings = (PulsingDocsAndPositionsEnum) reuse;
                     if (!postings.CanReuse(field))
                     {
                         postings = new PulsingDocsAndPositionsEnum(field);

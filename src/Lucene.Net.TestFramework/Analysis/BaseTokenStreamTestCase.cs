@@ -68,7 +68,8 @@ namespace Lucene.Net.Analysis
 
         public override bool Equals(object other)
         {
-            return (other is CheckClearAttributesAttribute && ((CheckClearAttributesAttribute)other).clearCalled == this.clearCalled);
+            return other is CheckClearAttributesAttribute checkClearAttributesAttribute
+                && checkClearAttributesAttribute.clearCalled == this.clearCalled;
         }
 
         public override int GetHashCode()

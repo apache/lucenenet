@@ -89,7 +89,7 @@ namespace Lucene.Net.Analysis
         /// <seealso cref="CharFilter.CorrectOffset(int)"/>
         protected internal int CorrectOffset(int currentOff)
         {
-            return (m_input is CharFilter) ? ((CharFilter)m_input).CorrectOffset(currentOff) : currentOff;
+            return (m_input is CharFilter charFilter) ? charFilter.CorrectOffset(currentOff) : currentOff;
         }
 
         /// <summary>

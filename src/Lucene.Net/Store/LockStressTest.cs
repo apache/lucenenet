@@ -114,9 +114,9 @@ namespace Lucene.Net.Store
 
             DirectoryInfo lockDir = new DirectoryInfo(lockDirName);
 
-            if (lockFactory is FSLockFactory)
+            if (lockFactory is FSLockFactory fsLockFactory)
             {
-                ((FSLockFactory)lockFactory).SetLockDir(lockDir);
+                fsLockFactory.SetLockDir(lockDir);
             }
 
             Console.WriteLine("Connecting to server " + addr + " and registering as client " + myID + "...");

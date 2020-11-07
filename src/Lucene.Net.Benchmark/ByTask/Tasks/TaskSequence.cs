@@ -560,9 +560,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             letChildReport = false;
             foreach (PerfTask task in tasks)
             {
-                if (task is TaskSequence)
+                if (task is TaskSequence taskSequence)
                 {
-                    ((TaskSequence)task).SetNoChildReport();
+                    taskSequence.SetNoChildReport();
                 }
             }
         }

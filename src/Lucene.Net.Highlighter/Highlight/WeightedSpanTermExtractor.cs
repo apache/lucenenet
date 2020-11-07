@@ -65,9 +65,9 @@ namespace Lucene.Net.Search.Highlight
         /// <exception cref="IOException">If there is a low-level I/O error</exception>
         protected virtual void Extract(Query query, IDictionary<string, WeightedSpanTerm> terms)
         {
-            if (query is BooleanQuery)
+            if (query is BooleanQuery booleanQuery)
             {
-                IList<BooleanClause> queryClauses = ((BooleanQuery)query).Clauses;
+                IList<BooleanClause> queryClauses = booleanQuery.Clauses;
 
                 for (int i = 0; i < queryClauses.Count; i++)
                 {
@@ -77,9 +77,8 @@ namespace Lucene.Net.Search.Highlight
                     }
                 }
             }
-            else if (query is PhraseQuery)
+            else if (query is PhraseQuery phraseQuery)
             {
-                PhraseQuery phraseQuery = (PhraseQuery)query;
                 Term[] phraseQueryTerms = phraseQuery.GetTerms();
                 SpanQuery[] clauses = new SpanQuery[phraseQueryTerms.Length];
                 for (int i = 0; i < phraseQueryTerms.Length; i++)
@@ -120,17 +119,17 @@ namespace Lucene.Net.Search.Highlight
             {
                 ExtractWeightedTerms(terms, query);
             }
-            else if (query is SpanQuery)
+            else if (query is SpanQuery spanQuery)
             {
-                ExtractWeightedSpanTerms(terms, (SpanQuery)query);
+                ExtractWeightedSpanTerms(terms, spanQuery);
             }
-            else if (query is FilteredQuery)
+            else if (query is FilteredQuery filteredQuery)
             {
-                Extract(((FilteredQuery)query).Query, terms);
+                Extract(filteredQuery.Query, terms);
             }
-            else if (query is ConstantScoreQuery)
+            else if (query is ConstantScoreQuery constantScoreQuery)
             {
-                Query q = ((ConstantScoreQuery)query).Query;
+                Query q = constantScoreQuery.Query;
                 if (q != null)
                 {
                     Extract(q, terms);
@@ -142,16 +141,15 @@ namespace Lucene.Net.Search.Highlight
                 // this query is TermContext sensitive.
                 ExtractWeightedTerms(terms, query);
             } 
-            else if (query is DisjunctionMaxQuery)
+            else if (query is DisjunctionMaxQuery disjunctionMaxQuery)
             {
-                foreach (var q in ((DisjunctionMaxQuery)query))
+                foreach (var q in disjunctionMaxQuery)
                 {
                     Extract(q, terms);
                 }
             }
-            else if (query is MultiPhraseQuery)
+            else if (query is MultiPhraseQuery mpq)
             {
-                MultiPhraseQuery mpq = (MultiPhraseQuery) query;
                 IList<Term[]> termArrays = mpq.GetTermArrays();
                 int[] positions = mpq.GetPositions();
                 if (positions.Length > 0)
@@ -540,28 +538,28 @@ namespace Lucene.Net.Search.Highlight
 
         protected virtual void CollectSpanQueryFields(SpanQuery spanQuery, ISet<string> fieldNames)
         {
-            if (spanQuery is FieldMaskingSpanQuery)
+            if (spanQuery is FieldMaskingSpanQuery fieldMaskingSpanQuery)
             {
-                CollectSpanQueryFields(((FieldMaskingSpanQuery)spanQuery).MaskedQuery, fieldNames);
+                CollectSpanQueryFields(fieldMaskingSpanQuery.MaskedQuery, fieldNames);
             }
-            else if (spanQuery is SpanFirstQuery)
+            else if (spanQuery is SpanFirstQuery spanFirstQuery)
             {
-                CollectSpanQueryFields(((SpanFirstQuery)spanQuery).Match, fieldNames);
+                CollectSpanQueryFields(spanFirstQuery.Match, fieldNames);
             }
-            else if (spanQuery is SpanNearQuery)
+            else if (spanQuery is SpanNearQuery spanNearQuery)
             {
-                foreach (SpanQuery clause in ((SpanNearQuery)spanQuery).GetClauses())
+                foreach (SpanQuery clause in spanNearQuery.GetClauses())
                 {
                     CollectSpanQueryFields(clause, fieldNames);
                 }
             }
-            else if (spanQuery is SpanNotQuery)
+            else if (spanQuery is SpanNotQuery spanNotQuery)
             {
-                CollectSpanQueryFields(((SpanNotQuery)spanQuery).Include, fieldNames);
+                CollectSpanQueryFields(spanNotQuery.Include, fieldNames);
             }
-            else if (spanQuery is SpanOrQuery)
+            else if (spanQuery is SpanOrQuery spanOrQuery)
             {
-                foreach (SpanQuery clause in ((SpanOrQuery)spanQuery).GetClauses())
+                foreach (SpanQuery clause in spanOrQuery.GetClauses())
                 {
                     CollectSpanQueryFields(clause, fieldNames);
                 }
@@ -578,17 +576,17 @@ namespace Lucene.Net.Search.Highlight
             {
                 return false; // Will throw NotImplementedException in case of a SpanRegexQuery.
             }
-            else if (spanQuery is FieldMaskingSpanQuery)
+            else if (spanQuery is FieldMaskingSpanQuery fieldMaskingSpanQuery)
             {
-                return MustRewriteQuery(((FieldMaskingSpanQuery)spanQuery).MaskedQuery);
+                return MustRewriteQuery(fieldMaskingSpanQuery.MaskedQuery);
             }
-            else if (spanQuery is SpanFirstQuery)
+            else if (spanQuery is SpanFirstQuery spanFirstQuery)
             {
-                return MustRewriteQuery(((SpanFirstQuery)spanQuery).Match);
+                return MustRewriteQuery(spanFirstQuery.Match);
             }
-            else if (spanQuery is SpanNearQuery)
+            else if (spanQuery is SpanNearQuery spanNearQuery)
             {
-                foreach (SpanQuery clause in ((SpanNearQuery)spanQuery).GetClauses())
+                foreach (SpanQuery clause in spanNearQuery.GetClauses())
                 {
                     if (MustRewriteQuery(clause))
                     {
@@ -597,14 +595,13 @@ namespace Lucene.Net.Search.Highlight
                 }
                 return false;
             }
-            else if (spanQuery is SpanNotQuery)
+            else if (spanQuery is SpanNotQuery spanNotQuery)
             {
-                SpanNotQuery spanNotQuery = (SpanNotQuery)spanQuery;
                 return MustRewriteQuery(spanNotQuery.Include) || MustRewriteQuery(spanNotQuery.Exclude);
             }
-            else if (spanQuery is SpanOrQuery)
+            else if (spanQuery is SpanOrQuery spanOrQuery)
             {
-                foreach (SpanQuery clause in ((SpanOrQuery)spanQuery).GetClauses())
+                foreach (SpanQuery clause in spanOrQuery.GetClauses())
                 {
                     if (MustRewriteQuery(clause))
                     {

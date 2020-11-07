@@ -355,9 +355,9 @@ namespace Lucene.Net.Join
             while (queue2.TryDequeue(out scorer))
             {
                 //System.out.println("  poll: " + value + "; " + value.getWeight().getQuery());
-                if (scorer is ToParentBlockJoinQuery.BlockJoinScorer)
+                if (scorer is ToParentBlockJoinQuery.BlockJoinScorer blockJoinScorer)
                 {
-                    Enroll((ToParentBlockJoinQuery)scorer.Weight.Query, (ToParentBlockJoinQuery.BlockJoinScorer)scorer);
+                    Enroll((ToParentBlockJoinQuery)scorer.Weight.Query, blockJoinScorer);
                 }
 
                 foreach (Scorer.ChildScorer sub in scorer.GetChildren())

@@ -391,9 +391,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     TermVectorsReader vectorsReader = matchingSegmentReader.TermVectorsReader;
 
-                    if (vectorsReader != null && vectorsReader is Lucene40TermVectorsReader)
+                    if (vectorsReader != null && vectorsReader is Lucene40TermVectorsReader lucene40TermVectorsReader)
                     {
-                        matchingVectorsReader = (Lucene40TermVectorsReader)vectorsReader;
+                        matchingVectorsReader = lucene40TermVectorsReader;
                     }
                 }
                 if (reader.LiveDocs != null)

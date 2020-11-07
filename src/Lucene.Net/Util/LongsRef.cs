@@ -123,15 +123,15 @@ namespace Lucene.Net.Util
             return result;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object obj)
         {
-            if (other == null)
+            if (obj == null)
             {
                 return false;
             }
-            if (other is Int64sRef)
+            if (obj is Int64sRef other)
             {
-                return this.Int64sEquals((Int64sRef)other);
+                return Int64sEquals(other);
             }
             return false;
         }

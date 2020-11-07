@@ -72,9 +72,9 @@ namespace Lucene.Net.Analysis.Icu.TokenAttributes
                 return true;
             }
 
-            if (other is ScriptAttribute)
+            if (other is ScriptAttribute scriptAttribute)
             {
-                return ((ScriptAttribute)other).code == code;
+                return scriptAttribute.code == code;
             }
 
             return false;

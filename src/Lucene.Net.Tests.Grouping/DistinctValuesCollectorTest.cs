@@ -302,9 +302,9 @@ namespace Lucene.Net.Search.Grouping
             {
                 var group = results[i];
                 object gv = group.GroupValue;
-                if (gv is BytesRef)
+                if (gv is BytesRef bytesRef)
                 {
-                    Console.WriteLine(i + ": groupValue=" + ((BytesRef)gv).Utf8ToString());
+                    Console.WriteLine(i + ": groupValue=" + bytesRef.Utf8ToString());
                 }
                 else
                 {
@@ -312,9 +312,9 @@ namespace Lucene.Net.Search.Grouping
                 }
                 foreach (object o in group.UniqueValues)
                 {
-                    if (o is BytesRef)
+                    if (o is BytesRef bytesRef2)
                     {
-                        Console.WriteLine("  " + ((BytesRef)o).Utf8ToString());
+                        Console.WriteLine("  " + bytesRef2.Utf8ToString());
                     }
                     else
                     {

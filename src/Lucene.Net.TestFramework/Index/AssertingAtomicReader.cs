@@ -420,9 +420,9 @@ namespace Lucene.Net.Index
 
                 // TODO: should we give this thing a random to be super-evil,
                 // and randomly *not* unwrap?
-                if (reuse is AssertingDocsEnum)
+                if (reuse is AssertingDocsEnum assertingDocsEnum)
                 {
-                    reuse = ((AssertingDocsEnum)reuse).m_input;
+                    reuse = assertingDocsEnum.m_input;
                 }
                 DocsEnum docs = base.Docs(liveDocs, reuse, flags);
                 return docs == null ? null : new AssertingDocsEnum(docs);
@@ -434,9 +434,9 @@ namespace Lucene.Net.Index
 
                 // TODO: should we give this thing a random to be super-evil,
                 // and randomly *not* unwrap?
-                if (reuse is AssertingDocsAndPositionsEnum)
+                if (reuse is AssertingDocsAndPositionsEnum assertingDocsAndPositionsEnum)
                 {
-                    reuse = ((AssertingDocsAndPositionsEnum)reuse).m_input;
+                    reuse = assertingDocsAndPositionsEnum.m_input;
                 }
                 DocsAndPositionsEnum docs = base.DocsAndPositions(liveDocs, reuse, flags);
                 return docs == null ? null : new AssertingDocsAndPositionsEnum(docs);

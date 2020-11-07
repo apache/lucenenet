@@ -194,9 +194,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public virtual ICollection<Cell> GetSubCells(IShape shapeFilter)
         {
             //Note: Higher-performing subclasses might override to consider the shape filter to generate fewer cells.
-            if (shapeFilter is IPoint)
+            if (shapeFilter is IPoint point)
             {
-                Cell subCell = GetSubCell((IPoint)shapeFilter);
+                Cell subCell = GetSubCell(point);
                 subCell.m_shapeRel = SpatialRelation.CONTAINS;
                 return new ReadOnlyCollection<Cell>(new[] { subCell });
             }
@@ -269,8 +269,8 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         public override bool Equals(object obj)
         {
-            return !(obj == null || !(obj is Cell)) &&
-                   TokenString.Equals(((Cell)obj).TokenString, StringComparison.Ordinal);
+            return !(obj == null || !(obj is Cell cell)) &&
+                   TokenString.Equals(cell.TokenString, StringComparison.Ordinal);
         }
 
         public override int GetHashCode()

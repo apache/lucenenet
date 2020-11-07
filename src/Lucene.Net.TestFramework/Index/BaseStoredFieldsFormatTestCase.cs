@@ -750,9 +750,9 @@ namespace Lucene.Net.Index
                 using (RandomIndexWriter iw = new RandomIndexWriter(Random, dir, iwConf))
                 {
 
-                    if (dir is MockDirectoryWrapper)
+                    if (dir is MockDirectoryWrapper mockDirectoryWrapper)
                     {
-                        ((MockDirectoryWrapper)dir).Throttling = Throttling.NEVER;
+                        mockDirectoryWrapper.Throttling = Throttling.NEVER;
                     }
 
                     Document emptyDoc = new Document(); // emptyDoc

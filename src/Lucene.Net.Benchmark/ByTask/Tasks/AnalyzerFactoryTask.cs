@@ -481,10 +481,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     throw new Exception("Line #" + GetLineNumber(stok) + ": ", e);
                 }
-                if (instance is IResourceLoaderAware)
+                if (instance is IResourceLoaderAware resourceLoaderAware)
                 {
                     DirectoryInfo baseDir = new DirectoryInfo(RunData.Config.Get("work.dir", "work"));
-                    ((IResourceLoaderAware)instance).Inform(new FilesystemResourceLoader(baseDir));
+                    resourceLoaderAware.Inform(new FilesystemResourceLoader(baseDir));
                 }
                 if (typeof(CharFilterFactory).IsAssignableFrom(clazz))
                 {

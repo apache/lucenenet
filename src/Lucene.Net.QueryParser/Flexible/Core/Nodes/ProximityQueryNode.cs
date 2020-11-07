@@ -103,10 +103,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             foreach (IQueryNode clause in nodes)
             {
-                if (clause is FieldQueryNode)
+                if (clause is FieldQueryNode fieldQueryNode)
                 {
-                    ((FieldQueryNode)clause).m_toQueryStringIgnoreFields = true;
-                    ((FieldQueryNode)clause).Field = field;
+                    fieldQueryNode.m_toQueryStringIgnoreFields = true;
+                    fieldQueryNode.Field = field;
                 }
             }
         }

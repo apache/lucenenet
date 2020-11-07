@@ -52,9 +52,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public static AtomicReader Unwrap(AtomicReader reader)
         {
-            while (reader is FilterAtomicReader)
+            while (reader is FilterAtomicReader filterAtomicReader)
             {
-                reader = ((FilterAtomicReader)reader).m_input;
+                reader = filterAtomicReader.m_input;
             }
             return reader;
         }

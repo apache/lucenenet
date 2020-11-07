@@ -77,18 +77,18 @@ namespace Lucene.Net.Analysis.Util
             catch (TargetInvocationException e)
             {
                 // to simplify tests that check for illegal parameters
-                if (e.InnerException is ArgumentException)
+                if (e.InnerException is ArgumentException argumentException)
                 {
-                    throw (ArgumentException)e.InnerException;
+                    throw argumentException;
                 }
                 else
                 {
                     throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
                 }
             }
-            if (factory is IResourceLoaderAware)
+            if (factory is IResourceLoaderAware resourceLoaderAware)
             {
-                ((IResourceLoaderAware)factory).Inform(loader);
+                resourceLoaderAware.Inform(loader);
             }
             return factory;
         }

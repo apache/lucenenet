@@ -138,13 +138,13 @@ namespace Lucene.Net.QueryParsers.Classic
 
         private void ApplySlop(Query q, int slop)
         {
-            if (q is PhraseQuery)
+            if (q is PhraseQuery phraseQuery)
             {
-                ((PhraseQuery)q).Slop = slop;
+                phraseQuery.Slop = slop;
             }
-            else if (q is MultiPhraseQuery)
+            else if (q is MultiPhraseQuery multiPhraseQuery)
             {
-                ((MultiPhraseQuery)q).Slop = slop;
+                multiPhraseQuery.Slop = slop;
             }
         }
 
@@ -277,7 +277,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
                 Query q = qp.Parse(queries[i]);
-                if (q != null && (!(q is BooleanQuery) || ((BooleanQuery)q).Clauses.Count > 0))
+                if (q != null && (!(q is BooleanQuery booleanQuery) || booleanQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, Occur.SHOULD);
                 }
@@ -325,7 +325,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
                 Query q = qp.Parse(query);
-                if (q != null && (!(q is BooleanQuery) || ((BooleanQuery)q).Clauses.Count > 0))
+                if (q != null && (!(q is BooleanQuery booleanQuery) || booleanQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, flags[i]);
                 }
@@ -371,7 +371,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 QueryParser qp = new QueryParser(matchVersion, fields[i], analyzer);
                 Query q = qp.Parse(queries[i]);
-                if (q != null && (!(q is BooleanQuery) || ((BooleanQuery)q).Clauses.Count > 0))
+                if (q != null && (!(q is BooleanQuery booleanQuery) || booleanQuery.Clauses.Count > 0))
                 {
                     bQuery.Add(q, flags[i]);
                 }

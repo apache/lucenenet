@@ -1631,13 +1631,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                AtomicReader reader;
-                if (readerIn is AtomicReader)
-                {
-                    // Reader is already atomic: use the incoming docID:
-                    reader = (AtomicReader)readerIn;
-                }
-                else
+                if (!(readerIn is AtomicReader reader))
                 {
                     // Composite reader: lookup sub-reader and re-base docID:
                     IList<AtomicReaderContext> leaves = readerIn.Leaves;
@@ -1650,13 +1644,14 @@ namespace Lucene.Net.Index
                         Debugging.Assert(docID < reader.MaxDoc);
                     }
                 }
+                // else: Reader is already atomic: use the incoming docID
 
-                if (!(reader is SegmentReader))
+                if (!(reader is SegmentReader segmentReader))
                 {
                     throw new ArgumentException("the reader must be a SegmentReader or composite reader containing only SegmentReaders");
                 }
 
-                SegmentCommitInfo info = ((SegmentReader)reader).SegmentInfo;
+                SegmentCommitInfo info = segmentReader.SegmentInfo;
 
                 // TODO: this is a slow linear search, but, number of
                 // segments should be contained unless something is

@@ -279,10 +279,10 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         numNegatives++;
                     }
 
-                    if (qc is BooleanQuery)
+                    if (qc is BooleanQuery booleanQuery)
                     {
                         List<SpanQuery> sc = new List<SpanQuery>();
-                        AddComplexPhraseClause(sc, (BooleanQuery)qc);
+                        AddComplexPhraseClause(sc, booleanQuery);
                         if (sc.Count > 0)
                         {
                             allSpanClauses[i] = sc[0];

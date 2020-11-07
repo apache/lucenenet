@@ -85,7 +85,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                         task.DisableCounting = isDisableCountNextTask;
                         isDisableCountNextTask = false;
                         currSequence.AddTask(task);
-                        if (task is RepSumByPrefTask)
+                        if (task is RepSumByPrefTask repSumByPrefTask)
                         {
                             stok.NextToken();
                             string prefix = stok.StringValue;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                             {
                                 throw new Exception("named report prefix problem - " + stok.ToString());
                             }
-                          ((RepSumByPrefTask)task).SetPrefix(prefix);
+                            repSumByPrefTask.SetPrefix(prefix);
                         }
                         // check for task param: '(' someParam ')'
                         stok.NextToken();
@@ -346,9 +346,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 if (t != null && t.Count == 1)
                 {
                     PerfTask p = t[0];
-                    if (p is TaskSequence)
+                    if (p is TaskSequence taskSequence)
                     {
-                        sequence = (TaskSequence)p;
+                        sequence = taskSequence;
                         continue;
                     }
                 }
@@ -448,9 +448,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 return;
             foreach (PerfTask p in t)
             {
-                if (p is TaskSequence)
+                if (p is TaskSequence taskSequence)
                 {
-                    ExtractTasks(extrct, (TaskSequence)p);
+                    ExtractTasks(extrct, taskSequence);
                 }
                 else
                 {

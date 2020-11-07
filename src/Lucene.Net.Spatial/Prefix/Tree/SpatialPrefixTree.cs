@@ -189,9 +189,9 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             {
                 throw new ArgumentException("detailLevel > maxLevels");
             }
-            if (shape is IPoint)
+            if (shape is IPoint point)
             {
-                return GetCells((IPoint)shape, detailLevel, inclParents);
+                return GetCells(point, detailLevel, inclParents);
             }
             IList<Cell> cells = new List<Cell>(inclParents ? 4096 : 2048);
             RecursiveGetCells(WorldCell, shape, detailLevel, inclParents, simplify, cells);

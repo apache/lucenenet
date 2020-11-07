@@ -147,9 +147,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public static SortedDocValues UnwrapSingleton(SortedSetDocValues dv)
         {
-            if (dv is SingletonSortedSetDocValues)
+            if (dv is SingletonSortedSetDocValues singletonSortedSetDocValues)
             {
-                return ((SingletonSortedSetDocValues)dv).SortedDocValues;
+                return singletonSortedSetDocValues.SortedDocValues;
             }
             else
             {

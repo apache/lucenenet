@@ -300,9 +300,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     StoredFieldsReader fieldsReader = matchingSegmentReader.FieldsReader;
                     // we can only bulk-copy if the matching reader is also a Lucene40FieldsReader
-                    if (fieldsReader != null && fieldsReader is Lucene40StoredFieldsReader)
+                    if (fieldsReader != null && fieldsReader is Lucene40StoredFieldsReader lucene40StoredFieldsReader)
                     {
-                        matchingFieldsReader = (Lucene40StoredFieldsReader)fieldsReader;
+                        matchingFieldsReader = lucene40StoredFieldsReader;
                     }
                 }
 

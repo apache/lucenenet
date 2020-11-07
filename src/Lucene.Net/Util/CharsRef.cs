@@ -131,14 +131,14 @@ namespace Lucene.Net.Util
 
         public override bool Equals(object other)
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }
 
-            if (other is CharsRef)
+            if (other is CharsRef charsRef)
             {
-                return this.CharsEquals(((CharsRef)other));
+                return this.CharsEquals(charsRef);
             }
             return false;
         }

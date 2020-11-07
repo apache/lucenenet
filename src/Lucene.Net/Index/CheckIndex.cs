@@ -1452,9 +1452,9 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (fieldTerms is BlockTreeTermsReader.FieldReader)
+                    if (fieldTerms is BlockTreeTermsReader.FieldReader fieldReader)
                     {
-                        BlockTreeTermsReader.Stats stats = ((BlockTreeTermsReader.FieldReader)fieldTerms).ComputeStats();
+                        BlockTreeTermsReader.Stats stats = fieldReader.ComputeStats();
                         if (Debugging.AssertsEnabled) Debugging.Assert(stats != null);
                         if (status.BlockTreeStats == null)
                         {
@@ -1896,9 +1896,9 @@ namespace Lucene.Net.Index
                         {
                             throw new Exception("ord out of bounds: " + ord);
                         }
-                        if (dv is RandomAccessOrds)
+                        if (dv is RandomAccessOrds randomAccessOrds2)
                         {
-                            long ord2 = ((RandomAccessOrds)dv).OrdAt(ordCount);
+                            long ord2 = randomAccessOrds2.OrdAt(ordCount);
                             if (ord != ord2)
                             {
                                 throw new Exception("ordAt(" + ordCount + ") inconsistent, expected=" + ord + ",got=" + ord2 + " for doc: " + i);
@@ -1913,9 +1913,9 @@ namespace Lucene.Net.Index
                     {
                         throw new Exception("dv for field: " + fieldName + " has no ordinals but is not marked missing for doc: " + i);
                     }
-                    if (dv is RandomAccessOrds)
+                    if (dv is RandomAccessOrds randomAccessOrds)
                     {
-                        long ordCount2 = ((RandomAccessOrds)dv).Cardinality();
+                        long ordCount2 = randomAccessOrds.Cardinality();
                         if (ordCount != ordCount2)
                         {
                             throw new Exception("cardinality inconsistent, expected=" + ordCount + ",got=" + ordCount2 + " for doc: " + i);
@@ -1929,9 +1929,9 @@ namespace Lucene.Net.Index
                     {
                         throw new Exception("dv for field: " + fieldName + " is marked missing but has ord=" + o + " for doc: " + i);
                     }
-                    if (dv is RandomAccessOrds)
+                    if (dv is RandomAccessOrds randomAccessOrds)
                     {
-                        long ordCount2 = ((RandomAccessOrds)dv).Cardinality();
+                        long ordCount2 = randomAccessOrds.Cardinality();
                         if (ordCount2 != 0)
                         {
                             throw new Exception("dv for field: " + fieldName + " is marked missing but has cardinality " + ordCount2 + " for doc: " + i);

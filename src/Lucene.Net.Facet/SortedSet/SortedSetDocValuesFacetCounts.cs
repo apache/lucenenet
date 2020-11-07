@@ -155,9 +155,9 @@ namespace Lucene.Net.Facet.SortedSet
             // TODO: is this right?  really, we need a way to
             // verify that this ordinalMap "matches" the leaves in
             // matchingDocs...
-            if (dv is MultiDocValues.MultiSortedSetDocValues && matchingDocs.Count > 1)
+            if (dv is MultiDocValues.MultiSortedSetDocValues values && matchingDocs.Count > 1)
             {
-                ordinalMap = ((MultiDocValues.MultiSortedSetDocValues)dv).Mapping;
+                ordinalMap = values.Mapping;
             }
             else
             {

@@ -187,8 +187,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
 
         public static bool WasEscaped(ICharSequence text, int index)
         {
-            if (text is UnescapedCharSequence)
-                return ((UnescapedCharSequence)text).wasEscaped[index];
+            if (text is UnescapedCharSequence unescapedCharSequence)
+                return unescapedCharSequence.wasEscaped[index];
             else return false;
         }
 
@@ -196,10 +196,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
         {
             var lowercaseText = locale.TextInfo.ToLower(text.ToString());
 
-            if (text is UnescapedCharSequence)
+            if (text is UnescapedCharSequence unescapedCharSequence)
             {
                 char[] chars = lowercaseText.ToCharArray();
-                bool[] wasEscaped = ((UnescapedCharSequence)text).wasEscaped;
+                bool[] wasEscaped = unescapedCharSequence.wasEscaped;
                 return new UnescapedCharSequence(chars, wasEscaped, 0, chars.Length);
             }
             else

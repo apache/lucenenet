@@ -169,8 +169,8 @@ namespace Lucene.Net.Search.Highlight
             tokenStream.Reset();
             var currentFrag = new TextFragment(newText, newText.Length, docFrags.Count);
 
-            if (_fragmentScorer is QueryScorer) {
-                ((QueryScorer)_fragmentScorer).SetMaxDocCharsToAnalyze(_maxDocCharsToAnalyze);
+            if (_fragmentScorer is QueryScorer queryScorer) {
+                queryScorer.SetMaxDocCharsToAnalyze(_maxDocCharsToAnalyze);
             }
 
             var newStream = _fragmentScorer.Init(tokenStream);

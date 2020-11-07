@@ -206,22 +206,22 @@ namespace Lucene.Net.Queries
         /// <exception cref="IOException"/>
         private void DoChain(FixedBitSet result, int logic, DocIdSet dis)
         {
-            if (dis is FixedBitSet)
+            if (dis is FixedBitSet fixedBitSet)
             {
                 // optimized case for FixedBitSets
                 switch (logic)
                 {
                     case OR:
-                        result.Or((FixedBitSet)dis);
+                        result.Or(fixedBitSet);
                         break;
                     case AND:
-                        result.And((FixedBitSet)dis);
+                        result.And(fixedBitSet);
                         break;
                     case ANDNOT:
-                        result.AndNot((FixedBitSet)dis);
+                        result.AndNot(fixedBitSet);
                         break;
                     case XOR:
-                        result.Xor((FixedBitSet)dis);
+                        result.Xor(fixedBitSet);
                         break;
                     default:
                         DoChain(result, DEFAULT, dis);

@@ -152,9 +152,9 @@ namespace Lucene.Net.Codecs
         {
             get
             {
-                if (docValuesFormatFactory is IServiceListable)
+                if (docValuesFormatFactory is IServiceListable serviceListable)
                 {
-                    return ((IServiceListable)docValuesFormatFactory).AvailableServices;
+                    return serviceListable.AvailableServices;
                 }
                 else
                 {

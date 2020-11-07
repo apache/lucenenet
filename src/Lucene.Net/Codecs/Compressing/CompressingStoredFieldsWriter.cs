@@ -404,9 +404,9 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     StoredFieldsReader fieldsReader = matchingSegmentReader.FieldsReader;
                     // we can only bulk-copy if the matching reader is also a CompressingStoredFieldsReader
-                    if (fieldsReader != null && fieldsReader is CompressingStoredFieldsReader)
+                    if (fieldsReader != null && fieldsReader is CompressingStoredFieldsReader compressingStoredFieldsReader)
                     {
-                        matchingFieldsReader = (CompressingStoredFieldsReader)fieldsReader;
+                        matchingFieldsReader = compressingStoredFieldsReader;
                     }
                 }
 
