@@ -32,17 +32,17 @@ namespace Lucene.Net.Codecs.Sep
     /// </summary>
     public sealed class SepPostingsWriter : PostingsWriterBase
     {
-        internal readonly static string CODEC = "SepPostingsWriter";
+        internal const string CODEC = "SepPostingsWriter";
 
-        internal readonly static string DOC_EXTENSION = "doc";
-        internal readonly static string SKIP_EXTENSION = "skp";
-        internal readonly static string FREQ_EXTENSION = "frq";
-        internal readonly static string POS_EXTENSION = "pos";
-        internal readonly static string PAYLOAD_EXTENSION = "pyl";
+        internal const string DOC_EXTENSION = "doc";
+        internal const string SKIP_EXTENSION = "skp";
+        internal const string FREQ_EXTENSION = "frq";
+        internal const string POS_EXTENSION = "pos";
+        internal const string PAYLOAD_EXTENSION = "pyl";
 
         // Increment version to change it:
-        internal readonly static int VERSION_START = 0;
-        internal readonly static int VERSION_CURRENT = VERSION_START;
+        internal const int VERSION_START = 0;
+        internal const int VERSION_CURRENT = VERSION_START;
 
 #pragma warning disable CA2213 // Disposable fields should be disposed
         private Int32IndexOutput freqOut;
@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.Sep
         /// accelerable cases. More detailed experiments would be useful here. 
         /// </summary>
         private readonly int skipInterval;
-        private static readonly int DEFAULT_SKIP_INTERVAL = 16;
+        private const int DEFAULT_SKIP_INTERVAL = 16;
 
         /// <summary>
         /// Expert: minimum docFreq to write any skip data at all.

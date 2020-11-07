@@ -39,7 +39,7 @@ namespace Lucene.Net.Codecs.MockRandom
     public sealed class MockRandomPostingsFormat : PostingsFormat
     {
         private readonly Random seedRandom;
-        private readonly string SEED_EXT = "sd";
+        private const string SEED_EXT = "sd";
 
         private class RandomAnonymousClassHelper : Random
         {

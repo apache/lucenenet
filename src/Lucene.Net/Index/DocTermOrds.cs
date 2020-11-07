@@ -112,11 +112,11 @@ namespace Lucene.Net.Index
         /// Term ords are shifted by this, internally, to reserve
         /// values 0 (end term) and 1 (index is a pointer into byte array)
         /// </summary>
-        private static readonly int TNUM_OFFSET = 2;
+        private const int TNUM_OFFSET = 2;
 
         /// <summary>
         /// Every 128th term is indexed, by default. </summary>
-        public static readonly int DEFAULT_INDEX_INTERVAL_BITS = 7; // decrease to a low number like 2 for testing
+        public const int DEFAULT_INDEX_INTERVAL_BITS = 7; // decrease to a low number like 2 for testing
 
         private int indexIntervalBits;
         private int indexIntervalMask;

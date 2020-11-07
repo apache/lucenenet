@@ -54,7 +54,9 @@ namespace Lucene.Net.Codecs.Lucene3x
     [Obsolete("(4.0)")]
     internal class Lucene3xFields : FieldsProducer
     {
+#pragma warning disable CA1802 // Use literals where appropriate
         private static bool DEBUG_SURROGATES = false;
+#pragma warning restore CA1802 // Use literals where appropriate
 
         public TermInfosReader Tis { get; set; }
         public TermInfosReader TisNoIndex { get; private set; }
@@ -279,8 +281,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             private SegmentTermEnum seekTermEnum;
 
-            private static readonly sbyte UTF8_NON_BMP_LEAD = unchecked((sbyte) 0xf0);
-            private static readonly sbyte UTF8_HIGH_BMP_LEAD = unchecked((sbyte) 0xee);
+            private const sbyte UTF8_NON_BMP_LEAD = unchecked((sbyte)0xf0);
+            private const sbyte UTF8_HIGH_BMP_LEAD = unchecked((sbyte)0xee);
 
             // Returns true if the unicode char is "after" the
             // surrogates in UTF16, ie >= U+E000 and <= U+FFFF:
@@ -666,7 +668,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         scratch[1] = (sbyte)scratchTerm.Bytes[upTo + 1];
                         scratch[2] = (sbyte)scratchTerm.Bytes[upTo + 2];
 
-                        scratchTerm.Bytes[upTo] = (byte)UTF8_HIGH_BMP_LEAD;
+                        scratchTerm.Bytes[upTo] = unchecked((byte)UTF8_HIGH_BMP_LEAD);
                         scratchTerm.Bytes[upTo + 1] = 0x80;
                         scratchTerm.Bytes[upTo + 2] = 0x80;
                         scratchTerm.Length = upTo + 3;

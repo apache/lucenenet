@@ -63,7 +63,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         , System.ICloneable
 #endif
     {
-        internal static readonly int DEFAULT_LOG_STEP = 1000;
+        internal const int DEFAULT_LOG_STEP = 1000;
 
         private PerfRunData runData;
 

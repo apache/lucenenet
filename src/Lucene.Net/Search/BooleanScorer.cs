@@ -133,8 +133,8 @@ namespace Lucene.Net.Search
         /// A simple hash table of document scores within a range. </summary>
         internal sealed class BucketTable
         {
-            public static readonly int SIZE = 1 << 11;
-            public static readonly int MASK = SIZE - 1;
+            public const int SIZE = 1 << 11;
+            public const int MASK = SIZE - 1;
 
             internal readonly Bucket[] buckets = new Bucket[SIZE];
             internal Bucket first = null; // head of valid list

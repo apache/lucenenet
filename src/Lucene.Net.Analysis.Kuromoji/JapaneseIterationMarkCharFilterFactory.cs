@@ -35,8 +35,8 @@ namespace Lucene.Net.Analysis.Ja
     /// </summary>
     public class JapaneseIterationMarkCharFilterFactory : CharFilterFactory, IMultiTermAwareComponent
     {
-        private static readonly string NORMALIZE_KANJI_PARAM = "normalizeKanji";
-        private static readonly string NORMALIZE_KANA_PARAM = "normalizeKana";
+        private const string NORMALIZE_KANJI_PARAM = "normalizeKanji";
+        private const string NORMALIZE_KANA_PARAM = "normalizeKana";
 
         private readonly bool normalizeKanji;
         private readonly bool normalizeKana;

@@ -53,17 +53,17 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Five values in the English language
         /// </summary>
-        private static readonly string VOWELS = "AEIOU";
+        private const string VOWELS = "AEIOU";
 
         /// <summary>
         /// Variable used in Metaphone algorithm
         /// </summary>
-        private static readonly string FRONTV = "EIY";
+        private const string FRONTV = "EIY";
 
         /// <summary>
         /// Variable used in Metaphone algorithm
         /// </summary>
-        private static readonly string VARSON = "CSPTG";
+        private const string VARSON = "CSPTG";
 
         /// <summary>
         /// The max code length for metaphone is 4

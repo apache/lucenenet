@@ -31,11 +31,11 @@ namespace Lucene.Net.Analysis.Ja
     /// </summary>
     public class GraphvizFormatter
     {
-        private readonly static string BOS_LABEL = "BOS";
+        private const string BOS_LABEL = "BOS";
 
-        private readonly static string EOS_LABEL = "EOS";
+        private const string EOS_LABEL = "EOS";
 
-        private readonly static string FONT_NAME = "Helvetica";
+        private const string FONT_NAME = "Helvetica";
 
         private readonly ConnectionCosts costs;
 

@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// "Vowels" to test for
         /// </summary>
-        private static readonly string VOWELS = "AEIOUY";
+        private const string VOWELS = "AEIOUY";
 
         /// <summary>
         /// Prefixes when present which are not pronounced

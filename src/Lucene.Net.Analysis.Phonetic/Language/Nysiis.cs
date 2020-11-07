@@ -119,8 +119,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         private static readonly Regex PAT_EE_IE = new Regex("(EE|IE)$", RegexOptions.Compiled);
         private static readonly Regex PAT_DT_ETC = new Regex("(DT|RT|RD|NT|ND)$", RegexOptions.Compiled);
 
-        private static readonly char SPACE = ' ';
-        private static readonly int TRUE_LENGTH = 6;
+        private const char SPACE = ' ';
+        private const int TRUE_LENGTH = 6;
 
         /// <summary>
         /// Tests if the given character is a vowel.

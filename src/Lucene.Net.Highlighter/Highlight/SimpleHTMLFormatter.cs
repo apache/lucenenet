@@ -23,8 +23,8 @@ namespace Lucene.Net.Search.Highlight
     /// <author>  MAHarwood </author>
     public class SimpleHTMLFormatter : IFormatter
     {
-        private static readonly string DEFAULT_PRE_TAG = "<B>";
-        private static readonly string DEFAULT_POST_TAG = "</B>";
+        private const string DEFAULT_PRE_TAG = "<B>";
+        private const string DEFAULT_POST_TAG = "</B>";
 
         internal string preTag;
         internal string postTag;

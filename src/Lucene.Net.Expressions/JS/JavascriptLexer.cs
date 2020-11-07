@@ -2111,17 +2111,17 @@ loop2_break: ;
 
         protected JavascriptLexer.DFA9 m_dfa9;
 
-        internal static readonly string DFA9_eotS = "\x1\uffff\x2\x4\x3\uffff\x1\x4";
+        internal const string DFA9_eotS = "\x1\uffff\x2\x4\x3\uffff\x1\x4";
 
-        internal static readonly string DFA9_eofS = "\x7\uffff";
+        internal const string DFA9_eofS = "\x7\uffff";
 
-        internal static readonly string DFA9_minS = "\x3\x30\x3\uffff\x1\x30";
+        internal const string DFA9_minS = "\x3\x30\x3\uffff\x1\x30";
 
-        internal static readonly string DFA9_maxS = "\x1\x49\x1\x30\x1\x49\x3\uffff\x1\x49";
+        internal const string DFA9_maxS = "\x1\x49\x1\x30\x1\x49\x3\uffff\x1\x49";
 
-        internal static readonly string DFA9_acceptS = "\x3\uffff\x1\x2\x1\x3\x1\x1\x1\uffff";
+        internal const string DFA9_acceptS = "\x3\uffff\x1\x2\x1\x3\x1\x1\x1\uffff";
 
-        internal static readonly string DFA9_specialS = "\x7\uffff}>";
+        internal const string DFA9_specialS = "\x7\uffff}>";
 
         internal static readonly string[] DFA9_transitionS = new string[] { "\x1\x3\x1\uffff\x1\x1\xb\x2"
             , "\x1\x5", "\x1\x5\x1\uffff\xc\x6", string.Empty, string.Empty, string.Empty, "\x1\x5\x1\uffff\xc\x6"

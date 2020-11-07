@@ -36,13 +36,13 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class BlockTermsWriter : FieldsConsumer
     {
-        internal readonly static string CODEC_NAME = "BLOCK_TERMS_DICT";
+        internal const string CODEC_NAME = "BLOCK_TERMS_DICT";
 
         // Initial format
-        public readonly static int VERSION_START = 0;
-        public readonly static int VERSION_APPEND_ONLY = 1;
-        public readonly static int VERSION_META_ARRAY = 2;
-        public readonly static int VERSION_CHECKSUM = 3;
+        public const int VERSION_START = 0;
+        public const int VERSION_APPEND_ONLY = 1;
+        public const int VERSION_META_ARRAY = 2;
+        public const int VERSION_CHECKSUM = 3;
         public readonly static int VERSION_CURRENT = VERSION_CHECKSUM;
 
         /// <summary>Extension of terms file</summary>

@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// Large prime number for hash function
         /// </summary>
-        public static readonly int PRIME_INDEX_LENGTH = 12071;
+        public const int PRIME_INDEX_LENGTH = 12071;
 
         /// <summary>
         /// wordIndexTable guarantees to hash all Chinese characters in Unicode into 

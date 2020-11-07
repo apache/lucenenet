@@ -128,14 +128,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// The file format version for the segments_N codec header, since 4.8+ </summary>
-        public static readonly int VERSION_48 = 2;
+        public const int VERSION_48 = 2;
 
         // Used for the segments.gen file only!
         // Whenever you add a new format, make it 1 smaller (negative version logic)!
-        private static readonly int FORMAT_SEGMENTS_GEN_47 = -2;
+        private const int FORMAT_SEGMENTS_GEN_47 = -2;
 
-        private static readonly int FORMAT_SEGMENTS_GEN_CHECKSUM = -3;
-        private static readonly int FORMAT_SEGMENTS_GEN_START = FORMAT_SEGMENTS_GEN_47;
+        private const int FORMAT_SEGMENTS_GEN_CHECKSUM = -3;
+        private const int FORMAT_SEGMENTS_GEN_START = FORMAT_SEGMENTS_GEN_47;
 
         /// <summary>
         /// Current format of segments.gen </summary>

@@ -25,14 +25,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// </summary>
     public class TrecLATimesParser : TrecDocParser
     {
-        private static readonly string DATE = "<DATE>";
-        private static readonly string DATE_END = "</DATE>";
-        private static readonly string DATE_NOISE = "day,"; // anything aftre the ',' 
+        private const string DATE = "<DATE>";
+        private const string DATE_END = "</DATE>";
+        private const string DATE_NOISE = "day,"; // anything aftre the ',' 
 
-        private static readonly string SUBJECT = "<SUBJECT>";
-        private static readonly string SUBJECT_END = "</SUBJECT>";
-        private static readonly string HEADLINE = "<HEADLINE>";
-        private static readonly string HEADLINE_END = "</HEADLINE>";
+        private const string SUBJECT = "<SUBJECT>";
+        private const string SUBJECT_END = "</SUBJECT>";
+        private const string HEADLINE = "<HEADLINE>";
+        private const string HEADLINE_END = "</HEADLINE>";
 
         public override DocData Parse(DocData docData, string name, TrecContentSource trecSrc,
             StringBuilder docBuf, ParsePathType pathType)

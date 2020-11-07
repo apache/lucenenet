@@ -36,9 +36,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// </summary>
     public class StandardSyntaxParser : ISyntaxParser /*, StandardSyntaxParserConstants*/
     {
-        private static readonly int CONJ_NONE = 0;
-        private static readonly int CONJ_AND = 2;
-        private static readonly int CONJ_OR = 2;
+        private const int CONJ_NONE = 0;
+        private const int CONJ_AND = 2;
+        private const int CONJ_OR = 2;
 
 
         // syntax parser constructor

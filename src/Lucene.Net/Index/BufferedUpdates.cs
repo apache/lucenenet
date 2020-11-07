@@ -151,7 +151,9 @@ namespace Lucene.Net.Index
 
         internal readonly AtomicInt64 bytesUsed;
 
+#pragma warning disable CA1802 // Use literals where appropriate
         private static bool VERBOSE_DELETES = false;
+#pragma warning restore CA1802 // Use literals where appropriate
 
         internal long gen;
 

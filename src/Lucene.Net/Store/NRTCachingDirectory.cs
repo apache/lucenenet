@@ -72,7 +72,9 @@ namespace Lucene.Net.Store
         private readonly long maxMergeSizeBytes;
         private readonly long maxCachedBytes;
 
-        private static readonly bool VERBOSE = false;
+#pragma warning disable CA1802 // Use literals where appropriate
+        private static /*readonly*/ bool VERBOSE = false; // For debugging
+#pragma warning restore CA1802 // Use literals where appropriate
 
         /// <summary>
         /// We will cache a newly created output if 1) it's a

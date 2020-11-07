@@ -35,11 +35,11 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
         }
 
-        public static readonly char WORD_SEGMENT_CHAR = '@';
+        public const char WORD_SEGMENT_CHAR = '@';
 
         private static BigramDictionary singleInstance;
 
-        public static readonly int PRIME_BIGRAM_LENGTH = 402137;
+        public const int PRIME_BIGRAM_LENGTH = 402137;
 
         /// <summary>
         /// The word associations are stored as FNV1 hashcodes, which have a small probability of collision, but save memory.  

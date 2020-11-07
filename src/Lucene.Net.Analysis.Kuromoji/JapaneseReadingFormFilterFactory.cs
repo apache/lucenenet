@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Ja
     /// </summary>
     public class JapaneseReadingFormFilterFactory : TokenFilterFactory
     {
-        private static readonly string ROMAJI_PARAM = "useRomaji";
+        private const string ROMAJI_PARAM = "useRomaji";
         private readonly bool useRomaji;
 
         /// <summary>Creates a new <see cref="JapaneseReadingFormFilterFactory"/>.</summary>

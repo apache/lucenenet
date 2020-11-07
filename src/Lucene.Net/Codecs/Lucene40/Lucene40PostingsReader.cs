@@ -46,17 +46,17 @@ namespace Lucene.Net.Codecs.Lucene40
     [Obsolete("Only for reading old 4.0 segments")]
     public class Lucene40PostingsReader : PostingsReaderBase
     {
-        internal static readonly string TERMS_CODEC = "Lucene40PostingsWriterTerms";
-        internal static readonly string FRQ_CODEC = "Lucene40PostingsWriterFrq";
-        internal static readonly string PRX_CODEC = "Lucene40PostingsWriterPrx";
+        internal const string TERMS_CODEC = "Lucene40PostingsWriterTerms";
+        internal const string FRQ_CODEC = "Lucene40PostingsWriterFrq";
+        internal const string PRX_CODEC = "Lucene40PostingsWriterPrx";
 
         //private static boolean DEBUG = BlockTreeTermsWriter.DEBUG;
 
         // Increment version to change it:
-        internal static readonly int VERSION_START = 0;
+        internal const int VERSION_START = 0;
 
-        internal static readonly int VERSION_LONG_SKIP = 1;
-        internal static readonly int VERSION_CURRENT = VERSION_LONG_SKIP;
+        internal const int VERSION_LONG_SKIP = 1;
+        internal const int VERSION_CURRENT = VERSION_LONG_SKIP;
 
         private readonly IndexInput freqIn;
         private readonly IndexInput proxIn;

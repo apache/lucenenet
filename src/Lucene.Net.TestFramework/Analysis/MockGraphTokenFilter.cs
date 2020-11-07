@@ -33,7 +33,9 @@ namespace Lucene.Net.Analysis
 
     public sealed class MockGraphTokenFilter : LookaheadTokenFilter<LookaheadTokenFilter.Position>
     {
+#pragma warning disable CA1802 // Use literals where appropriate
         new private static bool DEBUG = false;
+#pragma warning restore CA1802 // Use literals where appropriate
 
         private readonly ICharTermAttribute termAtt;
 

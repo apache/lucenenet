@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             "N2"
         };
 
-        private static readonly string padd = "                                                 ";
+        private const string padd = "                                                 ";
 
         /// <summary>
         /// Padd a number from left.

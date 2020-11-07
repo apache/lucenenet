@@ -36,8 +36,8 @@ namespace Lucene.Net.Analysis.OpenNlp
             = "Sentence number 1 has 6 words. Sentence number 2, 5 words. And finally, sentence number 3 has 8 words.";
         private static readonly String[] SENTENCES = new String[] {
             "Sentence number 1 has 6 words. ", "Sentence number 2, 5 words. ", "And finally, sentence number 3 has 8 words." };
-        private static readonly String PADDING = " Word. Word. ";
-        private static readonly String sentenceModelFile = "en-test-sent.bin";
+        private const String PADDING = " Word. Word. ";
+        private const String sentenceModelFile = "en-test-sent.bin";
 
         public override void BeforeClass()
         {

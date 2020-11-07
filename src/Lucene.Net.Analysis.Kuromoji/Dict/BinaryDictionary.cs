@@ -55,7 +55,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         // LUCENENET specific - variable to hold the name of the data directory (or empty string to load embedded resources)
         private static readonly string DATA_DIR;
         // LUCENENET specific - name of the subdirectory inside of the directory where the Kuromoji dictionary files reside.
-        private static readonly string DATA_SUBDIR = "kuromoji-data";
+        private const string DATA_SUBDIR = "kuromoji-data";
 
         static BinaryDictionary()
         {

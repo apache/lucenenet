@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         }
 
         // LUCENENET specific - need to load this first for LoadLangs() to work
-        private static readonly string LANGUAGE_RULES_RN = "lang.txt";
+        private const string LANGUAGE_RULES_RN = "lang.txt";
 
         private static readonly IDictionary<NameType, Lang> langs = LoadLangs();
 

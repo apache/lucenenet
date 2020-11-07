@@ -42,14 +42,14 @@ namespace Lucene.Net.Codecs.Pulsing
     /// </summary>
     public sealed class PulsingPostingsWriter : PostingsWriterBase
     {
-        internal static readonly string CODEC = "PulsedPostingsWriter";
-        internal static readonly string SUMMARY_EXTENSION = "smy";         // recording field summary
+        internal const string CODEC = "PulsedPostingsWriter";
+        internal const string SUMMARY_EXTENSION = "smy";         // recording field summary
 
         // To add a new version, increment from the last one, and
         // change VERSION_CURRENT to point to your new version:
-        internal static readonly int VERSION_START = 0;
-        internal static readonly int VERSION_META_ARRAY = 1;
-        internal static readonly int VERSION_CURRENT = VERSION_META_ARRAY;
+        internal const int VERSION_START = 0;
+        internal const int VERSION_META_ARRAY = 1;
+        internal const int VERSION_CURRENT = VERSION_META_ARRAY;
 
         private readonly SegmentWriteState _segmentState;
         //private IndexOutput _termsOut; // LUCENENET: Never read

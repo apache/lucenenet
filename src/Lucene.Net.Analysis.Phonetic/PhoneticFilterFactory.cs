@@ -69,12 +69,12 @@ namespace Lucene.Net.Analysis.Phonetic
     public class PhoneticFilterFactory : TokenFilterFactory, IResourceLoaderAware
     {
         /// <summary>parameter name: either a short name or a full class name</summary>
-        public static readonly string ENCODER = "encoder";
+        public const string ENCODER = "encoder";
         /// <summary>parameter name: true if encoded tokens should be added as synonyms</summary>
-        public static readonly string INJECT = "inject"; // boolean
+        public const string INJECT = "inject"; // boolean
                                                          /** parameter name: restricts the length of the phonetic code */
-        public static readonly string MAX_CODE_LENGTH = "maxCodeLength";
-        private static readonly string PACKAGE_CONTAINING_ENCODERS = "Lucene.Net.Analysis.Phonetic.Language.";
+        public const string MAX_CODE_LENGTH = "maxCodeLength";
+        private const string PACKAGE_CONTAINING_ENCODERS = "Lucene.Net.Analysis.Phonetic.Language.";
 
         //Effectively constants; uppercase keys
         private static readonly IDictionary<string, Type> registry = new Dictionary<string, Type> // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)

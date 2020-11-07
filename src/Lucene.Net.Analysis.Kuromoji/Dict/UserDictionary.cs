@@ -43,13 +43,13 @@ namespace Lucene.Net.Analysis.Ja.Dict
         // holds readings and POS, indexed by wordid
         private readonly string[] data;
 
-        private static readonly int CUSTOM_DICTIONARY_WORD_ID_OFFSET = 100000000;
+        private const int CUSTOM_DICTIONARY_WORD_ID_OFFSET = 100000000;
 
-        public static readonly int WORD_COST = -100000;
+        public const int WORD_COST = -100000;
 
-        public static readonly int LEFT_ID = 5;
+        public const int LEFT_ID = 5;
 
-        public static readonly int RIGHT_ID = 5;
+        public const int RIGHT_ID = 5;
 
         private static readonly Regex specialChars = new Regex(@"#.*$", RegexOptions.Compiled);
         private static readonly Regex commentLine = new Regex(@"  *", RegexOptions.Compiled);

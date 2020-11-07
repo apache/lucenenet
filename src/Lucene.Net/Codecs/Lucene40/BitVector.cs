@@ -232,23 +232,23 @@ namespace Lucene.Net.Codecs.Lucene40
             return c;
         }
 
-        private static string CODEC = "BitVector";
+        private const string CODEC = "BitVector";
 
         // Version before version tracking was added:
-        public readonly static int VERSION_PRE = -1;
+        public const int VERSION_PRE = -1;
 
         // First version:
-        public readonly static int VERSION_START = 0;
+        public const int VERSION_START = 0;
 
         // Changed DGaps to encode gaps between cleared bits, not
         // set:
-        public readonly static int VERSION_DGAPS_CLEARED = 1;
+        public const int VERSION_DGAPS_CLEARED = 1;
 
         // added checksum
-        public readonly static int VERSION_CHECKSUM = 2;
+        public const int VERSION_CHECKSUM = 2;
 
         // Increment version to change it:
-        public readonly static int VERSION_CURRENT = VERSION_CHECKSUM;
+        public const int VERSION_CURRENT = VERSION_CHECKSUM;
 
         public int Version => version;
 

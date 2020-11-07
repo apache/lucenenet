@@ -310,7 +310,7 @@ namespace Lucene.Net.Codecs.Memory
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
         }
 
-        private static string EXTENSION = "ram";
+        private const string EXTENSION = "ram"; // LUCENENET specific - made into const
         private const string CODEC_NAME = "MemoryPostings";
         private const int VERSION_START = 0;
         private const int VERSION_CURRENT = VERSION_START;

@@ -41,11 +41,11 @@ namespace Lucene.Net.Codecs.Compressing
 
         internal const int MEMORY_USAGE = 14;
         internal const int MIN_MATCH = 4; // minimum length of a match
-        internal static readonly int MAX_DISTANCE = 1 << 16; // maximum distance of a reference
+        internal const int MAX_DISTANCE = 1 << 16; // maximum distance of a reference
         internal const int LAST_LITERALS = 5; // the last 5 bytes must be encoded as literals
         internal const int HASH_LOG_HC = 15; // log size of the dictionary for compressHC
-        internal static readonly int HASH_TABLE_SIZE_HC = 1 << HASH_LOG_HC;
-        internal static readonly int OPTIMAL_ML = 0x0F + 4 - 1; // match length that doesn't require an additional byte
+        internal const int HASH_TABLE_SIZE_HC = 1 << HASH_LOG_HC;
+        internal const int OPTIMAL_ML = 0x0F + 4 - 1; // match length that doesn't require an additional byte
 
         private static int Hash(int i, int hashBits)
         {
@@ -328,7 +328,7 @@ namespace Lucene.Net.Codecs.Compressing
         public sealed class HCHashTable
         {
             internal const int MAX_ATTEMPTS = 256;
-            internal static readonly int MASK = MAX_DISTANCE - 1;
+            internal const int MASK = MAX_DISTANCE - 1;
             internal int nextToUpdate;
             private int @base;
             private readonly int[] hashTable;

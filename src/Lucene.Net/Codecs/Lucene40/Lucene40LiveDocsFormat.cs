@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.Lucene40
     {
         /// <summary>
         /// Extension of deletes </summary>
-        internal static readonly string DELETES_EXTENSION = "del";
+        internal const string DELETES_EXTENSION = "del";
 
         /// <summary>
         /// Sole constructor. </summary>

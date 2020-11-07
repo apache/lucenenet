@@ -51,12 +51,12 @@ namespace Lucene.Net.Codecs.Lucene40
     public sealed class Lucene40StoredFieldsWriter : StoredFieldsWriter
     {
         // NOTE: bit 0 is free here!  You can steal it!
-        internal static readonly int FIELD_IS_BINARY = 1 << 1;
+        internal const int FIELD_IS_BINARY = 1 << 1;
 
         // the old bit 1 << 2 was compressed, is now left out
 
         private const int _NUMERIC_BIT_SHIFT = 3;
-        internal static readonly int FIELD_IS_NUMERIC_MASK = 0x07 << _NUMERIC_BIT_SHIFT;
+        internal const int FIELD_IS_NUMERIC_MASK = 0x07 << _NUMERIC_BIT_SHIFT;
 
         internal const int FIELD_IS_NUMERIC_INT = 1 << _NUMERIC_BIT_SHIFT;
         internal const int FIELD_IS_NUMERIC_LONG = 2 << _NUMERIC_BIT_SHIFT;

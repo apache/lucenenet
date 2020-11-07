@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.Compressing
     public sealed class CompressingStoredFieldsReader : StoredFieldsReader
     {
         // Do not reuse the decompression buffer when there is more than 32kb to decompress
-        private static readonly int BUFFER_REUSE_THRESHOLD = 1 << 15;
+        private const int BUFFER_REUSE_THRESHOLD = 1 << 15;
 
         private readonly int version;
         private readonly FieldInfos fieldInfos;

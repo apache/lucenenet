@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// Special number of bits per value used whenever all values to encode are equal.
         /// </summary>
-        private static readonly int ALL_VALUES_EQUAL = 0;
+        private const int ALL_VALUES_EQUAL = 0;
 
         /// <summary>
         /// Upper limit of the number of bytes that might be required to stored

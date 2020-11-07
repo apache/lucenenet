@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Ja
     /// </summary>
     public class JapaneseKatakanaStemFilterFactory : TokenFilterFactory
     {
-        private static readonly string MINIMUM_LENGTH_PARAM = "minimumLength";
+        private const string MINIMUM_LENGTH_PARAM = "minimumLength";
         private readonly int minimumLength;
 
         /// <summary>Creates a new <see cref="JapaneseKatakanaStemFilterFactory"/></summary>

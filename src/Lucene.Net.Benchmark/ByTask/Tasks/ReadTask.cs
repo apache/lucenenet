@@ -260,7 +260,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// </remarks>
         public virtual int TraversalSize => int.MaxValue;
 
-        internal static readonly int DEFAULT_SEARCH_NUM_HITS = 10;
+        internal const int DEFAULT_SEARCH_NUM_HITS = 10;
         private int numHits;
 
         public override void Setup()

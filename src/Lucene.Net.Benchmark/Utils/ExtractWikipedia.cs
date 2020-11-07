@@ -36,7 +36,7 @@ namespace Lucene.Net.Benchmarks.Utils
 
         public static int count = 0;
 
-        internal static readonly int BASE = 10;
+        internal const int BASE = 10;
         protected DocMaker m_docMaker;
 
         public ExtractWikipedia(DocMaker docMaker, DirectoryInfo outputDir)

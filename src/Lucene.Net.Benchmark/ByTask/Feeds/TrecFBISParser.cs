@@ -26,15 +26,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// </summary>
     public class TrecFBISParser : TrecDocParser
     {
-        private static readonly string HEADER = "<HEADER>";
-        private static readonly string HEADER_END = "</HEADER>";
+        private const string HEADER = "<HEADER>";
+        private const string HEADER_END = "</HEADER>";
         private static readonly int HEADER_END_LENGTH = HEADER_END.Length;
 
-        private static readonly string DATE1 = "<DATE1>";
-        private static readonly string DATE1_END = "</DATE1>";
+        private const string DATE1 = "<DATE1>";
+        private const string DATE1_END = "</DATE1>";
 
-        private static readonly string TI = "<TI>";
-        private static readonly string TI_END = "</TI>";
+        private const string TI = "<TI>";
+        private const string TI_END = "</TI>";
 
         public override DocData Parse(DocData docData, string name, TrecContentSource trecSrc,
             StringBuilder docBuf, ParsePathType pathType)

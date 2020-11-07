@@ -49,9 +49,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <seealso cref="Precedence.Processors.BooleanModifiersQueryNodeProcessor"/>
     public class BooleanQuery2ModifierNodeProcessor : IQueryNodeProcessor
     {
-        internal readonly static string TAG_REMOVE = "remove";
-        internal readonly static string TAG_MODIFIER = "wrapWithModifier";
-        internal readonly static string TAG_BOOLEAN_ROOT = "booleanRoot";
+        internal const string TAG_REMOVE = "remove";
+        internal const string TAG_MODIFIER = "wrapWithModifier";
+        internal const string TAG_BOOLEAN_ROOT = "booleanRoot";
 
         QueryConfigHandler queryConfigHandler;
 

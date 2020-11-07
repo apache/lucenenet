@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.VectorHighlight
         internal int termOrPhraseNumber; // used for colored tag support
 
         // The maximum number of different matching terms accumulated from any one MultiTermQuery
-        private static readonly int MAX_MTQ_TERMS = 1024;
+        private const int MAX_MTQ_TERMS = 1024;
 
         internal FieldQuery(Query query, IndexReader reader, bool phraseHighlight, bool fieldMatch)
         {

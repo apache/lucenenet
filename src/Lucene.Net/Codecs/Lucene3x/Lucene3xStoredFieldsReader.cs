@@ -72,12 +72,12 @@ namespace Lucene.Net.Codecs.Lucene3x
         internal const int FORMAT_MINIMUM = FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS;
 
         // NOTE: bit 0 is free here!  You can steal it!
-        public static readonly int FIELD_IS_BINARY = 1 << 1;
+        public const int FIELD_IS_BINARY = 1 << 1;
 
         // the old bit 1 << 2 was compressed, is now left out
 
         private const int _NUMERIC_BIT_SHIFT = 3;
-        internal static readonly int FIELD_IS_NUMERIC_MASK = 0x07 << _NUMERIC_BIT_SHIFT;
+        internal const int FIELD_IS_NUMERIC_MASK = 0x07 << _NUMERIC_BIT_SHIFT;
 
         public const int FIELD_IS_NUMERIC_INT = 1 << _NUMERIC_BIT_SHIFT;
         public const int FIELD_IS_NUMERIC_LONG = 2 << _NUMERIC_BIT_SHIFT;

@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private readonly Directory dir;
         private readonly SegmentReadState state;
         private readonly string legacyKey;
-        private static readonly string segmentSuffix = "dv";
+        private const string segmentSuffix = "dv";
 
         // ram instances we have already loaded
         private readonly IDictionary<int, NumericDocValues> numericInstances = new Dictionary<int, NumericDocValues>();

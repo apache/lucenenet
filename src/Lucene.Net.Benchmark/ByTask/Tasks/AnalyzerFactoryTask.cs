@@ -72,7 +72,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </remarks>
     public class AnalyzerFactoryTask : PerfTask
     {
-        private static readonly string LUCENE_ANALYSIS_PACKAGE_PREFIX = "Lucene.Net.Analysis.";
+        private const string LUCENE_ANALYSIS_PACKAGE_PREFIX = "Lucene.Net.Analysis.";
         private static readonly Regex ANALYSIS_COMPONENT_SUFFIX_PATTERN
             = new Regex("(?s:(?:(?:Token|Char)?Filter|Tokenizer)(?:Factory)?)$", RegexOptions.Compiled);
         private static readonly Regex TRAILING_DOT_ZERO_PATTERN = new Regex(@"\.0$", RegexOptions.Compiled);

@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// </summary>
     public class TermAllGroupHeadsCollector
     {
-        private static readonly int DEFAULT_INITIAL_SIZE = 128;
+        private const int DEFAULT_INITIAL_SIZE = 128;
 
         /// <summary>
         /// Disallow creation

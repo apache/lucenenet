@@ -58,7 +58,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
 
         /// <summary>max length of walk up from file to its ancestors when looking for a known path type.</summary>
-        private static readonly int MAX_PATH_LENGTH = 10;
+        private const int MAX_PATH_LENGTH = 10;
 
         /// <summary>
         /// Compute the path type of a file by inspecting name of file and its parents.
