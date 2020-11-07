@@ -256,9 +256,8 @@ namespace Lucene.Net.Analysis.OpenNlp
         private string CharacterIteratorToString()
         {
             string fullText;
-            if (text is CharArrayIterator)
+            if (text is CharArrayIterator charArrayIterator)
             {
-                CharArrayIterator charArrayIterator = (CharArrayIterator)text;
                 fullText = new string(charArrayIterator.Text, charArrayIterator.Start, charArrayIterator.Length);
             }
             else

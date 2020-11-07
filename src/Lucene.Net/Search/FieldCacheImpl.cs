@@ -394,19 +394,15 @@ namespace Lucene.Net.Search
             /// Two of these are equal if they reference the same field and type. </summary>
             public override bool Equals(object o)
             {
-                if (o is CacheKey)
+                if (o is CacheKey other && other.field.Equals(field, StringComparison.Ordinal))
                 {
-                    CacheKey other = (CacheKey)o;
-                    if (other.field.Equals(field, StringComparison.Ordinal))
+                    if (other.Custom is null)
                     {
-                        if (other.Custom is null)
-                        {
-                            return Custom is null;
-                        }
-                        else if (other.Custom.Equals(Custom))
-                        {
-                            return true;
-                        }
+                        return Custom is null;
+                    }
+                    else if (other.Custom.Equals(Custom))
+                    {
+                        return true;
                     }
                 }
                 return false;
@@ -443,9 +439,8 @@ namespace Lucene.Net.Search
             /// Two of these are equal if they reference the same field and type. </summary>
             public override bool Equals(object o)
             {
-                if (o is CacheKey<TCustom>)
+                if (o is CacheKey<TCustom> other)
                 {
-                    CacheKey<TCustom> other = (CacheKey<TCustom>)o;
                     if (other.field.Equals(field, StringComparison.Ordinal))
                     {
                         if (other.custom is null)

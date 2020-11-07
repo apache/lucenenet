@@ -84,9 +84,8 @@ namespace Lucene.Net.Util.Fst
 
             public override bool Equals(object other)
             {
-                if (other is TwoInt64s)
+                if (other is TwoInt64s other2)
                 {
-                    TwoInt64s other2 = (TwoInt64s)other;
                     return first == other2.first && second == other2.second;
                 }
                 else

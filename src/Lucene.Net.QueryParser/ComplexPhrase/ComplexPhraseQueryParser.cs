@@ -298,9 +298,8 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                     }
                     else
                     {
-                        if (qc is TermQuery)
+                        if (qc is TermQuery tq)
                         {
-                            TermQuery tq = (TermQuery)qc;
                             allSpanClauses[i] = new SpanTermQuery(tq.Term);
                         }
                         else
@@ -370,16 +369,14 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                         chosenList = nots;
                     }
 
-                    if (childQuery is TermQuery)
+                    if (childQuery is TermQuery tq)
                     {
-                        TermQuery tq = (TermQuery)childQuery;
                         SpanTermQuery stq = new SpanTermQuery(tq.Term);
                         stq.Boost = tq.Boost;
                         chosenList.Add(stq);
                     }
-                    else if (childQuery is BooleanQuery)
+                    else if (childQuery is BooleanQuery cbq)
                     {
-                        BooleanQuery cbq = (BooleanQuery)childQuery;
                         AddComplexPhraseClause(chosenList, cbq);
                     }
                     else

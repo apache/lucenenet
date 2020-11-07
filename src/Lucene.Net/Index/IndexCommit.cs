@@ -95,9 +95,8 @@ namespace Lucene.Net.Index
         /// Two IndexCommits are equal if both their <see cref="Store.Directory"/> and versions are equal. </summary>
         public override bool Equals(object other)
         {
-            if (other is IndexCommit)
+            if (other is IndexCommit otherCommit)
             {
-                IndexCommit otherCommit = (IndexCommit)other;
                 return otherCommit.Directory == Directory && otherCommit.Generation == Generation;
             }
             else

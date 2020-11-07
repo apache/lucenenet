@@ -339,26 +339,23 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 foreach (string name in valByRound.Keys)
                 {
                     object a = valByRound[name];
-                    if (a is int[])
+                    if (a is int[] ai)
                     {
-                        int[] ai = (int[])a;
                         int n1 = (roundNumber - 1) % ai.Length;
                         int n2 = roundNumber % ai.Length;
                         sb.Append("  ").Append(name).Append(":").Append(ai[n1]).Append("-->").Append(ai[n2]);
                     }
-                    else if (a is double[])
+                    else if (a is double[] ad)
                     {
-                        double[] ad = (double[])a;
                         int n1 = (roundNumber - 1) % ad.Length;
                         int n2 = roundNumber % ad.Length;
                         sb.Append("  ").Append(name).Append(":").Append(ad[n1]).Append("-->").Append(ad[n2]);
                     }
-                    else if (a is string[])
+                    else if (a is string[] astr)
                     {
-                        string[] ad = (string[])a;
-                        int n1 = (roundNumber - 1) % ad.Length;
-                        int n2 = roundNumber % ad.Length;
-                        sb.Append("  ").Append(name).Append(":").Append(ad[n1]).Append("-->").Append(ad[n2]);
+                        int n1 = (roundNumber - 1) % astr.Length;
+                        int n2 = roundNumber % astr.Length;
+                        sb.Append("  ").Append(name).Append(":").Append(astr[n1]).Append("-->").Append(astr[n2]);
                     }
                     else
                     {
@@ -503,25 +500,21 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 else
                 {
                     // append actual values, for that round
-                    // LUCENENET TODO: Boxing with value types in object type
                     valByRound.TryGetValue(name, out object a);
-                    if (a is int[])
+                    if (a is int[] ai)
                     {
-                        int[] ai = (int[])a;
                         int n = roundNum % ai.Length;
                         sb.Append(Formatter.Format(ai[n], template));
                     }
-                    else if (a is double[])
+                    else if (a is double[] ad)
                     {
-                        double[] ad = (double[])a;
                         int n = roundNum % ad.Length;
                         sb.Append(Formatter.Format(2, ad[n], template));
                     }
-                    else if (a is string[])
+                    else if (a is string[] astr)
                     {
-                        string[] ad = (string[])a;
-                        int n = roundNum % ad.Length;
-                        sb.Append(ad[n]);
+                        int n = roundNum % astr.Length;
+                        sb.Append(astr[n]);
                     }
                     else
                     {

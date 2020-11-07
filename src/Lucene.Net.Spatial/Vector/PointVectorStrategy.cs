@@ -139,9 +139,8 @@ namespace Lucene.Net.Spatial.Vector
                 var bbox = (IRectangle)shape;
                 return new ConstantScoreQuery(MakeWithin(bbox));
             }
-            else if (shape is ICircle)
+            else if (shape is ICircle circle)
             {
-                var circle = (ICircle)shape;
                 var bbox = circle.BoundingBox;
                 var vsf = new ValueSourceFilter(
                     new QueryWrapperFilter(MakeWithin(bbox)),
@@ -150,7 +149,7 @@ namespace Lucene.Net.Spatial.Vector
                     circle.Radius);
                 return new ConstantScoreQuery(vsf);
             }
-            
+
             throw new NotSupportedException("Only IRectangles and ICircles are currently supported, " +
                                             "found [" + shape.GetType().Name + "]"); //TODO
         }
@@ -186,10 +185,8 @@ namespace Lucene.Net.Spatial.Vector
               SpatialOperation.IsWithin))
             {
                 spatial = MakeWithin(bbox);
-                if (args.Shape is ICircle)
+                if (args.Shape is ICircle circle)
                 {
-                    var circle = (ICircle)args.Shape;
-
                     // Make the ValueSource
                     valueSource = MakeDistanceValueSource(shape.Center);
 

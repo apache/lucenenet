@@ -399,16 +399,15 @@ namespace Lucene.Net.Analysis
                 return true;
             }
 
-            
-            if (obj is Token)
+
+            if (obj is Token other)
             {
-                var other = (Token)obj;
-                return (startOffset == other.startOffset && 
-                    endOffset == other.endOffset && 
-                    flags == other.flags && 
-                    positionIncrement == other.positionIncrement && 
-                    (type == null ? other.type == null : type.Equals(other.type, StringComparison.Ordinal)) && 
-                    (payload == null ? other.payload == null : payload.Equals(other.payload)) && 
+                return (startOffset == other.startOffset &&
+                    endOffset == other.endOffset &&
+                    flags == other.flags &&
+                    positionIncrement == other.positionIncrement &&
+                    (type == null ? other.type == null : type.Equals(other.type, StringComparison.Ordinal)) &&
+                    (payload == null ? other.payload == null : payload.Equals(other.payload)) &&
                     base.Equals(obj)
                 );
             }

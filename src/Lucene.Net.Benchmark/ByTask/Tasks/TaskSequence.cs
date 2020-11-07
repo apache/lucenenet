@@ -335,9 +335,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 exhausted = false;
                 resetExhausted = true;
             }
-            else if (task is TaskSequence)
+            else if (task is TaskSequence t)
             {
-                TaskSequence t = (TaskSequence)task;
                 if (t.resetExhausted)
                 {
                     exhausted = false;
@@ -443,23 +442,19 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 t[i].Join();
                 count += t[i].Count;
-                if (t[i].Task is TaskSequence)
+                if (t[i].Task is TaskSequence sub && sub.countsByTime != null)
                 {
-                    TaskSequence sub = (TaskSequence)t[i].Task;
-                    if (sub.countsByTime != null)
+                    if (countsByTime == null)
                     {
-                        if (countsByTime == null)
-                        {
-                            countsByTime = new int[sub.countsByTime.Length];
-                        }
-                        else if (countsByTime.Length < sub.countsByTime.Length)
-                        {
-                            countsByTime = ArrayUtil.Grow(countsByTime, sub.countsByTime.Length);
-                        }
-                        for (int j = 0; j < sub.countsByTime.Length; j++)
-                        {
-                            countsByTime[j] += sub.countsByTime[j];
-                        }
+                        countsByTime = new int[sub.countsByTime.Length];
+                    }
+                    else if (countsByTime.Length < sub.countsByTime.Length)
+                    {
+                        countsByTime = ArrayUtil.Grow(countsByTime, sub.countsByTime.Length);
+                    }
+                    for (int j = 0; j < sub.countsByTime.Length; j++)
+                    {
+                        countsByTime[j] += sub.countsByTime[j];
                     }
                 }
             }

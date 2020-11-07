@@ -44,9 +44,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PreProcessNode(IQueryNode node)
         {
-            if (node is FuzzyQueryNode)
+            if (node is FuzzyQueryNode fuzzyNode)
             {
-                FuzzyQueryNode fuzzyNode = (FuzzyQueryNode)node;
                 QueryConfigHandler config = GetQueryConfigHandler();
 
                 FuzzyConfig fuzzyConfig = null;

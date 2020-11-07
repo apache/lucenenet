@@ -113,9 +113,8 @@ namespace Lucene.Net.QueryParsers.Xml
                 {
                     return null;
                 }
-                if (n is XmlElement)
+                if (n is XmlElement parent)
                 {
-                    XmlElement parent = (XmlElement)n;
                     return GetAttributeWithInheritance(parent, attributeName);
                 }
                 return null; //we reached the top level of the document without finding attribute

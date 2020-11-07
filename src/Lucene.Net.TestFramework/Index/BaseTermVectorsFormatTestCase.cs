@@ -226,9 +226,8 @@ namespace Lucene.Net.Index
                     return true;
                 }
 
-                if (other is PermissiveOffsetAttribute)
+                if (other is PermissiveOffsetAttribute o)
                 {
-                    PermissiveOffsetAttribute o = (PermissiveOffsetAttribute)other;
                     return o.start == start && o.end == end;
                 }
 

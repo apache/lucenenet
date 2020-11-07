@@ -126,10 +126,8 @@ namespace Lucene.Net.Expressions
         {
             foreach (object o in map.Values)
             {
-                if (o is Expression)
+                if (o is Expression expr)
                 {
-                    Expression expr = (Expression)o;
-
                     expr.GetValueSource(this);
                 }
             }

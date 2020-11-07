@@ -55,9 +55,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is TermRangeQueryNode)
+            if (node is TermRangeQueryNode termRangeNode)
             {
-                TermRangeQueryNode termRangeNode = (TermRangeQueryNode)node;
                 FieldQueryNode upper = (FieldQueryNode)termRangeNode.UpperBound;
                 FieldQueryNode lower = (FieldQueryNode)termRangeNode.LowerBound;
 

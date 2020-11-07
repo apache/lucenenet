@@ -191,9 +191,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     throw new Exception("unable to instantiate class '" + mergePolicy + "' as merge policy", e);
                 }
                 iwConf.MergePolicy.NoCFSRatio = isCompound ? 1.0 : 0.0;
-                if (iwConf.MergePolicy is LogMergePolicy)
+                if (iwConf.MergePolicy is LogMergePolicy logMergePolicy)
                 {
-                    LogMergePolicy logMergePolicy = (LogMergePolicy)iwConf.MergePolicy;
                     logMergePolicy.MergeFactor = config.Get("merge.factor", OpenIndexTask.DEFAULT_MERGE_PFACTOR);
                 }
             }

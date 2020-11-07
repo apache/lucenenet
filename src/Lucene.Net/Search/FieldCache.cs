@@ -1125,9 +1125,8 @@ namespace Lucene.Net.Search
 
             public override bool Equals(object obj)
             {
-                if (obj is AcceptableOverheadRatio)
+                if (obj is AcceptableOverheadRatio other)
                 {
-                    AcceptableOverheadRatio other = (AcceptableOverheadRatio)obj;
                     return Value.Equals(other.Value);
                 }
                 return false;

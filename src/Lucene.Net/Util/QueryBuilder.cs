@@ -140,9 +140,8 @@ namespace Lucene.Net.Util
             }
 
             Query query = CreateFieldQuery(analyzer, Occur.SHOULD, field, queryText, false, 0);
-            if (query is BooleanQuery)
+            if (query is BooleanQuery bq)
             {
-                BooleanQuery bq = (BooleanQuery)query;
                 bq.MinimumNumberShouldMatch = (int)(fraction * bq.Clauses.Count);
             }
             return query;

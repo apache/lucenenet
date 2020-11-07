@@ -1004,15 +1004,13 @@ namespace Lucene.Net.Util
         {
             // keep number of open files lowish
             MergePolicy mp = w.Config.MergePolicy;
-            if (mp is LogMergePolicy)
+            if (mp is LogMergePolicy lmp)
             {
-                LogMergePolicy lmp = (LogMergePolicy)mp;
                 lmp.MergeFactor = Math.Min(5, lmp.MergeFactor);
                 lmp.NoCFSRatio = 1.0;
             }
-            else if (mp is TieredMergePolicy)
+            else if (mp is TieredMergePolicy tmp)
             {
-                TieredMergePolicy tmp = (TieredMergePolicy)mp;
                 tmp.MaxMergeAtOnce = Math.Min(5, tmp.MaxMergeAtOnce);
                 tmp.SegmentsPerTier = Math.Min(5, tmp.SegmentsPerTier);
                 tmp.NoCFSRatio = 1.0;

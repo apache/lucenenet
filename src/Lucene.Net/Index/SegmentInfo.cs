@@ -226,9 +226,8 @@ namespace Lucene.Net.Index
             {
                 return true;
             }
-            if (obj is SegmentInfo)
+            if (obj is SegmentInfo other)
             {
-                SegmentInfo other = (SegmentInfo)obj;
                 return other.Dir == Dir && other.Name.Equals(Name, StringComparison.Ordinal);
             }
             else

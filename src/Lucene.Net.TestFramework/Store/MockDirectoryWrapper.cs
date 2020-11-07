@@ -653,9 +653,8 @@ namespace Lucene.Net.Store
                 unSyncedFiles.Add(name);
                 createdFiles.Add(name);
 
-                if (m_input is RAMDirectory)
+                if (m_input is RAMDirectory ramdir)
                 {
-                    RAMDirectory ramdir = (RAMDirectory)m_input;
                     RAMFile file = new RAMFile(ramdir);
                     ramdir.m_fileMap.TryGetValue(name, out RAMFile existing);
 
