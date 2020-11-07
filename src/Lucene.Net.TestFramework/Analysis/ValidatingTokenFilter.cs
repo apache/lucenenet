@@ -44,10 +44,10 @@ namespace Lucene.Net.Analysis
 
         private readonly IDictionary<int, int> posToEndOffset = new Dictionary<int, int>();
 
-        private PositionIncrementAttribute posIncAtt;
-        private PositionLengthAttribute posLenAtt;
-        private OffsetAttribute offsetAtt;
-        private CharTermAttribute termAtt;
+        private readonly PositionIncrementAttribute posIncAtt;
+        private readonly PositionLengthAttribute posLenAtt;
+        private readonly OffsetAttribute offsetAtt;
+        private readonly CharTermAttribute termAtt;
         private readonly bool offsetsAreCorrect;
 
         private readonly string name;

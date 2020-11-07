@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs.Bloom
     [PostingsFormatName("TestBloomFilteredLucene41Postings")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class TestBloomFilteredLucene41Postings : PostingsFormat
     {
-        private BloomFilteringPostingsFormat @delegate;
+        private readonly BloomFilteringPostingsFormat @delegate;
 
         // Special class used to avoid OOM exceptions where Junit tests create many
         // fields.
