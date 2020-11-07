@@ -43,6 +43,7 @@
     <NoWarn Label="Remove unused parameter">$(NoWarn);IDE0060</NoWarn>
     <NoWarn Label="Use Literals Where Appropriate">$(NoWarn);CA1802</NoWarn>
     <NoWarn Label="Add readonly modifier">$(NoWarn);IDE0044</NoWarn>
+    <NoWarn Label="Use pattern matching">$(NoWarn);IDE0019;IDE0020;IDE0038</NoWarn>
   </PropertyGroup>
   
 </Project>
