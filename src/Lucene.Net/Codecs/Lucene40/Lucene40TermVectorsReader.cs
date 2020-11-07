@@ -363,9 +363,7 @@ namespace Lucene.Net.Codecs.Lucene40
             public override TermsEnum GetEnumerator(TermsEnum reuse)
             {
                 TVTermsEnum termsEnum;
-#pragma warning disable IDE0038 // Use pattern matching
                 if (reuse is null || !(reuse is TVTermsEnum))
-#pragma warning restore IDE0038 // Use pattern matching
                 {
                     termsEnum = new TVTermsEnum(outerInstance);
                 }

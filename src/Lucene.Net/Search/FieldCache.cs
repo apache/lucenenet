@@ -1127,9 +1127,7 @@ namespace Lucene.Net.Search
             {
                 if (obj is AcceptableOverheadRatio)
                 {
-#pragma warning disable IDE0020 // Use pattern matching
                     AcceptableOverheadRatio other = (AcceptableOverheadRatio)obj;
-#pragma warning restore IDE0020 // Use pattern matching
                     return Value.Equals(other.Value);
                 }
                 return false;

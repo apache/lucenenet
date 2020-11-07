@@ -233,9 +233,7 @@ namespace Lucene.Net.Codecs.Bloom
 
                 public override TermsEnum GetEnumerator(TermsEnum reuse)
                 {
-#pragma warning disable IDE0038 // Use pattern matching
                     if (!(reuse is null) && reuse is BloomFilteredTermsEnum)
-#pragma warning restore IDE0038 // Use pattern matching
                     {
                         BloomFilteredTermsEnum bfte = (BloomFilteredTermsEnum)reuse;
                         if (bfte.filter == _filter)

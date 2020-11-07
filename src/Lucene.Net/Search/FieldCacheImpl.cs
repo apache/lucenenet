@@ -204,9 +204,7 @@ namespace Lucene.Net.Search
 
         private void InitReader(AtomicReader reader)
         {
-#pragma warning disable IDE0038 // Use pattern matching
             if (reader is SegmentReader)
-#pragma warning restore IDE0038 // Use pattern matching
             {
                 ((SegmentReader)reader).AddCoreDisposedListener(purgeCore);
             }
@@ -215,9 +213,7 @@ namespace Lucene.Net.Search
                 // we have a slow reader of some sort, try to register a purge event
                 // rather than relying on gc:
                 object key = reader.CoreCacheKey;
-#pragma warning disable IDE0038 // Use pattern matching
                 if (key is AtomicReader)
-#pragma warning restore IDE0038 // Use pattern matching
                 {
                     ((AtomicReader)key).AddReaderClosedListener(purgeReader);
                 }
@@ -326,9 +322,7 @@ namespace Lucene.Net.Search
                 }
 #endif
                 object value = innerCache.GetOrAdd(key, (cacheKey) => new FieldCache.CreationPlaceholder<TValue>());
-#pragma warning disable IDE0038 // Use pattern matching
                 if (value is FieldCache.CreationPlaceholder<TValue>)
-#pragma warning restore IDE0038 // Use pattern matching
                 {
                     lock (value)
                     {
@@ -403,9 +397,7 @@ namespace Lucene.Net.Search
             {
                 if (o is CacheKey)
                 {
-#pragma warning disable IDE0020 // Use pattern matching
                     CacheKey other = (CacheKey)o;
-#pragma warning restore IDE0020 // Use pattern matching
                     if (other.field.Equals(field, StringComparison.Ordinal))
                     {
                         if (other.Custom is null)
@@ -454,9 +446,7 @@ namespace Lucene.Net.Search
             {
                 if (o is CacheKey<TCustom>)
                 {
-#pragma warning disable IDE0020 // Use pattern matching
                     CacheKey<TCustom> other = (CacheKey<TCustom>)o;
-#pragma warning restore IDE0020 // Use pattern matching
                     if (other.field.Equals(field, StringComparison.Ordinal))
                     {
                         if (other.custom is null)
@@ -548,9 +538,7 @@ namespace Lucene.Net.Search
             {
                 bits = new Lucene.Net.Util.Bits.MatchNoBits(maxDoc);
             }
-#pragma warning disable IDE0038 // Use pattern matching
             else if (docsWithField is FixedBitSet)
-#pragma warning restore IDE0038 // Use pattern matching
             {
                 int numSet = ((FixedBitSet)docsWithField).Cardinality();
                 if (numSet >= maxDoc)
