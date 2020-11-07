@@ -366,8 +366,7 @@ namespace TagSoup
                 }
                 else
                 {
-                    var handler = value as ILexicalHandler;
-                    if (handler != null)
+                    if (value is ILexicalHandler handler)
                     {
                         theLexicalHandler = handler;
                     }
@@ -379,8 +378,7 @@ namespace TagSoup
             }
             else if (name.Equals(SCANNER_PROPERTY, StringComparison.Ordinal))
             {
-                var scanner = value as IScanner;
-                if (scanner != null)
+                if (value is IScanner scanner)
                 {
                     theScanner = scanner;
                 }
@@ -391,8 +389,7 @@ namespace TagSoup
             }
             else if (name.Equals(SCHEMA_PROPERTY, StringComparison.Ordinal))
             {
-                var schema = value as Schema;
-                if (schema != null)
+                if (value is Schema schema)
                 {
                     theSchema = schema;
                 }
@@ -403,8 +400,7 @@ namespace TagSoup
             }
             else if (name.Equals(AUTO_DETECTOR_PROPERTY, StringComparison.Ordinal))
             {
-                var detector = value as IAutoDetector;
-                if (detector != null)
+                if (value is IAutoDetector detector)
                 {
                     theAutoDetector = detector;
                 }
@@ -449,12 +445,11 @@ namespace TagSoup
             TextReader r = GetReader(input);
             theContentHandler.StartDocument();
             theScanner.ResetDocumentLocator(input.PublicId, input.SystemId);
-            var locator = theScanner as ILocator;
-            if (locator != null)
+            if (theScanner is ILocator locator)
             {
                 theContentHandler.SetDocumentLocator(locator);
             }
-            if (!(theSchema.Uri.Equals("", StringComparison.Ordinal)))
+            if (theSchema.Uri.Length > 0)
             {
                 theContentHandler.StartPrefixMapping(theSchema.Prefix, theSchema.Uri);
             }
@@ -1045,8 +1040,7 @@ namespace TagSoup
                 theLexicalHandler.EndDTD();
                 theDoctypeName = name;
                 theDoctypePublicId = publicid;
-                var locator = theScanner as ILocator;
-                if (locator != null)
+                if (theScanner is ILocator locator)
                 {
                     // Must resolve systemid
                     theDoctypeSystemId = locator.SystemId;

@@ -85,8 +85,7 @@ namespace Lucene.Net.Spatial.Vector
 
         public override Field[] CreateIndexableFields(IShape shape)
         {
-            var point = shape as IPoint;
-            if (point != null)
+            if (shape is IPoint point)
                 return CreateIndexableFields(point);
 
             throw new NotSupportedException("Can only index IPoint, not " + shape);

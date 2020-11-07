@@ -297,8 +297,7 @@ namespace Lucene.Net.Util
                 var obj = all[i];
                 // TODO: We don't check closed readers here (as getTopReaderContext
                 // throws ObjectDisposedException), what should we do? Reflection?
-                var reader = obj as IndexReader;
-                if (reader != null)
+                if (obj is IndexReader reader)
                 {
                     try
                     {

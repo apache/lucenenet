@@ -101,8 +101,7 @@ namespace Lucene.Net.Util
             var nameAttributes = type.GetCustomAttributes(typeof(ServiceNameAttribute), inherit: true);
             if (nameAttributes.Length > 0)
             {
-                ServiceNameAttribute nameAttribute = nameAttributes[0] as ServiceNameAttribute;
-                if (nameAttribute != null)
+                if (nameAttributes[0] is ServiceNameAttribute nameAttribute)
                 {
                     string name = nameAttribute.Name;
                     CheckServiceName(name);

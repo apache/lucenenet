@@ -53,8 +53,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static AtomicReader Wrap(IndexReader reader)
         {
-            CompositeReader compositeReader = reader as CompositeReader;
-            if (compositeReader != null)
+            if (reader is CompositeReader compositeReader)
             {
                 return new SlowCompositeReaderWrapper(compositeReader);
             }
@@ -116,8 +115,7 @@ namespace Lucene.Net.Index
                 {
                     // uncached, or not a multi dv
                     SortedDocValues dv = MultiDocValues.GetSortedValues(@in, field);
-                    MultiSortedDocValues docValues = dv as MultiSortedDocValues;
-                    if (docValues != null)
+                    if (dv is MultiSortedDocValues docValues)
                     {
                         map = docValues.Mapping;
                         if (map.owner == CoreCacheKey)
@@ -157,8 +155,7 @@ namespace Lucene.Net.Index
                 {
                     // uncached, or not a multi dv
                     SortedSetDocValues dv = MultiDocValues.GetSortedSetValues(@in, field);
-                    MultiSortedSetDocValues docValues = dv as MultiSortedSetDocValues;
-                    if (docValues != null)
+                    if (dv is MultiSortedSetDocValues docValues)
                     {
                         map = docValues.Mapping;
                         if (map.owner == CoreCacheKey)

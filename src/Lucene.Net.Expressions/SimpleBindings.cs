@@ -81,8 +81,7 @@ namespace Lucene.Net.Expressions
             {
                 throw new ArgumentException("Invalid reference '" + name + "'");
             }
-            var expression = o as Expression;
-            if (expression != null)
+            if (o is Expression expression)
             {
                 return expression.GetValueSource(this);
             }

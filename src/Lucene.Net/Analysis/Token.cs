@@ -598,8 +598,7 @@ namespace Lucene.Net.Analysis
 
         public override void CopyTo(IAttribute target)
         {
-            var to = target as Token;
-            if (to != null)
+            if (target is Token to)
             {
                 to.Reinit(this);
                 // reinit shares the payload, so clone it:
@@ -677,8 +676,7 @@ namespace Lucene.Net.Analysis
                     return true;
                 }
 
-                var af = other as TokenAttributeFactory;
-                if (af != null)
+                if (other is TokenAttributeFactory af)
                 {
                     return this.@delegate.Equals(af.@delegate);
                 }

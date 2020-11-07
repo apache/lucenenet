@@ -109,11 +109,10 @@ namespace Lucene.Net.Spatial.Util
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || GetType() != o.GetType()) return false;
+            if (o is null || GetType() != o.GetType()) return false;
 
-            var that = o as ShapeFieldCacheDistanceValueSource;
 
-            if (that == null) return false;
+            if (!(o is ShapeFieldCacheDistanceValueSource that)) return false;
             if (!ctx.Equals(that.ctx)) return false;
             if (!from.Equals(that.from)) return false;
             if (!provider.Equals(that.provider)) return false;

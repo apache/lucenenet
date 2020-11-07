@@ -2,7 +2,6 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
@@ -242,8 +241,7 @@ namespace Lucene.Net.Facet
 
         internal static Filter GetFilter(Query query)
         {
-            var scoreQuery = query as ConstantScoreQuery;
-            if (scoreQuery != null)
+            if (query is ConstantScoreQuery scoreQuery)
             {
                 ConstantScoreQuery csq = scoreQuery;
                 Filter filter = csq.Filter;

@@ -121,10 +121,9 @@ namespace Lucene.Net.Spatial.Vector
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || GetType() != o.GetType()) return false;
+            if (o is null || GetType() != o.GetType()) return false;
 
-            var that = o as DistanceValueSource;
-            if (that == null) return false;
+            if (!(o is DistanceValueSource that)) return false;
 
             if (!from.Equals(that.from)) return false;
             if (!strategy.Equals(that.strategy)) return false;

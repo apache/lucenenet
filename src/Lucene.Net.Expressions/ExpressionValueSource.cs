@@ -57,8 +57,7 @@ namespace Lucene.Net.Expressions
                 }
                 else
                 {
-                    var valueSource = source as ExpressionValueSource;
-                    if (valueSource != null)
+                    if (source is ExpressionValueSource valueSource)
                     {
                         if (valueSource.NeedsScores)
                         {

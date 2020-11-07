@@ -341,9 +341,7 @@ namespace Lucene.Net.Index
 
         private void OnMergeThreadCompleted(object sender, EventArgs e)
         {
-            var mergeThread = sender as MergeThread;
-
-            if (mergeThread == null)
+            if (!(sender is MergeThread mergeThread))
             {
                 return;
             }
@@ -665,9 +663,7 @@ namespace Lucene.Net.Index
 
             public override bool Equals(object obj)
             {
-                var compared = obj as MergeThread;
-
-                if (compared == null
+                if (!(obj is MergeThread compared)
                     || (Instance == null && compared.Instance != null)
                     || (Instance != null && compared.Instance == null))
                 {

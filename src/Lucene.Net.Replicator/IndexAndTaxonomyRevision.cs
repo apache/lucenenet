@@ -172,8 +172,7 @@ namespace Lucene.Net.Replicator
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
 
-            IndexAndTaxonomyRevision itr = other as IndexAndTaxonomyRevision;
-            if(itr == null)
+            if (!(other is IndexAndTaxonomyRevision itr))
                 throw new ArgumentException($"Cannot compare IndexAndTaxonomyRevision to a {other.GetType()}", nameof(other));
 
             int cmp = indexCommit.CompareTo(itr.indexCommit);
