@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.OpenNlp
             chunkerModelFile = Get(args, CHUNKER_MODEL);
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 

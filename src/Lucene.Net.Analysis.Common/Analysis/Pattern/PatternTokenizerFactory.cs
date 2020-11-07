@@ -77,7 +77,7 @@ namespace Lucene.Net.Analysis.Pattern
             m_group = GetInt32(args, GROUP, -1);
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 
