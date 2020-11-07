@@ -242,22 +242,12 @@ namespace Lucene.Net.Codecs.Sep
             DocsFlags flags)
         {
             SepTermState termState_ = (SepTermState)termState;
-            SepDocsEnum docsEnum;
-            if (reuse == null || !(reuse is SepDocsEnum))
-            {
+
+            // If you are using ParellelReader, and pass in a
+            // reused DocsAndPositionsEnum, it could have come
+            // from another reader also using sep codec
+            if (reuse is null || !(reuse is SepDocsEnum docsEnum) || docsEnum.startDocIn != docIn)
                 docsEnum = new SepDocsEnum(this);
-            }
-            else
-            {
-                docsEnum = (SepDocsEnum)reuse;
-                if (docsEnum.startDocIn != docIn)
-                {
-                    // If you are using ParellelReader, and pass in a
-                    // reused DocsAndPositionsEnum, it could have come
-                    // from another reader also using sep codec
-                    docsEnum = new SepDocsEnum(this);
-                }
-            }
 
             return docsEnum.Init(fieldInfo, termState_, liveDocs);
         }
@@ -267,22 +257,12 @@ namespace Lucene.Net.Codecs.Sep
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
             SepTermState termState_ = (SepTermState)termState;
-            SepDocsAndPositionsEnum postingsEnum;
-            if (reuse == null || !(reuse is SepDocsAndPositionsEnum))
-            {
+
+            // If you are using ParellelReader, and pass in a
+            // reused DocsAndPositionsEnum, it could have come
+            // from another reader also using sep codec
+            if (reuse is null || !(reuse is SepDocsAndPositionsEnum postingsEnum) || postingsEnum.startDocIn != docIn)
                 postingsEnum = new SepDocsAndPositionsEnum(this);
-            }
-            else
-            {
-                postingsEnum = (SepDocsAndPositionsEnum)reuse;
-                if (postingsEnum.startDocIn != docIn)
-                {
-                    // If you are using ParellelReader, and pass in a
-                    // reused DocsAndPositionsEnum, it could have come
-                    // from another reader also using sep codec
-                    postingsEnum = new SepDocsAndPositionsEnum(this);
-                }
-            }
 
             return postingsEnum.Init(fieldInfo, termState_, liveDocs);
         }

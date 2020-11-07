@@ -807,20 +807,10 @@ namespace Lucene.Net.Codecs.Memory
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 DecodeMetaData();
-                FSTDocsEnum docsEnum;
 
-                if (reuse == null || !(reuse is FSTDocsEnum))
-                {
+                if (reuse is null || !(reuse is FSTDocsEnum docsEnum) || !docsEnum.CanReuse(field.IndexOptions, field.HasPayloads))
                     docsEnum = new FSTDocsEnum(field.IndexOptions, field.HasPayloads);
-                }
-                else
-                {
-                    docsEnum = (FSTDocsEnum)reuse;
-                    if (!docsEnum.CanReuse(field.IndexOptions, field.HasPayloads))
-                    {
-                        docsEnum = new FSTDocsEnum(field.IndexOptions, field.HasPayloads);
-                    }
-                }
+
                 return docsEnum.Reset(this.postingsSpare, liveDocs, docFreq);
             }
 
@@ -833,19 +823,9 @@ namespace Lucene.Net.Codecs.Memory
                     return null;
                 }
                 DecodeMetaData();
-                FSTDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse == null || !(reuse is FSTDocsAndPositionsEnum))
-                {
+                if (reuse is null || !(reuse is FSTDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(field.HasPayloads, hasOffsets))
                     docsAndPositionsEnum = new FSTDocsAndPositionsEnum(field.HasPayloads, hasOffsets);
-                }
-                else
-                {
-                    docsAndPositionsEnum = (FSTDocsAndPositionsEnum)reuse;
-                    if (!docsAndPositionsEnum.CanReuse(field.HasPayloads, hasOffsets))
-                    {
-                        docsAndPositionsEnum = new FSTDocsAndPositionsEnum(field.HasPayloads, hasOffsets);
-                    }
-                }
+
                 //System.out.println("D&P reset this=" + this);
                 return docsAndPositionsEnum.Reset(postingsSpare, liveDocs, docFreq);
             }

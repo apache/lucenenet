@@ -377,19 +377,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override TermsEnum GetEnumerator(TermsEnum reuse)
             {
-                TVTermsEnum termsEnum;
-                if (reuse is null || !(reuse is TVTermsEnum))
-                {
+                if (reuse is null || !(reuse is TVTermsEnum termsEnum) || !termsEnum.CanReuse(outerInstance.tvf))
                     termsEnum = new TVTermsEnum(outerInstance);
-                }
-                else
-                {
-                    var reusable = (TVTermsEnum)reuse;
-                    if (reusable.CanReuse(outerInstance.tvf))
-                        termsEnum = reusable;
-                    else
-                        termsEnum = new TVTermsEnum(outerInstance);
-                }
 
                 termsEnum.Reset(numTerms, tvfFPStart, storePositions, storeOffsets, unicodeSortOrder);
                 return termsEnum;
@@ -584,15 +573,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags) // ignored
             {
-                TVDocsEnum docsEnum;
-                if (reuse != null && reuse is TVDocsEnum)
-                {
-                    docsEnum = (TVDocsEnum)reuse;
-                }
-                else
-                {
+                if (reuse is null || !(reuse is TVDocsEnum docsEnum))
                     docsEnum = new TVDocsEnum();
-                }
+
                 docsEnum.Reset(liveDocs, termAndPostings[currentTerm]);
                 return docsEnum;
             }
@@ -604,15 +587,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     return null;
                 }
 
-                TVDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse != null && reuse is TVDocsAndPositionsEnum)
-                {
-                    docsAndPositionsEnum = (TVDocsAndPositionsEnum)reuse;
-                }
-                else
-                {
+                if (reuse is null || !(reuse is TVDocsAndPositionsEnum docsAndPositionsEnum))
                     docsAndPositionsEnum = new TVDocsAndPositionsEnum();
-                }
+
                 docsAndPositionsEnum.Reset(liveDocs, termAndPostings[currentTerm]);
                 return docsAndPositionsEnum;
             }

@@ -1061,41 +1061,20 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                PreDocsEnum docsEnum;
-                if (reuse == null || !(reuse is PreDocsEnum))
-                {
+                if (reuse == null || !(reuse is PreDocsEnum docsEnum) || docsEnum.FreqStream != outerInstance.FreqStream)
                     docsEnum = new PreDocsEnum(outerInstance);
-                }
-                else
-                {
-                    docsEnum = (PreDocsEnum)reuse;
-                    if (docsEnum.FreqStream != outerInstance.FreqStream)
-                    {
-                        docsEnum = new PreDocsEnum(outerInstance);
-                    }
-                }
+
                 return docsEnum.Reset(termEnum, liveDocs);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-                PreDocsAndPositionsEnum docsPosEnum;
                 if (fieldInfo.IndexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
-                {
                     return null;
-                }
-                else if (reuse == null || !(reuse is PreDocsAndPositionsEnum))
-                {
+
+                if (reuse is null || !(reuse is PreDocsAndPositionsEnum docsPosEnum) || docsPosEnum.FreqStream != outerInstance.FreqStream)
                     docsPosEnum = new PreDocsAndPositionsEnum(outerInstance);
-                }
-                else
-                {
-                    docsPosEnum = (PreDocsAndPositionsEnum)reuse;
-                    if (docsPosEnum.FreqStream != outerInstance.FreqStream)
-                    {
-                        docsPosEnum = new PreDocsAndPositionsEnum(outerInstance);
-                    }
-                }
+
                 return docsPosEnum.Reset(termEnum, liveDocs);
             }
         }

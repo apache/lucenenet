@@ -193,17 +193,10 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                SimpleTextDocsEnum docsEnum;
-                if (reuse != null && reuse is SimpleTextDocsEnum && ((SimpleTextDocsEnum) reuse).CanReuse(_outerInstance._input))
-                {
-                    docsEnum = (SimpleTextDocsEnum) reuse;
-                }
-                else
-                {
+                if (reuse is null || !(reuse is SimpleTextDocsEnum docsEnum) || !docsEnum.CanReuse(_outerInstance._input))
                     docsEnum = new SimpleTextDocsEnum(_outerInstance);
-                }
-                return docsEnum.Reset(_docsStart, liveDocs, _indexOptions == IndexOptions.DOCS_ONLY,
-                    _docFreq);
+                
+                return docsEnum.Reset(_docsStart, liveDocs, _indexOptions == IndexOptions.DOCS_ONLY, _docFreq);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
@@ -215,15 +208,9 @@ namespace Lucene.Net.Codecs.SimpleText
                     return null;
                 }
 
-                SimpleTextDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse != null && reuse is SimpleTextDocsAndPositionsEnum && ((SimpleTextDocsAndPositionsEnum) reuse).CanReuse(_outerInstance._input))
-                {
-                    docsAndPositionsEnum = (SimpleTextDocsAndPositionsEnum) reuse;
-                }
-                else
-                {
+                if (reuse is null || !(reuse is SimpleTextDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(_outerInstance._input))
                     docsAndPositionsEnum = new SimpleTextDocsAndPositionsEnum(_outerInstance);
-                }
+
                 return docsAndPositionsEnum.Reset(_docsStart, liveDocs, _indexOptions, _docFreq);
             }
 

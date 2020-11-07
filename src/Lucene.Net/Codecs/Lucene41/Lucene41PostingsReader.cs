@@ -238,19 +238,9 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
-            BlockDocsEnum docsEnum;
-            if (reuse is BlockDocsEnum)
-            {
-                docsEnum = (BlockDocsEnum)reuse;
-                if (!docsEnum.CanReuse(docIn, fieldInfo))
-                {
-                    docsEnum = new BlockDocsEnum(this, fieldInfo);
-                }
-            }
-            else
-            {
+            if (reuse is null || !(reuse is BlockDocsEnum docsEnum) || !docsEnum.CanReuse(docIn, fieldInfo))
                 docsEnum = new BlockDocsEnum(this, fieldInfo);
-            }
+
             return docsEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState, flags);
         }
 
@@ -264,36 +254,16 @@ namespace Lucene.Net.Codecs.Lucene41
 
             if ((!indexHasOffsets || (flags & DocsAndPositionsFlags.OFFSETS) == 0) && (!indexHasPayloads || (flags & DocsAndPositionsFlags.PAYLOADS) == 0))
             {
-                BlockDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse is BlockDocsAndPositionsEnum)
-                {
-                    docsAndPositionsEnum = (BlockDocsAndPositionsEnum)reuse;
-                    if (!docsAndPositionsEnum.CanReuse(docIn, fieldInfo))
-                    {
-                        docsAndPositionsEnum = new BlockDocsAndPositionsEnum(this, fieldInfo);
-                    }
-                }
-                else
-                {
+                if (reuse is null || !(reuse is BlockDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(docIn, fieldInfo))
                     docsAndPositionsEnum = new BlockDocsAndPositionsEnum(this, fieldInfo);
-                }
+
                 return docsAndPositionsEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState);
             }
             else
             {
-                EverythingEnum everythingEnum;
-                if (reuse is EverythingEnum)
-                {
-                    everythingEnum = (EverythingEnum)reuse;
-                    if (!everythingEnum.CanReuse(docIn, fieldInfo))
-                    {
-                        everythingEnum = new EverythingEnum(this, fieldInfo);
-                    }
-                }
-                else
-                {
+                if (reuse is null || !(reuse is EverythingEnum everythingEnum) || !everythingEnum.CanReuse(docIn, fieldInfo))
                     everythingEnum = new EverythingEnum(this, fieldInfo);
-                }
+
                 return everythingEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState, flags);
             }
         }

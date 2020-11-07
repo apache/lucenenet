@@ -225,18 +225,13 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private bool CanReuse(DocsEnum reuse, IBits liveDocs)
         {
-            if (reuse != null && (reuse is SegmentDocsEnumBase))
-            {
-                SegmentDocsEnumBase docsEnum = (SegmentDocsEnumBase)reuse;
-                // If you are using ParellelReader, and pass in a
-                // reused DocsEnum, it could have come from another
-                // reader also using standard codec
-                if (docsEnum.startFreqIn == freqIn)
-                {
-                    // we only reuse if the the actual the incoming enum has the same liveDocs as the given liveDocs
-                    return liveDocs == docsEnum.m_liveDocs;
-                }
-            }
+            // If you are using ParellelReader, and pass in a
+            // reused DocsEnum, it could have come from another
+            // reader also using standard codec
+            if (reuse != null && (reuse is SegmentDocsEnumBase docsEnum) && docsEnum.startFreqIn == freqIn)
+                // we only reuse if the the actual the incoming enum has the same liveDocs as the given liveDocs
+                return liveDocs == docsEnum.m_liveDocs;
+
             return false;
         }
 
@@ -263,47 +258,27 @@ namespace Lucene.Net.Codecs.Lucene40
             // TODO: refactor
             if (fieldInfo.HasPayloads || hasOffsets)
             {
-                SegmentFullPositionsEnum docsEnum;
-                if (reuse == null || !(reuse is SegmentFullPositionsEnum))
-                {
+                // If you are using ParellelReader, and pass in a
+                // reused DocsEnum, it could have come from another
+                // reader also using standard codec
+                if (reuse is null || !(reuse is SegmentFullPositionsEnum docsEnum) || docsEnum.startFreqIn != freqIn)
                     docsEnum = new SegmentFullPositionsEnum(this, freqIn, proxIn);
-                }
-                else
-                {
-                    docsEnum = (SegmentFullPositionsEnum)reuse;
-                    if (docsEnum.startFreqIn != freqIn)
-                    {
-                        // If you are using ParellelReader, and pass in a
-                        // reused DocsEnum, it could have come from another
-                        // reader also using standard codec
-                        docsEnum = new SegmentFullPositionsEnum(this, freqIn, proxIn);
-                    }
-                }
+
                 return docsEnum.Reset(fieldInfo, (StandardTermState)termState, liveDocs);
             }
             else
             {
-                SegmentDocsAndPositionsEnum docsEnum;
-                if (reuse == null || !(reuse is SegmentDocsAndPositionsEnum))
-                {
+                // If you are using ParellelReader, and pass in a
+                // reused DocsEnum, it could have come from another
+                // reader also using standard codec
+                if (reuse is null || !(reuse is SegmentDocsAndPositionsEnum docsEnum) || docsEnum.startFreqIn != freqIn)
                     docsEnum = new SegmentDocsAndPositionsEnum(this, freqIn, proxIn);
-                }
-                else
-                {
-                    docsEnum = (SegmentDocsAndPositionsEnum)reuse;
-                    if (docsEnum.startFreqIn != freqIn)
-                    {
-                        // If you are using ParellelReader, and pass in a
-                        // reused DocsEnum, it could have come from another
-                        // reader also using standard codec
-                        docsEnum = new SegmentDocsAndPositionsEnum(this, freqIn, proxIn);
-                    }
-                }
+
                 return docsEnum.Reset(fieldInfo, (StandardTermState)termState, liveDocs);
             }
         }
 
-        internal static readonly int BUFFERSIZE = 64;
+        internal const int BUFFERSIZE = 64;
 
         private abstract class SegmentDocsEnumBase : DocsEnum
         {
