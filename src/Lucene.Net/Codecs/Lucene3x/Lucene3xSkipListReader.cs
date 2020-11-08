@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -73,6 +74,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// </summary>
         public int PayloadLength => lastPayloadLength;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void SeekChild(int level)
         {
             base.SeekChild(level);
@@ -81,6 +83,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             payloadLength[level] = lastPayloadLength;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void SetLastSkipData(int level)
         {
             base.SetLastSkipData(level);

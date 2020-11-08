@@ -2,8 +2,8 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -161,12 +161,14 @@ namespace Lucene.Net.Facet.Taxonomy
             return Length - other.Length;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void HasDelimiter(string offender, char delimiter) // LUCENENET: CA1822: Mark members as static
         {
-            throw new ArgumentException("delimiter character '" + delimiter + 
+            throw new ArgumentException("delimiter character '" + delimiter +
                 "' (U+" + delimiter.ToString() + ") appears in path component \"" + offender + "\"");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void NoDelimiter(char[] buf, int offset, int len, char delimiter)
         {
             for (int idx = 0; idx < len; idx++)
@@ -296,6 +298,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// '/'.
         /// </summary>
         /// <seealso cref="ToString(char)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string ToString()
         {
             return ToString('/');

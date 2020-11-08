@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Codecs.Lucene41
 {
     /*
@@ -37,11 +39,13 @@ namespace Lucene.Net.Codecs.Lucene41
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override PostingsReaderBase PostingsReaderBase(SegmentReadState state)
         {
             return new Lucene41PostingsReader(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, state.SegmentSuffix);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override PostingsWriterBase PostingsWriterBase(SegmentWriteState state)
         {
             return new Lucene41PostingsWriter(state);

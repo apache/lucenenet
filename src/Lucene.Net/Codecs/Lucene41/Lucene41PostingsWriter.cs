@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -212,6 +213,7 @@ namespace Lucene.Net.Codecs.Lucene41
             // freq is always implicitly totalTermFreq in this case.
             internal int singletonDocID = -1;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override object Clone()
             {
                 Int32BlockTermState other = new Int32BlockTermState();
@@ -237,11 +239,13 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override BlockTermState NewTermState()
         {
             return new Int32BlockTermState();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Init(IndexOutput termsOut)
         {
             CodecUtil.WriteHeader(termsOut, TERMS_CODEC, VERSION_CURRENT);

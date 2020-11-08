@@ -4,6 +4,7 @@ using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Arrays = Lucene.Net.Support.Arrays;
 using JCG = J2N.Collections.Generic;
 
@@ -143,6 +144,7 @@ namespace Lucene.Net.Util.Automaton
             /// <summary>
             /// Return the most recent transitions's target state.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal State LastChild() // LUCENENET NOTE: Kept this a method because there is another overload
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(HasChildren, "No outgoing transitions.");
@@ -169,6 +171,7 @@ namespace Lucene.Net.Util.Automaton
             /// Replace the last added outgoing transition's target state with the given
             /// <paramref name="state"/>.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal void ReplaceLastChild(State state)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(HasChildren, "No outgoing transitions.");
@@ -326,6 +329,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Copy <paramref name="current"/> into an internal buffer.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool SetPrevious(CharsRef current)
         {
             // don't need to copy, once we fix https://issues.apache.org/jira/browse/LUCENE-3277

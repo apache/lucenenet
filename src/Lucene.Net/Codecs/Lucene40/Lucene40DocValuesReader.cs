@@ -2,6 +2,7 @@ using J2N.Threading.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -179,6 +180,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.values = values;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 return values[docID];
@@ -198,6 +200,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.reader = reader;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 long value = reader.Get(docID);
@@ -236,6 +239,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.values = values;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 return (sbyte)values[docID];
@@ -272,6 +276,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.values = values;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 return values[docID];
@@ -308,6 +313,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.values = values;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 return values[docID];
@@ -344,6 +350,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.values = values;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 return values[docID];
@@ -380,6 +387,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.values = values;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 return values[docID];
@@ -413,6 +421,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.values = values;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 return values[docID];
@@ -494,6 +503,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.bytesReader = bytesReader;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Get(int docID, BytesRef result)
             {
                 bytesReader.FillSlice(result, fixedLength * (long)docID, fixedLength);
@@ -548,6 +558,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.reader = reader;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Get(int docID, BytesRef result)
             {
                 long startAddress = reader.Get(docID);
@@ -608,6 +619,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.reader = reader;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Get(int docID, BytesRef result)
             {
                 long offset = fixedLength * reader.Get(docID);
@@ -768,11 +780,13 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.reader = reader;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetOrd(int docID)
             {
                 return (int)reader.Get(docID);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void LookupOrd(int ord, BytesRef result)
             {
                 bytesReader.FillSlice(result, fixedLength * (long)ord, fixedLength);
@@ -814,11 +828,13 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.valueCount = valueCount;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetOrd(int docID)
             {
                 return (int)ordsReader.Get(docID);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void LookupOrd(int ord, BytesRef result)
             {
                 long startAddress = addressReader.Get(ord);
@@ -854,11 +870,13 @@ namespace Lucene.Net.Codecs.Lucene40
                 this.@in = @in;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetOrd(int docID)
             {
                 return @in.GetOrd(docID) - 1;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void LookupOrd(int ord, BytesRef result)
             {
                 @in.LookupOrd(ord + 1, result);
@@ -872,11 +890,13 @@ namespace Lucene.Net.Codecs.Lucene40
             throw new InvalidOperationException("Lucene 4.0 does not support SortedSet: how did you pull this off?");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override IBits GetDocsWithField(FieldInfo field)
         {
             return new Lucene.Net.Util.Bits.MatchAllBits(state.SegmentInfo.DocCount);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -887,6 +907,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override long RamBytesUsed() => ramBytesUsed;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity() { }
     }
 }

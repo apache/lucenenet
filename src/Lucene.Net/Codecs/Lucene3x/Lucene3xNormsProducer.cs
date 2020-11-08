@@ -1,10 +1,10 @@
-using J2N.Threading.Atomic;
 using J2N.Runtime.CompilerServices;
+using J2N.Threading.Atomic;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -27,10 +27,10 @@ namespace Lucene.Net.Codecs.Lucene3x
      */
 
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IOContext = Lucene.Net.Store.IOContext;
@@ -181,6 +181,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool HasSeparateNorms(SegmentInfo info, int number)
         {
             string v = info.GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_PREFIX + number);
@@ -250,6 +251,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     this.bytes = bytes;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 public override long Get(int docID)
                 {
                     return bytes[docID];
@@ -257,6 +259,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
             var dv = norms[field.Name];
@@ -284,6 +287,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             throw new InvalidOperationException();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed() => ramBytesUsed;
 
         public override void CheckIntegrity() { }

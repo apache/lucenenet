@@ -1,6 +1,7 @@
 ﻿// commons-codec version compatibility level: 1.9
 using System;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Phonetic.Language
@@ -72,6 +73,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="value">String to encode.</param>
         /// <returns>An encoded string.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string GetDoubleMetaphone(string value)
         {
             return GetDoubleMetaphone(value, false);
@@ -217,6 +219,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="value">String to encode.</param>
         /// <returns>An encoded string.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string Encode(string value)
         {
             return GetDoubleMetaphone(value);
@@ -229,6 +232,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <param name="value1">The left-hand side of the encoded <see cref="string.Equals(object)"/>.</param>
         /// <param name="value2">The right-hand side of the encoded <see cref="string.Equals(object)"/>.</param>
         /// <returns><c>true</c> if the encoded <see cref="string"/>s are equal; <c>false</c> otherwise.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool IsDoubleMetaphoneEqual(string value1, string value2)
         {
             return IsDoubleMetaphoneEqual(value1, value2, false);
@@ -242,6 +246,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <param name="value2">The right-hand side of the encoded <see cref="string.Equals(object)"/>.</param>
         /// <param name="alternate">Use the alternate value if <c>true</c>.</param>
         /// <returns><c>true</c> if the encoded <see cref="string"/>s are equal; <c>false</c> otherwise.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool IsDoubleMetaphoneEqual(string value1, string value2, bool alternate)
         {
             return GetDoubleMetaphone(value1, alternate).Equals(GetDoubleMetaphone(value2, alternate), StringComparison.Ordinal);
@@ -261,6 +266,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Handles 'A', 'E', 'I', 'O', 'U', and 'Y' cases.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int HandleAEIOUY(DoubleMetaphoneResult result, int index)
         {
             if (index == 0)
@@ -1085,6 +1091,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// Determines whether or not a value is of slavo-germanic origin. A value is
         /// of slavo-germanic origin if it contians any of 'W', 'K', 'CZ', or 'WITZ'.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsSlavoGermanic(string value)
         {
             return value.IndexOf('W') > -1 || value.IndexOf('K') > -1 ||
@@ -1094,6 +1101,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Determines whether or not a character is a vowel or not
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsVowel(char ch) // LUCENENET: CA1822: Mark members as static
         {
             return VOWELS.IndexOf(ch) != -1;
@@ -1193,18 +1201,21 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 this.alternate = new StringBuilder(maxLength);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void Append(char value)
             {
                 AppendPrimary(value);
                 AppendAlternate(value);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void Append(char primary, char alternate)
             {
                 AppendPrimary(primary);
                 AppendAlternate(alternate);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void AppendPrimary(char value)
             {
                 if (this.primary.Length < this.maxLength)
@@ -1213,6 +1224,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void AppendAlternate(char value)
             {
                 if (this.alternate.Length < this.maxLength)
@@ -1221,12 +1233,14 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void Append(string value)
             {
                 AppendPrimary(value);
                 AppendAlternate(value);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void Append(string primary, string alternate)
             {
                 AppendPrimary(primary);

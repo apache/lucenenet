@@ -10,6 +10,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -306,7 +307,7 @@ namespace Lucene.Net.Search
                     this.outerInstance = nodeState;
                     this.nodeVersions = nodeVersions;
                     MyNodeID = nodeID;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(MyNodeID == nodeState.MyNodeID,"myNodeID={0} nodeState.MyNodeID={1}", nodeID, nodeState.MyNodeID);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(MyNodeID == nodeState.MyNodeID, "myNodeID={0} nodeState.MyNodeID={1}", nodeID, nodeState.MyNodeID);
                 }
 
                 public override Query Rewrite(Query original)
@@ -639,6 +640,7 @@ namespace Lucene.Net.Search
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void Release(ShardIndexSearcher s) // LUCENENET: CA1822: Mark members as static
             {
                 s.IndexReader.DecRef();

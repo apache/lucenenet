@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using FieldInfos = Lucene.Net.Index.FieldInfos;
 using IndexFormatTooNewException = Lucene.Net.Index.IndexFormatTooNewException;
 using IndexFormatTooOldException = Lucene.Net.Index.IndexFormatTooOldException;
@@ -212,6 +213,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the current Term in the enumeration.
         /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Term Term()
         {
             return termBuffer.ToTerm();
@@ -219,6 +221,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns the previous Term enumerated. Initially <c>null</c>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal Term Prev()
         {
             return prevBuffer.ToTerm();
@@ -228,6 +231,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
         /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TermInfo TermInfo()
         {
             return new TermInfo(termInfo);
@@ -237,6 +241,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Sets the argument to the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
         /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void TermInfo(TermInfo ti)
         {
             ti.Set(termInfo);
@@ -262,6 +267,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Closes the enumeration to further activity, freeing resources. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
             input.Dispose();

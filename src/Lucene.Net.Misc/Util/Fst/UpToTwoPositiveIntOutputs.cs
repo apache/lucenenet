@@ -111,17 +111,20 @@ namespace Lucene.Net.Util.Fst
             this.doShare = doShare;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static UpToTwoPositiveInt64Outputs GetSingleton(bool doShare)
         {
             return doShare ? singletonShare : singletonNoShare;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This is a shipped public API")]
         public long? Get(long v)
         {
             return v == 0 ? NO_OUTPUT : v;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This is a shipped public API")]
         public TwoInt64s Get(long first, long second)
         {
@@ -255,6 +258,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool Valid(long? o) // LUCENENET: CA1822: Mark members as static
         {
             Debugging.Assert(o != null);
@@ -264,6 +268,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         // Used only by assert
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool Valid(object o, bool allowDouble) // LUCENENET: CA1822: Mark members as static
         {
             if (!allowDouble)

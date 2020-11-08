@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using IBits = Lucene.Net.Util.IBits;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -67,6 +68,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             maxSkipLevels = tis.MaxSkipLevels;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Seek(Term term)
         {
             TermInfo ti = tis.Get(term);
@@ -121,12 +123,14 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -143,6 +147,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public int Freq => freq;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void SkippingDoc()
         {
         }
@@ -247,6 +252,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Overridden by <see cref="SegmentTermPositions"/> to skip in prox stream. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void SkipProx(long proxPointer, int payloadLength)
         {
         }

@@ -4,8 +4,8 @@ using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Codecs
@@ -340,6 +340,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the terms file header. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteHeader(IndexOutput @out)
         {
             CodecUtil.WriteHeader(@out, TERMS_CODEC_NAME, VERSION_CURRENT);
@@ -347,6 +348,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the index file header. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteIndexHeader(IndexOutput @out)
         {
             CodecUtil.WriteHeader(@out, TERMS_INDEX_CODEC_NAME, VERSION_CURRENT);
@@ -354,6 +356,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the terms file trailer. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteTrailer(IndexOutput @out, long dirStart)
         {
             @out.WriteInt64(dirStart);
@@ -361,6 +364,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the index file trailer. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteIndexTrailer(IndexOutput indexOut, long dirStart)
         {
             indexOut.WriteInt64(dirStart);
@@ -375,6 +379,7 @@ namespace Lucene.Net.Codecs
             return new TermsWriter(this, field);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long EncodeOutput(long fp, bool hasTerms, bool isFloor)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(fp < (1L << 62));
@@ -1186,6 +1191,7 @@ namespace Lucene.Net.Codecs
 
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override PostingsConsumer StartTerm(BytesRef text)
             {
                 //if (DEBUG) System.out.println("\nBTTW.startTerm term=" + fieldInfo.name + ":" + toString(text) + " seg=" + segment);

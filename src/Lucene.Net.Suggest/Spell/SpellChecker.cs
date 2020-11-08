@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Search.Spell
@@ -213,6 +214,7 @@ namespace Lucene.Net.Search.Spell
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
         /// of the suggest words in the field of the user index</returns>
         /// <seealso cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string[] SuggestSimilar(string word, int numSug)
         {
             return this.SuggestSimilar(word, numSug, null, null, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
@@ -240,6 +242,7 @@ namespace Lucene.Net.Search.Spell
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
         /// of the suggest words in the field of the user index</returns>
         /// <seealso cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string[] SuggestSimilar(string word, int numSug, float accuracy)
         {
             return this.SuggestSimilar(word, numSug, null, null, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX, accuracy);
@@ -250,6 +253,7 @@ namespace Lucene.Net.Search.Spell
         ///       SuggestSimilar(word, numSug, ir, suggestMode, field, this.accuracy)
         /// 
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string[] SuggestSimilar(string word, int numSug, IndexReader ir, string field, SuggestMode suggestMode)
         {
             return SuggestSimilar(word, numSug, ir, field, suggestMode, this.accuracy);
@@ -558,6 +562,7 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetMin(int l)
         {
             if (l > 5)
@@ -571,6 +576,7 @@ namespace Lucene.Net.Search.Spell
             return 1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetMax(int l)
         {
             if (l > 5)
@@ -638,6 +644,7 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ReleaseSearcher(IndexSearcher aSearcher) // LUCENENET: CA1822: Mark members as static
         {
             // don't check if open - always decRef 
@@ -645,6 +652,7 @@ namespace Lucene.Net.Search.Spell
             aSearcher.IndexReader.DecRef();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (disposed)
@@ -712,6 +720,7 @@ namespace Lucene.Net.Search.Spell
         /// <returns> a new read-only IndexSearcher </returns>
         /// <exception cref="IOException"> f there is a low-level IO error </exception>
         // for testing purposes
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual IndexSearcher CreateSearcher(Directory dir)
         {
             return new IndexSearcher(DirectoryReader.Open(dir));

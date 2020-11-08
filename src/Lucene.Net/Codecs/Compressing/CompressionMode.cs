@@ -1,7 +1,7 @@
 using Lucene.Net.Diagnostics;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 using BytesRef = Lucene.Net.Util.BytesRef;
 
@@ -46,20 +46,19 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class CompressionModeAnonymousInnerClassHelper : CompressionMode
         {
-            public CompressionModeAnonymousInnerClassHelper()
-            {
-            }
-
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Compressor NewCompressor()
             {
                 return new LZ4FastCompressor();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Decompressor NewDecompressor()
             {
                 return LZ4_DECOMPRESSOR;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override string ToString()
             {
                 return "FAST";
@@ -76,20 +75,19 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class CompressionModeAnonymousInnerClassHelper2 : CompressionMode
         {
-            public CompressionModeAnonymousInnerClassHelper2()
-            {
-            }
-
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Compressor NewCompressor()
             {
                 return new DeflateCompressor(CompressionLevel.Optimal);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Decompressor NewDecompressor()
             {
                 return new DeflateDecompressor();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override string ToString()
             {
                 return "HIGH_COMPRESSION";
@@ -106,20 +104,19 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class CompressionModeAnonymousInnerClassHelper3 : CompressionMode
         {
-            public CompressionModeAnonymousInnerClassHelper3()
-            {
-            }
-
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Compressor NewCompressor()
             {
                 return new LZ4HighCompressor();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Decompressor NewDecompressor()
             {
                 return LZ4_DECOMPRESSOR;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override string ToString()
             {
                 return "FAST_DECOMPRESSION";
@@ -146,10 +143,6 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class DecompressorAnonymousInnerClassHelper : Decompressor
         {
-            public DecompressorAnonymousInnerClassHelper()
-            {
-            }
-
             public override void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(offset + length <= originalLength);
@@ -167,6 +160,7 @@ namespace Lucene.Net.Codecs.Compressing
                 bytes.Length = length;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override object Clone()
             {
                 return this;
@@ -182,6 +176,7 @@ namespace Lucene.Net.Codecs.Compressing
                 ht = new LZ4.HashTable();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {
                 LZ4.Compress(bytes, off, len, @out, ht);
@@ -197,6 +192,7 @@ namespace Lucene.Net.Codecs.Compressing
                 ht = new LZ4.HCHashTable();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Compress(byte[] bytes, int off, int len, DataOutput @out)
             {
                 LZ4.CompressHC(bytes, off, len, @out, ht);
@@ -205,11 +201,6 @@ namespace Lucene.Net.Codecs.Compressing
 
         private sealed class DeflateDecompressor : Decompressor
         {
-
-            internal DeflateDecompressor()
-            {
-            }
-
             public override void Decompress(DataInput input, int originalLength, int offset, int length, BytesRef bytes)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(offset + length <= originalLength);
@@ -242,9 +233,10 @@ namespace Lucene.Net.Codecs.Compressing
 
                 bytes.Bytes = decompressedBytes;
                 bytes.Offset = offset;
-                bytes.Length = length;            
+                bytes.Length = length;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override object Clone()
             {
                 return new DeflateDecompressor();

@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -62,6 +63,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// clones are called (eg, currently <see cref="Index.SegmentReader"/> manages
         /// this logic).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object Clone()
         {
             EnsureOpen();
@@ -130,6 +132,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <exception cref="ObjectDisposedException"> if this FieldsReader is disposed. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (closed)
@@ -143,6 +146,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// This means that the <see cref="Index.Fields"/> values will not be accessible.
         /// </summary>
         /// <exception cref="IOException"> If an I/O error occurs. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -162,6 +166,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public int Count => size;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SeekIndex(int docID)
         {
             indexStream.Seek(Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX + docID * 8L);
@@ -304,11 +309,13 @@ namespace Lucene.Net.Codecs.Lucene40
             return fieldsStream;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
         }

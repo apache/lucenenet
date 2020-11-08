@@ -1,8 +1,8 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.PerField
@@ -75,6 +75,7 @@ namespace Lucene.Net.Codecs.PerField
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {
             return new FieldsWriter(this, state);
@@ -85,6 +86,7 @@ namespace Lucene.Net.Codecs.PerField
             internal FieldsConsumer Consumer { get; set; }
             internal int Suffix { get; set; }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Dispose()
             {
                 Consumer.Dispose();
@@ -161,6 +163,7 @@ namespace Lucene.Net.Codecs.PerField
                 return consumer.Consumer.AddField(field);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
@@ -171,11 +174,13 @@ namespace Lucene.Net.Codecs.PerField
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetSuffix(string formatName, string suffix)
         {
             return formatName + "_" + suffix;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetFullSegmentSuffix(string fieldName, string outerSegmentSuffix, string segmentSuffix)
         {
             if (outerSegmentSuffix.Length == 0)
@@ -237,11 +242,13 @@ namespace Lucene.Net.Codecs.PerField
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override IEnumerator<string> GetEnumerator()
             {
                 return fields.Keys.GetEnumerator(); // LUCENENET NOTE: enumerators are not writable in .NET
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Terms GetTerms(string field)
             {
                 if (fields.TryGetValue(field, out FieldsProducer fieldsProducer) && fieldsProducer != null)
@@ -254,6 +261,7 @@ namespace Lucene.Net.Codecs.PerField
 
             public override int Count => fields.Count;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
@@ -262,6 +270,7 @@ namespace Lucene.Net.Codecs.PerField
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long RamBytesUsed()
             {
                 long sizeInBytes = 0;
@@ -273,6 +282,7 @@ namespace Lucene.Net.Codecs.PerField
                 return sizeInBytes;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void CheckIntegrity()
             {
                 foreach (FieldsProducer producer in formats.Values)
@@ -282,6 +292,7 @@ namespace Lucene.Net.Codecs.PerField
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed FieldsProducer FieldsProducer(SegmentReadState state)
         {
             return new FieldsReader(state);

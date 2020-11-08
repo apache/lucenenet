@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -84,6 +85,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetField(bool fieldHasPositions, bool fieldHasOffsets, bool fieldHasPayloads)
         {
             this.fieldHasPositions = fieldHasPositions;

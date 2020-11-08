@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -138,6 +139,7 @@ namespace Lucene.Net.Codecs.Compressing
             return hi;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int RelativeDocBase(int block, int relativeChunk)
         {
             int expected = avgChunkDocs[block] * relativeChunk;
@@ -145,6 +147,7 @@ namespace Lucene.Net.Codecs.Compressing
             return expected + (int)delta;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private long RelativeStartPointer(int block, int relativeChunk)
         {
             long expected = avgChunkSizes[block] * relativeChunk;
@@ -186,6 +189,7 @@ namespace Lucene.Net.Codecs.Compressing
             return startPointers[block] + RelativeStartPointer(block, relativeChunk);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object Clone()
         {
             return this;

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -74,11 +75,13 @@ namespace Lucene.Net.Codecs.Compressing
             this.chunkSize = chunkSize;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed TermVectorsReader VectorsReader(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
         {
             return new CompressingTermVectorsReader(directory, segmentInfo, segmentSuffix, fieldInfos, context, formatName, compressionMode);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed TermVectorsWriter VectorsWriter(Directory directory, SegmentInfo segmentInfo, IOContext context)
         {
             return new CompressingTermVectorsWriter(directory, segmentInfo, segmentSuffix, context, formatName, compressionMode, chunkSize);

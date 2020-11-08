@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -109,6 +110,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Init(IndexInput termsIn)
         {
             // Make sure we are talking to the matching past writer
@@ -126,6 +128,7 @@ namespace Lucene.Net.Codecs.Lucene40
             internal long proxOffset;
             internal long skipOffset;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override object Clone()
             {
                 StandardTermState other = new StandardTermState();
@@ -133,6 +136,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return other;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void CopyFrom(TermState other)
             {
                 base.CopyFrom(other);
@@ -142,12 +146,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 skipOffset = other2.skipOffset;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override string ToString()
             {
                 return base.ToString() + " freqFP=" + freqOffset + " proxFP=" + proxOffset + " skipOffset=" + skipOffset;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override BlockTermState NewTermState()
         {
             return new StandardTermState();
@@ -223,6 +229,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return NewDocsEnum(liveDocs, fieldInfo, (StandardTermState)termState);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool CanReuse(DocsEnum reuse, IBits liveDocs)
         {
             // If you are using ParellelReader, and pass in a
@@ -235,6 +242,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private DocsEnum NewDocsEnum(IBits liveDocs, FieldInfo fieldInfo, StandardTermState termState)
         {
             if (liveDocs == null)
@@ -399,6 +407,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return low - 1;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal static int ReadFreq(IndexInput freqIn, int code) // LUCENENET: CA1822: Mark members as static
             {
                 if ((code & 1) != 0) // if low bit is set
@@ -440,6 +449,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             protected internal abstract int NextUnreadDoc();
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private int FillDocs(int size)
             {
                 IndexInput freqIn = this.freqIn;
@@ -454,6 +464,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return size;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private int FillDocsAndFreqs(int size)
             {
                 IndexInput freqIn = this.freqIn;
@@ -509,6 +520,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return ScanTo(target);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return m_limit;
@@ -917,11 +929,13 @@ namespace Lucene.Net.Codecs.Lucene40
             /// Returns the payload at this position, or <c>null</c> if no
             /// payload was indexed.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override BytesRef GetPayload()
             {
                 return null;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return limit;
@@ -1249,17 +1263,20 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return limit;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
         }

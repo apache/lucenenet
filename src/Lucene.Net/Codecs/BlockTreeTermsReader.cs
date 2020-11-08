@@ -6,6 +6,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -607,6 +608,7 @@ namespace Lucene.Net.Codecs
             /// <summary>
             /// For debugging -- used by CheckIndex too </summary>
             // TODO: maybe push this into Terms?
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public Stats ComputeStats()
             {
                 return (new SegmentTermsEnum(this)).ComputeBlockStats();
@@ -1049,12 +1051,14 @@ namespace Lucene.Net.Codecs
                 }
 
                 // only for assert:
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 internal bool SetSavedStartTerm(BytesRef startTerm)
                 {
                     savedStartTerm = startTerm == null ? null : BytesRef.DeepCopyOf(startTerm);
                     return true;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 public override TermState GetTermState()
                 {
                     currentFrame.DecodeMetaData();
@@ -1150,12 +1154,14 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     currentFrame.DecodeMetaData();
                     return outerInstance.outerInstance.postingsReader.Docs(outerInstance.fieldInfo, currentFrame.termState, skipDocs, reuse, flags);
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 public override DocsAndPositionsEnum DocsAndPositions(IBits skipDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
                     // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
@@ -1568,6 +1574,7 @@ namespace Lucene.Net.Codecs
                 }
 
                 // Not private to avoid synthetic access$NNN methods
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 internal void InitIndexInput()
                 {
                     if (this.@in == null)
@@ -2915,6 +2922,7 @@ namespace Lucene.Net.Codecs
                         */
                     }
 
+                    [MethodImpl(MethodImplOptions.AggressiveInlining)]
                     public bool Next()
                     {
                         return isLeafBlock ? NextLeaf() : NextNonLeaf();

@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -111,6 +112,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// clones are called (eg, currently SegmentReader manages
         /// this logic).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object Clone()
         {
             EnsureOpen();
@@ -235,6 +237,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <exception cref="ObjectDisposedException"> If this FieldsReader is disposed. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (closed)
@@ -248,6 +251,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// This means that the Fields values will not be accessible.
         /// </summary>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -260,6 +264,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SeekIndex(int docID)
         {
             indexStream.Seek(FORMAT_SIZE + (docID + docStoreOffset) * 8L);
@@ -366,12 +371,14 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             // everything is stored on disk
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
         }

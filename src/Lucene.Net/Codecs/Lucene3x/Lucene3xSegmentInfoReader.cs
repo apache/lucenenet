@@ -7,6 +7,7 @@ using System.Globalization;
 using JCG = J2N.Collections.Generic;
 using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 using Directory = Lucene.Net.Store.Directory;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -132,6 +133,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void AddIfExists(Directory dir, ISet<string> files, string fileName)
         {
             if (dir.FileExists(fileName))

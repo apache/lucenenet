@@ -3,6 +3,7 @@ using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -122,6 +123,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             ramBytesUsed = fields.Length * (RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.ShallowSizeOfInstance(typeof(Term))) + dataPagedBytes.RamBytesUsed() + indexToDataOffset.RamBytesUsed();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int EstimatePageBits(long estSize)
         {
             return Math.Max(Math.Min(64 - estSize.LeadingZeroCount(), MAX_PAGE_BITS), 4);
@@ -224,6 +226,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         ///          The index of the of term to compare. </param>
         /// <returns> int. </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int CompareTo(Term term, int termIndex)
         {
             return CompareTo(term, termIndex, (PagedBytesDataInput)dataInput.Clone(), new BytesRef());
@@ -267,12 +270,14 @@ namespace Lucene.Net.Codecs.Lucene3x
         ///          The data block. </param>
         /// <returns> int. </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int CompareField(Term term, int termIndex, PagedBytesDataInput input)
         {
             input.SetPosition(indexToDataOffset.Get(termIndex));
             return term.Field.CompareToOrdinal(fields[input.ReadVInt32()].Field);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual long RamBytesUsed()
         {
             return ramBytesUsed;

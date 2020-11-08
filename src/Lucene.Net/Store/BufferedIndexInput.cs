@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -110,6 +111,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void NewBuffer(byte[] newBuffer)
         {
             // Subclasses can do something here
@@ -122,6 +124,7 @@ namespace Lucene.Net.Store
         /// <seealso cref="SetBufferSize(int)"/>
         public int BufferSize => bufferSize;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void CheckBufferSize(int bufferSize) // LUCENENET: CA1822: Mark members as static
         {
             if (bufferSize <= 0)
@@ -130,6 +133,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed void ReadBytes(byte[] b, int offset, int len)
         {
             ReadBytes(b, offset, len, true);
@@ -220,7 +224,7 @@ namespace Lucene.Net.Store
         {
             if (4 <= (bufferLength - bufferPosition))
             {
-                return ((m_buffer[bufferPosition++] & 0xFF) << 24) | ((m_buffer[bufferPosition++] & 0xFF) << 16) 
+                return ((m_buffer[bufferPosition++] & 0xFF) << 24) | ((m_buffer[bufferPosition++] & 0xFF) << 16)
                     | ((m_buffer[bufferPosition++] & 0xFF) << 8) | (m_buffer[bufferPosition++] & 0xFF);
             }
             else
@@ -236,9 +240,9 @@ namespace Lucene.Net.Store
         {
             if (8 <= (bufferLength - bufferPosition))
             {
-                int i1 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16) 
+                int i1 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16)
                     | ((m_buffer[bufferPosition++] & 0xff) << 8) | (m_buffer[bufferPosition++] & 0xff);
-                int i2 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16) 
+                int i2 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16)
                     | ((m_buffer[bufferPosition++] & 0xff) << 8) | (m_buffer[bufferPosition++] & 0xff);
                 return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
             }
@@ -396,6 +400,7 @@ namespace Lucene.Net.Store
         /// <param name="length"> the number of bytes to read </param>
         protected abstract void ReadInternal(byte[] b, int offset, int length);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed long GetFilePointer()
         {
             return bufferStart + bufferPosition;
@@ -460,6 +465,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Returns default buffer sizes for the given <see cref="IOContext"/>
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetBufferSize(IOContext context) // LUCENENET NOTE: Renamed from BufferSize to prevent naming conflict
         {
             switch (context.Context)

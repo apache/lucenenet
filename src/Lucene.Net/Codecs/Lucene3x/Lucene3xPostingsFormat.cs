@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using SegmentReadState = Lucene.Net.Index.SegmentReadState;
 using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
@@ -58,6 +59,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             throw new NotSupportedException("this codec can only be used for reading");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override FieldsProducer FieldsProducer(SegmentReadState state)
         {
             return new Lucene3xFields(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, state.TermsIndexDivisor);

@@ -8,8 +8,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
-using System.Diagnostics;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 using Document = Lucene.Net.Documents.Document;
 
@@ -236,6 +234,7 @@ namespace Lucene.Net.Codecs.Compressing
             SaveInt32s(lengths, numBufferedDocs, fieldsStream);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool TriggerFlush()
         {
             return bufferedDocs.Length >= chunkSize || numBufferedDocs >= MAX_DOCUMENTS_PER_CHUNK; // chunks of at least chunkSize bytes
@@ -488,6 +487,7 @@ namespace Lucene.Net.Codecs.Compressing
             return docCount;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int NextLiveDoc(int doc, IBits liveDocs, int maxDoc)
         {
             if (liveDocs == null)
@@ -501,6 +501,7 @@ namespace Lucene.Net.Codecs.Compressing
             return doc;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int NextDeletedDoc(int doc, IBits liveDocs, int maxDoc)
         {
             if (liveDocs == null)

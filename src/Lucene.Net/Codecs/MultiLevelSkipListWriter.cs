@@ -1,6 +1,6 @@
 using Lucene.Net.Diagnostics;
-using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
 {
@@ -107,6 +107,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Allocates internal skip buffers. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void Init()
         {
             skipBuffer = new RAMOutputStream[m_numberOfSkipLevels];
@@ -118,6 +119,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Creates new buffers or empties the existing ones. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void ResetSkip()
         {
             if (skipBuffer == null)

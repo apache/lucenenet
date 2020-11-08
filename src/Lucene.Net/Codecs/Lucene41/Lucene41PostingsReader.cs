@@ -4,6 +4,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -84,6 +85,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Init(IndexInput termsIn)
         {
             // Make sure we are talking to the matching postings writer
@@ -127,11 +129,13 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override BlockTermState NewTermState()
         {
             return new Lucene41PostingsWriter.Int32BlockTermState();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -236,6 +240,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             if (reuse is null || !(reuse is BlockDocsEnum docsEnum) || !docsEnum.CanReuse(docIn, fieldInfo))
@@ -327,6 +332,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
                 // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
@@ -565,6 +571,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return docFreq;
@@ -648,6 +655,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 indexHasPayloads = fieldInfo.HasPayloads;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
                 return docIn == startDocIn && 
@@ -1014,11 +1022,13 @@ namespace Lucene.Net.Codecs.Lucene41
 
             public override int EndOffset => -1;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override BytesRef GetPayload()
             {
                 return null;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return docFreq;
@@ -1150,6 +1160,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
                 // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
@@ -1654,6 +1665,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             public override int EndOffset => endOffset;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override BytesRef GetPayload()
             {
                 // if (DEBUG) {
@@ -1669,12 +1681,14 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return docFreq;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             return 0;

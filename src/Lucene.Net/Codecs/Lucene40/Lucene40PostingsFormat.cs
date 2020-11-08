@@ -1,6 +1,5 @@
 using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Lucene40
 {

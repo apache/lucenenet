@@ -2,7 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -33,12 +33,8 @@ namespace Lucene.Net.Codecs.Compressing
     /// http://code.google.com/p/lz4/
     /// http://fastcompression.blogspot.fr/p/lz4.html
     /// </summary>
-    public sealed class LZ4
+    public static class LZ4 // LUCENENET specific - made static
     {
-        private LZ4()
-        {
-        }
-
         internal const int MEMORY_USAGE = 14;
         internal const int MIN_MATCH = 4; // minimum length of a match
         internal const int MAX_DISTANCE = 1 << 16; // maximum distance of a reference
@@ -47,11 +43,13 @@ namespace Lucene.Net.Codecs.Compressing
         internal const int HASH_TABLE_SIZE_HC = 1 << HASH_LOG_HC;
         internal const int OPTIMAL_ML = 0x0F + 4 - 1; // match length that doesn't require an additional byte
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int Hash(int i, int hashBits)
         {
             return (i * -1640531535).TripleShift(32 - hashBits);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int HashHC(int i)
         {
             return Hash(i, HASH_LOG_HC);
@@ -60,6 +58,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// <summary>
         /// NOTE: This was readInt() in Lucene.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int ReadInt32(byte[] buf, int i)
         {
             return ((((sbyte)buf[i]) & 0xFF) << 24) | ((((sbyte)buf[i + 1]) & 0xFF) << 16) | ((((sbyte)buf[i + 2]) & 0xFF) << 8) |
@@ -69,11 +68,13 @@ namespace Lucene.Net.Codecs.Compressing
         /// <summary>
         /// NOTE: This was readIntEquals() in Lucene.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool ReadInt32Equals(byte[] buf, int i, int j)
         {
             return ReadInt32(buf, i) == ReadInt32(buf, j);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CommonBytes(byte[] b, int o1, int o2, int limit)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(o1 < o2);
@@ -85,6 +86,7 @@ namespace Lucene.Net.Codecs.Compressing
             return count;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CommonBytesBackward(byte[] b, int o1, int o2, int l1, int l2)
         {
             int count = 0;
@@ -170,6 +172,7 @@ namespace Lucene.Net.Codecs.Compressing
             return dOff;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void EncodeLen(int l, DataOutput @out)
         {
             while (l >= 0xFF)
@@ -180,6 +183,7 @@ namespace Lucene.Net.Codecs.Compressing
             @out.WriteByte((byte)(sbyte)l);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void EncodeLiterals(byte[] bytes, int token, int anchor, int literalLen, DataOutput @out)
         {
             @out.WriteByte((byte)(sbyte)token);
@@ -194,6 +198,7 @@ namespace Lucene.Net.Codecs.Compressing
             @out.WriteBytes(bytes, anchor, literalLen);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void EncodeLastLiterals(byte[] bytes, int anchor, int literalLen, DataOutput @out)
         {
             int token = Math.Min(literalLen, 0x0F) << 4;
@@ -305,6 +310,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             internal int start, @ref, len;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual void Fix(int correction)
             {
                 start += correction;
@@ -312,12 +318,14 @@ namespace Lucene.Net.Codecs.Compressing
                 len -= correction;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual int End()
             {
                 return start + len;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void CopyTo(Match m1, Match m2)
         {
             m2.len = m1.len;
@@ -340,6 +348,7 @@ namespace Lucene.Net.Codecs.Compressing
                 chainTable = new short[MAX_DISTANCE];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal void Reset(int @base)
             {
                 this.@base = @base;
@@ -348,6 +357,7 @@ namespace Lucene.Net.Codecs.Compressing
                 Arrays.Fill(chainTable, (short)0);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private int HashPointer(byte[] bytes, int off)
             {
                 int v = ReadInt32(bytes, off);
@@ -355,6 +365,7 @@ namespace Lucene.Net.Codecs.Compressing
                 return hashTable[h];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private int Next(int off)
             {
                 return off - (chainTable[off & MASK] & 0xFFFF);
@@ -374,6 +385,7 @@ namespace Lucene.Net.Codecs.Compressing
                 hashTable[h] = off;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal void Insert(int off, byte[] bytes)
             {
                 for (; nextToUpdate < off; ++nextToUpdate)

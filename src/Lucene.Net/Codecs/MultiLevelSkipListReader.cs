@@ -1,6 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
 {
@@ -327,6 +327,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Copies the values of the last read skip entry on this <paramref name="level"/>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void SetLastSkipData(int level)
         {
             lastDoc = m_skipDoc[level];
@@ -357,6 +358,7 @@ namespace Lucene.Net.Codecs
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetFilePointer()
             {
                 return pointer + pos;
@@ -364,17 +366,20 @@ namespace Lucene.Net.Codecs
 
             public override long Length => data.Length;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override byte ReadByte()
             {
                 return data[pos++];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void ReadBytes(byte[] b, int offset, int len)
             {
                 Array.Copy(data, pos, b, offset, len);
                 pos += len;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Seek(long pos)
             {
                 this.pos = (int)(pos - pointer);

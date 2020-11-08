@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -95,6 +96,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public virtual int OffsetLength => lastOffsetLength;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void SeekChild(int level)
         {
             base.SeekChild(level);
@@ -104,6 +106,7 @@ namespace Lucene.Net.Codecs.Lucene40
             offsetLength[level] = lastOffsetLength;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void SetLastSkipData(int level)
         {
             base.SetLastSkipData(level);

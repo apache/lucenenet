@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -200,11 +201,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 return replacementDefault;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private static bool IsVowel(char ch) // LUCENENET: CA1822: Mark members as static
             {
                 return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool Matches(string context)
             {
                 return context.StartsWith(pattern, StringComparison.Ordinal);
@@ -240,6 +243,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
         private class DaitchMokotoffRuleComparer : IComparer<Rule>
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public int Compare(Rule rule1, Rule rule2)
             {
                 return rule2.PatternLength - rule1.PatternLength;
@@ -275,7 +279,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
             string rawLine;
             while ((rawLine = scanner.ReadLine()) != null)
-            { 
+            {
                 currentLine++;
                 string line = rawLine;
 
@@ -472,6 +476,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>A DM Soundex code corresponding to the string supplied.</returns>
         /// <exception cref="ArgumentException">If a character is not mapped.</exception>
         /// <seealso cref="GetSoundex(string)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string Encode(string source)
         {
             if (source == null)

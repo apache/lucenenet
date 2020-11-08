@@ -1,6 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -73,6 +73,7 @@ namespace Lucene.Net.Codecs.Compressing
     {
         internal const int BLOCK_SIZE = 1024; // number of chunks to serialize at once
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long MoveSignToLowOrderBit(long n)
         {
             return (n >> 63) ^ (n << 1);
@@ -97,6 +98,7 @@ namespace Lucene.Net.Codecs.Compressing
             fieldsIndexOut.WriteVInt32(PackedInt32s.VERSION_CURRENT);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Reset()
         {
             blockChunks = 0;
@@ -223,6 +225,7 @@ namespace Lucene.Net.Codecs.Compressing
             CodecUtil.WriteFooter(fieldsIndexOut);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
             fieldsIndexOut.Dispose();

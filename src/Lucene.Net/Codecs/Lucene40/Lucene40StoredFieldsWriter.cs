@@ -2,7 +2,6 @@ using J2N;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Documents;
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene40
@@ -25,12 +24,12 @@ namespace Lucene.Net.Codecs.Lucene40
      */
 
     using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
+    using IBits = Lucene.Net.Util.IBits;
     using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
@@ -125,12 +124,14 @@ namespace Lucene.Net.Codecs.Lucene40
         // and adds a new entry for this document into the index
         // stream.  this assumes the buffer was already written
         // in the correct fields format.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void StartDocument(int numStoredFields)
         {
             indexStream.WriteInt64(fieldsStream.GetFilePointer());
             fieldsStream.WriteVInt32(numStoredFields);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -271,6 +272,7 @@ namespace Lucene.Net.Codecs.Lucene40
             if (Debugging.AssertsEnabled) Debugging.Assert(fieldsStream.GetFilePointer() == position);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Finish(FieldInfos fis, int numDocs)
         {
             if (HEADER_LENGTH_IDX + ((long)numDocs) * 8 != indexStream.GetFilePointer())

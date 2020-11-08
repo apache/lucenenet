@@ -2,8 +2,7 @@ using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -168,6 +167,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <exception cref="ObjectDisposedException"> If this FieldsReader is disposed. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (closed)
@@ -179,6 +179,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// <summary>
         /// Dispose the underlying <see cref="IndexInput"/>s.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (!closed)

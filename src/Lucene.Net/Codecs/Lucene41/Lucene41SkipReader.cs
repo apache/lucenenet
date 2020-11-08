@@ -1,6 +1,6 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -106,6 +106,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// 1. silly reading a non-existed skip point after the last block boundary
         /// 2. moving into the vInt block
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal int Trim(int df)
         {
             return df % blockSize == 0 ? df - 1 : df;

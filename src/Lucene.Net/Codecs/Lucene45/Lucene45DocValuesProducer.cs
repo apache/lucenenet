@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene45
 {
@@ -352,14 +353,17 @@ namespace Lucene.Net.Codecs.Lucene45
             return entry;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
             NumericEntry entry = numerics[field.Number];
             return GetNumeric(entry);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed() => ramBytesUsed;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
             if (version >= Lucene45DocValuesFormat.VERSION_CHECKSUM)
@@ -409,6 +413,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 this.quotientReader = quotientReader;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(long id)
             {
                 return min + mult * quotientReader.Get(id);
@@ -426,6 +431,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 this.ords = ords;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(long id)
             {
                 return table[(int)ords.Get((int)id)];
@@ -451,6 +457,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private BinaryDocValues GetFixedBinary(/* FieldInfo field, // LUCENENET: Never read */ BinaryEntry bytes)
         {
             IndexInput data = (IndexInput)this.data.Clone();
@@ -512,6 +519,7 @@ namespace Lucene.Net.Codecs.Lucene45
             return addresses;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private BinaryDocValues GetVariableBinary(FieldInfo field, BinaryEntry bytes)
         {
             IndexInput data = (IndexInput)this.data.Clone();
@@ -589,6 +597,7 @@ namespace Lucene.Net.Codecs.Lucene45
             return addresses;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private BinaryDocValues GetCompressedBinary(FieldInfo field, BinaryEntry bytes)
         {
             IndexInput data = (IndexInput)this.data.Clone();
@@ -623,11 +632,13 @@ namespace Lucene.Net.Codecs.Lucene45
                 this.ordinals = ordinals;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetOrd(int docID)
             {
                 return (int)ordinals.Get(docID);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void LookupOrd(int ord, BytesRef result)
             {
                 binary.Get(ord, result);
@@ -635,6 +646,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override int ValueCount => valueCount;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int LookupTerm(BytesRef key)
             {
                 if (binary is CompressedBinaryDocValues compressedBinaryDocValues)
@@ -647,6 +659,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetTermsEnum()
             {
                 if (binary is CompressedBinaryDocValues compressedBinaryDocValues)
@@ -725,6 +738,7 @@ namespace Lucene.Net.Codecs.Lucene45
             internal long offset;
             internal long endOffset;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long NextOrd()
             {
                 if (offset == endOffset)
@@ -739,12 +753,14 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void SetDocument(int docID)
             {
                 startOffset = offset = (docID == 0 ? 0 : ordIndex.Get(docID - 1));
                 endOffset = ordIndex.Get(docID);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void LookupOrd(long ord, BytesRef result)
             {
                 binary.Get(ord, result);
@@ -752,6 +768,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override long ValueCount => valueCount;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long LookupTerm(BytesRef key)
             {
                 if (binary is CompressedBinaryDocValues compressedBinaryDocValues)
@@ -764,6 +781,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetTermsEnum()
             {
                 if (binary is CompressedBinaryDocValues compressedBinaryDocValues)
@@ -776,17 +794,20 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long OrdAt(int index)
             {
                 return ordinals.Get(startOffset + index);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int Cardinality()
             {
                 return (int)(endOffset - startOffset);
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private IBits GetMissingBits(long offset)
         {
             if (offset == -1)
@@ -853,6 +874,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -1030,6 +1052,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual TermsEnum GetTermsEnum()
             {
                 try
@@ -1042,6 +1065,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual TermsEnum GetTermsEnum(IndexInput input)
             {
                 input.Seek(bytes.offset);
@@ -1153,6 +1177,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return TermsEnum.SeekStatus.END;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 public override void SeekExact(long ord)
                 {
                     DoSeek(ord);
@@ -1180,6 +1205,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private void SetTerm()
                 {
                     // TODO: is there a cleaner way

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -6,10 +7,9 @@ using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using JCG = J2N.Collections.Generic;
+using System.Runtime.CompilerServices;
 using BitSet = Lucene.Net.Util.OpenBitSet;
-using Lucene.Net.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -834,21 +834,25 @@ namespace Lucene.Net.Codecs.Memory
                     return frame;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private bool IsAccept(Frame frame) // reach a term both fst&fsa accepts
                 {
                     return fsa.IsAccept(frame.state) && frame.arc.IsFinal;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private static bool IsValid(Frame frame) // reach a prefix both fst&fsa won't reject // LUCENENET: CA1822: Mark members as static
                 {
                     return frame.state != -1; //frame != null &&
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private static bool CanGrow(Frame frame) // can walk forward on both fst&fsa // LUCENENET: CA1822: Mark members as static
                 {
                     return frame.state != -1 && FST<long?>.TargetHasArcs(frame.arc);
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private static bool CanRewind(Frame frame) // can jump to sibling // LUCENENET: CA1822: Mark members as static
                 {
                     return !frame.arc.IsLast;

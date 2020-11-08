@@ -3,8 +3,8 @@ using Lucene.Net.Index;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
@@ -133,8 +133,8 @@ namespace Lucene.Net.Codecs.Memory
             }
             @in.Seek(@in.ReadInt64());
         }
-        
-        
+
+
         private void CheckFieldSummary(SegmentInfo info, IndexInput @in, TermsReader field, TermsReader previous)
         {
             // #docs with field must be <= #docs
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Memory
                 public override TermState GetTermState()
                 {
                     DecodeMetaData();
-                    return (TermState) state.Clone();
+                    return (TermState)state.Clone();
                 }
 
                 public override BytesRef Term => term;
@@ -318,7 +318,7 @@ namespace Lucene.Net.Codecs.Memory
                 /// <summary>True when current enum is 'positioned' by <see cref="SeekExact(BytesRef, TermState)"/>.</summary>
                 private bool seekPending;
 
-                internal SegmentTermsEnum(FSTTermsReader.TermsReader outerInstance) 
+                internal SegmentTermsEnum(FSTTermsReader.TermsReader outerInstance)
                     : base(outerInstance)
                 {
                     this.outerInstance = outerInstance;
@@ -437,7 +437,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 /// <summary>True when there is pending term when calling <see cref="MoveNext()"/>.</summary>
                 private bool pending;
-     
+
                 /// <summary>
                 /// stack to record how current term is constructed,
                 /// used to accumulate metadata or rewind term:
@@ -750,21 +750,25 @@ namespace Lucene.Net.Codecs.Memory
                     return frame;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private bool IsAccept(Frame frame) // reach a term both fst&fsa accepts
                 {
                     return fsa.IsAccept(frame.fsaState) && frame.fstArc.IsFinal;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private static bool IsValid(Frame frame) // reach a prefix both fst&fsa won't reject // LUCENENET: CA1822: Mark members as static
                 {
                     return frame.fsaState != -1; //frame != null &&
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private static bool CanGrow(Frame frame) // can walk forward on both fst&fsa // LUCENENET: CA1822: Mark members as static
                 {
                     return frame.fsaState != -1 && FST<Memory.FSTTermOutputs.TermData>.TargetHasArcs(frame.fstArc);
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private static bool CanRewind(Frame frame) // can jump to sibling // LUCENENET: CA1822: Mark members as static
                 {
                     return !frame.fstArc.IsLast;

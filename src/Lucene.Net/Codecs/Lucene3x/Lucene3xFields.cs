@@ -1,12 +1,11 @@
 using J2N.Text;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
-using Lucene.Net.Util;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -27,20 +26,19 @@ namespace Lucene.Net.Codecs.Lucene3x
      * limitations under the License.
      */
 
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
     using DocsEnum = Lucene.Net.Index.DocsEnum;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOptions = Lucene.Net.Index.IndexOptions;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
-    using StringHelper = Lucene.Net.Util.StringHelper;
     using Term = Lucene.Net.Index.Term;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;

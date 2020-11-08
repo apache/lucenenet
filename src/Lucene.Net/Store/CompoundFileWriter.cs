@@ -181,6 +181,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (closed)
@@ -287,6 +288,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void ReleaseOutputLock()
         {
             outputTaken.CompareAndSet(true, false);
@@ -325,11 +327,13 @@ namespace Lucene.Net.Store
             return fileEntry.Length;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool FileExists(string name)
         {
             return entries.ContainsKey(name);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal string[] ListAll()
         {
             return entries.Keys.ToArray();
@@ -384,12 +388,14 @@ namespace Lucene.Net.Store
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetFilePointer()
             {
                 return @delegate.GetFilePointer() - offset;
             }
 
             [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Seek(long pos)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(!closed);

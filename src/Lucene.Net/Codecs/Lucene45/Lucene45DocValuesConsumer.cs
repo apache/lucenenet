@@ -2,7 +2,7 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Lucene45
@@ -111,6 +111,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
             AddNumericField(field, values, true);

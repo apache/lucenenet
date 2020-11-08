@@ -2,6 +2,7 @@ using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -211,6 +212,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Compare two pps, but only by position and offset </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static PhrasePositions Lesser(PhrasePositions pp, PhrasePositions pp2) // LUCENENET: CA1822: Mark members as static
         {
             if (pp.position < pp2.position || (pp.position == pp2.position && pp.offset < pp2.offset))
@@ -301,6 +303,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Move all PPs to their first position </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void PlaceFirstPositions()
         {
             for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
@@ -521,6 +524,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Actual position in doc of a PhrasePosition, relies on that position = tpPos - offset) </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int TpPos(PhrasePositions pp) // LUCENENET: CA1822: Mark members as static
         {
             return pp.position + pp.offset;
@@ -674,6 +678,7 @@ namespace Lucene.Net.Search
             return Advance(max.doc + 1); // advance to the next doc after #docID()
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override float GetScore()
         {
             return docScorer.Score(max.doc, sloppyFreq);
@@ -704,6 +709,7 @@ namespace Lucene.Net.Search
             return max.doc;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long GetCost()
         {
             return cost;

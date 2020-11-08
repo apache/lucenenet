@@ -192,6 +192,7 @@ namespace Lucene.Net.Codecs.Compressing
                 ord = 0;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual void AddTerm(int freq, int prefixLength, int suffixLength)
             {
                 freqs[ord] = freq;
@@ -301,6 +302,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -324,6 +326,7 @@ namespace Lucene.Net.Codecs.Compressing
             IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_EXTENSION), IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_INDEX_EXTENSION));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void StartDocument(int numVectorFields)
         {
             curDoc = AddDocData(numVectorFields);
@@ -343,12 +346,14 @@ namespace Lucene.Net.Codecs.Compressing
             curDoc = null;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
             curField = curDoc.AddField(info.Number, numTerms, positions, offsets, payloads);
             lastTerm.Length = 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void FinishField()
         {
             curField = null;
@@ -380,6 +385,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool TriggerFlush()
         {
             return termSuffixes.Length >= chunkSize || pendingDocs.Count >= MAX_DOCUMENTS_PER_CHUNK;
@@ -971,6 +977,7 @@ namespace Lucene.Net.Codecs.Compressing
             return docCount;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int NextLiveDoc(int doc, IBits liveDocs, int maxDoc)
         {
             if (liveDocs == null)
@@ -984,6 +991,7 @@ namespace Lucene.Net.Codecs.Compressing
             return doc;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int NextDeletedDoc(int doc, IBits liveDocs, int maxDoc)
         {
             if (liveDocs == null)

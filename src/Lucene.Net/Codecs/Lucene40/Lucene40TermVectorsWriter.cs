@@ -2,7 +2,6 @@ using J2N.Text;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene40
@@ -26,13 +25,13 @@ namespace Lucene.Net.Codecs.Lucene40
 
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DataInput = Lucene.Net.Store.DataInput;
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using Fields = Lucene.Net.Index.Fields;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IOContext = Lucene.Net.Store.IOContext;
@@ -97,6 +96,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void StartDocument(int numVectorFields)
         {
             lastFieldName = null;
@@ -506,6 +506,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return maxDoc;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Finish(FieldInfos fis, int numDocs)
         {
             if (Lucene40TermVectorsReader.HEADER_LENGTH_INDEX + ((long)numDocs) * 16 != tvx.GetFilePointer())
@@ -521,6 +522,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Close all streams. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -2,7 +2,6 @@ using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Codecs
@@ -27,10 +26,10 @@ namespace Lucene.Net.Codecs
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
+    using IBits = Lucene.Net.Util.IBits;
     using Int64BitSet = Lucene.Net.Util.Int64BitSet;
     using MergeState = Lucene.Net.Index.MergeState;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
