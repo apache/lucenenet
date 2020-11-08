@@ -45,7 +45,7 @@ namespace Lucene.Net
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
         public override void TestPublicFields(Type typeFromTargetAssembly)
         {
-            base.TestPublicFields(typeFromTargetAssembly, @"^Lucene\.Net\.Util\.(?:LightWeight|Disposable)ThreadLocal`1\+(?:LocalState|CurrentThreadState)");
+            base.TestPublicFields(typeFromTargetAssembly, @"^Lucene\.Net\.Util\.(?:LightWeight|Disposable)ThreadLocal`1\+(?:LocalState|CurrentThreadState)|^System\.Runtime\.CompilerServices");
         }
 
         [Test, LuceneNetSpecific]
