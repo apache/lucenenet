@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Util.Mutable
 {
     /*
@@ -26,11 +28,13 @@ namespace Lucene.Net.Util.Mutable
     {
         public int Value { get; set; }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object ToObject()
         {
             return Exists ? (object)Value : null;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Copy(MutableValue source)
         {
             MutableValueInt32 s = (MutableValueInt32)source;
@@ -38,6 +42,7 @@ namespace Lucene.Net.Util.Mutable
             Exists = s.Exists;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override MutableValue Duplicate()
         {
             return new MutableValueInt32
@@ -47,6 +52,7 @@ namespace Lucene.Net.Util.Mutable
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool EqualsSameType(object other)
         {
             MutableValueInt32 b = (MutableValueInt32)other;
@@ -74,6 +80,7 @@ namespace Lucene.Net.Util.Mutable
             return Exists ? 1 : -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
             // TODO: if used in HashMap, it already mixes the value... maybe use a straight value?

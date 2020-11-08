@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -67,6 +68,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// NOTE: This was getIntBlock() in Lucene
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual int[] GetInt32Block()
             {
                 return new int[m_blockSize];
@@ -159,6 +161,7 @@ namespace Lucene.Net.Util
         /// Resets the pool to its initial state reusing the first buffer. Calling
         /// <see cref="Int32BlockPool.NextBuffer()"/> is not needed after reset.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             this.Reset(true, true);
@@ -324,6 +327,7 @@ namespace Lucene.Net.Util
             }
 
             ///
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void Reset(int sliceOffset)
             {
                 this.offset = sliceOffset;
@@ -354,6 +358,7 @@ namespace Lucene.Net.Util
             /// Starts a new slice and returns the start offset. The returned value
             /// should be used as the start offset to initialize a <see cref="SliceReader"/>.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual int StartNewSlice()
             {
                 return offset = pool.NewSlice(FIRST_LEVEL_SIZE) + pool.Int32Offset;
@@ -425,6 +430,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public bool IsEndOfSlice
             {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 get
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(upto + bufferOffset <= end);

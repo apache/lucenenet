@@ -2,6 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -105,6 +106,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Expert. </summary>
         [WritableArray]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long[] GetBits()
         {
             return bits;
@@ -115,6 +117,7 @@ namespace Lucene.Net.Util
         /// long in the backing bits array, and the result is not
         /// internally cached!
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long Cardinality()
         {
             return BitUtil.Pop_Array(bits, 0, bits.Length);
@@ -419,6 +422,7 @@ namespace Lucene.Net.Util
             bits[endWord] &= endmask;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Int64BitSet Clone()
         {
             long[] bits = new long[this.bits.Length];

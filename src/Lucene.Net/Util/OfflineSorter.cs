@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -337,6 +338,7 @@ namespace Lucene.Net.Util
         /// Returns the default temporary directory. By default, the System's temp folder. If not accessible
         /// or not available, an <see cref="IOException"/> is thrown.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DirectoryInfo DefaultTempDir()
         {
             return new DirectoryInfo(Path.GetTempPath());
@@ -345,6 +347,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Copies one file to another.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Copy(FileInfo file, FileInfo output)
         {
             using Stream inputStream = file.OpenRead();
@@ -447,6 +450,7 @@ namespace Lucene.Net.Util
                 this.outerInstance = outerInstance;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected internal override bool LessThan(FileAndTop a, FileAndTop b)
             {
                 return outerInstance.comparer.Compare(a.Current, b.Current) < 0;
@@ -539,6 +543,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Writes a byte array. </summary>
             /// <seealso cref="Write(byte[], int, int)"/>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void Write(byte[] bytes)
             {
                 Write(bytes, 0, bytes.Length);

@@ -1,6 +1,7 @@
 using J2N.Collections.Generic.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -50,21 +51,25 @@ namespace Lucene.Net.Util
                 this.comp = comp;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void SetPivot(int i)
             {
                 pivot = (i < list.Count) ? list[i] : default;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void Swap(int i, int j)
             {
                 list.Swap(i, j);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override int Compare(int i, int j)
             {
                 return comp.Compare(list[i], list[j]);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override int ComparePivot(int j)
             {
                 return comp.Compare(pivot, list[j]);
@@ -97,16 +102,19 @@ namespace Lucene.Net.Util
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void Swap(int i, int j)
             {
                 list.Swap(i, j);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void Copy(int src, int dest)
             {
                 list[dest] = list[src];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void Save(int i, int len)
             {
                 for (int j = 0; j < len; ++j)
@@ -115,16 +123,19 @@ namespace Lucene.Net.Util
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void Restore(int i, int j)
             {
                 list[j] = tmp[i];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override int Compare(int i, int j)
             {
                 return comp.Compare(list[i], list[j]);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override int CompareSaved(int i, int j)
             {
                 return comp.Compare(tmp[i], list[j]);

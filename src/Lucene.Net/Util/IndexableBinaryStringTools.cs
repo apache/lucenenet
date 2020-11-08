@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -63,6 +64,8 @@ namespace Lucene.Net.Util
         /// <param name="inputLength"> Number of bytes in <paramref name="inputArray"/> </param>
         /// <returns> The number of chars required to encode the number of <see cref="byte"/>s. </returns>
         // LUCENENET specific overload for CLS compliance
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #pragma warning disable IDE0060 // Remove unused parameter
         public static int GetEncodedLength(byte[] inputArray, int inputOffset, int inputLength)
 #pragma warning restore IDE0060 // Remove unused parameter
@@ -79,6 +82,7 @@ namespace Lucene.Net.Util
         /// <param name="inputLength"> Number of sbytes in <paramref name="inputArray"/> </param>
         /// <returns> The number of chars required to encode the number of <see cref="sbyte"/>s. </returns>
         [CLSCompliant(false)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #pragma warning disable IDE0060 // Remove unused parameter
         public static int GetEncodedLength(sbyte[] inputArray, int inputOffset, int inputLength)
 #pragma warning restore IDE0060 // Remove unused parameter
@@ -122,6 +126,7 @@ namespace Lucene.Net.Util
         /// <param name="outputOffset"> Initial offset into outputArray </param>
         /// <param name="outputLength"> Length of output, must be GetEncodedLength(inputArray, inputOffset, inputLength) </param>
         // LUCENENET specific overload for CLS compliance
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Encode(byte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength)
         {
             Encode((sbyte[])(Array)inputArray, inputOffset, inputLength, outputArray, outputOffset, outputLength);
@@ -201,6 +206,7 @@ namespace Lucene.Net.Util
         /// <param name="outputLength"> Length of output, must be
         ///        GetDecodedLength(inputArray, inputOffset, inputLength) </param>
         // LUCENENET specific overload for CLS compliance
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Decode(char[] inputArray, int inputOffset, int inputLength, byte[] outputArray, int outputOffset, int outputLength)
         {
             Decode(inputArray, inputOffset, inputLength, (sbyte[])(Array)outputArray, outputOffset, outputLength);

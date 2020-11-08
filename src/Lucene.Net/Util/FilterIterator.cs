@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -57,6 +58,7 @@ namespace Lucene.Net.Util
         }
 
         // LUCENENET specific - seems logical to call reset on the underlying implementation
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             current = default;
@@ -67,6 +69,7 @@ namespace Lucene.Net.Util
 
         object System.Collections.IEnumerator.Current => current;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose() => iter.Dispose();
     }
 

@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -97,6 +98,7 @@ namespace Lucene.Net.Util
             return pos < nextPos && pos >= nextPos - count;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetIndex(int pos)
         {
             int index = nextWrite - (nextPos - pos);

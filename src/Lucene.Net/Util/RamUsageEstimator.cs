@@ -283,6 +283,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Aligns an object size to be the next multiple of <see cref="NUM_BYTES_OBJECT_ALIGNMENT"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long AlignObjectSize(long size)
         {
             size += (long)NUM_BYTES_OBJECT_ALIGNMENT - 1L;
@@ -292,6 +293,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:byte[]"/> object. </summary>
         // LUCENENET specific overload for CLS compliance
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(byte[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
@@ -300,6 +302,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:sbyte[]"/> object. </summary>
         [CLSCompliant(false)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(sbyte[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
@@ -307,6 +310,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:bool[]"/> object. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(bool[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
@@ -314,6 +318,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:char[]"/> object. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(char[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_CHAR * arr.Length);
@@ -321,6 +326,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:short[]"/> object. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(short[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT16 * arr.Length);
@@ -328,6 +334,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:int[]"/> object. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(int[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT32 * arr.Length);
@@ -335,6 +342,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:float[]"/> object. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(float[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_SINGLE * arr.Length);
@@ -342,6 +350,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:long[]"/> object. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(long[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT64 * arr.Length);
@@ -349,6 +358,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:double[]"/> object. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(double[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_DOUBLE * arr.Length);
@@ -357,6 +367,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:ulong[]"/> object. </summary>
         [CLSCompliant(false)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(ulong[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT64 * arr.Length);
@@ -365,6 +376,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:uint[]"/> object. </summary>
         [CLSCompliant(false)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(uint[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT32 * arr.Length);
@@ -373,6 +385,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the size in bytes of the <see cref="T:ushort[]"/> object. </summary>
         [CLSCompliant(false)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(ushort[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT16 * arr.Length);
@@ -387,6 +400,7 @@ namespace Lucene.Net.Util
         /// (it isn't side-effect free). After the method exits, this memory
         /// should be GCed.</para>
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long SizeOf(object obj)
         {
             return MeasureObjectSize(obj);
@@ -593,6 +607,7 @@ namespace Lucene.Net.Util
         /// Create a cached information about shallow size and reference fields for
         /// a given class.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ClassCache CreateCacheEntry(Type clazz)
         {
             ClassCache cachedInfo;
@@ -631,6 +646,7 @@ namespace Lucene.Net.Util
         /// <para/>The returned offset will be the maximum of whatever was measured so far and
         /// <paramref name="f"/> field's offset and representation size (unaligned).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static long AdjustForField(long sizeSoFar, FieldInfo f)
         {
             Type type = f.FieldType;
@@ -663,6 +679,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns <c>size</c> in human-readable units (GB, MB, KB or bytes).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string HumanReadableUnits(long bytes)
         {
             return HumanReadableUnits(bytes, new NumberFormatInfo() { NumberDecimalDigits = 1 });
@@ -695,6 +712,7 @@ namespace Lucene.Net.Util
         /// Return a human-readable size of a given object. </summary>
         /// <seealso cref="SizeOf(object)"/>
         /// <seealso cref="HumanReadableUnits(long)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string HumanSizeOf(object @object)
         {
             return HumanReadableUnits(SizeOf(@object));
@@ -704,6 +722,7 @@ namespace Lucene.Net.Util
         /// Return a human-readable size of a given object. </summary>
         /// <seealso cref="SizeOf(object)"/>
         /// <seealso cref="HumanReadableUnits(long)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string HumanSizeOf(object @object, IFormatProvider df)
         {
             return HumanReadableUnits(SizeOf(@object), df);
@@ -895,6 +914,7 @@ namespace Lucene.Net.Util
             /// </summary>
             /// <param name="capacity">
             ///          New capacity (must be a power of two). </param>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private void AllocateBuffers(int capacity)
             {
                 this.keys = new object[capacity];
@@ -939,6 +959,7 @@ namespace Lucene.Net.Util
                 return capacity;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Clear()
             {
                 Assigned = 0;
@@ -955,6 +976,7 @@ namespace Lucene.Net.Util
             //    }
             //}
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public IEnumerator<KType> GetEnumerator()
             {
                 return new IteratorAnonymousInnerClassHelper(this);

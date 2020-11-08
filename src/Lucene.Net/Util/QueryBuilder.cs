@@ -4,6 +4,7 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -70,6 +71,7 @@ namespace Lucene.Net.Util
         /// <param name="queryText"> Text to be passed to the analyzer. </param>
         /// <returns> <see cref="TermQuery"/> or <see cref="BooleanQuery"/>, based on the analysis
         ///         of <paramref name="queryText"/>. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Query CreateBooleanQuery(string field, string queryText)
         {
             return CreateBooleanQuery(field, queryText, Occur.SHOULD);
@@ -100,6 +102,7 @@ namespace Lucene.Net.Util
         /// <param name="queryText"> Text to be passed to the analyzer. </param>
         /// <returns> <see cref="TermQuery"/>, <see cref="BooleanQuery"/>, <see cref="PhraseQuery"/>, or
         ///         <see cref="MultiPhraseQuery"/>, based on the analysis of <paramref name="queryText"/>. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Query CreatePhraseQuery(string field, string queryText)
         {
             return CreatePhraseQuery(field, queryText, 0);
@@ -113,6 +116,7 @@ namespace Lucene.Net.Util
         /// <param name="phraseSlop"> number of other words permitted between words in query phrase </param>
         /// <returns> <see cref="TermQuery"/>, <see cref="BooleanQuery"/>, <see cref="PhraseQuery"/>, or
         ///         <see cref="MultiPhraseQuery"/>, based on the analysis of <paramref name="queryText"/>. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Query CreatePhraseQuery(string field, string queryText, int phraseSlop)
         {
             return CreateFieldQuery(analyzer, Occur.MUST, field, queryText, true, phraseSlop);
@@ -438,6 +442,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="disableCoord"> Disable coord. </param>
         /// <returns> New <see cref="BooleanQuery"/> instance. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual BooleanQuery NewBooleanQuery(bool disableCoord)
         {
             return new BooleanQuery(disableCoord);
@@ -450,6 +455,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="term"> Term. </param>
         /// <returns> New <see cref="TermQuery"/> instance. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual Query NewTermQuery(Term term)
         {
             return new TermQuery(term);
@@ -461,6 +467,7 @@ namespace Lucene.Net.Util
         /// This is intended for subclasses that wish to customize the generated queries. 
         /// </summary>
         /// <returns> New <see cref="PhraseQuery"/> instance. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual PhraseQuery NewPhraseQuery()
         {
             return new PhraseQuery();
@@ -472,6 +479,7 @@ namespace Lucene.Net.Util
         /// This is intended for subclasses that wish to customize the generated queries. 
         /// </summary>
         /// <returns> New <see cref="MultiPhraseQuery"/> instance. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual MultiPhraseQuery NewMultiPhraseQuery()
         {
             return new MultiPhraseQuery();

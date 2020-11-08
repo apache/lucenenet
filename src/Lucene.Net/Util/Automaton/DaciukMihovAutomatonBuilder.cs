@@ -130,6 +130,7 @@ namespace Lucene.Net.Util.Automaton
             /// Create a new outgoing transition labeled <paramref name="label"/> and return
             /// the newly created target state for this transition.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal State NewState(int label)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(Array.BinarySearch(labels, label) < 0, "State already has transition labeled: {0}", label);
@@ -155,6 +156,7 @@ namespace Lucene.Net.Util.Automaton
             /// Return the associated state if the most recent transition is labeled with
             /// <paramref name="label"/>.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal State LastChild(int label)
             {
                 int index = labels.Length - 1;
@@ -181,6 +183,7 @@ namespace Lucene.Net.Util.Automaton
             /// <summary>
             /// Compare two lists of objects for reference-equality.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private static bool ReferenceEquals(object[] a1, object[] a2)
             {
                 if (a1.Length != a2.Length)
@@ -281,6 +284,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         /// <param name="s"></param>
         /// <param name="visited">Must use a dictionary with <see cref="IdentityEqualityComparer{State}.Default"/> passed into its constructor.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Util.Automaton.State Convert(State s, IDictionary<State, Util.Automaton.State> visited)
         {
             if (visited.TryGetValue(s, out Util.Automaton.State converted) && converted != null)
@@ -365,6 +369,7 @@ namespace Lucene.Net.Util.Automaton
         /// Add a suffix of <paramref name="current"/> starting at <paramref name="fromIndex"/>
         /// (inclusive) to state <paramref name="state"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void AddSuffix(State state, ICharSequence current, int fromIndex) // LUCENENET: CA1822: Mark members as static
         {
             int len = current.Length;

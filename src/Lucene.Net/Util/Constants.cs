@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #if NETFRAMEWORK
 using Microsoft.Win32;
@@ -89,6 +90,7 @@ namespace Lucene.Net.Util
 #endif
         public static readonly string RUNTIME_VERSION = LoadRuntimeVersion();
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string LoadRuntimeVersion() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
 #if NETFRAMEWORK
@@ -104,6 +106,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was JRE_IS_64BIT in Lucene
         /// </summary>
         public static readonly bool RUNTIME_IS_64BIT = LoadRuntimeIs64Bit(); // LUCENENET NOTE: We still need this constant to indicate 64 bit runtime.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool LoadRuntimeIs64Bit() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             // LUCENENET NOTE: In Java, the check is for sun.misc.Unsafe.addressSize,
@@ -118,6 +121,7 @@ namespace Lucene.Net.Util
 
         // this method prevents inlining the final version constant in compiled classes,
         // see: http://www.javaworld.com/community/node/3400
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string Ident(string s)
         {
             return s.ToString();
@@ -226,6 +230,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="input">The string to examine</param>
         /// <param name="pattern">A regex object to use to extract the string</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string ExtractString(string input, Regex pattern)
         {
             Match m = pattern.Match(input);

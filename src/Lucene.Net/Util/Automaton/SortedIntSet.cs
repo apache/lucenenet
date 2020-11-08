@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -54,6 +55,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         // Adds this state to the set
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Incr(int num)
         {
             if (useTreeMap)
@@ -116,6 +118,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         // Removes this state from the set, if count decrs to 0
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Decr(int num)
         {
             if (useTreeMap)
@@ -160,6 +163,7 @@ namespace Lucene.Net.Util.Automaton
             if (Debugging.AssertsEnabled) Debugging.Assert(false);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ComputeHash()
         {
             if (useTreeMap)
@@ -188,6 +192,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FrozenInt32Set ToFrozenInt32Set() // LUCENENET specific
         {
             int[] c = new int[upto];
@@ -195,6 +200,7 @@ namespace Lucene.Net.Util.Automaton
             return new FrozenInt32Set(c, this.hashCode, this.state);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FrozenInt32Set Freeze(State state)
         {
             int[] c = new int[upto];
@@ -202,6 +208,7 @@ namespace Lucene.Net.Util.Automaton
             return new FrozenInt32Set(c, hashCode, state);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
             return hashCode;
@@ -274,6 +281,7 @@ namespace Lucene.Net.Util.Automaton
                 this.hashCode = 683 + num;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetHashCode()
             {
                 return hashCode;

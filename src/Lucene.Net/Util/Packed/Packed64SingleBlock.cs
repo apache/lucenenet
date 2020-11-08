@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 // this file has been automatically generated, DO NOT EDIT
 
@@ -35,11 +36,13 @@ namespace Lucene.Net.Util.Packed
         public const int MAX_SUPPORTED_BITS_PER_VALUE = 32;
         private static readonly int[] SUPPORTED_BITS_PER_VALUE = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 21, 32 };
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsSupported(int bitsPerValue)
         {
             return Array.BinarySearch(SUPPORTED_BITS_PER_VALUE, bitsPerValue) >= 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int RequiredCapacity(int valueCount, int valuesPerBlock)
         {
             return valueCount / valuesPerBlock + (valueCount % valuesPerBlock == 0 ? 0 : 1);
@@ -55,6 +58,7 @@ namespace Lucene.Net.Util.Packed
             blocks = new long[RequiredCapacity(valueCount, valuesPerBlock)];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Clear()
         {
             Arrays.Fill(blocks, 0L);

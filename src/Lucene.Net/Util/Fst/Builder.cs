@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -486,7 +487,7 @@ namespace Lucene.Net.Util.Fst
             //System.out.println("  count[0]=" + frontier[0].inputCount);
         }
 
-        internal bool ValidOutput(T output)
+        internal bool ValidOutput(T output) // Only called from assert
         {
             return output.Equals(NO_OUTPUT) || !output.Equals(NO_OUTPUT);
         }
@@ -533,6 +534,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CompileAllTargets(UnCompiledNode<T> node, int tailLength)
         {
             for (int arcIdx = 0; arcIdx < node.NumArcs; arcIdx++)
@@ -560,6 +562,7 @@ namespace Lucene.Net.Util.Fst
 
         // LUCENENET specific: moved INode to Builder type
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual long GetFstSizeInBytes()
         {
             return fst.GetSizeInBytes();

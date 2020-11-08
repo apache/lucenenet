@@ -1,5 +1,6 @@
 using J2N.Threading.Atomic;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -51,6 +52,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns a new counter. The returned counter is not thread-safe.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Counter NewCounter()
         {
             return NewCounter(false);
@@ -63,6 +65,7 @@ namespace Lucene.Net.Util
         ///          <c>true</c> if the returned counter can be used by multiple
         ///          threads concurrently. </param>
         /// <returns> A new counter. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Counter NewCounter(bool threadSafe)
         {
             return threadSafe ? (Counter)new AtomicCounter() : new SerialCounter();
@@ -78,6 +81,7 @@ namespace Lucene.Net.Util
         {
             private long count = 0;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long AddAndGet(long delta)
             {
                 return count += delta;
@@ -90,6 +94,7 @@ namespace Lucene.Net.Util
         {
             private readonly AtomicInt64 count = new AtomicInt64();
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long AddAndGet(long delta)
             {
                 return count.AddAndGet(delta);

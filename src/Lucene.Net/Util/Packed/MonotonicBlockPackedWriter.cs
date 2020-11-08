@@ -64,6 +64,7 @@ namespace Lucene.Net.Util.Packed
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Add(long l)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(l >= 0);

@@ -2,6 +2,7 @@ using J2N;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Automaton
@@ -121,6 +122,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int[] CodePoints(string input)
         {
             int length = Character.CodePointCount(input, 0, input.Length);
@@ -222,6 +224,7 @@ namespace Lucene.Net.Util.Automaton
         /// Get the characteristic vector <c>X(x, V)</c>
         /// where V is <c>Substring(pos, end - pos)</c>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int GetVector(int x, int pos, int end)
         {
             int vector = 0;
@@ -271,6 +274,7 @@ namespace Lucene.Net.Util.Automaton
             /// <summary>
             /// Returns <c>true</c> if the <c>state</c> in any Levenshtein DFA is an accept state (final state).
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual bool IsAccept(int absState)
             {
                 // decode absState -> state, offset
@@ -284,6 +288,7 @@ namespace Lucene.Net.Util.Automaton
             /// Returns the position in the input word for a given <c>state</c>.
             /// this is the minimal boundary for the state.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual int GetPosition(int absState)
             {
                 return absState % (m_w + 1);

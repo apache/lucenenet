@@ -2,6 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -90,6 +91,7 @@ namespace Lucene.Net.Util
 
             public override int DocID => doc;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return numBits;
@@ -167,6 +169,7 @@ namespace Lucene.Net.Util
         /// Returns the popcount or cardinality of the intersection of the two sets.
         /// Neither set is modified.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long IntersectionCount(FixedBitSet a, FixedBitSet b)
         {
             return BitUtil.Pop_Intersect(a.bits, b.bits, 0, Math.Min(a.numWords, b.numWords));
@@ -242,6 +245,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Expert. </summary>
         [WritableArray]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long[] GetBits()
         {
             return bits;
@@ -252,6 +256,7 @@ namespace Lucene.Net.Util
         /// <see cref="long"/> in the backing bits array, and the result is not
         /// internally cached!
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Cardinality()
         {
             return (int)BitUtil.Pop_Array(bits, 0, bits.Length);
@@ -396,6 +401,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this OR other </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Or(FixedBitSet other)
         {
             Or(other.bits, other.numWords);
@@ -494,6 +500,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this AND other </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void And(FixedBitSet other)
         {
             And(other.bits, other.numWords);
@@ -545,6 +552,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this AND NOT other </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AndNot(FixedBitSet other)
         {
             AndNot(other.bits, other.bits.Length);
@@ -688,6 +696,7 @@ namespace Lucene.Net.Util
             bits[endWord] &= endmask;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FixedBitSet Clone()
         {
             long[] bits = new long[this.bits.Length];

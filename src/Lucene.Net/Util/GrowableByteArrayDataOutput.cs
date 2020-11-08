@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -52,6 +53,7 @@ namespace Lucene.Net.Util
             this.Length = 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void WriteByte(byte b)
         {
             if (Length >= bytes.Length)
@@ -61,6 +63,7 @@ namespace Lucene.Net.Util
             bytes[Length++] = b;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void WriteBytes(byte[] b, int off, int len)
         {
             int newLength = Length + len;

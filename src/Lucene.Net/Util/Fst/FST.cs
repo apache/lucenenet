@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -340,6 +341,7 @@ namespace Lucene.Net.Util.Fst
             return size;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void Finish(long newStartNode)
         {
             if (startNode != -1)
@@ -356,6 +358,7 @@ namespace Lucene.Net.Util.Fst
             CacheRootArcs();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private long GetNodeAddress(long node)
         {
             if (nodeAddress != null)
@@ -371,6 +374,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         // Caches first 128 labels
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CacheRootArcs()
         {
             cachedRootArcs = (FST.Arc<T>[])new FST.Arc<T>[0x80];
@@ -383,6 +387,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ReadRootArcs(FST.Arc<T>[] arcs)
         {
             FST.Arc<T> arc = new FST.Arc<T>();
@@ -582,6 +587,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         // LUCENENET NOTE: static Read<T>() was moved into the FST class
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteLabel(DataOutput @out, int v)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(v >= 0,"v={0}", v);
@@ -601,6 +607,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal int ReadLabel(DataInput @in)
         {
             int v;
@@ -625,6 +632,7 @@ namespace Lucene.Net.Util.Fst
         /// returns <c>true</c> if the node at this address has any
         /// outgoing arcs
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TargetHasArcs(FST.Arc<T> arc)
         {
             return arc.Target > 0;
@@ -965,6 +973,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private long ReadUnpackedNodeTarget(FST.BytesReader @in)
         {
             long target;
@@ -1056,6 +1065,7 @@ namespace Lucene.Net.Util.Fst
         /// </summary>
         /// <returns> Returns <c>true</c> if arc points to a state in an
         /// expanded array format. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool IsExpandedTarget(FST.Arc<T> follow, FST.BytesReader @in)
         {
             if (!TargetHasArcs(follow))
@@ -1397,6 +1407,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SeekToNextNode(FST.BytesReader @in)
         {
             while (true)
@@ -1455,6 +1466,7 @@ namespace Lucene.Net.Util.Fst
         /// </returns>
         /// <seealso cref="FST.FIXED_ARRAY_NUM_ARCS_DEEP"/>
         /// <seealso cref="Builder.UnCompiledNode{S}.Depth"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ShouldExpand(Builder.UnCompiledNode<T> node)
         {
             return allowArrayArcs && ((node.Depth <= FST.FIXED_ARRAY_SHALLOW_DISTANCE && node.NumArcs >= FST.FIXED_ARRAY_NUM_ARCS_SHALLOW) || node.NumArcs >= FST.FIXED_ARRAY_NUM_ARCS_DEEP);
@@ -1610,6 +1622,7 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// Creates a packed FST
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private FST(FST.INPUT_TYPE inputType, Outputs<T> outputs, int bytesPageBits)
         {
             version = FST.VERSION_CURRENT;
@@ -2267,6 +2280,7 @@ namespace Lucene.Net.Util.Fst
                 return this;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual bool Flag(int flag)
             {
                 return FST<T>.Flag(Flags, flag);
@@ -2340,6 +2354,7 @@ namespace Lucene.Net.Util.Fst
             {
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected internal override bool LessThan(NodeAndInCount a, NodeAndInCount b)
             {
                 int cmp = a.CompareTo(b);

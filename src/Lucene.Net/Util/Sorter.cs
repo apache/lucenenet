@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -52,6 +53,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public abstract void Sort(int from, int to);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void CheckRange(int from, int to)
         {
             if (to < from)
@@ -60,6 +62,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void MergeInPlace(int from, int mid, int to)
         {
             if (from == mid || mid == to || Compare(mid - 1, mid) <= 0)
@@ -101,6 +104,7 @@ namespace Lucene.Net.Util
             MergeInPlace(new_mid, second_cut, to);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int Lower(int from, int to, int val)
         {
             int len = to - from;
@@ -121,6 +125,7 @@ namespace Lucene.Net.Util
             return from;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int Upper(int from, int to, int val)
         {
             int len = to - from;
@@ -142,6 +147,7 @@ namespace Lucene.Net.Util
         }
 
         // faster than lower when val is at the end of [from:to[
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int Lower2(int from, int to, int val)
         {
             int f = to - 1, t = to;
@@ -159,6 +165,7 @@ namespace Lucene.Net.Util
         }
 
         // faster than upper when val is at the beginning of [from:to[
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual int Upper2(int from, int to, int val)
         {
             int f = from, t = f + 1;
@@ -175,6 +182,7 @@ namespace Lucene.Net.Util
             return Upper(f, to, val);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void Reverse(int from, int to)
         {
             for (--to; from < to; ++from, --to)
@@ -183,6 +191,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void Rotate(int lo, int mid, int hi)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(lo <= mid && mid <= hi);
@@ -193,6 +202,7 @@ namespace Lucene.Net.Util
             DoRotate(lo, mid, hi);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void DoRotate(int lo, int mid, int hi)
         {
             if (mid - lo == hi - mid)
@@ -211,6 +221,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void InsertionSort(int from, int to)
         {
             for (int i = from + 1; i < to; ++i)
@@ -229,11 +240,13 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void BinarySort(int from, int to)
         {
             BinarySort(from, to, from + 1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void BinarySort(int from, int to, int i)
         {
             for (; i < to; ++i)
@@ -277,6 +290,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void HeapSort(int from, int to)
         {
             if (to - from <= 1)
@@ -291,6 +305,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void Heapify(int from, int to)
         {
             for (int i = HeapParent(from, to - 1); i >= from; --i)
@@ -299,6 +314,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void SiftDown(int i, int from, int to)
         {
             for (int leftChild = HeapChild(from, i); leftChild < to; leftChild = HeapChild(from, i))
@@ -329,11 +345,13 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int HeapParent(int from, int i)
         {
             return ((int)((uint)(i - 1 - from) >> 1)) + from;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int HeapChild(int from, int i)
         {
             return ((i - from) << 1) + 1 + from;

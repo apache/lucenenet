@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -101,6 +102,7 @@ namespace Lucene.Net.Util.Packed
             pending[pendingOff++] = l;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void Grow(int newBlockCount)
         {
             Array.Resize<PackedInt32s.Reader>(ref values, newBlockCount);
@@ -215,6 +217,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual long BaseRamBytesUsed()
         {
             return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 

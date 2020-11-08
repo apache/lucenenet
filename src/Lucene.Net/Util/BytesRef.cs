@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
@@ -138,6 +139,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="text"> Must be well-formed unicode text, with no
         /// unpaired surrogates or invalid UTF16 code units. </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyChars(ICharSequence text)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Offset == 0); // TODO broken if offset != 0
@@ -149,6 +151,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="text"> Must be well-formed unicode text, with no
         /// unpaired surrogates or invalid UTF16 code units. </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyChars(string text)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Offset == 0); // TODO broken if offset != 0
@@ -191,6 +194,7 @@ namespace Lucene.Net.Util
         /// object.
         /// </summary>
         /// <seealso cref="DeepCopyOf(BytesRef)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object Clone()
         {
             return new BytesRef(bytes, Offset, Length);
@@ -203,6 +207,7 @@ namespace Lucene.Net.Util
         /// <see cref="StringHelper.GOOD_FAST_HASH_SEED"/>, but is subject to
         /// change from release to release.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
             return StringHelper.Murmurhash3_x86_32(this, StringHelper.GOOD_FAST_HASH_SEED);
@@ -219,6 +224,7 @@ namespace Lucene.Net.Util
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         bool IEquatable<BytesRef>.Equals(BytesRef other) // LUCENENET specific - implemented IEquatable<BytesRef>
             => BytesEquals(other);
 
@@ -226,6 +232,7 @@ namespace Lucene.Net.Util
         /// Interprets stored bytes as UTF8 bytes, returning the
         /// resulting <see cref="string"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public string Utf8ToString()
         {
             CharsRef @ref = new CharsRef(Length);
@@ -296,6 +303,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// @lucene.internal
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Grow(int newLength)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Offset == 0); // NOTE: senseless if offset != 0
@@ -304,6 +312,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Unsigned byte order comparison </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(object other) // LUCENENET specific: Implemented IComparable for FieldComparer
         {
             BytesRef br = other as BytesRef;
@@ -313,6 +322,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Unsigned byte order comparison </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(BytesRef other)
         {
             return utf8SortedAsUnicodeSortOrder.Compare(this, other);
@@ -343,6 +353,7 @@ namespace Lucene.Net.Util
         /// The returned <see cref="BytesRef"/> will have a length of <c>other.Length</c>
         /// and an offset of zero.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static BytesRef DeepCopyOf(BytesRef other)
         {
             BytesRef copy = new BytesRef();

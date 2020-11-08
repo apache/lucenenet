@@ -2,7 +2,7 @@ using J2N.Threading.Atomic;
 using Lucene.Net.Support.IO;
 using System;
 using System.IO;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -72,11 +72,13 @@ namespace Lucene.Net.Util
             this.m_messageID = messageID;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Message(string component, string message)
         {
             m_stream.Write(component + " " + m_messageID + " [" + DateTime.Now + "; " + Thread.CurrentThread.Name + "]: " + message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool IsEnabled(string component)
         {
             return true;

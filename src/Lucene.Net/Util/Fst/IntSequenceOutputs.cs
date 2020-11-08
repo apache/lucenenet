@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -173,6 +174,7 @@ namespace Lucene.Net.Util.Fst
 
         public override Int32sRef NoOutput => NO_OUTPUT;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string OutputToString(Int32sRef output)
         {
             return output.ToString();

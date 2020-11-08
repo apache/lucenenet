@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -34,17 +35,20 @@ namespace Lucene.Net.Util.Fst
             this.bytes = bytes;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override byte ReadByte()
         {
             return bytes[pos++];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void ReadBytes(byte[] b, int offset, int len)
         {
             Array.Copy(bytes, pos, b, offset, len);
             pos += len;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void SkipBytes(int count)
         {
             pos += count;

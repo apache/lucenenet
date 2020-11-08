@@ -79,6 +79,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Quick and dirty convenience method </summary>
         /// <seealso cref="Check(FieldCache.CacheEntry[])"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Insanity[] CheckSanity(IFieldCache cache)
         {
             return CheckSanity(cache.GetCacheEntries());
@@ -88,6 +89,7 @@ namespace Lucene.Net.Util
         /// Quick and dirty convenience method that instantiates an instance with
         /// "good defaults" and uses it to test the <see cref="FieldCache.CacheEntry"/>s </summary>
         /// <seealso cref="Check(FieldCache.CacheEntry[])"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Insanity[] CheckSanity(params FieldCache.CacheEntry[] cacheEntries)
         {
             FieldCacheSanityChecker sanityChecker = new FieldCacheSanityChecker(estimateRam: true);
@@ -338,6 +340,7 @@ namespace Lucene.Net.Util
                 this.FieldName = fieldName;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetHashCode()
             {
                 return RuntimeHelpers.GetHashCode(readerKey) * FieldName.GetHashCode();
@@ -443,6 +446,7 @@ namespace Lucene.Net.Util
                 this.label = label;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override string ToString()
             {
                 return label;
