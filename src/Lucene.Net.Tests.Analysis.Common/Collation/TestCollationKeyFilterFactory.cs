@@ -107,7 +107,7 @@ namespace Lucene.Net.Collation
             var allRules = RuleBasedCollator.GetAvailableCollationLocales();
             var localeToUse = possiblelocales.FirstOrDefault(locl => allRules.Contains(locl.Id));
 
-            Assert.True(localeToUse != default(Locale), "Should have found a matching collation locale given the two locales to use.");
+            Assert.True(localeToUse != default, "Should have found a matching collation locale given the two locales to use.");
 
             const string DIN5007_2_tailorings = "& ae , a\u0308 & AE , A\u0308" + "& oe , o\u0308 & OE , O\u0308" + "& ue , u\u0308 & UE , u\u0308";
             var collationRules = Collator.GetCollationRules(localeToUse.Id);

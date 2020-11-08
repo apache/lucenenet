@@ -148,7 +148,7 @@ namespace Lucene.Net.Collation
                 .Select(x => new Locale(x))
                 .FirstOrDefault(x => availableCollationLocales.Contains(x.Id));
 
-            if (firstAvailableLocale == default(Locale))
+            if (firstAvailableLocale == default)
                 throw new ArgumentException($"None of the locales are available: {string.Join(", ", localeNames)}");
 
             Collator collator = Collator.Create(firstAvailableLocale.Id);

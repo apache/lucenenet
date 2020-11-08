@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         internal class MapValue
         {
-            private TValue value = default(TValue);
+            private TValue value = default;
             public TValue Value
             {
                 get => value;
@@ -305,7 +305,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(char[] text, int offset, int length)
         {
             var value = values[GetSlot(text, offset, length)];
-            return (value != null) ? value.Value : default(TValue);
+            return (value != null) ? value.Value : default;
         }
 
         /// <summary>
@@ -314,7 +314,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(char[] text)
         {
             var value = values[GetSlot(text, 0, text.Length)];
-            return (value != null) ? value.Value : default(TValue);
+            return (value != null) ? value.Value : default;
         }
 
         /// <summary>
@@ -323,7 +323,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(ICharSequence text)
         {
             var value = values[GetSlot(text)];
-            return (value != null) ? value.Value : default(TValue);
+            return (value != null) ? value.Value : default;
         }
 
         /// <summary>
@@ -332,7 +332,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(string text)
         {
             var value = values[GetSlot(text)];
-            return (value != null) ? value.Value : default(TValue);
+            return (value != null) ? value.Value : default;
         }
 
         /// <summary>
@@ -417,7 +417,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(ICharSequence text, TValue value)
         {
             MapValue oldValue = PutImpl(text, new MapValue(value)); // could be more efficient
-            return (oldValue != null) ? oldValue.Value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default;
         }
 
         /// <summary>
@@ -427,7 +427,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(object o, TValue value)
         {
             MapValue oldValue = PutImpl(o, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default;
         }
 
         /// <summary>
@@ -436,7 +436,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(string text, TValue value)
         {
             MapValue oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default;
         }
 
         /// <summary>
@@ -447,7 +447,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(char[] text, TValue value)
         {
             MapValue oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default;
         }
 
         /// <summary>
@@ -943,7 +943,7 @@ namespace Lucene.Net.Analysis.Util
                 value = val.Value;
                 return true;
             }
-            value = default(TValue);
+            value = default;
             return false;
         }
 
@@ -963,7 +963,7 @@ namespace Lucene.Net.Analysis.Util
                 value = val.Value;
                 return true;
             }
-            value = default(TValue);
+            value = default;
             return false;
         }
 
@@ -983,7 +983,7 @@ namespace Lucene.Net.Analysis.Util
                 value = val.Value;
                 return true;
             }
-            value = default(TValue);
+            value = default;
             return false;
         }
 
@@ -1003,7 +1003,7 @@ namespace Lucene.Net.Analysis.Util
                 value = val.Value;
                 return true;
             }
-            value = default(TValue);
+            value = default;
             return false;
         }
 
@@ -1520,7 +1520,7 @@ namespace Lucene.Net.Analysis.Util
                 get
                 {
                     var val = outerInstance.values[lastPos];
-                    return val != null ? val.Value : default(TValue);
+                    return val != null ? val.Value : default;
                 }
             }
 
@@ -1572,7 +1572,7 @@ namespace Lucene.Net.Analysis.Util
                     var val = outerInstance.values[lastPos];
                     return new KeyValuePair<string, TValue>(
                         new string(outerInstance.keys[lastPos]), 
-                        val != null ? val.Value : default(TValue));
+                        val != null ? val.Value : default);
                 }
             }
 
@@ -2009,7 +2009,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     throw new ArgumentNullException(nameof(text));
                 }
-                return default(V);
+                return default;
             }
 
             public override V Get(char[] text)
@@ -2018,7 +2018,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     throw new ArgumentNullException(nameof(text));
                 }
-                return default(V);
+                return default;
             }
 
             public override V Get(ICharSequence text)
@@ -2027,7 +2027,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     throw new ArgumentNullException(nameof(text));
                 }
-                return default(V);
+                return default;
             }
 
             public override V Get(object o)
@@ -2036,7 +2036,7 @@ namespace Lucene.Net.Analysis.Util
                 {
                     throw new ArgumentNullException(nameof(o));
                 }
-                return default(V);
+                return default;
             }
         }
     }

@@ -923,7 +923,7 @@ namespace Lucene.Net.Analysis.Core
                 //{
                 //    Rethrow.rethrow(ie);
                 //}
-                return default(T); // no success
+                return default; // no success
             }
 
             private static bool Broken(ConstructorInfo ctor, object[] args) // LUCENENET: CA1822: Mark members as static

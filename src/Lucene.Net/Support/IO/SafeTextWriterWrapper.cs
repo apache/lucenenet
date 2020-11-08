@@ -353,7 +353,7 @@ namespace Lucene.Net.Support.IO
 
         private T Run<T>(Func<T> method)
         {
-            if (isDisposed) return default(T);
+            if (isDisposed) return default;
 
             try
             {
@@ -362,7 +362,7 @@ namespace Lucene.Net.Support.IO
             catch (ObjectDisposedException)
             {
                 isDisposed = true;
-                return default(T);
+                return default;
             }
         }
 

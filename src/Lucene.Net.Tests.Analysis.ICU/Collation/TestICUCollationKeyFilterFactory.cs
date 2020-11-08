@@ -290,7 +290,7 @@ namespace Lucene.Net.Collation
 
             public T NewInstance<T>(String cname)
             {
-                return default(T);
+                return default;
             }
 
             public Type FindType(String cname)

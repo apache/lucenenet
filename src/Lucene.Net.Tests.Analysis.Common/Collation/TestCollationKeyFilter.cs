@@ -120,7 +120,7 @@ namespace Lucene.Net.Collation
                 .Select(x => new Locale(x))
                 .FirstOrDefault(x => availableCollationLocales.Contains(x.Id));
 
-            if (firstMatchingLocale == default(Locale))
+            if (firstMatchingLocale == default)
             {
                 throw new ArgumentException($"Could not find a collator locale matching any of the following: {string.Join(", ", localeNames)}");
             }

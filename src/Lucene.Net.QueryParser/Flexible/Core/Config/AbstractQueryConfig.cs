@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Config
                 throw new ArgumentException("key cannot be null!");
             }
             this.configMap.TryGetValue(key, out object result);
-            return result == null ? default(T) : (T)result;
+            return result == null ? default : (T)result;
         }
 
         /// <summary>

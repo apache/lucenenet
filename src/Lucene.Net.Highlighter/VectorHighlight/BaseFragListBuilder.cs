@@ -159,7 +159,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
                 else
                 {
-                    top = default(T);
+                    top = default;
                 }
                 return currentTop;
             }

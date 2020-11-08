@@ -182,11 +182,11 @@ namespace Lucene.Net.Search
         /// </summary>
         public virtual int CompareValues(T first, T second)
         {
-            if (object.ReferenceEquals(first, default(T)))
+            if (object.ReferenceEquals(first, default))
             {
-                return object.ReferenceEquals(second, default(T)) ? 0 : -1;
+                return object.ReferenceEquals(second, default) ? 0 : -1;
             }
-            else if (object.ReferenceEquals(second, default(T)))
+            else if (object.ReferenceEquals(second, default))
             {
                 return 1;
             }

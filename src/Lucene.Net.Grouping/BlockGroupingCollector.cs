@@ -456,7 +456,7 @@ namespace Lucene.Net.Search.Grouping
                                                        topDocs.MaxScore,
                                                        og.count,
                                                        topDocs.ScoreDocs,
-                                                       default(TGroupValue),
+                                                       default,
                                                        groupSortValues);
                 maxScore = Math.Max(maxScore, topDocs.MaxScore);
             }

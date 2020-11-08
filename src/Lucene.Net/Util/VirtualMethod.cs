@@ -217,7 +217,7 @@ namespace Lucene.Net.Util
 
             if (methods.Length == 0)
             {
-                return default(MethodInfo);
+                return default;
             }
             else if (methods.Length == 1)
             {

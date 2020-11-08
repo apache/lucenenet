@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void SetPivot(int i)
         {
-            pivot = (i < arr.Length) ? arr[i] : default(T);
+            pivot = (i < arr.Length) ? arr[i] : default;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

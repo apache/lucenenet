@@ -247,7 +247,7 @@ namespace Lucene.Net.Util.Fst
                     }
                     else
                     {
-                        return default(T);
+                        return default;
                     }
                 }
                 output = fst.Outputs.Add(output, arc.Output);
@@ -557,7 +557,7 @@ namespace Lucene.Net.Util.Fst
                     while (true)
                     {
                         Int32sRef term = ToInt32sRef(GetRandomString(random), inputMode);
-                        int pos = pairs.BinarySearch(new InputOutput<T>(term, default(T)));
+                        int pos = pairs.BinarySearch(new InputOutput<T>(term, default));
                         if (pos < 0)
                         {
                             pos = -(pos + 1);
@@ -689,7 +689,7 @@ namespace Lucene.Net.Util.Fst
                             Int32sRef term = ToInt32sRef(GetRandomString(random), inputMode);
                             if (!termsMap.ContainsKey(term) && term.CompareTo(pairs[upto].Input) > 0)
                             {
-                                int pos = pairs.BinarySearch(new InputOutput<T>(term, default(T)));
+                                int pos = pairs.BinarySearch(new InputOutput<T>(term, default));
                                 if (Debugging.AssertsEnabled) Debugging.Assert(pos < 0);
                                 upto = -(pos + 1);
 

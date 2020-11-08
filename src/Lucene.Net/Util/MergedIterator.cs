@@ -142,7 +142,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    top[i].Current = default(T);
+                    top[i].Current = default;
                 }
             }
             numTop = 0;
@@ -304,7 +304,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    top[i].Current = default(T);
+                    top[i].Current = default;
                 }
             }
             numTop = 0;

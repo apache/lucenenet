@@ -30,7 +30,7 @@ namespace Lucene.Net.Support
         /// Enumerates a sequence in pairs  
         /// </summary>
         /// <remarks>
-        /// In the case of an uneven amount of elements, the list call to <paramref name="join" /> pases <code>default(T)</code> as the second parameter.
+        /// In the case of an uneven amount of elements, the list call to <paramref name="join" /> pases <code>default</code> as the second parameter.
         /// </remarks>
         /// <typeparam name="T">The type of the elements of <paramref name="source" />.</typeparam>
         /// <typeparam name="TOut">The type of the elements returned from <paramref name="join" />.</typeparam>

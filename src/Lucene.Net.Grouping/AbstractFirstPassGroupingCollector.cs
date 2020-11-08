@@ -218,7 +218,7 @@ namespace Lucene.Net.Search.Grouping
 
                     // Add a new CollectedSearchGroup:
                     CollectedSearchGroup<TGroupValue> sg = new CollectedSearchGroup<TGroupValue>();
-                    sg.GroupValue = CopyDocGroupValue(groupValue, default(TGroupValue));
+                    sg.GroupValue = CopyDocGroupValue(groupValue, default);
                     sg.ComparerSlot = groupMap.Count;
                     sg.TopDoc = docBase + doc;
                     foreach (FieldComparer fc in comparers)
