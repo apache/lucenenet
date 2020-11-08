@@ -98,6 +98,7 @@ namespace Lucene.Net.QueryParsers.Classic
     /// <item><description>As of 3.1, <see cref="QueryParserBase.AutoGeneratePhraseQueries"/> is false by default.</description></item>
     /// </list>
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
     public class QueryParser : QueryParserBase
     {
         // NOTE: This was moved into the QueryParserBase class.
@@ -888,6 +889,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
             return new ParseException(Token, exptokseq, QueryParserConstants.TokenImage);
         }
+
 
         /// <summary>Enable tracing. </summary>
         public void Enable_tracing()

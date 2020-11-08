@@ -382,7 +382,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Handles 'CH' cases.
         /// </summary>
-        private int HandleCH(string value, DoubleMetaphoneResult result, int index)
+        private static int HandleCH(string value, DoubleMetaphoneResult result, int index) // LUCENENET: CA1822: Mark members as static
         {
             if (index > 0 && Contains(value, index, 4, "CHAE"))
             {   // Michael
@@ -1011,7 +1011,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Complex condition 0 for 'CH'.
         /// </summary>
-        private bool ConditionCH0(string value, int index)
+        private static bool ConditionCH0(string value, int index) // LUCENENET: CA1822: Mark members as static
         {
             if (index != 0)
             {
@@ -1035,7 +1035,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Complex condition 1 for 'CH'.
         /// </summary>
-        private bool ConditionCH1(string value, int index)
+        private static bool ConditionCH1(string value, int index) // LUCENENET: CA1822: Mark members as static
         {
             return ((Contains(value, 0, 4, "VAN ", "VON ") || Contains(value, 0, 3, "SCH")) ||
                     Contains(value, index - 2, 6, "ORCHES", "ARCHIT", "ORCHID") ||
@@ -1047,7 +1047,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Complex condition 0 for 'L'.
         /// </summary>
-        private bool ConditionL0(string value, int index)
+        private static bool ConditionL0(string value, int index) // LUCENENET: CA1822: Mark members as static
         {
             if (index == value.Length - 3 &&
                 Contains(value, index - 1, 4, "ILLO", "ILLA", "ALLE"))
@@ -1094,7 +1094,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Determines whether or not a character is a vowel or not
         /// </summary>
-        private bool IsVowel(char ch)
+        private static bool IsVowel(char ch) // LUCENENET: CA1822: Mark members as static
         {
             return VOWELS.IndexOf(ch) != -1;
         }

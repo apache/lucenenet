@@ -398,7 +398,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             throw new TypeLoadException(taskName + " not found in packages " + Collections.ToString(taskPackages));
         }
 
-        private Type LoadType(string assemblyName, string typeName)
+        private static Type LoadType(string assemblyName, string typeName) // LUCENENET: CA1822: Mark members as static
         {
             return Assembly.Load(new AssemblyName(assemblyName)).GetTypes().FirstOrDefault(t => t.Name == typeName);
         }

@@ -109,7 +109,7 @@ namespace Lucene.Net.Queries
             return BitsFilteredDocIdSet.Wrap(GetDocIdSet(context, DEFAULT, index), acceptDocs);
         }
 
-        private DocIdSetIterator GetDISI(Filter filter, AtomicReaderContext context)
+        private static DocIdSetIterator GetDISI(Filter filter, AtomicReaderContext context) // LUCENENET: CA1822: Mark members as static
         {
             // we dont pass acceptDocs, we will filter at the end using an additional filter
             DocIdSet docIdSet = filter.GetDocIdSet(context, null);

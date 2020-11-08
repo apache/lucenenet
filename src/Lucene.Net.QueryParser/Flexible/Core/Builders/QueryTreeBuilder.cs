@@ -160,7 +160,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
             return builder;
         }
 
-        private void ProcessNode(IQueryNode node, IQueryBuilder<TQuery> builder)
+        private static void ProcessNode(IQueryNode node, IQueryBuilder<TQuery> builder) // LUCENENET: CA1822: Mark members as static
         {
             if (builder == null)
             {

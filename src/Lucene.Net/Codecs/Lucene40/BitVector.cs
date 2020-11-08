@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Lucene40
             count = -1;
         }
 
-        private int GetNumBytes(int size)
+        private static int GetNumBytes(int size) // LUCENENET: CA1822: Mark members as static
         {
             int bytesLength = (int)((uint)size >> 3);
             if ((size & 7) != 0)

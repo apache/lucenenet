@@ -110,7 +110,7 @@ namespace Lucene.Net.Demo.Facet
             } // Disposes writer
         }
 
-        private ValueSource GetDistanceValueSource()
+        private static ValueSource GetDistanceValueSource()
         {
             Expression distance = JavascriptCompiler.Compile(
                 string.Format(CultureInfo.InvariantCulture, "haversin({0:R},{1:R},latitude,longitude)", ORIGIN_LATITUDE, ORIGIN_LONGITUDE));

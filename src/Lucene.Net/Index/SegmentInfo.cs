@@ -288,7 +288,7 @@ namespace Lucene.Net.Index
             setFiles.Add(file);
         }
 
-        private void CheckFileNames(ICollection<string> files)
+        private static void CheckFileNames(ICollection<string> files) // LUCENENET: CA1822: Mark members as static
         {
             Regex r = IndexFileNames.CODEC_FILE_PATTERN;
             foreach (string file in files)

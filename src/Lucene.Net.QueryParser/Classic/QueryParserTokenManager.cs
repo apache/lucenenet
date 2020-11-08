@@ -23,6 +23,7 @@ namespace Lucene.Net.QueryParsers.Classic
      */
 
     /// <summary>Token Manager. </summary>
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
     public class QueryParserTokenManager //: QueryParserConstants
     {
         private void  InitBlock()

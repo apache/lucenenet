@@ -399,7 +399,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return low - 1;
             }
 
-            internal int ReadFreq(IndexInput freqIn, int code)
+            internal static int ReadFreq(IndexInput freqIn, int code) // LUCENENET: CA1822: Mark members as static
             {
                 if ((code & 1) != 0) // if low bit is set
                 {

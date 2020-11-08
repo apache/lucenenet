@@ -372,9 +372,9 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Not implemented </summary>
         /// <exception cref="NotSupportedException"> always: not supported by CFS  </exception>
-#pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable IDE0060, CA1822 // Remove unused parameter, Mark members as static
         public void RenameFile(string from, string to)
-#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore IDE0060, CA1822 // Remove unused parameter, Mark members as static
         {
             throw new NotSupportedException();
         }

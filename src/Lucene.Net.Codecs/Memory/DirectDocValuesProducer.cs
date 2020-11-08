@@ -117,7 +117,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private NumericEntry ReadNumericEntry(IndexInput meta)
+        private static NumericEntry ReadNumericEntry(IndexInput meta) // LUCENENET: CA1822: Mark members as static
         {
             var entry = new NumericEntry { offset = meta.ReadInt64(), count = meta.ReadInt32(), missingOffset = meta.ReadInt64() };
             if (entry.missingOffset != -1)
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs.Memory
             return entry;
         }
 
-        private BinaryEntry ReadBinaryEntry(IndexInput meta)
+        private static BinaryEntry ReadBinaryEntry(IndexInput meta) // LUCENENET: CA1822: Mark members as static
         {
             var entry = new BinaryEntry();
             entry.offset = meta.ReadInt64();
@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.Memory
             return entry;
         }
 
-        private SortedEntry ReadSortedEntry(IndexInput meta)
+        private static SortedEntry ReadSortedEntry(IndexInput meta) // LUCENENET: CA1822: Mark members as static
         {
             var entry = new SortedEntry();
             entry.docToOrd = ReadNumericEntry(meta);
@@ -160,7 +160,7 @@ namespace Lucene.Net.Codecs.Memory
             return entry;
         }
 
-        private SortedSetEntry ReadSortedSetEntry(IndexInput meta)
+        private static SortedSetEntry ReadSortedSetEntry(IndexInput meta) // LUCENENET: CA1822: Mark members as static
         {
             var entry = new SortedSetEntry();
             entry.docToOrdAddress = ReadNumericEntry(meta);

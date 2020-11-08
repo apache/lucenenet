@@ -118,7 +118,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        private long RandomSeekPos(Random random, long size)
+        private static long RandomSeekPos(Random random, long size) // LUCENENET: CA1822: Mark members as static
         {
             if (random == null || size <= 3L)
             {

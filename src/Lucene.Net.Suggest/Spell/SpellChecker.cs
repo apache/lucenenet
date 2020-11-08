@@ -638,7 +638,7 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
-        private void ReleaseSearcher(IndexSearcher aSearcher)
+        private static void ReleaseSearcher(IndexSearcher aSearcher) // LUCENENET: CA1822: Mark members as static
         {
             // don't check if open - always decRef 
             // don't decrement the private searcher - could have been swapped

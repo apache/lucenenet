@@ -536,7 +536,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        private Exception CreateException(Exception exception, Exception innerException)
+        private static Exception CreateException(Exception exception, Exception innerException) // LUCENENET: CA1822: Mark members as static
         {
             return (Exception)Activator.CreateInstance(exception.GetType(), exception.Message, innerException);
         }

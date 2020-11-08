@@ -607,11 +607,11 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <returns> Currently stored value or <c>null</c> if no value is stored </returns>
         /// <exception cref="ObjectDisposedException"> if the <see cref="Analyzer"/> is closed. </exception>
-        protected internal object GetStoredValue(Analyzer analyzer)
+        protected internal static object GetStoredValue(Analyzer analyzer) // LUCENENET: CA1822: Mark members as static
         {
             if (analyzer.storedValue == null)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "this Analyzer is closed");
+                throw new ObjectDisposedException(analyzer.GetType().FullName, "this Analyzer is closed");
             }
             return analyzer.storedValue.Value;
         }
@@ -622,11 +622,11 @@ namespace Lucene.Net.Analysis
         /// <param name="analyzer"> Analyzer </param>
         /// <param name="storedValue"> Value to store </param>
         /// <exception cref="ObjectDisposedException"> if the <see cref="Analyzer"/> is closed. </exception>
-        protected internal void SetStoredValue(Analyzer analyzer, object storedValue)
+        protected internal static void SetStoredValue(Analyzer analyzer, object storedValue) // LUCENENET: CA1822: Mark members as static
         {
             if (analyzer.storedValue == null)
             {
-                throw new ObjectDisposedException("this Analyzer is closed");
+                throw new ObjectDisposedException(analyzer.GetType().FullName, "this Analyzer is closed");
             }
             analyzer.storedValue.Value = storedValue;
         }

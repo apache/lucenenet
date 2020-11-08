@@ -342,7 +342,7 @@ namespace Lucene.Net.Search.Highlight
         /// This will leave a "null" in the array entry for the lesser scored fragment. 
         /// </summary>
         /// <param name="frag">An array of document fragments in descending score</param>
-        private void MergeContiguousFragments(TextFragment[] frag)
+        private static void MergeContiguousFragments(TextFragment[] frag) // LUCENENET: CA1822: Mark members as static
         {
             bool mergingStillBeingDone;
             if (frag.Length > 1)

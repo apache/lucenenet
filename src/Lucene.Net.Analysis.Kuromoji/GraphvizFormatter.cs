@@ -192,7 +192,7 @@ namespace Lucene.Net.Analysis.Ja
             return "}";
         }
 
-        private string GetNodeID(int pos, int idx)
+        private static string GetNodeID(int pos, int idx) // LUCENENET: CA1822: Mark members as static
         {
             return pos + "." + idx;
         }

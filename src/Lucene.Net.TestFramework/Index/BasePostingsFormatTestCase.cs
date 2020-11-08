@@ -1276,7 +1276,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void TestFields(Fields fields)
+        private static void TestFields(Fields fields) // LUCENENET: CA1822: Mark members as static
         {
             using (IEnumerator<string> iterator = fields.GetEnumerator())
             {

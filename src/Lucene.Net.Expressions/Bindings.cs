@@ -46,7 +46,7 @@ namespace Lucene.Net.Expressions
         /// <summary>
         /// Returns a <see cref="ValueSource"/> over relevance scores
         /// </summary>
-        protected ValueSource GetScoreValueSource()
+        protected static ValueSource GetScoreValueSource() // LUCENENET: CA1822: Mark members as static
         {
             return new ScoreValueSource();
         }

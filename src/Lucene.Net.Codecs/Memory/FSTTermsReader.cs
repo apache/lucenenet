@@ -754,15 +754,18 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     return fsa.IsAccept(frame.fsaState) && frame.fstArc.IsFinal;
                 }
-                private bool IsValid(Frame frame) // reach a prefix both fst&fsa won't reject
+
+                private static bool IsValid(Frame frame) // reach a prefix both fst&fsa won't reject // LUCENENET: CA1822: Mark members as static
                 {
                     return frame.fsaState != -1; //frame != null &&
                 }
-                private bool CanGrow(Frame frame) // can walk forward on both fst&fsa
+
+                private static bool CanGrow(Frame frame) // can walk forward on both fst&fsa // LUCENENET: CA1822: Mark members as static
                 {
                     return frame.fsaState != -1 && FST<Memory.FSTTermOutputs.TermData>.TargetHasArcs(frame.fstArc);
                 }
-                private bool CanRewind(Frame frame) // can jump to sibling
+
+                private static bool CanRewind(Frame frame) // can jump to sibling // LUCENENET: CA1822: Mark members as static
                 {
                     return !frame.fstArc.IsLast;
                 }

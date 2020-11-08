@@ -200,7 +200,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 return replacementDefault;
             }
 
-            private bool IsVowel(char ch)
+            private static bool IsVowel(char ch) // LUCENENET: CA1822: Mark members as static
             {
                 return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
             }

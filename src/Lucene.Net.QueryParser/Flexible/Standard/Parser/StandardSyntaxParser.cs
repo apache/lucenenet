@@ -34,6 +34,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// <summary>
     /// Parser for the standard Lucene syntax
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
     public class StandardSyntaxParser : ISyntaxParser /*, StandardSyntaxParserConstants*/
     {
         private const int CONJ_NONE = 0;
@@ -1251,6 +1252,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             }
             return new ParseException(Token, exptokseq, StandardSyntaxParserConstants.TokenImage);
         }
+
 
         /// <summary>Enable tracing.</summary>
         public void Enable_tracing()

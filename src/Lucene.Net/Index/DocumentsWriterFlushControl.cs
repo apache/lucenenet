@@ -274,7 +274,7 @@ namespace Lucene.Net.Index
                     long? bytes = flushingWriters[dwpt];
                     flushingWriters.Remove(dwpt);
                     flushBytes -= (long)bytes;
-                    perThreadPool.Recycle(/* dwpt // LUCENENET: Not referenced */);
+                    //perThreadPool.Recycle(dwpt); // LUCENENET: This is a no-op method in Lucene and it cannot be overridden
                     if (Debugging.AssertsEnabled) Debugging.Assert(AssertMemory());
                 }
                 finally
@@ -367,7 +367,7 @@ namespace Lucene.Net.Index
                     }
                     if (Debugging.AssertsEnabled) Debugging.Assert(AssertMemory());
                     // Take it out of the loop this DWPT is stale
-                    perThreadPool.Reset(state, closed);
+                    DocumentsWriterPerThreadPool.Reset(state, closed); // LUCENENET specific - made static per CA1822
                 }
                 finally
                 {
@@ -397,7 +397,7 @@ namespace Lucene.Net.Index
                 }
                 DocumentsWriterPerThread dwpt;
                 long bytes = perThread.bytesUsed;
-                dwpt = perThreadPool.Reset(perThread, closed);
+                dwpt = DocumentsWriterPerThreadPool.Reset(perThread, closed); // LUCENENET specific - made method static per CA1822
                 numPending--;
                 blockedFlushes.AddLast(new BlockedFlush(dwpt, bytes));
             }
@@ -427,7 +427,7 @@ namespace Lucene.Net.Index
                     DocumentsWriterPerThread dwpt;
                     long bytes = perThread.bytesUsed; // do that before
                     // replace!
-                    dwpt = perThreadPool.Reset(perThread, closed);
+                    dwpt = DocumentsWriterPerThreadPool.Reset(perThread, closed); // LUCENENET specific - made method static per CA1822
                     if (Debugging.AssertsEnabled) Debugging.Assert(!flushingWriters.ContainsKey(dwpt), "DWPT is already flushing");
                     // Record the flushing DWPT to reduce flushBytes in doAfterFlush
                     flushingWriters[dwpt] = bytes;
@@ -646,7 +646,7 @@ namespace Lucene.Net.Index
                     {
                         if (closed && next.IsActive)
                         {
-                            perThreadPool.DeactivateThreadState(next);
+                            DocumentsWriterPerThreadPool.DeactivateThreadState(next); // LUCENENET specific - made method static per CA1822
                         }
                         continue;
                     }
@@ -739,7 +739,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                perThreadPool.Reset(perThread, closed); // make this state inactive
+                DocumentsWriterPerThreadPool.Reset(perThread, closed); // make this state inactive // LUCENENET specific - made method static per CA1822
             }
         }
 

@@ -122,7 +122,7 @@ namespace Lucene.Net.Store
         /// <seealso cref="SetBufferSize(int)"/>
         public int BufferSize => bufferSize;
 
-        private void CheckBufferSize(int bufferSize)
+        private static void CheckBufferSize(int bufferSize) // LUCENENET: CA1822: Mark members as static
         {
             if (bufferSize <= 0)
             {

@@ -161,7 +161,7 @@ namespace Lucene.Net.Facet.Taxonomy
             return Length - other.Length;
         }
 
-        private void HasDelimiter(string offender, char delimiter)
+        private static void HasDelimiter(string offender, char delimiter) // LUCENENET: CA1822: Mark members as static
         {
             throw new ArgumentException("delimiter character '" + delimiter + 
                 "' (U+" + delimiter.ToString() + ") appears in path component \"" + offender + "\"");

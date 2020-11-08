@@ -302,7 +302,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
             }
 
-            private int SharedPrefix(BytesRef term1, BytesRef term2)
+            private static int SharedPrefix(BytesRef term1, BytesRef term2) // LUCENENET: CA1822: Mark members as static
             {
                 if (Debugging.AssertsEnabled)
                 {

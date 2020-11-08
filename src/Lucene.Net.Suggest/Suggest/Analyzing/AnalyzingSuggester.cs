@@ -243,7 +243,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return fst == null ? 0 : fst.GetSizeInBytes();
         }
 
-        private void CopyDestTransitions(State from, State to, IList<Transition> transitions)
+        private static void CopyDestTransitions(State from, State to, IList<Transition> transitions) // LUCENENET: CA1822: Mark members as static
         {
             if (to.Accept)
             {

@@ -240,7 +240,7 @@ namespace Lucene.Net.Collation
             return this;
         }
 
-        private string ToUTF8String(Stream input)
+        private static string ToUTF8String(Stream input) // LUCENENET: CA1822: Mark members as static
         {
             StringBuilder sb = new StringBuilder();
             char[] buffer = new char[1024];

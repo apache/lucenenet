@@ -361,7 +361,7 @@ namespace Lucene.Net.Util.Automaton
         /// Add a suffix of <paramref name="current"/> starting at <paramref name="fromIndex"/>
         /// (inclusive) to state <paramref name="state"/>.
         /// </summary>
-        private void AddSuffix(State state, ICharSequence current, int fromIndex)
+        private static void AddSuffix(State state, ICharSequence current, int fromIndex) // LUCENENET: CA1822: Mark members as static
         {
             int len = current.Length;
             while (fromIndex < len)

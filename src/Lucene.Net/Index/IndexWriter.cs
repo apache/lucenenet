@@ -4009,7 +4009,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc)
+        private static void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc) // LUCENENET: CA1822: Mark members as static
         {
             foreach (DocValuesFieldUpdates.Iterator iter in updatesIters)
             {

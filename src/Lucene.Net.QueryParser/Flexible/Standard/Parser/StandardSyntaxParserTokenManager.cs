@@ -24,6 +24,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// <summary>
     /// Token Manager.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
     public class StandardSyntaxParserTokenManager /*: StandardSyntaxParserConstants*/
     {
         /// <summary>Debug output.</summary>

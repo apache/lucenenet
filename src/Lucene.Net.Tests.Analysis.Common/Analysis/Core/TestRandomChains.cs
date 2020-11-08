@@ -926,12 +926,12 @@ namespace Lucene.Net.Analysis.Core
                 return default(T); // no success
             }
 
-            private bool Broken(ConstructorInfo ctor, object[] args)
+            private static bool Broken(ConstructorInfo ctor, object[] args) // LUCENENET: CA1822: Mark members as static
             {
                 return brokenConstructors.TryGetValue(ctor, out IPredicate<object[]> pred) && pred != null && pred.Apply(args);
             }
 
-            private bool BrokenOffsets(ConstructorInfo ctor, object[] args)
+            private static bool BrokenOffsets(ConstructorInfo ctor, object[] args) // LUCENENET: CA1822: Mark members as static
             {
                 return brokenOffsetsConstructors.TryGetValue(ctor, out IPredicate<object[]> pred) && pred != null && pred.Apply(args);
             }

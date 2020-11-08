@@ -250,7 +250,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        private bool AddLabelOffsetToHashArray(HashArray a, int hash, int ordinal, int knownOffset)
+        private static bool AddLabelOffsetToHashArray(HashArray a, int hash, int ordinal, int knownOffset) // LUCENENET: CA1822: Mark members as static
         {
             int index = CompactLabelToOrdinal.IndexFor(hash, a.offsets.Length);
             int offset = a.offsets[index];

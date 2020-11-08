@@ -309,7 +309,8 @@ namespace Lucene.Net.Search
                 }
                 finally
                 {
-                    m_nodes[myNodeID].Release(localShardSearcher);
+                    //m_nodes[myNodeID].Release(localShardSearcher);
+                    NodeState.Release(localShardSearcher); // LUCENENET: Made Release() static per CA1822 for performance
                     foreach (IndexReader sub in subs)
                     {
                         if (sub != null)

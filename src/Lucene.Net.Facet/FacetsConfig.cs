@@ -586,7 +586,7 @@ namespace Lucene.Net.Facet
             return new BytesRef(bytes, 0, upto);
         }
 
-        private void CheckTaxoWriter(ITaxonomyWriter taxoWriter)
+        private static void CheckTaxoWriter(ITaxonomyWriter taxoWriter) // LUCENENET: CA1822: Mark members as static
         {
             if (taxoWriter == null)
             {

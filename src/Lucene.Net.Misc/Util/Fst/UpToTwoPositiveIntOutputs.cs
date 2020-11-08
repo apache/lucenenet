@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Diagnostics;
 using Lucene.Net.Store;
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
@@ -27,8 +26,8 @@ namespace Lucene.Net.Util.Fst
     /// An FST <see cref="Outputs{T}"/> implementation where each output
     /// is one or two non-negative long values.  If it's a
     /// <see cref="float"/> output, <see cref="Nullable{Int64}"/> is 
-    /// returned; else, TwoLongs.  Order
-    /// is preserved in the TwoLongs case, ie .first is the first
+    /// returned; else, <see cref="TwoInt64s"/>.  Order
+    /// is preserved in the <see cref="TwoInt64s"/> case, ie .first is the first
     /// input/output added to <see cref="Builder{T}"/>, and .second is the
     /// second.  You cannot store 0 output with this (that's
     /// reserved to mean "no output")!
@@ -117,18 +116,13 @@ namespace Lucene.Net.Util.Fst
             return doShare ? singletonShare : singletonNoShare;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This is a shipped public API")]
         public long? Get(long v)
         {
-            if (v == 0)
-            {
-                return NO_OUTPUT;
-            }
-            else
-            {
-                return v;
-            }
+            return v == 0 ? NO_OUTPUT : v;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This is a shipped public API")]
         public TwoInt64s Get(long first, long second)
         {
             return new TwoInt64s(first, second);
@@ -261,7 +255,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private bool Valid(long? o)
+        private static bool Valid(long? o) // LUCENENET: CA1822: Mark members as static
         {
             Debugging.Assert(o != null);
             Debugging.Assert(o is long?);
@@ -270,7 +264,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         // Used only by assert
-        private bool Valid(object o, bool allowDouble)
+        private static bool Valid(object o, bool allowDouble) // LUCENENET: CA1822: Mark members as static
         {
             if (!allowDouble)
             {

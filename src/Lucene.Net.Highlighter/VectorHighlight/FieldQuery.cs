@@ -262,7 +262,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// ex8) src="a b c d", dest="b c"   => no overlap
         /// </code>
         /// </summary>
-        private void CheckOverlap(ICollection<Query> expandQueries, Term[] src, Term[] dest, int slop, float boost)
+        private static void CheckOverlap(ICollection<Query> expandQueries, Term[] src, Term[] dest, int slop, float boost) // LUCENENET: CA1822: Mark members as static
         {
             // beginning from 1 (not 0) is safe because that the PhraseQuery has multiple terms
             // is guaranteed in flatten() method (if PhraseQuery has only one term, flatten()

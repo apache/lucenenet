@@ -89,7 +89,7 @@ namespace Lucene.Net.Util.Fst
         /// hash code for an unfrozen node.  this must be identical
         /// to the frozen case (below)!!
         /// </summary>
-        private long Hash(Builder.UnCompiledNode<T> node)
+        private static long Hash(Builder.UnCompiledNode<T> node) // LUCENENET: CA1822: Mark members as static
         {
             const int PRIME = 31;
             //System.out.println("hash unfrozen");

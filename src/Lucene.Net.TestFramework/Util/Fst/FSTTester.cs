@@ -217,7 +217,7 @@ namespace Lucene.Net.Util.Fst
         // isn't accepted.  if prefixLength is non-null it must be
         // length 1 int array; prefixLength[0] is set to the length
         // of the term prefix that matches
-        private T Run(FST<T> fst, Int32sRef term, int[] prefixLength)
+        private static T Run(FST<T> fst, Int32sRef term, int[] prefixLength) // LUCENENET: CA1822: Mark members as static
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(prefixLength == null || prefixLength.Length == 1);
             FST.Arc<T> arc = fst.GetFirstArc(new FST.Arc<T>());

@@ -1475,7 +1475,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoTestNumericsVsStoredFields(Int64Producer longs)
+        private static void DoTestNumericsVsStoredFields(Int64Producer longs) // LUCENENET: CA1822: Mark members as static
         {
             using (Directory dir = NewDirectory())
             {
@@ -1561,7 +1561,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DoTestMissingVsFieldCache(Int64Producer longs)
+        private static void DoTestMissingVsFieldCache(Int64Producer longs) // LUCENENET: CA1822: Mark members as static
         {
             AssumeTrue("Codec does not support GetDocsWithField", DefaultCodecSupportsDocsWithField);
             using (Directory dir = NewDirectory())
@@ -2708,7 +2708,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void AssertEquals(IBits expected, IBits actual)
+        private static void AssertEquals(IBits expected, IBits actual) // LUCENENET: CA1822: Mark members as static
         {
             Assert.AreEqual(expected.Length, actual.Length);
             for (int i = 0; i < expected.Length; i++)
@@ -2717,12 +2717,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void AssertEquals(int maxDoc, SortedDocValues expected, SortedDocValues actual)
+        private static void AssertEquals(int maxDoc, SortedDocValues expected, SortedDocValues actual) // LUCENENET: CA1822: Mark members as static
         {
             AssertEquals(maxDoc, new SingletonSortedSetDocValues(expected), new SingletonSortedSetDocValues(actual));
         }
 
-        private void AssertEquals(int maxDoc, SortedSetDocValues expected, SortedSetDocValues actual)
+        private static void AssertEquals(int maxDoc, SortedSetDocValues expected, SortedSetDocValues actual) // LUCENENET: CA1822: Mark members as static
         {
             // can be null for the segment if no docs actually had any SortedDocValues
             // in this case FC.getDocTermsOrds returns EMPTY
@@ -2759,7 +2759,7 @@ namespace Lucene.Net.Index
             AssertEquals(expected.ValueCount, expected.GetTermsEnum(), actual.GetTermsEnum());
         }
 
-        private void AssertEquals(long numOrds, TermsEnum expected, TermsEnum actual)
+        private static void AssertEquals(long numOrds, TermsEnum expected, TermsEnum actual) // LUCENENET: CA1822: Mark members as static
         {
             // sequential next() through all terms
             while (expected.MoveNext())

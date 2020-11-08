@@ -87,7 +87,7 @@ namespace Lucene.Net.Demo.Facet
             } // Disposes indexWriter
         }
 
-        private FacetsConfig GetConfig()
+        private static FacetsConfig GetConfig()
         {
             return new FacetsConfig();
         }

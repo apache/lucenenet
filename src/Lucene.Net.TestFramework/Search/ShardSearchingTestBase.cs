@@ -226,7 +226,7 @@ namespace Lucene.Net.Search
             }
             finally
             {
-                m_nodes[nodeID].Release(s);
+                NodeState.Release(s); // LUCENENET: made static per CA1822 and eliminated array lookup
             }
         }
 
@@ -512,7 +512,7 @@ namespace Lucene.Net.Search
                             }
                             finally
                             {
-                                outerInstance.outerInstance.m_nodes[nodeID].Release(s);
+                                Release(s); // LUCENENET: Made static per CA1822 and eliminated array lookup
                             }
                         }
                         else if (nodeID == after.ShardIndex)
@@ -639,7 +639,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public void Release(ShardIndexSearcher s)
+            public static void Release(ShardIndexSearcher s) // LUCENENET: CA1822: Mark members as static
             {
                 s.IndexReader.DecRef();
             }

@@ -345,7 +345,7 @@ namespace Lucene.Net.Search.Spell
             return newSuggestion;
         }
 
-        private SuggestWord GenerateSuggestWord(IndexReader ir, string fieldname, string text)
+        private static SuggestWord GenerateSuggestWord(IndexReader ir, string fieldname, string text) // LUCENENET: CA1822: Mark members as static
         {
             Term term = new Term(fieldname, text);
             int freq = ir.DocFreq(term);

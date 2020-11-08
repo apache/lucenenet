@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
         /// </summary>
         /// <param name="input"></param>
         /// <returns>Array of {wordId, index, length}.</returns>
-        private int[][] ToIndexArray(IDictionary<int, int[]> input)
+        private static int[][] ToIndexArray(IDictionary<int, int[]> input) // LUCENENET: CA1822: Mark members as static
         {
             List<int[]> result = new List<int[]>();
             foreach (int i in input.Keys)

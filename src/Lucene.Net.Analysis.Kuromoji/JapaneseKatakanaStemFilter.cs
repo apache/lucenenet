@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Ja
             return length;
         }
 
-        private bool IsKatakana(char[] term, int length)
+        private static bool IsKatakana(char[] term, int length) // LUCENENET: CA1822: Mark members as static
         {
             for (int i = 0; i < length; i++)
             {

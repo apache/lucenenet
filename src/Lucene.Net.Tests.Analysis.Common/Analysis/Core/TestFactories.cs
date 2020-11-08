@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// tries to initialize a factory with no arguments </summary>
-        private AbstractAnalysisFactory Initialize(Type factoryClazz)
+        private static AbstractAnalysisFactory Initialize(Type factoryClazz) // LUCENENET: CA1822: Mark members as static
         {
             IDictionary<string, string> args =
                 new Dictionary<string, string> { ["luceneMatchVersion"] = TEST_VERSION_CURRENT_STRING };

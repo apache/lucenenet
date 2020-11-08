@@ -103,6 +103,7 @@ namespace Egothor.Stemmer
         /// <param name="in">the Row to test</param>
         /// <param name="remap">Description of the Parameter</param>
         /// <returns><c>true</c> if the Row should remain; otherwise, <c>false</c></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This is a shipped public API")]
         public bool Eat(Row @in, int[] remap)
         {
             int sum = 0;

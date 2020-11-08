@@ -171,7 +171,10 @@ namespace Lucene.Net.Util
         /// instances accordingly.  The <see cref="MapOfSets{TKey, TValue}"/> are used to populate
         /// the <see cref="Insanity"/> objects. </summary>
         /// <seealso cref="InsanityType.VALUEMISMATCH"/>
-        private ICollection<Insanity> CheckValueMismatch(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds, ISet<ReaderField> valMismatchKeys)
+        private static ICollection<Insanity> CheckValueMismatch( // LUCENENET: CA1822: Mark members as static
+            MapOfSets<int, FieldCache.CacheEntry> valIdToItems,
+            MapOfSets<ReaderField, int> readerFieldToValIds,
+            ISet<ReaderField> valMismatchKeys)
         {
             List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
 
@@ -208,7 +211,7 @@ namespace Lucene.Net.Util
         /// found that have an ancestry relationships.
         /// </summary>
         /// <seealso cref="InsanityType.SUBREADER"/>
-        private ICollection<Insanity> CheckSubreaders(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds)
+        private static ICollection<Insanity> CheckSubreaders(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds) // LUCENENET: CA1822: Mark members as static
         {
             List<Insanity> insanity = new List<Insanity>(23);
 
@@ -289,7 +292,7 @@ namespace Lucene.Net.Util
         /// the hierarchy of subReaders building up a list of the objects
         /// returned by <c>seed.CoreCacheKey</c>
         /// </summary>
-        private IList<object> GetAllDescendantReaderKeys(object seed)
+        private static IList<object> GetAllDescendantReaderKeys(object seed) // LUCENENET: CA1822: Mark members as static
         {
             var all = new List<object>(17) {seed}; // will grow as we iter
             for (var i = 0; i < all.Count; i++)

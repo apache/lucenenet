@@ -242,7 +242,7 @@ namespace Lucene.Net.Index
             /// publishing operation is synced on IW -> BDS so that the <see cref="SegmentInfo"/>'s
             /// delete generation is always <see cref="FrozenBufferedUpdates.DelGen"/> (<paramref name="globalPacket"/>) + 1
             /// </summary>
-            protected void PublishFlushedSegment(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates globalPacket)
+            protected static void PublishFlushedSegment(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates globalPacket) // LUCENENET: CA1822: Mark members as static
             {
                 if (Debugging.AssertsEnabled)
                 {

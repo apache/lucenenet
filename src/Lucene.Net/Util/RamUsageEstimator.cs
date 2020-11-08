@@ -904,7 +904,7 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Return the next possible capacity, counting from the current buffers' size.
             /// </summary>
-            private int NextCapacity(int current) // LUCENENET NOTE: made private, since protected is not valid in a sealed class
+            private static int NextCapacity(int current) // LUCENENET NOTE: made private, since protected is not valid in a sealed class // LUCENENET: CA1822: Mark members as static
             {
                 if (Debugging.AssertsEnabled)
                 {

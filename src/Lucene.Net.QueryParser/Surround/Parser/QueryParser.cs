@@ -54,6 +54,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     /// to two terms may appear between a and b. 
     /// </para>
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
     public class QueryParser
     {
         internal readonly int minimumPrefixLength = 3;

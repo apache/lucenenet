@@ -154,7 +154,7 @@ namespace Lucene.Net.Search
                 return new BooleanScorerCollector(mask, this);
             }
 
-            public int Count => SIZE; // LUCENENET NOTE: This was size() in Lucene.
+            public static int Count => SIZE; // LUCENENET NOTE: This was size() in Lucene. // LUCENENET: CA1822: Mark members as static
         }
 
         internal sealed class SubScorer

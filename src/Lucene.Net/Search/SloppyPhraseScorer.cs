@@ -211,7 +211,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Compare two pps, but only by position and offset </summary>
-        private PhrasePositions Lesser(PhrasePositions pp, PhrasePositions pp2)
+        private static PhrasePositions Lesser(PhrasePositions pp, PhrasePositions pp2) // LUCENENET: CA1822: Mark members as static
         {
             if (pp.position < pp2.position || (pp.position == pp2.position && pp.offset < pp2.offset))
             {
@@ -521,7 +521,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Actual position in doc of a PhrasePosition, relies on that position = tpPos - offset) </summary>
-        private int TpPos(PhrasePositions pp)
+        private static int TpPos(PhrasePositions pp) // LUCENENET: CA1822: Mark members as static
         {
             return pp.position + pp.offset;
         }
@@ -570,7 +570,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// bit-sets - for each repeating pp, for each of its repeating terms, the term ordinal values is set </summary>
-        private IList<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, IDictionary<Term, int?> tord)
+        private static IList<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, IDictionary<Term, int?> tord) // LUCENENET: CA1822: Mark members as static
         {
             List<FixedBitSet> bb = new List<FixedBitSet>(rpp.Length);
             foreach (PhrasePositions pp in rpp)
@@ -589,7 +589,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Union (term group) bit-sets until they are disjoint (O(n^^2)), and each group have different terms </summary>
-        private void UnionTermGroups(IList<FixedBitSet> bb)
+        private static void UnionTermGroups(IList<FixedBitSet> bb) // LUCENENET: CA1822: Mark members as static
         {
             int incr;
             for (int i = 0; i < bb.Count - 1; i += incr)
@@ -614,7 +614,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Map each term to the single group that contains it </summary>
-        private IDictionary<Term, int> TermGroups(JCG.LinkedDictionary<Term, int?> tord, IList<FixedBitSet> bb)
+        private static IDictionary<Term, int> TermGroups(JCG.LinkedDictionary<Term, int?> tord, IList<FixedBitSet> bb) // LUCENENET: CA1822: Mark members as static
         {
             Dictionary<Term, int> tg = new Dictionary<Term, int>();
             Term[] t = tord.Keys.ToArray(/*new Term[0]*/);

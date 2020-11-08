@@ -537,7 +537,7 @@ namespace TagSoup
         /// <param name="systemid"></param>
         /// <returns></returns>
 #pragma warning disable IDE0060 // Remove unused parameter
-        private Stream GetInputStream(string publicid, string systemid)
+        private static Stream GetInputStream(string publicid, string systemid) // LUCENENET: CA1822: Mark members as static
 #pragma warning restore IDE0060 // Remove unused parameter
         {
             var basis = new Uri("file://" + Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);

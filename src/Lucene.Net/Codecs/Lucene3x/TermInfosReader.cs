@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private static readonly IComparer<BytesRef> legacyComparer = BytesRef.UTF8SortedAsUTF16Comparer;
 
-        private int CompareAsUTF16(Term term1, Term term2)
+        private static int CompareAsUTF16(Term term1, Term term2) // LUCENENET: CA1822: Mark members as static
         {
             if (term1.Field.Equals(term2.Field, StringComparison.Ordinal))
             {
@@ -349,7 +349,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         // called only from asserts
-        private bool SameTermInfo(TermInfo ti1, TermInfo ti2, SegmentTermEnum enumerator)
+        private static bool SameTermInfo(TermInfo ti1, TermInfo ti2, SegmentTermEnum enumerator) // LUCENENET: CA1822: Mark members as static
         {
             if (ti1.DocFreq != ti2.DocFreq)
             {

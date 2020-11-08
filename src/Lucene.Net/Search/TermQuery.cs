@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
                 return termsEnum;
             }
 
-            private bool TermNotInReader(AtomicReader reader, Term term)
+            private static bool TermNotInReader(AtomicReader reader, Term term) // LUCENENET: CA1822: Mark members as static
             {
                 // only called from assert
                 //System.out.println("TQ.termNotInReader reader=" + reader + " term=" + field + ":" + bytes.utf8ToString());

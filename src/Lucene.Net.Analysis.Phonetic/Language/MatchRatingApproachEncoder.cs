@@ -277,7 +277,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="letter">The letter under investiagtion.</param>
         /// <returns><c>true</c> if a vowel, else <c>false</c>.</returns>
-        internal bool IsVowel(string letter)
+        internal static bool IsVowel(string letter) // LUCENENET: CA1822: Mark members as static
         {
             return letter.Equals("E", StringComparison.OrdinalIgnoreCase) || letter.Equals("A", StringComparison.OrdinalIgnoreCase) || letter.Equals("O", StringComparison.OrdinalIgnoreCase) ||
                    letter.Equals("I", StringComparison.OrdinalIgnoreCase) || letter.Equals("U", StringComparison.OrdinalIgnoreCase);
@@ -353,7 +353,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="accentedWord">The word that may have accents in it.</param>
         /// <returns>De-accented word.</returns>
-        internal string RemoveAccents(string accentedWord)
+        internal static string RemoveAccents(string accentedWord) // LUCENENET: CA1822: Mark members as static
         {
             if (accentedWord == null)
             {

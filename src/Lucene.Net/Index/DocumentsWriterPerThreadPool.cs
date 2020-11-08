@@ -282,7 +282,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal DocumentsWriterPerThread Reset(ThreadState threadState, bool closed)
+        internal static DocumentsWriterPerThread Reset(ThreadState threadState, bool closed) // LUCENENET: CA1822: Mark members as static
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(threadState.IsHeldByCurrentThread);
             DocumentsWriterPerThread dwpt = threadState.dwpt;
@@ -441,7 +441,7 @@ namespace Lucene.Net.Index
         /// if the parent <see cref="DocumentsWriter"/> is closed or aborted.
         /// </summary>
         /// <param name="threadState"> the state to deactivate </param>
-        internal void DeactivateThreadState(ThreadState threadState)
+        internal static void DeactivateThreadState(ThreadState threadState) // LUCENENET: CA1822: Mark members as static
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(threadState.IsActive);
             threadState.Deactivate();

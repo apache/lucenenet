@@ -193,7 +193,7 @@ namespace Lucene.Net.Store
         /// Copy the contents of the file with specified extension into the provided
         /// output stream.
         /// </summary>
-        private long CopyFileEntry(IndexOutput dataOut, FileEntry fileEntry)
+        private static long CopyFileEntry(IndexOutput dataOut, FileEntry fileEntry) // LUCENENET: CA1822: Mark members as static
         {
             IndexInput @is = fileEntry.Dir.OpenInput(fileEntry.File, IOContext.READ_ONCE);
             bool success = false;
