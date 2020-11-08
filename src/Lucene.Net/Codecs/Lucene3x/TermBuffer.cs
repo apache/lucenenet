@@ -147,16 +147,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public object Clone()
         {
-            TermBuffer clone = null;
-            try
-            {
-                clone = (TermBuffer)base.MemberwiseClone();
-            }
-#pragma warning disable 168
-            catch (InvalidOperationException e)
-#pragma warning restore 168
-            {
-            }
+            // LUCENENET: MemberwiseClone() doesn't throw in .NET
+            TermBuffer clone = (TermBuffer)base.MemberwiseClone();
             clone.bytes = BytesRef.DeepCopyOf(bytes);
             return clone;
         }

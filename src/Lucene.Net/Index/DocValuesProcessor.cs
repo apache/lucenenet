@@ -225,10 +225,9 @@ namespace Lucene.Net.Index
                 {
                     writer.Abort();
                 }
-#pragma warning disable 168
-                catch (Exception t)
-#pragma warning restore 168
+                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
+                    // ignore
                 }
             }
             writers.Clear();

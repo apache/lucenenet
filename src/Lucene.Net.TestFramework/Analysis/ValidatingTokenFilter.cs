@@ -90,7 +90,7 @@ namespace Lucene.Net.Analysis
 
             int startOffset = 0;
             int endOffset = 0;
-            int posLen = 0;
+            int posLen; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             if (posIncAtt != null)
             {

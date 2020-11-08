@@ -81,7 +81,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             NumberFormat numberFormat = numericConfig.NumberFormat;
                             string text = fieldNode.GetTextAsString();
                             /*Number*/
-                            object number = null;
+                            object number; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                             if (text.Length > 0)
                             {

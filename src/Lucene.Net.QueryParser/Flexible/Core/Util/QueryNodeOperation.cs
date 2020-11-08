@@ -61,7 +61,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             else
                 op = ANDOperation.NONE;
 
-            IQueryNode result = null;
+            IQueryNode result; // LUCENENET: IDE0059: Remove unnecessary value assignment
             switch (op)
             {
                 case ANDOperation.NONE:

@@ -348,7 +348,7 @@ namespace TagSoup
                         else if (statetable[i + 1] == ch)
                         {
                             hit = i;
-                            action = statetable[i + 2];
+                            //action = statetable[i + 2]; // LUCENENET: IDE0059: Remove unnecessary value assignment
                             break;
                         }
                     }
@@ -539,12 +539,12 @@ namespace TagSoup
                             if (ent < 0x20)
                             {
                                 // Control becomes space
-                                ent = 0x20;
+                                //ent = 0x20; // LUCENENET: IDE0059: Remove unnecessary value assignment
                             }
                             else if (ent >= 0xD800 && ent <= 0xDFFF)
                             {
                                 // Surrogates get dropped
-                                ent = 0;
+                                //ent = 0; // LUCENENET: IDE0059: Remove unnecessary value assignment
                             }
                             else if (ent <= 0xFFFF)
                             {

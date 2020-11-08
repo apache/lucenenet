@@ -59,9 +59,7 @@ namespace Lucene.Net.Store
             {
                 SetLockFactory(new SingleInstanceLockFactory());
             }
-#pragma warning disable 168
-            catch (IOException e)
-#pragma warning restore 168
+            catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
             {
                 // Cannot happen
             }

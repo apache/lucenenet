@@ -92,12 +92,10 @@ namespace Lucene.Net.Store
                 {
                     lockFile.Delete();
                 }
-#pragma warning disable 168
                 catch (Exception e)
-#pragma warning restore 168
                 {
                     if (lockFile.Exists) // Delete failed and lockFile exists
-                        throw new IOException("Cannot delete " + lockFile);
+                        throw new IOException("Cannot delete " + lockFile, e); // LUCENENET specific: wrapped inner exception
                 }
             }
         }

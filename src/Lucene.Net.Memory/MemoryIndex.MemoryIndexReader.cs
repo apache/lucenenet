@@ -231,7 +231,7 @@ namespace Lucene.Net.Index.Memory
 
                 internal int BinarySearch(BytesRef b, BytesRef bytesRef, int low, int high, BytesRefHash hash, int[] ords, IComparer<BytesRef> comparer)
                 {
-                    int mid = 0;
+                    int mid; // LUCENENET: IDE0059: Remove unnecessary value assignment
                     while (low <= high)
                     {
                         mid = (int)((uint)(low + high) >> 1);

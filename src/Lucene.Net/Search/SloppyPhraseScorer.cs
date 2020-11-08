@@ -580,10 +580,9 @@ namespace Lucene.Net.Search
             foreach (PhrasePositions pp in rpp)
             {
                 FixedBitSet b = new FixedBitSet(tord.Count);
-                var ord = new int?();
                 foreach (var t in pp.terms)
                 {
-                    if (tord.TryGetValue(t, out ord) && ord != null)
+                    if (tord.TryGetValue(t, out int? ord) && ord.HasValue)
                         b.Set((int)ord);
                 }
                 bb.Add(b);

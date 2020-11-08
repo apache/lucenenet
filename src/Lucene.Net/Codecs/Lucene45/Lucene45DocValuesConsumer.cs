@@ -409,8 +409,8 @@ namespace Lucene.Net.Codecs.Lucene45
                 // write addresses of indexed terms
                 termAddresses.Finish();
                 addressBuffer.WriteTo(data);
-                addressBuffer = null;
-                termAddresses = null;
+                //addressBuffer = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
+                //termAddresses = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 meta.WriteVInt32(minLength);
                 meta.WriteVInt32(maxLength);
                 meta.WriteVInt64(count);

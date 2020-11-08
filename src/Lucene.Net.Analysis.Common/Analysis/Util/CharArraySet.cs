@@ -577,8 +577,7 @@ namespace Lucene.Net.Analysis.Util
             // we just need to return true if the other set
             // contains all of the elements of the this set,
             // but we need to use the comparison rules of the current set.
-            int foundCount, unfoundCount;
-            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int _);
             return foundCount == this.Count;
         }
 
@@ -600,8 +599,7 @@ namespace Lucene.Net.Analysis.Util
             // we just need to return true if the other set
             // contains all of the elements of the this set,
             // but we need to use the comparison rules of the current set.
-            int foundCount, unfoundCount;
-            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int _);
             return foundCount == this.Count;
         }
 
@@ -682,8 +680,7 @@ namespace Lucene.Net.Analysis.Util
             // we just need to return true if the other set
             // contains all of the elements of the this set plus at least one more,
             // but we need to use the comparison rules of the current set.
-            int foundCount, unfoundCount;
-            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
             return foundCount == this.Count && unfoundCount > 0;
         }
 
@@ -706,8 +703,7 @@ namespace Lucene.Net.Analysis.Util
             // we just need to return true if the other set
             // contains all of the elements of the this set plus at least one more,
             // but we need to use the comparison rules of the current set.
-            int foundCount, unfoundCount;
-            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
             return foundCount == this.Count && unfoundCount > 0;
         }
 
@@ -743,8 +739,7 @@ namespace Lucene.Net.Analysis.Util
                     return this.ContainsAll(set);
                 }
             }
-            int foundCount, unfoundCount;
-            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
             return foundCount < this.Count && unfoundCount == 0;
         }
 
@@ -768,8 +763,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 return true;
             }
-            int foundCount, unfoundCount;
-            this.GetFoundAndUnfoundCounts(other, out foundCount, out unfoundCount);
+            this.GetFoundAndUnfoundCounts(other, out int foundCount, out int unfoundCount);
             return foundCount < this.Count && unfoundCount == 0;
         }
 

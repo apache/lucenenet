@@ -233,9 +233,9 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                 }
                 // log.info("serialize bigram dict.");
             }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
             catch (Exception e)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
             {
                 // log.warn(e.getMessage());
             }

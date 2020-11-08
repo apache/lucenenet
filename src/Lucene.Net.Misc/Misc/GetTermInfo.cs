@@ -31,9 +31,9 @@ namespace Lucene.Net.Misc
         public static void Main(string[] args)
         {
 
-            FSDirectory dir = null;
-            string inputStr = null;
-            string field = null;
+            FSDirectory dir; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            string inputStr; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            string field; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             if (args.Length == 3)
             {

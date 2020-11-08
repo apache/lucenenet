@@ -578,7 +578,7 @@ namespace Lucene.Net.Codecs.Compressing
                             }
                             // encode seq 1
                             EncodeSequence(src, anchor, match1.@ref, match1.start, match1.len, @out);
-                            anchor = sOff = match1.End();
+                            anchor = /*sOff =*/ match1.End(); // LUCENENET: IDE0059: Remove unnecessary value assignment
                             // encode seq 2
                             EncodeSequence(src, anchor, match2.@ref, match2.start, match2.len, @out);
                             anchor = sOff = match2.End();
@@ -600,7 +600,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 }
 
                                 EncodeSequence(src, anchor, match1.@ref, match1.start, match1.len, @out);
-                                anchor = sOff = match1.End();
+                                anchor = /*sOff =*/ match1.End(); // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                                 CopyTo(match3, match1);
                                 CopyTo(match2, match0);
@@ -635,7 +635,7 @@ namespace Lucene.Net.Codecs.Compressing
                         }
 
                         EncodeSequence(src, anchor, match1.@ref, match1.start, match1.len, @out);
-                        anchor = sOff = match1.End();
+                        anchor = /*sOff =*/ match1.End(); // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                         CopyTo(match2, match1);
                         CopyTo(match3, match2);

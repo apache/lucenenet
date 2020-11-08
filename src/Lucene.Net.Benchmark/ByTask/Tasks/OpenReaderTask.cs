@@ -43,7 +43,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public override int DoLogic()
         {
             Store.Directory dir = RunData.Directory;
-            DirectoryReader r = null;
+            DirectoryReader r; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (commitUserData != null)
             {
                 r = DirectoryReader.Open(OpenReaderTask.FindIndexCommit(dir, commitUserData));

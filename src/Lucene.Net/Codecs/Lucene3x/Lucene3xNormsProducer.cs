@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             Directory separateNormsDir = info.Dir; // separate norms are never inside CFS
             maxdoc = info.DocCount;
-            string segmentName = info.Name;
+            //string segmentName = info.Name; // LUCENENET: IDE0059: Remove unnecessary value assignment
             bool success = false;
             try
             {

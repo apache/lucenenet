@@ -245,7 +245,7 @@ namespace Lucene.Net.Collation
             StringBuilder sb = new StringBuilder();
             char[] buffer = new char[1024];
             TextReader r = IOUtils.GetDecodingReader(input, Encoding.UTF8);
-            int len = 0;
+            int len; // LUCENENET: IDE0059: Remove unnecessary value assignment
             while ((len = r.Read(buffer, 0, buffer.Length)) > 0)
             {
                 sb.Append(buffer, 0, len);

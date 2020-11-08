@@ -265,7 +265,7 @@ namespace Lucene.Net.QueryParsers.Classic
         public Query Clause(string field)
         {
             Query q;
-            Token fieldToken = null, boost = null;
+            Token fieldToken, boost = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (Jj_2_1(2))
             {
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)

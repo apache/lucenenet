@@ -217,7 +217,7 @@ namespace Lucene.Net.Search.Spans
                 if (queueStale) // maintain the queue
                 {
                     ListToQueue();
-                    queueStale = false;
+                    //queueStale = false; // LUCENENET: IDE0059: Remove unnecessary value assignment (this is reset to false at the beginning of the loop)
                 }
 
                 if (AtMatch)

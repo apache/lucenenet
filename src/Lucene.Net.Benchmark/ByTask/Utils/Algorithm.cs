@@ -185,7 +185,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
                             case ':':
                                 if (!colonOk) throw new Exception("colon unexpexted: - " + stok.ToString());
-                                colonOk = false;
+                                //colonOk = false; // LUCENENET: IDE0059: Remove unnecessary value assignment - this is assigned again below without being read
                                 // get repetitions number
                                 stok.NextToken();
                                 if ((char)stok.TokenType == '*')

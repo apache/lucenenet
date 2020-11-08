@@ -130,10 +130,9 @@ namespace Lucene.Net.Store
                     {
                         reason += ": " + FailureReason;
                     }
-                    LockObtainFailedException e = new LockObtainFailedException(reason);
-                    e = FailureReason != null
-                                        ? new LockObtainFailedException(reason, FailureReason)
-                                        : new LockObtainFailedException(reason);
+                    LockObtainFailedException e = FailureReason != null
+                        ? new LockObtainFailedException(reason, FailureReason)
+                        : new LockObtainFailedException(reason);
                     throw e;
                 }
 

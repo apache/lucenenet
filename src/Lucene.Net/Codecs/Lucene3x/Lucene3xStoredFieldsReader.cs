@@ -227,10 +227,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         Dispose();
                     } // keep our original exception
-#pragma warning disable 168
-                    catch (Exception t)
-#pragma warning restore 168
+                    catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                     {
+                        // ignored
                     }
                 }
             }

@@ -172,7 +172,7 @@ namespace Lucene.Net.Support.IO
             }
             // Ensure the directory exists (this does nothing if it already exists, although may throw exceptions in cases where permissions are changed)
             directory.Create();
-            string fileName = string.Empty;
+            string fileName;
 
             while (true)
             {

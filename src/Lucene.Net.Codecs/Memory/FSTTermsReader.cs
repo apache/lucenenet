@@ -497,7 +497,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
 
                     Frame frame;
-                    frame = LoadVirtualFrame(NewFrame());
+                    /*frame = */LoadVirtualFrame(NewFrame()); // LUCENENET: IDE0059: Remove unnecessary value assignment
                     this.level++;
                     frame = LoadFirstFrame(NewFrame());
                     PushFrame(frame);

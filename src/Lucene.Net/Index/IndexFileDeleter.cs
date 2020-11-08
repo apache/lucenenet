@@ -146,14 +146,12 @@ namespace Lucene.Net.Index
             long currentGen = segmentInfos.Generation;
 
             CommitPoint currentCommitPoint = null;
-            string[] files = null;
+            string[] files/* = null*/;
             try
             {
                 files = directory.ListAll();
             }
-#pragma warning disable 168
-            catch (DirectoryNotFoundException e)
-#pragma warning restore 168
+            catch (DirectoryNotFoundException) // LUCENENET: IDE0059: Remove unnecessary value assignment
             {
                 // it means the directory is empty, so ignore it.
                 files = Arrays.Empty<string>();

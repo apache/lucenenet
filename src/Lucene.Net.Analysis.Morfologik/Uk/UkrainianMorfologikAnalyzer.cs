@@ -66,13 +66,11 @@ namespace Lucene.Net.Analysis.Uk
                         LuceneVersion.LUCENE_CURRENT);
 #pragma warning restore 612, 618
                 }
-#pragma warning disable 168
                 catch (IOException ex)
-#pragma warning restore 168
                 {
                     // default set should always be present as it is part of the
                     // distribution (JAR)
-                    throw new Exception("Unable to load default stopword set");
+                    throw new Exception("Unable to load default stopword set", ex);
                 }
             }
         }

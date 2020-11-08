@@ -215,14 +215,16 @@ namespace Lucene.Net.Codecs.Lucene3x
             int delCount = input.ReadInt32();
             if (Debugging.AssertsEnabled) Debugging.Assert(delCount <= docCount);
 
-            bool hasProx = input.ReadByte() == 1;
+            //bool hasProx = input.ReadByte() == 1;
+            input.ReadByte(); // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             IDictionary<string, string> diagnostics = input.ReadStringStringMap();
 
             if (format <= Lucene3xSegmentInfoFormat.FORMAT_HAS_VECTORS)
             {
                 // NOTE: unused
-                int hasVectors = input.ReadByte();
+                //int hasVectors = input.ReadByte();
+                input.ReadByte(); // LUCENENET: IDE0059: Remove unnecessary value assignment
             }
 
             // Replicate logic from 3.x's SegmentInfo.files():

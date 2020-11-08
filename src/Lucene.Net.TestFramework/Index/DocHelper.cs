@@ -249,9 +249,7 @@ namespace Lucene.Net.Index
             {
                 LAZY_FIELD_BINARY_BYTES = "These are some binary field bytes".GetBytes(Encoding.UTF8);
             }
-#pragma warning disable 168
-            catch (EncoderFallbackException e)
-#pragma warning restore 168
+            catch (EncoderFallbackException)
             {
             }
             LazyFieldBinary = new StoredField(LAZY_FIELD_BINARY_KEY, LAZY_FIELD_BINARY_BYTES);

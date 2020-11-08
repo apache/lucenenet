@@ -826,7 +826,7 @@ namespace Lucene.Net.Index
                     return DoBody(commit.SegmentsFileName);
                 }
 
-                string segmentFileName = null;
+                string segmentFileName/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 long lastGen = -1;
                 long gen = 0;
                 int genLookaheadCount = 0;
@@ -860,11 +860,9 @@ namespace Lucene.Net.Index
                         // as there is no stale caching on the directory
                         // contents (NOTE: NFS clients often have such stale
                         // caching):
-                        string[] files = null;
+                        string[] files = directory.ListAll(); // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                         long genA = -1;
-
-                        files = directory.ListAll();
 
                         if (files != null)
                         {
@@ -1041,9 +1039,7 @@ namespace Lucene.Net.Index
                                 directory.OpenInput(prevSegmentFileName, IOContext.DEFAULT).Dispose();
                                 prevExists = true;
                             }
-#pragma warning disable 168
-                            catch (IOException ioe)
-#pragma warning restore 168
+                            catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                             {
                                 prevExists = false;
                             }

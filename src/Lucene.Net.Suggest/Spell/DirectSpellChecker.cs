@@ -365,7 +365,7 @@ namespace Lucene.Net.Search.Spell
                 docfreq = Math.Max(docfreq, (int)(thresholdFrequency * maxDoc) - 1);
             }
 
-            ICollection<ScoreTerm> terms = null;
+            ICollection<ScoreTerm> terms; // LUCENENET: IDE0059: Remove unnecessary value assignment
             int inspections = numSug * maxInspections;
 
             // try ed=1 first, in case we get lucky

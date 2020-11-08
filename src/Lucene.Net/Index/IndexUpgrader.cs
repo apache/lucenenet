@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
                 PrintUsage();
             }
 
-            Directory dir = null;
+            Directory dir/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (dirImpl == null)
             {
                 dir = FSDirectory.Open(new DirectoryInfo(path));

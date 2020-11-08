@@ -411,9 +411,7 @@ namespace Lucene.Net.Index
                         m_ordBase = (int)te.Ord;
                         //System.out.println("got ordBase=" + ordBase);
                     }
-#pragma warning disable 168
-                    catch (NotSupportedException uoe)
-#pragma warning restore 168
+                    catch (NotSupportedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                     {
                         // Reader cannot provide ord support, so we wrap
                         // our own support by creating our own terms index:
@@ -1065,7 +1063,7 @@ namespace Lucene.Net.Index
 
             public override void LookupOrd(long ord, BytesRef result)
             {
-                BytesRef @ref = null;
+                BytesRef @ref/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 try
                 {
                     @ref = outerInstance.LookupTerm(te, (int)ord);

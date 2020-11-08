@@ -225,10 +225,10 @@ namespace Lucene.Net.Analysis
                         termUnicode[j++] = cp = Character.CodePointAt(utf16, i);
                     }
                 }
-                else
-                {
-                    termLen = termUTF8.Length;
-                }
+                //else
+                //{
+                //    termLen = termUTF8.Length; // LUCENENET: IDE0059: Remove unnecessary value assignment
+                //}
 
                 for (int byteIDX = 0; byteIDX < termLen; byteIDX++)
                 {

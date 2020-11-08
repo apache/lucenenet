@@ -85,7 +85,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             }
             if (Level == 0)
             {
-                var x = Shape;//ensure any lazy instantiation completes to make this threadsafe
+                var _ = Shape;//ensure any lazy instantiation completes to make this threadsafe
             }
         }
 

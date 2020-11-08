@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>The min rating value.</returns>
         internal int GetMinRating(int sumLength)
         {
-            int minRating = 0;
+            int minRating; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             if (sumLength <= FOUR)
             {
@@ -259,7 +259,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             // 5. Obtain the minimum rating value by calculating the length sum of the
             // encoded strings and sending it down.
             int sumLength = Math.Abs(name1.Length + name2.Length);
-            int minRating = 0;
+            int minRating; // LUCENENET: IDE0059: Remove unnecessary value assignment
             minRating = GetMinRating(sumLength);
 
             // 6. Process the encoded strings from left to right and remove any
@@ -298,11 +298,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             int name1Size = name1.Length - 1;
             int name2Size = name2.Length - 1;
 
-            string name1LtRStart = EMPTY;
-            string name1LtREnd = EMPTY;
+            string name1LtRStart/* = EMPTY*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            string name1LtREnd/* = EMPTY*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
-            string name2RtLStart = EMPTY;
-            string name2RtLEnd = EMPTY;
+            string name2RtLStart/* = EMPTY*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            string name2RtLEnd/* = EMPTY*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             for (int i = 0; i < name1Char.Length; i++)
             {

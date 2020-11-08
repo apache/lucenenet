@@ -24,7 +24,8 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     /// <summary>
     /// Token Manager.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
+	[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
     public class QueryParserTokenManager //: QueryParserConstants
     {
         /// <summary>Debug output. </summary>

@@ -273,7 +273,8 @@ namespace Lucene.Net.Analysis.Standard
         {
             int[] result = new int[3116];
             int offset = 0;
-            offset = ZzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
+            /*offset = */
+            ZzUnpackAction(ZZ_ACTION_PACKED_0, offset, result); // LUCENENET: IDE0059: Remove unnecessary value assignment
             return result;
         }
 
@@ -693,7 +694,8 @@ namespace Lucene.Net.Analysis.Standard
         {
             int[] result = new int[3116];
             int offset = 0;
-            offset = ZzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
+            /*offset = */
+            ZzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result); // LUCENENET: IDE0059: Remove unnecessary value assignment
             return result;
         }
 
@@ -8966,7 +8968,7 @@ namespace Lucene.Net.Analysis.Standard
             int offset = 0;
             offset = ZzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
             offset = ZzUnpackTrans(ZZ_TRANS_PACKED_1, offset, result);
-            offset = ZzUnpackTrans(ZZ_TRANS_PACKED_2, offset, result);
+            /*offset = */ZzUnpackTrans(ZZ_TRANS_PACKED_2, offset, result); // LUCENENET: IDE0059: Remove unnecessary value assignment
             return result;
         }
 
@@ -9038,7 +9040,7 @@ namespace Lucene.Net.Analysis.Standard
         {
             int[] result = new int[3116];
             int offset = 0;
-            offset = ZzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
+            /*offset = */ZzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result); // LUCENENET: IDE0059: Remove unnecessary value assignment
             return result;
         }
 

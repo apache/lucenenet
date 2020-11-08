@@ -156,9 +156,7 @@ namespace Lucene.Net.Index
                         {
                             r.DecRef();
                         }
-#pragma warning disable 168
-                        catch (Exception th)
-#pragma warning restore 168
+                        catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                         {
                             // ignore any exception that is thrown here to not mask any original
                             // exception.
@@ -485,9 +483,7 @@ namespace Lucene.Net.Index
                 {
                     writer.DecRefDeleter(segmentInfos);
                 }
-#pragma warning disable 168
-                catch (ObjectDisposedException ex)
-#pragma warning restore 168
+                catch (ObjectDisposedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
                     // this is OK, it just means our original writer was
                     // closed before we were, and this may leave some

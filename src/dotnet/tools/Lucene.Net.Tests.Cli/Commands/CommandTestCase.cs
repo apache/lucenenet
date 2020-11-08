@@ -149,7 +149,7 @@ namespace Lucene.Net.Cli.Commands
         public virtual MockConsoleApp RunCommand(string command)
         {
             var output = new MockConsoleApp();
-            var cmd = CreateConfiguration(output).Execute(command.ToArgs());
+            CreateConfiguration(output).Execute(command.ToArgs());
             return output;
         }
 

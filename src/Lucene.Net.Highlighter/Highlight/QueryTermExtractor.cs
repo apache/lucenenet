@@ -122,9 +122,7 @@ namespace Lucene.Net.Search.Highlight
                     }
                 }
             }
-#pragma warning disable 168
-            catch (NotSupportedException ignore)
-#pragma warning restore 168
+            catch (NotSupportedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
             {
                 //this is non-fatal for our purposes
             }

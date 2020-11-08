@@ -184,7 +184,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             StandardTermState termState2 = (StandardTermState)termState;
             // if (DEBUG) System.out.println("SPR: nextTerm seg=" + segment + " tbOrd=" + termState2.termBlockOrd + " bytesReader.fp=" + termState.bytesReader.getPosition());
-            bool isFirstTerm = termState2.TermBlockOrd == 0;
+            //bool isFirstTerm = termState2.TermBlockOrd == 0; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (absolute)
             {
                 termState2.freqOffset = 0;

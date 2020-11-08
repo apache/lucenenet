@@ -48,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             {
                 QueryConfigHandler config = GetQueryConfigHandler();
 
-                FuzzyConfig fuzzyConfig = null;
+                FuzzyConfig fuzzyConfig; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                 if (config != null && (fuzzyConfig = config.Get(ConfigurationKeys.FUZZY_CONFIG)) != null)
                 {

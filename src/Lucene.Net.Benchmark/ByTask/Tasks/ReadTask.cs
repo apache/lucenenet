@@ -89,7 +89,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             // optionally warm and add num docs traversed to count
             if (WithWarm)
             {
-                Document doc = null;
+                Document doc; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 IBits liveDocs = MultiFields.GetLiveDocs(reader);
                 for (int m = 0; m < reader.MaxDoc; m++)
                 {

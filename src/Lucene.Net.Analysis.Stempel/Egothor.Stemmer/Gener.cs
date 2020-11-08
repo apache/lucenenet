@@ -77,7 +77,7 @@ namespace Egothor.Stemmer
         public override Trie Optimize(Trie orig)
         {
             IList<string> cmds = orig.cmds;
-            IList<Row> rows = new List<Row>();
+            IList<Row> rows; // LUCENENET: IDE0059: Remove unnecessary value assignment
             IList<Row> orows = orig.rows;
             int[] remap = new int[orows.Count];
 

@@ -47,7 +47,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         protected override ICollector CreateCollector()
         {
-            ICollector collector = null;
+            ICollector collector; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (m_clnName.Equals("topScoreDocOrdered", StringComparison.OrdinalIgnoreCase) == true)
             {
                 collector = TopScoreDocCollector.Create(NumHits, true);

@@ -1269,9 +1269,9 @@ namespace Lucene.Net.Util
                         return p;
                     }
                 }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                 catch (Exception ignored)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                 {
                     // Loop trying until we hit something that compiles.
                 }

@@ -24,6 +24,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
     /// <summary>Token Manager. </summary>
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
+	[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
     public class QueryParserTokenManager //: QueryParserConstants
     {
         private void  InitBlock()
@@ -784,7 +785,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 else if (m_curChar < 128)
                 {
                     ulong l = (ulong) (1L << (m_curChar & 63));
-                    do 
+                    do
                     {
                         switch (jjstateSet[--i])
                         {

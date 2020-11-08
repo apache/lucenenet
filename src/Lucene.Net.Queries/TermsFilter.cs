@@ -225,7 +225,7 @@ namespace Lucene.Net.Queries
             {
                 return result;
             }
-            Terms terms = null;
+            Terms terms; // LUCENENET: IDE0059: Remove unnecessary value assignment
             TermsEnum termsEnum = null;
             DocsEnum docs = null;
             foreach (TermsAndField termsAndField in this.termsAndFields)

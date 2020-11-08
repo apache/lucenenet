@@ -563,7 +563,7 @@ namespace Lucene.Net.Index
             int numSegments = sis.Count;
             string segmentsFileName = sis.GetSegmentsFileName();
             // note: we only read the format byte (required preamble) here!
-            IndexInput input = null;
+            IndexInput input/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             try
             {
                 input = dir.OpenInput(segmentsFileName, IOContext.READ_ONCE);
@@ -582,7 +582,7 @@ namespace Lucene.Net.Index
                 result.CantOpenSegments = true;
                 return result;
             }
-            int format = 0;
+            int format/* = 0*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             try
             {
                 format = input.ReadInt32();
@@ -625,7 +625,7 @@ namespace Lucene.Net.Index
                 userDataString = "";
             }
 
-            string versionString = null;
+            string versionString/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (oldSegs != null)
             {
                 if (foundNonNullVersion)
@@ -2497,7 +2497,7 @@ namespace Lucene.Net.Index
             }
 
             Console.WriteLine("\nOpening index @ " + indexPath + "\n");
-            Directory dir = null;
+            Directory dir/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             try
             {
                 if (dirImpl == null)

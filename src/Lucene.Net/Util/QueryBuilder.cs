@@ -198,7 +198,7 @@ namespace Lucene.Net.Util
             int numTokens = 0;
             int positionCount = 0;
             bool severalTokensAtSamePosition = false;
-            bool hasMoreTokens = false;
+            bool hasMoreTokens/* = false*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             TokenStream source = null;
             try

@@ -324,7 +324,7 @@ namespace Egothor.Stemmer
             if (deletes != @base)
             {
                 result.Append("D" + (deletes));
-                deletes = @base;
+                //deletes = @base; // LUCENENET: IDE0059: Remove unnecessary value assignment
             }
 
             return result.ToString();

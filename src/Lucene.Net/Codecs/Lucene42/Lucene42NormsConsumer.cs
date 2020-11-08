@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.Lucene42
             long maxValue = long.MinValue;
             long gcd = 0;
             // TODO: more efficient?
-            JCG.HashSet<long> uniqueValues = null;
+            JCG.HashSet<long> uniqueValues/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (true)
             {
                 uniqueValues = new JCG.HashSet<long>();

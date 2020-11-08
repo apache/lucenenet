@@ -1251,7 +1251,7 @@ namespace Lucene.Net.Index
                     // Save away this TermState:
                     termStates.Add(termsEnum.GetTermState());
                     termStateTerms.Add(fieldAndTerm);
-                    useTermState = true;
+                    //useTermState = true; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 }
 
                 // 10% of the time make sure you can pull another enum
@@ -1282,7 +1282,7 @@ namespace Lucene.Net.Index
             {
                 while (iterator.MoveNext())
                 {
-                    var dummy = iterator.Current;
+                    var _ = iterator.Current;
                     // .NET: Testing for iterator.Remove() isn't applicable
                 }
                 Assert.IsFalse(iterator.MoveNext());

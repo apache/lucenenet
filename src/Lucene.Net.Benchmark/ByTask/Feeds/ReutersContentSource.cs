@@ -48,7 +48,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             base.SetConfig(config);
             DirectoryInfo workDir = new DirectoryInfo(config.Get("work.dir", "work"));
             string d = config.Get("docs.dir", "reuters-out");
-            dataDir = new DirectoryInfo(d);
+            dataDir = new DirectoryInfo(Path.Combine(workDir.FullName, d));
             inputFiles.Clear();
             CollectFiles(dataDir, inputFiles);
             if (inputFiles.Count == 0)

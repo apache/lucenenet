@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         private void GenerateBiSegGraph(SegGraph segGraph)
         {
             double smooth = 0.1;
-            int wordPairFreq = 0;
+            int wordPairFreq; // LUCENENET: IDE0059: Remove unnecessary value assignment
             int maxStart = segGraph.MaxStart;
             double oneWordFreq, weight, tinyDouble = 1.0 / Utility.MAX_FREQUENCE;
 
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             segTokenList = segGraph.MakeIndex();
             // Because the beginning position of startToken is -1, therefore startToken can be obtained when key = -1
             int key = -1;
-            IList<SegToken> nextTokens = null;
+            IList<SegToken> nextTokens; // LUCENENET: IDE0059: Remove unnecessary value assignment
             while (key < maxStart)
             {
                 if (segGraph.IsStartExist(key))

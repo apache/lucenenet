@@ -147,7 +147,7 @@ namespace Lucene.Net.Expressions.JS
         private static void UnusedTestCompile()
         {
             FunctionValues f = null;
-            double ret = f.DoubleVal(2);
+            /*double ret = */f.DoubleVal(2); // LUCENENET: IDE0059: Remove unnecessary value assignment
         }
 
         /// <summary>Constructs a compiler for expressions.</summary>

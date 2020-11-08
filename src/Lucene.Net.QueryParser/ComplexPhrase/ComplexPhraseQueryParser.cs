@@ -332,7 +332,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
                 SpanQuery[] includeClauses = positiveClauses
                     .ToArray();
 
-                SpanQuery include = null;
+                SpanQuery include; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 if (includeClauses.Length == 1)
                 {
                     include = includeClauses[0]; // only one positive clause

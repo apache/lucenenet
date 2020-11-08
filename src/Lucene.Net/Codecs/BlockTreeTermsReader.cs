@@ -1550,10 +1550,10 @@ namespace Lucene.Net.Codecs
                         // Empty string prefix must have an output in the index!
                         if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
                     }
-                    else
-                    {
-                        arc = null;
-                    }
+                    //else
+                    //{
+                    //    arc = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
+                    //}
                     currentFrame = staticFrame;
                     //currentFrame = pushFrame(arc, rootCode, 0);
                     //currentFrame.loadBlock();
@@ -3005,7 +3005,7 @@ namespace Lucene.Net.Codecs
 
                         if (Debugging.AssertsEnabled) Debugging.Assert(numFollowFloorBlocks != 0);
 
-                        long newFP = fpOrig;
+                        long newFP/* = fpOrig*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
                         while (true)
                         {
                             long code = floorDataReader.ReadVInt64();

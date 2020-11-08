@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.Memory
                 this.metaLongsBlock = new byte[(int)blockIn.ReadVInt64()];
                 this.metaBytesBlock = new byte[(int)blockIn.ReadVInt64()];
 
-                int last = 0, next = 0;
+                int last = 0, next; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 for (int i = 1; i < numBlocks; i++)
                 {
                     next = numSkipInfo * i;
@@ -615,7 +615,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
 
                     Frame frame;
-                    frame = LoadVirtualFrame(NewFrame());
+                    /*frame = */LoadVirtualFrame(NewFrame()); // LUCENENET: IDE0059: Remove unnecessary value assignment
                     this.level++;
                     frame = LoadFirstFrame(NewFrame());
                     PushFrame(frame);

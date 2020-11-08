@@ -93,10 +93,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 Dispose();
             }
-#pragma warning disable 168
-            catch (Exception ignored)
-#pragma warning restore 168
+            catch (Exception)
             {
+                // ignored
             }
             IOUtils.DeleteFilesIgnoringExceptions(directory, 
                 IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), 

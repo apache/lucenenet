@@ -1126,9 +1126,9 @@ namespace Lucene.Net.Analysis
                         }
                         // Throw an errant exception from the Reader:
 
-                        MockReaderWrapper evilReader = new MockReaderWrapper(random, new StringReader(text));
+                        using MockReaderWrapper evilReader = new MockReaderWrapper(random, new StringReader(text));
                         evilReader.ThrowExcAfterChar(random.Next(text.Length)); // LUCENENET note, Next() is exclusive, so we don't need +1
-                        reader = evilReader;
+                        //reader = evilReader; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                         try
                         {

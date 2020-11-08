@@ -231,9 +231,7 @@ namespace Lucene.Net.Store
                 {
                     @delegate.DeleteFile(name);
                 }
-#pragma warning disable 168
-                catch (IOException ioe)
-#pragma warning restore 168
+                catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
                     // this is fine: file may not exist
                 }
@@ -245,9 +243,7 @@ namespace Lucene.Net.Store
                 {
                     cache.DeleteFile(name);
                 }
-#pragma warning disable 168
-                catch (IOException ioe)
-#pragma warning restore 168
+                catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
                     // this is fine: file may not exist
                 }

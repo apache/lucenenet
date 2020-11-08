@@ -137,7 +137,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                     if (collectMatchLine)
                     {
                         sb.Append(sep + line);
-                        sep = newline;
+                        //sep = newline; // LUCENENET: IDE0059: Remove unnecessary value assignment - this skips out of the loop
                     }
                     break;
                 }

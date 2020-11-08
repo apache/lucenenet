@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
             MergeSpecification mergeSpec = null;
             //System.out.println("MRMP: findMerges sis=" + segmentInfos);
 
-            int numSegments = segmentInfos.Count;
+            int numSegments/* = segmentInfos.Count*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             IList<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
             ICollection<SegmentCommitInfo> merging = base.m_writer.Get().MergingSegments;

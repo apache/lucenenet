@@ -547,7 +547,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
 
         public void OptionalWeights(SrndQuery q)
         {
-            Token weight = null;
+            Token weight; // LUCENENET: IDE0059: Remove unnecessary value assignment
             while (true)
             {
                 switch ((jj_ntk == -1) ? Jj_ntk() : jj_ntk)

@@ -2454,11 +2454,9 @@ namespace Lucene.Net.Util
             {
                 return this.GetType().getResourceAsStream(name);
             }
-#pragma warning disable 168
             catch (Exception e)
-#pragma warning restore 168
             {
-                throw new IOException("Cannot find resource: " + name);
+                throw new IOException("Cannot find resource: " + name, e); // LUCENENET specific - wrapped inner exception
             }
         }
 
@@ -3424,9 +3422,9 @@ namespace Lucene.Net.Util
                         iterate = false;
                     }
                 }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                 catch (IOException exc)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                 {
                     iterate = true;
                 }

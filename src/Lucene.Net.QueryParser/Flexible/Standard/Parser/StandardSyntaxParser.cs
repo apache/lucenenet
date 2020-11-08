@@ -6,6 +6,7 @@ using Lucene.Net.QueryParsers.Flexible.Messages;
 using Lucene.Net.QueryParsers.Flexible.Standard.Nodes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -34,7 +35,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// <summary>
     /// Parser for the standard Lucene syntax
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
+	[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
     public class StandardSyntaxParser : ISyntaxParser /*, StandardSyntaxParserConstants*/
     {
         private const int CONJ_NONE = 0;
@@ -157,6 +159,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             { if (true) return q; }
             throw new Exception("Missing return statement in function");
         }
+
 
         // These changes were made to introduce operator precedence:
         // - Clause() now returns a QueryNode. 
@@ -550,10 +553,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         q = new BoostQueryNode(q, f);
                     }
                 }
-#pragma warning disable 168
-                catch (Exception ignored)
-#pragma warning restore 168
+                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
+                    //ignored
                     /* Should this be handled somehow? (defaults to "no boost", if
                          * boost number is invalid)
                          */
@@ -776,10 +778,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                             phraseSlop = (int)Convert.ToSingle(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
                             q = new SlopQueryNode(q, phraseSlop);
                         }
-#pragma warning disable 168
-                        catch (Exception ignored)
-#pragma warning restore 168
+                        catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                         {
+                            // ignored
                             /* Should this be handled somehow? (defaults to "no PhraseSlop", if
                            * slop number is invalid)
                            */
@@ -803,10 +804,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                         q = new BoostQueryNode(q, f);
                     }
                 }
-#pragma warning disable 168
-                catch (Exception ignored)
-#pragma warning restore 168
+                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
+                    // ignored
                     /* Should this be handled somehow? (defaults to "no boost", if
                        * boost number is invalid)
                        */

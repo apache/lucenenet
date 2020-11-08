@@ -62,14 +62,14 @@ namespace Lucene.Net.Search.VectorHighlight
             string field = fieldTermStack.FieldName;
 
             List<TermInfo> phraseCandidate = new List<TermInfo>();
-            QueryPhraseMap currMap = null;
-            QueryPhraseMap nextMap = null;
+            QueryPhraseMap currMap; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            QueryPhraseMap nextMap; // LUCENENET: IDE0059: Remove unnecessary value assignment
             while (!fieldTermStack.IsEmpty && (phraseList.Count < phraseLimit))
             {
                 phraseCandidate.Clear();
 
-                TermInfo ti = null;
-                TermInfo first = null;
+                TermInfo ti; // LUCENENET: IDE0059: Remove unnecessary value assignment
+                TermInfo first; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                 first = ti = fieldTermStack.Pop();
                 currMap = fieldQuery.GetFieldTermMap(field, ti.Text);

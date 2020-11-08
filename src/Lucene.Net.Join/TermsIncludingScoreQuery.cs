@@ -194,7 +194,7 @@ namespace Lucene.Net.Join
                     return null;
                 }
                 // what is the runtime...seems ok?
-                long cost = context.AtomicReader.MaxDoc * terms.Count;
+                //long cost = context.AtomicReader.MaxDoc * terms.Count; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                 segmentTermsEnum = terms.GetEnumerator(segmentTermsEnum);
                 // Optimized impls that take advantage of docs
@@ -301,7 +301,7 @@ namespace Lucene.Net.Join
                         int tempDocId = docsEnum.Advance(target);
                         if (tempDocId == target)
                         {
-                            docId = tempDocId;
+                            //docId = tempDocId; // LUCENENET: IDE0059: Remove unnecessary value assignment
                             break;
                         }
                     }

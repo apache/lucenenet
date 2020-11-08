@@ -116,16 +116,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public object Clone()
         {
-            SegmentTermEnum clone = null;
-            try
-            {
-                clone = (SegmentTermEnum)base.MemberwiseClone();
-            }
-#pragma warning disable 168
-            catch (InvalidOperationException e)
-#pragma warning restore 168
-            {
-            }
+            // LUCENENET: MemberwiseClone() doesn't throw in .NET
+            SegmentTermEnum clone = (SegmentTermEnum)base.MemberwiseClone();
 
             clone.input = (IndexInput)input.Clone();
             clone.termInfo = new TermInfo(termInfo);

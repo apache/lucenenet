@@ -276,7 +276,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override void WriteField(FieldInfo info, IIndexableField field)
         {
-            int bits = 0;
+            int bits/* = 0*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             BytesRef bytes;
             string @string;
 

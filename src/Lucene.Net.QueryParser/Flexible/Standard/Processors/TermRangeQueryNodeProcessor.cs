@@ -140,9 +140,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     }
 
                 }
-#pragma warning disable 168
-                catch (Exception e)
-#pragma warning restore 168
+                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
                     // do nothing
                 }

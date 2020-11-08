@@ -1094,7 +1094,7 @@ namespace TagSoup
             }
             var l = new List<string>();
             int s = 0;
-            int e = 0;
+            int e; // LUCENENET: IDE0059: Remove unnecessary value assignment
             bool sq = false; // single quote
             bool dq = false; // double quote
             var lastc = (char)0;

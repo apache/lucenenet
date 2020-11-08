@@ -63,7 +63,7 @@ namespace TagSoup
                         if (instag)
                         {
                             h.STagC(buff, 0, 0);
-                            instag = false;
+                            //instag = false; // LUCENENET: IDE0059: Remove unnecessary value assignment
                         }
                         h.GI(buff, 1, size - 1);
                         instag = true;

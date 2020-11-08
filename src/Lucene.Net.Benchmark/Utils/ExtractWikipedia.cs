@@ -99,7 +99,7 @@ namespace Lucene.Net.Benchmarks.Utils
 
         public virtual void Extract()
         {
-            Document doc = null;
+            Document doc; // LUCENENET: IDE0059: Remove unnecessary value assignment
             Console.WriteLine("Starting Extraction");
             long start = J2N.Time.CurrentTimeMilliseconds();
             try

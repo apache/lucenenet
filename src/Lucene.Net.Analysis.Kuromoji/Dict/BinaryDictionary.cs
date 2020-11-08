@@ -103,7 +103,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             string[] posDict = null;
             string[] inflFormDict = null;
             string[] inflTypeDict = null;
-            ByteBuffer buffer = null;
+            ByteBuffer buffer; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             using (Stream mapIS = GetResource(TARGETMAP_FILENAME_SUFFIX))
             {

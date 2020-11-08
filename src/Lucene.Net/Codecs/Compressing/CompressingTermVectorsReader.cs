@@ -319,7 +319,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 reader.Reset(vectorsStream, totalTerms);
                 // skip
-                toSkip = 0;
+                //toSkip = 0; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 for (int i = 0; i < skip; ++i)
                 {
                     for (int j = 0; j < numTerms.Get(i); ++j)
