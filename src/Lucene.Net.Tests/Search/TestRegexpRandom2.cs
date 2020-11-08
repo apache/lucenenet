@@ -126,11 +126,6 @@ namespace Lucene.Net.Search
 
             private sealed class SimpleAutomatonTermsEnum : FilteredTermsEnum
             {
-                private void InitializeInstanceFields()
-                {
-                    runAutomaton = new CharacterRunAutomaton(outerInstance.automaton);
-                }
-
                 private readonly TestRegexpRandom2.DumbRegexpQuery outerInstance;
 
                 private CharacterRunAutomaton runAutomaton;
@@ -141,7 +136,7 @@ namespace Lucene.Net.Search
                 {
                     this.outerInstance = outerInstance;
 
-                    InitializeInstanceFields();
+                    runAutomaton = new CharacterRunAutomaton(outerInstance.automaton);
                     SetInitialSeekTerm(new BytesRef(""));
                 }
 

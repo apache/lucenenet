@@ -35,11 +35,6 @@ namespace Lucene.Net.Collation
     {
         public TestCollationKeyFilter()
         {
-            InitializeInstanceFields();
-        }
-
-        private void InitializeInstanceFields()
-        {
             this.analyzer = new TestAnalyzer(this, this.collator);
             this.firstRangeBeginning = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(this.FirstRangeBeginningOriginal).KeyData.ToSByteArray()));
             this.firstRangeEnd = new BytesRef(this.EncodeCollationKey(this.collator.GetSortKey(this.FirstRangeEndOriginal).KeyData.ToSByteArray()));

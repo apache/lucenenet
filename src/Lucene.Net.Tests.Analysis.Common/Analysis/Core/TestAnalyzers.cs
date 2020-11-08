@@ -244,15 +244,10 @@ namespace Lucene.Net.Analysis.Core
 
     internal sealed class PayloadSetter : TokenFilter
     {
-        private void InitializeInstanceFields()
-        {
-            p = new BytesRef(data, 0, 1);
-        }
-
         internal IPayloadAttribute payloadAtt;
         public PayloadSetter(TokenStream input) : base(input)
         {
-            InitializeInstanceFields();
+            p = new BytesRef(data, 0, 1);
             payloadAtt = AddAttribute<IPayloadAttribute>();
         }
 

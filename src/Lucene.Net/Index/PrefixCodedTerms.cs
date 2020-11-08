@@ -143,16 +143,11 @@ namespace Lucene.Net.Index
         {
             public Builder()
             {
-                InitializeInstanceFields();
-            }
-
-            internal virtual void InitializeInstanceFields()
-            {
                 output = new RAMOutputStream(buffer);
             }
 
             private readonly RAMFile buffer = new RAMFile(); // LUCENENET: marked readonly
-            private RAMOutputStream output;
+            private readonly RAMOutputStream output; // LUCENENET: marked readonly
             private readonly Term lastTerm = new Term(""); // LUCENENET: marked readonly
 
             /// <summary>

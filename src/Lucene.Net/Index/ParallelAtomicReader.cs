@@ -48,13 +48,8 @@ namespace Lucene.Net.Index
     /// </summary>
     public class ParallelAtomicReader : AtomicReader
     {
-        private void InitializeInstanceFields()
-        {
-            fields = new ParallelFields();
-        }
-
         private readonly FieldInfos fieldInfos;
-        private ParallelFields fields;
+        private readonly ParallelFields fields = new ParallelFields();
         private readonly AtomicReader[] parallelReaders, storedFieldsReaders;
         private readonly ISet<AtomicReader> completeReaderSet = new JCG.HashSet<AtomicReader>(IdentityEqualityComparer<AtomicReader>.Default);
         private readonly bool closeSubReaders;
@@ -90,7 +85,6 @@ namespace Lucene.Net.Index
         /// </summary>
         public ParallelAtomicReader(bool closeSubReaders, AtomicReader[] readers, AtomicReader[] storedFieldsReaders)
         {
-            InitializeInstanceFields();
             this.closeSubReaders = closeSubReaders;
             if (readers.Length == 0 && storedFieldsReaders.Length > 0)
             {

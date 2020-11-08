@@ -887,12 +887,6 @@ namespace Lucene.Net.Documents
 
         internal sealed class StringTokenStream : TokenStream
         {
-            internal void InitializeInstanceFields()
-            {
-                termAttribute = AddAttribute<ICharTermAttribute>();
-                offsetAttribute = AddAttribute<IOffsetAttribute>();
-            }
-
             internal ICharTermAttribute termAttribute;
             internal IOffsetAttribute offsetAttribute;
             internal bool used = false;
@@ -905,7 +899,8 @@ namespace Lucene.Net.Documents
             /// </summary>
             internal StringTokenStream()
             {
-                InitializeInstanceFields();
+                termAttribute = AddAttribute<ICharTermAttribute>();
+                offsetAttribute = AddAttribute<IOffsetAttribute>();
             }
 
             /// <summary>

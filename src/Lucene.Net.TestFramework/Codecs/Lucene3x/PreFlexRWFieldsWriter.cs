@@ -103,11 +103,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private class PreFlexTermsWriter : TermsConsumer
         {
-            internal virtual void InitializeInstanceFields()
-            {
-                postingsWriter = new PostingsWriter(this);
-            }
-
             private readonly PreFlexRWFieldsWriter outerInstance;
 
             private readonly FieldInfo fieldInfo;
@@ -121,7 +116,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 this.outerInstance = outerInstance;
 
-                InitializeInstanceFields();
+                postingsWriter = new PostingsWriter(this);
                 this.fieldInfo = fieldInfo;
                 omitTF = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY;
                 storePayloads = fieldInfo.HasPayloads;

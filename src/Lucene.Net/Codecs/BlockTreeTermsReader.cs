@@ -87,11 +87,6 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class BlockTreeTermsReader : FieldsProducer
     {
-        private void InitializeInstanceFields()
-        {
-            NO_OUTPUT = fstOutputs.NoOutput;
-        }
-
         // Open input to the main terms dict file (_X.tib)
 #pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput @in;
@@ -122,8 +117,7 @@ namespace Lucene.Net.Codecs
         /// Sole constructor. </summary>
         public BlockTreeTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info, PostingsReaderBase postingsReader, IOContext ioContext, string segmentSuffix, int indexDivisor)
         {
-            InitializeInstanceFields();
-
+            NO_OUTPUT = fstOutputs.NoOutput;
             this.postingsReader = postingsReader;
 
             this.segment = info.Name;

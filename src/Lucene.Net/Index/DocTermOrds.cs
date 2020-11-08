@@ -736,11 +736,6 @@ namespace Lucene.Net.Index
         /// </summary>
         private sealed class OrdWrappedTermsEnum : TermsEnum
         {
-            internal void InitializeInstanceFields()
-            {
-                ord = -outerInstance.indexInterval - 1;
-            }
-
             private readonly DocTermOrds outerInstance;
 
             internal readonly TermsEnum termsEnum;
@@ -751,7 +746,7 @@ namespace Lucene.Net.Index
             {
                 this.outerInstance = outerInstance;
 
-                InitializeInstanceFields();
+                ord = -outerInstance.indexInterval - 1;
                 if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.m_indexedTermsArray != null);
                 termsEnum = reader.Fields.GetTerms(outerInstance.m_field).GetEnumerator();
             }

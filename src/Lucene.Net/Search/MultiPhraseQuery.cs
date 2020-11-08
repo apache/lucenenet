@@ -555,11 +555,6 @@ namespace Lucene.Net.Search
         {
             public Int32Queue()
             {
-                InitializeInstanceFields();
-            }
-
-            internal void InitializeInstanceFields()
-            {
                 _array = new int[_arraySize];
             }
 
