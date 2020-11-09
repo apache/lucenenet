@@ -1735,12 +1735,8 @@ namespace Lucene.Net.Analysis.Util
         bool Put(string text);
     }
 
-    public class CharArrayMap
+    public static class CharArrayMap // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        // Prevent direct creation
-        private CharArrayMap()
-        { }
-
         /// <summary>
         /// Returns a copy of the given map as a <see cref="CharArrayMap{TValue}"/>. If the given map
         /// is a <see cref="CharArrayMap{TValue}"/> the ignoreCase property will be preserved.

@@ -68,13 +68,8 @@ namespace Egothor.Stemmer
     /// The DiffIt class is a means generate patch commands from an already prepared
     /// stemmer table.
     /// </summary>
-    public class DiffIt
+    public static class DiffIt // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        /// <summary>
-        /// no instantiation
-        /// </summary>
-        private DiffIt() { }
-
         internal static int Get(int i, string s)
         {
             if (!int.TryParse(s.Substring(i, 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out int result))

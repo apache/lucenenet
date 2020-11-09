@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Packed
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public class PackedInt32s
+    public static class PackedInt32s // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// At most 700% memory overhead, always select a direct implementation.

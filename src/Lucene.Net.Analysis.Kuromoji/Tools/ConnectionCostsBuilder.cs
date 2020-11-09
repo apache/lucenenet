@@ -24,13 +24,9 @@ namespace Lucene.Net.Analysis.Ja.Util
      * limitations under the License.
      */
 
-    public class ConnectionCostsBuilder
+    public static class ConnectionCostsBuilder // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         private static readonly Regex whiteSpaceRegex = new Regex("\\s+", RegexOptions.Compiled);
-
-        private ConnectionCostsBuilder()
-        {
-        }
 
         public static ConnectionCostsWriter Build(string filename)
         {

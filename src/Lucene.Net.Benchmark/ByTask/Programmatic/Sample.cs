@@ -25,7 +25,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Programmatic
     /// <summary>
     /// Sample performance test written programmatically - no algorithm file is needed here.
     /// </summary>
-    public class Sample
+    public static class Sample // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Sample shows optional args[] parameter")]
         public static void Main(string[] args)

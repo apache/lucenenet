@@ -32,7 +32,7 @@ namespace Lucene.Net.Store
     /// </summary>
     /// <seealso cref="VerifyingLockFactory"/>
     /// <seealso cref="LockVerifyServer"/>
-    public class LockStressTest
+    public static class LockStressTest // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         [STAThread]
         public static void Main(string[] args)

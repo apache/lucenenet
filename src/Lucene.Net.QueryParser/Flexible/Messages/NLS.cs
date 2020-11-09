@@ -39,7 +39,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
     /// 
     /// MessageBundle classes may subclass this type.
     /// </summary>
-    public class NLS
+    public abstract class NLS // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// LUCENENET specific factory reference to inject instances of <see cref="ResourceManager"/>

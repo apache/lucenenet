@@ -20,13 +20,9 @@ namespace Lucene.Net.Analysis.Ja.Util
      * limitations under the License.
      */
 
-    public class DictionaryBuilder
+    public static class DictionaryBuilder // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public enum DictionaryFormat { IPADIC, UNIDIC };
-
-        private DictionaryBuilder()
-        {
-        }
 
         static DictionaryBuilder()
         {

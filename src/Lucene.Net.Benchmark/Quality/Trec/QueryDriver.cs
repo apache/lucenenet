@@ -32,7 +32,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
     /// <summary>
     /// Command-line tool for doing a TREC evaluation run.
     /// </summary>
-    public class QueryDriver
+    public static class QueryDriver // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public static void Main(string[] args)
         {

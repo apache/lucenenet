@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Command-line tool for extracting sub-files out of a compound file.
     /// </summary>
-    public class CompoundFileExtractor
+    public static class CompoundFileExtractor // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// Prints the filename and size of each file within a given compound file.

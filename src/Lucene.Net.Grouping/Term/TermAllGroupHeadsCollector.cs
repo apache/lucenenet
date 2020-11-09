@@ -52,14 +52,9 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// specifying its generic closing type.
     /// (TermAllGroupHeadsCollector.Create() rather than TermAllGroupHeadsCollector{GH}.Create()).
     /// </summary>
-    public class TermAllGroupHeadsCollector
+    public static class TermAllGroupHeadsCollector // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         private const int DEFAULT_INITIAL_SIZE = 128;
-
-        /// <summary>
-        /// Disallow creation
-        /// </summary>
-        private TermAllGroupHeadsCollector() { }
 
         /// <summary>
         /// Creates an <see cref="AbstractAllGroupHeadsCollector"/> instance based on the supplied arguments.

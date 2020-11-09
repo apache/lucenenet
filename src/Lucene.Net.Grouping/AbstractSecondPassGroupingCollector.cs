@@ -155,13 +155,8 @@ namespace Lucene.Net.Search.Grouping
     /// to access nested classes of <see cref="AbstractAllGroupHeadsCollector{GH}"/>
     /// without referencing the generic closing type.
     /// </summary>
-    public class AbstractSecondPassGroupingCollector
+    public static class AbstractSecondPassGroupingCollector // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        /// <summary>
-        /// Don't allow creation
-        /// </summary>
-        private AbstractSecondPassGroupingCollector() { }
-
         // TODO: merge with SearchGroup or not?
         // ad: don't need to build a new hashmap
         // disad: blows up the size of SearchGroup if we need many of them, and couples implementations

@@ -38,10 +38,8 @@ namespace Lucene.Net.Demo
     /// <summary>
     /// Simple command-line based search demo.
     /// </summary>
-    public class SearchFiles
+    public static class SearchFiles // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        private SearchFiles() { }
-
         /// <summary>Simple command-line based search demo.</summary>
         public static void Main(string[] args)
         {

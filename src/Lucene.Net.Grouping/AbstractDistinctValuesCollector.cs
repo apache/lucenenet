@@ -77,11 +77,8 @@ namespace Lucene.Net.Search.Grouping
     /// (AbstractDistinctValuesCollector.GroupCount{TGroupValue} rather than 
     /// AbstractDistinctValuesCollector{GC}.GroupCount{TGroupValue}).
     /// </summary>
-    public class AbstractDistinctValuesCollector
+    public static class AbstractDistinctValuesCollector // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        // Disallow direct creation
-        private AbstractDistinctValuesCollector() { }
-
         /// <summary>
         /// Returned by <see cref="AbstractDistinctValuesCollector{GC}.Groups"/>,
         /// representing the value and set of distinct values for the group.

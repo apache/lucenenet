@@ -87,13 +87,8 @@ namespace Lucene.Net.Search.Grouping
     /// LUCENENET specific class used to nest types to mimic the syntax used 
     /// by Lucene (that is, without specifying the generic closing type of <see cref="SearchGroup{TGroupValue}"/>)
     /// </summary>
-    public class SearchGroup
+    public static class SearchGroup // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        /// <summary>
-        /// Prevent direct creation
-        /// </summary>
-        private SearchGroup() { }
-
         private class ShardIter<T>
         {
             public IEnumerator<ISearchGroup<T>> Iter => iter;

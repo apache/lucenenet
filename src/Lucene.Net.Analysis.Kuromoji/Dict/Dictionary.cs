@@ -99,7 +99,7 @@
     }
 
     // LUCENENT TODO: Make this whole thing into an abstact class??
-    public class Dictionary
+    public static class Dictionary // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public static readonly string INTERNAL_SEPARATOR = "\u0000";
     }

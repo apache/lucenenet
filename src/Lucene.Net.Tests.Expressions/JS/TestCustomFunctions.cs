@@ -231,7 +231,7 @@ namespace Lucene.Net.Expressions.JS
         
         internal static string MESSAGE = "This should not happen but it happens";
 
-        public class StaticThrowingException
+        public static class StaticThrowingException // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
         {
             public static double Method()
             {

@@ -66,16 +66,11 @@ namespace Egothor.Stemmer
     /// <summary>
     /// The Compile class is used to compile a stemmer table.
     /// </summary>
-    public class Compile
+    public static class Compile // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         static bool backward;
         static bool multi;
         static Trie trie;
-
-        /// <summary>
-        /// no instantiation
-        /// </summary>
-        private Compile() { }
 
         /// <summary>
         /// Entry point to the Compile application.

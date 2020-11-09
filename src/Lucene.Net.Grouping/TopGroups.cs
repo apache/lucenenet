@@ -93,13 +93,8 @@ namespace Lucene.Net.Search.Grouping
     /// LUCENENET specific class used to nest types to mimic the syntax used 
     /// by Lucene (that is, without specifying the generic closing type of <see cref="TopGroups{TGroupValue}"/>)
     /// </summary>
-    public class TopGroups
+    public static class TopGroups // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        /// <summary>
-        /// Prevent direct creation
-        /// </summary>
-        private TopGroups() { }
-
         /// <summary>
         /// How the GroupDocs score (if any) should be merged. </summary>
         public enum ScoreMergeMode

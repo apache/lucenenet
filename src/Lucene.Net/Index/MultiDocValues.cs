@@ -46,14 +46,8 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// @lucene.internal
     /// </summary>
-    public class MultiDocValues
+    public static class MultiDocValues // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        /// <summary>
-        /// No instantiation </summary>
-        private MultiDocValues()
-        {
-        }
-
         /// <summary>
         /// Returns a <see cref="NumericDocValues"/> for a reader's norms (potentially merging on-the-fly).
         /// <para>

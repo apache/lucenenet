@@ -37,10 +37,8 @@ namespace Lucene.Net.Demo
     /// This is a command-line application demonstrating simple Lucene indexing.
     /// Run it with no command-line arguments for usage information.
     /// </summary>
-    public class IndexFiles
+    public static class IndexFiles // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        private IndexFiles() { }
-
         /// <summary>Index all text files under a directory.</summary>
         public static void Main(string[] args)
         {

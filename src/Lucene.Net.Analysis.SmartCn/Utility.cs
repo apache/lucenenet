@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class Utility
+    public static class Utility // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public static readonly char[] STRING_CHAR_ARRAY = "未##串".ToCharArray();
 

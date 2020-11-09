@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Highlight
     /// term vectors with offsets and positions or from an Analyzer re-parsing the stored content.
     /// see TokenStreamFromTermVector
     ///</summary>
-    public class TokenSources
+    public static class TokenSources // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         private class TokenComparer : IComparer<Token>
         {

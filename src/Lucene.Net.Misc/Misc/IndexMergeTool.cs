@@ -27,7 +27,7 @@ namespace Lucene.Net.Misc
     /// Merges indices specified on the command line into the index
     /// specified as the first command line argument.
     /// </summary>
-    public class IndexMergeTool
+    public static class IndexMergeTool // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public static void Main(string[] args)
         {

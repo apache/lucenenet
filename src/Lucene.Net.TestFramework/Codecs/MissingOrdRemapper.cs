@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs
     /// A utility class to write missing values for SORTED as if they were the empty string
     /// (to simulate pre-Lucene4.5 dv behavior for testing old codecs).
     /// </summary>
-    public class MissingOrdRemapper
+    public static class MissingOrdRemapper // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// Insert an empty byte[] to the front of this enumerable.</summary>

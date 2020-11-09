@@ -22,7 +22,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
     /// <summary>
     /// File utilities.
     /// </summary>
-    public class FileUtils
+    public static class FileUtils // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// Delete files and directories, even if non-empty.

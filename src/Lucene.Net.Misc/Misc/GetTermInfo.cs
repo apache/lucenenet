@@ -26,7 +26,7 @@ namespace Lucene.Net.Misc
     /// <summary>
     /// Utility to get document frequency and total number of occurrences (sum of the tf for each doc)  of a term. 
     /// </summary>
-    public class GetTermInfo
+    public static class GetTermInfo // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public static void Main(string[] args)
         {

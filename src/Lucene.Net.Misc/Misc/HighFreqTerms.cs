@@ -37,9 +37,8 @@ namespace Lucene.Net.Misc
     /// 
     /// </para>
     /// </summary>
-    public class HighFreqTerms
+    public static class HighFreqTerms // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-
         // The top numTerms will be displayed
         public const int DEFAULT_NUMTERMS = 100;
 

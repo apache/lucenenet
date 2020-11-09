@@ -27,12 +27,9 @@ namespace Lucene.Net.Documents
     /// this class uses the <see cref="DeflateStream"/>
     /// class to compress and decompress.
     /// </summary>
-    public class CompressionTools
+    public static class CompressionTools // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         // Export only static methods
-        private CompressionTools()
-        {
-        }
 
         /// <summary>
         /// Compresses the specified <see cref="byte"/> range using the

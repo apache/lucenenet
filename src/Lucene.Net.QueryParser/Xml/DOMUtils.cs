@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Xml
     /// <summary>
     /// Helper methods for parsing XML
     /// </summary>
-    public class DOMUtils
+    public static class DOMUtils // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public static XmlElement GetChildByTagOrFail(XmlElement e, string name)
         {

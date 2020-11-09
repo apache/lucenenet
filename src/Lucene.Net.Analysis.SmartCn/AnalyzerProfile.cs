@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class AnalyzerProfile
+    public static class AnalyzerProfile // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// Global indicating the configured analysis data directory

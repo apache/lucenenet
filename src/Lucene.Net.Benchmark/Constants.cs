@@ -20,14 +20,14 @@
     /// <summary>
     /// Various benchmarking constants (mostly defaults)
     /// </summary>
-    public class Constants
+    public static class Constants // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        public static readonly int DEFAULT_RUN_COUNT = 5;
-        public static readonly int DEFAULT_SCALE_UP = 5;
-        public static readonly int DEFAULT_LOG_STEP = 1000;
+        public const int DEFAULT_RUN_COUNT = 5;
+        public const int DEFAULT_SCALE_UP = 5;
+        public const int DEFAULT_LOG_STEP = 1000;
 
         public static bool[] BOOLEANS = new bool[] { false, true };
 
-        public static readonly int DEFAULT_MAXIMUM_DOCUMENTS = int.MaxValue;
+        public const int DEFAULT_MAXIMUM_DOCUMENTS = int.MaxValue;
     }
 }

@@ -21,7 +21,7 @@ namespace Lucene.Net
     /// Support for junit.framework.TestCase.getName().
     /// {{Lucene.Net-2.9.1}} Move to another location after LUCENENET-266
     /// </summary>
-    public class TestCase
+    public static class TestCase // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         public static string GetName()
         {
