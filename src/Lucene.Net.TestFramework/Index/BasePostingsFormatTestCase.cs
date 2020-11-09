@@ -178,7 +178,9 @@ namespace Lucene.Net.Index
                 }
             }
 
+#pragma warning disable IDE1006 // Naming Styles
             private int _nextDoc()
+#pragma warning restore IDE1006 // Naming Styles
             {
                 // Must consume random:
                 while (posUpto < freq)

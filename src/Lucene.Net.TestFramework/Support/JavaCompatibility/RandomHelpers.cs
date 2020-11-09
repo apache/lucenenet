@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net
 {
@@ -24,6 +25,7 @@ namespace Lucene.Net
     /// LUCENENET specific extensions to <see cref="Random"/> to make it easier to port tests
     /// from Java with fewer changes.
     /// </summary>
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "These methods are intended to make porting tests from Java easier")]
     internal static class RandomHelpers
     {
         [ExceptionToNetNumericConvention] // LUCENENET: This is for making test porting easier, keeping as-is

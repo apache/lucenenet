@@ -411,7 +411,9 @@ namespace Lucene.Net.Index
             set => doRandomForceMergeAssert = value;
         }
 
+#pragma warning disable IDE1006 // Naming Styles
         private void _DoRandomForceMerge() // LUCENENET specific - added leading underscore to keep this from colliding with the DoRandomForceMerge property
+#pragma warning restore IDE1006 // Naming Styles
         {
             if (doRandomForceMerge)
             {

@@ -25,8 +25,9 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     /// Token Manager.
     /// </summary>
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
-	[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
     [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This class is based on generated code")]
     public class QueryParserTokenManager //: QueryParserConstants
     {
         /// <summary>Debug output. </summary>
@@ -56,6 +57,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             jjmatchedPos = pos;
             return pos + 1;
         }
+
         private int jjMoveStringLiteralDfa0_1()
         {
             switch (m_curChar)
