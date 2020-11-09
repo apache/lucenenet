@@ -112,6 +112,7 @@ namespace Lucene.Net.Search.Grouping
         /// <summary>
         /// Matches the groupSort passed to <see cref="AbstractFirstPassGroupingCollector{TGroupValue}"/>. 
         /// </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         object[] GroupSortValues { get; }
     }
 }

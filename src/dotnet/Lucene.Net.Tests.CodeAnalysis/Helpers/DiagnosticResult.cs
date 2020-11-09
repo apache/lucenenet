@@ -1,5 +1,6 @@
 using Microsoft.CodeAnalysis;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TestHelper
 {
@@ -54,6 +55,7 @@ namespace TestHelper
     {
         private DiagnosticResultLocation[] locations;
 
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Used for testing")]
         public DiagnosticResultLocation[] Locations
         {
             get

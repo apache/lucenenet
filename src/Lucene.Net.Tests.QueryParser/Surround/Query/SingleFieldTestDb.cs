@@ -4,6 +4,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
 {
@@ -51,6 +52,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         }
 
         public Directory Db => db;
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         public string[] Docs => docs;
         public string Fieldname => fieldName;
     }

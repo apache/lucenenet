@@ -295,14 +295,17 @@ namespace Lucene.Net.Search.Grouping
 
         /// <summary>
         /// Group results in groupSort order </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         IGroupDocs<TGroupValue>[] Groups { get; }
 
         /// <summary>
         /// How groups are sorted against each other </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         SortField[] GroupSort { get; }
 
         /// <summary>
         /// How docs are sorted within each group </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         SortField[] WithinGroupSort { get; }
 
         /// <summary>

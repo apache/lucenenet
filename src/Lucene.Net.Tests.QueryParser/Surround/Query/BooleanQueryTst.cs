@@ -1,7 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
-using NUnit.Framework;
-using System;
+using System.Diagnostics.CodeAnalysis;
 using Assert = Lucene.Net.TestFramework.Assert;
 using Console = Lucene.Net.Util.SystemConsole;
 
@@ -51,6 +50,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
 
         public virtual string QueryText => this.queryText;
 
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         public virtual int[] ExpectedDocNrs => this.expectedDocNrs;
 
         internal class TestCollector : ICollector
