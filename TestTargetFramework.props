@@ -42,6 +42,7 @@
     <NoWarn Label="Nested types should not be visible">$(NoWarn);CA1034</NoWarn>
     <NoWarn Label="Use Literals Where Appropriate">$(NoWarn);CA1802</NoWarn>
     <NoWarn Label="Add readonly modifier">$(NoWarn);CA1822</NoWarn>
+    <NoWarn Label="Avoid zero-length array allocations">$(NoWarn);CA1825</NoWarn>
 
     <NoWarn Label="Use pattern matching">$(NoWarn);IDE0019;IDE0020;IDE0038</NoWarn>
     <NoWarn Label="Add readonly modifier">$(NoWarn);IDE0044</NoWarn>
