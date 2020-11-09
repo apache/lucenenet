@@ -26,7 +26,8 @@
     <!-- Disabling warnings that require .NET Standard 2.1 -->
     <NoWarn Label="Use index operator">$(NoWarn);IDE0056</NoWarn>
     <NoWarn Label="Use range operator">$(NoWarn);IDE0057</NoWarn>
-    
+
+    <NoWarn Label="Do not catch general exception types">$(NoWarn);CA1031</NoWarn>
     <NoWarn Label="Use auto property">$(NoWarn);IDE0032</NoWarn>
   </PropertyGroup>
   
