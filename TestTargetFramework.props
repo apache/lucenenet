@@ -47,6 +47,7 @@
     <NoWarn Label="Remove unread private member">$(NoWarn);IDE0052</NoWarn>
     <NoWarn Label="Remove unnecessary value assignment">$(NoWarn);IDE0059</NoWarn>
     <NoWarn Label="Remove unused parameter">$(NoWarn);IDE0060</NoWarn>
+    <NoWarn Label="Naming rule violation">$(NoWarn);IDE1006</NoWarn>
   </PropertyGroup>
   
 </Project>
