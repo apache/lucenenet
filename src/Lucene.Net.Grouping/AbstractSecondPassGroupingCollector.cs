@@ -49,8 +49,8 @@ namespace Lucene.Net.Search.Grouping
         private int totalHitCount;
         private int totalGroupedHitCount;
 
-        public AbstractSecondPassGroupingCollector(IEnumerable<ISearchGroup<TGroupValue>> groups, Sort groupSort, Sort withinGroupSort,
-                                                   int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields)
+        protected AbstractSecondPassGroupingCollector(IEnumerable<ISearchGroup<TGroupValue>> groups, Sort groupSort, Sort withinGroupSort,
+                                                   int maxDocsPerGroup, bool getScores, bool getMaxScores, bool fillSortFields) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
 
             //System.out.println("SP init");

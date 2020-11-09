@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        public LogMergePolicy()
+        protected LogMergePolicy() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(DEFAULT_NO_CFS_RATIO, MergePolicy.DEFAULT_MAX_CFS_SEGMENT_SIZE)
         {
         }

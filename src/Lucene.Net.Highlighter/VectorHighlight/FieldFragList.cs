@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.VectorHighlight
         /// </summary>
         /// <param name="fragCharSize">the length (number of chars) of a fragment</param>
 #pragma warning disable IDE0060 // Remove unused parameter
-        public FieldFragList(int fragCharSize)
+        protected FieldFragList(int fragCharSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
         }

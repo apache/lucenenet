@@ -71,12 +71,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
 
         private QueryConfigHandler queryConfig;
 
-        public QueryNodeProcessor()
+        protected QueryNodeProcessor() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             // empty constructor
         }
 
-        public QueryNodeProcessor(QueryConfigHandler queryConfigHandler)
+        protected QueryNodeProcessor(QueryConfigHandler queryConfigHandler) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.queryConfig = queryConfigHandler;
         }

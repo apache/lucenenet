@@ -799,7 +799,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Sole constructor. </summary>
-            public FindSegmentsFile(Directory directory)
+            protected FindSegmentsFile(Directory directory) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.directory = directory;
             }

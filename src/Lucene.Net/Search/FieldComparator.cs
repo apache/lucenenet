@@ -330,7 +330,7 @@ namespace Lucene.Net.Search
             protected readonly string m_field;
             protected IBits m_docsWithField;
 
-            public NumericComparer(string field, T? missingValue)
+            protected NumericComparer(string field, T? missingValue) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.m_field = field;
                 this.m_missingValue = missingValue;

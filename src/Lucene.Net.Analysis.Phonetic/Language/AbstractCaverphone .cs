@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Creates an instance of the Caverphone encoder
         /// </summary>
-        public AbstractCaverphone()
+        protected AbstractCaverphone() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base()
         {
         }

@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Grouping
             public TGroupValue GroupValue { get; protected set; }
             public IEnumerable<TGroupValue> UniqueValues { get; protected set; }
 
-            public GroupCount(TGroupValue groupValue)
+            protected GroupCount(TGroupValue groupValue) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.GroupValue = groupValue;
                 this.UniqueValues = new JCG.HashSet<TGroupValue>();

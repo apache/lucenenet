@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
         {
             protected readonly int m_blockSize;
 
-            public Allocator(int blockSize)
+            protected Allocator(int blockSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.m_blockSize = blockSize;
             }

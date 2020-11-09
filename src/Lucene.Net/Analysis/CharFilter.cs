@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Create a new <see cref="CharFilter"/> wrapping the provided reader. </summary>
         /// <param name="input"> a <see cref="TextReader"/>, can also be a <see cref="CharFilter"/> for chaining. </param>
-        public CharFilter(TextReader input)
+        protected CharFilter(TextReader input) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_input = input;
         }

@@ -81,7 +81,7 @@ namespace Lucene.Net.Spatial.Prefix
         protected int m_defaultFieldValuesArrayLen = 2;
         protected double m_distErrPct = SpatialArgs.DEFAULT_DISTERRPCT;// [ 0 TO 0.5 ]
 
-        public PrefixTreeStrategy(SpatialPrefixTree grid, string fieldName, bool simplifyIndexedCells)
+        protected PrefixTreeStrategy(SpatialPrefixTree grid, string fieldName, bool simplifyIndexedCells) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(grid.SpatialContext, fieldName)
         {
             this.m_grid = grid;

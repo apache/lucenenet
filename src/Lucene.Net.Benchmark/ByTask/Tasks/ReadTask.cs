@@ -48,7 +48,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     {
         private readonly IQueryMaker queryMaker;
 
-        public ReadTask(PerfRunData runData)
+        protected ReadTask(PerfRunData runData) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(runData)
         {
             if (WithSearch)

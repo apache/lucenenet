@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Spans
     {
         protected SpanQuery m_match;
 
-        public SpanPositionCheckQuery(SpanQuery match)
+        protected SpanPositionCheckQuery(SpanQuery match) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_match = match;
         }

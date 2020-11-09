@@ -58,19 +58,19 @@ namespace Lucene.Net.Store
             return m_buffer[bufferPosition++];
         }
 
-        public BufferedIndexInput(string resourceDesc)
+        protected BufferedIndexInput(string resourceDesc) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(resourceDesc, BUFFER_SIZE)
         {
         }
 
-        public BufferedIndexInput(string resourceDesc, IOContext context)
+        protected BufferedIndexInput(string resourceDesc, IOContext context) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(resourceDesc, GetBufferSize(context))
         {
         }
 
         /// <summary>
         /// Inits <see cref="BufferedIndexInput"/> with a specific <paramref name="bufferSize"/> </summary>
-        public BufferedIndexInput(string resourceDesc, int bufferSize)
+        protected BufferedIndexInput(string resourceDesc, int bufferSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(resourceDesc)
         {
             CheckBufferSize(bufferSize);

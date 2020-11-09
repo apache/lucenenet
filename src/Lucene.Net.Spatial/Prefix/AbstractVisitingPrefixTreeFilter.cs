@@ -47,8 +47,8 @@ namespace Lucene.Net.Spatial.Prefix
 
         protected readonly int m_prefixGridScanLevel;//at least one less than grid.getMaxLevels()
 
-        public AbstractVisitingPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
-                                                int detailLevel, int prefixGridScanLevel)
+        protected AbstractVisitingPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
+                                                int detailLevel, int prefixGridScanLevel) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(queryShape, fieldName, grid, detailLevel)
         {
             this.m_prefixGridScanLevel = Math.Max(0, Math.Min(prefixGridScanLevel, grid.MaxLevels - 1));
@@ -126,8 +126,8 @@ namespace Lucene.Net.Spatial.Prefix
 
             private BytesRef thisTerm; //the result of termsEnum.term()
 
-            public VisitorTemplate(AbstractVisitingPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs,
-                                   bool hasIndexedLeaves)
+            protected VisitorTemplate(AbstractVisitingPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs,
+                                   bool hasIndexedLeaves) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
                 : base(outerInstance, context, acceptDocs)
             {
                 this.m_hasIndexedLeaves = hasIndexedLeaves;

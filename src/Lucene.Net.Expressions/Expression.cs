@@ -42,6 +42,7 @@ namespace Lucene.Net.Expressions
     /// @lucene.experimental
     /// </remarks>
     /// <seealso cref="Lucene.Net.Expressions.JS.JavascriptCompiler.Compile(string)"/>
+    [SuppressMessage("Design", "CA1012:Abstract types should not have constructors", Justification = "Required for Reflection")]
     public abstract class Expression
     {
         /// <summary>The original source text</summary>

@@ -121,7 +121,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             stopNow = true;
         }
 
-        public PerfTask(PerfRunData runData)
+        protected PerfTask(PerfRunData runData)
             : this()
         {
             this.runData = runData;

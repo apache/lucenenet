@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.PerField
 
         /// <summary>
         /// Sole constructor. </summary>
-        public PerFieldDocValuesFormat()
+        protected PerFieldDocValuesFormat() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base()
         {
         }

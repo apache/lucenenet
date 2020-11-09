@@ -46,7 +46,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal readonly SpatialContext m_ctx;
 
-        public SpatialPrefixTree(SpatialContext ctx, int maxLevels)
+        protected SpatialPrefixTree(SpatialContext ctx, int maxLevels) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(maxLevels > 0);
             this.m_ctx = ctx;

@@ -29,7 +29,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         protected readonly string m_field;
         protected readonly IFieldCache m_cache = Search.FieldCache.DEFAULT;
 
-        public FieldCacheSource(string field)
+        protected FieldCacheSource(string field) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_field = field;
         }

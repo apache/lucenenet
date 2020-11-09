@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
         /// Sole constructor. Initializes the service name.
         /// </summary>
         /// <param name="name"></param>
-        public ServiceNameAttribute(string name)
+        protected ServiceNameAttribute(string name) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException(nameof(name));

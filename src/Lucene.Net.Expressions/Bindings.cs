@@ -27,6 +27,7 @@ namespace Lucene.Net.Expressions
     /// relevance score, or other <see cref="ValueSource"/>s.
     /// @lucene.experimental
     /// </remarks>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1012:Abstract types should not have constructors", Justification = "Required for Reflection")]
     public abstract class Bindings
     {
         /// <summary>Sole constructor.</summary>

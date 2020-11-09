@@ -67,7 +67,7 @@ namespace Lucene.Net.Search.Grouping
         /// </param>
         /// <param name="topNGroups">How many top groups to keep.</param>
         /// <exception cref="IOException">If I/O related errors occur</exception>
-        public AbstractFirstPassGroupingCollector(Sort groupSort, int topNGroups)
+        protected AbstractFirstPassGroupingCollector(Sort groupSort, int topNGroups) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             if (topNGroups < 1)
             {

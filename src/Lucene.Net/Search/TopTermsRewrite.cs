@@ -54,7 +54,7 @@ namespace Lucene.Net.Search
         /// NOTE: if <see cref="BooleanQuery.MaxClauseCount"/> is smaller than
         /// <paramref name="count"/>, then it will be used instead.
         /// </summary>
-        public TopTermsRewrite(int count)
+        protected TopTermsRewrite(int count) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.size = count;
         }

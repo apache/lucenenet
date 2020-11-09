@@ -186,7 +186,7 @@ namespace Lucene.Net.Store
             /// <param name="lockWaitTimeout"> length of time to wait in
             ///        milliseconds or 
             ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
-            public With(Lock @lock, long lockWaitTimeout)
+            protected With(Lock @lock, long lockWaitTimeout) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.@lock = @lock;
                 this.lockWaitTimeout = lockWaitTimeout;

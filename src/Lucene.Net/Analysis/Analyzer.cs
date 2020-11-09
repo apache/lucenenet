@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis
         /// Create a new <see cref="Analyzer"/>, reusing the same set of components per-thread
         /// across calls to <see cref="GetTokenStream(string, TextReader)"/>.
         /// </summary>
-        public Analyzer()
+        protected Analyzer() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(GLOBAL_REUSE_STRATEGY)
         {
         }
@@ -88,7 +88,7 @@ namespace Lucene.Net.Analysis
         /// <c>Lucene.Net.Analysis.Common.Miscellaneous.PerFieldAnalyzerWrapper</c>
         /// instead.
         /// </summary>
-        public Analyzer(ReuseStrategy reuseStrategy)
+        protected Analyzer(ReuseStrategy reuseStrategy) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.reuseStrategy = reuseStrategy;
         }

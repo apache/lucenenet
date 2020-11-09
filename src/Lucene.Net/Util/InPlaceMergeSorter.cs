@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// Create a new <see cref="InPlaceMergeSorter"/> </summary>
-        public InPlaceMergeSorter()
+        protected InPlaceMergeSorter() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 

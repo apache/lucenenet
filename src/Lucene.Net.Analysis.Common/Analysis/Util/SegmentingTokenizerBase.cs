@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Util
         /// be provided to this constructor.
         /// </para>
         /// </summary>
-        public SegmentingTokenizerBase(TextReader reader, BreakIterator iterator)
+        protected SegmentingTokenizerBase(TextReader reader, BreakIterator iterator) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY, reader, iterator)
         {
         }
@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Construct a new SegmenterBase, also supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/>
         /// </summary>
-        public SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator iterator)
+        protected SegmentingTokenizerBase(AttributeFactory factory, TextReader reader, BreakIterator iterator) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(factory, reader)
         {
             offsetAtt = AddAttribute<IOffsetAttribute>();

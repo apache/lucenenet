@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
         private readonly ReferenceManager<S> mgr;
         private readonly T missingValue;
 
-        public LiveFieldValues(ReferenceManager<S> mgr, T missingValue)
+        protected LiveFieldValues(ReferenceManager<S> mgr, T missingValue) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.missingValue = missingValue;
             this.mgr = mgr;

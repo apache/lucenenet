@@ -591,7 +591,7 @@ namespace Lucene.Net.Index
         /// without passing it to <see cref="IndexWriter"/>, you should call
         /// <see cref="SetIndexWriter(IndexWriter)"/>.
         /// </summary>
-        public MergePolicy()
+        protected MergePolicy() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(DEFAULT_NO_CFS_RATIO, DEFAULT_MAX_CFS_SEGMENT_SIZE)
         {
         }

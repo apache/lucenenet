@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         private int[] targetMapOffsets = new int[8192];
         private readonly List<string> posDict = new List<string>();
 
-        public BinaryDictionaryWriter(Type implClazz, int size)
+        protected BinaryDictionaryWriter(Type implClazz, int size) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_implClazz = implClazz;
             m_buffer = ByteBuffer.Allocate(size);

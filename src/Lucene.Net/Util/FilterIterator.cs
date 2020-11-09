@@ -88,7 +88,7 @@ namespace Lucene.Net.Util
         /// Returns <c>true</c>, if this element should be set to <see cref="Current"/> by <see cref="SetNext()"/>. </summary>
         protected abstract bool PredicateFunction(T @object);
 
-        public FilterIterator(IEnumerator<T> baseIterator)
+        protected FilterIterator(IEnumerator<T> baseIterator) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.iter = baseIterator;
         }
