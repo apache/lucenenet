@@ -5699,13 +5699,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DeletePendingFiles()
-        {
-            lock (this)
-            {
-                deleter.DeletePendingFiles();
-            }
-        }
+        // LUCENENET specific - DeletePendingFiles() excluded because it is not referenced - IDE0051
+
 
         /// <summary>
         /// NOTE: this method creates a compound file for all files returned by

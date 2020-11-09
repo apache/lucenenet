@@ -144,7 +144,9 @@ namespace Lucene.Net.Expressions.JS
         /// If this method fails to compile, you also have to change the byte code generator to correctly
         /// use the <see cref="FunctionValues"/> class.
         /// </remarks>
+#pragma warning disable IDE0051 // Remove unused private members
         private static void UnusedTestCompile()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             FunctionValues f = null;
             /*double ret = */f.DoubleVal(2); // LUCENENET: IDE0059: Remove unnecessary value assignment

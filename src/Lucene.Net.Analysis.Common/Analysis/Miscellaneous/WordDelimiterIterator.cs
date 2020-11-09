@@ -365,52 +365,6 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     return WordDelimiterFilter.SUBWORD_DELIM;
 
             }
-
-            //switch (char.getType(ch))
-            //{
-            //  case char.UPPERCASE_LETTER:
-            //	  return WordDelimiterFilter.UPPER;
-            //  case char.LOWERCASE_LETTER:
-            //	  return WordDelimiterFilter.LOWER;
-
-            //  case char.TITLECASE_LETTER:
-            //  case char.MODIFIER_LETTER:
-            //  case char.OTHER_LETTER:
-            //  case char.NON_SPACING_MARK:
-            //  case char.ENCLOSING_MARK: // depends what it encloses?
-            //  case char.COMBINING_SPACING_MARK:
-            //	return WordDelimiterFilter.ALPHA;
-
-            //  case char.DECIMAL_DIGIT_NUMBER:
-            //  case char.LETTER_NUMBER:
-            //  case char.OTHER_NUMBER:
-            //	return WordDelimiterFilter.DIGIT;
-
-            //  // case Character.SPACE_SEPARATOR:
-            //  // case Character.LINE_SEPARATOR:
-            //  // case Character.PARAGRAPH_SEPARATOR:
-            //  // case Character.CONTROL:
-            //  // case Character.FORMAT:
-            //  // case Character.PRIVATE_USE:
-
-            //  case char.SURROGATE: // prevent splitting
-            //	return WordDelimiterFilter.ALPHA | WordDelimiterFilter.DIGIT;
-
-            //  // case Character.DASH_PUNCTUATION:
-            //  // case Character.START_PUNCTUATION:
-            //  // case Character.END_PUNCTUATION:
-            //  // case Character.CONNECTOR_PUNCTUATION:
-            //  // case Character.OTHER_PUNCTUATION:
-            //  // case Character.MATH_SYMBOL:
-            //  // case Character.CURRENCY_SYMBOL:
-            //  // case Character.MODIFIER_SYMBOL:
-            //  // case Character.OTHER_SYMBOL:
-            //  // case Character.INITIAL_QUOTE_PUNCTUATION:
-            //  // case Character.FINAL_QUOTE_PUNCTUATION:
-
-            //  default:
-            //	  return WordDelimiterFilter.SUBWORD_DELIM;
-            //}
         }
     }
 }

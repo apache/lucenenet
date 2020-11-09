@@ -731,11 +731,11 @@ namespace TagSoup
         //		}
 
 
-        private static string NiceChar(int value)
-        {
-            if (value == '\n') return "\\n";
-            if (value < 32) return "0x" + value.ToString("X", CultureInfo.InvariantCulture);
-            return "'" + ((char)value) + "'";
-        }
+        //private static string NiceChar(int value) // LUCENENET: IDE0051: Remove unused private member
+        //{
+        //    if (value == '\n') return "\\n";
+        //    if (value < 32) return "0x" + value.ToString("X", CultureInfo.InvariantCulture);
+        //    return "'" + ((char)value) + "'";
+        //}
     }
 }

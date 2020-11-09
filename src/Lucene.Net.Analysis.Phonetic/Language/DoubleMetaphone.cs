@@ -196,23 +196,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return alternate ? result.Alternate : result.Primary;
         }
 
-        // LUCENENET specific - in .NET we don't need an object overload, since strings are sealed anyway.
-        //    /**
-        //     * Encode the value using DoubleMetaphone.  It will only work if
-        //     * <code>obj</code> is a <code>String</code> (like <code>Metaphone</code>).
-        //     *
-        //     * @param obj Object to encode (should be of type String)
-        //     * @return An encoded Object (will be of type String)
-        //     * @throws EncoderException encode parameter is not of type String
-        //     */
-
-        //public virtual object Encode(object obj) 
-        //    {
-        //    if (!(obj is String)) {
-        //            throw new EncoderException("DoubleMetaphone encode parameter is not of type String");
-        //        }
-        //    return GetDoubleMetaphone((String) obj);
-        //    }
+        // LUCENENET specific - in .NET we don't need an object overload of Encode(), since strings are sealed anyway.
 
         /// <summary>
         /// Encode the value using DoubleMetaphone.

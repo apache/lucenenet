@@ -925,43 +925,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private static void Walk<T>(FST<T> fst) // LUCENENET NOTE: Not referenced anywhere
-        {
-            var queue = new List<FST.Arc<T>>();
-
-            // Java version was BitSet(), but in .NET we don't have a zero contructor BitSet. 
-            // Couldn't find the default size in BitSet, so went with zero here.
-            var seen = new BitSet(); 
-            var reader = fst.GetBytesReader();
-            var startArc = fst.GetFirstArc(new FST.Arc<T>());
-            queue.Add(startArc);
-            while (queue.Count > 0)
-            {
-                //FST.Arc<T> arc = queue.Remove(0);
-                var arc = queue[0];
-                queue.RemoveAt(0); 
-
-                long node = arc.Target;
-                //System.out.println(arc);
-                if (FST<T>.TargetHasArcs(arc) && !seen.Get((int)node))
-                {
-                    seen.Set((int)node);
-                    fst.ReadFirstRealTargetArc(node, arc, reader);
-                    while (true)
-                    {
-                        queue.Add((new FST.Arc<T>()).CopyFrom(arc));
-                        if (arc.IsLast)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            fst.ReadNextRealArc(arc, reader);
-                        }
-                    }
-                }
-            }
-        }
+        // LUCENENET specific - removed Walk<T>(FST<T> fst) because it is dead code
 
         public override long RamBytesUsed()
         {

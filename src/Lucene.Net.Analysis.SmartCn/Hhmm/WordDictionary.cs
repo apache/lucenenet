@@ -96,21 +96,6 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     {
                         singleInstance.Load(dictRoot);
                     }
-
-
-                    //try
-                    //{
-                    //    singleInstance.Load();
-                    //}
-                    //catch (IOException e)
-                    //{
-                    //    string wordDictRoot = AnalyzerProfile.ANALYSIS_DATA_DIR;
-                    //    singleInstance.Load(wordDictRoot);
-                    //}
-                    //catch (TypeLoadException e)
-                    //{
-                    //    throw new Exception(e.ToString(), e);
-                    //}
                 }
                 return singleInstance;
             }
@@ -217,16 +202,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private void LoadFromObjectInputStream(Stream serialObjectInputStream)
         {
-            //ObjectInputStream input = new ObjectInputStream(serialObjectInputStream);
-            //wordIndexTable = (short[])input.ReadObject();
-            //charIndexTable = (char[])input.ReadObject();
-            //wordItem_charArrayTable = (char[][][])input.ReadObject();
-            //wordItem_frequencyTable = (int[][])input.ReadObject();
-            //// log.info("load core dict from serialization.");
-            //input.close();
-
             using (var reader = new BinaryReader(serialObjectInputStream))
-            //using (var reader = new DataInputStream(serialObjectInputStream))
             {
 
                 // Read wordIndexTable
@@ -299,15 +275,6 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
             try
             {
-                //ObjectOutputStream output = new ObjectOutputStream(new FileStream(
-                //    serialObj.FullName, FileMode.Create, FileAccess.Write));
-                //output.writeObject(wordIndexTable);
-                //output.writeObject(charIndexTable);
-                //output.writeObject(wordItem_charArrayTable);
-                //output.writeObject(wordItem_frequencyTable);
-                //output.close();
-                //// log.info("serialize core dict.");
-
                 using (Stream stream = new FileStream(serialObj.FullName, FileMode.Create, FileAccess.Write))
                 {
                     using (var writer = new BinaryWriter(stream))
@@ -386,7 +353,6 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             buffer = new int[3];
             byte[] intBuffer = new byte[4];
             string tmpword;
-            //using (RandomAccessFile dctFile = new RandomAccessFile(dctFilePath, "r"))
             using (var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read))
             {
 
@@ -430,11 +396,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         {
                             byte[] lchBuffer = new byte[length];
                             dctFile.Read(lchBuffer, 0, lchBuffer.Length);
-                            //tmpword = new String(lchBuffer, "GB2312");
                             tmpword = Encoding.GetEncoding("GB2312").GetString(lchBuffer);
-                            //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
-                            // indexTable[i].wordItems[j].word = tmpword;
-                            // wordItemTable[i][j].charArray = tmpword.toCharArray();
                             wordItem_charArrayTable[i][j] = tmpword.ToCharArray();
                         }
                         else

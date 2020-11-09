@@ -40,10 +40,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Extension of norms file </summary>
         private const string NORMS_EXTENSION = "nrm";
 
-        /// <summary>
-        /// Extension of separate norms file </summary>
-        [Obsolete("Only for reading existing 3.x indexes")]
-        private const string SEPARATE_NORMS_EXTENSION = "s";
+        ///// <summary>
+        ///// Extension of separate norms file </summary>
+        //[Obsolete("Only for reading existing 3.x indexes")]
+        //private const string SEPARATE_NORMS_EXTENSION = "s"; // LUCENENET: IDE0051: Remove unused private member
 
 #pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexOutput @out;

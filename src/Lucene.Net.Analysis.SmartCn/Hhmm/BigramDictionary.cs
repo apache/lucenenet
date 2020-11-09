@@ -78,21 +78,6 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     {
                         singleInstance.Load(dictRoot);
                     }
-
-
-                    //try
-                    //{
-                    //    singleInstance.Load();
-                    //}
-                    //catch (IOException e)
-                    //{
-                    //    string dictRoot = AnalyzerProfile.ANALYSIS_DATA_DIR;
-                    //    singleInstance.Load(dictRoot);
-                    //}
-                    //catch (TypeLoadException e)
-                    //{
-                    //    throw new Exception(e.ToString(), e);
-                    //}
                 }
                 return singleInstance;
             }
@@ -173,14 +158,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private void LoadFromInputStream(Stream serialObjectInputStream)
         {
-            //ObjectInputStream input = new ObjectInputStream(serialObjectInputStream);
-            //bigramHashTable = (long[])input.readObject();
-            //frequencyTable = (int[])input.readObject();
-            //// log.info("load bigram dict from serialization.");
-            //input.close();
-
             using (var reader = new BinaryReader(serialObjectInputStream))
-            //using (var reader = new DataInputStream(serialObjectInputStream))
             {
                 // Read bigramHashTable
                 int bhLen = reader.ReadInt32();
@@ -206,12 +184,6 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
             try
             {
-                //ObjectOutputStream output = new ObjectOutputStream(new FileStream(
-                //    serialObj.FullName, FileMode.Create, FileAccess.Write));
-                //output.writeObject(bigramHashTable);
-                //output.writeObject(frequencyTable);
-                //output.close();
-                
                 using (Stream output = new FileStream(serialObj.FullName, FileMode.Create, FileAccess.Write))
                 {
                     using (BinaryWriter writer = new BinaryWriter(output))

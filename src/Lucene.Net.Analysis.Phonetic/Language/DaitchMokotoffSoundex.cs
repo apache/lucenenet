@@ -440,34 +440,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return sb.ToString();
         }
 
-        // LUCENENET specific - in .NET we don't need an object overload, since strings are sealed anyway.
-        //**
-        // * Encodes an Object using the Daitch-Mokotoff soundex algorithm without branching.
-        // * <p>
-        // * This method is provided in order to satisfy the requirements of the Encoder interface, and will throw an
-        // * EncoderException if the supplied object is not of type java.lang.String.
-        // * </p>
-        // *
-        // * @see #soundex(String)
-        // *
-        // * @param obj
-        // *            Object to encode
-        // * @return An object (of type java.lang.String) containing the DM soundex code, which corresponds to the String
-        // *         supplied.
-        // * @throws EncoderException
-        // *             if the parameter supplied is not of type java.lang.String
-        // * @throws IllegalArgumentException
-        // *             if a character is not mapped
-        // */
-        //@Override
-        //    public Object encode(object obj) 
-        //{
-        //        if (!(obj instanceof String)) {
-        //        throw new EncoderException(
-        //                "Parameter supplied to DaitchMokotoffSoundex encode is not of type java.lang.String");
-        //    }
-        //        return encode((String) obj);
-        //}
+        // LUCENENET specific - in .NET we don't need an object overload of Encode(), since strings are sealed anyway.
 
         /// <summary>
         /// Encodes a string using the Daitch-Mokotoff soundex algorithm without branching.

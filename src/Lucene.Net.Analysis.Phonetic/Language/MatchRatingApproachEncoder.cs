@@ -98,26 +98,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return upperName;
         }
 
-        // LUCENENET specific - in .NET we don't need an object overload, since strings are sealed anyway.
-        // **
-        // * Encodes an Object using the Match Rating Approach algorithm. Method is here to satisfy the requirements of the
-        // * Encoder interface Throws an EncoderException if input object is not of type java.lang.string.
-        // *
-        // * @param pObject
-        // *            Object to encode
-        // * @return An object (or type java.lang.string) containing the Match Rating Approach code which corresponds to the
-        // *         string supplied.
-        // * @throws EncoderException
-        // *             if the parameter supplied is not of type java.lang.string
-        // */
-        //public Object encode(Object pObject) throws EncoderException
-        //{
-        //if (!(pObject instanceof string)) {
-        //        throw new EncoderException(
-        //                "Parameter supplied to Match Rating Approach encoder is not of type java.lang.string");
-        //    }
-        //return encode((string) pObject);
-        //}
+        // LUCENENET specific - in .NET we don't need an object overload of Encode(), since strings are sealed anyway.
 
         /// <summary>
         /// Encodes a string using the Match Rating Approach (MRA) algorithm.

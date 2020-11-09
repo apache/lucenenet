@@ -81,10 +81,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.sindex = sindex;
             }
 
-            private string ToTerm(string readableValue)
-            {
-                return readableValue;
-            }
+            //private string ToTerm(string readableValue) // LUCENENET: IDE0051: Remove unused private member
+            //{
+            //    return readableValue;
+            //}
 
             /// <summary>
             /// NOTE: This was intVal() in Lucene

@@ -158,7 +158,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             return rules;
         }
 
+#pragma warning disable IDE0051 // Remove unused private members
         private static bool Contains(ICharSequence chars, char input)
+#pragma warning restore IDE0051 // Remove unused private members
         {
             for (int i = 0; i < chars.Length; i++)
             {
@@ -180,7 +182,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             }
             return false;
         }
+#pragma warning disable IDE0051 // Remove unused private members
         private static bool Contains(StringBuilder chars, char input)
+#pragma warning restore IDE0051 // Remove unused private members
         {
             for (int i = 0; i < chars.Length; i++)
             {

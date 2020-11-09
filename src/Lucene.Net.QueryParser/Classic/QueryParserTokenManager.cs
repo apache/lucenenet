@@ -24,7 +24,8 @@ namespace Lucene.Net.QueryParsers.Classic
 
     /// <summary>Token Manager. </summary>
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
-	[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
+    [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "This class is based on generated code")]
     public class QueryParserTokenManager //: QueryParserConstants
     {
         private void  InitBlock()
@@ -54,6 +55,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 
             }
         }
+
         private int JjStartNfa_2(int pos, long active0)
         {
             return JjMoveNfa_2(JjStopStringLiteralDfa_2(pos, active0), pos + 1);

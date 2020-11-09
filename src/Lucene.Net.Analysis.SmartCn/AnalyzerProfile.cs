@@ -80,28 +80,6 @@ namespace Lucene.Net.Analysis.Cn.Smart
             string currentPath = System.AppContext.BaseDirectory;
 #endif
 
-            //FileInfo[] cadidateFiles = new FileInfo[] { new FileInfo(currentPath + "/" + dirName),
-            //    new FileInfo(currentPath + "/bin/" + dirName)/*, new FileInfo("./" + propName),
-            //    new FileInfo("./lib/" + propName)*/ };
-            //for (int i = 0; i < cadidateFiles.Length; i++)
-            //{
-            //    FileInfo file = cadidateFiles[i];
-            //    if (file.Exists)
-            //    {
-            //        ANALYSIS_DATA_DIR = file.FullName;
-
-            //        //if (file.isDirectory())
-            //        //{
-            //        //    ANALYSIS_DATA_DIR = file.getAbsolutePath();
-            //        //}
-            //        //else if (file.isFile() && GetAnalysisDataDir(file).Length != 0)
-            //        //{
-            //        //    ANALYSIS_DATA_DIR = GetAnalysisDataDir(file);
-            //        //}
-            //        break;
-            //    }
-            //}
-
             string candidatePath = System.IO.Path.Combine(currentPath, dirName);
             if (Directory.Exists(candidatePath))
             {
@@ -127,45 +105,6 @@ namespace Lucene.Net.Analysis.Cn.Smart
             {
                 // ignore security errors
             }
-
-
-            //for (int i = 0; i < cadidateDirectories.Count; i++)
-            //{
-            //    DirectoryInfo dir = cadidateDirectories[i];
-            //    if (dir.Exists)
-            //    {
-            //        ANALYSIS_DATA_DIR = dir.FullName;
-            //        break;
-            //    }
-            //}
-
-            //if (ANALYSIS_DATA_DIR.Length == 0)
-            //{
-            //    // Dictionary directory cannot be found.
-            //    throw new Exception("WARNING: Can not find lexical dictionary directory!"
-            //     + " This will cause unpredictable exceptions in your application!"
-            //     + " Please refer to the manual to download the dictionaries.");
-            //}
-
         }
-
-        //private static string GetAnalysisDataDir(FileInfo propFile)
-        //{
-        //    Properties prop = new Properties();
-        //    try
-        //    {
-        //        string dir;
-        //        using (FileStream input = new FileStream(propFile.FullName, FileMode.Open, FileAccess.Read))
-        //        {
-        //            prop.load(new StreamReader(input, Encoding.UTF8));
-        //            dir = prop.getProperty("analysis.data.dir", "");
-        //        }
-        //        return dir;
-        //    }
-        //    catch (IOException e)
-        //    {
-        //        return "";
-        //    }
-        //}
     }
 }

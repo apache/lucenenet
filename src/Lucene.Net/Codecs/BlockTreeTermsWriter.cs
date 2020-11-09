@@ -935,7 +935,9 @@ namespace Lucene.Net.Codecs
             }
 
             // for debugging
+#pragma warning disable IDE0051 // Remove unused private members
             private string ToString(BytesRef b)
+#pragma warning restore IDE0051 // Remove unused private members
             {
                 try
                 {

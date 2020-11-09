@@ -316,21 +316,6 @@ namespace Lucene.Net.Codecs.MockRandom
                                 Console.WriteLine("MockRandomCodec: random-gap terms index (max gap=" + gap + ")");
                             }
                             selector = new IndexTermSelectorAnonymousHelper(seed2, gap);
-
-                            //           selector = new VariableGapTermsIndexWriter.IndexTermSelector() {
-                            //                Random rand = new Random(seed2);
-
-                            //@Override
-                            //                public bool isIndexTerm(BytesRef term, TermStats stats)
-                            //{
-                            //    return rand.nextInt(gap) == gap / 2;
-                            //}
-
-                            //@Override
-                            //                  public void newField(FieldInfo fieldInfo)
-                            //{
-                            //}
-                            //              };
                         }
                         indexWriter = new VariableGapTermsIndexWriter(state, selector);
                     }
