@@ -7,6 +7,7 @@ using Lucene.Net.QueryParsers.Flexible.Standard.Config;
 using Lucene.Net.QueryParsers.Flexible.Standard.Parser;
 using Lucene.Net.QueryParsers.Flexible.Standard.Processors;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -246,7 +247,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             if (fields == null)
             {
-                fields = new string[0];
+                fields = Arrays.Empty<string>();
             }
 
             QueryConfigHandler.Set(ConfigurationKeys.MULTI_FIELDS, fields);

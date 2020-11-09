@@ -508,7 +508,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // check if we should do any multiterm processing
             Analyzer analyzer = GetIndexAnalyzer(field);
-            CharacterRunAutomaton[] automata = new CharacterRunAutomaton[0];
+            CharacterRunAutomaton[] automata = Arrays.Empty<CharacterRunAutomaton>();
             if (analyzer != null)
             {
                 automata = MultiTermHighlighting.ExtractAutomata(query, field);

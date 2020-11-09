@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -32,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
     {
         private readonly string key; // LUCENENET: marked readonly
 
-        private readonly object[] arguments = new object[0]; // LUCENENET: marked readonly
+        private readonly object[] arguments = Arrays.Empty<object>(); // LUCENENET: marked readonly
 
         public Message(string key)
         {

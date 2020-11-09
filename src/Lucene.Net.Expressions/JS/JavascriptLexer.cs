@@ -26,6 +26,7 @@ using System;
 using System.Runtime.Serialization;
 #endif
 using Antlr.Runtime;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Expressions.JS
 {
@@ -125,7 +126,7 @@ namespace Lucene.Net.Expressions.JS
         // delegators
         public virtual Lexer[] GetDelegates()
         {
-            return new Lexer[] {  };
+            return Arrays.Empty<Lexer>();
         }
 
         public JavascriptLexer()

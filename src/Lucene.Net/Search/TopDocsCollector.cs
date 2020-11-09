@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 
@@ -39,7 +40,7 @@ namespace Lucene.Net.Search
         /// This is used in case <see cref="GetTopDocs()"/> is called with illegal parameters, or there
         /// simply aren't (enough) results.
         /// </summary>
-        protected static readonly TopDocs EMPTY_TOPDOCS = new TopDocs(0, new ScoreDoc[0], float.NaN);
+        protected static readonly TopDocs EMPTY_TOPDOCS = new TopDocs(0, Arrays.Empty<ScoreDoc>(), float.NaN);
 
         /// <summary>
         /// The priority queue which holds the top documents. Note that different

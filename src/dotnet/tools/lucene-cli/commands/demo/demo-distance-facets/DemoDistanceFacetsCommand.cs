@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Demo.Facet;
 using System.Collections.Generic;
+using System;
 
 namespace Lucene.Net.Cli
 {
@@ -46,7 +47,7 @@ namespace Lucene.Net.Cli
 
         public int Run(ConfigurationBase cmd)
         {
-            cmd.Main(new string[0]);
+            cmd.Main(Array.Empty<string>());
             return 0;
         }
     }

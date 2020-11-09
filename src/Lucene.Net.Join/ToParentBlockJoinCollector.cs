@@ -92,7 +92,7 @@ namespace Lucene.Net.Join
         private readonly bool trackScores;
 
         private int docBase;
-        private ToParentBlockJoinQuery.BlockJoinScorer[] joinScorers = new ToParentBlockJoinQuery.BlockJoinScorer[0];
+        private ToParentBlockJoinQuery.BlockJoinScorer[] joinScorers = Arrays.Empty<ToParentBlockJoinQuery.BlockJoinScorer>();
         private AtomicReaderContext currentReaderContext;
         private Scorer scorer;
         private bool queueFull;

@@ -430,7 +430,7 @@ namespace Lucene.Net.Codecs.Compressing
                     {
                         // not all docs were deleted
                         CompressingStoredFieldsReader.ChunkIterator it = matchingFieldsReader.GetChunkIterator(docID);
-                        int[] startOffsets = new int[0];
+                        int[] startOffsets = Arrays.Empty<int>();
                         do
                         {
                             // go to the next chunk that contains docID

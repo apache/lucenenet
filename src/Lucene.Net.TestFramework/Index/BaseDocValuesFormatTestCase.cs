@@ -1726,7 +1726,7 @@ namespace Lucene.Net.Index
                 {
                     Document doc = new Document();
                     Field idField = new StringField("id", "", Field.Store.NO);
-                    Field storedField = new StoredField("stored", new byte[0]);
+                    Field storedField = new StoredField("stored", Arrays.Empty<byte>());
                     Field dvField = new BinaryDocValuesField("dv", new BytesRef());
                     doc.Add(idField);
                     doc.Add(storedField);
@@ -1816,7 +1816,7 @@ namespace Lucene.Net.Index
                 {
                     Document doc = new Document();
                     Field idField = new StringField("id", "", Field.Store.NO);
-                    Field storedField = new StoredField("stored", new byte[0]);
+                    Field storedField = new StoredField("stored", Arrays.Empty<byte>());
                     Field dvField = new SortedDocValuesField("dv", new BytesRef());
                     doc.Add(idField);
                     doc.Add(storedField);

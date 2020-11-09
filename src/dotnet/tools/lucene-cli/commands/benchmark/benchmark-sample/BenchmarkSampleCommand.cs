@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Programmatic;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Cli
@@ -46,7 +47,7 @@ namespace Lucene.Net.Cli
 
         public int Run(ConfigurationBase cmd)
         {
-            cmd.Main(new string[0]);
+            cmd.Main(Array.Empty<string>());
             return 0;
         }
     }

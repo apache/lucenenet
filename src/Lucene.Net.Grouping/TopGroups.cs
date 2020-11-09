@@ -228,7 +228,7 @@ namespace Lucene.Net.Search.Grouping
                 }
                 else if (docOffset >= mergedTopDocs.ScoreDocs.Length)
                 {
-                    mergedScoreDocs = new ScoreDoc[0];
+                    mergedScoreDocs = Arrays.Empty<ScoreDoc>();
                 }
                 else
                 {

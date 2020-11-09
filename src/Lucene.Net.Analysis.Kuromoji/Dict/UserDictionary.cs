@@ -1,5 +1,6 @@
 ﻿using J2N.Text;
 using Lucene.Net.Analysis.Ja.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -169,7 +170,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         public TokenInfoFST FST => fst;
 
-        private static readonly int[][] EMPTY_RESULT = new int[0][];
+        private static readonly int[][] EMPTY_RESULT = Arrays.Empty<int[]>();
 
         /// <summary>
         /// Convert Map of index and wordIdAndLength to array of {wordId, index, length}

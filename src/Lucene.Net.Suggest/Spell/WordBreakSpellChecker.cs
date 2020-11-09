@@ -1,5 +1,6 @@
 ﻿using J2N;
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -93,7 +94,7 @@ namespace Lucene.Net.Search.Spell
         {
             if (maxSuggestions < 1)
             {
-                return new SuggestWord[0][];
+                return Arrays.Empty<SuggestWord[]>();
             }
 
             int queueInitialCapacity = maxSuggestions > 10 ? 10 : maxSuggestions;
@@ -105,7 +106,7 @@ namespace Lucene.Net.Search.Spell
             int origFreq = ir.DocFreq(term);
             if (origFreq > 0 && suggestMode == SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX)
             {
-                return new SuggestWord[0][];
+                return Arrays.Empty<SuggestWord[]>();
             }
 
             int useMinSuggestionFrequency = minSuggestionFrequency;
@@ -114,7 +115,7 @@ namespace Lucene.Net.Search.Spell
                 useMinSuggestionFrequency = (origFreq == 0 ? 1 : origFreq);
             }
 
-            GenerateBreakUpSuggestions(term, ir, 1, maxSuggestions, useMinSuggestionFrequency, new SuggestWord[0], suggestions, 0, sortMethod);
+            GenerateBreakUpSuggestions(term, ir, 1, maxSuggestions, useMinSuggestionFrequency, Arrays.Empty<SuggestWord>(), suggestions, 0, sortMethod);
 
             SuggestWord[][] suggestionArray = new SuggestWord[suggestions.Count][];
             for (int i = suggestions.Count - 1; i >= 0; i--)
@@ -157,7 +158,7 @@ namespace Lucene.Net.Search.Spell
         {
             if (maxSuggestions < 1)
             {
-                return new CombineSuggestion[0];
+                return Arrays.Empty<CombineSuggestion>();
             }
 
             int[] origFreqs = null;
