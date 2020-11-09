@@ -70,22 +70,23 @@ namespace Lucene.Net.Benchmarks.ByTask.Programmatic
         // Sample programmatic settings. Could also read from file.
         private static IDictionary<string, string> InitProps()
         {
-            var p = new Dictionary<string, string>();
-            p["task.max.depth.log"] = "3";
-            p["max.buffered"] = "buf:10:10:100:100:10:10:100:100";
-            //p["doc.maker"] = "Lucene.Net.Benchmarks.ByTask.Feeds.ReutersContentSource, Lucene.Net.Benchmark";
-            p["log.step"] = "2000";
-            p["doc.delete.step"] = "8";
-            p["analyzer"] = "Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net.Analysis.Common";
-            p["doc.term.vector"] = "false";
-            p["directory"] = "FSDirectory";
-            p["query.maker"] = "Lucene.Net.Benchmarks.ByTask.Feeds.ReutersQueryMaker, Lucene.Net.Benchmark";
-            p["doc.stored"] = "true";
-            p["docs.dir"] = "reuters-out";
-            p["compound"] = "cmpnd:true:true:true:true:false:false:false:false";
-            p["doc.tokenized"] = "true";
-            p["merge.factor"] = "mrg:10:100:10:100:10:100:10:100";
-            return p;
+            return new Dictionary<string, string>
+            {
+                ["task.max.depth.log"] = "3",
+                ["max.buffered"] = "buf:10:10:100:100:10:10:100:100",
+                //p["doc.maker"] = "Lucene.Net.Benchmarks.ByTask.Feeds.ReutersContentSource, Lucene.Net.Benchmark";
+                ["log.step"] = "2000",
+                ["doc.delete.step"] = "8",
+                ["analyzer"] = "Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net.Analysis.Common",
+                ["doc.term.vector"] = "false",
+                ["directory"] = "FSDirectory",
+                ["query.maker"] = "Lucene.Net.Benchmarks.ByTask.Feeds.ReutersQueryMaker, Lucene.Net.Benchmark",
+                ["doc.stored"] = "true",
+                ["docs.dir"] = "reuters-out",
+                ["compound"] = "cmpnd:true:true:true:true:false:false:false:false",
+                ["doc.tokenized"] = "true",
+                ["merge.factor"] = "mrg:10:100:10:100:10:100:10:100"
+            };
         }
     }
 }

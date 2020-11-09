@@ -150,8 +150,10 @@ namespace Lucene.Net.Analysis.Synonym
                     else
                     {
                         // reduce to first argument
-                        target = new List<IList<string>>(1);
-                        target.Add(source[0]);
+                        target = new List<IList<string>>(1)
+                        {
+                            source[0]
+                        };
                     }
                 }
 

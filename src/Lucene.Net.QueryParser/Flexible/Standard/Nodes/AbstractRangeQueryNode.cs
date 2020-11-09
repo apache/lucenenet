@@ -140,9 +140,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 this.lowerInclusive = lowerInclusive;
                 this.upperInclusive = upperInclusive;
 
-                List<IQueryNode> children = new List<IQueryNode>(2);
-                children.Add(lower);
-                children.Add(upper);
+                List<IQueryNode> children = new List<IQueryNode>(2)
+                {
+                    lower,
+                    upper
+                };
 
                 Set(children);
             }

@@ -61,96 +61,95 @@ namespace Lucene.Net.Demo.Facet
         /// <summary>Build the example index.</summary>
         private void Index()
         {
-            using (IndexWriter indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(EXAMPLE_VERSION,
-                new WhitespaceAnalyzer(EXAMPLE_VERSION))))
+            using IndexWriter indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(EXAMPLE_VERSION,
+                new WhitespaceAnalyzer(EXAMPLE_VERSION)));
 
             // Writes facet ords to a separate directory from the main index
-            using (DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir))
+            using DirectoryTaxonomyWriter taxoWriter = new DirectoryTaxonomyWriter(taxoDir);
+
+            indexWriter.AddDocument(config.Build(taxoWriter, new Document
             {
+                new FacetField("Author", "Bob"),
+                new FacetField("Publish Date", "2010", "10", "15")
+            }));
 
-                Document doc = new Document();
-                doc.Add(new FacetField("Author", "Bob"));
-                doc.Add(new FacetField("Publish Date", "2010", "10", "15"));
-                indexWriter.AddDocument(config.Build(taxoWriter, doc));
+            indexWriter.AddDocument(config.Build(taxoWriter, new Document
+            {
+                new FacetField("Author", "Lisa"),
+                new FacetField("Publish Date", "2010", "10", "20")
+            }));
 
-                doc = new Document();
-                doc.Add(new FacetField("Author", "Lisa"));
-                doc.Add(new FacetField("Publish Date", "2010", "10", "20"));
-                indexWriter.AddDocument(config.Build(taxoWriter, doc));
+            indexWriter.AddDocument(config.Build(taxoWriter, new Document
+            {
+                new FacetField("Author", "Lisa"),
+                new FacetField("Publish Date", "2012", "1", "1")
+            }));
 
-                doc = new Document();
-                doc.Add(new FacetField("Author", "Lisa"));
-                doc.Add(new FacetField("Publish Date", "2012", "1", "1"));
-                indexWriter.AddDocument(config.Build(taxoWriter, doc));
+            indexWriter.AddDocument(config.Build(taxoWriter, new Document
+            {
+                new FacetField("Author", "Susan"),
+                new FacetField("Publish Date", "2012", "1", "7")
+            }));
 
-                doc = new Document();
-                doc.Add(new FacetField("Author", "Susan"));
-                doc.Add(new FacetField("Publish Date", "2012", "1", "7"));
-                indexWriter.AddDocument(config.Build(taxoWriter, doc));
-
-                doc = new Document();
-                doc.Add(new FacetField("Author", "Frank"));
-                doc.Add(new FacetField("Publish Date", "1999", "5", "5"));
-                indexWriter.AddDocument(config.Build(taxoWriter, doc));
-
-            } // Disposes indexWriter and taxoWriter
+            indexWriter.AddDocument(config.Build(taxoWriter, new Document
+            {
+                new FacetField("Author", "Frank"),
+                new FacetField("Publish Date", "1999", "5", "5")
+            }));
         }
 
         /// <summary>User runs a query and counts facets.</summary>
         private IList<FacetResult> FacetsWithSearch()
         {
-            using (DirectoryReader indexReader = DirectoryReader.Open(indexDir))
-            using (TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir))
+            using DirectoryReader indexReader = DirectoryReader.Open(indexDir);
+            using TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir);
+            IndexSearcher searcher = new IndexSearcher(indexReader);
+
+            FacetsCollector fc = new FacetsCollector();
+
+            // MatchAllDocsQuery is for "browsing" (counts facets
+            // for all non-deleted docs in the index); normally
+            // you'd use a "normal" query:
+            FacetsCollector.Search(searcher, new MatchAllDocsQuery(), 10, fc);
+
+            Facets facets = new FastTaxonomyFacetCounts(taxoReader, config, fc);
+
+            // Retrieve results
+            IList<FacetResult> results = new List<FacetResult>
             {
-                IndexSearcher searcher = new IndexSearcher(indexReader);
-
-                FacetsCollector fc = new FacetsCollector();
-
-                // MatchAllDocsQuery is for "browsing" (counts facets
-                // for all non-deleted docs in the index); normally
-                // you'd use a "normal" query:
-                FacetsCollector.Search(searcher, new MatchAllDocsQuery(), 10, fc);
-
-                // Retrieve results
-                IList<FacetResult> results = new List<FacetResult>();
-
                 // Count both "Publish Date" and "Author" dimensions
-                Facets facets = new FastTaxonomyFacetCounts(taxoReader, config, fc);
-                results.Add(facets.GetTopChildren(10, "Author"));
-                results.Add(facets.GetTopChildren(10, "Publish Date"));
+                facets.GetTopChildren(10, "Author"),
+                facets.GetTopChildren(10, "Publish Date")
+            };
 
-                return results;
-
-            } // Disposes indexReader and taxoReader
+            return results;
         }
 
         /// <summary>User runs a query and counts facets only without collecting the matching documents.</summary>
         private IList<FacetResult> FacetsOnly()
         {
-            using (DirectoryReader indexReader = DirectoryReader.Open(indexDir))
-            using (TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir))
+            using DirectoryReader indexReader = DirectoryReader.Open(indexDir);
+            using TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir);
+            IndexSearcher searcher = new IndexSearcher(indexReader);
+
+            FacetsCollector fc = new FacetsCollector();
+
+            // MatchAllDocsQuery is for "browsing" (counts facets
+            // for all non-deleted docs in the index); normally
+            // you'd use a "normal" query:
+            searcher.Search(new MatchAllDocsQuery(), null /*Filter */, fc);
+
+            Facets facets = new FastTaxonomyFacetCounts(taxoReader, config, fc);
+
+            // Retrieve results
+            IList<FacetResult> results = new List<FacetResult>
             {
-                IndexSearcher searcher = new IndexSearcher(indexReader);
-
-                FacetsCollector fc = new FacetsCollector();
-
-                // MatchAllDocsQuery is for "browsing" (counts facets
-                // for all non-deleted docs in the index); normally
-                // you'd use a "normal" query:
-                searcher.Search(new MatchAllDocsQuery(), null /*Filter */, fc);
-
-                // Retrieve results
-                IList<FacetResult> results = new List<FacetResult>();
-
                 // Count both "Publish Date" and "Author" dimensions
-                Facets facets = new FastTaxonomyFacetCounts(taxoReader, config, fc);
+                facets.GetTopChildren(10, "Author"),
+                facets.GetTopChildren(10, "Publish Date")
+            };
 
-                results.Add(facets.GetTopChildren(10, "Author"));
-                results.Add(facets.GetTopChildren(10, "Publish Date"));
-
-                return results;
-
-            } // Disposes indexReader and taxoReader
+            return results;
         }
 
         /// <summary>
@@ -159,27 +158,24 @@ namespace Lucene.Net.Demo.Facet
         /// </summary>
         private FacetResult DrillDown()
         {
-            using (DirectoryReader indexReader = DirectoryReader.Open(indexDir))
-            using (TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir))
-            {
-                IndexSearcher searcher = new IndexSearcher(indexReader);
+            using DirectoryReader indexReader = DirectoryReader.Open(indexDir);
+            using TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir);
+            IndexSearcher searcher = new IndexSearcher(indexReader);
 
-                // Passing no baseQuery means we drill down on all
-                // documents ("browse only"):
-                DrillDownQuery q = new DrillDownQuery(config);
+            // Passing no baseQuery means we drill down on all
+            // documents ("browse only"):
+            DrillDownQuery q = new DrillDownQuery(config);
 
-                // Now user drills down on Publish Date/2010:
-                q.Add("Publish Date", "2010");
-                FacetsCollector fc = new FacetsCollector();
-                FacetsCollector.Search(searcher, q, 10, fc);
+            // Now user drills down on Publish Date/2010:
+            q.Add("Publish Date", "2010");
+            FacetsCollector fc = new FacetsCollector();
+            FacetsCollector.Search(searcher, q, 10, fc);
 
-                // Retrieve results
-                Facets facets = new FastTaxonomyFacetCounts(taxoReader, config, fc);
-                FacetResult result = facets.GetTopChildren(10, "Author");
+            // Retrieve results
+            Facets facets = new FastTaxonomyFacetCounts(taxoReader, config, fc);
+            FacetResult result = facets.GetTopChildren(10, "Author");
 
-                return result;
-
-            } // Disposes indexReader and taxoReader
+            return result;
         }
 
         /// <summary>
@@ -189,27 +185,24 @@ namespace Lucene.Net.Demo.Facet
         /// </summary>
         private IList<FacetResult> DrillSideways()
         {
-            using (DirectoryReader indexReader = DirectoryReader.Open(indexDir))
-            using (TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir))
-            {
-                IndexSearcher searcher = new IndexSearcher(indexReader);
+            using DirectoryReader indexReader = DirectoryReader.Open(indexDir);
+            using TaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir);
+            IndexSearcher searcher = new IndexSearcher(indexReader);
 
-                // Passing no baseQuery means we drill down on all
-                // documents ("browse only"):
-                DrillDownQuery q = new DrillDownQuery(config);
+            // Passing no baseQuery means we drill down on all
+            // documents ("browse only"):
+            DrillDownQuery q = new DrillDownQuery(config);
 
-                // Now user drills down on Publish Date/2010:
-                q.Add("Publish Date", "2010");
+            // Now user drills down on Publish Date/2010:
+            q.Add("Publish Date", "2010");
 
-                DrillSideways ds = new DrillSideways(searcher, config, taxoReader);
-                DrillSidewaysResult result = ds.Search(q, 10);
+            DrillSideways ds = new DrillSideways(searcher, config, taxoReader);
+            DrillSidewaysResult result = ds.Search(q, 10);
 
-                // Retrieve results
-                IList<FacetResult> facets = result.Facets.GetAllDims(10);
+            // Retrieve results
+            IList<FacetResult> facets = result.Facets.GetAllDims(10);
 
-                return facets;
-
-            } // Disposes indexReader and taxoReader
+            return facets;
         }
 
         /// <summary>Runs the search example.</summary>

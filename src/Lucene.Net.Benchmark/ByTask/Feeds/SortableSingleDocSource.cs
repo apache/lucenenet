@@ -79,10 +79,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public override DocData GetNextDocData(DocData docData)
         {
             docData = base.GetNextDocData(docData);
-            var props = new Dictionary<string, string>();
-
-            // random int
-            props["sort_field"] = r.Next(sortRange).ToString(CultureInfo.InvariantCulture);
+            var props = new Dictionary<string, string>
+            {
+                // random int
+                ["sort_field"] = r.Next(sortRange).ToString(CultureInfo.InvariantCulture)
+            };
 
             // random string
             int len = NextInt32(2, 20);

@@ -269,10 +269,11 @@ namespace Lucene.Net.Analysis.Hunspell
         {
             JCG.SortedDictionary<string, IList<char?>> prefixes = new JCG.SortedDictionary<string, IList<char?>>(StringComparer.Ordinal);
             JCG.SortedDictionary<string, IList<char?>> suffixes = new JCG.SortedDictionary<string, IList<char?>>(StringComparer.Ordinal);
-            IDictionary<string, int?> seenPatterns = new JCG.Dictionary<string, int?>();
-
-            // zero condition -> 0 ord
-            seenPatterns[".*"] = 0;
+            IDictionary<string, int?> seenPatterns = new JCG.Dictionary<string, int?>
+            {
+                // zero condition -> 0 ord
+                [".*"] = 0
+            };
             patterns.Add(null);
 
             // zero strip -> 0 ord

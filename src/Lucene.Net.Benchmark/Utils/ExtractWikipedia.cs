@@ -143,10 +143,12 @@ namespace Lucene.Net.Benchmarks.Utils
                 }
             }
 
-            IDictionary<string, string> properties = new Dictionary<string, string>();
-            properties["docs.file"] = wikipedia.FullName;
-            properties["content.source.forever"] = "false";
-            properties["keep.image.only.docs"] = keepImageOnlyDocs.ToString();
+            IDictionary<string, string> properties = new Dictionary<string, string>
+            {
+                ["docs.file"] = wikipedia.FullName,
+                ["content.source.forever"] = "false",
+                ["keep.image.only.docs"] = keepImageOnlyDocs.ToString()
+            };
             Config config = new Config(properties);
 
             ContentSource source = new EnwikiContentSource();

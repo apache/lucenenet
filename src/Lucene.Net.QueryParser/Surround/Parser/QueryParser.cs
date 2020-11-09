@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.QueryParsers.Surround.Query;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
@@ -54,7 +55,8 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     /// to two terms may appear between a and b. 
     /// </para>
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE0028:Collection initialization can be simplified", Justification = "This class is based on generated code")]
     public class QueryParser
     {
         internal readonly int minimumPrefixLength = 3;

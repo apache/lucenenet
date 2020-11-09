@@ -42,7 +42,7 @@ namespace Lucene.Net.Expressions
     /// </code>
     /// @lucene.experimental
     /// </summary>
-    public sealed class SimpleBindings : Bindings
+    public sealed class SimpleBindings : Bindings // LUCENENET TODO: Implement collection initializer to make populating easier
     {
         internal readonly IDictionary<string, object> map = new Dictionary<string, object>();
 

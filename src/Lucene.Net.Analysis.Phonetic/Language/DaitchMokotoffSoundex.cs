@@ -509,8 +509,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             string input = Cleanup(source);
 
             // LinkedHashSet preserves input order. In .NET we can use List for that purpose.
-            IList<Branch> currentBranches = new List<Branch>();
-            currentBranches.Add(new Branch());
+            IList<Branch> currentBranches = new List<Branch>
+            {
+                new Branch()
+            };
 
             char lastChar = '\0';
             for (int index = 0; index < input.Length; index++)

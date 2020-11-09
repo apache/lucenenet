@@ -101,8 +101,10 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             int s = token.StartOffset;
             if (!IsStartExist(s))
             {
-                List<SegToken> newlist = new List<SegToken>();
-                newlist.Add(token);
+                List<SegToken> newlist = new List<SegToken>
+                {
+                    token
+                };
                 tokenListTable[s] = newlist;
             }
             else

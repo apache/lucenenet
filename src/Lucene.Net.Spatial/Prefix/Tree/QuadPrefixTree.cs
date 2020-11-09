@@ -261,12 +261,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
             protected internal override ICollection<Cell> GetSubCells()
             {
                 QuadPrefixTree outerInstance = (QuadPrefixTree)this.m_outerInstance;
-                IList<Cell> cells = new List<Cell>(4);
-                cells.Add(new QuadCell(outerInstance, TokenString + "A"));
-                cells.Add(new QuadCell(outerInstance, TokenString + "B"));
-                cells.Add(new QuadCell(outerInstance, TokenString + "C"));
-                cells.Add(new QuadCell(outerInstance, TokenString + "D"));
-                return cells;
+                return new List<Cell>(4)
+                {
+                    new QuadCell(outerInstance, TokenString + "A"),
+                    new QuadCell(outerInstance, TokenString + "B"),
+                    new QuadCell(outerInstance, TokenString + "C"),
+                    new QuadCell(outerInstance, TokenString + "D")
+                };
             }
 
             public override int SubCellsSize => 4;

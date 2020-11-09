@@ -40,8 +40,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         public FieldsQuery(SrndQuery q, string fieldName, char fieldOp)
         {
             this.q = q;
-            var fieldNameList = new List<string>();
-            fieldNameList.Add(fieldName);
+            var fieldNameList = new List<string>
+            {
+                fieldName
+            };
             this.fieldNames = fieldNameList;
             this.fieldOp = fieldOp;
         }

@@ -4814,9 +4814,11 @@ namespace Lucene.Net.Index
                 // names.
                 string mergeSegmentName = NewSegmentName();
                 SegmentInfo si = new SegmentInfo(directory, Constants.LUCENE_MAIN_VERSION, mergeSegmentName, -1, false, codec, null);
-                IDictionary<string, string> details = new Dictionary<string, string>();
-                details["mergeMaxNumSegments"] = "" + merge.MaxNumSegments;
-                details["mergeFactor"] = Convert.ToString(merge.Segments.Count);
+                IDictionary<string, string> details = new Dictionary<string, string>
+                {
+                    ["mergeMaxNumSegments"] = "" + merge.MaxNumSegments,
+                    ["mergeFactor"] = Convert.ToString(merge.Segments.Count)
+                };
                 SetDiagnostics(si, SOURCE_MERGE, details);
                 merge.Info = new SegmentCommitInfo(si, 0, -1L, -1L);
 
@@ -4839,15 +4841,17 @@ namespace Lucene.Net.Index
 
         private static void SetDiagnostics(SegmentInfo info, string source, IDictionary<string, string> details)
         {
-            IDictionary<string, string> diagnostics = new Dictionary<string, string>();
-            diagnostics["source"] = source;
-            diagnostics["lucene.version"] = Constants.LUCENE_VERSION;
-            diagnostics["os"] = Constants.OS_NAME;
-            diagnostics["os.arch"] = Constants.OS_ARCH;
-            diagnostics["os.version"] = Constants.OS_VERSION;
-            diagnostics["java.version"] = Constants.RUNTIME_VERSION;
-            diagnostics["java.vendor"] = Constants.RUNTIME_VENDOR;
-            diagnostics["timestamp"] = Convert.ToString((DateTime.Now));
+            IDictionary<string, string> diagnostics = new Dictionary<string, string>
+            {
+                ["source"] = source,
+                ["lucene.version"] = Constants.LUCENE_VERSION,
+                ["os"] = Constants.OS_NAME,
+                ["os.arch"] = Constants.OS_ARCH,
+                ["os.version"] = Constants.OS_VERSION,
+                ["java.version"] = Constants.RUNTIME_VERSION,
+                ["java.vendor"] = Constants.RUNTIME_VENDOR,
+                ["timestamp"] = Convert.ToString((DateTime.Now))
+            };
             if (details != null)
             {
                 diagnostics.PutAll(details);
@@ -5763,9 +5767,11 @@ namespace Lucene.Net.Index
             }
 
             // Replace all previous files with the CFS/CFE files:
-            JCG.HashSet<string> siFiles = new JCG.HashSet<string>();
-            siFiles.Add(fileName);
-            siFiles.Add(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+            JCG.HashSet<string> siFiles = new JCG.HashSet<string>
+            {
+                fileName,
+                Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION)
+            };
             info.SetFiles(siFiles);
 
             return files;

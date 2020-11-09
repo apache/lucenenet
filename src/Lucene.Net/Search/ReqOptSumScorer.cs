@@ -101,10 +101,11 @@ namespace Lucene.Net.Search
 
         public override ICollection<ChildScorer> GetChildren()
         {
-            List<ChildScorer> children = new List<ChildScorer>(2);
-            children.Add(new ChildScorer(reqScorer, "MUST"));
-            children.Add(new ChildScorer(optScorer, "SHOULD"));
-            return children;
+            return new List<ChildScorer>(2)
+            {
+                new ChildScorer(reqScorer, "MUST"),
+                new ChildScorer(optScorer, "SHOULD")
+            };
         }
 
         public override long GetCost()

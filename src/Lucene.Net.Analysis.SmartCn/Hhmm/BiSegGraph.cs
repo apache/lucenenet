@@ -153,8 +153,10 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             int to = tokenPair.To;
             if (!IsToExist(to))
             {
-                List<SegTokenPair> newlist = new List<SegTokenPair>();
-                newlist.Add(tokenPair);
+                List<SegTokenPair> newlist = new List<SegTokenPair>
+                {
+                    tokenPair
+                };
                 tokenPairListTable[to] = newlist;
             }
             else

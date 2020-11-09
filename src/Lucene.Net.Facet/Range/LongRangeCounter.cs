@@ -47,10 +47,11 @@ namespace Lucene.Net.Facet.Range
             // track the start vs end case separately because if a
             // given point is both, then it must be its own
             // elementary interval:
-            IDictionary<long?, int?> endsMap = new Dictionary<long?, int?>();
-
-            endsMap[long.MinValue] = 1;
-            endsMap[long.MaxValue] = 2;
+            IDictionary<long?, int?> endsMap = new Dictionary<long?, int?>
+            {
+                [long.MinValue] = 1,
+                [long.MaxValue] = 2
+            };
 
             foreach (Int64Range range in ranges)
             {

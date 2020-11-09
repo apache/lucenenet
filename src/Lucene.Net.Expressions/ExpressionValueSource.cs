@@ -84,8 +84,10 @@ namespace Lucene.Net.Expressions
             if (valuesCache == null)
             {
                 valuesCache = new Dictionary<string, FunctionValues>();
-                context = new Hashtable(context);
-                context["valuesCache"] = valuesCache;
+                context = new Hashtable(context)
+                {
+                    ["valuesCache"] = valuesCache
+                };
             }
             FunctionValues[] externalValues = new FunctionValues[expression.Variables.Length];
             for (int i = 0; i < variables.Length; ++i)

@@ -480,8 +480,10 @@ namespace Lucene.Net.Search
                         {
                             g = res.Count;
                             pp.rptGroup = g;
-                            List<PhrasePositions> rl = new List<PhrasePositions>(2);
-                            rl.Add(pp);
+                            List<PhrasePositions> rl = new List<PhrasePositions>(2)
+                            {
+                                pp
+                            };
                             res.Add(rl);
                         }
                         pp2.rptGroup = g;

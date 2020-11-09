@@ -215,10 +215,11 @@ namespace Lucene.Net.Spatial.Vector
                 valueSource = MakeDistanceValueSource(shape.Center);
             }
             Query spatialRankingQuery = new FunctionQuery(valueSource);
-            var bq = new BooleanQuery();
-            bq.Add(spatial, Occur.MUST);
-            bq.Add(spatialRankingQuery, Occur.MUST);
-            return bq;
+            return new BooleanQuery
+            {
+                { spatial, Occur.MUST },
+                { spatialRankingQuery, Occur.MUST }
+            };
         }
 
         /// <summary>
@@ -264,10 +265,11 @@ namespace Lucene.Net.Spatial.Vector
             Query qX = RangeQuery(fieldNameX, bbox.MinX, bbox.MaxX);
             Query qY = RangeQuery(fieldNameY, bbox.MinY, bbox.MaxY);
 
-            var bq = new BooleanQuery();
-            bq.Add(qX, Occur.MUST_NOT);
-            bq.Add(qY, Occur.MUST_NOT);
-            return bq;
+            return new BooleanQuery
+            {
+                { qX, Occur.MUST_NOT },
+                { qY, Occur.MUST_NOT }
+            };
         }
     }
 }

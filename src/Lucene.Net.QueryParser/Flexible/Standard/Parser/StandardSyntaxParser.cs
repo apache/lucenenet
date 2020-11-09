@@ -36,7 +36,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
     /// Parser for the standard Lucene syntax
     /// </summary>
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
-	[SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE0028:Collection initialization can be simplified", Justification = "This class is based on generated code")]
     public class StandardSyntaxParser : ISyntaxParser /*, StandardSyntaxParserConstants*/
     {
         private const int CONJ_NONE = 0;

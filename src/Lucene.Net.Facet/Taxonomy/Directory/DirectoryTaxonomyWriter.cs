@@ -574,8 +574,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // in the reader (which knows that anyway only category 0 has a parent
             // -1).    
             parentStream.Set(Math.Max(parent + 1, 1));
-            Document d = new Document();
-            d.Add(parentStreamField);
+            Document d = new Document
+            {
+                parentStreamField
+            };
 
             fullPathField.SetStringValue(FacetsConfig.PathToString(categoryPath.Components, categoryPath.Length));
             d.Add(fullPathField);

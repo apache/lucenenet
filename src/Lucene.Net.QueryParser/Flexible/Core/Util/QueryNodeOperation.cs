@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.QueryParsers.Flexible.Core.Util
 {
@@ -65,9 +66,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             switch (op)
             {
                 case ANDOperation.NONE:
-                    List<IQueryNode> children = new List<IQueryNode>();
-                    children.Add(q1.CloneTree());
-                    children.Add(q2.CloneTree());
+                    List<IQueryNode> children = new List<IQueryNode>
+                    {
+                        q1.CloneTree(),
+                        q2.CloneTree()
+                    };
                     result = new AndQueryNode(children);
                     return result;
                 case ANDOperation.Q1:

@@ -37,8 +37,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public override void SetParams(string @params)
         {
             base.SetParams(@params);
-            commitUserData = new Dictionary<string, string>();
-            commitUserData[OpenReaderTask.USER_DATA] = @params;
+            commitUserData = new Dictionary<string, string>
+            {
+                [OpenReaderTask.USER_DATA] = @params
+            };
         }
 
         public override int DoLogic()
