@@ -3043,7 +3043,7 @@ namespace Lucene.Net.Util
                 // in whatever way it wants (e.g. maybe it packs related fields together or something)
                 // To fix this, we sort the fields in both documents by name, but
                 // we still assume that all instances with same name are in order:
-                Comparison<IIndexableField> comp = (a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal);
+                var comp = Comparer<IIndexableField>.Create((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
                 leftDoc.Fields.Sort(comp);
                 rightDoc.Fields.Sort(comp);
 
