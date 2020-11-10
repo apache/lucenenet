@@ -717,7 +717,7 @@ namespace TagSoup
             {
                 Pop();
             }
-            if (!(theSchema.Uri.Equals("", StringComparison.Ordinal)))
+            if (theSchema.Uri.Length > 0) // LUCENENET: CA1820: Test for empty strings using string length
             {
                 theContentHandler.EndPrefixMapping(theSchema.Prefix);
             }
@@ -979,7 +979,7 @@ namespace TagSoup
         private bool Foreign(string prefix, string ns)
         {
             //		System.err.print("%% Testing " + prefix + " and " + namespace + " for foreignness -- ");
-            bool foreign = !(prefix.Equals("", StringComparison.Ordinal) || ns.Equals("", StringComparison.Ordinal) || ns.Equals(theSchema.Uri, StringComparison.Ordinal));
+            bool foreign = !(prefix.Length == 0 || ns.Length == 0 || ns.Equals(theSchema.Uri, StringComparison.Ordinal)); // LUCENENET: CA1820: Test for empty strings using string length
             //		System.err.println(foreign);
             return foreign;
         }

@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private void AssertNotEmpty(BeiderMorseEncoder bmpm, string value)
         {
-            Assert.False(bmpm.Encode(value).Equals("", StringComparison.Ordinal), value);
+            Assert.False(bmpm.Encode(value).Length == 0, value); // LUCENENET: CA1820: Test for empty strings using string length
         }
 
         private BeiderMorseEncoder CreateGenericApproxEncoder()

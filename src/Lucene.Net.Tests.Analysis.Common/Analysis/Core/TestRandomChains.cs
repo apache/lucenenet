@@ -665,12 +665,12 @@ namespace Lucene.Net.Analysis.Core
                     do
                     {
                         input = TestUtil.RandomRealisticUnicodeString(random);
-                    } while (input == string.Empty);
+                    } while (input.Length == 0); // LUCENENET: CA1820: Test for empty strings using string length
                     string @out = ""; TestUtil.RandomSimpleString(random);
                     do
                     {
                         @out = TestUtil.RandomRealisticUnicodeString(random);
-                    } while (@out == string.Empty);
+                    } while (@out.Length == 0); // LUCENENET: CA1820: Test for empty strings using string length
                     builder.Add(input, @out);
                 }
                 try
