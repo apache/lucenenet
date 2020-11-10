@@ -57,7 +57,7 @@ namespace Lucene.Net.Search
         // Used for 'sortMissingFirst/Last'
         public virtual object MissingValue
         {
-            get { return m_missingValue; }
+            get => m_missingValue;
             set
             {
                 if (type == SortFieldType.STRING)
