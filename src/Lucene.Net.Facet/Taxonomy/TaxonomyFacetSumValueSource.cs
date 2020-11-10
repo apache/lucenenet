@@ -194,7 +194,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             public override bool Equals(object o)
             {
-                if (ReferenceEquals(null, o)) return false;
+                if (o is null) return false;
                 if (ReferenceEquals(this, o)) return true;
                 if (o.GetType() != this.GetType()) return false;
                 return Equals((ScoreValueSource)o);

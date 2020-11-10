@@ -613,7 +613,11 @@ namespace Lucene.Net.Util
                 {
                     buffer.Append(attClass.Name).Append('#');
                 }
-                buffer.Append(key).Append('=').Append(object.ReferenceEquals(value, null) ? "null" : value);
+                buffer.Append(key).Append('=');
+                if (value is null)
+                    buffer.Append("null");
+                else
+                    buffer.Append(value);
             }
         }
 

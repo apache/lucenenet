@@ -44,13 +44,13 @@ namespace Lucene.Net.Search.Payloads
 
         public override bool Equals(object obj)
         {
-            if (object.ReferenceEquals(obj, this))
+            if (ReferenceEquals(obj, this))
             {
                 return true;
             }
-            if (object.ReferenceEquals(null, obj))
+            if (obj is null)
             {
-                return object.ReferenceEquals(null, this);
+                return false;
             }
             if (this.GetType() != obj.GetType())
             {
