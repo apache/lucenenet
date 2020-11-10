@@ -580,7 +580,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_BytesAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache_BytesAnonymousInnerClassHelper(valuesIn);
             }
             else
             {
@@ -606,13 +606,10 @@ namespace Lucene.Net.Search
 
         private class FieldCache_BytesAnonymousInnerClassHelper : FieldCache.Bytes
         {
-            private readonly FieldCacheImpl outerInstance;
+            private readonly NumericDocValues valuesIn;
 
-            private NumericDocValues valuesIn;
-
-            public FieldCache_BytesAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
+            public FieldCache_BytesAnonymousInnerClassHelper(NumericDocValues valuesIn)
             {
-                this.outerInstance = outerInstance;
                 this.valuesIn = valuesIn;
             }
 
@@ -756,7 +753,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_Int16sAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache_Int16sAnonymousInnerClassHelper(valuesIn);
             }
             else
             {
@@ -780,13 +777,10 @@ namespace Lucene.Net.Search
 
         private class FieldCache_Int16sAnonymousInnerClassHelper : FieldCache.Int16s
         {
-            private readonly FieldCacheImpl outerInstance;
+            private readonly NumericDocValues valuesIn;
 
-            private NumericDocValues valuesIn;
-
-            public FieldCache_Int16sAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
+            public FieldCache_Int16sAnonymousInnerClassHelper(NumericDocValues valuesIn)
             {
-                this.outerInstance = outerInstance;
                 this.valuesIn = valuesIn;
             }
 
@@ -931,7 +925,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_Int32sAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache_Int32sAnonymousInnerClassHelper(valuesIn);
             }
             else
             {
@@ -955,13 +949,10 @@ namespace Lucene.Net.Search
 
         private class FieldCache_Int32sAnonymousInnerClassHelper : FieldCache.Int32s
         {
-            private readonly FieldCacheImpl outerInstance;
+            private readonly NumericDocValues valuesIn;
 
-            private NumericDocValues valuesIn;
-
-            public FieldCache_Int32sAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
+            public FieldCache_Int32sAnonymousInnerClassHelper(NumericDocValues valuesIn)
             {
-                this.outerInstance = outerInstance;
                 this.valuesIn = valuesIn;
             }
 
@@ -1229,7 +1220,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_SinglesAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache_SinglesAnonymousInnerClassHelper(valuesIn);
             }
             else
             {
@@ -1253,13 +1244,10 @@ namespace Lucene.Net.Search
 
         private class FieldCache_SinglesAnonymousInnerClassHelper : FieldCache.Singles
         {
-            private readonly FieldCacheImpl outerInstance;
+            private readonly NumericDocValues valuesIn;
 
-            private NumericDocValues valuesIn;
-
-            public FieldCache_SinglesAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
+            public FieldCache_SinglesAnonymousInnerClassHelper(NumericDocValues valuesIn)
             {
-                this.outerInstance = outerInstance;
                 this.valuesIn = valuesIn;
             }
 
@@ -1398,7 +1386,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_Int64sAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache_Int64sAnonymousInnerClassHelper(valuesIn);
             }
             else
             {
@@ -1422,13 +1410,10 @@ namespace Lucene.Net.Search
 
         private class FieldCache_Int64sAnonymousInnerClassHelper : FieldCache.Int64s
         {
-            private readonly FieldCacheImpl outerInstance;
+            private readonly NumericDocValues valuesIn;
 
-            private NumericDocValues valuesIn;
-
-            public FieldCache_Int64sAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
+            public FieldCache_Int64sAnonymousInnerClassHelper(NumericDocValues valuesIn)
             {
-                this.outerInstance = outerInstance;
                 this.valuesIn = valuesIn;
             }
 
@@ -1579,7 +1564,7 @@ namespace Lucene.Net.Search
             {
                 // Not cached here by FieldCacheImpl (cached instead
                 // per-thread by SegmentReader):
-                return new FieldCache_DoublesAnonymousInnerClassHelper(this, valuesIn);
+                return new FieldCache_DoublesAnonymousInnerClassHelper(valuesIn);
             }
             else
             {
@@ -1603,13 +1588,10 @@ namespace Lucene.Net.Search
 
         private class FieldCache_DoublesAnonymousInnerClassHelper : FieldCache.Doubles
         {
-            private readonly FieldCacheImpl outerInstance;
+            private readonly NumericDocValues valuesIn;
 
-            private NumericDocValues valuesIn;
-
-            public FieldCache_DoublesAnonymousInnerClassHelper(FieldCacheImpl outerInstance, NumericDocValues valuesIn)
+            public FieldCache_DoublesAnonymousInnerClassHelper(NumericDocValues valuesIn)
             {
-                this.outerInstance = outerInstance;
                 this.valuesIn = valuesIn;
             }
 
