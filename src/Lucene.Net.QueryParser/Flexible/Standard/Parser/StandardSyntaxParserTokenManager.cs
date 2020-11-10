@@ -788,7 +788,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1,
            -1, 1, 1, 2, -1, 2, 2, -1, -1,
         };
-        static readonly long[] jjtoToken = {
+        private static readonly long[] jjtoToken = {
            0x3ffffff01L,
         };
         //static readonly long[] jjtoSkip = { // LUCENENET: Never read

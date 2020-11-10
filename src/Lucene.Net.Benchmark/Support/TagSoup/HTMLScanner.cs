@@ -261,11 +261,11 @@ namespace TagSoup
         private int theCurrentLine;
         private int theCurrentColumn;
 
-        int theState;                   // Current state
-        int theNextState;               // Next state
-        char[] theOutputBuffer = new char[200]; // Output buffer
-        int theSize;                    // Current buffer size
-        readonly int[] theWinMap = {    // Windows chars map // LUCENENET: marked readonly
+        private int theState;                   // Current state
+        private int theNextState;               // Next state
+        private char[] theOutputBuffer = new char[200]; // Output buffer
+        private int theSize;                    // Current buffer size
+        private readonly int[] theWinMap = {    // Windows chars map // LUCENENET: marked readonly
         0x20AC, 0xFFFD, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
         0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0xFFFD, 0x017D, 0xFFFD,
         0xFFFD, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
@@ -296,14 +296,14 @@ namespace TagSoup
         ///   next state = statetable[value + 3]. That is, the value points
         ///   to the start of the answer 4-tuple in the statetable.
         /// </summary>
-        static short[][] statetableIndex;
+        private static short[][] statetableIndex;
 
         /// <summary>
         ///   The highest character value seen in the statetable.
         ///   See the doc comment for statetableIndex to see how this
         ///   is used.
         /// </summary>
-        static int statetableIndexMaxChar;
+        private static int statetableIndexMaxChar;
         public HTMLScanner()
         {
             int maxState = -1;

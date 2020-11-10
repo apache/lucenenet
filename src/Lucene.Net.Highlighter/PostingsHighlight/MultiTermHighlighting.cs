@@ -257,7 +257,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             internal int currentEndOffset = -1;
             internal TokenStream stream;
 
-            readonly BytesRef[] matchDescriptions;
+            private readonly BytesRef[] matchDescriptions;
 
 
             public override int NextPosition()

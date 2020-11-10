@@ -33,7 +33,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal sealed class Direct8 : PackedInt32s.MutableImpl
     {
-        readonly byte[] values;
+        private readonly byte[] values;
 
         internal Direct8(int valueCount)
             : base(valueCount, 8)

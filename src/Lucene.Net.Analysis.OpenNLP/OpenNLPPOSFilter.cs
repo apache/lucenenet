@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.OpenNlp
     public sealed class OpenNLPPOSFilter : TokenFilter
     {
         private readonly IList<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>();
-        string[] tags = null;
+        private string[] tags = null;
         private int tokenNum = 0;
         private bool moreTokensAvailable = true;
 

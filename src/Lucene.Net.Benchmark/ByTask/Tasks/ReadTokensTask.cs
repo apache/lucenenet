@@ -101,9 +101,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         internal sealed class ReusableStringReader : TextReader
         {
-            int upto;
-            int left;
-            string s;
+            private int upto;
+            private int left;
+            private string s;
             internal void Init(string s)
             {
                 this.s = s;

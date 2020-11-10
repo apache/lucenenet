@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         private readonly PagedBytes termBytes = new PagedBytes(PAGED_BYTES_BITS);
         private readonly PagedBytes.Reader termBytesReader;
 
-        readonly IDictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
+        private readonly IDictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
 
         // start of the field info data
         private long dirOffset;

@@ -206,7 +206,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
         /// when these raw version cannot be used as part of an ASCII
         /// string literal.
         /// </summary>
-        static string AddEscapes(string str)
+        private static string AddEscapes(string str)
         {
             StringBuilder retval = new StringBuilder();
             char ch;

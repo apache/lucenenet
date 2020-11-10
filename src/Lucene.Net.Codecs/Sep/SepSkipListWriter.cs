@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.Sep
             }
         }
 
-        IndexOptions indexOptions;
+        private IndexOptions indexOptions;
 
         internal void SetIndexOptions(IndexOptions v)
         {

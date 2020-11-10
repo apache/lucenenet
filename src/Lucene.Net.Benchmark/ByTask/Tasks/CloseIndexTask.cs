@@ -34,7 +34,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
         }
 
-        bool doWait = true;
+        private bool doWait = true;
 
         public override int DoLogic()
         {

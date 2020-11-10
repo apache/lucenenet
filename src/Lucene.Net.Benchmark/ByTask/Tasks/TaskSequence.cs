@@ -406,7 +406,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
         }
 
-        ParallelTask[] runningParallelTasks;
+        private ParallelTask[] runningParallelTasks;
 
         private int DoParallelTasks()
         {

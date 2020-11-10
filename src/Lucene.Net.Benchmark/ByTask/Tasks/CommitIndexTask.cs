@@ -25,7 +25,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </summary>
     public class CommitIndexTask : PerfTask
     {
-        IDictionary<string, string> commitUserData;
+        private IDictionary<string, string> commitUserData;
 
         public CommitIndexTask(PerfRunData runData)
             : base(runData)

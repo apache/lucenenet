@@ -33,7 +33,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal sealed class Packed8ThreeBlocks : PackedInt32s.MutableImpl
     {
-        readonly byte[] blocks;
+        private readonly byte[] blocks;
 
         public const int MAX_SIZE = int.MaxValue / 3;
 

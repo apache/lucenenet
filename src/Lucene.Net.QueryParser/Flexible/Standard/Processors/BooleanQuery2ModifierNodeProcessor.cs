@@ -53,7 +53,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         internal const string TAG_MODIFIER = "wrapWithModifier";
         internal const string TAG_BOOLEAN_ROOT = "booleanRoot";
 
-        QueryConfigHandler queryConfigHandler;
+        private QueryConfigHandler queryConfigHandler;
 
         private readonly List<IQueryNode> childrenBuffer = new List<IQueryNode>();
 

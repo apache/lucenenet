@@ -1080,7 +1080,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
             }
 
-            int[] map = null;
+            private int[] map = null;
 
             public int[] GetMap()
             {

@@ -114,25 +114,25 @@ namespace Lucene.Net.QueryParsers.Classic
         //int phraseSlop = 0;
         //float fuzzyMinSim = FuzzyQuery.DefaultMinSimilarity;
         //int fuzzyPrefixLength = FuzzyQuery.DefaultPrefixLength;
-        CultureInfo locale = null; // LUCENENET NOTE: null indicates read CultureInfo.CurrentCulture on the fly
-        TimeZoneInfo timeZone = null; // LUCENENET NOTE: null indicates read TimeZoneInfo.Local on the fly
+        private CultureInfo locale = null; // LUCENENET NOTE: null indicates read CultureInfo.CurrentCulture on the fly
+        private TimeZoneInfo timeZone = null; // LUCENENET NOTE: null indicates read TimeZoneInfo.Local on the fly
 
         // TODO: Work out what the default date resolution SHOULD be (was null in Java, which isn't valid for an enum type)
 
         /// <summary>
         /// the default date resolution
         /// </summary>
-        DateTools.Resolution dateResolution = DateTools.Resolution.DAY;
+        private DateTools.Resolution dateResolution = DateTools.Resolution.DAY;
         /// <summary>
         ///  maps field names to date resolutions
         /// </summary>
-        IDictionary<string, DateTools.Resolution> fieldToDateResolution = null;
+        private IDictionary<string, DateTools.Resolution> fieldToDateResolution = null;
 
         /// <summary>
         /// Whether or not to analyze range terms when constructing RangeQuerys
         /// (For example, analyzing terms into collation keys for locale-sensitive RangeQuery)
         /// </summary>
-        bool analyzeRangeTerms = false;
+        private bool analyzeRangeTerms = false;
 
         /// <summary>
         /// So the generated QueryParser(CharStream) won't error out

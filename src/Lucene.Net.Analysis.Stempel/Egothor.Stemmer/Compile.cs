@@ -68,9 +68,9 @@ namespace Egothor.Stemmer
     /// </summary>
     public static class Compile // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        static bool backward;
-        static bool multi;
-        static Trie trie;
+        private static bool backward;
+        private static bool multi;
+        private static Trie trie;
 
         /// <summary>
         /// Entry point to the Compile application.

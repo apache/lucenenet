@@ -79,9 +79,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         private enum ArgType { ANALYZER_ARG, ANALYZER_ARG_OR_CHARFILTER_OR_TOKENIZER, TOKENFILTER }
 
-        string factoryName = null;
-        int? positionIncrementGap = null;
-        int? offsetGap = null;
+        private string factoryName = null;
+        private int? positionIncrementGap = null;
+        private int? offsetGap = null;
         private readonly IList<CharFilterFactory> charFilterFactories = new List<CharFilterFactory>();
         private TokenizerFactory tokenizerFactory = null;
         private readonly IList<TokenFilterFactory> tokenFilterFactories = new List<TokenFilterFactory>();
