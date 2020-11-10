@@ -520,7 +520,7 @@ namespace Lucene.Net.Join
                 groups[groupIdx - offset] = new GroupDocs<int>(og.Score, topDocs.MaxScore, numChildDocs, topDocs.ScoreDocs, og.Doc, groupSortValues);
             }
 
-            return new TopGroups<int>(new TopGroups<int>(sort.GetSort(), withinGroupSort == null ? null : withinGroupSort.GetSort(), 0, totalGroupedHitCount, groups, maxScore), totalHitCount);
+            return new TopGroups<int>(new TopGroups<int>(sort.GetSort(), withinGroupSort?.GetSort(), 0, totalGroupedHitCount, groups, maxScore), totalHitCount);
         }
 
         /// <summary>

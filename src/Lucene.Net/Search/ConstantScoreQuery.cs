@@ -121,7 +121,7 @@ namespace Lucene.Net.Search
             public ConstantWeight(ConstantScoreQuery outerInstance, IndexSearcher searcher)
             {
                 this.outerInstance = outerInstance;
-                this.innerWeight = (outerInstance.m_query == null) ? null : outerInstance.m_query.CreateWeight(searcher);
+                this.innerWeight = outerInstance.m_query?.CreateWeight(searcher);
             }
 
             public override Query Query => outerInstance;

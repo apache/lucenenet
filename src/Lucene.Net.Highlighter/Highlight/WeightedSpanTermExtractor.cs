@@ -507,7 +507,7 @@ namespace Lucene.Net.Search.Highlight
         public virtual IDictionary<string, WeightedSpanTerm> GetWeightedSpanTermsWithScores(
             Query query, TokenStream tokenStream, string fieldName, IndexReader reader)
         {
-            this.fieldName = fieldName == null ? null : fieldName.Intern();
+            this.fieldName = fieldName?.Intern();
 
             this.tokenStream = tokenStream;
 

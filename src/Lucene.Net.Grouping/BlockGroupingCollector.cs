@@ -470,7 +470,7 @@ namespace Lucene.Net.Search.Grouping
             */
 
             return new TopGroups<TGroupValue>(new TopGroups<TGroupValue>(groupSort.GetSort(),
-                                               withinGroupSort == null ? null : withinGroupSort.GetSort(),
+                                               withinGroupSort?.GetSort(),
                                                totalHitCount, totalGroupedHitCount, groups, maxScore),
                                  totalGroupCount);
         }

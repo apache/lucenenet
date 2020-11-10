@@ -261,11 +261,11 @@ namespace Lucene.Net.Search.Grouping
 
             if (totalGroupCount != null)
             {
-                var result = new TopGroups<T>(groupSort.GetSort(), docSort == null ? null : docSort.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
+                var result = new TopGroups<T>(groupSort.GetSort(), docSort?.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
                 return new TopGroups<T>(result, totalGroupCount);
             }
 
-            return new TopGroups<T>(groupSort.GetSort(), docSort == null ? null : docSort.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
+            return new TopGroups<T>(groupSort.GetSort(), docSort?.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
         }
     }
 

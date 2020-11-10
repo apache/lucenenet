@@ -541,7 +541,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override BytesRef GetPayload()
             {
-                return _payloads == null ? null : _payloads[_nextPos - 1];
+                return _payloads?[_nextPos - 1];
             }
 
             public override int NextPosition()

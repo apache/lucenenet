@@ -32,12 +32,12 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
 
         public virtual string GetInflectionType()
         {
-            return token == null ? null : token.GetInflectionType();
+            return token?.GetInflectionType();
         }
 
         public virtual string GetInflectionForm()
         {
-            return token == null ? null : token.GetInflectionForm();
+            return token?.GetInflectionForm();
         }
 
         public virtual void SetToken(Token token)

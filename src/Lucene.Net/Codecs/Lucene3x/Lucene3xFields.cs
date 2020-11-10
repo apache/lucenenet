@@ -696,7 +696,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                             }
                             else
                             {
-                                Console.WriteLine("      hit term=" + UnicodeUtil.ToHexString(t2.Text()) + " " + (t2 == null ? null : t2.Bytes));
+                                Console.WriteLine($"      hit term={UnicodeUtil.ToHexString(t2.Text())} {t2?.Bytes}");
                             }
                         }
 
