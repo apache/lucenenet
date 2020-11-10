@@ -234,6 +234,7 @@ namespace Lucene.Net.Index
             return doc;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Complexity")]
         static DocHelper()
         {
             //Initialize the large Lazy Field

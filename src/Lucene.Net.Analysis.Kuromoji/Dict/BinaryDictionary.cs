@@ -53,20 +53,20 @@ namespace Lucene.Net.Analysis.Ja.Dict
         private readonly string[] inflFormDict;
 
         // LUCENENET specific - variable to hold the name of the data directory (or empty string to load embedded resources)
-        private static readonly string DATA_DIR;
+        private static readonly string DATA_DIR = LoadDataDir();
         // LUCENENET specific - name of the subdirectory inside of the directory where the Kuromoji dictionary files reside.
         private const string DATA_SUBDIR = "kuromoji-data";
 
-        static BinaryDictionary()
+        private static string LoadDataDir()
         {
             // LUCENENET specific - reformatted with :, renamed from "analysis.data.dir"
             string currentPath = SystemProperties.GetProperty("kuromoji:data:dir",
 #if FEATURE_APPDOMAIN_BASEDIRECTORY
-                AppDomain.CurrentDomain.BaseDirectory
+            AppDomain.CurrentDomain.BaseDirectory
 #else
-                System.AppContext.BaseDirectory
+            System.AppContext.BaseDirectory
 #endif
-                );
+            );
 
             // If a matching directory path is found, set our DATA_DIR static
             // variable. If it is null or empty after this process, we need to
@@ -74,8 +74,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
             string candidatePath = System.IO.Path.Combine(currentPath, DATA_SUBDIR);
             if (System.IO.Directory.Exists(candidatePath))
             {
-                DATA_DIR = candidatePath;
-                return;
+                return candidatePath;
             }
 
             while (new DirectoryInfo(currentPath).Parent != null)
@@ -85,8 +84,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                     candidatePath = System.IO.Path.Combine(new DirectoryInfo(currentPath).Parent.FullName, DATA_SUBDIR);
                     if (System.IO.Directory.Exists(candidatePath))
                     {
-                        DATA_DIR = candidatePath;
-                        return;
+                        return candidatePath;
                     }
                     currentPath = new DirectoryInfo(currentPath).Parent.FullName;
                 }
@@ -95,6 +93,8 @@ namespace Lucene.Net.Analysis.Ja.Dict
                     // ignore security errors
                 }
             }
+
+            return null; // This is the signal to load from local resources
         }
 
         protected BinaryDictionary()

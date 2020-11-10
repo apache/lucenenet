@@ -58,6 +58,7 @@ namespace Lucene.Net.Util
             return buffer;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Complexity")]
         static PForDeltaDocIdSet()
         {
             int maxByteBLockCount = 0;
