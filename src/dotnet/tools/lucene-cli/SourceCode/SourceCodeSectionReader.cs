@@ -93,9 +93,7 @@ namespace Lucene.Net.Cli.SourceCode
 
         public SourceCodeSectionReader(TextReader reader)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
-            this.reader = reader;
+            this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
         }
 
         public override string ReadLine()

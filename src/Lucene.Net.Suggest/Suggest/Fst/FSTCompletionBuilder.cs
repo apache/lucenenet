@@ -182,15 +182,10 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             if (buckets < 1 || buckets > 255)
             {
-                throw new ArgumentException("Buckets must be >= 1 and <= 255: " + buckets);
+                throw new ArgumentOutOfRangeException(nameof(buckets), buckets, "Buckets must be >= 1 and <= 255");
             }
 
-            if (sorter == null)
-            {
-                throw new ArgumentException("BytesRefSorter must not be null.");
-            }
-
-            this.sorter = sorter;
+            this.sorter = sorter ?? throw new ArgumentNullException("BytesRefSorter must not be null.");
             this.buckets = buckets;
             this.shareMaxTailLength = shareMaxTailLength;
         }

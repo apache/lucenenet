@@ -73,11 +73,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         // in a centralized DI configuration builder.
         public static void SetResourceManagerFactory(IResourceManagerFactory resourceManagerFactory)
         {
-            if (resourceManagerFactory == null)
-            {
-                throw new ArgumentNullException(nameof(resourceManagerFactory));
-            }
-            NLS.resourceManagerFactory = resourceManagerFactory;
+            NLS.resourceManagerFactory = resourceManagerFactory ?? throw new ArgumentNullException(nameof(resourceManagerFactory));
         }
 
         public static string GetLocalizedMessage(string key)

@@ -336,9 +336,7 @@ namespace Lucene.Net.Analysis.Core
 
             public AnonymousProducer(Func<Random, object> create)
             {
-                if (create == null)
-                    throw new ArgumentNullException(nameof(create));
-                this.create = create;
+                this.create = create ?? throw new ArgumentNullException(nameof(create));
             }
 
             public object Create(Random random)

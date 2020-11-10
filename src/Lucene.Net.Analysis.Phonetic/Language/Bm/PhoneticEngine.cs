@@ -214,11 +214,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             public RulesApplication(IDictionary<string, IList<Rule>> finalRules, string input,
                                     PhonemeBuilder phonemeBuilder, int i, int maxPhonemes)
             {
-                if (finalRules == null)
-                {
-                    throw new ArgumentNullException("The finalRules argument must not be null");
-                }
-                this.finalRules = finalRules;
+                this.finalRules = finalRules ?? throw new ArgumentNullException(nameof(finalRules), "The finalRules argument must not be null");
                 this.phonemeBuilder = phonemeBuilder;
                 this.input = input;
                 this.i = i;

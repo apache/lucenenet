@@ -63,22 +63,14 @@ namespace Lucene.Net.Analysis.Icu
         public ICUNormalizer2CharFilter(TextReader input, Normalizer2 normalizer)
             : this(input, normalizer, 128)
         {
-            if (normalizer == null)
-            {
-                throw new ArgumentNullException(nameof(normalizer));
-            }
-            this.normalizer = normalizer;
+            this.normalizer = normalizer ?? throw new ArgumentNullException(nameof(normalizer));
         }
 
         // for testing ONLY
         internal ICUNormalizer2CharFilter(TextReader input, Normalizer2 normalizer, int bufferSize)
             : base(input)
         {
-            if (normalizer == null)
-            {
-                throw new ArgumentNullException(nameof(normalizer));
-            }
-            this.normalizer = normalizer;
+            this.normalizer = normalizer ?? throw new ArgumentNullException(nameof(normalizer));
             this.tmpBuffer = CharacterUtils.NewCharacterBuffer(bufferSize);
         }
 

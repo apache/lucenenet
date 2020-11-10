@@ -95,7 +95,9 @@ namespace TagSoup
             }
             if (parent == null)
             {
+#pragma warning disable IDE0016 // Use 'throw' expression
                 throw new Exception("No parent " + parentName + " for child " + name);
+#pragma warning restore IDE0016 // Use 'throw' expression
             }
             child.Parent = parent;
         }

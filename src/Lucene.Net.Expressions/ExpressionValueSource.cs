@@ -39,13 +39,10 @@ namespace Lucene.Net.Expressions
         {
             if (bindings == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(bindings));
             }
-            if (expression == null)
-            {
-                throw new ArgumentNullException();
-            }
-            this.expression = expression;
+
+            this.expression = expression ?? throw new ArgumentNullException(nameof(expression));
             variables = new ValueSource[expression.Variables.Length];
             bool needsScores = false;
             for (int i = 0; i < variables.Length; i++)
@@ -98,7 +95,9 @@ namespace Lucene.Net.Expressions
                     values = variables[i].GetValues(context, readerContext);
                     if (values == null)
                     {
-                        throw new InvalidOperationException("Internal error. External (" + externalName + ") does not exist.");
+#pragma warning disable IDE0016 // Use 'throw' expression
+                        throw new InvalidOperationException($"Internal error. External ({externalName}) does not exist.");
+#pragma warning restore IDE0016 // Use 'throw' expression
                     }
                     valuesCache[externalName] = values;
                 }
