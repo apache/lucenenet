@@ -43,6 +43,7 @@
     <NoWarn Label="Use Literals Where Appropriate">$(NoWarn);CA1802</NoWarn>
     <NoWarn Label="Add readonly modifier">$(NoWarn);CA1822</NoWarn>
     <NoWarn Label="Avoid zero-length array allocations">$(NoWarn);CA1825</NoWarn>
+    <NoWarn Label="Do not raise exceptions in exception clauses">$(NoWarn);CA2219</NoWarn>
 
     <NoWarn Label="Use object initializers">$(NoWarn);IDE0017</NoWarn>
     <NoWarn Label="Use pattern matching">$(NoWarn);IDE0019;IDE0020;IDE0038</NoWarn>
