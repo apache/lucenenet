@@ -175,11 +175,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual bool LowercaseExpandedTerms
         {
-            get
-            {
-                bool? lowercaseExpandedTerms = QueryConfigHandler.Get(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS);
-                return lowercaseExpandedTerms.HasValue ? lowercaseExpandedTerms.Value : true;
-            }
+            get => QueryConfigHandler.Get(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS) ?? true;
             set => QueryConfigHandler.Set(ConfigurationKeys.LOWERCASE_EXPANDED_TERMS, value);
         }
 
@@ -194,11 +190,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual bool AllowLeadingWildcard
         {
-            get
-            {
-                bool? allowLeadingWildcard = QueryConfigHandler.Get(ConfigurationKeys.ALLOW_LEADING_WILDCARD);
-                return allowLeadingWildcard.HasValue ? allowLeadingWildcard.Value : false;
-            }
+            get => QueryConfigHandler.Get(ConfigurationKeys.ALLOW_LEADING_WILDCARD) ?? false;
             set => QueryConfigHandler.Set(ConfigurationKeys.ALLOW_LEADING_WILDCARD, value);
         }
 
@@ -213,11 +205,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual bool EnablePositionIncrements
         {
-            get
-            {
-                bool? enablePositionsIncrements = QueryConfigHandler.Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS);
-                return enablePositionsIncrements.HasValue ? enablePositionsIncrements.Value : false;
-            }
+            get => QueryConfigHandler.Get(ConfigurationKeys.ENABLE_POSITION_INCREMENTS) ?? false;
             set => QueryConfigHandler.Set(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, value);
         }
 
@@ -345,11 +333,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         /// </summary>
         public virtual int PhraseSlop
         {
-            get
-            {
-                int? phraseSlop = QueryConfigHandler.Get(ConfigurationKeys.PHRASE_SLOP);
-                return phraseSlop.HasValue ? phraseSlop.Value : 0;
-            }
+            get => QueryConfigHandler.Get(ConfigurationKeys.PHRASE_SLOP) ?? 0;
             set => QueryConfigHandler.Set(ConfigurationKeys.PHRASE_SLOP, value);
         }
 

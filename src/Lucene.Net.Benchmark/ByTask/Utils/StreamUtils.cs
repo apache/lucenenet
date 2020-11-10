@@ -65,7 +65,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             {
                 extensionToType.TryGetValue(fileName.Substring(idx).ToLowerInvariant(), out type);
             }
-            return !type.HasValue ? FileType.PLAIN : type.Value;
+            return type ?? FileType.PLAIN ;
         }
 
         /// <summary>

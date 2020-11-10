@@ -50,7 +50,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
             protected internal override SpatialPrefixTree NewSPT()
             {
-                return new QuadPrefixTree(m_ctx, m_maxLevels.HasValue ? m_maxLevels.Value : MAX_LEVELS_POSSIBLE);
+                return new QuadPrefixTree(m_ctx, m_maxLevels ?? MAX_LEVELS_POSSIBLE);
             }
         }
 

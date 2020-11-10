@@ -80,7 +80,7 @@ namespace Lucene.Net.Facet.Range
             // Build elementaryIntervals (a 1D Venn diagram):
             IList<InclusiveRange> elementaryIntervals = new List<InclusiveRange>();
             int upto0 = 1;
-            long v = endsList[0].HasValue ? endsList[0].Value : 0;
+            long v = endsList[0] ?? 0;
             long prev;
             if (endsMap[v] == 3)
             {
@@ -94,8 +94,8 @@ namespace Lucene.Net.Facet.Range
 
             while (upto0 < endsList.Count)
             {
-                v = endsList[upto0].HasValue ? endsList[upto0].Value : 0;
-                int flags = endsMap[v].HasValue ? endsMap[v].Value : 0;
+                v = endsList[upto0] ?? 0;
+                int flags = endsMap[v] ?? 0;
                 //System.out.println("  v=" + v + " flags=" + flags);
                 if (flags == 3)
                 {
