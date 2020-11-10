@@ -1191,23 +1191,17 @@ namespace Lucene.Net.QueryParsers.Util
         [Test]
         public virtual void TestPositionIncrements()
         {
-            using (Directory dir = NewDirectory())
-            {
-                Analyzer a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
-                using (IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, a)))
-                {
-                    Document doc = new Document();
-                    doc.Add(NewTextField("field", "the wizard of ozzy", Field.Store.NO));
-                    w.AddDocument(doc);
-                    using (IndexReader r = DirectoryReader.Open(w, true))
-                    {
-                        IndexSearcher s = NewSearcher(r);
+            using Directory dir = NewDirectory();
+            Analyzer a = new MockAnalyzer(Random, MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET);
+            using IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, a));
+            Document doc = new Document();
+            doc.Add(NewTextField("field", "the wizard of ozzy", Field.Store.NO));
+            w.AddDocument(doc);
+            using IndexReader r = DirectoryReader.Open(w, true);
+            IndexSearcher s = NewSearcher(r);
 
-                        Query q = GetQuery("\"wizard of ozzy\"", a);
-                        assertEquals(1, s.Search(q, 1).TotalHits);
-                    }
-                }
-            }
+            Query q = GetQuery("\"wizard of ozzy\"", a);
+            assertEquals(1, s.Search(q, 1).TotalHits);
         }
 
         /// <summary>

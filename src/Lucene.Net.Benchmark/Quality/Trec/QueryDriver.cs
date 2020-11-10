@@ -53,44 +53,42 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
             FileInfo topicsFile = new FileInfo(args[0]);
             FileInfo qrelsFile = new FileInfo(args[1]);
             SubmissionReport submitLog = new SubmissionReport(new StreamWriter(new FileStream(args[2], FileMode.Create, FileAccess.Write), Encoding.UTF8 /* huh, no nio.Charset ctor? */), "lucene");
-            using (Store.FSDirectory dir = Store.FSDirectory.Open(new DirectoryInfo(args[3])))
-            using (IndexReader reader = DirectoryReader.Open(dir))
-            {
-                string fieldSpec = args.Length == 5 ? args[4] : "T"; // default to Title-only if not specified.
-                IndexSearcher searcher = new IndexSearcher(reader);
+            using Store.FSDirectory dir = Store.FSDirectory.Open(new DirectoryInfo(args[3]));
+            using IndexReader reader = DirectoryReader.Open(dir);
+            string fieldSpec = args.Length == 5 ? args[4] : "T"; // default to Title-only if not specified.
+            IndexSearcher searcher = new IndexSearcher(reader);
 
-                int maxResults = 1000;
-                string docNameField = "docname";
+            int maxResults = 1000;
+            string docNameField = "docname";
 
-                TextWriter logger = Console.Out; //new StreamWriter(Console, Encoding.GetEncoding(0));
+            TextWriter logger = Console.Out; //new StreamWriter(Console, Encoding.GetEncoding(0));
 
-                // use trec utilities to read trec topics into quality queries
-                TrecTopicsReader qReader = new TrecTopicsReader();
-                QualityQuery[] qqs = qReader.ReadQueries(IOUtils.GetDecodingReader(topicsFile, Encoding.UTF8));
+            // use trec utilities to read trec topics into quality queries
+            TrecTopicsReader qReader = new TrecTopicsReader();
+            QualityQuery[] qqs = qReader.ReadQueries(IOUtils.GetDecodingReader(topicsFile, Encoding.UTF8));
 
-                // prepare judge, with trec utilities that read from a QRels file
-                IJudge judge = new TrecJudge(IOUtils.GetDecodingReader(qrelsFile, Encoding.UTF8));
+            // prepare judge, with trec utilities that read from a QRels file
+            IJudge judge = new TrecJudge(IOUtils.GetDecodingReader(qrelsFile, Encoding.UTF8));
 
-                // validate topics & judgments match each other
-                judge.ValidateData(qqs, logger);
+            // validate topics & judgments match each other
+            judge.ValidateData(qqs, logger);
 
-                ISet<string> fieldSet = new JCG.HashSet<string>();
-                if (fieldSpec.IndexOf('T') >= 0) fieldSet.Add("title");
-                if (fieldSpec.IndexOf('D') >= 0) fieldSet.Add("description");
-                if (fieldSpec.IndexOf('N') >= 0) fieldSet.Add("narrative");
+            ISet<string> fieldSet = new JCG.HashSet<string>();
+            if (fieldSpec.IndexOf('T') >= 0) fieldSet.Add("title");
+            if (fieldSpec.IndexOf('D') >= 0) fieldSet.Add("description");
+            if (fieldSpec.IndexOf('N') >= 0) fieldSet.Add("narrative");
 
-                // set the parsing of quality queries into Lucene queries.
-                IQualityQueryParser qqParser = new SimpleQQParser(fieldSet.ToArray(), "body");
+            // set the parsing of quality queries into Lucene queries.
+            IQualityQueryParser qqParser = new SimpleQQParser(fieldSet.ToArray(), "body");
 
-                // run the benchmark
-                QualityBenchmark qrun = new QualityBenchmark(qqs, qqParser, searcher, docNameField);
-                qrun.MaxResults = maxResults;
-                QualityStats[] stats = qrun.Execute(judge, submitLog, logger);
+            // run the benchmark
+            QualityBenchmark qrun = new QualityBenchmark(qqs, qqParser, searcher, docNameField);
+            qrun.MaxResults = maxResults;
+            QualityStats[] stats = qrun.Execute(judge, submitLog, logger);
 
-                // print an avarage sum of the results
-                QualityStats avg = QualityStats.Average(stats);
-                avg.Log("SUMMARY", 2, logger, "  ");
-            }
+            // print an avarage sum of the results
+            QualityStats avg = QualityStats.Average(stats);
+            avg.Log("SUMMARY", 2, logger, "  ");
         }
     }
 }

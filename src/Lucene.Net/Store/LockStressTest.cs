@@ -120,60 +120,55 @@ namespace Lucene.Net.Store
             }
 
             Console.WriteLine("Connecting to server " + addr + " and registering as client " + myID + "...");
-            using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            using Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+            socket.Connect(verifierHost, verifierPort);
+
+            using Stream stream = new NetworkStream(socket);
+            BinaryReader intReader = new BinaryReader(stream);
+            BinaryWriter intWriter = new BinaryWriter(stream);
+
+            intWriter.Write(myID);
+            stream.Flush();
+
+            lockFactory.LockPrefix = "test";
+            LockFactory verifyLF = new VerifyingLockFactory(lockFactory, stream);
+            Lock l = verifyLF.MakeLock("test.lock");
+            Random rnd = new Random();
+
+            // wait for starting gun
+            if (intReader.ReadInt32() != 43)
             {
-                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
-                socket.Connect(verifierHost, verifierPort);
-
-                using (Stream stream = new NetworkStream(socket))
-                {
-                    BinaryReader intReader = new BinaryReader(stream);
-                    BinaryWriter intWriter = new BinaryWriter(stream);
-
-                    intWriter.Write(myID);
-                    stream.Flush();
-
-                    lockFactory.LockPrefix = "test";
-                    LockFactory verifyLF = new VerifyingLockFactory(lockFactory, stream);
-                    Lock l = verifyLF.MakeLock("test.lock");
-                    Random rnd = new Random();
-
-                    // wait for starting gun
-                    if (intReader.ReadInt32() != 43)
-                    {
-                        throw new IOException("Protocol violation");
-                    }
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        bool obtained = false;
-
-                        try
-                        {
-                            obtained = l.Obtain(rnd.Next(100) + 10);
-                        }
-#pragma warning disable 168
-                        catch (LockObtainFailedException e)
-#pragma warning restore 168
-                        {
-                        }
-
-                        if (obtained)
-                        {
-                            Thread.Sleep(sleepTimeMS);
-                            l.Dispose();
-                        }
-
-                        if (i % 500 == 0)
-                        {
-                            Console.WriteLine((i * 100.0 / count) + "% done.");
-                        }
-
-                        Thread.Sleep(sleepTimeMS);
-                    }
-                }
+                throw new IOException("Protocol violation");
             }
 
+            for (int i = 0; i < count; i++)
+            {
+                bool obtained = false;
+
+                try
+                {
+                    obtained = l.Obtain(rnd.Next(100) + 10);
+                }
+#pragma warning disable 168
+                catch (LockObtainFailedException e)
+#pragma warning restore 168
+                {
+                }
+
+                if (obtained)
+                {
+                    Thread.Sleep(sleepTimeMS);
+                    l.Dispose();
+                }
+
+                if (i % 500 == 0)
+                {
+                    Console.WriteLine((i * 100.0 / count) + "% done.");
+                }
+
+                Thread.Sleep(sleepTimeMS);
+            }
             Console.WriteLine("Finished " + count + " tries.");
         }
     }

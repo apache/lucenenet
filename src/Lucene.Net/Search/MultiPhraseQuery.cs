@@ -482,18 +482,16 @@ namespace Lucene.Net.Search
                 return false;
             }
             using (IEnumerator<Term[]> iterator1 = termArrays1.GetEnumerator())
+            using (IEnumerator<Term[]> iterator2 = termArrays2.GetEnumerator())
             {
-                using (IEnumerator<Term[]> iterator2 = termArrays2.GetEnumerator())
+                while (iterator1.MoveNext())
                 {
-                    while (iterator1.MoveNext())
+                    Term[] termArray1 = iterator1.Current;
+                    iterator2.MoveNext();
+                    Term[] termArray2 = iterator2.Current;
+                    if (!(termArray1 == null ? termArray2 == null : Arrays.Equals(termArray1, termArray2)))
                     {
-                        Term[] termArray1 = iterator1.Current;
-                        iterator2.MoveNext();
-                        Term[] termArray2 = iterator2.Current;
-                        if (!(termArray1 == null ? termArray2 == null : Arrays.Equals(termArray1, termArray2)))
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
             }

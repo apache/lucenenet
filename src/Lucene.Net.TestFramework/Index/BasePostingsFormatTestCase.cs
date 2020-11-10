@@ -1280,17 +1280,15 @@ namespace Lucene.Net.Index
 
         private static void TestFields(Fields fields) // LUCENENET: CA1822: Mark members as static
         {
-            using (IEnumerator<string> iterator = fields.GetEnumerator())
+            using IEnumerator<string> iterator = fields.GetEnumerator();
+            while (iterator.MoveNext())
             {
-                while (iterator.MoveNext())
-                {
-                    var _ = iterator.Current;
-                    // .NET: Testing for iterator.Remove() isn't applicable
-                }
-                Assert.IsFalse(iterator.MoveNext());
-
-                // .NET: Testing for NoSuchElementException with .NET iterators isn't applicable
+                var _ = iterator.Current;
+                // .NET: Testing for iterator.Remove() isn't applicable
             }
+            Assert.IsFalse(iterator.MoveNext());
+
+            // .NET: Testing for NoSuchElementException with .NET iterators isn't applicable
         }
 
         /// <summary>
@@ -1300,39 +1298,33 @@ namespace Lucene.Net.Index
         private void TestFull(IndexOptions options, bool withPayloads)
         {
             DirectoryInfo path = CreateTempDir("testPostingsFormat.testExact");
-            using (Directory dir = NewFSDirectory(path))
+            using Directory dir = NewFSDirectory(path);
+            // TODO test thread safety of buildIndex too
+            using var fieldsProducer = BuildIndex(dir, options, withPayloads, true);
+            TestFields(fieldsProducer);
+
+            // LUCENENET: A bit of extra work required since we don't have an easy way to filter out
+            // the "NONE" option we added to avoid having to use null
+            IndexOptions[] allOptions = new IndexOptions[ALL_INDEX_OPTIONS.Length - 1];
+            Array.Copy(ALL_INDEX_OPTIONS, 1, allOptions, 0, allOptions.Length); // LUCENENET: Skip our NONE option
+            int maxIndexOption = Array.IndexOf(allOptions, options);
+
+            ISet<Option> allOptionsHashSet = new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option)));
+
+            for (int i = 0; i <= maxIndexOption; i++)
             {
-                // TODO test thread safety of buildIndex too
-                using (var fieldsProducer = BuildIndex(dir, options, withPayloads, true))
+                TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
+                if (withPayloads)
                 {
+                    // If we indexed w/ payloads, also test enums w/o accessing payloads:
 
-                    TestFields(fieldsProducer);
-
-                    // LUCENENET: A bit of extra work required since we don't have an easy way to filter out
-                    // the "NONE" option we added to avoid having to use null
-                    IndexOptions[] allOptions = new IndexOptions[ALL_INDEX_OPTIONS.Length - 1];
-                    Array.Copy(ALL_INDEX_OPTIONS, 1, allOptions, 0, allOptions.Length); // LUCENENET: Skip our NONE option
-                    int maxIndexOption = Array.IndexOf(allOptions, options);
-
-                    ISet<Option> allOptionsHashSet = new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option)));
-
-                    for (int i = 0; i <= maxIndexOption; i++)
-                    {
-                        TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
-                        if (withPayloads)
-                        {
-                            // If we indexed w/ payloads, also test enums w/o accessing payloads:
-
-                            // LUCENENET: No EnumSet in .NET, so we have some extra work to do
-                            // to populate the options.
-                            ISet<Option> payloadsHashSet = new JCG.HashSet<Option>() { Option.PAYLOADS };
-                            var complementHashSet = new JCG.HashSet<Option>(allOptionsHashSet);
-                            complementHashSet.SymmetricExceptWith(payloadsHashSet); // Complement of
-                            TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
-                        }
-                    }
-
-                } // fieldsProducer.Dispose();
+                    // LUCENENET: No EnumSet in .NET, so we have some extra work to do
+                    // to populate the options.
+                    ISet<Option> payloadsHashSet = new JCG.HashSet<Option>() { Option.PAYLOADS };
+                    var complementHashSet = new JCG.HashSet<Option>(allOptionsHashSet);
+                    complementHashSet.SymmetricExceptWith(payloadsHashSet); // Complement of
+                    TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
+                }
             }
         }
 
@@ -1385,21 +1377,17 @@ namespace Lucene.Net.Index
 
                     bool indexPayloads = Random.NextBoolean();
                     // TODO test thread safety of buildIndex too
-                    using (FieldsProducer fieldsProducer = BuildIndex(dir, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, indexPayloads, false))
-                    {
+                    using FieldsProducer fieldsProducer = BuildIndex(dir, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, indexPayloads, false);
+                    TestFields(fieldsProducer);
 
-                        TestFields(fieldsProducer);
-
-                        // NOTE: you can also test "weaker" index options than
-                        // you indexed with:
-                        TestTerms(fieldsProducer,
-                            // LUCENENET: No need to skip options here
-                            new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option))),
-                            IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
-                            IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
-                            false);
-
-                    } // fieldsProducer.Dispose();
+                    // NOTE: you can also test "weaker" index options than
+                    // you indexed with:
+                    TestTerms(fieldsProducer,
+                        // LUCENENET: No need to skip options here
+                        new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option))),
+                        IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+                        IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+                        false);
                     // fieldsProducer = null; // LUCENENET: No can do - out of scope
 
                 } // dir.Dispose();

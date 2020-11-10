@@ -162,9 +162,9 @@ namespace Lucene.Net.Analysis.Uk
                 // (see https://search.maven.org/search?q=a:morfologik-ukrainian-search). However, we are embedding the file in .NET.
                 // Since it doesn't appear to be updated frequently, this should be okay.
                 string dictFile = "ukrainian.dict";
-                using (var dictStream = type.FindAndGetManifestResourceStream(dictFile))
-                using (var metadataStream = type.FindAndGetManifestResourceStream(DictionaryMetadata.GetExpectedMetadataFileName(dictFile)))
-                    return Dictionary.Read(dictStream, metadataStream);
+                using var dictStream = type.FindAndGetManifestResourceStream(dictFile);
+                using var metadataStream = type.FindAndGetManifestResourceStream(DictionaryMetadata.GetExpectedMetadataFileName(dictFile));
+                return Dictionary.Read(dictStream, metadataStream);
             }
             catch (IOException e)
             {

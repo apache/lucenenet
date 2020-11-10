@@ -146,38 +146,36 @@ namespace Lucene.Net.Codecs.Asserting
                 int docCount = 0;
                 long ordCount = 0;
                 Int64BitSet seenOrds = new Int64BitSet(valueCount);
-                using (IEnumerator<long?> ordIterator = ords.GetEnumerator())
+                using IEnumerator<long?> ordIterator = ords.GetEnumerator();
+                foreach (long? v in docToOrdCount)
                 {
-                    foreach (long? v in docToOrdCount)
+                    if (Debugging.AssertsEnabled) Debugging.Assert(v != null);
+                    int count = (int)v.Value;
+                    if (Debugging.AssertsEnabled) Debugging.Assert(count >= 0);
+                    docCount++;
+                    ordCount += count;
+
+                    long lastOrd = -1;
+                    for (int i = 0; i < count; i++)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(v != null);
-                        int count = (int)v.Value;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(count >= 0);
-                        docCount++;
-                        ordCount += count;
-
-                        long lastOrd = -1;
-                        for (int i = 0; i < count; i++)
-                        {
-                            ordIterator.MoveNext();
-                            long? o = ordIterator.Current;
-                            if (Debugging.AssertsEnabled) Debugging.Assert(o != null);
-                            long ord = o.Value;
-                            if (Debugging.AssertsEnabled) Debugging.Assert(ord >= 0 && ord < valueCount);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(ord > lastOrd,"ord={0},lastOrd={1}", ord, lastOrd);
-                            seenOrds.Set(ord);
-                            lastOrd = ord;
-                        }
+                        ordIterator.MoveNext();
+                        long? o = ordIterator.Current;
+                        if (Debugging.AssertsEnabled) Debugging.Assert(o != null);
+                        long ord = o.Value;
+                        if (Debugging.AssertsEnabled) Debugging.Assert(ord >= 0 && ord < valueCount);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(ord > lastOrd, "ord={0},lastOrd={1}", ord, lastOrd);
+                        seenOrds.Set(ord);
+                        lastOrd = ord;
                     }
-                    if (Debugging.AssertsEnabled) Debugging.Assert(ordIterator.MoveNext() == false);
-
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docCount == maxDoc);
-                    if (Debugging.AssertsEnabled) Debugging.Assert(seenOrds.Cardinality() == valueCount);
-                    CheckIterator(values.GetEnumerator(), valueCount, false);
-                    CheckIterator(docToOrdCount.GetEnumerator(), maxDoc, false);
-                    CheckIterator(ords.GetEnumerator(), ordCount, false);
-                    @in.AddSortedSetField(field, values, docToOrdCount, ords);
                 }
+                if (Debugging.AssertsEnabled) Debugging.Assert(ordIterator.MoveNext() == false);
+
+                if (Debugging.AssertsEnabled) Debugging.Assert(docCount == maxDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(seenOrds.Cardinality() == valueCount);
+                CheckIterator(values.GetEnumerator(), valueCount, false);
+                CheckIterator(docToOrdCount.GetEnumerator(), maxDoc, false);
+                CheckIterator(ords.GetEnumerator(), ordCount, false);
+                @in.AddSortedSetField(field, values, docToOrdCount, ords);
             }
 
             protected override void Dispose(bool disposing)

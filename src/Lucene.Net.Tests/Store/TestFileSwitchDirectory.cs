@@ -114,17 +114,15 @@ namespace Lucene.Net.Store
             DirectoryInfo secondDir = CreateTempDir("bar");
             System.IO.Directory.Delete(primDir.FullName, true);
             System.IO.Directory.Delete(secondDir.FullName, true);
-            using (Directory dir = NewFSSwitchDirectory(primDir, secondDir, Collections.EmptySet<string>()))
+            using Directory dir = NewFSSwitchDirectory(primDir, secondDir, Collections.EmptySet<string>());
+            try
             {
-                try
-                {
-                    DirectoryReader.Open(dir);
-                    Assert.Fail("did not hit expected exception");
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    // expected
-                }
+                DirectoryReader.Open(dir);
+                Assert.Fail("did not hit expected exception");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                // expected
             }
         }
 

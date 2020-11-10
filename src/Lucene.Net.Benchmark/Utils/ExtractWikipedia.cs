@@ -88,8 +88,8 @@ namespace Lucene.Net.Benchmarks.Utils
 
             try
             {
-                using (TextWriter writer = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8))
-                    writer.Write(contents.ToString());
+                using TextWriter writer = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8);
+                writer.Write(contents.ToString());
             }
             catch (IOException ioe)
             {

@@ -1285,12 +1285,10 @@ namespace Lucene.Net.Analysis
 
         protected internal virtual void ToDotFile(Analyzer a, string inputText, string localFileName)
         {
-            using (StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), Encoding.UTF8))
-            {
-                TokenStream ts = a.GetTokenStream("field", new StringReader(inputText));
-                ts.Reset();
-                (new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();    
-            }
+            using StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), Encoding.UTF8);
+            TokenStream ts = a.GetTokenStream("field", new StringReader(inputText));
+            ts.Reset();
+            (new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();
         }
 
         [ExceptionToNetNumericConvention] // LUCENENET: Private API, keeping as-is

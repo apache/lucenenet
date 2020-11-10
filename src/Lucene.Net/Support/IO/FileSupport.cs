@@ -50,7 +50,7 @@ namespace Lucene.Net.Support.IO
             return GetFileIOExceptionHResult(provokeException: (fileName) =>
             {
                 //Try to create the file again -this should throw an IOException with the correct HResult for the current platform
-                using (var stream = new FileStream(fileName, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) { }
+                using var stream = new FileStream(fileName, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
             });
         }
 
@@ -186,10 +186,8 @@ namespace Lucene.Net.Support.IO
                 try
                 {
                     // Create the file, and close it immediately
-                    using (var stream = new FileStream(fileName, FileMode.CreateNew, FileAccess.Write, FileShare.Read))
-                    {
-                        break;
-                    }
+                    using var stream = new FileStream(fileName, FileMode.CreateNew, FileAccess.Write, FileShare.Read);
+                    break;
                 }
                 catch (IOException e) when (IsFileAlreadyExistsException(e, fileName))
                 {

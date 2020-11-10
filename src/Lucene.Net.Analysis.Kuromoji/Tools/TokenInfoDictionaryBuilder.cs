@@ -68,43 +68,41 @@ namespace Lucene.Net.Analysis.Ja.Util
             List<string[]> lines = new List<string[]>(400000);
             foreach (string file in csvFiles)
             {
-                using (Stream inputStream = new FileStream(file, FileMode.Open, FileAccess.Read))
+                using Stream inputStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                Encoding decoder = Encoding.GetEncoding(encoding);
+                TextReader reader = new StreamReader(inputStream, decoder);
+
+                string line = null;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    Encoding decoder = Encoding.GetEncoding(encoding);
-                    TextReader reader = new StreamReader(inputStream, decoder);
+                    string[] entry = CSVUtil.Parse(line);
 
-                    string line = null;
-                    while ((line = reader.ReadLine()) != null)
+                    if (entry.Length < 13)
                     {
-                        string[] entry = CSVUtil.Parse(line);
+                        Console.WriteLine("Entry in CSV is not valid: " + line);
+                        continue;
+                    }
 
-                        if (entry.Length < 13)
+                    string[] formatted = FormatEntry(entry);
+                    lines.Add(formatted);
+
+                    // NFKC normalize dictionary entry
+                    if (normalizeEntries)
+                    {
+                        //if (normalizer.isNormalized(entry[0])){
+                        if (entry[0].IsNormalized(NormalizationForm.FormKC))
                         {
-                            Console.WriteLine("Entry in CSV is not valid: " + line);
                             continue;
                         }
-
-                        string[] formatted = FormatEntry(entry);
-                        lines.Add(formatted);
-
-                        // NFKC normalize dictionary entry
-                        if (normalizeEntries)
+                        string[] normalizedEntry = new string[entry.Length];
+                        for (int i = 0; i < entry.Length; i++)
                         {
-                            //if (normalizer.isNormalized(entry[0])){
-                            if (entry[0].IsNormalized(NormalizationForm.FormKC))
-                            {
-                                continue;
-                            }
-                            string[] normalizedEntry = new string[entry.Length];
-                            for (int i = 0; i < entry.Length; i++)
-                            {
-                                //normalizedEntry[i] = normalizer.normalize(entry[i]);
-                                normalizedEntry[i] = entry[i].Normalize(NormalizationForm.FormKC);
-                            }
-
-                            formatted = FormatEntry(normalizedEntry);
-                            lines.Add(formatted);
+                            //normalizedEntry[i] = normalizer.normalize(entry[i]);
+                            normalizedEntry[i] = entry[i].Normalize(NormalizationForm.FormKC);
                         }
+
+                        formatted = FormatEntry(normalizedEntry);
+                        lines.Add(formatted);
                     }
                 }
             }

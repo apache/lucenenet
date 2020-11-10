@@ -215,12 +215,10 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="arrayIndex">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
         public virtual void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
         {
-            using (var iter = (EntryIterator)EntrySet().GetEnumerator())
+            using var iter = (EntryIterator)EntrySet().GetEnumerator();
+            for (int i = arrayIndex; iter.MoveNext(); i++)
             {
-                for (int i = arrayIndex; iter.MoveNext(); i++)
-                {
-                    array[i] = new KeyValuePair<string, TValue>(iter.Current.Key, iter.CurrentValue);
-                }
+                array[i] = new KeyValuePair<string, TValue>(iter.Current.Key, iter.CurrentValue);
             }
         }
 
@@ -231,12 +229,10 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="map"></param>
         public virtual void CopyTo(CharArrayMap<TValue> map)
         {
-            using (var iter = (EntryIterator)EntrySet().GetEnumerator())
+            using var iter = (EntryIterator)EntrySet().GetEnumerator();
+            while (iter.MoveNext())
             {
-                while (iter.MoveNext())
-                {
-                    map.Put(iter.Current.Key, iter.CurrentValue);
-                }
+                map.Put(iter.Current.Key, iter.CurrentValue);
             }
         }
 
@@ -1144,12 +1140,10 @@ namespace Lucene.Net.Analysis.Util
 
             public void CopyTo(string[] array, int arrayIndex)
             {
-                using (var iter = GetEnumerator())
+                using var iter = GetEnumerator();
+                for (int i = arrayIndex; iter.MoveNext(); i++)
                 {
-                    for (int i = arrayIndex; iter.MoveNext(); i++)
-                    {
-                        array[i] = iter.Current;
-                    }
+                    array[i] = iter.Current;
                 }
             }
 
@@ -1260,25 +1254,23 @@ namespace Lucene.Net.Analysis.Util
 
             public override string ToString()
             {
-                using (var i = (ValueEnumerator)GetEnumerator())
+                using var i = (ValueEnumerator)GetEnumerator();
+                if (!i.HasNext)
+                    return "[]";
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append('[');
+                while (i.MoveNext())
                 {
-                    if (!i.HasNext)
-                        return "[]";
-
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append('[');
-                    while (i.MoveNext())
+                    TValue value = i.Current;
+                    if (sb.Length > 1)
                     {
-                        TValue value = i.Current;
-                        if (sb.Length > 1)
-                        {
-                            sb.Append(',').Append(' ');
-                        }
-                        sb.Append(value.ToString());
+                        sb.Append(',').Append(' ');
                     }
-
-                    return sb.Append(']').ToString();
+                    sb.Append(value.ToString());
                 }
+
+                return sb.Append(']').ToString();
             }
 
             /// <summary>

@@ -443,18 +443,16 @@ namespace Lucene.Net.Util
                 return s;
             }
             var c = s = currentState[0] = new State();
-            using (var it = attributeImpls.Values.GetEnumerator())
+            using var it = attributeImpls.Values.GetEnumerator();
+            it.MoveNext();
+            c.attribute = it.Current;
+            while (it.MoveNext())
             {
-                it.MoveNext();
+                c.next = new State();
+                c = c.next;
                 c.attribute = it.Current;
-                while (it.MoveNext())
-                {
-                    c.next = new State();
-                    c = c.next;
-                    c.attribute = it.Current;
-                }
-                return s;
             }
+            return s;
         }
 
         /// <summary>

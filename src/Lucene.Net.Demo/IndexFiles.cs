@@ -174,47 +174,45 @@ namespace Lucene.Net.Demo
         /// </exception>
         internal static void IndexDocs(IndexWriter writer, FileInfo file)
         {
-            using (FileStream fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
+            using FileStream fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read);
+            // make a new, empty document
+            Document doc = new Document();
+
+            // Add the path of the file as a field named "path".  Use a
+            // field that is indexed (i.e. searchable), but don't tokenize 
+            // the field into separate words and don't index term frequency
+            // or positional information:
+            Field pathField = new StringField("path", file.FullName, Field.Store.YES);
+            doc.Add(pathField);
+
+            // Add the last modified date of the file a field named "modified".
+            // Use a LongField that is indexed (i.e. efficiently filterable with
+            // NumericRangeFilter).  This indexes to milli-second resolution, which
+            // is often too fine.  You could instead create a number based on
+            // year/month/day/hour/minutes/seconds, down the resolution you require.
+            // For example the long value 2011021714 would mean
+            // February 17, 2011, 2-3 PM.
+            doc.Add(new Int64Field("modified", file.LastWriteTimeUtc.Ticks, Field.Store.NO));
+
+            // Add the contents of the file to a field named "contents".  Specify a Reader,
+            // so that the text of the file is tokenized and indexed, but not stored.
+            // Note that FileReader expects the file to be in UTF-8 encoding.
+            // If that's not the case searching for special characters will fail.
+            doc.Add(new TextField("contents", new StreamReader(fs, Encoding.UTF8)));
+
+            if (writer.Config.OpenMode == OpenMode.CREATE)
             {
-                // make a new, empty document
-                Document doc = new Document();
-
-                // Add the path of the file as a field named "path".  Use a
-                // field that is indexed (i.e. searchable), but don't tokenize 
-                // the field into separate words and don't index term frequency
-                // or positional information:
-                Field pathField = new StringField("path", file.FullName, Field.Store.YES);
-                doc.Add(pathField);
-
-                // Add the last modified date of the file a field named "modified".
-                // Use a LongField that is indexed (i.e. efficiently filterable with
-                // NumericRangeFilter).  This indexes to milli-second resolution, which
-                // is often too fine.  You could instead create a number based on
-                // year/month/day/hour/minutes/seconds, down the resolution you require.
-                // For example the long value 2011021714 would mean
-                // February 17, 2011, 2-3 PM.
-                doc.Add(new Int64Field("modified", file.LastWriteTimeUtc.Ticks, Field.Store.NO));
-
-                // Add the contents of the file to a field named "contents".  Specify a Reader,
-                // so that the text of the file is tokenized and indexed, but not stored.
-                // Note that FileReader expects the file to be in UTF-8 encoding.
-                // If that's not the case searching for special characters will fail.
-                doc.Add(new TextField("contents", new StreamReader(fs, Encoding.UTF8)));
-
-                if (writer.Config.OpenMode == OpenMode.CREATE)
-                {
-                    // New index, so we just add the document (no old document can be there):
-                    Console.WriteLine("adding " + file);
-                    writer.AddDocument(doc);
-                }
-                else
-                {
-                    // Existing index (an old copy of this document may have been indexed) so 
-                    // we use updateDocument instead to replace the old one matching the exact 
-                    // path, if present:
-                    Console.WriteLine("updating " + file);
-                    writer.UpdateDocument(new Term("path", file.FullName), doc);
-                }
+                // New index, so we just add the document (no old document can be there):
+                Console.WriteLine("adding " + file);
+                writer.AddDocument(doc);
+            }
+            else
+            {
+                // Existing index (an old copy of this document may have been indexed) so 
+                // we use updateDocument instead to replace the old one matching the exact 
+                // path, if present:
+                Console.WriteLine("updating " + file);
+                writer.UpdateDocument(new Term("path", file.FullName), doc);
             }
         }
     }

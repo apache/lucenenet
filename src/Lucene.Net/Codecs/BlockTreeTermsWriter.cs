@@ -466,31 +466,29 @@ namespace Lucene.Net.Codecs
                     if (blocks.Count == 0)
                         return "[]";
 
-                    using (var it = blocks.GetEnumerator())
+                    using var it = blocks.GetEnumerator();
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append('[');
+                    it.MoveNext();
+                    while (true)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append('[');
-                        it.MoveNext();
-                        while (true)
+                        var e = it.Current;
+                        // There is a chance that the Prefix will contain invalid UTF8,
+                        // so we catch that and use the alternative way of displaying it
+                        try
                         {
-                            var e = it.Current;
-                            // There is a chance that the Prefix will contain invalid UTF8,
-                            // so we catch that and use the alternative way of displaying it
-                            try
-                            {
-                                sb.Append(e.ToString());
-                            }
-                            catch (IndexOutOfRangeException)
-                            {
-                                sb.Append("BLOCK: ");
-                                sb.Append(e.Prefix.ToString());
-                            }
-                            if (!it.MoveNext())
-                            {
-                                return sb.Append(']').ToString();
-                            }
-                            sb.Append(',').Append(' ');
+                            sb.Append(e.ToString());
                         }
+                        catch (IndexOutOfRangeException)
+                        {
+                            sb.Append("BLOCK: ");
+                            sb.Append(e.Prefix.ToString());
+                        }
+                        if (!it.MoveNext())
+                        {
+                            return sb.Append(']').ToString();
+                        }
+                        sb.Append(',').Append(' ');
                     }
                 }
             }

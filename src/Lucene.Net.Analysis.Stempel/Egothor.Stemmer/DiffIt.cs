@@ -118,31 +118,29 @@ namespace Egothor.Stemmer
                 // System.out.println("[" + args[i] + "]");
                 Diff diff = new Diff(ins, del, rep, nop);
 
-                using (TextReader input = new StreamReader(new FileStream(stemmerTable, FileMode.Open, FileAccess.Read), Encoding.GetEncoding(charset)))
+                using TextReader input = new StreamReader(new FileStream(stemmerTable, FileMode.Open, FileAccess.Read), Encoding.GetEncoding(charset));
+                string line;
+                while ((line = input.ReadLine()) != null)
                 {
-                    string line;
-                    while ((line = input.ReadLine()) != null)
+                    try
                     {
-                        try
+                        line = line.ToLowerInvariant();
+                        StringTokenizer st = new StringTokenizer(line);
+                        st.MoveNext();
+                        string stem = st.Current;
+                        Console.WriteLine(stem + " -a");
+                        while (st.MoveNext())
                         {
-                            line = line.ToLowerInvariant();
-                            StringTokenizer st = new StringTokenizer(line);
-                            st.MoveNext();
-                            string stem = st.Current;
-                            Console.WriteLine(stem + " -a");
-                            while (st.MoveNext())
+                            string token = st.Current;
+                            if (token.Equals(stem, StringComparison.Ordinal) == false)
                             {
-                                string token = st.Current;
-                                if (token.Equals(stem, StringComparison.Ordinal) == false)
-                                {
-                                    Console.WriteLine(stem + " " + diff.Exec(token, stem));
-                                }
+                                Console.WriteLine(stem + " " + diff.Exec(token, stem));
                             }
                         }
-                        catch (InvalidOperationException /*x*/)
-                        {
-                            // no base token (stem) on a line
-                        }
+                    }
+                    catch (InvalidOperationException /*x*/)
+                    {
+                        // no base token (stem) on a line
                     }
                 }
             }

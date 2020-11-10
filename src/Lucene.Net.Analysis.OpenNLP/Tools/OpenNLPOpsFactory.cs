@@ -171,22 +171,20 @@ namespace Lucene.Net.Analysis.OpenNlp.Tools
         {
             if (!lemmaDictionaries.TryGetValue(dictionaryFile, out string dictionary) || dictionary == null)
             {
-                using (TextReader reader = new StreamReader(loader.OpenResource(dictionaryFile), Encoding.UTF8))
+                using TextReader reader = new StreamReader(loader.OpenResource(dictionaryFile), Encoding.UTF8);
+                StringBuilder builder = new StringBuilder();
+                char[] chars = new char[8092];
+                int numRead = 0;
+                do
                 {
-                    StringBuilder builder = new StringBuilder();
-                    char[] chars = new char[8092];
-                    int numRead = 0;
-                    do
+                    numRead = reader.Read(chars, 0, chars.Length);
+                    if (numRead > 0)
                     {
-                        numRead = reader.Read(chars, 0, chars.Length);
-                        if (numRead > 0)
-                        {
-                            builder.Append(chars, 0, numRead);
-                        }
-                    } while (numRead > 0);
-                    dictionary = builder.ToString();
-                    lemmaDictionaries[dictionaryFile] = dictionary;
-                }
+                        builder.Append(chars, 0, numRead);
+                    }
+                } while (numRead > 0);
+                dictionary = builder.ToString();
+                lemmaDictionaries[dictionaryFile] = dictionary;
             }
             return dictionary;
         }

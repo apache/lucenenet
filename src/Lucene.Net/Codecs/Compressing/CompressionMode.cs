@@ -215,14 +215,10 @@ namespace Lucene.Net.Codecs.Compressing
                 byte[] decompressedBytes = null;
 
                 using (MemoryStream decompressedStream = new MemoryStream())
+                using (MemoryStream compressedStream = new MemoryStream(compressedBytes))
                 {
-                    using (MemoryStream compressedStream = new MemoryStream(compressedBytes))
-                    {
-                        using (DeflateStream dStream = new DeflateStream(compressedStream, System.IO.Compression.CompressionMode.Decompress))
-                        {
-                            dStream.CopyTo(decompressedStream);
-                        }
-                    }
+                    using DeflateStream dStream = new DeflateStream(compressedStream, System.IO.Compression.CompressionMode.Decompress);
+                    dStream.CopyTo(decompressedStream);
                     decompressedBytes = decompressedStream.ToArray();
                 }
 

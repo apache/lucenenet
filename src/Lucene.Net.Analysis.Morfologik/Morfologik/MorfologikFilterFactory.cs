@@ -86,11 +86,9 @@ namespace Lucene.Net.Analysis.Morfologik
             }
             else
             {
-                using (Stream dict = loader.OpenResource(resourceName))
-                using (Stream meta = loader.OpenResource(DictionaryMetadata.GetExpectedMetadataFileName(resourceName)))
-                {
-                    this.dictionary = Dictionary.Read(dict, meta);
-                }
+                using Stream dict = loader.OpenResource(resourceName);
+                using Stream meta = loader.OpenResource(DictionaryMetadata.GetExpectedMetadataFileName(resourceName));
+                this.dictionary = Dictionary.Read(dict, meta);
             }
         }
 

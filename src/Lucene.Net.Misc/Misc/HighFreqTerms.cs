@@ -72,14 +72,12 @@ namespace Lucene.Net.Misc
                 }
             }
 
-            using (IndexReader reader = DirectoryReader.Open(dir))
-            {
-                TermStats[] terms = GetHighFreqTerms(reader, numTerms, field, comparer);
+            using IndexReader reader = DirectoryReader.Open(dir);
+            TermStats[] terms = GetHighFreqTerms(reader, numTerms, field, comparer);
 
-                for (int i = 0; i < terms.Length; i++)
-                {
-                    Console.WriteLine("{0}:{1} \t totalTF = {2:#,##0} \t doc freq = {3:#,##0} \n", terms[i].Field, terms[i].GetTermText(), terms[i].TotalTermFreq, terms[i].DocFreq);
-                }
+            for (int i = 0; i < terms.Length; i++)
+            {
+                Console.WriteLine("{0}:{1} \t totalTF = {2:#,##0} \t doc freq = {3:#,##0} \n", terms[i].Field, terms[i].GetTermText(), terms[i].TotalTermFreq, terms[i].DocFreq);
             }
         }
 

@@ -98,33 +98,31 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 name = f.GetCanonicalPath() + "_" + iteration;
             }
 
-            using (TextReader reader = new StreamReader(new FileStream(f.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8))
+            using TextReader reader = new StreamReader(new FileStream(f.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8);
+            // First line is the date, 3rd is the title, rest is body
+            string dateStr = reader.ReadLine();
+            reader.ReadLine();// skip an empty line
+            string title = reader.ReadLine();
+            reader.ReadLine();// skip an empty line
+            StringBuilder bodyBuf = new StringBuilder(1024);
+            string line = null;
+            while ((line = reader.ReadLine()) != null)
             {
-                // First line is the date, 3rd is the title, rest is body
-                string dateStr = reader.ReadLine();
-                reader.ReadLine();// skip an empty line
-                string title = reader.ReadLine();
-                reader.ReadLine();// skip an empty line
-                StringBuilder bodyBuf = new StringBuilder(1024);
-                string line = null;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    bodyBuf.Append(line).Append(' ');
-                }
-                reader.Dispose();
-
-
-                AddBytes(f.Length);
-
-                DateTime? date = ParseDate(dateStr.Trim());
-
-                docData.Clear();
-                docData.Name = name;
-                docData.Body = bodyBuf.ToString();
-                docData.Title = title;
-                docData.SetDate(date);
-                return docData;
+                bodyBuf.Append(line).Append(' ');
             }
+            reader.Dispose();
+
+
+            AddBytes(f.Length);
+
+            DateTime? date = ParseDate(dateStr.Trim());
+
+            docData.Clear();
+            docData.Name = name;
+            docData.Body = bodyBuf.ToString();
+            docData.Title = title;
+            docData.SetDate(date);
+            return docData;
         }
 
         public override void ResetInputs()

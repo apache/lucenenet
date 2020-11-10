@@ -175,18 +175,17 @@ namespace Lucene.Net.Util
 
             // As an alternative, if you know the computers you will query are running .NET Framework 4.5 
             // or later, you can use:
-            using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
+            using RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey);
+            object releaseValue;
+            if (ndpKey != null && (releaseValue = ndpKey.GetValue("Release")) != null)
             {
-                if (ndpKey != null && ndpKey.GetValue("Release") != null)
-                {
-                    return CheckFor45PlusVersion((int)ndpKey.GetValue("Release"));
-                }
-                else
-                {
-                    // Fall back to Environment.Version (probably wrong, but this is our best guess if the registry check fails)
-                    return Environment.Version.ToString();
-                    //Console.WriteLine(".NET Framework Version 4.5 or later is not detected.");
-                }
+                return CheckFor45PlusVersion((int)releaseValue);
+            }
+            else
+            {
+                // Fall back to Environment.Version (probably wrong, but this is our best guess if the registry check fails)
+                return Environment.Version.ToString();
+                //Console.WriteLine(".NET Framework Version 4.5 or later is not detected.");
             }
         }
 

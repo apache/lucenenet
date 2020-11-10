@@ -2583,18 +2583,16 @@ namespace Lucene.Net.Util
             }
             AssertFieldStatisticsEquals(info, leftFields, rightFields);
 
-            using (IEnumerator<string> leftEnum = leftFields.GetEnumerator())
-            using (IEnumerator<string> rightEnum = rightFields.GetEnumerator())
+            using IEnumerator<string> leftEnum = leftFields.GetEnumerator();
+            using IEnumerator<string> rightEnum = rightFields.GetEnumerator();
+            while (leftEnum.MoveNext())
             {
-                while (leftEnum.MoveNext())
-                {
-                    string field = leftEnum.Current;
-                    rightEnum.MoveNext();
-                    Assert.AreEqual(field, rightEnum.Current, info);
-                    AssertTermsEquals(info, leftReader, leftFields.GetTerms(field), rightFields.GetTerms(field), deep);
-                }
-                Assert.IsFalse(rightEnum.MoveNext());
+                string field = leftEnum.Current;
+                rightEnum.MoveNext();
+                Assert.AreEqual(field, rightEnum.Current, info);
+                AssertTermsEquals(info, leftReader, leftFields.GetTerms(field), rightFields.GetTerms(field), deep);
             }
+            Assert.IsFalse(rightEnum.MoveNext());
         }
 
         /// <summary>
@@ -3042,20 +3040,18 @@ namespace Lucene.Net.Util
                 // in whatever way it wants (e.g. maybe it packs related fields together or something)
                 // To fix this, we sort the fields in both documents by name, but
                 // we still assume that all instances with same name are in order:
-                Comparison<IIndexableField> comp = (a, b) => String.Compare(a.Name, b.Name, StringComparison.Ordinal);
+                Comparison<IIndexableField> comp = (a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal);
                 leftDoc.Fields.Sort(comp);
                 rightDoc.Fields.Sort(comp);
 
-                using (var leftIterator = leftDoc.GetEnumerator())
-                using (var rightIterator = rightDoc.GetEnumerator())
+                using var leftIterator = leftDoc.GetEnumerator();
+                using var rightIterator = rightDoc.GetEnumerator();
+                while (leftIterator.MoveNext())
                 {
-                    while (leftIterator.MoveNext())
-                    {
-                        Assert.IsTrue(rightIterator.MoveNext(), info);
-                        AssertStoredFieldEquals(info, leftIterator.Current, rightIterator.Current);
-                    }
-                    Assert.IsFalse(rightIterator.MoveNext(), info);
+                    Assert.IsTrue(rightIterator.MoveNext(), info);
+                    AssertStoredFieldEquals(info, leftIterator.Current, rightIterator.Current);
                 }
+                Assert.IsFalse(rightIterator.MoveNext(), info);
             }
         }
 
@@ -3598,7 +3594,7 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            Stream lockStream;
+            Stream lockStream = null;
             try
             {
                 lockStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1, FileOptions.None);
@@ -3609,12 +3605,14 @@ namespace Lucene.Net.Util
                 SystemConsole.WriteLine($"******* HResult: {e.HResult}");
                 return;
             }
+            finally
+            {
+                lockStream?.Dispose();
+            }
             try
             {
                 // Try to get an exclusive lock on the file - this should throw an IOException with the current platform's HResult value for FileShare violation
-                using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Write, FileShare.None, 1, FileOptions.None))
-                {
-                }
+                using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Write, FileShare.None, 1, FileOptions.None);
             }
             catch (IOException io) when (io.HResult != 0)
             {
@@ -3624,7 +3622,7 @@ namespace Lucene.Net.Util
             }
             finally
             {
-                lockStream.Dispose();
+                lockStream?.Dispose();
             }
         }
 

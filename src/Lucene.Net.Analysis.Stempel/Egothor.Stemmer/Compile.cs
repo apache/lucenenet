@@ -214,12 +214,10 @@ namespace Egothor.Stemmer
                     trie.PrintInfo(Console.Out, prefix + " ");
                 }
 
-                using (DataOutputStream os = new DataOutputStream(
-                    new FileStream(stemmerTable + ".out", FileMode.OpenOrCreate, FileAccess.Write)))
-                {
-                    os.WriteUTF(args[0]);
-                    trie.Store(os);
-                }
+                using DataOutputStream os = new DataOutputStream(
+                    new FileStream(stemmerTable + ".out", FileMode.OpenOrCreate, FileAccess.Write));
+                os.WriteUTF(args[0]);
+                trie.Store(os);
             }
         }
 

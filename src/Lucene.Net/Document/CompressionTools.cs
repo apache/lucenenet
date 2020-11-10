@@ -42,7 +42,6 @@ namespace Lucene.Net.Documents
             {
                 using (DeflateStream deflateStream = new DeflateStream(compressionMemoryStream, compressionLevel))
                 {
-
                     deflateStream.Write(value, offset, length);
                 }
                 resultArray = compressionMemoryStream.ToArray();
@@ -113,10 +112,8 @@ namespace Lucene.Net.Documents
             {
                 using (MemoryStream compressedStream = new MemoryStream(value, offset, length))
                 {
-                    using (DeflateStream dStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
-                    {
-                        dStream.CopyTo(decompressedStream);
-                    }
+                    using DeflateStream dStream = new DeflateStream(compressedStream, CompressionMode.Decompress);
+                    dStream.CopyTo(decompressedStream);
                 }
                 decompressedBytes = decompressedStream.ToArray();
             }

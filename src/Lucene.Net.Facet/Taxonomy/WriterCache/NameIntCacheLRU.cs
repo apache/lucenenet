@@ -233,14 +233,12 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
 
                 //System.Diagnostics.Debug.WriteLine("Removing cache entries in MakeRoomLRU");
-                using (var it = cache.GetEnumerator())
+                using var it = cache.GetEnumerator();
+                int i = 0;
+                while (i < n && it.MoveNext())
                 {
-                    int i = 0;
-                    while (i < n && it.MoveNext())
-                    {
-                        cache.Remove(it.Current.Key);
-                        i++;
-                    }
+                    cache.Remove(it.Current.Key);
+                    i++;
                 }
             }
             return true;

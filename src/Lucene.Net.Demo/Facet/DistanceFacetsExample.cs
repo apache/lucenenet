@@ -264,21 +264,18 @@ namespace Lucene.Net.Demo.Facet
         /// <summary>Runs the search and drill-down examples and prints the results.</summary>
         public static void Main(string[] args)
         {
-            using (DistanceFacetsExample example = new DistanceFacetsExample())
-            {
-                example.Index();
+            using DistanceFacetsExample example = new DistanceFacetsExample();
+            example.Index();
 
-                Console.WriteLine("Distance facet counting example:");
-                Console.WriteLine("-----------------------");
-                Console.WriteLine(example.Search());
+            Console.WriteLine("Distance facet counting example:");
+            Console.WriteLine("-----------------------");
+            Console.WriteLine(example.Search());
 
-                Console.WriteLine("\n");
-                Console.WriteLine("Distance facet drill-down example (field/< 2 km):");
-                Console.WriteLine("---------------------------------------------");
-                TopDocs hits = example.DrillDown(TWO_KM);
-                Console.WriteLine(hits.TotalHits + " totalHits");
-
-            } // Disposes example
+            Console.WriteLine("\n");
+            Console.WriteLine("Distance facet drill-down example (field/< 2 km):");
+            Console.WriteLine("---------------------------------------------");
+            TopDocs hits = example.DrillDown(TWO_KM);
+            Console.WriteLine(hits.TotalHits + " totalHits");
         }
     }
 }

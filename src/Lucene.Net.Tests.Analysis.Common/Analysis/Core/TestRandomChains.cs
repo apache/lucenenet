@@ -502,22 +502,18 @@ namespace Lucene.Net.Analysis.Core
             public object Create(Random random)
             {
                 // TODO: make nastier
-                using (Stream affixStream = typeof(TestHunspellStemFilter).getResourceAsStream("simple.aff"))
+                using Stream affixStream = typeof(TestHunspellStemFilter).getResourceAsStream("simple.aff");
+                using Stream dictStream = typeof(TestHunspellStemFilter).getResourceAsStream("simple.dic");
+                try
                 {
-                    using (Stream dictStream = typeof(TestHunspellStemFilter).getResourceAsStream("simple.dic"))
-                    {
-                        try
-                        {
-                            return new Dictionary(affixStream, dictStream);
-                        }
-                        catch (Exception /*ex*/)
-                        {
-                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                    return new Dictionary(affixStream, dictStream);
+                }
+                catch (Exception /*ex*/)
+                {
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
-                            return null; // unreachable code
+                    return null; // unreachable code
 #pragma warning restore 162
-                        }
-                    }
                 }
             }
         }
@@ -553,11 +549,9 @@ namespace Lucene.Net.Analysis.Core
                 // TODO: make nastier
                 try
                 {
-                    using (Stream @is = typeof(TestCompoundWordTokenFilter).getResourceAsStream("da_UTF8.xml"))
-                    {
-                        HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
-                        return hyphenator;
-                    }
+                    using Stream @is = typeof(TestCompoundWordTokenFilter).getResourceAsStream("da_UTF8.xml");
+                    HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
+                    return hyphenator;
                 }
                 catch (Exception /*ex*/)
                 {

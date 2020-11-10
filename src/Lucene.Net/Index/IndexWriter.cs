@@ -5576,7 +5576,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static void Unlock(Directory directory)
         {
-            using (var _ = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME)) { }
+            using var _ = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
         }
 
         /// <summary>

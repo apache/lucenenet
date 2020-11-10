@@ -134,29 +134,23 @@ namespace Lucene.Net.Util
             Rm(destDir);
             destDir.Create();
 
-            using (ZipArchive zip = new ZipArchive(zipFileStream))
+            using ZipArchive zip = new ZipArchive(zipFileStream);
+            foreach (var entry in zip.Entries)
             {
-                foreach (var entry in zip.Entries)
+                // Ignore internal folders - these are tacked onto the FullName anyway
+                if (entry.FullName.EndsWith("/", StringComparison.Ordinal) || entry.FullName.EndsWith("\\", StringComparison.Ordinal))
                 {
-                    // Ignore internal folders - these are tacked onto the FullName anyway
-                    if (entry.FullName.EndsWith("/", StringComparison.Ordinal) || entry.FullName.EndsWith("\\", StringComparison.Ordinal))
-                    {
-                        continue;
-                    }
-                    using (Stream input = entry.Open())
-                    {
-                        FileInfo targetFile = new FileInfo(CorrectPath(Path.Combine(destDir.FullName, entry.FullName)));
-                        if (!targetFile.Directory.Exists)
-                        {
-                            targetFile.Directory.Create();
-                        }
-
-                        using (Stream output = new FileStream(targetFile.FullName, FileMode.Create, FileAccess.Write))
-                        {
-                            input.CopyTo(output);
-                        }
-                    }
+                    continue;
                 }
+                using Stream input = entry.Open();
+                FileInfo targetFile = new FileInfo(CorrectPath(Path.Combine(destDir.FullName, entry.FullName)));
+                if (!targetFile.Directory.Exists)
+                {
+                    targetFile.Directory.Create();
+                }
+
+                using Stream output = new FileStream(targetFile.FullName, FileMode.Create, FileAccess.Write);
+                input.CopyTo(output);
             }
         }
 

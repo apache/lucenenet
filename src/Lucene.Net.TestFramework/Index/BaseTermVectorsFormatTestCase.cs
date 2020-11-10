@@ -692,45 +692,41 @@ namespace Lucene.Net.Index
                 int numDocs = AtLeast(200);
                 int docWithVectors = Random.Next(numDocs);
                 Document emptyDoc = new Document();
-                using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(
+                using Directory dir = NewDirectory();
+                using RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
-                    Random, dir))
+                    Random, dir);
+                RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), 20, options);
+                for (int i = 0; i < numDocs; ++i)
                 {
-                    RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), 20, options);
-                    for (int i = 0; i < numDocs; ++i)
+                    if (i == docWithVectors)
                     {
-                        if (i == docWithVectors)
-                        {
-                            writer.AddDocument(AddId(doc.ToDocument(), "42"));
-                        }
-                        else
-                        {
-                            writer.AddDocument(emptyDoc);
-                        }
+                        writer.AddDocument(AddId(doc.ToDocument(), "42"));
                     }
-                    using (IndexReader reader = writer.GetReader())
+                    else
                     {
-                        int docWithVectorsID = DocID(reader, "42");
-                        for (int i = 0; i < 10; ++i)
-                        {
-                            int docID = Random.Next(numDocs);
-                            Fields fields = reader.GetTermVectors(docID);
-                            if (docID == docWithVectorsID)
-                            {
-                                AssertEquals(doc, fields);
-                            }
-                            else
-                            {
-                                Assert.IsNull(fields);
-                            }
-                        }
-                        Fields fields_ = reader.GetTermVectors(docWithVectorsID);
-                        AssertEquals(doc, fields_);
-                    } // reader.Dispose();
-                } // writer.Dispose();, dir.Dispose();
+                        writer.AddDocument(emptyDoc);
+                    }
+                }
+                using IndexReader reader = writer.GetReader();
+                int docWithVectorsID = DocID(reader, "42");
+                for (int i = 0; i < 10; ++i)
+                {
+                    int docID = Random.Next(numDocs);
+                    Fields fields = reader.GetTermVectors(docID);
+                    if (docID == docWithVectorsID)
+                    {
+                        AssertEquals(doc, fields);
+                    }
+                    else
+                    {
+                        Assert.IsNull(fields);
+                    }
+                }
+                Fields fields_ = reader.GetTermVectors(docWithVectorsID);
+                AssertEquals(doc, fields_);
             }
         }
 
@@ -744,19 +740,17 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(
+                using Directory dir = NewDirectory();
+                using RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
-                    Random, dir))
-                {
-                    RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 2), AtLeast(20000),
-                        options);
-                    writer.AddDocument(doc.ToDocument());
-                    using (IndexReader reader = writer.GetReader())
-                        AssertEquals(doc, reader.GetTermVectors(0));
-                }
+                    Random, dir);
+                RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 2), AtLeast(20000),
+                    options);
+                writer.AddDocument(doc.ToDocument());
+                using IndexReader reader = writer.GetReader();
+                AssertEquals(doc, reader.GetTermVectors(0));
             }
         }
 
@@ -766,19 +760,16 @@ namespace Lucene.Net.Index
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5000, 10);
             foreach (Options options in ValidOptions())
             {
-                using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(
+                using Directory dir = NewDirectory();
+                using RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
-                    Random, dir))
-                {
-                    RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
-                    writer.AddDocument(doc.ToDocument());
-                    using (IndexReader reader = writer.GetReader())
-                        AssertEquals(doc, reader.GetTermVectors(0));
-                    //reader.Dispose();
-                } // writer.Dispose();, dir.Dispose();
+                    Random, dir);
+                RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
+                writer.AddDocument(doc.ToDocument());
+                using IndexReader reader = writer.GetReader();
+                AssertEquals(doc, reader.GetTermVectors(0));
             }
         }
 
@@ -796,25 +787,21 @@ namespace Lucene.Net.Index
                     {
                         continue;
                     }
-                    using (Directory dir = NewDirectory())
-                    using (var writer = new RandomIndexWriter(
+                    using Directory dir = NewDirectory();
+                    using var writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
-                        Random, dir))
-                    {
-                        RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
-                        RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
-                        writer.AddDocument(AddId(doc1.ToDocument(), "1"));
-                        writer.AddDocument(AddId(doc2.ToDocument(), "2"));
-                        using (IndexReader reader = writer.GetReader())
-                        {
-                            int doc1ID = DocID(reader, "1");
-                            AssertEquals(doc1, reader.GetTermVectors(doc1ID));
-                            int doc2ID = DocID(reader, "2");
-                            AssertEquals(doc2, reader.GetTermVectors(doc2ID));
-                        }
-                    }
+                        Random, dir);
+                    RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
+                    RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
+                    writer.AddDocument(AddId(doc1.ToDocument(), "1"));
+                    writer.AddDocument(AddId(doc2.ToDocument(), "2"));
+                    using IndexReader reader = writer.GetReader();
+                    int doc1ID = DocID(reader, "1");
+                    AssertEquals(doc1, reader.GetTermVectors(doc1ID));
+                    int doc2ID = DocID(reader, "2");
+                    AssertEquals(doc2, reader.GetTermVectors(doc2ID));
                 }
             }
         }
@@ -829,26 +816,22 @@ namespace Lucene.Net.Index
             {
                 docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), TestUtil.NextInt32(Random, 10, 50), RandomOptions());
             }
-            using (Directory dir = NewDirectory())
-            using (RandomIndexWriter writer = new RandomIndexWriter(
+            using Directory dir = NewDirectory();
+            using RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, dir))
+                Random, dir);
+            for (int i = 0; i < numDocs; ++i)
             {
-                for (int i = 0; i < numDocs; ++i)
-                {
-                    writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
-                }
-                using (IndexReader reader = writer.GetReader())
-                {
-                    for (int i = 0; i < numDocs; ++i)
-                    {
-                        int docID = DocID(reader, "" + i);
-                        AssertEquals(docs[i], reader.GetTermVectors(docID));
-                    }
-                } // reader.Dispose();
-            } // writer.Dispose();, dir.Dispose();
+                writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
+            }
+            using IndexReader reader = writer.GetReader();
+            for (int i = 0; i < numDocs; ++i)
+            {
+                int docID = DocID(reader, "" + i);
+                AssertEquals(docs[i], reader.GetTermVectors(docID));
+            }
         }
 
         [Test]
@@ -869,40 +852,35 @@ namespace Lucene.Net.Index
                 {
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), AtLeast(10), options);
                 }
-                using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(
+                using Directory dir = NewDirectory();
+                using RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
-                    Random, dir))
+                    Random, dir);
+                for (int i = 0; i < numDocs; ++i)
                 {
-                    for (int i = 0; i < numDocs; ++i)
+                    writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
+                    if (Rarely())
                     {
-                        writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
-                        if (Rarely())
-                        {
-                            writer.Commit();
-                        }
+                        writer.Commit();
                     }
-                    foreach (int delete in deletes)
+                }
+                foreach (int delete in deletes)
+                {
+                    writer.DeleteDocuments(new Term("id", "" + delete));
+                }
+                // merge with deletes
+                writer.ForceMerge(1);
+                using IndexReader reader = writer.GetReader();
+                for (int i = 0; i < numDocs; ++i)
+                {
+                    if (!deletes.Contains(i))
                     {
-                        writer.DeleteDocuments(new Term("id", "" + delete));
+                        int docID = DocID(reader, "" + i);
+                        AssertEquals(docs[i], reader.GetTermVectors(docID));
                     }
-                    // merge with deletes
-                    writer.ForceMerge(1);
-                    using (IndexReader reader = writer.GetReader())
-                    {
-                        for (int i = 0; i < numDocs; ++i)
-                        {
-                            if (!deletes.Contains(i))
-                            {
-                                int docID = DocID(reader, "" + i);
-                                AssertEquals(docs[i], reader.GetTermVectors(docID));
-                            }
-                        }
-                    } // reader.Dispose();
-
-                } // writer.Dispose();, dir.Dispose();
+                }
             }
         }
 
@@ -932,28 +910,26 @@ namespace Lucene.Net.Index
                     {
                         writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
                     }
-                    using (IndexReader reader = writer.GetReader())
+                    using IndexReader reader = writer.GetReader();
+                    for (int i = 0; i < numDocs; ++i)
                     {
-                        for (int i = 0; i < numDocs; ++i)
-                        {
-                            int docID = DocID(reader, "" + i);
-                            AssertEquals(docs[i], reader.GetTermVectors(docID));
-                        }
+                        int docID = DocID(reader, "" + i);
+                        AssertEquals(docs[i], reader.GetTermVectors(docID));
+                    }
 
-                        ThreadJob[] threads = new ThreadJob[2];
-                        for (int i = 0; i < threads.Length; ++i)
-                        {
-                            threads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, docs, reader, exception);
-                        }
-                        foreach (ThreadJob thread in threads)
-                        {
-                            thread.Start();
-                        }
-                        foreach (ThreadJob thread in threads)
-                        {
-                            thread.Join();
-                        }
-                    } // reader.Dispose();
+                    ThreadJob[] threads = new ThreadJob[2];
+                    for (int i = 0; i < threads.Length; ++i)
+                    {
+                        threads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, docs, reader, exception);
+                    }
+                    foreach (ThreadJob thread in threads)
+                    {
+                        thread.Start();
+                    }
+                    foreach (ThreadJob thread in threads)
+                    {
+                        thread.Join();
+                    }
                 } // writer.Dispose();, dir.Dispose();
                 Assert.IsNull(exception.Value, "One thread threw an exception");
             }

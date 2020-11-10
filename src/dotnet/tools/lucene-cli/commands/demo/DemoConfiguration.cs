@@ -66,10 +66,8 @@ namespace Lucene.Net.Cli
                     }
                     if (viewSource)
                     {
-                        using (var console = new ConsolePager(this.SourceCodeFiles))
-                        {
-                            console.Run();
-                        }
+                        using var console = new ConsolePager(this.SourceCodeFiles);
+                        console.Run();
                     }
 
                     return 0;

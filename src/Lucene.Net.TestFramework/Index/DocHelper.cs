@@ -193,14 +193,12 @@ namespace Lucene.Net.Index
         public static SegmentCommitInfo WriteDoc(Random random, Directory dir, Analyzer analyzer, Similarity similarity, Document doc)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            using (IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(Util.LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity ?? IndexSearcher.DefaultSimilarity))) // LuceneTestCase.newIndexWriterConfig(random,
-            {
-                //writer.SetNoCFSRatio(0.0);
-                writer.AddDocument(doc);
-                writer.Commit();
-                SegmentCommitInfo info = writer.NewestSegment();
-                return info;
-            } // writer.Dispose();
+            using IndexWriter writer = new IndexWriter(dir, (new IndexWriterConfig(Util.LuceneTestCase.TEST_VERSION_CURRENT, analyzer)).SetSimilarity(similarity ?? IndexSearcher.DefaultSimilarity));
+            //writer.SetNoCFSRatio(0.0);
+            writer.AddDocument(doc);
+            writer.Commit();
+            SegmentCommitInfo info = writer.NewestSegment();
+            return info;
         }
 
         public static int NumFields(Document doc)

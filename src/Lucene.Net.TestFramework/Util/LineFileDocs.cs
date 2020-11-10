@@ -133,15 +133,13 @@ namespace Lucene.Net.Util
         // so tests can be run without the overhead of seeking within a MemoryStream
         private Stream PrepareGZipStream(Stream input)
         {
-            using (var gzs = new GZipStream(input, CompressionMode.Decompress, leaveOpen: false))
-            {
-                FileInfo tempFile = LuceneTestCase.CreateTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
-                tempFilePath = tempFile.FullName;
-                Stream result = new FileStream(tempFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
-                gzs.CopyTo(result);
-                // Use the decompressed stream now
-                return new BufferedStream(result);
-            }
+            using var gzs = new GZipStream(input, CompressionMode.Decompress, leaveOpen: false);
+            FileInfo tempFile = LuceneTestCase.CreateTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
+            tempFilePath = tempFile.FullName;
+            Stream result = new FileStream(tempFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read); // Leave open
+            gzs.CopyTo(result);
+            // Use the decompressed stream now
+            return new BufferedStream(result);
         }
 
         private void Open(Random random)
@@ -367,11 +365,9 @@ namespace Lucene.Net.Util
                     ? LuceneTestCase.CreateTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX)
                     : FileSupport.CreateTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
                 result = file.FullName;
-                using (var gzs = new GZipStream(temp, CompressionMode.Decompress, leaveOpen: false))
-                using (Stream output = new FileStream(result, FileMode.Open, FileAccess.Write, FileShare.Read))
-                {
-                    gzs.CopyTo(output);
-                }
+                using var gzs = new GZipStream(temp, CompressionMode.Decompress, leaveOpen: false);
+                using Stream output = new FileStream(result, FileMode.Open, FileAccess.Write, FileShare.Read);
+                gzs.CopyTo(output);
             }
             return result;
         }

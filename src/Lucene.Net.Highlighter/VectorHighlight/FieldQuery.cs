@@ -201,14 +201,12 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
                 expandQueries.Add(query);
                 if (!(query is PhraseQuery)) continue;
-                using (IEnumerator<Query> j = flatQueries.GetEnumerator())
+                using IEnumerator<Query> j = flatQueries.GetEnumerator();
+                while (j.MoveNext())
                 {
-                    while (j.MoveNext())
-                    {
-                        Query qj = j.Current;
-                        if (!(qj is PhraseQuery)) continue;
-                        CheckOverlap(expandQueries, (PhraseQuery)query, (PhraseQuery)qj);
-                    }
+                    Query qj = j.Current;
+                    if (!(qj is PhraseQuery)) continue;
+                    CheckOverlap(expandQueries, (PhraseQuery)query, (PhraseQuery)qj);
                 }
             }
 

@@ -79,19 +79,17 @@ namespace Lucene.Net.Analysis.Ja.Util
             string filename = System.IO.Path.Combine(baseDir, typeof(CharacterDefinition).Name + CharacterDefinition.FILENAME_SUFFIX);
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(baseDir));
-            using (Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write))
+            using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            DataOutput @out = new OutputStreamDataOutput(os);
+            CodecUtil.WriteHeader(@out, CharacterDefinition.HEADER, CharacterDefinition.VERSION);
+            @out.WriteBytes(characterCategoryMap, 0, characterCategoryMap.Length);
+            for (int i = 0; i < CharacterDefinition.CLASS_COUNT; i++)
             {
-                DataOutput @out = new OutputStreamDataOutput(os);
-                CodecUtil.WriteHeader(@out, CharacterDefinition.HEADER, CharacterDefinition.VERSION);
-                @out.WriteBytes(characterCategoryMap, 0, characterCategoryMap.Length);
-                for (int i = 0; i < CharacterDefinition.CLASS_COUNT; i++)
-                {
-                    byte b = (byte)(
-                      (invokeMap[i] ? 0x01 : 0x00) |
-                      (groupMap[i] ? 0x02 : 0x00)
-                    );
-                    @out.WriteByte(b);
-                }
+                byte b = (byte)(
+                  (invokeMap[i] ? 0x01 : 0x00) |
+                  (groupMap[i] ? 0x02 : 0x00)
+                );
+                @out.WriteByte(b);
             }
         }
     }

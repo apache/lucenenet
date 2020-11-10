@@ -158,23 +158,21 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private void LoadFromInputStream(Stream serialObjectInputStream)
         {
-            using (var reader = new BinaryReader(serialObjectInputStream))
+            using var reader = new BinaryReader(serialObjectInputStream);
+            // Read bigramHashTable
+            int bhLen = reader.ReadInt32();
+            bigramHashTable = new long[bhLen];
+            for (int i = 0; i < bhLen; i++)
             {
-                // Read bigramHashTable
-                int bhLen = reader.ReadInt32();
-                bigramHashTable = new long[bhLen];
-                for (int i = 0; i < bhLen; i++)
-                {
-                    bigramHashTable[i] = reader.ReadInt64();
-                }
+                bigramHashTable[i] = reader.ReadInt64();
+            }
 
-                // Read frequencyTable
-                int fLen = reader.ReadInt32();
-                frequencyTable = new int[fLen];
-                for (int i = 0; i < fLen; i++)
-                {
-                    frequencyTable[i] = reader.ReadInt32();
-                }
+            // Read frequencyTable
+            int fLen = reader.ReadInt32();
+            frequencyTable = new int[fLen];
+            for (int i = 0; i < fLen; i++)
+            {
+                frequencyTable[i] = reader.ReadInt32();
             }
 
             // log.info("load bigram dict from serialization.");
@@ -184,24 +182,20 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
             try
             {
-                using (Stream output = new FileStream(serialObj.FullName, FileMode.Create, FileAccess.Write))
+                using Stream output = new FileStream(serialObj.FullName, FileMode.Create, FileAccess.Write);
+                using BinaryWriter writer = new BinaryWriter(output);
+                int bhLen = bigramHashTable.Length;
+                writer.Write(bhLen);
+                for (int i = 0; i < bhLen; i++)
                 {
-                    using (BinaryWriter writer = new BinaryWriter(output))
-                    {
-                        int bhLen = bigramHashTable.Length;
-                        writer.Write(bhLen);
-                        for (int i = 0; i < bhLen; i++)
-                        {
-                            writer.Write(bigramHashTable[i]);
-                        }
+                    writer.Write(bigramHashTable[i]);
+                }
 
-                        int fLen = frequencyTable.Length;
-                        writer.Write(fLen);
-                        for (int i = 0; i < fLen; i++)
-                        {
-                            writer.Write(frequencyTable[i]);
-                        }
-                    }
+                int fLen = frequencyTable.Length;
+                writer.Write(fLen);
+                for (int i = 0; i < fLen; i++)
+                {
+                    writer.Write(frequencyTable[i]);
                 }
                 // log.info("serialize bigram dict.");
             }
@@ -215,10 +209,8 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private void Load()
         {
-            using (Stream input = this.GetType().FindAndGetManifestResourceStream("bigramdict.mem"))
-            {
-                LoadFromInputStream(input);
-            }
+            using Stream input = this.GetType().FindAndGetManifestResourceStream("bigramdict.mem");
+            LoadFromInputStream(input);
         }
 
         private void Load(string dictRoot)
@@ -268,64 +260,62 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             byte[] intBuffer = new byte[4];
             string tmpword;
             //using (RandomAccessFile dctFile = new RandomAccessFile(dctFilePath, "r"))
-            using (var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read))
+            using var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read);
+
+            // GB2312 characters 0 - 6768
+            for (i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
             {
+                string currentStr = GetCCByGB2312Id(i);
+                // if (i == 5231)
+                // System.out.println(i);
 
-                // GB2312 characters 0 - 6768
-                for (i = GB2312_FIRST_CHAR; i < GB2312_FIRST_CHAR + CHAR_NUM_IN_FILE; i++)
+                dctFile.Read(intBuffer, 0, intBuffer.Length);
+                // the dictionary was developed for C, and byte order must be converted to work with Java
+                cnt = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian).GetInt32();
+                if (cnt <= 0)
                 {
-                    string currentStr = GetCCByGB2312Id(i);
-                    // if (i == 5231)
-                    // System.out.println(i);
-
+                    continue;
+                }
+                total += cnt;
+                int j = 0;
+                while (j < cnt)
+                {
                     dctFile.Read(intBuffer, 0, intBuffer.Length);
-                    // the dictionary was developed for C, and byte order must be converted to work with Java
-                    cnt = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian).GetInt32();
-                    if (cnt <= 0)
-                    {
-                        continue;
-                    }
-                    total += cnt;
-                    int j = 0;
-                    while (j < cnt)
-                    {
-                        dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        buffer[0] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                            .GetInt32();// frequency
-                        dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        buffer[1] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
-                            .GetInt32();// length
-                        dctFile.Read(intBuffer, 0, intBuffer.Length);
-                        // buffer[2] = ByteBuffer.wrap(intBuffer).order(
-                        // ByteOrder.LITTLE_ENDIAN).getInt();// handle
+                    buffer[0] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
+                        .GetInt32();// frequency
+                    dctFile.Read(intBuffer, 0, intBuffer.Length);
+                    buffer[1] = ByteBuffer.Wrap(intBuffer).SetOrder(ByteOrder.LittleEndian)
+                        .GetInt32();// length
+                    dctFile.Read(intBuffer, 0, intBuffer.Length);
+                    // buffer[2] = ByteBuffer.wrap(intBuffer).order(
+                    // ByteOrder.LITTLE_ENDIAN).getInt();// handle
 
-                        length = buffer[1];
-                        if (length > 0)
+                    length = buffer[1];
+                    if (length > 0)
+                    {
+                        byte[] lchBuffer = new byte[length];
+                        dctFile.Read(lchBuffer, 0, lchBuffer.Length);
+                        //tmpword = new String(lchBuffer, "GB2312");
+                        tmpword = Encoding.GetEncoding("GB2312").GetString(lchBuffer);
+                        //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
+                        if (i != 3755 + GB2312_FIRST_CHAR)
                         {
-                            byte[] lchBuffer = new byte[length];
-                            dctFile.Read(lchBuffer, 0, lchBuffer.Length);
-                            //tmpword = new String(lchBuffer, "GB2312");
-                            tmpword = Encoding.GetEncoding("GB2312").GetString(lchBuffer);
-                            //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
-                            if (i != 3755 + GB2312_FIRST_CHAR)
-                            {
-                                tmpword = currentStr + tmpword;
-                            }
-                            char[] carray = tmpword.ToCharArray();
-                            long hashId = Hash1(carray);
-                            int index = GetAvaliableIndex(hashId, carray);
-                            if (index != -1)
-                            {
-                                if (bigramHashTable[index] == 0)
-                                {
-                                    bigramHashTable[index] = hashId;
-                                    // bigramStringTable[index] = tmpword;
-                                }
-                                frequencyTable[index] += buffer[0];
-                            }
+                            tmpword = currentStr + tmpword;
                         }
-                        j++;
+                        char[] carray = tmpword.ToCharArray();
+                        long hashId = Hash1(carray);
+                        int index = GetAvaliableIndex(hashId, carray);
+                        if (index != -1)
+                        {
+                            if (bigramHashTable[index] == 0)
+                            {
+                                bigramHashTable[index] = hashId;
+                                // bigramStringTable[index] = tmpword;
+                            }
+                            frequencyTable[index] += buffer[0];
+                        }
                     }
+                    j++;
                 }
             }
             // log.info("load dictionary done! " + dctFilePath + " total:" + total);

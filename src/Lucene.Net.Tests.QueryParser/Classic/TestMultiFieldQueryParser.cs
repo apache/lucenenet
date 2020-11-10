@@ -310,26 +310,22 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestStopWordSearching()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
-            using (var ramDir = NewDirectory())
+            using var ramDir = NewDirectory();
+            using (IndexWriter iw = new IndexWriter(ramDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)))
             {
-                using (IndexWriter iw = new IndexWriter(ramDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)))
-                {
-                    Document doc = new Document();
-                    doc.Add(NewTextField("body", "blah the footest blah", Field.Store.NO));
-                    iw.AddDocument(doc);
-                }
-
-                MultiFieldQueryParser mfqp =
-                  new MultiFieldQueryParser(TEST_VERSION_CURRENT, new string[] { "body" }, analyzer);
-                mfqp.DefaultOperator = Operator.AND;
-                Query q = mfqp.Parse("the footest");
-                using (IndexReader ir = DirectoryReader.Open(ramDir))
-                {
-                    IndexSearcher @is = NewSearcher(ir);
-                    ScoreDoc[] hits = @is.Search(q, null, 1000).ScoreDocs;
-                    assertEquals(1, hits.Length);
-                }
+                Document doc = new Document();
+                doc.Add(NewTextField("body", "blah the footest blah", Field.Store.NO));
+                iw.AddDocument(doc);
             }
+
+            MultiFieldQueryParser mfqp =
+              new MultiFieldQueryParser(TEST_VERSION_CURRENT, new string[] { "body" }, analyzer);
+            mfqp.DefaultOperator = Operator.AND;
+            Query q = mfqp.Parse("the footest");
+            using IndexReader ir = DirectoryReader.Open(ramDir);
+            IndexSearcher @is = NewSearcher(ir);
+            ScoreDoc[] hits = @is.Search(q, null, 1000).ScoreDocs;
+            assertEquals(1, hits.Length);
         }
 
         private class AnalyzerReturningNull : Analyzer

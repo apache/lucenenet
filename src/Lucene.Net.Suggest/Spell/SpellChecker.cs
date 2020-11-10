@@ -151,9 +151,7 @@ namespace Lucene.Net.Search.Spell
                 if (!DirectoryReader.IndexExists(spellIndexDir))
                 {
 #pragma warning disable 612, 618
-                    using (var writer = new IndexWriter(spellIndexDir, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null)))
-                    {
-                    }
+                    using var writer = new IndexWriter(spellIndexDir, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null));
 #pragma warning restore 612, 618
                 }
                 SwapSearcher(spellIndexDir);

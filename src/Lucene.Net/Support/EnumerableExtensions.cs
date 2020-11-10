@@ -45,18 +45,16 @@ namespace Lucene.Net.Support
             if (join == null)
                 throw new ArgumentNullException(nameof(join));
 
-            using (IEnumerator<T> enumerator = source.GetEnumerator())
+            using IEnumerator<T> enumerator = source.GetEnumerator();
+            while (true)
             {
-                while (true)
-                {
-                    if (!enumerator.MoveNext())
-                        yield break;
+                if (!enumerator.MoveNext())
+                    yield break;
 
-                    T x = enumerator.Current;
-                    if (!enumerator.MoveNext())
-                        yield return join(x, default);
-                    yield return join(x, enumerator.Current);
-                }
+                T x = enumerator.Current;
+                if (!enumerator.MoveNext())
+                    yield return join(x, default);
+                yield return join(x, enumerator.Current);
             }
         }
 

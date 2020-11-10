@@ -79,19 +79,17 @@ namespace Lucene.Net.Analysis.Morfologik
 
         private void dumpTokens(String input)
         {
-            using (Analyzer a = getTestAnalyzer())
-            using (TokenStream ts = a.GetTokenStream("dummy", input))
-            {
-                ts.Reset();
+            using Analyzer a = getTestAnalyzer();
+            using TokenStream ts = a.GetTokenStream("dummy", input);
+            ts.Reset();
 
-                IMorphosyntacticTagsAttribute attribute = ts.GetAttribute<IMorphosyntacticTagsAttribute>();
-                ICharTermAttribute charTerm = ts.GetAttribute<ICharTermAttribute>();
-                while (ts.IncrementToken())
-                {
-                    Console.WriteLine(charTerm.ToString() + " => " + string.Format(StringFormatter.InvariantCulture, "{0}", attribute.Tags));
-                }
-                ts.End();
+            IMorphosyntacticTagsAttribute attribute = ts.GetAttribute<IMorphosyntacticTagsAttribute>();
+            ICharTermAttribute charTerm = ts.GetAttribute<ICharTermAttribute>();
+            while (ts.IncrementToken())
+            {
+                Console.WriteLine(charTerm.ToString() + " => " + string.Format(StringFormatter.InvariantCulture, "{0}", attribute.Tags));
             }
+            ts.End();
         }
 
         /** Test reuse of MorfologikFilter with leftover stems. */
@@ -167,29 +165,27 @@ namespace Lucene.Net.Analysis.Morfologik
         [Test]
         public void TestPOSAttribute()
         {
-            using (Analyzer a = getTestAnalyzer())
-            using (TokenStream ts = a.GetTokenStream("dummy", "liście"))
-            {
-                ts.Reset();
-                assertPOSToken(ts, "liście",
-                  "subst:sg:acc:n2",
-                  "subst:sg:nom:n2",
-                  "subst:sg:voc:n2");
+            using Analyzer a = getTestAnalyzer();
+            using TokenStream ts = a.GetTokenStream("dummy", "liście");
+            ts.Reset();
+            assertPOSToken(ts, "liście",
+              "subst:sg:acc:n2",
+              "subst:sg:nom:n2",
+              "subst:sg:voc:n2");
 
-                assertPOSToken(ts, "liść",
-                  "subst:pl:acc:m3",
-                  "subst:pl:nom:m3",
-                  "subst:pl:voc:m3");
+            assertPOSToken(ts, "liść",
+              "subst:pl:acc:m3",
+              "subst:pl:nom:m3",
+              "subst:pl:voc:m3");
 
-                assertPOSToken(ts, "list",
-                  "subst:sg:loc:m3",
-                  "subst:sg:voc:m3");
+            assertPOSToken(ts, "list",
+              "subst:sg:loc:m3",
+              "subst:sg:voc:m3");
 
-                assertPOSToken(ts, "lista",
-                  "subst:sg:dat:f",
-                  "subst:sg:loc:f");
-                ts.End();
-            }
+            assertPOSToken(ts, "lista",
+              "subst:sg:dat:f",
+              "subst:sg:loc:f");
+            ts.End();
         }
 
         private class MockMorfologikAnalyzer : MorfologikAnalyzer

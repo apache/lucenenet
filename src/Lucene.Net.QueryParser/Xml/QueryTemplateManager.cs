@@ -84,14 +84,10 @@ namespace Lucene.Net.QueryParsers.Xml
         public static string GetQueryAsXmlString(IDictionary<string, string> formProperties, XslCompiledTransform template)
         {
             // TODO: Suppress XML header with encoding (as Strings have no encoding)
-            using (var stream = new MemoryStream())
-            {
-                TransformCriteria(formProperties, template, stream);
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
+            using var stream = new MemoryStream();
+            TransformCriteria(formProperties, template, stream);
+            using StreamReader reader = new StreamReader(stream);
+            return reader.ReadToEnd();
         }
 
         /// <summary>
@@ -100,14 +96,10 @@ namespace Lucene.Net.QueryParsers.Xml
         public static string GetQueryAsXmlString(IDictionary<string, string> formProperties, Stream xslIs)
         {
             // TODO: Suppress XML header with encoding (as Strings have no encoding)
-            using (var stream = new MemoryStream())
-            {
-                TransformCriteria(formProperties, xslIs, stream);
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
+            using var stream = new MemoryStream();
+            TransformCriteria(formProperties, xslIs, stream);
+            using StreamReader reader = new StreamReader(stream);
+            return reader.ReadToEnd();
         }
 
         /// <summary>
@@ -181,12 +173,10 @@ namespace Lucene.Net.QueryParsers.Xml
         /// </summary>
         public static XslCompiledTransform GetTemplates(Stream xslIs)
         {
-            using (var reader = XmlReader.Create(xslIs))
-            {
-                XslCompiledTransform xslt = new XslCompiledTransform();
-                xslt.Load(reader);
-                return xslt;
-            }
+            using var reader = XmlReader.Create(xslIs);
+            XslCompiledTransform xslt = new XslCompiledTransform();
+            xslt.Load(reader);
+            return xslt;
         }
     }
 }
