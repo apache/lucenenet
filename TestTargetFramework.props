@@ -47,6 +47,7 @@
     <NoWarn Label="Use object initializers">$(NoWarn);IDE0017</NoWarn>
     <NoWarn Label="Use pattern matching">$(NoWarn);IDE0019;IDE0020;IDE0038</NoWarn>
     <NoWarn Label="Use collection initializers">$(NoWarn);IDE0028</NoWarn>
+    <NoWarn Label="Use null propagation">$(NoWarn);IDE0031</NoWarn>
     <NoWarn Label="Add readonly modifier">$(NoWarn);IDE0044</NoWarn>
     <NoWarn Label="Remove unused private member">$(NoWarn);IDE0051</NoWarn>
     <NoWarn Label="Remove unread private member">$(NoWarn);IDE0052</NoWarn>
