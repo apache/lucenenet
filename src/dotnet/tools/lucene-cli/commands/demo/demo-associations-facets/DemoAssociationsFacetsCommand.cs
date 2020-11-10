@@ -36,13 +36,7 @@ namespace Lucene.Net.Cli
                 this.OnExecute(() => new DemoAssociationsFacetsCommand().Run(this));
             }
 
-            public override IEnumerable<string> SourceCodeFiles
-            {
-                get
-                {
-                    return new string[] { "AssociationsFacetsExample.cs" };
-                }
-            }
+            public override IEnumerable<string> SourceCodeFiles => new string[] { "AssociationsFacetsExample.cs" };
         }
 
         public int Run(ConfigurationBase cmd)

@@ -48,33 +48,14 @@ namespace Lucene.Net.Support.IO
             this.textWriter = textWriter ?? throw new ArgumentNullException(nameof(textWriter));
         }
 
-        public override Encoding Encoding
-        {
-            get
-            {
-                return Run(() => textWriter.Encoding);
-            }
-        }
+        public override Encoding Encoding => Run(() => textWriter.Encoding);
 
-        public override IFormatProvider FormatProvider
-        {
-            get
-            {
-                return Run(() => textWriter.FormatProvider);
-            }
-        }
+        public override IFormatProvider FormatProvider => Run(() => textWriter.FormatProvider);
 
         public override string NewLine
         {
-            get
-            {
-                return Run(() => textWriter.NewLine);
-            }
-
-            set
-            {
-                Run(() => textWriter.NewLine = value);
-            }
+            get => Run(() => textWriter.NewLine);
+            set => Run(() => textWriter.NewLine = value);
         }
 
 #if FEATURE_TEXTWRITER_CLOSE

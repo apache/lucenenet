@@ -36,13 +36,7 @@ namespace Lucene.Net.Cli
                 this.OnExecute(() => new DemoDistanceFacetsCommand().Run(this));
             }
 
-            public override IEnumerable<string> SourceCodeFiles
-            {
-                get
-                {
-                    return new string[] { "DistanceFacetsExample.cs" };
-                }
-            }
+            public override IEnumerable<string> SourceCodeFiles => new string[] { "DistanceFacetsExample.cs" };
         }
 
         public int Run(ConfigurationBase cmd)

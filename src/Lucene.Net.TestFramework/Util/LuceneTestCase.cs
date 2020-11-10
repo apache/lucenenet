@@ -1206,6 +1206,7 @@ namespace Lucene.Net.Util
         /// // tight loop with many invocations.
         /// </code>
         /// </summary>
+        [SuppressMessage("Style", "IDE0025:Use expression body for properties", Justification = "Multiple lines")]
         public static Random Random
         {
             get
@@ -1275,9 +1276,11 @@ namespace Lucene.Net.Util
         }
 
 
+
         /// <summary>
         /// Return the name of the currently executing test case.
         /// </summary>
+        [SuppressMessage("Style", "IDE0025:Use expression body for properties", Justification = "Multiple lines")]
         public virtual string TestName
         {
             get

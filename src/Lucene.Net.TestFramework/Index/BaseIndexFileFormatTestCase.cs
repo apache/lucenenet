@@ -6,6 +6,7 @@ using Lucene.Net.Store;
 using Lucene.Net.TestFramework;
 using Lucene.Net.Util;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using JCG = J2N.Collections.Generic;
 
 #if TESTFRAMEWORK_MSTEST
@@ -102,6 +103,7 @@ namespace Lucene.Net.Index
         /// Return the list of extensions that should be excluded from byte counts when
         /// comparing indices that store the same content.
         /// </summary>
+        [SuppressMessage("Style", "IDE0025:Use expression body for properties", Justification = "Multiple lines")]
         protected virtual ICollection<string> ExcludedExtensionsFromByteCounts
         {
             get

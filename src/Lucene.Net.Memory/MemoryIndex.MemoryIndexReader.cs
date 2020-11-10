@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Index.Memory
 {
@@ -518,6 +519,7 @@ namespace Lucene.Net.Index.Memory
                 set => this.searcher = value;
             }
 
+            [SuppressMessage("Style", "IDE0025:Use expression body for properties", Justification = "Multiple lines")]
             public override int NumDocs
             {
                 get
@@ -529,6 +531,7 @@ namespace Lucene.Net.Index.Memory
                 }
             }
 
+            [SuppressMessage("Style", "IDE0025:Use expression body for properties", Justification = "Multiple lines")]
             public override int MaxDoc
             {
                 get

@@ -36,13 +36,7 @@ namespace Lucene.Net.Cli
                 this.OnExecute(() => new DemoSimpleSortedSetFacetsCommand().Run(this));
             }
 
-            public override IEnumerable<string> SourceCodeFiles
-            {
-                get
-                {
-                    return new string[] { "SimpleSortedSetFacetsExample.cs" };
-                }
-            }
+            public override IEnumerable<string> SourceCodeFiles => new string[] { "SimpleSortedSetFacetsExample.cs" };
         }
 
         public int Run(ConfigurationBase cmd)

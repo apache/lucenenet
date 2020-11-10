@@ -36,13 +36,7 @@ namespace Lucene.Net.Cli
                 this.OnExecute(() => new DemoRangeFacetsCommand().Run(this));
             }
 
-            public override IEnumerable<string> SourceCodeFiles
-            {
-                get
-                {
-                    return new string[] { "RangeFacetsExample.cs" };
-                }
-            }
+            public override IEnumerable<string> SourceCodeFiles => new string[] { "RangeFacetsExample.cs" };
         }
 
         public int Run(ConfigurationBase cmd)

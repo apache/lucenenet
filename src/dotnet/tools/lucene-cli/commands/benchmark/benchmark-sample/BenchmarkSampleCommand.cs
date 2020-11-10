@@ -36,13 +36,7 @@ namespace Lucene.Net.Cli
                 this.OnExecute(() => new BenchmarkSampleCommand().Run(this));
             }
 
-            public override IEnumerable<string> SourceCodeFiles
-            {
-                get
-                {
-                    return new string[] { "Sample.cs" };
-                }
-            }
+            public override IEnumerable<string> SourceCodeFiles => new string[] { "Sample.cs" };
         }
 
         public int Run(ConfigurationBase cmd)
