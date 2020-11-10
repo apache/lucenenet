@@ -292,9 +292,8 @@ namespace Lucene.Net.Util
             {
                 // Cover the case where this attribute is applied to the whole test fixture
                 var currentTest = context.CurrentTest;
-                if (!TestNightly && currentTest is NUnit.Framework.Internal.TestFixture)
+                if (!TestNightly && currentTest is NUnit.Framework.Internal.TestFixture fixture)
                 {
-                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
                     foreach (var testInterface in fixture.Tests)
                     {
                         var test = (NUnit.Framework.Internal.Test)testInterface;
@@ -337,9 +336,8 @@ namespace Lucene.Net.Util
             {
                 // Cover the case where this attribute is applied to the whole test fixture
                 var currentTest = context.CurrentTest;
-                if (!TestWeekly && currentTest is NUnit.Framework.Internal.TestFixture)
+                if (!TestWeekly && currentTest is NUnit.Framework.Internal.TestFixture fixture)
                 {
-                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
                     foreach (var testInterface in fixture.Tests)
                     {
                         var test = (NUnit.Framework.Internal.Test)testInterface;
@@ -380,9 +378,8 @@ namespace Lucene.Net.Util
             {
                 // Cover the case where this attribute is applied to the whole test fixture
                 var currentTest = context.CurrentTest;
-                if (!TestAwaitsFix && currentTest is NUnit.Framework.Internal.TestFixture)
+                if (!TestAwaitsFix && currentTest is NUnit.Framework.Internal.TestFixture fixture)
                 {
-                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
                     foreach (var testInterface in fixture.Tests)
                     {
                         var test = (NUnit.Framework.Internal.Test)testInterface;
@@ -427,9 +424,8 @@ namespace Lucene.Net.Util
             {
                 // Cover the case where this attribute is applied to the whole test fixture
                 var currentTest = context.CurrentTest;
-                if (!TestSlow && currentTest is NUnit.Framework.Internal.TestFixture)
+                if (!TestSlow && currentTest is NUnit.Framework.Internal.TestFixture fixture)
                 {
-                    var fixture = (NUnit.Framework.Internal.TestFixture)currentTest;
                     foreach (var testInterface in fixture.Tests)
                     {
                         var test = (NUnit.Framework.Internal.Test)testInterface;
@@ -507,7 +503,7 @@ namespace Lucene.Net.Util
         /// up after the suite is completed.
         /// </summary>
         /// <seealso cref="LuceneTestCase.CreateTempDir()"/>
-        /// <seealso cref="LuceneTestCase.CreateTempFile(String, String)"/>
+        /// <seealso cref="LuceneTestCase.CreateTempFile(string, string)"/>
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
         public sealed class SuppressTempFileChecksAttribute : System.Attribute
@@ -1129,7 +1125,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during BeforeClass:\n{ex.ToString()}", ex);
+                throw new Exception($"An exception occurred during BeforeClass:\n{ex}", ex);
             }
         }
 
@@ -1182,7 +1178,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during AfterClass:\n{ex.ToString()}", ex);
+                throw new Exception($"An exception occurred during AfterClass:\n{ex}", ex);
             }
         }
 
@@ -1210,6 +1206,7 @@ namespace Lucene.Net.Util
         /// // tight loop with many invocations.
         /// </code>
         /// </summary>
+        [SuppressMessage("Style", "IDE0025:Use expression body for properties", Justification = "Multiple lines")]
         public static Random Random
         {
             get
@@ -1279,9 +1276,11 @@ namespace Lucene.Net.Util
         }
 
 
+
         /// <summary>
         /// Return the name of the currently executing test case.
         /// </summary>
+        [SuppressMessage("Style", "IDE0025:Use expression body for properties", Justification = "Multiple lines")]
         public virtual string TestName
         {
             get
@@ -2150,7 +2149,7 @@ namespace Lucene.Net.Util
 
                         case 1:
                             // will create no FC insanity in atomic case, as ParallelAtomicReader has own cache key:
-                            r = (r is AtomicReader) ? (IndexReader)new ParallelAtomicReader((AtomicReader)r) : new ParallelCompositeReader((CompositeReader)r);
+                            r = (r is AtomicReader atomicReader) ? (IndexReader)new ParallelAtomicReader(atomicReader) : new ParallelCompositeReader((CompositeReader)r);
                             break;
 
                         case 2:
@@ -2178,13 +2177,13 @@ namespace Lucene.Net.Util
                             // Häckidy-Hick-Hack: a standard Reader will cause FC insanity, so we use
                             // QueryUtils' reader with a fake cache key, so insanity checker cannot walk
                             // along our reader:
-                            if (r is AtomicReader)
+                            if (r is AtomicReader atomicReader2)
                             {
-                                r = new AssertingAtomicReader((AtomicReader)r);
+                                r = new AssertingAtomicReader(atomicReader2);
                             }
-                            else if (r is DirectoryReader)
+                            else if (r is DirectoryReader directoryReader)
                             {
-                                r = new AssertingDirectoryReader((DirectoryReader)r);
+                                r = new AssertingDirectoryReader(directoryReader);
                             }
                             break;
 
@@ -2458,11 +2457,9 @@ namespace Lucene.Net.Util
             {
                 return this.GetType().getResourceAsStream(name);
             }
-#pragma warning disable 168
             catch (Exception e)
-#pragma warning restore 168
             {
-                throw new IOException("Cannot find resource: " + name);
+                throw new IOException("Cannot find resource: " + name, e); // LUCENENET specific - wrapped inner exception
             }
         }
 
@@ -2589,18 +2586,16 @@ namespace Lucene.Net.Util
             }
             AssertFieldStatisticsEquals(info, leftFields, rightFields);
 
-            using (IEnumerator<string> leftEnum = leftFields.GetEnumerator())
-            using (IEnumerator<string> rightEnum = rightFields.GetEnumerator())
+            using IEnumerator<string> leftEnum = leftFields.GetEnumerator();
+            using IEnumerator<string> rightEnum = rightFields.GetEnumerator();
+            while (leftEnum.MoveNext())
             {
-                while (leftEnum.MoveNext())
-                {
-                    string field = leftEnum.Current;
-                    rightEnum.MoveNext();
-                    Assert.AreEqual(field, rightEnum.Current, info);
-                    AssertTermsEquals(info, leftReader, leftFields.GetTerms(field), rightFields.GetTerms(field), deep);
-                }
-                Assert.IsFalse(rightEnum.MoveNext());
+                string field = leftEnum.Current;
+                rightEnum.MoveNext();
+                Assert.AreEqual(field, rightEnum.Current, info);
+                AssertTermsEquals(info, leftReader, leftFields.GetTerms(field), rightFields.GetTerms(field), deep);
             }
+            Assert.IsFalse(rightEnum.MoveNext());
         }
 
         /// <summary>
@@ -3048,20 +3043,18 @@ namespace Lucene.Net.Util
                 // in whatever way it wants (e.g. maybe it packs related fields together or something)
                 // To fix this, we sort the fields in both documents by name, but
                 // we still assume that all instances with same name are in order:
-                Comparison<IIndexableField> comp = (a, b) => String.Compare(a.Name, b.Name, StringComparison.Ordinal);
+                var comp = Comparer<IIndexableField>.Create((a, b) => string.Compare(a.Name, b.Name, StringComparison.Ordinal));
                 leftDoc.Fields.Sort(comp);
                 rightDoc.Fields.Sort(comp);
 
-                using (var leftIterator = leftDoc.GetEnumerator())
-                using (var rightIterator = rightDoc.GetEnumerator())
+                using var leftIterator = leftDoc.GetEnumerator();
+                using var rightIterator = rightDoc.GetEnumerator();
+                while (leftIterator.MoveNext())
                 {
-                    while (leftIterator.MoveNext())
-                    {
-                        Assert.IsTrue(rightIterator.MoveNext(), info);
-                        AssertStoredFieldEquals(info, leftIterator.Current, rightIterator.Current);
-                    }
-                    Assert.IsFalse(rightIterator.MoveNext(), info);
+                    Assert.IsTrue(rightIterator.MoveNext(), info);
+                    AssertStoredFieldEquals(info, leftIterator.Current, rightIterator.Current);
                 }
+                Assert.IsFalse(rightIterator.MoveNext(), info);
             }
         }
 
@@ -3428,9 +3421,9 @@ namespace Lucene.Net.Util
                         iterate = false;
                     }
                 }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                 catch (IOException exc)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                 {
                     iterate = true;
                 }
@@ -3471,7 +3464,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Creates an empty temporary file.
         /// </summary>
-        /// <seealso cref="CreateTempFile(String, String)"/>
+        /// <seealso cref="CreateTempFile(string, string)"/>
         public static FileInfo CreateTempFile()
         {
             return CreateTempFile("tempFile", ".tmp");
@@ -3516,8 +3509,7 @@ namespace Lucene.Net.Util
             // and leave them there.
             if (LuceneTestCase.SuiteFailureMarker /*.WasSuccessful()*/)
             {
-                string f;
-                while (cleanupQueue.TryDequeue(out f))
+                while (cleanupQueue.TryDequeue(out string f))
                 {
                     try
                     {
@@ -3605,7 +3597,7 @@ namespace Lucene.Net.Util
                 return;
             }
 
-            Stream lockStream;
+            Stream lockStream = null;
             try
             {
                 lockStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 1, FileOptions.None);
@@ -3616,12 +3608,14 @@ namespace Lucene.Net.Util
                 SystemConsole.WriteLine($"******* HResult: {e.HResult}");
                 return;
             }
+            finally
+            {
+                lockStream?.Dispose();
+            }
             try
             {
                 // Try to get an exclusive lock on the file - this should throw an IOException with the current platform's HResult value for FileShare violation
-                using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Write, FileShare.None, 1, FileOptions.None))
-                {
-                }
+                using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Write, FileShare.None, 1, FileOptions.None);
             }
             catch (IOException io) when (io.HResult != 0)
             {
@@ -3631,7 +3625,7 @@ namespace Lucene.Net.Util
             }
             finally
             {
-                lockStream.Dispose();
+                lockStream?.Dispose();
             }
         }
 

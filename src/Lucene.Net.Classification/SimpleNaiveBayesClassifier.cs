@@ -96,8 +96,10 @@ namespace Lucene.Net.Classification
             if (docCount == -1) 
             { // in case codec doesn't support getDocCount
                 TotalHitCountCollector totalHitCountCollector = new TotalHitCountCollector();
-                BooleanQuery q = new BooleanQuery();
-                q.Add(new BooleanClause(new WildcardQuery(new Term(_classFieldName, WildcardQuery.WILDCARD_STRING.ToString())), Occur.MUST));
+                BooleanQuery q = new BooleanQuery
+                {
+                    new BooleanClause(new WildcardQuery(new Term(_classFieldName, WildcardQuery.WILDCARD_STRING.ToString())), Occur.MUST)
+                };
                 if (_query != null) 
                 {
                     q.Add(_query, Occur.MUST);

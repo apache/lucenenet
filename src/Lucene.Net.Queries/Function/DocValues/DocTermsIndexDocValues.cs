@@ -38,7 +38,7 @@ namespace Lucene.Net.Queries.Function.DocValues
         protected readonly BytesRef m_spare = new BytesRef();
         protected readonly CharsRef m_spareChars = new CharsRef();
 
-        public DocTermsIndexDocValues(ValueSource vs, AtomicReaderContext context, string field)
+        protected DocTermsIndexDocValues(ValueSource vs, AtomicReaderContext context, string field) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             try
             {

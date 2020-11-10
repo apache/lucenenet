@@ -26,7 +26,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public abstract class ComposedQuery : SrndQuery
     {
-        public ComposedQuery(IList<SrndQuery> qs, bool operatorInfix, string opName)
+        protected ComposedQuery(IList<SrndQuery> qs, bool operatorInfix, string opName) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             Recompose(qs);
             this.operatorInfix = operatorInfix;

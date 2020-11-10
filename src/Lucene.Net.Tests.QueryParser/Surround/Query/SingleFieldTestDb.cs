@@ -4,6 +4,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
 {
@@ -35,22 +36,21 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             db = new MockDirectoryWrapper(random, new RAMDirectory());
             docs = documents;
             fieldName = fName;
-            using (IndexWriter writer = new IndexWriter(db, new IndexWriterConfig(
+            using IndexWriter writer = new IndexWriter(db, new IndexWriterConfig(
 #pragma warning disable 612, 618
                 LuceneVersion.LUCENE_CURRENT,
 #pragma warning restore 612, 618
-                new MockAnalyzer(random))))
+                new MockAnalyzer(random)));
+            for (int j = 0; j < docs.Length; j++)
             {
-                for (int j = 0; j < docs.Length; j++)
-                {
-                    Document d = new Document();
-                    d.Add(new TextField(fieldName, docs[j], Field.Store.NO));
-                    writer.AddDocument(d);
-                }
+                Document d = new Document();
+                d.Add(new TextField(fieldName, docs[j], Field.Store.NO));
+                writer.AddDocument(d);
             }
         }
 
         public Directory Db => db;
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         public string[] Docs => docs;
         public string Fieldname => fieldName;
     }

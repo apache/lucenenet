@@ -473,9 +473,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    ReadersAndUpdates rld;
-                    readerMap.TryGetValue(info, out rld);
-                    if (rld != null)
+                    if (readerMap.TryGetValue(info, out ReadersAndUpdates rld) && rld != null)
                     {
                         if (Debugging.AssertsEnabled) Debugging.Assert(info == rld.Info);
                         //        System.out.println("[" + Thread.currentThread().getName() + "] ReaderPool.drop: " + info);
@@ -661,8 +659,7 @@ namespace Lucene.Net.Index
                 {
                     foreach (SegmentCommitInfo info in infos.Segments)
                     {
-                        ReadersAndUpdates rld;
-                        if (readerMap.TryGetValue(info, out rld))
+                        if (readerMap.TryGetValue(info, out ReadersAndUpdates rld))
                         {
                             if (Debugging.AssertsEnabled) Debugging.Assert(rld.Info == info);
                             if (rld.WriteLiveDocs(outerInstance.directory))
@@ -694,9 +691,7 @@ namespace Lucene.Net.Index
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(info.Info.Dir == outerInstance.directory,"info.dir={0} vs {1}", info.Info.Dir, outerInstance.directory);
 
-                    ReadersAndUpdates rld;
-                    readerMap.TryGetValue(info, out rld);
-                    if (rld == null)
+                    if (!readerMap.TryGetValue(info, out ReadersAndUpdates rld) || rld == null)
                     {
                         if (!create)
                         {
@@ -1636,13 +1631,7 @@ namespace Lucene.Net.Index
         {
             lock (this)
             {
-                AtomicReader reader;
-                if (readerIn is AtomicReader)
-                {
-                    // Reader is already atomic: use the incoming docID:
-                    reader = (AtomicReader)readerIn;
-                }
-                else
+                if (!(readerIn is AtomicReader reader))
                 {
                     // Composite reader: lookup sub-reader and re-base docID:
                     IList<AtomicReaderContext> leaves = readerIn.Leaves;
@@ -1655,13 +1644,14 @@ namespace Lucene.Net.Index
                         Debugging.Assert(docID < reader.MaxDoc);
                     }
                 }
+                // else: Reader is already atomic: use the incoming docID
 
-                if (!(reader is SegmentReader))
+                if (!(reader is SegmentReader segmentReader))
                 {
                     throw new ArgumentException("the reader must be a SegmentReader or composite reader containing only SegmentReaders");
                 }
 
-                SegmentCommitInfo info = ((SegmentReader)reader).SegmentInfo;
+                SegmentCommitInfo info = segmentReader.SegmentInfo;
 
                 // TODO: this is a slow linear search, but, number of
                 // segments should be contained unless something is
@@ -4019,7 +4009,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc)
+        private static void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc) // LUCENENET: CA1822: Mark members as static
         {
             foreach (DocValuesFieldUpdates.Iterator iter in updatesIters)
             {
@@ -4824,9 +4814,11 @@ namespace Lucene.Net.Index
                 // names.
                 string mergeSegmentName = NewSegmentName();
                 SegmentInfo si = new SegmentInfo(directory, Constants.LUCENE_MAIN_VERSION, mergeSegmentName, -1, false, codec, null);
-                IDictionary<string, string> details = new Dictionary<string, string>();
-                details["mergeMaxNumSegments"] = "" + merge.MaxNumSegments;
-                details["mergeFactor"] = Convert.ToString(merge.Segments.Count);
+                IDictionary<string, string> details = new Dictionary<string, string>
+                {
+                    ["mergeMaxNumSegments"] = "" + merge.MaxNumSegments,
+                    ["mergeFactor"] = Convert.ToString(merge.Segments.Count)
+                };
                 SetDiagnostics(si, SOURCE_MERGE, details);
                 merge.Info = new SegmentCommitInfo(si, 0, -1L, -1L);
 
@@ -4849,15 +4841,17 @@ namespace Lucene.Net.Index
 
         private static void SetDiagnostics(SegmentInfo info, string source, IDictionary<string, string> details)
         {
-            IDictionary<string, string> diagnostics = new Dictionary<string, string>();
-            diagnostics["source"] = source;
-            diagnostics["lucene.version"] = Constants.LUCENE_VERSION;
-            diagnostics["os"] = Constants.OS_NAME;
-            diagnostics["os.arch"] = Constants.OS_ARCH;
-            diagnostics["os.version"] = Constants.OS_VERSION;
-            diagnostics["java.version"] = Constants.RUNTIME_VERSION;
-            diagnostics["java.vendor"] = Constants.RUNTIME_VENDOR;
-            diagnostics["timestamp"] = Convert.ToString((DateTime.Now));
+            IDictionary<string, string> diagnostics = new Dictionary<string, string>
+            {
+                ["source"] = source,
+                ["lucene.version"] = Constants.LUCENE_VERSION,
+                ["os"] = Constants.OS_NAME,
+                ["os.arch"] = Constants.OS_ARCH,
+                ["os.version"] = Constants.OS_VERSION,
+                ["java.version"] = Constants.RUNTIME_VERSION,
+                ["java.vendor"] = Constants.RUNTIME_VENDOR,
+                ["timestamp"] = Convert.ToString((DateTime.Now))
+            };
             if (details != null)
             {
                 diagnostics.PutAll(details);
@@ -5420,8 +5414,7 @@ namespace Lucene.Net.Index
                 foreach (SegmentCommitInfo info in sis.Segments)
                 {
                     SegmentCommitInfo infoMod = info;
-                    SegmentCommitInfo liveInfo;
-                    if (liveSIS.TryGetValue(info, out liveInfo))
+                    if (liveSIS.TryGetValue(info, out SegmentCommitInfo liveInfo))
                     {
                         infoMod = liveInfo;
                     }
@@ -5583,7 +5576,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static void Unlock(Directory directory)
         {
-            using (var _ = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME)) { }
+            using var _ = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME);
         }
 
         /// <summary>
@@ -5710,13 +5703,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void DeletePendingFiles()
-        {
-            lock (this)
-            {
-                deleter.DeletePendingFiles();
-            }
-        }
+        // LUCENENET specific - DeletePendingFiles() excluded because it is not referenced - IDE0051
+
 
         /// <summary>
         /// NOTE: this method creates a compound file for all files returned by
@@ -5779,9 +5767,11 @@ namespace Lucene.Net.Index
             }
 
             // Replace all previous files with the CFS/CFE files:
-            JCG.HashSet<string> siFiles = new JCG.HashSet<string>();
-            siFiles.Add(fileName);
-            siFiles.Add(Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
+            JCG.HashSet<string> siFiles = new JCG.HashSet<string>
+            {
+                fileName,
+                Lucene.Net.Index.IndexFileNames.SegmentFileName(info.Name, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION)
+            };
             info.SetFiles(siFiles);
 
             return files;
@@ -5869,9 +5859,8 @@ namespace Lucene.Net.Index
 
         private bool ProcessEvents(ConcurrentQueue<IEvent> queue, bool triggerMerge, bool forcePurge)
         {
-            IEvent @event;
             bool processed = false;
-            while (queue.TryDequeue(out @event))
+            while (queue.TryDequeue(out IEvent @event))
             {
                 processed = true;
                 @event.Process(this, triggerMerge, forcePurge);

@@ -129,7 +129,7 @@ namespace Lucene.Net.Search.Spell
         {
             var @ref = new Int32sRef(s.Length); // worst case
             int utf16Len = s.Length;
-            for (int i = 0, cp = 0; i < utf16Len; i += Character.CharCount(cp))
+            for (int i = 0, cp; i < utf16Len; i += Character.CharCount(cp)) // LUCENENET: IDE0059: Remove unnecessary value assignment to cp
             {
                 cp = @ref.Int32s[@ref.Length++] = Character.CodePointAt(s, i);
             }

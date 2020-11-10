@@ -61,7 +61,9 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private readonly Directory _directory;
         private readonly string _segment;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput _output;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private int _numDocsWritten;
         private readonly BytesRef _scratch = new BytesRef();
         private bool _offsets;

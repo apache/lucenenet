@@ -101,9 +101,9 @@ namespace Lucene.Net.Collation
                     + "To tailor rules for a built-in language, see the javadocs for RuleBasedCollator. "
                     + "Then save the entire customized ruleset to a file, and use with the custom parameter");
 
-            if (args.Count != 0)
+            if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 
@@ -240,12 +240,12 @@ namespace Lucene.Net.Collation
             return this;
         }
 
-        private string ToUTF8String(Stream input)
+        private static string ToUTF8String(Stream input) // LUCENENET: CA1822: Mark members as static
         {
             StringBuilder sb = new StringBuilder();
             char[] buffer = new char[1024];
             TextReader r = IOUtils.GetDecodingReader(input, Encoding.UTF8);
-            int len = 0;
+            int len; // LUCENENET: IDE0059: Remove unnecessary value assignment
             while ((len = r.Read(buffer, 0, buffer.Length)) > 0)
             {
                 sb.Append(buffer, 0, len);

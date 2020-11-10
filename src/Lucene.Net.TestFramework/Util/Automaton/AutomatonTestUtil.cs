@@ -50,9 +50,9 @@ namespace Lucene.Net.Util.Automaton
                     new RegExp(regexp, RegExpSyntax.NONE);
                     return regexp;
                 }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                 catch (Exception e)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                 {
                 }
             }

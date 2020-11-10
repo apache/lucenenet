@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         private CharacterIterator text;
         private int currentSentence;
         private int[] sentenceStarts;
-        private NLPSentenceDetectorOp sentenceOp;
+        private readonly NLPSentenceDetectorOp sentenceOp; // LUCENENET: marked readonly
 
         public OpenNLPSentenceBreakIterator(NLPSentenceDetectorOp sentenceOp)
         {
@@ -256,9 +256,8 @@ namespace Lucene.Net.Analysis.OpenNlp
         private string CharacterIteratorToString()
         {
             string fullText;
-            if (text is CharArrayIterator)
+            if (text is CharArrayIterator charArrayIterator)
             {
-                CharArrayIterator charArrayIterator = (CharArrayIterator)text;
                 fullText = new string(charArrayIterator.Text, charArrayIterator.Start, charArrayIterator.Length);
             }
             else

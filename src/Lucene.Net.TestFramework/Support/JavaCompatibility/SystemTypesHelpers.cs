@@ -2,6 +2,7 @@ using J2N;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -32,6 +33,7 @@ namespace Lucene.Net
     /// LUCENENET specific extensions to various .NET types to make it easier to port tests
     /// from Java with fewer changes.
     /// </summary>
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "These are intended to make porting tests from Java simpler")]
     internal static class SystemTypesHelpers
     {
         public static char[] toCharArray(this string str)

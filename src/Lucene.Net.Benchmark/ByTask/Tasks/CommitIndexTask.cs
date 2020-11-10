@@ -25,7 +25,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </summary>
     public class CommitIndexTask : PerfTask
     {
-        IDictionary<string, string> commitUserData;
+        private IDictionary<string, string> commitUserData;
 
         public CommitIndexTask(PerfRunData runData)
             : base(runData)
@@ -37,8 +37,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public override void SetParams(string @params)
         {
             base.SetParams(@params);
-            commitUserData = new Dictionary<string, string>();
-            commitUserData[OpenReaderTask.USER_DATA] = @params;
+            commitUserData = new Dictionary<string, string>
+            {
+                [OpenReaderTask.USER_DATA] = @params
+            };
         }
 
         public override int DoLogic()

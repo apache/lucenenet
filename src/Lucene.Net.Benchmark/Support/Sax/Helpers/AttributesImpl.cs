@@ -606,7 +606,7 @@ namespace Sax.Helpers
         // Internal state.
         ////////////////////////////////////////////////////////////////////
 
-        int length;
-        string[] data;
+        private int length;
+        private string[] data;
     }
 }

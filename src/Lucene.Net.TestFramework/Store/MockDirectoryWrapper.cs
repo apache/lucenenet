@@ -113,7 +113,7 @@ namespace Lucene.Net.Store
         private ISet<string> openFilesForWrite = new JCG.HashSet<string>(StringComparer.Ordinal);
         internal ISet<string> openLocks = new ConcurrentHashSet<string>(StringComparer.Ordinal);
         internal volatile bool crashed;
-        private ThrottledIndexOutput throttledOutput;
+        private readonly ThrottledIndexOutput throttledOutput; // LUCENENET: marked readonly
         private Throttling throttling = Throttling.SOMETIMES;
         protected LockFactory m_lockFactory;
 
@@ -224,9 +224,9 @@ namespace Lucene.Net.Store
         private bool MustSync()
         {
             Directory @delegate = m_input;
-            while (@delegate is FilterDirectory)
+            while (@delegate is FilterDirectory filterDirectory)
             {
-                @delegate = ((FilterDirectory)@delegate).Delegate;
+                @delegate = filterDirectory.Delegate;
             }
             return @delegate is NRTCachingDirectory;
         }
@@ -264,9 +264,9 @@ namespace Lucene.Net.Store
         {
             lock (this)
             {
-                if (m_input is RAMDirectory)
+                if (m_input is RAMDirectory ramDirectory)
                 {
-                    return ((RAMDirectory)m_input).GetSizeInBytes();
+                    return ramDirectory.GetSizeInBytes();
                 }
                 else
                 {
@@ -293,109 +293,99 @@ namespace Lucene.Net.Store
                 openFiles = new Dictionary<string, int>(StringComparer.Ordinal);
                 openFilesForWrite = new JCG.HashSet<string>(StringComparer.Ordinal);
                 openFilesDeleted = new JCG.HashSet<string>(StringComparer.Ordinal);
-                using (IEnumerator<string> it = unSyncedFiles.GetEnumerator())
+                using IEnumerator<string> it = unSyncedFiles.GetEnumerator();
+                unSyncedFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
+                // first force-close all files, so we can corrupt on windows etc.
+                // clone the file map, as these guys want to remove themselves on close.
+                var m = new JCG.Dictionary<IDisposable, Exception>(openFileHandles, IdentityEqualityComparer<IDisposable>.Default);
+                foreach (IDisposable f in m.Keys)
                 {
-                    unSyncedFiles = new JCG.HashSet<string>(StringComparer.Ordinal);
-                    // first force-close all files, so we can corrupt on windows etc.
-                    // clone the file map, as these guys want to remove themselves on close.
-                    var m = new JCG.Dictionary<IDisposable, Exception>(openFileHandles, IdentityEqualityComparer<IDisposable>.Default);
-                    foreach (IDisposable f in m.Keys)
+                    try
                     {
-                        try
-                        {
-                            f.Dispose();
-                        }
+                        f.Dispose();
+                    }
 #pragma warning disable 168
-                        catch (Exception ignored)
+                    catch (Exception ignored)
 #pragma warning restore 168
+                    {
+                        //Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ignored.ToString());
+                    }
+                }
+
+                while (it.MoveNext())
+                {
+                    string name = it.Current;
+                    int damage = randomState.Next(5);
+                    string action = null;
+
+                    if (damage == 0)
+                    {
+                        action = "deleted";
+                        DeleteFile(name, true);
+                    }
+                    else if (damage == 1)
+                    {
+                        action = "zeroed";
+                        // Zero out file entirely
+                        long length = FileLength(name);
+                        var zeroes = new byte[256];
+                        long upto = 0;
+                        using IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState));
+                        while (upto < length)
                         {
-                            //Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ignored.ToString());
+                            var limit = (int)Math.Min(length - upto, zeroes.Length);
+                            @out.WriteBytes(zeroes, 0, limit);
+                            upto += limit;
                         }
                     }
-
-                    while (it.MoveNext())
+                    else if (damage == 2)
                     {
-                        string name = it.Current;
-                        int damage = randomState.Next(5);
-                        string action = null;
+                        action = "partially truncated";
+                        // Partially Truncate the file:
 
-                        if (damage == 0)
+                        // First, make temp file and copy only half this
+                        // file over:
+                        string tempFileName;
+                        while (true)
                         {
-                            action = "deleted";
-                            DeleteFile(name, true);
-                        }
-                        else if (damage == 1)
-                        {
-                            action = "zeroed";
-                            // Zero out file entirely
-                            long length = FileLength(name);
-                            var zeroes = new byte[256];
-                            long upto = 0;
-                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
+                            tempFileName = "" + randomState.Next();
+                            if (!LuceneTestCase.SlowFileExists(m_input, tempFileName))
                             {
-                                while (upto < length)
-                                {
-                                    var limit = (int)Math.Min(length - upto, zeroes.Length);
-                                    @out.WriteBytes(zeroes, 0, limit);
-                                    upto += limit;
-                                }
+                                break;
                             }
                         }
-                        else if (damage == 2)
+                        using (IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(randomState)))
+                        using (IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(randomState)))
                         {
-                            action = "partially truncated";
-                            // Partially Truncate the file:
+                            tempOut.CopyBytes(ii, ii.Length / 2);
+                        }
 
-                            // First, make temp file and copy only half this
-                            // file over:
-                            string tempFileName;
-                            while (true)
-                            {
-                                tempFileName = "" + randomState.Next();
-                                if (!LuceneTestCase.SlowFileExists(m_input, tempFileName))
-                                {
-                                    break;
-                                }
-                            }
-                            using (IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(randomState)))
-                            {
-                                using (IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(randomState)))
-                                {
-                                    tempOut.CopyBytes(ii, ii.Length / 2);
-                                }
-                            }
+                        // Delete original and copy bytes back:
+                        DeleteFile(name, true);
 
-                            // Delete original and copy bytes back:
-                            DeleteFile(name, true);
-
-                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
-                            {
-                                using (IndexInput ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(randomState)))
-                                {
-                                    @out.CopyBytes(ii, ii.Length);
-                                }
-                            }
-                            DeleteFile(tempFileName, true);
-                        }
-                        else if (damage == 3)
+                        using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
+                        using (IndexInput ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(randomState)))
                         {
-                            // The file survived intact:
-                            action = "didn't change";
+                            @out.CopyBytes(ii, ii.Length);
                         }
-                        else
-                        {
-                            action = "fully truncated";
-                            // Totally truncate the file to zero bytes
-                            DeleteFile(name, true);
-                            using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState)))
-                            {
-                                @out.Length = 0;
-                            }
-                        }
-                        if (LuceneTestCase.Verbose)
-                        {
-                            Console.WriteLine("MockDirectoryWrapper: " + action + " unsynced file: " + name);
-                        }
+                        DeleteFile(tempFileName, true);
+                    }
+                    else if (damage == 3)
+                    {
+                        // The file survived intact:
+                        action = "didn't change";
+                    }
+                    else
+                    {
+                        action = "fully truncated";
+                        // Totally truncate the file to zero bytes
+                        DeleteFile(name, true);
+                        using IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(randomState));
+                        @out.Length = 0;
+                    }
+                    if (LuceneTestCase.Verbose)
+                    {
+                        Console.WriteLine("MockDirectoryWrapper: " + action + " unsynced file: " + name);
                     }
                 }
             }
@@ -521,12 +511,12 @@ namespace Lucene.Net.Store
             {
                 foreach (var ent in openFileHandles)
                 {
-                    if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).name.Equals(name, StringComparison.Ordinal))
+                    if (input && ent.Key is MockIndexInputWrapper mockIndexInputWrapper && mockIndexInputWrapper.name.Equals(name, StringComparison.Ordinal))
                     {
                         t = CreateException(t, ent.Value);
                         break;
                     }
-                    else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper)ent.Key).name.Equals(name, StringComparison.Ordinal))
+                    else if (!input && ent.Key is MockIndexOutputWrapper mockIndexOutputWrapper && mockIndexOutputWrapper.name.Equals(name, StringComparison.Ordinal))
                     {
                         t = CreateException(t, ent.Value);
                         break;
@@ -536,7 +526,8 @@ namespace Lucene.Net.Store
             }
         }
 
-        private Exception CreateException(Exception exception, Exception innerException)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Exception CreateException(Exception exception, Exception innerException) // LUCENENET: CA1822: Mark members as static
         {
             return (Exception)Activator.CreateInstance(exception.GetType(), exception.Message, innerException);
         }
@@ -653,9 +644,8 @@ namespace Lucene.Net.Store
                 unSyncedFiles.Add(name);
                 createdFiles.Add(name);
 
-                if (m_input is RAMDirectory)
+                if (m_input is RAMDirectory ramdir)
                 {
-                    RAMDirectory ramdir = (RAMDirectory)m_input;
                     RAMFile file = new RAMFile(ramdir);
                     ramdir.m_fileMap.TryGetValue(name, out RAMFile existing);
 
@@ -1039,6 +1029,7 @@ namespace Lucene.Net.Store
                         }
                     }
                     m_input.Dispose(); // LUCENENET TODO: using blocks in this entire class
+                    throttledOutput.Dispose(); // LUCENENET specific
                 }
             }
         }
@@ -1245,8 +1236,8 @@ namespace Lucene.Net.Store
         {
             private readonly MockDirectoryWrapper outerInstance;
 
-            private string name;
-            private IndexInputSlicer delegateHandle;
+            private readonly string name;
+            private readonly IndexInputSlicer delegateHandle;
 
             public IndexInputSlicerAnonymousInnerClassHelper(MockDirectoryWrapper outerInstance, string name, IndexInputSlicer delegateHandle)
             {

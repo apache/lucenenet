@@ -65,8 +65,8 @@ namespace Lucene.Net.Index
         {
             private readonly IndexInput input;
             private string field = "";
-            private BytesRef bytes = new BytesRef();
-            private Term term;
+            private readonly BytesRef bytes = new BytesRef(); // LUCENENET: marked readonly
+            private readonly Term term; // LUCENENET: marked readonly
 
             internal PrefixCodedTermsIterator(RAMFile buffer)
             {
@@ -84,8 +84,18 @@ namespace Lucene.Net.Index
 
             public virtual Term Current => term;
 
-            public virtual void Dispose()
+            public void Dispose()
             {
+                Dispose(true);
+                GC.SuppressFinalize(true);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    input?.Dispose(); // LUCENENET specific - call dispose on input
+                }
             }
 
             object IEnumerator.Current => Current;
@@ -133,17 +143,12 @@ namespace Lucene.Net.Index
         {
             public Builder()
             {
-                InitializeInstanceFields();
-            }
-
-            internal virtual void InitializeInstanceFields()
-            {
                 output = new RAMOutputStream(buffer);
             }
 
-            private RAMFile buffer = new RAMFile();
-            private RAMOutputStream output;
-            private Term lastTerm = new Term("");
+            private readonly RAMFile buffer = new RAMFile(); // LUCENENET: marked readonly
+            private readonly RAMOutputStream output; // LUCENENET: marked readonly
+            private readonly Term lastTerm = new Term(""); // LUCENENET: marked readonly
 
             /// <summary>
             /// add a term </summary>

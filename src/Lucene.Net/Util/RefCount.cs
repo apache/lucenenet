@@ -1,5 +1,6 @@
 using J2N.Threading.Atomic;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -74,6 +75,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Get()
         {
             return m_object;
@@ -81,6 +83,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the current reference count. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetRefCount() // LUCENENET NOTE: although this would be a good candidate for a property, doing so would cause a naming conflict
         {
             return refCount;
@@ -90,6 +93,7 @@ namespace Lucene.Net.Util
         /// Increments the reference count. Calls to this method must be matched with
         /// calls to <see cref="DecRef()"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void IncRef()
         {
             refCount.IncrementAndGet();

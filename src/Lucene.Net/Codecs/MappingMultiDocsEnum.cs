@@ -1,8 +1,8 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
 {
@@ -128,6 +128,7 @@ namespace Lucene.Net.Codecs
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long GetCost()
         {
             long cost = 0;

@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -121,8 +122,8 @@ namespace Lucene.Net.Util
         {
             private readonly BytesRefArray outerInstance;
 
-            private IComparer<BytesRef> comp;
-            private int[] orderedEntries;
+            private readonly IComparer<BytesRef> comp;
+            private readonly int[] orderedEntries;
 
             public IntroSorterAnonymousInnerClassHelper(BytesRefArray outerInstance, IComparer<BytesRef> comp, int[] orderedEntries)
             {
@@ -134,6 +135,7 @@ namespace Lucene.Net.Util
                 scratch2 = new BytesRef();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void Swap(int i, int j)
             {
                 int o = orderedEntries[i];
@@ -141,18 +143,21 @@ namespace Lucene.Net.Util
                 orderedEntries[j] = o;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override int Compare(int i, int j)
             {
                 int idx1 = orderedEntries[i], idx2 = orderedEntries[j];
                 return comp.Compare(outerInstance.Get(scratch1, idx1), outerInstance.Get(scratch2, idx2));
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void SetPivot(int i)
             {
                 int index = orderedEntries[i];
                 outerInstance.Get(pivot, index);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override int ComparePivot(int j)
             {
                 int index = orderedEntries[j];
@@ -233,6 +238,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sugar for <see cref="GetEnumerator(IComparer{BytesRef})"/> with a <c>null</c> comparer.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBytesRefEnumerator GetEnumerator()
             => GetEnumerator(null);
 
@@ -251,6 +257,7 @@ namespace Lucene.Net.Util
         /// This is a non-destructive operation.
         /// </para>
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBytesRefEnumerator GetEnumerator(IComparer<BytesRef> comparer)
         {
             int[] indices = comparer == null ? null : Sort(comparer);

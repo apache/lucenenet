@@ -88,20 +88,18 @@ namespace Lucene.Net.Support
 
             Assert.AreEqual(lucQuery, lucQuery2, "Error in serialization");
 
-            using (var reader = DirectoryReader.Open(dir))
-            {
-                //Lucene.Net.Search.IndexSearcher searcher = new Lucene.Net.Search.IndexSearcher(dir, true);
-                Lucene.Net.Search.IndexSearcher searcher = new Lucene.Net.Search.IndexSearcher(reader);
+            using var reader = DirectoryReader.Open(dir);
+            //Lucene.Net.Search.IndexSearcher searcher = new Lucene.Net.Search.IndexSearcher(dir, true);
+            Lucene.Net.Search.IndexSearcher searcher = new Lucene.Net.Search.IndexSearcher(reader);
 
-                int hitCount = searcher.Search(lucQuery, 20).TotalHits;
+            int hitCount = searcher.Search(lucQuery, 20).TotalHits;
 
-                //searcher.Close();
-                searcher = new Lucene.Net.Search.IndexSearcher(reader);
+            //searcher.Close();
+            searcher = new Lucene.Net.Search.IndexSearcher(reader);
 
-                int hitCount2 = searcher.Search(lucQuery2, 20).TotalHits;
+            int hitCount2 = searcher.Search(lucQuery2, 20).TotalHits;
 
-                Assert.AreEqual(hitCount, hitCount2, "Error in serialization - different hit counts");
-            }
+            Assert.AreEqual(hitCount, hitCount2, "Error in serialization - different hit counts");
         }
     }
 }

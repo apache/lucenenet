@@ -3,6 +3,7 @@ using J2N.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -41,6 +42,7 @@ namespace Lucene.Net.Util
         // denial of service attacks, and to catch any places that
         // somehow rely on hash function/order across JVM
         // instances:
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int InitializeHashSeed()
         {
             // LUCENENET specific - reformatted with :
@@ -128,6 +130,7 @@ namespace Lucene.Net.Util
                 return 0;
             });
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Equals(string s1, string s2)
         {
             if (s1 == null)
@@ -150,6 +153,7 @@ namespace Lucene.Net.Util
         ///          The expected prefix </param>
         /// <returns> Returns <c>true</c> if the <paramref name="ref"/> starts with the given <paramref name="prefix"/>.
         ///         Otherwise <c>false</c>. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool StartsWith(this BytesRef @ref, BytesRef prefix) // LUCENENET specific - converted to extension method
         {
             return SliceEquals(@ref, prefix, 0);
@@ -165,11 +169,13 @@ namespace Lucene.Net.Util
         ///          The expected suffix </param>
         /// <returns> Returns <c>true</c> if the <paramref name="ref"/> ends with the given <paramref name="suffix"/>.
         ///         Otherwise <c>false</c>. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool EndsWith(this BytesRef @ref, BytesRef suffix) // LUCENENET specific - converted to extension method
         {
             return SliceEquals(@ref, suffix, @ref.Length - suffix.Length);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool SliceEquals(this BytesRef sliceToTest, BytesRef other, int pos) // LUCENENET specific - converted to extension method
         {
             if (pos < 0 || sliceToTest.Length - pos < other.Length)
@@ -255,6 +261,7 @@ namespace Lucene.Net.Util
         /// Returns the MurmurHash3_x86_32 hash.
         /// Original source/tests at <a href="https://github.com/yonik/java_util/">https://github.com/yonik/java_util/</a>. 
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Murmurhash3_x86_32(BytesRef bytes, int seed)
         {
             return Murmurhash3_x86_32(bytes.Bytes, bytes.Offset, bytes.Length, seed);

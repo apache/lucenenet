@@ -269,8 +269,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                string ret;
-                attributes.TryGetValue(key, out ret);
+                attributes.TryGetValue(key, out string ret);
                 return ret;
             }
         }
@@ -292,9 +291,8 @@ namespace Lucene.Net.Index
                 attributes = new Dictionary<string, string>();
             }
 
-            string ret;
             // The key was not previously assigned, null will be returned
-            if (!attributes.TryGetValue(key, out ret))
+            if (!attributes.TryGetValue(key, out string ret))
             {
                 ret = null;
             }

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -6,10 +7,9 @@ using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using JCG = J2N.Collections.Generic;
+using System.Runtime.CompilerServices;
 using BitSet = Lucene.Net.Util.OpenBitSet;
-using Lucene.Net.Diagnostics;
+using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Memory
         // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
         private readonly IDictionary<string, TermsReader> fields = new JCG.SortedDictionary<string, TermsReader>(StringComparer.Ordinal);
         private readonly PostingsReaderBase postingsReader;
-        private int version;
+        private readonly int version; // LUCENENET: marked readonly
         //static final boolean TEST = false;
 
         public FSTOrdTermsReader(SegmentReadState state, PostingsReaderBase postingsReader)
@@ -86,10 +86,9 @@ namespace Lucene.Net.Codecs.Memory
                     var index = new FST<long?>(indexIn, PositiveInt32Outputs.Singleton);
 
                     var current = new TermsReader(this, fieldInfo, blockIn, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize, index);
-                    TermsReader previous;
                     // LUCENENET NOTE: This simulates a put operation in Java,
                     // getting the prior value first before setting it.
-                    fields.TryGetValue(fieldInfo.Name, out previous);
+                    fields.TryGetValue(fieldInfo.Name, out TermsReader previous);
                     fields[fieldInfo.Name] = current;
                     CheckFieldSummary(state.SegmentInfo, indexIn, blockIn, current, previous);
                 }
@@ -167,8 +166,7 @@ namespace Lucene.Net.Codecs.Memory
         public override Terms GetTerms(string field)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
-            TermsReader result;
-            fields.TryGetValue(field, out result);
+            fields.TryGetValue(field, out TermsReader result);
             return result;
         }
 
@@ -226,7 +224,7 @@ namespace Lucene.Net.Codecs.Memory
                 this.metaLongsBlock = new byte[(int)blockIn.ReadVInt64()];
                 this.metaBytesBlock = new byte[(int)blockIn.ReadVInt64()];
 
-                int last = 0, next = 0;
+                int last = 0, next; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 for (int i = 1; i < numBlocks; i++)
                 {
                     next = numSkipInfo * i;
@@ -294,13 +292,13 @@ namespace Lucene.Net.Codecs.Memory
                 private int metaBlockOrd;
 
                 /* Current buffered metadata (long[] & byte[]) */
-                private long[][] longs;
-                private int[] bytesStart;
-                private int[] bytesLength;
+                private readonly long[][] longs; // LUCENENET: marked readonly
+                private readonly int[] bytesStart; // LUCENENET: marked readonly
+                private readonly int[] bytesLength; // LUCENENET: marked readonly
 
                 /* Current buffered stats (df & ttf) */
-                private int[] docFreq;
-                private long[] totalTermFreq;
+                private readonly int[] docFreq; // LUCENENET: marked readonly
+                private readonly long[] totalTermFreq; // LUCENENET: marked readonly
 
                 internal BaseTermsEnum(TermsReader outerInstance)
                 {
@@ -559,8 +557,6 @@ namespace Lucene.Net.Codecs.Memory
             // Iterates intersect result with automaton (cannot seek!)
             private sealed class IntersectTermsEnum : BaseTermsEnum
             {
-                private readonly FSTOrdTermsReader.TermsReader outerInstance;
-
                 /// <summary>True when current term's metadata is decoded.</summary>
                 private bool decoded;
 
@@ -607,7 +603,6 @@ namespace Lucene.Net.Codecs.Memory
                 internal IntersectTermsEnum(TermsReader outerInstance, CompiledAutomaton compiled, BytesRef startTerm) : base(outerInstance)
                 {
                     //if (TEST) System.out.println("Enum init, startTerm=" + startTerm);
-                    this.outerInstance = outerInstance;
                     this.fst = outerInstance.index;
                     this.fstReader = fst.GetBytesReader();
                     this.fstOutputs = outerInstance.index.Outputs;
@@ -620,7 +615,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
 
                     Frame frame;
-                    frame = LoadVirtualFrame(NewFrame());
+                    /*frame = */LoadVirtualFrame(NewFrame()); // LUCENENET: IDE0059: Remove unnecessary value assignment
                     this.level++;
                     frame = LoadFirstFrame(NewFrame());
                     PushFrame(frame);
@@ -839,22 +834,26 @@ namespace Lucene.Net.Codecs.Memory
                     return frame;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private bool IsAccept(Frame frame) // reach a term both fst&fsa accepts
                 {
                     return fsa.IsAccept(frame.state) && frame.arc.IsFinal;
                 }
 
-                private bool IsValid(Frame frame) // reach a prefix both fst&fsa won't reject
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                private static bool IsValid(Frame frame) // reach a prefix both fst&fsa won't reject // LUCENENET: CA1822: Mark members as static
                 {
                     return frame.state != -1; //frame != null &&
                 }
 
-                private bool CanGrow(Frame frame) // can walk forward on both fst&fsa
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                private static bool CanGrow(Frame frame) // can walk forward on both fst&fsa // LUCENENET: CA1822: Mark members as static
                 {
                     return frame.state != -1 && FST<long?>.TargetHasArcs(frame.arc);
                 }
 
-                private bool CanRewind(Frame frame) // can jump to sibling
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                private static bool CanRewind(Frame frame) // can jump to sibling // LUCENENET: CA1822: Mark members as static
                 {
                     return !frame.arc.IsLast;
                 }
@@ -926,43 +925,7 @@ namespace Lucene.Net.Codecs.Memory
             }
         }
 
-        private static void Walk<T>(FST<T> fst) // LUCENENET NOTE: Not referenced anywhere
-        {
-            var queue = new List<FST.Arc<T>>();
-
-            // Java version was BitSet(), but in .NET we don't have a zero contructor BitSet. 
-            // Couldn't find the default size in BitSet, so went with zero here.
-            var seen = new BitSet(); 
-            var reader = fst.GetBytesReader();
-            var startArc = fst.GetFirstArc(new FST.Arc<T>());
-            queue.Add(startArc);
-            while (queue.Count > 0)
-            {
-                //FST.Arc<T> arc = queue.Remove(0);
-                var arc = queue[0];
-                queue.RemoveAt(0); 
-
-                long node = arc.Target;
-                //System.out.println(arc);
-                if (FST<T>.TargetHasArcs(arc) && !seen.Get((int)node))
-                {
-                    seen.Set((int)node);
-                    fst.ReadFirstRealTargetArc(node, arc, reader);
-                    while (true)
-                    {
-                        queue.Add((new FST.Arc<T>()).CopyFrom(arc));
-                        if (arc.IsLast)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            fst.ReadNextRealArc(arc, reader);
-                        }
-                    }
-                }
-            }
-        }
+        // LUCENENET specific - removed Walk<T>(FST<T> fst) because it is dead code
 
         public override long RamBytesUsed()
         {

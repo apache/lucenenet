@@ -202,7 +202,7 @@ namespace Lucene.Net.Analysis.Sinks
             private readonly IList<AttributeSource.State> cachedStates = new List<AttributeSource.State>();
             private AttributeSource.State finalState;
             private IEnumerator<AttributeSource.State> it = null;
-            private SinkFilter filter;
+            private readonly SinkFilter filter; // LUCENENET: marked readonly
 
             internal SinkTokenStream(AttributeSource source, SinkFilter filter)
                 : base(source)

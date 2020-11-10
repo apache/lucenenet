@@ -32,8 +32,8 @@ namespace Lucene.Net.Analysis.Ja
         private readonly ICharTermAttribute termAttr;
         private readonly IReadingAttribute readingAttr;
 
-        private StringBuilder buffer = new StringBuilder();
-        private bool useRomaji;
+        private readonly StringBuilder buffer = new StringBuilder(); // LUCENENET: marked readonly
+        private readonly bool useRomaji; // LUCENENET: marked readonly
 
         public JapaneseReadingFormFilter(TokenStream input, bool useRomaji)
             : base(input)

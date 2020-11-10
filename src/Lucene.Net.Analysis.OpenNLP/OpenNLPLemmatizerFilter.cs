@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         private readonly ITypeAttribute typeAtt;
         private readonly IKeywordAttribute keywordAtt;
         private readonly IFlagsAttribute flagsAtt;
-        private IList<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>();
+        private readonly IList<AttributeSource> sentenceTokenAttrs = new List<AttributeSource>(); // LUCENENET: marked readonly
         private IEnumerator<AttributeSource> sentenceTokenAttrsIter = null;
         private bool moreTokensAvailable = true;
         private string[] sentenceTokens = null;     // non-keyword tokens
@@ -125,6 +125,30 @@ namespace Lucene.Net.Analysis.OpenNlp
             sentenceTokenTypes = null;
             lemmas = null;
             lemmaNum = 0;
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="OpenNLPLemmatizerFilter"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    sentenceTokenAttrsIter?.Dispose();
+                    sentenceTokenAttrsIter = null;
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
     }
 }

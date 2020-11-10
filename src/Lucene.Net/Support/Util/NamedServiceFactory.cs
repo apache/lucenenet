@@ -101,8 +101,7 @@ namespace Lucene.Net.Util
             var nameAttributes = type.GetCustomAttributes(typeof(ServiceNameAttribute), inherit: true);
             if (nameAttributes.Length > 0)
             {
-                ServiceNameAttribute nameAttribute = nameAttributes[0] as ServiceNameAttribute;
-                if (nameAttribute != null)
+                if (nameAttributes[0] is ServiceNameAttribute nameAttribute)
                 {
                     string name = nameAttribute.Name;
                     CheckServiceName(name);
@@ -169,16 +168,12 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Gets a value that indicates whether the current application domain executes with full trust.
         /// </summary>
-        protected bool IsFullyTrusted
-        {
-            get
-            {
+        protected bool IsFullyTrusted =>
 #if FEATURE_APPDOMAIN_ISFULLYTRUSTED
-                return AppDomain.CurrentDomain.IsFullyTrusted; // Partial trust support
+            AppDomain.CurrentDomain.IsFullyTrusted; // Partial trust support
 #else
-                return true; // Partial trust not supported
+            true; // Partial trust not supported
 #endif
-            }
-        }
+
     }
 }

@@ -47,15 +47,15 @@ namespace Lucene.Net.Facet.Range
             // track the start vs end case separately because if a
             // given point is both, then it must be its own
             // elementary interval:
-            IDictionary<long?, int?> endsMap = new Dictionary<long?, int?>();
-
-            endsMap[long.MinValue] = 1;
-            endsMap[long.MaxValue] = 2;
+            IDictionary<long?, int?> endsMap = new Dictionary<long?, int?>
+            {
+                [long.MinValue] = 1,
+                [long.MaxValue] = 2
+            };
 
             foreach (Int64Range range in ranges)
             {
-                int? cur;
-                if (!endsMap.TryGetValue(range.minIncl, out cur))
+                if (!endsMap.TryGetValue(range.minIncl, out int? cur))
                 {
                     endsMap[range.minIncl] = 1;
                 }
@@ -80,7 +80,7 @@ namespace Lucene.Net.Facet.Range
             // Build elementaryIntervals (a 1D Venn diagram):
             IList<InclusiveRange> elementaryIntervals = new List<InclusiveRange>();
             int upto0 = 1;
-            long v = endsList[0].HasValue ? endsList[0].Value : 0;
+            long v = endsList[0] ?? 0;
             long prev;
             if (endsMap[v] == 3)
             {
@@ -94,8 +94,8 @@ namespace Lucene.Net.Facet.Range
 
             while (upto0 < endsList.Count)
             {
-                v = endsList[upto0].HasValue ? endsList[upto0].Value : 0;
-                int flags = endsMap[v].HasValue ? endsMap[v].Value : 0;
+                v = endsList[upto0] ?? 0;
+                int flags = endsMap[v] ?? 0;
                 //System.out.println("  v=" + v + " flags=" + flags);
                 if (flags == 3)
                 {

@@ -213,18 +213,11 @@ namespace Lucene.Net.Index
             /// </summary>
             public virtual DocMap GetDocMap(MergeState mergeState)
             {
-                return new DocMapAnonymousInnerClassHelper(this);
+                return new DocMapAnonymousInnerClassHelper();
             }
 
             private class DocMapAnonymousInnerClassHelper : DocMap
             {
-                private readonly OneMerge outerInstance;
-
-                public DocMapAnonymousInnerClassHelper(OneMerge outerInstance)
-                {
-                    this.outerInstance = outerInstance;
-                }
-
                 public override int Map(int docID)
                 {
                     return docID;
@@ -471,7 +464,7 @@ namespace Lucene.Net.Index
 #endif
         public class MergeException : Exception
         {
-            private Directory dir;
+            private readonly Directory dir; // LUCENENET: marked readonly
 
             /// <summary>
             /// Create a <see cref="MergeException"/>. </summary>
@@ -598,7 +591,7 @@ namespace Lucene.Net.Index
         /// without passing it to <see cref="IndexWriter"/>, you should call
         /// <see cref="SetIndexWriter(IndexWriter)"/>.
         /// </summary>
-        public MergePolicy()
+        protected MergePolicy() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(DEFAULT_NO_CFS_RATIO, DEFAULT_MAX_CFS_SEGMENT_SIZE)
         {
         }

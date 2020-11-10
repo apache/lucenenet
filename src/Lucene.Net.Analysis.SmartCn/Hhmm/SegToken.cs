@@ -1,5 +1,6 @@
 ﻿// lucene version compatibility level: 4.8.1
 using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 {
@@ -31,6 +32,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// Character array containing token text
         /// </summary>
         [WritableArray]
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         public char[] CharArray { get; set; }
 
         /// <summary>

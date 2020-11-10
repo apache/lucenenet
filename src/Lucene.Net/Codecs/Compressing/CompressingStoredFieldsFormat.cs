@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -101,16 +102,19 @@ namespace Lucene.Net.Codecs.Compressing
             this.chunkSize = chunkSize;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override StoredFieldsReader FieldsReader(Directory directory, SegmentInfo si, FieldInfos fn, IOContext context)
         {
             return new CompressingStoredFieldsReader(directory, si, segmentSuffix, fn, context, formatName, compressionMode);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override StoredFieldsWriter FieldsWriter(Directory directory, SegmentInfo si, IOContext context)
         {
             return new CompressingStoredFieldsWriter(directory, si, segmentSuffix, context, formatName, compressionMode, chunkSize);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string ToString()
         {
             return this.GetType().Name + "(compressionMode=" + compressionMode + ", chunkSize=" + chunkSize + ")";

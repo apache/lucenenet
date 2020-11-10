@@ -192,25 +192,23 @@ namespace Lucene.Net.Index.Sorter
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random));
             conf.SetMaxBufferedDocs(4); // create some segments
             conf.SetSimilarity(new NormsSimilarity(conf.Similarity)); // for testing norms field
-            using (RandomIndexWriter writer = new RandomIndexWriter(random, dir, conf))
+            using RandomIndexWriter writer = new RandomIndexWriter(random, dir, conf);
+            writer.DoRandomForceMerge = (false);
+            foreach (int id in ids)
             {
-                writer.DoRandomForceMerge = (false);
-                foreach (int id in ids)
+                writer.AddDocument(Doc(id, positions));
+            }
+            // delete some documents
+            writer.Commit();
+            foreach (int id in ids)
+            {
+                if (random.NextDouble() < 0.2)
                 {
-                    writer.AddDocument(Doc(id, positions));
-                }
-                // delete some documents
-                writer.Commit();
-                foreach (int id in ids)
-                {
-                    if (random.NextDouble() < 0.2)
+                    if (Verbose)
                     {
-                        if (Verbose)
-                        {
-                            Console.WriteLine("delete doc_id " + id);
-                        }
-                        writer.DeleteDocuments(new Term(ID_FIELD, id.ToString()));
+                        Console.WriteLine("delete doc_id " + id);
                     }
+                    writer.DeleteDocuments(new Term(ID_FIELD, id.ToString()));
                 }
             }
         }

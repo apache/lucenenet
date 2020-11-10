@@ -26,8 +26,8 @@ namespace Lucene.Net.Search.Suggest.Fst
         [Test]
         public void TestExternalRefSorter()
         {
-            using (ExternalRefSorter s = new ExternalRefSorter(new OfflineSorter()))
-                Check(s);
+            using ExternalRefSorter s = new ExternalRefSorter(new OfflineSorter());
+            Check(s);
         }
 
         [Test]

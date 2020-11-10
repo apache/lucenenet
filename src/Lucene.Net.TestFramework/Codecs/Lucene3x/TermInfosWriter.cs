@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private FieldInfos fieldInfos;
         private IndexOutput output;
-        private TermInfo lastTi = new TermInfo();
+        private readonly TermInfo lastTi = new TermInfo(); // LUCENENET: marked readonly
         private long size;
 
         // TODO: the default values for these two parameters should be settable from
@@ -107,9 +107,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (isIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
                     }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                     catch (IOException ignored)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                     {
                     }
                 }
@@ -148,9 +148,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         directory.DeleteFile(IndexFileNames.SegmentFileName(segment, "", (isIndex ? Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION : Lucene3xPostingsFormat.TERMS_EXTENSION)));
                     }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                     catch (IOException ignored)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                     {
                     }
                 }

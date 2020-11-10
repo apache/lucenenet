@@ -69,39 +69,34 @@ namespace Lucene.Net.Codecs.MockIntBlock
 
             public override Int32IndexInput OpenInput(Directory dir, string fileName, IOContext context)
             {
-                return new FixedInt32BlockIndexInputAnonymousHelper(this, dir.OpenInput(fileName, context));
+                return new FixedInt32BlockIndexInputAnonymousHelper(dir.OpenInput(fileName, context));
             }
 
             private class FixedInt32BlockIndexInputAnonymousHelper : FixedInt32BlockIndexInput
             {
-                private readonly MockInt32Factory outerInstance;
-
-                public FixedInt32BlockIndexInputAnonymousHelper(MockInt32Factory outerInstance, IndexInput input)
+                public FixedInt32BlockIndexInputAnonymousHelper(IndexInput input)
                     : base(input)
                 {
-                    this.outerInstance = outerInstance;
                 }
 
                 protected override IBlockReader GetBlockReader(IndexInput @in, int[] buffer)
                 {
-                    return new BlockReaderAnonymousHelper(outerInstance, @in, buffer);
+                    return new BlockReaderAnonymousHelper(@in, buffer);
                 }
 
                 private class BlockReaderAnonymousHelper : FixedInt32BlockIndexInput.IBlockReader
                 {
-                    private readonly MockInt32Factory outerInstance;
                     private readonly IndexInput @in;
                     private readonly int[] buffer;
 
-                    public BlockReaderAnonymousHelper(MockInt32Factory outerInstance, IndexInput @in, int[] buffer)
+                    public BlockReaderAnonymousHelper(IndexInput @in, int[] buffer)
                     {
-                        this.outerInstance = outerInstance;
                         this.@in = @in;
                         this.buffer = buffer;
                     }
-                    public void Seek(long pos)
-                    {
-                    }
+                    //public void Seek(long pos) // LUCENENET: Not referenced;
+                    //{
+                    //}
 
                     public void ReadBlock()
                     {

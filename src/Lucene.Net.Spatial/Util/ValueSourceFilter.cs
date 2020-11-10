@@ -42,11 +42,8 @@ namespace Lucene.Net.Spatial.Util
 
         public ValueSourceFilter(Filter startingFilter, ValueSource source, double min, double max)
         {
-            if (startingFilter == null)
-            {
-                throw new ArgumentException("please provide a non-null startingFilter; you can use QueryWrapperFilter(MatchAllDocsQuery) as a no-op filter", "startingFilter");
-            }
-            this.startingFilter = startingFilter;
+            this.startingFilter = startingFilter ?? throw new ArgumentNullException(nameof(startingFilter),
+                "Please provide a non-null startingFilter; you can use QueryWrapperFilter(MatchAllDocsQuery) as a no-op filter");
             this.source = source;
             this.min = min;
             this.max = max;

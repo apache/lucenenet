@@ -204,22 +204,18 @@ namespace Lucene.Net.Search
 
         private void InitReader(AtomicReader reader)
         {
-#pragma warning disable IDE0038 // Use pattern matching
-            if (reader is SegmentReader)
-#pragma warning restore IDE0038 // Use pattern matching
+            if (reader is SegmentReader segmentReader)
             {
-                ((SegmentReader)reader).AddCoreDisposedListener(purgeCore);
+                segmentReader.AddCoreDisposedListener(purgeCore);
             }
             else
             {
                 // we have a slow reader of some sort, try to register a purge event
                 // rather than relying on gc:
                 object key = reader.CoreCacheKey;
-#pragma warning disable IDE0038 // Use pattern matching
-                if (key is AtomicReader)
-#pragma warning restore IDE0038 // Use pattern matching
+                if (key is AtomicReader atomicReader)
                 {
-                    ((AtomicReader)key).AddReaderClosedListener(purgeReader);
+                    atomicReader.AddReaderClosedListener(purgeReader);
                 }
                 else
                 {
@@ -326,13 +322,10 @@ namespace Lucene.Net.Search
                 }
 #endif
                 object value = innerCache.GetOrAdd(key, (cacheKey) => new FieldCache.CreationPlaceholder<TValue>());
-#pragma warning disable IDE0038 // Use pattern matching
-                if (value is FieldCache.CreationPlaceholder<TValue>)
-#pragma warning restore IDE0038 // Use pattern matching
+                if (value is FieldCache.CreationPlaceholder<TValue> progress)
                 {
                     lock (value)
                     {
-                        var progress = (FieldCache.CreationPlaceholder<TValue>)value;
                         if (progress.Value is null)
                         {
                             progress.Value = CreateValue(reader, key, setDocsWithField);
@@ -401,21 +394,15 @@ namespace Lucene.Net.Search
             /// Two of these are equal if they reference the same field and type. </summary>
             public override bool Equals(object o)
             {
-                if (o is CacheKey)
+                if (o is CacheKey other && other.field.Equals(field, StringComparison.Ordinal))
                 {
-#pragma warning disable IDE0020 // Use pattern matching
-                    CacheKey other = (CacheKey)o;
-#pragma warning restore IDE0020 // Use pattern matching
-                    if (other.field.Equals(field, StringComparison.Ordinal))
+                    if (other.Custom is null)
                     {
-                        if (other.Custom is null)
-                        {
-                            return Custom is null;
-                        }
-                        else if (other.Custom.Equals(Custom))
-                        {
-                            return true;
-                        }
+                        return Custom is null;
+                    }
+                    else if (other.Custom.Equals(Custom))
+                    {
+                        return true;
                     }
                 }
                 return false;
@@ -452,11 +439,8 @@ namespace Lucene.Net.Search
             /// Two of these are equal if they reference the same field and type. </summary>
             public override bool Equals(object o)
             {
-                if (o is CacheKey<TCustom>)
+                if (o is CacheKey<TCustom> other)
                 {
-#pragma warning disable IDE0020 // Use pattern matching
-                    CacheKey<TCustom> other = (CacheKey<TCustom>)o;
-#pragma warning restore IDE0020 // Use pattern matching
                     if (other.field.Equals(field, StringComparison.Ordinal))
                     {
                         if (other.custom is null)
@@ -548,11 +532,9 @@ namespace Lucene.Net.Search
             {
                 bits = new Lucene.Net.Util.Bits.MatchNoBits(maxDoc);
             }
-#pragma warning disable IDE0038 // Use pattern matching
-            else if (docsWithField is FixedBitSet)
-#pragma warning restore IDE0038 // Use pattern matching
+            else if (docsWithField is FixedBitSet fixedBitSet)
             {
-                int numSet = ((FixedBitSet)docsWithField).Cardinality();
+                int numSet = fixedBitSet.Cardinality();
                 if (numSet >= maxDoc)
                 {
                     // The cardinality of the BitSet is maxDoc if all documents have a value.

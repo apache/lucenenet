@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -91,6 +92,7 @@ namespace Lucene.Net.Util
         private static readonly MonotonicAppendingInt64Buffer SINGLE_ZERO_BUFFER = LoadSingleZeroBuffer();
         // LUCENENET specific - optimized empty array creation
         private static readonly WAH8DocIdSet EMPTY = new WAH8DocIdSet(Arrays.Empty<byte>(), 0, 1, SINGLE_ZERO_BUFFER, SINGLE_ZERO_BUFFER);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static MonotonicAppendingInt64Buffer LoadSingleZeroBuffer() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
             var buffer = new MonotonicAppendingInt64Buffer(1, 64, PackedInt32s.COMPACT);
@@ -100,9 +102,10 @@ namespace Lucene.Net.Util
         }
 
         private static readonly IComparer<Iterator> SERIALIZED_LENGTH_COMPARER = Comparer<Iterator>.Create((wi1, wi2) => wi1.@in.Length - wi2.@in.Length);
-        
+
         /// <summary>
         /// Same as <see cref="Intersect(ICollection{WAH8DocIdSet}, int)"/> with the default index interval. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static WAH8DocIdSet Intersect(ICollection<WAH8DocIdSet> docIdSets)
         {
             return Intersect(docIdSets, DEFAULT_INDEX_INTERVAL);
@@ -175,6 +178,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Same as <see cref="Union(ICollection{WAH8DocIdSet}, int)"/> with the default index interval. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static WAH8DocIdSet Union(ICollection<WAH8DocIdSet> docIdSets)
         {
             return Union(docIdSets, DEFAULT_INDEX_INTERVAL);
@@ -242,12 +246,14 @@ namespace Lucene.Net.Util
             {
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected internal override bool LessThan(Iterator a, Iterator b)
             {
                 return a.wordNum < b.wordNum;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int WordNum(int docID)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(docID >= 0);
@@ -561,6 +567,7 @@ namespace Lucene.Net.Util
                 return this;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override object SetIndexInterval(int indexInterval)
             {
                 return (Builder)base.SetIndexInterval(indexInterval);
@@ -601,6 +608,7 @@ namespace Lucene.Net.Util
             return new Iterator(data, cardinality, indexInterval, positions, wordNums);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int ReadCleanLength(ByteArrayDataInput @in, int token)
         {
             int len = ((int)((uint)token >> 4)) & 0x07;
@@ -616,6 +624,7 @@ namespace Lucene.Net.Util
             return len;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int ReadDirtyLength(ByteArrayDataInput @in, int token)
         {
             int len = token & 0x0F;
@@ -883,6 +892,7 @@ namespace Lucene.Net.Util
                 return SlowAdvance(target);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return cardinality;
@@ -891,6 +901,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Return the number of documents in this <see cref="DocIdSet"/> in constant time. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Cardinality()
         {
             return cardinality;
@@ -898,6 +909,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Return the memory usage of this class in bytes. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long RamBytesUsed()
         {
             return RamUsageEstimator.AlignObjectSize(3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_INT32)

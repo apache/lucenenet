@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -55,6 +56,7 @@ namespace Lucene.Net.Util
         /// <param name="chars"> A string representation of an int quantity. </param>
         /// <returns> The value represented by the argument </returns>
         /// <exception cref="FormatException"> If the argument could not be parsed as an int quantity. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ParseInt32(char[] chars)
         {
             return ParseInt32(chars, 0, chars.Length, 10);
@@ -70,6 +72,7 @@ namespace Lucene.Net.Util
         /// <param name="len"> The length </param>
         /// <returns> the <see cref="int"/> </returns>
         /// <exception cref="FormatException"> If it can't parse </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ParseInt32(char[] chars, int offset, int len)
         {
             return ParseInt32(chars, offset, len, 10);
@@ -283,6 +286,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static short[] Grow(short[] array)
         {
             return Grow(array, 1 + array.Length);
@@ -303,6 +307,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float[] Grow(float[] array)
         {
             return Grow(array, 1 + array.Length);
@@ -323,6 +328,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double[] Grow(double[] array)
         {
             return Grow(array, 1 + array.Length);
@@ -359,6 +365,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[] Grow(int[] array)
         {
             return Grow(array, 1 + array.Length);
@@ -395,6 +402,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long[] Grow(long[] array)
         {
             return Grow(array, 1 + array.Length);
@@ -447,6 +455,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte[] Grow(byte[] array)
         {
             return Grow(array, 1 + array.Length);
@@ -483,6 +492,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool[] Grow(bool[] array)
         {
             return Grow(array, 1 + array.Length);
@@ -519,6 +529,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char[] Grow(char[] array)
         {
             return Grow(array, 1 + array.Length);
@@ -557,6 +568,7 @@ namespace Lucene.Net.Util
         }
 
         [CLSCompliant(false)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int[][] Grow(int[][] array)
         {
             return Grow(array, 1 + array.Length);
@@ -596,6 +608,7 @@ namespace Lucene.Net.Util
         }
 
         [CLSCompliant(false)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float[][] Grow(float[][] array)
         {
             return Grow(array, 1 + array.Length);
@@ -798,6 +811,7 @@ namespace Lucene.Net.Util
 
             public static NaturalComparer<T> Default { get; } = new NaturalComparer<T>();
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual int Compare(T o1, T o2)
             {
                 return ((IComparable<T>)o1).CompareTo(o2);
@@ -846,6 +860,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Swap values stored in slots <paramref name="i"/> and <paramref name="j"/> </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Swap<T>(T[] arr, int i, int j)
         {
             T tmp = arr[i];
@@ -873,6 +888,7 @@ namespace Lucene.Net.Util
         /// Sorts the given array using the <see cref="IComparer{T}"/>. This method uses the intro sort
         /// algorithm, but falls back to insertion sort for small arrays.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void IntroSort<T>(T[] a, IComparer<T> comp)
         {
             IntroSort(a, 0, a.Length, comp);
@@ -896,6 +912,7 @@ namespace Lucene.Net.Util
         /// Sorts the given array in natural order. This method uses the intro sort
         /// algorithm, but falls back to insertion sort for small arrays.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void IntroSort<T>(T[] a) //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             IntroSort(a, 0, a.Length);
@@ -921,6 +938,7 @@ namespace Lucene.Net.Util
         /// Sorts the given array using the <see cref="IComparer{T}"/>. this method uses the Tim sort
         /// algorithm, but falls back to binary sort for small arrays.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TimSort<T>(T[] a, IComparer<T> comp)
         {
             TimSort(a, 0, a.Length, comp);
@@ -944,6 +962,7 @@ namespace Lucene.Net.Util
         /// Sorts the given array in natural order. this method uses the Tim sort
         /// algorithm, but falls back to binary sort for small arrays.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TimSort<T>(T[] a) //where T : IComparable<T>  // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             TimSort(a, 0, a.Length);

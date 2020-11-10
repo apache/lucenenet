@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Codecs.Lucene45
 {
     /*
@@ -159,11 +161,13 @@ namespace Lucene.Net.Codecs.Lucene45
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)
         {
             return new Lucene45DocValuesConsumer(state, DATA_CODEC, DATA_EXTENSION, META_CODEC, META_EXTENSION);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DocValuesProducer FieldsProducer(SegmentReadState state)
         {
             return new Lucene45DocValuesProducer(state, DATA_CODEC, DATA_EXTENSION, META_CODEC, META_EXTENSION);

@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using BitUtil = Lucene.Net.Util.BitUtil;
 
 namespace Lucene.Net.Codecs.Lucene40
@@ -54,7 +55,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private byte[] bits;
         private int size;
         private int count;
-        private int version;
+        private readonly int version; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructs a vector capable of holding <paramref name="n"/> bits. </summary>
@@ -72,7 +73,8 @@ namespace Lucene.Net.Codecs.Lucene40
             count = -1;
         }
 
-        private int GetNumBytes(int size)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int GetNumBytes(int size) // LUCENENET: CA1822: Mark members as static
         {
             int bytesLength = (int)((uint)size >> 3);
             if ((size & 7) != 0)
@@ -82,6 +84,7 @@ namespace Lucene.Net.Codecs.Lucene40
             return bytesLength;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object Clone()
         {
             byte[] copyBits = new byte[bits.Length];
@@ -93,6 +96,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Sets the value of <paramref name="bit"/> to one. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(int bit)
         {
             if (bit >= size)
@@ -134,6 +138,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Sets the value of <paramref name="bit"/> to zero. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear(int bit)
         {
             if (bit >= size)
@@ -173,6 +178,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Returns <c>true</c> if <paramref name="bit"/> is one and
         /// <c>false</c> if it is zero.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Get(int bit)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(bit >= 0 && bit < size,"bit {0} is out of bounds 0..{1}", bit, (size - 1));
@@ -221,6 +227,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// For testing </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetRecomputedCount()
         {
             int c = 0;
@@ -232,23 +239,23 @@ namespace Lucene.Net.Codecs.Lucene40
             return c;
         }
 
-        private static string CODEC = "BitVector";
+        private const string CODEC = "BitVector";
 
         // Version before version tracking was added:
-        public readonly static int VERSION_PRE = -1;
+        public const int VERSION_PRE = -1;
 
         // First version:
-        public readonly static int VERSION_START = 0;
+        public const int VERSION_START = 0;
 
         // Changed DGaps to encode gaps between cleared bits, not
         // set:
-        public readonly static int VERSION_DGAPS_CLEARED = 1;
+        public const int VERSION_DGAPS_CLEARED = 1;
 
         // added checksum
-        public readonly static int VERSION_CHECKSUM = 2;
+        public const int VERSION_CHECKSUM = 2;
 
         // Increment version to change it:
-        public readonly static int VERSION_CURRENT = VERSION_CHECKSUM;
+        public const int VERSION_CURRENT = VERSION_CHECKSUM;
 
         public int Version => version;
 
@@ -318,6 +325,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Set all bits. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetAll()
         {
             Arrays.Fill(bits, (byte)0xff);
@@ -327,6 +335,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Write as a bit set. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void WriteBits(IndexOutput output)
         {
             output.WriteInt32(Length); // write size
@@ -469,6 +478,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         // asserts only
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool VerifyCount()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(count != -1);
@@ -480,6 +490,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Read as a bit set. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ReadBits(IndexInput input)
         {
             count = input.ReadInt32(); // read count

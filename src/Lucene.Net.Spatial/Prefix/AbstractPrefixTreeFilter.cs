@@ -36,8 +36,8 @@ namespace Lucene.Net.Spatial.Prefix
         protected internal readonly string m_fieldName;
         protected internal readonly SpatialPrefixTree m_grid;//not in equals/hashCode since it's implied for a specific field
         protected internal readonly int m_detailLevel;
-        
-        public AbstractPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel)
+
+        protected AbstractPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, int detailLevel) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_queryShape = queryShape;
             this.m_fieldName = fieldName;
@@ -94,8 +94,8 @@ namespace Lucene.Net.Spatial.Prefix
 
             protected TermsEnum m_termsEnum;//remember to check for null in getDocIdSet
             protected DocsEnum m_docsEnum;
-            
-            public BaseTermsEnumTraverser(AbstractPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs)
+
+            protected BaseTermsEnumTraverser(AbstractPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.m_outerInstance = outerInstance;
                 

@@ -37,10 +37,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is SlopQueryNode)
+            if (node is SlopQueryNode phraseSlopNode)
             {
-                SlopQueryNode phraseSlopNode = (SlopQueryNode)node;
-
                 if (!(phraseSlopNode.GetChild() is TokenizedPhraseQueryNode)
                     && !(phraseSlopNode.GetChild() is MultiPhraseQueryNode))
                 {

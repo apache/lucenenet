@@ -114,25 +114,25 @@ namespace Lucene.Net.QueryParsers.Classic
         //int phraseSlop = 0;
         //float fuzzyMinSim = FuzzyQuery.DefaultMinSimilarity;
         //int fuzzyPrefixLength = FuzzyQuery.DefaultPrefixLength;
-        CultureInfo locale = null; // LUCENENET NOTE: null indicates read CultureInfo.CurrentCulture on the fly
-        TimeZoneInfo timeZone = null; // LUCENENET NOTE: null indicates read TimeZoneInfo.Local on the fly
+        private CultureInfo locale = null; // LUCENENET NOTE: null indicates read CultureInfo.CurrentCulture on the fly
+        private TimeZoneInfo timeZone = null; // LUCENENET NOTE: null indicates read TimeZoneInfo.Local on the fly
 
         // TODO: Work out what the default date resolution SHOULD be (was null in Java, which isn't valid for an enum type)
 
         /// <summary>
         /// the default date resolution
         /// </summary>
-        DateTools.Resolution dateResolution = DateTools.Resolution.DAY;
+        private DateTools.Resolution dateResolution = DateTools.Resolution.DAY;
         /// <summary>
         ///  maps field names to date resolutions
         /// </summary>
-        IDictionary<string, DateTools.Resolution> fieldToDateResolution = null;
+        private IDictionary<string, DateTools.Resolution> fieldToDateResolution = null;
 
         /// <summary>
         /// Whether or not to analyze range terms when constructing RangeQuerys
         /// (For example, analyzing terms into collation keys for locale-sensitive RangeQuery)
         /// </summary>
-        bool analyzeRangeTerms = false;
+        private bool analyzeRangeTerms = false;
 
         /// <summary>
         /// So the generated QueryParser(CharStream) won't error out
@@ -190,8 +190,7 @@ namespace Lucene.Net.QueryParsers.Classic
             try
             {
                 // TopLevelQuery is a Query followed by the end-of-input (EOF)
-                Query res = TopLevelQuery(m_field);
-                return res != null ? res : NewBooleanQuery(false);
+                return TopLevelQuery(m_field) ?? NewBooleanQuery(false);
             }
             catch (ParseException tme)
             {
@@ -295,7 +294,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public virtual CultureInfo Locale // LUCENENET TODO: API - Rename Culture
         {
-            get => this.locale == null ? CultureInfo.CurrentCulture : this.locale;
+            get => this.locale ?? CultureInfo.CurrentCulture;
             set => this.locale = value;
         }
 
@@ -309,7 +308,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public virtual TimeZoneInfo TimeZone
         {
-            get => this.timeZone == null ? TimeZoneInfo.Local : this.timeZone;
+            get => this.timeZone ?? TimeZoneInfo.Local;
             set => this.timeZone = value;
         }
 
@@ -462,13 +461,13 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             Query query = GetFieldQuery(field, queryText, true);
 
-            if (query is PhraseQuery)
+            if (query is PhraseQuery phraseQuery)
             {
-                ((PhraseQuery)query).Slop = slop;
+                phraseQuery.Slop = slop;
             }
-            if (query is MultiPhraseQuery)
+            if (query is MultiPhraseQuery multiPhraseQuery)
             {
-                ((MultiPhraseQuery)query).Slop = slop;
+                multiPhraseQuery.Slop = slop;
             }
 
             return query;
@@ -487,8 +486,6 @@ namespace Lucene.Net.QueryParsers.Classic
             }
 
             string shortDateFormat = Locale.DateTimeFormat.ShortDatePattern;
-            DateTime d1;
-            DateTime d2 = DateTime.MaxValue; // We really don't care what we set this to, but we need something or the compiler will complain below
             DateTools.Resolution resolution = GetDateResolution(field);
 
             // LUCENENET specific: This doesn't emulate java perfectly.
@@ -512,12 +509,12 @@ namespace Lucene.Net.QueryParsers.Classic
             // to DateTime.TryParse(part1, Locale, DateTimeStyles.None, out d1);
             // rather than TryParseExact
 
-            if (DateTime.TryParseExact(part1, shortDateFormat, Locale, DateTimeStyles.None, out d1))
+            if (DateTime.TryParseExact(part1, shortDateFormat, Locale, DateTimeStyles.None, out DateTime d1))
             {
                 part1 = DateTools.DateToString(d1, resolution);
             }
 
-            if (DateTime.TryParseExact(part2, shortDateFormat, Locale, DateTimeStyles.None, out d2))
+            if (DateTime.TryParseExact(part2, shortDateFormat, Locale, DateTimeStyles.None, out DateTime d2))
             {
                 if (endInclusive)
                 {

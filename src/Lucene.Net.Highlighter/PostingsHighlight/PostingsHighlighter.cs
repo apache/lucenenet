@@ -219,8 +219,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         public virtual string[] Highlight(string field, Query query, IndexSearcher searcher, TopDocs topDocs, int maxPassages)
         {
             IDictionary<string, string[]> res = HighlightFields(new string[] { field }, query, searcher, topDocs, new int[] { maxPassages });
-            string[] result;
-            res.TryGetValue(field, out result);
+            res.TryGetValue(field, out string[] result);
             return result;
         }
 
@@ -509,7 +508,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 
             // check if we should do any multiterm processing
             Analyzer analyzer = GetIndexAnalyzer(field);
-            CharacterRunAutomaton[] automata = new CharacterRunAutomaton[0];
+            CharacterRunAutomaton[] automata = Arrays.Empty<CharacterRunAutomaton>();
             if (analyzer != null)
             {
                 automata = MultiTermHighlighting.ExtractAutomata(query, field);

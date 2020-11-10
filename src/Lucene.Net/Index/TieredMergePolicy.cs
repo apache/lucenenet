@@ -545,20 +545,17 @@ namespace Lucene.Net.Index
 
             double finalMergeScore = mergeScore;
 
-            return new MergeScoreAnonymousInnerClassHelper(this, skew, nonDelRatio, finalMergeScore);
+            return new MergeScoreAnonymousInnerClassHelper(skew, nonDelRatio, finalMergeScore);
         }
 
         private class MergeScoreAnonymousInnerClassHelper : MergeScore
         {
-            private readonly TieredMergePolicy outerInstance;
+            private readonly double skew;
+            private readonly double nonDelRatio;
+            private readonly double finalMergeScore;
 
-            private double skew;
-            private double nonDelRatio;
-            private double finalMergeScore;
-
-            public MergeScoreAnonymousInnerClassHelper(TieredMergePolicy outerInstance, double skew, double nonDelRatio, double finalMergeScore)
+            public MergeScoreAnonymousInnerClassHelper(double skew, double nonDelRatio, double finalMergeScore)
             {
-                this.outerInstance = outerInstance;
                 this.skew = skew;
                 this.nonDelRatio = nonDelRatio;
                 this.finalMergeScore = finalMergeScore;
@@ -584,8 +581,7 @@ namespace Lucene.Net.Index
             bool? segmentIsOriginal = false;
             foreach (SegmentCommitInfo info in infos.Segments)
             {
-                bool? isOriginal;
-                if (segmentsToMerge.TryGetValue(info, out isOriginal))
+                if (segmentsToMerge.TryGetValue(info, out bool? isOriginal))
                 {
                     segmentIsOriginal = isOriginal;
                     if (!merging.Contains(info))

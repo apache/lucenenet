@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Fst
@@ -426,6 +427,7 @@ namespace Lucene.Net.Util.Fst
             private int nextBuffer;
             private int nextRead;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override byte ReadByte()
             {
                 if (nextRead == outerInstance.blockSize)
@@ -436,6 +438,7 @@ namespace Lucene.Net.Util.Fst
                 return current[nextRead++];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void SkipBytes(int count)
             {
                 Position += count;
@@ -482,11 +485,13 @@ namespace Lucene.Net.Util.Fst
             public override bool IsReversed => false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual FST.BytesReader GetReverseReader()
         {
             return GetReverseReader(true);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual FST.BytesReader GetReverseReader(bool allowSingle)
         {
             if (allowSingle && blocks.Count == 1)
@@ -512,6 +517,7 @@ namespace Lucene.Net.Util.Fst
             private int nextBuffer;
             private int nextRead;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override byte ReadByte()
             {
                 if (nextRead == -1)
@@ -522,11 +528,13 @@ namespace Lucene.Net.Util.Fst
                 return current[nextRead--];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void SkipBytes(int count)
             {
                 Position -= count;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void ReadBytes(byte[] b, int offset, int len)
             {
                 for (int i = 0; i < len; i++)

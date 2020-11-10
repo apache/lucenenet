@@ -86,10 +86,10 @@ namespace Lucene.Net.Util
         /// </summary>
         private static readonly Regex ContainsNonNetNumeric = new Regex("(?<![Pp]o|[Pp]r|[Jj]o)[Ii]nt(?!16|32|64|er|eg|ro)|[Ll]ong(?!est|er)|[Ss]hort(?!est|er)|[Ff]loat", RegexOptions.Compiled);
 
-        /// <summary>
-        /// Constants should not contain the word INT that is not followed by 16, 32, or 64, LONG, SHORT, or FLOAT
-        /// </summary>
-        private static readonly Regex ConstContainsNonNetNumeric = new Regex("(?<!PO|PR|JO)INT(?!16|32|64|ER|EG|RO)|LONG(?!EST|ER)|SHORT(?!EST|ER)|FLOAT", RegexOptions.Compiled);
+        ///// <summary>
+        ///// Constants should not contain the word INT that is not followed by 16, 32, or 64, LONG, SHORT, or FLOAT
+        ///// </summary>
+        //private static readonly Regex ConstContainsNonNetNumeric = new Regex("(?<!PO|PR|JO)INT(?!16|32|64|ER|EG|RO)|LONG(?!EST|ER)|SHORT(?!EST|ER)|FLOAT", RegexOptions.Compiled);
 
         /// <summary>
         /// Matches IL code pattern for a method body with only a return statement for a local variable.

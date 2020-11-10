@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -123,7 +124,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             else
             {
-                this.rootArcs = new FST.Arc<object>[0];
+                this.rootArcs = Arrays.Empty<FST.Arc<object>>();
             }
             this.higherWeightsFirst = higherWeightsFirst;
             this.exactFirst = exactFirst;

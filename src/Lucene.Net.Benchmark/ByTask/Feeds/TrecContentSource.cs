@@ -89,7 +89,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         private readonly List<FileInfo> inputFiles = new List<FileInfo>();
         private int nextFile = 0;
         // Use to synchronize threads on reading from the TREC documents.
-        private object @lock = new object();
+        private readonly object @lock = new object(); // LUCENENET: marked readonly
 
         // Required for test
         internal TextReader reader;
@@ -143,7 +143,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     if (collectMatchLine)
                     {
                         buf.Append(sep).Append(line);
-                        sep = NEW_LINE;
+                        //sep = NEW_LINE; // LUCENENET: IDE0059: Remove unnecessary value assignment - this skips out of the loop
                     }
                     return;
                 }
@@ -158,7 +158,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         internal virtual void OpenNextFile()
         {
-            Dispose();
+            DoClose();
             //currPathType = null; 
             while (true)
             {
@@ -216,7 +216,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             return null;
         }
 
-        protected override void Dispose(bool disposing)
+        private void DoClose() // LUCENENET specific - separate disposing from closing so those tasks that "reopen" can continue
         {
             if (reader == null)
             {
@@ -225,7 +225,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             try
             {
-                reader.Dispose();
+                reader?.Dispose();
             }
             catch (IOException e)
             {
@@ -236,6 +236,21 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
             }
             reader = null;
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="TrecContentSource"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                DoClose();
+                trecDocBuffer?.Dispose(); // LUCENENET specific
+            }
         }
 
         public override DocData GetNextDocData(DocData docData)
@@ -293,7 +308,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             lock (@lock)
             {
                 base.ResetInputs();
-                Dispose();
+                DoClose();
                 nextFile = 0;
                 iteration = 0;
             }
@@ -305,7 +320,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // dirs
             DirectoryInfo workDir = new DirectoryInfo(config.Get("work.dir", "work"));
             string d = config.Get("docs.dir", "trec");
-            dataDir = new DirectoryInfo(d);
+            dataDir = new DirectoryInfo(Path.Combine(workDir.FullName, d));
             // files
             CollectFiles(dataDir, inputFiles);
             if (inputFiles.Count == 0)

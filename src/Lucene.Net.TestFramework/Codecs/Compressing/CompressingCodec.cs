@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// <summary>
         /// Creates a compressing codec with a given <paramref name="segmentSuffix"/>.
         /// </summary>
-        public CompressingCodec(string segmentSuffix, CompressionMode compressionMode, int chunkSize)
+        protected CompressingCodec(string segmentSuffix, CompressionMode compressionMode, int chunkSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(new Lucene46Codec())
         {
             this.storedFieldsFormat = new CompressingStoredFieldsFormat(this.Name, segmentSuffix, compressionMode, chunkSize);
@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.Compressing
         /// <summary>
         /// Creates a compressing codec with an empty segment suffix.
         /// </summary>
-        public CompressingCodec(CompressionMode compressionMode, int chunkSize)
+        protected CompressingCodec(CompressionMode compressionMode, int chunkSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this("", compressionMode, chunkSize)
         { }
 

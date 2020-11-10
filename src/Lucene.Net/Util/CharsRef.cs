@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using WritableArrayAttribute = Lucene.Net.Support.WritableArrayAttribute;
 
 namespace Lucene.Net.Util
@@ -112,6 +113,7 @@ namespace Lucene.Net.Util
         /// object.
         /// </summary>
         /// <seealso cref="DeepCopyOf(CharsRef)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object Clone()
         {
             return new CharsRef(chars, Offset, Length);
@@ -131,14 +133,14 @@ namespace Lucene.Net.Util
 
         public override bool Equals(object other)
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }
 
-            if (other is CharsRef)
+            if (other is CharsRef charsRef)
             {
-                return this.CharsEquals(((CharsRef)other));
+                return this.CharsEquals(charsRef);
             }
             return false;
         }
@@ -207,6 +209,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="other">
         ///          The <see cref="CharsRef"/> to copy. </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyChars(CharsRef other)
         {
             CopyChars(other.chars, other.Offset, other.Length);
@@ -259,6 +262,7 @@ namespace Lucene.Net.Util
             Length = newLen;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string ToString()
         {
             return new string(chars, Offset, Length);
@@ -279,6 +283,7 @@ namespace Lucene.Net.Util
         // LUCENENET specific - added to .NETify
         public char this[int index]
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 // NOTE: must do a real check here to meet the specs of CharSequence
@@ -388,6 +393,7 @@ namespace Lucene.Net.Util
         /// The returned <see cref="CharsRef"/> will have a Length of <c>other.Length</c>
         /// and an offset of zero.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static CharsRef DeepCopyOf(CharsRef other)
         {
             CharsRef clone = new CharsRef();

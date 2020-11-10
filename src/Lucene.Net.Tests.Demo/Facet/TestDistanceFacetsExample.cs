@@ -28,23 +28,19 @@ namespace Lucene.Net.Demo.Facet
         [Test]
         public void TestSimple()
         {
-            using (DistanceFacetsExample example = new DistanceFacetsExample())
-            {
-                example.Index();
-                FacetResult result = example.Search();
-                assertEquals("dim=field path=[] value=3 childCount=4\n  < 1 km (1)\n  < 2 km (2)\n  < 5 km (2)\n  < 10 km (3)\n", result.toString());
-            }
+            using DistanceFacetsExample example = new DistanceFacetsExample();
+            example.Index();
+            FacetResult result = example.Search();
+            assertEquals("dim=field path=[] value=3 childCount=4\n  < 1 km (1)\n  < 2 km (2)\n  < 5 km (2)\n  < 10 km (3)\n", result.toString());
         }
 
         [Test]
         public void TestDrillDown()
         {
-            using (DistanceFacetsExample example = new DistanceFacetsExample())
-            {
-                example.Index();
-                TopDocs hits = example.DrillDown(DistanceFacetsExample.FIVE_KM);
-                assertEquals(2, hits.TotalHits);
-            }
+            using DistanceFacetsExample example = new DistanceFacetsExample();
+            example.Index();
+            TopDocs hits = example.DrillDown(DistanceFacetsExample.FIVE_KM);
+            assertEquals(2, hits.TotalHits);
         }
     }
 }

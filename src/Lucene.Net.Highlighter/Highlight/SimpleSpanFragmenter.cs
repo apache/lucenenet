@@ -27,11 +27,11 @@ namespace Lucene.Net.Search.Highlight
     /// </summary>
     public class SimpleSpanFragmenter : IFragmenter
     {
-        private static int DEFAULT_FRAGMENT_SIZE = 100;
-        private int fragmentSize;
+        private const int DEFAULT_FRAGMENT_SIZE = 100;
+        private readonly int fragmentSize; // LUCENENET: marked readonly
         private int currentNumFrags;
         private int position = -1;
-        private QueryScorer queryScorer;
+        private readonly QueryScorer queryScorer; // LUCENENET: marked readonly
         private int waitForPos = -1;
         private int textSize;
         private ICharTermAttribute termAtt;

@@ -3,6 +3,7 @@ using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -142,6 +143,7 @@ namespace Lucene.Net.Util.Automaton
         /// Selects minimization algorithm (default: <c>MINIMIZE_HOPCROFT</c>).
         /// </summary>
         /// <param name="algorithm"> minimization algorithm </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetMinimization(int algorithm)
         {
             minimization = algorithm;
@@ -154,6 +156,7 @@ namespace Lucene.Net.Util.Automaton
         /// automata. By default, the flag is not set.
         /// </summary>
         /// <param name="flag"> if <c>true</c>, the flag is set </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetMinimizeAlways(bool flag)
         {
             minimize_always = flag;
@@ -167,6 +170,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         /// <param name="flag"> if <c>true</c>, the flag is set </param>
         /// <returns> previous value of the flag </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool SetAllowMutate(bool flag)
         {
             bool b = allow_mutation;
@@ -183,6 +187,7 @@ namespace Lucene.Net.Util.Automaton
         /// <returns> current value of the flag </returns>
         internal static bool AllowMutate => allow_mutation;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void CheckMinimizeAlways()
         {
             if (minimize_always)
@@ -216,6 +221,7 @@ namespace Lucene.Net.Util.Automaton
         /// Gets initial state.
         /// </summary>
         /// <returns> state </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual State GetInitialState()
         {
             ExpandSingleton();
@@ -292,6 +298,7 @@ namespace Lucene.Net.Util.Automaton
             return numberedStates;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void SetNumberedStates(State[] states)
         {
             SetNumberedStates(states, states.Length);
@@ -313,6 +320,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void ClearNumberedStates()
         {
             numberedStates = null;
@@ -386,6 +394,7 @@ namespace Lucene.Net.Util.Automaton
         /// are manipulated manually.
         /// </summary>
         /// <seealso cref="IsDeterministic"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void RestoreInvariant()
         {
             RemoveDeadTransitions();
@@ -608,6 +617,7 @@ namespace Lucene.Net.Util.Automaton
             return c;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool Equals(object obj)
         {
             var other = obj as Automaton;
@@ -743,6 +753,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns a clone of this automaton, expands if singleton.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual Automaton CloneExpanded()
         {
             Automaton a = (Automaton)Clone();
@@ -754,6 +765,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns a clone of this automaton unless <see cref="allow_mutation"/> is
         /// set, expands if singleton.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual Automaton CloneExpandedIfRequired()
         {
             if (allow_mutation)
@@ -803,6 +815,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns a clone of this automaton, or this automaton itself if
         /// <see cref="allow_mutation"/> flag is set.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual Automaton CloneIfRequired()
         {
             if (allow_mutation)
@@ -818,6 +831,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Concatenate(Automaton, Automaton)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton Concatenate(Automaton a)
         {
             return BasicOperations.Concatenate(this, a);
@@ -826,6 +840,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Concatenate(IList{Automaton})"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Automaton Concatenate(IList<Automaton> l)
         {
             return BasicOperations.Concatenate(l);
@@ -834,6 +849,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Optional(Automaton)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton Optional()
         {
             return BasicOperations.Optional(this);
@@ -842,6 +858,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Repeat(Automaton)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton Repeat()
         {
             return BasicOperations.Repeat(this);
@@ -850,6 +867,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Repeat(Automaton, int)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton Repeat(int min)
         {
             return BasicOperations.Repeat(this, min);
@@ -858,6 +876,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Repeat(Automaton, int, int)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton Repeat(int min, int max)
         {
             return BasicOperations.Repeat(this, min, max);
@@ -866,6 +885,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Complement(Automaton)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton Complement()
         {
             return BasicOperations.Complement(this);
@@ -874,6 +894,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Minus(Automaton, Automaton)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton Minus(Automaton a)
         {
             return BasicOperations.Minus(this, a);
@@ -882,6 +903,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Intersection(Automaton, Automaton)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton Intersection(Automaton a)
         {
             return BasicOperations.Intersection(this, a);
@@ -890,6 +912,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.SubsetOf(Automaton, Automaton)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool SubsetOf(Automaton a)
         {
             return BasicOperations.SubsetOf(this, a);
@@ -898,6 +921,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Union(Automaton, Automaton)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton Union(Automaton a)
         {
             return BasicOperations.Union(this, a);
@@ -906,6 +930,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Union(ICollection{Automaton})"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Automaton Union(ICollection<Automaton> l)
         {
             return BasicOperations.Union(l);
@@ -914,6 +939,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// See <see cref="BasicOperations.Determinize(Automaton)"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Determinize()
         {
             BasicOperations.Determinize(this);
@@ -928,6 +954,7 @@ namespace Lucene.Net.Util.Automaton
         /// See <see cref="MinimizationOperations.Minimize(Automaton)"/>. Returns the
         /// automaton being given as argument.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Automaton Minimize(Automaton a)
         {
             MinimizationOperations.Minimize(a);

@@ -67,16 +67,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
     /// <seealso cref="IQueryNodeProcessor"/>
     public abstract class QueryNodeProcessor : IQueryNodeProcessor
     {
-        private List<ChildrenList> childrenListPool = new List<ChildrenList>();
+        private readonly List<ChildrenList> childrenListPool = new List<ChildrenList>(); // LUCENENET: marked readonly
 
         private QueryConfigHandler queryConfig;
 
-        public QueryNodeProcessor()
+        protected QueryNodeProcessor() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             // empty constructor
         }
 
-        public QueryNodeProcessor(QueryConfigHandler queryConfigHandler)
+        protected QueryNodeProcessor(QueryConfigHandler queryConfigHandler) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.queryConfig = queryConfigHandler;
         }

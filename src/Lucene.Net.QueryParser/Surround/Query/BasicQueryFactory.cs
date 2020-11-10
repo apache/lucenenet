@@ -51,7 +51,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
         {
         }
 
-        private int maxBasicQueries;
+        private readonly int maxBasicQueries; // LUCENENET: marked readonly
         private int queriesMade;
 
         public virtual int NrQueriesMade => queriesMade;

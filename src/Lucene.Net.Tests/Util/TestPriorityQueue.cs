@@ -253,7 +253,7 @@ namespace Lucene.Net.Util
 
             // Does not populate it
             pq = new IntegerQueue(maxSize, false);
-            Assert.AreEqual(pq.Top, default(int?));
+            Assert.AreEqual(pq.Top, default);
             Assert.AreEqual(pq.Count, 0);
         }
 

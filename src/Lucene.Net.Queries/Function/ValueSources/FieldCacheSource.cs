@@ -29,7 +29,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         protected readonly string m_field;
         protected readonly IFieldCache m_cache = Search.FieldCache.DEFAULT;
 
-        public FieldCacheSource(string field)
+        protected FieldCacheSource(string field) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_field = field;
         }
@@ -45,11 +45,8 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as FieldCacheSource;
-            if (other == null)
-            {
-                return false;
-            }
+            if (o is null) return false;
+            if (!(o is FieldCacheSource other)) return false;
             return m_field.Equals(other.m_field, StringComparison.Ordinal) && m_cache == other.m_cache;
         }
 

@@ -84,9 +84,9 @@ namespace Lucene.Net.Search
         {
             private readonly FilteredQuery outerInstance;
 
-            private Lucene.Net.Search.Weight weight;
+            private readonly Weight weight;
 
-            public WeightAnonymousInnerClassHelper(FilteredQuery outerInstance, Lucene.Net.Search.Weight weight)
+            public WeightAnonymousInnerClassHelper(FilteredQuery outerInstance, Weight weight)
             {
                 this.outerInstance = outerInstance;
                 this.weight = weight;

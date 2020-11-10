@@ -31,18 +31,12 @@ namespace Lucene.Net.Analysis.Util
     /// <see cref="IOUtils"/> to obtain <see cref="TextReader"/> instances.
     /// @lucene.internal
     /// </summary>
-    public class WordlistLoader
+    public static class WordlistLoader // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         private const int INITIAL_CAPACITY = 16;
 
         // LUCENENET specific
         private readonly static Regex WHITESPACE = new Regex("\\s+", RegexOptions.Compiled);
-
-        /// <summary>
-        /// no instance </summary>
-        private WordlistLoader()
-        {
-        }
 
         // LUCENENET TODO: Add .NET overloads that accept a file name? Or at least a FileInfo object as was done in 3.0.3?
 

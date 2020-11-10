@@ -48,8 +48,7 @@ namespace Lucene.Net.Spatial.Prefix.Tree
         public static SpatialPrefixTree MakeSPT(IDictionary<string, string> args, SpatialContext ctx)
         {
             SpatialPrefixTreeFactory instance;
-            string cname;
-            if (!args.TryGetValue(PREFIX_TREE, out cname))
+            if (!args.TryGetValue(PREFIX_TREE, out string cname))
             {
                 cname = ctx.IsGeo ? "geohash" : "quad";
             }
@@ -86,15 +85,13 @@ namespace Lucene.Net.Spatial.Prefix.Tree
 
         protected internal virtual void InitMaxLevels()
         {
-            string mlStr;
-            if (m_args.TryGetValue(MAX_LEVELS, out mlStr))
+            if (m_args.TryGetValue(MAX_LEVELS, out string mlStr))
             {
                 m_maxLevels = int.Parse(mlStr, CultureInfo.InvariantCulture);
                 return;
             }
             double degrees;
-            string maxDetailDistStr;
-            if (!m_args.TryGetValue(MAX_DIST_ERR, out maxDetailDistStr))
+            if (!m_args.TryGetValue(MAX_DIST_ERR, out string maxDetailDistStr))
             {
                 if (!m_ctx.IsGeo)
                 {

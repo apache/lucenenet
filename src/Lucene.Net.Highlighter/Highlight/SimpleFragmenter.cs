@@ -26,7 +26,7 @@ namespace Lucene.Net.Search.Highlight
     /// </summary>
     public class SimpleFragmenter : IFragmenter
     {
-        private static readonly int DEFAULT_FRAGMENT_SIZE = 100;
+        private const int DEFAULT_FRAGMENT_SIZE = 100;
         private int currentNumFrags;
         private int fragmentSize;
         private IOffsetAttribute offsetAtt;

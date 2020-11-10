@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -70,6 +71,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <returns> If this segment shares stored fields &amp; vectors, this
         ///         offset is where in that file this segment's docs begin.  </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetDocStoreOffset(SegmentInfo si)
         {
             string v = si.GetAttribute(DS_OFFSET_KEY);
@@ -77,13 +79,15 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <returns> Name used to derive fields/vectors file we share with other segments. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string GetDocStoreSegment(SegmentInfo si)
         {
             string v = si.GetAttribute(DS_NAME_KEY);
-            return v == null ? si.Name : v;
+            return v ?? si.Name;
         }
 
         /// <returns> Whether doc store files are stored in compound file (*.cfx). </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool GetDocStoreIsCompoundFile(SegmentInfo si)
         {
             string v = si.GetAttribute(DS_COMPOUND_KEY);

@@ -58,15 +58,10 @@ namespace Lucene.Net.Search
     /// </summary>
     public class FuzzyTermsEnum : TermsEnum
     {
-        private void InitializeInstanceFields()
-        {
-            boostAtt = Attributes.AddAttribute<IBoostAttribute>();
-        }
-
         private TermsEnum actualEnum;
         private IBoostAttribute actualBoostAtt;
 
-        private IBoostAttribute boostAtt;
+        private readonly IBoostAttribute boostAtt;
 
         private readonly IMaxNonCompetitiveBoostAttribute maxBoostAtt;
         private readonly ILevenshteinAutomataAttribute dfaAtt;
@@ -112,7 +107,7 @@ namespace Lucene.Net.Search
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public FuzzyTermsEnum(Terms terms, AttributeSource atts, Term term, float minSimilarity, int prefixLength, bool transpositions)
         {
-            InitializeInstanceFields();
+            boostAtt = Attributes.AddAttribute<IBoostAttribute>();
             if (minSimilarity >= 1.0f && minSimilarity != (int)minSimilarity)
             {
                 throw new ArgumentException("fractional edit distances are not allowed");
@@ -361,25 +356,20 @@ namespace Lucene.Net.Search
         /// </summary>
         private class AutomatonFuzzyTermsEnum : FilteredTermsEnum
         {
-            internal virtual void InitializeInstanceFields()
-            {
-                boostAtt = Attributes.AddAttribute<IBoostAttribute>();
-            }
-
             private readonly FuzzyTermsEnum outerInstance;
 
             private readonly ByteRunAutomaton[] matchers;
 
             private readonly BytesRef termRef;
 
-            private IBoostAttribute boostAtt;
+            private readonly IBoostAttribute boostAtt;
 
             public AutomatonFuzzyTermsEnum(FuzzyTermsEnum outerInstance, TermsEnum tenum, CompiledAutomaton[] compiled)
                 : base(tenum, false)
             {
                 this.outerInstance = outerInstance;
 
-                InitializeInstanceFields();
+                boostAtt = Attributes.AddAttribute<IBoostAttribute>();
                 this.matchers = new ByteRunAutomaton[compiled.Length];
                 for (int i = 0; i < compiled.Length; i++)
                 {

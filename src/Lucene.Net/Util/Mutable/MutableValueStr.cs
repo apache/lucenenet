@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Util.Mutable
 {
     /*
@@ -30,11 +32,13 @@ namespace Lucene.Net.Util.Mutable
             Value = new BytesRef();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object ToObject()
         {
             return Exists ? Value.Utf8ToString() : null;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Copy(MutableValue source)
         {
             MutableValueStr s = (MutableValueStr)source;
@@ -42,6 +46,7 @@ namespace Lucene.Net.Util.Mutable
             Value.CopyBytes(s.Value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override MutableValue Duplicate()
         {
             MutableValueStr v = new MutableValueStr();
@@ -50,6 +55,7 @@ namespace Lucene.Net.Util.Mutable
             return v;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool EqualsSameType(object other)
         {
             MutableValueStr b = (MutableValueStr)other;
@@ -71,6 +77,7 @@ namespace Lucene.Net.Util.Mutable
             return Exists ? 1 : -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
             return Value.GetHashCode();

@@ -5,6 +5,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -71,6 +72,7 @@ namespace Lucene.Net.Util
                 RecycleByteBlocks(b, 0, b.Length);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual byte[] GetByteBlock()
             {
                 return new byte[m_blockSize];
@@ -91,6 +93,7 @@ namespace Lucene.Net.Util
             {
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
             {
             }
@@ -115,12 +118,14 @@ namespace Lucene.Net.Util
                 this.bytesUsed = bytesUsed;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override byte[] GetByteBlock()
             {
                 bytesUsed.AddAndGet(m_blockSize);
                 return new byte[m_blockSize];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void RecycleByteBlocks(byte[][] blocks, int start, int end)
             {
                 bytesUsed.AddAndGet(-((end - start) * m_blockSize));
@@ -185,6 +190,7 @@ namespace Lucene.Net.Util
         /// <see cref="Allocator.RecycleByteBlocks(byte[][], int, int)"/>. Calling
         /// <see cref="ByteBlockPool.NextBuffer()"/> is not needed after reset.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             Reset(true, true);

@@ -88,6 +88,8 @@ namespace Lucene.Net.Analysis.Core
         private static readonly IDictionary<ConstructorInfo, IPredicate<object[]>> brokenOffsetsConstructors = new Dictionary<ConstructorInfo, IPredicate<object[]>>();
 
         internal static readonly ISet<Type> allowedTokenizerArgs, allowedTokenFilterArgs, allowedCharFilterArgs;
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Complexity")]
         static TestRandomChains()
         {
             try
@@ -336,9 +338,7 @@ namespace Lucene.Net.Analysis.Core
 
             public AnonymousProducer(Func<Random, object> create)
             {
-                if (create == null)
-                    throw new ArgumentNullException("create");
-                this.create = create;
+                this.create = create ?? throw new ArgumentNullException(nameof(create));
             }
 
             public object Create(Random random)
@@ -502,22 +502,18 @@ namespace Lucene.Net.Analysis.Core
             public object Create(Random random)
             {
                 // TODO: make nastier
-                using (Stream affixStream = typeof(TestHunspellStemFilter).getResourceAsStream("simple.aff"))
+                using Stream affixStream = typeof(TestHunspellStemFilter).getResourceAsStream("simple.aff");
+                using Stream dictStream = typeof(TestHunspellStemFilter).getResourceAsStream("simple.dic");
+                try
                 {
-                    using (Stream dictStream = typeof(TestHunspellStemFilter).getResourceAsStream("simple.dic"))
-                    {
-                        try
-                        {
-                            return new Dictionary(affixStream, dictStream);
-                        }
-                        catch (Exception /*ex*/)
-                        {
-                            throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
+                    return new Dictionary(affixStream, dictStream);
+                }
+                catch (Exception /*ex*/)
+                {
+                    throw; // LUCENENET: CA2200: Rethrow to preserve stack details (https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details)
 #pragma warning disable 162
-                            return null; // unreachable code
+                    return null; // unreachable code
 #pragma warning restore 162
-                        }
-                    }
                 }
             }
         }
@@ -553,11 +549,9 @@ namespace Lucene.Net.Analysis.Core
                 // TODO: make nastier
                 try
                 {
-                    using (Stream @is = typeof(TestCompoundWordTokenFilter).getResourceAsStream("da_UTF8.xml"))
-                    {
-                        HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
-                        return hyphenator;
-                    }
+                    using Stream @is = typeof(TestCompoundWordTokenFilter).getResourceAsStream("da_UTF8.xml");
+                    HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
+                    return hyphenator;
                 }
                 catch (Exception /*ex*/)
                 {
@@ -673,12 +667,12 @@ namespace Lucene.Net.Analysis.Core
                     do
                     {
                         input = TestUtil.RandomRealisticUnicodeString(random);
-                    } while (input == string.Empty);
+                    } while (input.Length == 0); // LUCENENET: CA1820: Test for empty strings using string length
                     string @out = ""; TestUtil.RandomSimpleString(random);
                     do
                     {
                         @out = TestUtil.RandomRealisticUnicodeString(random);
-                    } while (@out == string.Empty);
+                    } while (@out.Length == 0); // LUCENENET: CA1820: Test for empty strings using string length
                     builder.Add(input, @out);
                 }
                 try
@@ -923,15 +917,15 @@ namespace Lucene.Net.Analysis.Core
                 //{
                 //    Rethrow.rethrow(ie);
                 //}
-                return default(T); // no success
+                return default; // no success
             }
 
-            private bool Broken(ConstructorInfo ctor, object[] args)
+            private static bool Broken(ConstructorInfo ctor, object[] args) // LUCENENET: CA1822: Mark members as static
             {
                 return brokenConstructors.TryGetValue(ctor, out IPredicate<object[]> pred) && pred != null && pred.Apply(args);
             }
 
-            private bool BrokenOffsets(ConstructorInfo ctor, object[] args)
+            private static bool BrokenOffsets(ConstructorInfo ctor, object[] args) // LUCENENET: CA1822: Mark members as static
             {
                 return brokenOffsetsConstructors.TryGetValue(ctor, out IPredicate<object[]> pred) && pred != null && pred.Apply(args);
             }

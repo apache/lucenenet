@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         }
 
         // LUCENENET specific - need to load this first for LoadLangs() to work
-        private static readonly string LANGUAGE_RULES_RN = "lang.txt";
+        private const string LANGUAGE_RULES_RN = "lang.txt";
 
         private static readonly IDictionary<NameType, Lang> langs = LoadLangs();
 
@@ -131,8 +131,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         /// <returns>A Lang encapsulating the language guessing rules for that name type.</returns>
         public static Lang GetInstance(NameType nameType)
         {
-            Lang result;
-            langs.TryGetValue(nameType, out result);
+            langs.TryGetValue(nameType, out Lang result);
             return result;
         }
 

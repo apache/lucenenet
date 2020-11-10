@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
@@ -61,7 +62,7 @@ namespace Lucene.Net.Util
         private int lastCount = -1;
         private int[] ids;
         private readonly BytesStartArray bytesStartArray;
-        private Counter bytesUsed;
+        private readonly Counter bytesUsed; // LUCENENET: marked readonly
 
         /// <summary>
         /// Creates a new <see cref="BytesRefHash"/> with a <see cref="ByteBlockPool"/> using a
@@ -93,7 +94,7 @@ namespace Lucene.Net.Util
             Arrays.Fill(ids, -1);
             this.bytesStartArray = bytesStartArray;
             bytesStart = bytesStartArray.Init();
-            bytesUsed = bytesStartArray.BytesUsed() == null ? Counter.NewCounter() : bytesStartArray.BytesUsed();
+            bytesUsed = bytesStartArray.BytesUsed() ?? Counter.NewCounter();
             bytesUsed.AddAndGet(hashSize * RamUsageEstimator.NUM_BYTES_INT32);
         }
 
@@ -169,6 +170,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="comp">
         ///          The <see cref="T:IComparer{BytesRef}"/> used for sorting </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int[] Sort(IComparer<BytesRef> comp)
         {
             int[] compact = Compact();
@@ -178,11 +180,11 @@ namespace Lucene.Net.Util
 
         private class IntroSorterAnonymousInnerClassHelper : IntroSorter
         {
-            private BytesRefHash outerInstance;
+            private readonly BytesRefHash outerInstance;
 
-            private IComparer<BytesRef> comp;
-            private int[] compact;
-            private readonly BytesRef pivot = new BytesRef(), scratch1 = new BytesRef(), scratch2 = new BytesRef();
+            private readonly IComparer<BytesRef> comp;
+            private readonly int[] compact;
+            private readonly BytesRef pivot = new BytesRef(), /*scratch1 = new BytesRef(), // LUCENENET: Never read */ scratch2 = new BytesRef();
 
             public IntroSorterAnonymousInnerClassHelper(BytesRefHash outerInstance, IComparer<BytesRef> comp, int[] compact)
             {
@@ -202,11 +204,13 @@ namespace Lucene.Net.Util
             {
                 int id1 = compact[i], id2 = compact[j];
                 if (Debugging.AssertsEnabled) Debugging.Assert(outerInstance.bytesStart.Length > id1 && outerInstance.bytesStart.Length > id2);
+                // LUCENENET NOTE: It is critical that this be outerInstance.scratch1 instead of scratch1
                 outerInstance.pool.SetBytesRef(outerInstance.scratch1, outerInstance.bytesStart[id1]);
                 outerInstance.pool.SetBytesRef(scratch2, outerInstance.bytesStart[id2]);
                 return comp.Compare(outerInstance.scratch1, scratch2);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void SetPivot(int i)
             {
                 int id = compact[i];
@@ -223,6 +227,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool Equals(int id, BytesRef b)
         {
             pool.SetBytesRef(scratch1, bytesStart[id]);
@@ -274,6 +279,7 @@ namespace Lucene.Net.Util
             Arrays.Fill(ids, -1);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
             Clear(true);
@@ -373,6 +379,7 @@ namespace Lucene.Net.Util
         /// </param>
         /// <returns> The id of the given bytes, or <c>-1</c> if there is no mapping for the
         ///         given bytes. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Find(BytesRef bytes)
         {
             return ids[FindHash(bytes)];
@@ -515,6 +522,7 @@ namespace Lucene.Net.Util
         }
 
         // TODO: maybe use long?  But our keys are typically short...
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int DoHash(byte[] bytes, int offset, int length)
         {
             return StringHelper.Murmurhash3_x86_32(bytes, offset, length, StringHelper.GOOD_FAST_HASH_SEED);
@@ -547,6 +555,7 @@ namespace Lucene.Net.Util
         ///          The id to look up </param>
         /// <returns> The bytesStart offset into the internally used
         ///         <see cref="ByteBlockPool"/> for the given id </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int ByteStart(int bytesID)
         {
             if (Debugging.AssertsEnabled)
@@ -644,22 +653,26 @@ namespace Lucene.Net.Util
             {
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int[] Clear()
             {
                 return bytesStart = null;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int[] Grow()
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(bytesStart != null);
                 return bytesStart = ArrayUtil.Grow(bytesStart, bytesStart.Length + 1);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int[] Init()
             {
                 return bytesStart = new int[ArrayUtil.Oversize(m_initSize, RamUsageEstimator.NUM_BYTES_INT32)];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override Counter BytesUsed()
             {
                 return bytesUsed;

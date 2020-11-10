@@ -52,6 +52,8 @@ namespace Lucene.Net.Facet.Taxonomy
         private const int NUM_CHILDREN_CP_C = 5, NUM_CHILDREN_CP_D = 5;
         private static readonly FacetField[] CATEGORIES_A, CATEGORIES_B;
         private static readonly FacetField[] CATEGORIES_C, CATEGORIES_D;
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Complexity")]
         static TestTaxonomyFacetCounts2()
         {
             CATEGORIES_A = new FacetField[NUM_CHILDREN_CP_A];

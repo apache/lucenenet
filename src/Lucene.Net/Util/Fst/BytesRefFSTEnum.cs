@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -136,6 +137,7 @@ namespace Lucene.Net.Util.Fst
             set => current.Bytes[m_upto] = (byte)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Grow()
         {
             current.Bytes = ArrayUtil.Grow(current.Bytes, m_upto + 1);

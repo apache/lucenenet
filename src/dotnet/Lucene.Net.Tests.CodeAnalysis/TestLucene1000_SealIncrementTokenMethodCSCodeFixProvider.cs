@@ -73,7 +73,7 @@ namespace MyNamespace
             var expected = new DiagnosticResult
             {
                 Id = Lucene1000_TokenStreamOrItsIncrementTokenMethodMustBeSealedCSAnalyzer.DiagnosticId,
-                Message = String.Format("Type name '{0}' or its IncrementToken() method must be marked sealed.", "TypeName"),
+                Message = string.Format("Type name '{0}' or its IncrementToken() method must be marked sealed.", "TypeName"),
                 Severity = DiagnosticSeverity.Error,
                 Locations =
                     new[] {

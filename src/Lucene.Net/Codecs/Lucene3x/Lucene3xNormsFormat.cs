@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -35,6 +36,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             throw new NotSupportedException("this codec can only be used for reading");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DocValuesProducer NormsProducer(SegmentReadState state)
         {
             return new Lucene3xNormsProducer(state.Directory, state.SegmentInfo, state.FieldInfos, state.Context);

@@ -73,8 +73,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
             private PhonemeBuilder(Phoneme phoneme)
             {
-                this.phonemes = new JCG.LinkedHashSet<Phoneme>();
-                this.phonemes.Add(phoneme);
+                this.phonemes = new JCG.LinkedHashSet<Phoneme>
+                {
+                    phoneme
+                };
             }
 
             internal PhonemeBuilder(ISet<Phoneme> phonemes)
@@ -212,11 +214,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             public RulesApplication(IDictionary<string, IList<Rule>> finalRules, string input,
                                     PhonemeBuilder phonemeBuilder, int i, int maxPhonemes)
             {
-                if (finalRules == null)
-                {
-                    throw new ArgumentNullException("The finalRules argument must not be null");
-                }
-                this.finalRules = finalRules;
+                this.finalRules = finalRules ?? throw new ArgumentNullException(nameof(finalRules), "The finalRules argument must not be null");
                 this.phonemeBuilder = phonemeBuilder;
                 this.input = input;
                 this.i = i;
@@ -237,8 +235,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             {
                 this.found = false;
                 int patternLength = 1;
-                IList<Rule> rules;
-                if (this.finalRules.TryGetValue(input.Substring(i, patternLength), out rules) && rules != null)
+                if (this.finalRules.TryGetValue(input.Substring(i, patternLength), out IList<Rule> rules) && rules != null)
                 {
                     foreach (Rule rule in rules)
                     {
@@ -269,13 +266,14 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
         private static IDictionary<NameType, ISet<string>> LoadNamePrefixes() // LUCENENET: Avoid static constructors (see https://github.com/apache/lucenenet/pull/224#issuecomment-469284006)
         {
-            var namePrefixes = new Dictionary<NameType, ISet<string>>();
-            namePrefixes[NameType.ASHKENAZI] = new JCG.HashSet<string>() { "bar", "ben", "da", "de", "van", "von" }.AsReadOnly();
-            namePrefixes[NameType.SEPHARDIC] = new JCG.HashSet<string>() { "al", "el", "da", "dal", "de", "del", "dela", "de la",
-                                                              "della", "des", "di", "do", "dos", "du", "van", "von" }.AsReadOnly();
-            namePrefixes[NameType.GENERIC] = new JCG.HashSet<string>() { "da", "dal", "de", "del", "dela", "de la", "della",
-                                                          "des", "di", "do", "dos", "du", "van", "von" }.AsReadOnly();
-            return namePrefixes;
+            return new Dictionary<NameType, ISet<string>>
+            {
+                [NameType.ASHKENAZI] = new JCG.HashSet<string>() { "bar", "ben", "da", "de", "van", "von" }.AsReadOnly(),
+                [NameType.SEPHARDIC] = new JCG.HashSet<string>() { "al", "el", "da", "dal", "de", "del", "dela", "de la",
+                                                              "della", "des", "di", "do", "dos", "du", "van", "von" }.AsReadOnly(),
+                [NameType.GENERIC] = new JCG.HashSet<string>() { "da", "dal", "de", "del", "dela", "de la", "della",
+                                                          "des", "di", "do", "dos", "du", "van", "von" }.AsReadOnly()
+            };
         }
 
         /// <summary>

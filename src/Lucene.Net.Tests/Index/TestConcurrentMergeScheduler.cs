@@ -451,37 +451,33 @@ namespace Lucene.Net.Index
         [Test, LuceneNetSpecific]
         public void TestExceptionOnBackgroundThreadIsPropagatedToCallingThread()
         {
-            using (MockDirectoryWrapper dir = NewMockDirectory())
+            using MockDirectoryWrapper dir = NewMockDirectory();
+            dir.FailOn(new FailOnlyOnMerge());
+
+            Document doc = new Document();
+            Field idField = NewStringField("id", "", Field.Store.YES);
+            doc.Add(idField);
+
+            var mergeScheduler = new ConcurrentMergeScheduler();
+            using IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(mergeScheduler).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy()));
+            LogMergePolicy logMP = (LogMergePolicy)writer.Config.MergePolicy;
+            logMP.MergeFactor = 10;
+            for (int i = 0; i < 20; i++)
             {
-                dir.FailOn(new FailOnlyOnMerge());
-
-                Document doc = new Document();
-                Field idField = NewStringField("id", "", Field.Store.YES);
-                doc.Add(idField);
-
-                var mergeScheduler = new ConcurrentMergeScheduler();
-                using (IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetMergeScheduler(mergeScheduler).SetMaxBufferedDocs(2).SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH).SetMergePolicy(NewLogMergePolicy())))
-                {
-                    LogMergePolicy logMP = (LogMergePolicy)writer.Config.MergePolicy;
-                    logMP.MergeFactor = 10;
-                    for (int i = 0; i < 20; i++)
-                    {
-                        writer.AddDocument(doc);
-                    }
-
-                    bool exceptionHit = false;
-                    try
-                    {
-                        mergeScheduler.Sync();
-                    }
-                    catch (MergePolicy.MergeException)
-                    {
-                        exceptionHit = true;
-                    }
-
-                    assertTrue(exceptionHit);
-                }
+                writer.AddDocument(doc);
             }
+
+            bool exceptionHit = false;
+            try
+            {
+                mergeScheduler.Sync();
+            }
+            catch (MergePolicy.MergeException)
+            {
+                exceptionHit = true;
+            }
+
+            assertTrue(exceptionHit);
         }
     }
 }

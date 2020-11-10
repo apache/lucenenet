@@ -27,12 +27,9 @@ namespace Lucene.Net.Documents
     /// this class uses the <see cref="DeflateStream"/>
     /// class to compress and decompress.
     /// </summary>
-    public class CompressionTools
+    public static class CompressionTools // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         // Export only static methods
-        private CompressionTools()
-        {
-        }
 
         /// <summary>
         /// Compresses the specified <see cref="byte"/> range using the
@@ -45,7 +42,6 @@ namespace Lucene.Net.Documents
             {
                 using (DeflateStream deflateStream = new DeflateStream(compressionMemoryStream, compressionLevel))
                 {
-
                     deflateStream.Write(value, offset, length);
                 }
                 resultArray = compressionMemoryStream.ToArray();
@@ -114,12 +110,10 @@ namespace Lucene.Net.Documents
 
             using (MemoryStream decompressedStream = new MemoryStream())
             {
-                using (MemoryStream compressedStream = new MemoryStream(value))
+                using (MemoryStream compressedStream = new MemoryStream(value, offset, length))
                 {
-                    using (DeflateStream dStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
-                    {
-                        dStream.CopyTo(decompressedStream);
-                    }
+                    using DeflateStream dStream = new DeflateStream(compressedStream, CompressionMode.Decompress);
+                    dStream.CopyTo(decompressedStream);
                 }
                 decompressedBytes = decompressedStream.ToArray();
             }

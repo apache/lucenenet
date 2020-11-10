@@ -32,30 +32,32 @@ namespace Lucene.Net.Codecs.Sep
     /// </summary>
     public sealed class SepPostingsWriter : PostingsWriterBase
     {
-        internal readonly static string CODEC = "SepPostingsWriter";
+        internal const string CODEC = "SepPostingsWriter";
 
-        internal readonly static string DOC_EXTENSION = "doc";
-        internal readonly static string SKIP_EXTENSION = "skp";
-        internal readonly static string FREQ_EXTENSION = "frq";
-        internal readonly static string POS_EXTENSION = "pos";
-        internal readonly static string PAYLOAD_EXTENSION = "pyl";
+        internal const string DOC_EXTENSION = "doc";
+        internal const string SKIP_EXTENSION = "skp";
+        internal const string FREQ_EXTENSION = "frq";
+        internal const string POS_EXTENSION = "pos";
+        internal const string PAYLOAD_EXTENSION = "pyl";
 
         // Increment version to change it:
-        internal readonly static int VERSION_START = 0;
-        internal readonly static int VERSION_CURRENT = VERSION_START;
+        internal const int VERSION_START = 0;
+        internal const int VERSION_CURRENT = VERSION_START;
 
-        private Int32IndexOutput freqOut;
-        private Int32IndexOutput.Index freqIndex;
+#pragma warning disable CA2213 // Disposable fields should be disposed
+        private readonly Int32IndexOutput freqOut; // LUCENENET: marked readonly
+        private readonly Int32IndexOutput.Index freqIndex; // LUCENENET: marked readonly
 
-        private Int32IndexOutput posOut;
-        private Int32IndexOutput.Index posIndex;
+        private readonly Int32IndexOutput posOut; // LUCENENET: marked readonly
+        private readonly Int32IndexOutput.Index posIndex; // LUCENENET: marked readonly
 
-        private Int32IndexOutput docOut;
-        private Int32IndexOutput.Index docIndex;
+        private readonly Int32IndexOutput docOut; // LUCENENET: marked readonly
+        private readonly Int32IndexOutput.Index docIndex; // LUCENENET: marked readonly
 
-        private IndexOutput payloadOut;
+        private readonly IndexOutput payloadOut; // LUCENENET: marked readonly
 
-        private IndexOutput skipOut;
+        private readonly IndexOutput skipOut; // LUCENENET: marked readonly
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         private readonly SepSkipListWriter skipListWriter;
 
@@ -67,7 +69,7 @@ namespace Lucene.Net.Codecs.Sep
         /// accelerable cases. More detailed experiments would be useful here. 
         /// </summary>
         private readonly int skipInterval;
-        private static readonly int DEFAULT_SKIP_INTERVAL = 16;
+        private const int DEFAULT_SKIP_INTERVAL = 16;
 
         /// <summary>
         /// Expert: minimum docFreq to write any skip data at all.
@@ -85,7 +87,7 @@ namespace Lucene.Net.Codecs.Sep
         private bool storePayloads;
         private IndexOptions indexOptions;
 
-        private FieldInfo fieldInfo;
+        //private FieldInfo fieldInfo; // LUCENENET: Never read
 
         private int lastPayloadLength;
         private int lastPosition;
@@ -195,7 +197,7 @@ namespace Lucene.Net.Codecs.Sep
         // our parent calls setField whenever the field changes
         public override int SetField(FieldInfo fieldInfo)
         {
-            this.fieldInfo = fieldInfo;
+            //this.fieldInfo = fieldInfo; // LUCENENET: Never read
             this.indexOptions = fieldInfo.IndexOptions;
             // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
             if (IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)

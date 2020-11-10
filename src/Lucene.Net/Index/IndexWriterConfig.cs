@@ -390,10 +390,7 @@ namespace Lucene.Net.Index
                     throw new InvalidOperationException(cce.Message, cce);
                 }
             }
-            set
-            {
-                this.indexerThreadPool = new DocumentsWriterPerThreadPool(value);
-            }
+            set => this.indexerThreadPool = new DocumentsWriterPerThreadPool(value);
         }
 
         /// <summary>

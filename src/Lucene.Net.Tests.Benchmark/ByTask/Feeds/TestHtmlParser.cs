@@ -111,15 +111,13 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         [Test]
         public void TestTurkish()
         {
-            using (var context = new CultureContext("tr-TR"))
-            {
-                String text = "<html><HEAD><TITLE>ııı</TITLE></head><body>" +
-                    "<IMG SRC=\"../images/head.jpg\" WIDTH=570 HEIGHT=47 BORDER=0 ALT=\"ş\">" +
-                    "<a title=\"(ııı)\"></body></html>";
-                Parser parser = new Parser(new StringReader(text));
-                assertEquals("ııı", parser.Title);
-                assertEquals("[ş]", parser.Body);
-            }
+            using var context = new CultureContext("tr-TR");
+            String text = "<html><HEAD><TITLE>ııı</TITLE></head><body>" +
+                "<IMG SRC=\"../images/head.jpg\" WIDTH=570 HEIGHT=47 BORDER=0 ALT=\"ş\">" +
+                "<a title=\"(ııı)\"></body></html>";
+            Parser parser = new Parser(new StringReader(text));
+            assertEquals("ııı", parser.Title);
+            assertEquals("[ş]", parser.Body);
         }
 
         [Test]

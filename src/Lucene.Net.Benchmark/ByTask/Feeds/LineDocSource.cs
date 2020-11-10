@@ -186,7 +186,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// Construct with the header 
         /// </summary>
         /// <param name="header">header line found in the input file, or <c>null</c> if none.</param>
-        public LineParser(string[] header)
+        protected LineParser(string[] header) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_header = header;
         }

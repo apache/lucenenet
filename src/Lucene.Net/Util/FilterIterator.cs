@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -57,6 +58,7 @@ namespace Lucene.Net.Util
         }
 
         // LUCENENET specific - seems logical to call reset on the underlying implementation
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             current = default;
@@ -67,6 +69,7 @@ namespace Lucene.Net.Util
 
         object System.Collections.IEnumerator.Current => current;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose() => iter.Dispose();
     }
 
@@ -77,15 +80,15 @@ namespace Lucene.Net.Util
     public abstract class FilterIterator<T> : IEnumerator<T>
     {
         private readonly IEnumerator<T> iter;
-        private T next = default(T);
+        private T next = default;
         private bool nextIsSet = false;
-        private T current = default(T);
+        private T current = default;
 
         /// <summary>
         /// Returns <c>true</c>, if this element should be set to <see cref="Current"/> by <see cref="SetNext()"/>. </summary>
         protected abstract bool PredicateFunction(T @object);
 
-        public FilterIterator(IEnumerator<T> baseIterator)
+        protected FilterIterator(IEnumerator<T> baseIterator) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.iter = baseIterator;
         }
@@ -105,7 +108,7 @@ namespace Lucene.Net.Util
             finally
             {
                 nextIsSet = false;
-                next = default(T);
+                next = default;
             }
             return true;
         }

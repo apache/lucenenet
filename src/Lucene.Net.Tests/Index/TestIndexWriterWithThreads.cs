@@ -644,19 +644,17 @@ namespace Lucene.Net.Index
                     Document doc = new Document();
                     Field field = NewTextField("field", "testData", Field.Store.YES);
                     doc.Add(field);
-                    using (IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(
+                    using IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         outerInstance,
 #endif
-                        TEST_VERSION_CURRENT, new MockAnalyzer(Random))))
+                        TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+                    if (iwConstructed.CurrentCount > 0)
                     {
-                        if (iwConstructed.CurrentCount > 0)
-                        {
-                            iwConstructed.Signal();
-                        }
-                        startIndexing.Wait();
-                        writer.AddDocument(doc);
+                        iwConstructed.Signal();
                     }
+                    startIndexing.Wait();
+                    writer.AddDocument(doc);
                 }
                 catch (Exception e)
                 {

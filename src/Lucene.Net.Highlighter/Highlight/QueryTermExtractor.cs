@@ -105,10 +105,10 @@ namespace Lucene.Net.Search.Highlight
         {
             try
             {
-                if (query is BooleanQuery)
-                    GetTermsFromBooleanQuery((BooleanQuery)query, terms, prohibited, fieldName);
-                else if (query is FilteredQuery)
-                    GetTermsFromFilteredQuery((FilteredQuery)query, terms, prohibited, fieldName);
+                if (query is BooleanQuery booleanQuery)
+                    GetTermsFromBooleanQuery(booleanQuery, terms, prohibited, fieldName);
+                else if (query is FilteredQuery filteredQuery)
+                    GetTermsFromFilteredQuery(filteredQuery, terms, prohibited, fieldName);
                 else
                 {
                     var nonWeightedTerms = new JCG.HashSet<Term>();
@@ -122,9 +122,7 @@ namespace Lucene.Net.Search.Highlight
                     }
                 }
             }
-#pragma warning disable 168
-            catch (NotSupportedException ignore)
-#pragma warning restore 168
+            catch (NotSupportedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
             {
                 //this is non-fatal for our purposes
             }

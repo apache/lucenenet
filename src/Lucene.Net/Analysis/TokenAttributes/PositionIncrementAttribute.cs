@@ -62,9 +62,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
                 return true;
             }
 
-            if (other is PositionIncrementAttribute)
+            if (other is PositionIncrementAttribute _other)
             {
-                PositionIncrementAttribute _other = (PositionIncrementAttribute)other;
                 return positionIncrement == _other.positionIncrement;
             }
 

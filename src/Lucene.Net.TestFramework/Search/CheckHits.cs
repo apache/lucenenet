@@ -410,9 +410,9 @@ namespace Lucene.Net.Search
                                     maxTimesOthers = true;
                                 }
                             }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                             catch (FormatException e)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                             {
                             }
                         }
@@ -574,7 +574,7 @@ namespace Lucene.Net.Search
 
         public virtual void Collect(int doc)
         {
-            Explanation exp = null;
+            Explanation exp; // LUCENENET: IDE0059: Remove unnecessary value assignment
             doc = doc + @base;
             try
             {

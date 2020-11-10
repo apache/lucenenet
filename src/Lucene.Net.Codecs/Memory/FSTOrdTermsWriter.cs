@@ -148,10 +148,12 @@ namespace Lucene.Net.Codecs.Memory
         public const int SKIP_INTERVAL = 8;
 
         private readonly PostingsWriterBase postingsWriter;
-        private readonly FieldInfos fieldInfos;
+        //private readonly FieldInfos fieldInfos; // LUCENENET: Never read
         private readonly IList<FieldMetaData> _fields = new List<FieldMetaData>();
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput blockOut = null;
-        private IndexOutput indexOut = null;
+        private readonly IndexOutput indexOut = null; // LUCENENET: marked readonly
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         public FSTOrdTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter)
         {
@@ -161,7 +163,7 @@ namespace Lucene.Net.Codecs.Memory
                 TERMS_BLOCK_EXTENSION);
 
             this.postingsWriter = postingsWriter;
-            fieldInfos = state.FieldInfos;
+            //fieldInfos = state.FieldInfos; // LUCENENET: Never read
 
             var success = false;
             try

@@ -38,17 +38,14 @@ namespace Lucene.Net.Codecs.DiskDV
 
         public override DocValuesConsumer FieldsConsumer(SegmentWriteState state)
         {
-            return new Lucene45DocValuesConsumerAnonymousHelper(this, state);
+            return new Lucene45DocValuesConsumerAnonymousHelper(state);
         }
 
         private class Lucene45DocValuesConsumerAnonymousHelper : Lucene45DocValuesConsumer
         {
-            private readonly DiskDocValuesFormat outerInstance;
-
-            public Lucene45DocValuesConsumerAnonymousHelper(DiskDocValuesFormat outerInstance, SegmentWriteState state)
+            public Lucene45DocValuesConsumerAnonymousHelper(SegmentWriteState state)
                 : base(state, DATA_CODEC, DATA_EXTENSION, META_CODEC, META_EXTENSION)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override void AddTermsDict(FieldInfo field, IEnumerable<BytesRef> values)

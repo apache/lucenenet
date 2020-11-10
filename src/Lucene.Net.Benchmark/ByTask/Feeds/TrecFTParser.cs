@@ -25,11 +25,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// </summary>
     public class TrecFTParser : TrecDocParser
     {
-        private static readonly string DATE = "<DATE>";
-        private static readonly string DATE_END = "</DATE>";
+        private const string DATE = "<DATE>";
+        private const string DATE_END = "</DATE>";
 
-        private static readonly string HEADLINE = "<HEADLINE>";
-        private static readonly string HEADLINE_END = "</HEADLINE>";
+        private const string HEADLINE = "<HEADLINE>";
+        private const string HEADLINE_END = "</HEADLINE>";
 
         public override DocData Parse(DocData docData, string name, TrecContentSource trecSrc,
             StringBuilder docBuf, ParsePathType pathType)

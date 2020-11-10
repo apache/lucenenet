@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -154,6 +155,7 @@ namespace Lucene.Net.Util.Fst
             return NewPair(outputs1.Add(prefix.Output1, output.Output1), outputs2.Add(prefix.Output2, output.Output2));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Write(Pair output, DataOutput writer)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Valid(output));
@@ -161,6 +163,7 @@ namespace Lucene.Net.Util.Fst
             outputs2.Write(output.Output2, writer);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override Pair Read(DataInput @in)
         {
             A output1 = outputs1.Read(@in);
@@ -170,6 +173,7 @@ namespace Lucene.Net.Util.Fst
 
         public override Pair NoOutput => NO_OUTPUT;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string OutputToString(Pair output)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Valid(output));

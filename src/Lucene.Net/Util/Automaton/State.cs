@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 /*
@@ -220,6 +221,7 @@ namespace Lucene.Net.Util.Automaton
         /// transitions from <paramref name="to"/> to this state, and if 
         /// <paramref name="to"/> is an accept state then set accept for this state.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void AddEpsilon(State to)
         {
             if (to.accept)
@@ -350,6 +352,7 @@ namespace Lucene.Net.Util.Automaton
         /// Compares this object with the specified object for order. States are
         /// ordered by the time of construction.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual int CompareTo(State s)
         {
             return s.id - id;
@@ -362,6 +365,7 @@ namespace Lucene.Net.Util.Automaton
         // IndexOutOfRangeExceptions when using FuzzyTermsEnum.
         // See GH-296.
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
             return id;

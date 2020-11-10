@@ -44,5 +44,28 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             dd.Value = source.GetNextDocData(dd.Value);
             return 1;
         }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="ConsumeContentSourceTask"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    dd.Dispose(); // LUCENENET specific - dispose dd
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
+        }
     }
 }

@@ -32,112 +32,88 @@ namespace Lucene.Net.Analysis.Hunspell
         [Test]
         public virtual void TestSimpleDictionary()
         {
-            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("simple.aff"))
-            {
-                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("simple.dic"))
-                {
+            using Stream affixStream = this.GetType().getResourceAsStream("simple.aff");
+            using Stream dictStream = this.GetType().getResourceAsStream("simple.dic");
+            Dictionary dictionary = new Dictionary(affixStream, dictStream);
+            assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
+            assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
+            Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+            assertNotNull(ordList);
+            assertEquals(1, ordList.Length);
 
-                    Dictionary dictionary = new Dictionary(affixStream, dictStream);
-                    assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
-                    assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
-                    Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
-                    assertNotNull(ordList);
-                    assertEquals(1, ordList.Length);
+            BytesRef @ref = new BytesRef();
+            dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
+            char[] flags = Dictionary.DecodeFlags(@ref);
+            assertEquals(1, flags.Length);
 
-                    BytesRef @ref = new BytesRef();
-                    dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
-                    char[] flags = Dictionary.DecodeFlags(@ref);
-                    assertEquals(1, flags.Length);
-
-                    ordList = dictionary.LookupWord(new char[] { 'l', 'u', 'c', 'e', 'n' }, 0, 5);
-                    assertNotNull(ordList);
-                    assertEquals(1, ordList.Length);
-                    dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
-                    flags = Dictionary.DecodeFlags(@ref);
-                    assertEquals(1, flags.Length);
-                }
-            }
+            ordList = dictionary.LookupWord(new char[] { 'l', 'u', 'c', 'e', 'n' }, 0, 5);
+            assertNotNull(ordList);
+            assertEquals(1, ordList.Length);
+            dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
+            flags = Dictionary.DecodeFlags(@ref);
+            assertEquals(1, flags.Length);
         }
 
         [Test]
         public virtual void TestCompressedDictionary()
         {
-            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("compressed.aff"))
-            {
-                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("compressed.dic"))
-                {
-
-                    Dictionary dictionary = new Dictionary(affixStream, dictStream);
-                    assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
-                    assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
-                    Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
-                    BytesRef @ref = new BytesRef();
-                    dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
-                    char[] flags = Dictionary.DecodeFlags(@ref);
-                    assertEquals(1, flags.Length);
-                }
-            }
+            using Stream affixStream = this.GetType().getResourceAsStream("compressed.aff");
+            using Stream dictStream = this.GetType().getResourceAsStream("compressed.dic");
+            Dictionary dictionary = new Dictionary(affixStream, dictStream);
+            assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
+            assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
+            Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+            BytesRef @ref = new BytesRef();
+            dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
+            char[] flags = Dictionary.DecodeFlags(@ref);
+            assertEquals(1, flags.Length);
         }
 
         [Test]
         public virtual void TestCompressedBeforeSetDictionary()
         {
-            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("compressed-before-set.aff"))
-            {
-                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("compressed.dic"))
-                {
-
-                    Dictionary dictionary = new Dictionary(affixStream, dictStream);
-                    assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
-                    assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
-                    Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
-                    BytesRef @ref = new BytesRef();
-                    dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
-                    char[] flags = Dictionary.DecodeFlags(@ref);
-                    assertEquals(1, flags.Length);
-                }
-            }
+            using Stream affixStream = this.GetType().getResourceAsStream("compressed-before-set.aff");
+            using Stream dictStream = this.GetType().getResourceAsStream("compressed.dic");
+            Dictionary dictionary = new Dictionary(affixStream, dictStream);
+            assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
+            assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
+            Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+            BytesRef @ref = new BytesRef();
+            dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
+            char[] flags = Dictionary.DecodeFlags(@ref);
+            assertEquals(1, flags.Length);
         }
 
         [Test]
         public virtual void TestCompressedEmptyAliasDictionary()
         {
-            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("compressed-empty-alias.aff"))
-            {
-                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("compressed.dic"))
-                {
-                    Dictionary dictionary = new Dictionary(affixStream, dictStream);
-                    assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
-                    assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
-                    Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
-                    BytesRef @ref = new BytesRef();
-                    dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
-                    char[] flags = Dictionary.DecodeFlags(@ref);
-                    assertEquals(1, flags.Length);
-                }
-            }
+            using Stream affixStream = this.GetType().getResourceAsStream("compressed-empty-alias.aff");
+            using Stream dictStream = this.GetType().getResourceAsStream("compressed.dic");
+            Dictionary dictionary = new Dictionary(affixStream, dictStream);
+            assertEquals(3, dictionary.LookupSuffix(new char[] { 'e' }, 0, 1).Length);
+            assertEquals(1, dictionary.LookupPrefix(new char[] { 's' }, 0, 1).Length);
+            Int32sRef ordList = dictionary.LookupWord(new char[] { 'o', 'l', 'r' }, 0, 3);
+            BytesRef @ref = new BytesRef();
+            dictionary.flagLookup.Get(ordList.Int32s[0], @ref);
+            char[] flags = Dictionary.DecodeFlags(@ref);
+            assertEquals(1, flags.Length);
         }
 
         // malformed rule causes ParseException
         [Test]
         public virtual void TestInvalidData()
         {
-            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("broken.aff"))
+            using Stream affixStream = this.GetType().getResourceAsStream("broken.aff");
+            using Stream dictStream = this.GetType().getResourceAsStream("simple.dic");
+            try
             {
-                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("simple.dic"))
-                {
-
-                    try
-                    {
-                        new Dictionary(affixStream, dictStream);
-                        fail("didn't get expected exception");
-                    }
-                    catch (Exception expected)
-                    {
-                        assertTrue(expected.Message.StartsWith("The affix file contains a rule with less than four elements", StringComparison.Ordinal));
-                        //assertEquals(24, expected.ErrorOffset); // No parse exception in LUCENENET
-                    }
-                }
+                new Dictionary(affixStream, dictStream);
+                fail("didn't get expected exception");
+            }
+            catch (Exception expected)
+            {
+                assertTrue(expected.Message.StartsWith("The affix file contains a rule with less than four elements", StringComparison.Ordinal));
+                //assertEquals(24, expected.ErrorOffset); // No parse exception in LUCENENET
             }
         }
 
@@ -145,20 +121,16 @@ namespace Lucene.Net.Analysis.Hunspell
         [Test]
         public virtual void TestInvalidFlags()
         {
-            using (System.IO.Stream affixStream = this.GetType().getResourceAsStream("broken-flags.aff"))
+            using Stream affixStream = this.GetType().getResourceAsStream("broken-flags.aff");
+            using Stream dictStream = this.GetType().getResourceAsStream("simple.dic");
+            try
             {
-                using (System.IO.Stream dictStream = this.GetType().getResourceAsStream("simple.dic"))
-                {
-                    try
-                    {
-                        new Dictionary(affixStream, dictStream);
-                        fail("didn't get expected exception");
-                    }
-                    catch (Exception expected)
-                    {
-                        assertTrue(expected.Message.StartsWith("expected only one flag", StringComparison.Ordinal));
-                    }
-                }
+                new Dictionary(affixStream, dictStream);
+                fail("didn't get expected exception");
+            }
+            catch (Exception expected)
+            {
+                assertTrue(expected.Message.StartsWith("expected only one flag", StringComparison.Ordinal));
             }
         }
 

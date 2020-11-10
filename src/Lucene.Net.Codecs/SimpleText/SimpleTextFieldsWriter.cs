@@ -75,12 +75,10 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTextTermsWriter : TermsConsumer
         {
-            private readonly SimpleTextFieldsWriter _outerInstance;
             private readonly SimpleTextPostingsWriter _postingsWriter;
 
             public SimpleTextTermsWriter(SimpleTextFieldsWriter outerInstance, FieldInfo field)
             {
-                _outerInstance = outerInstance;
                 _postingsWriter = new SimpleTextPostingsWriter(outerInstance, field);
             }
 

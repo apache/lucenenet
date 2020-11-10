@@ -82,12 +82,14 @@ namespace Lucene.Net.Store
 
         private readonly Directory directory;
         private readonly string fileName;
-        private readonly int readBufferSize;
+        //private readonly int readBufferSize; // LUCENENET: Never read
         private readonly IDictionary<string, FileEntry> entries;
         private readonly bool openForWrite;
         private static readonly IDictionary<string, FileEntry> SENTINEL = Collections.EmptyMap<string, FileEntry>();
         private readonly CompoundFileWriter writer;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInputSlicer handle;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         /// <summary>
         /// Create a new <see cref="CompoundFileDirectory"/>.
@@ -96,7 +98,7 @@ namespace Lucene.Net.Store
         {
             this.directory = directory;
             this.fileName = fileName;
-            this.readBufferSize = BufferedIndexInput.GetBufferSize(context);
+            //this.readBufferSize = BufferedIndexInput.GetBufferSize(context); // LUCENENET: Never read
             this.IsOpen = false;
             this.openForWrite = openForWrite;
             if (!openForWrite)
@@ -370,7 +372,9 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Not implemented </summary>
         /// <exception cref="NotSupportedException"> always: not supported by CFS  </exception>
+#pragma warning disable IDE0060, CA1822 // Remove unused parameter, Mark members as static
         public void RenameFile(string from, string to)
+#pragma warning restore IDE0060, CA1822 // Remove unused parameter, Mark members as static
         {
             throw new NotSupportedException();
         }
@@ -430,7 +434,7 @@ namespace Lucene.Net.Store
         {
             private readonly CompoundFileDirectory outerInstance;
 
-            private FileEntry entry;
+            private readonly FileEntry entry;
 
             public IndexInputSlicerAnonymousInnerClassHelper(CompoundFileDirectory outerInstance, FileEntry entry)
             {

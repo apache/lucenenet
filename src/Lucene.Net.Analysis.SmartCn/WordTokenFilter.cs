@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
     [Obsolete("Use HMMChineseTokenizer instead.")]
     public sealed class WordTokenFilter : TokenFilter
     {
-        private WordSegmenter wordSegmenter;
+        private readonly WordSegmenter wordSegmenter; // LUCENENET: marked readonly
 
         private IEnumerator<SegToken> tokenIter;
 
@@ -109,7 +109,32 @@ namespace Lucene.Net.Analysis.Cn.Smart
         public override void Reset()
         {
             base.Reset();
+            tokenIter?.Dispose(); // LUCENENET specific
             tokenIter = null;
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="WordTokenFilter"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    tokenIter?.Dispose(); // LUCENENET specific - dispose tokenIter and set to null
+                    tokenIter = null;
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
     }
 }

@@ -112,17 +112,13 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Return the priority that merge threads run at. This is always the same.
         /// </summary>
-        public int MergeThreadPriority
-        {
-            get
-            {
+        public int MergeThreadPriority =>
 #if !FEATURE_THREAD_PRIORITY
-                return 2;
+            2;
 #else
-                return (int)ThreadPriority.Normal;
-#endif 
-            }
-        }
+            (int)ThreadPriority.Normal;
+#endif
+
 
         /// <summary>
         /// This method has no effect in <see cref="TaskMergeScheduler"/> because the
@@ -176,6 +172,7 @@ namespace Lucene.Net.Index
         {
             Sync();
             _manualResetEvent.Dispose();
+            _lock.Dispose();
         }
 
         /// <summary>
@@ -219,10 +216,7 @@ namespace Lucene.Net.Index
         /// Returns the number of merge threads that are alive. Note that this number
         /// is &lt;= <see cref="_mergeThreads"/> size.
         /// </summary>
-        private int MergeThreadCount
-        {
-            get { return _mergeThreads.Count(x => x.IsAlive && x.CurrentMerge != null); }
-        }
+        private int MergeThreadCount => _mergeThreads.Count(x => x.IsAlive && x.CurrentMerge != null);
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
@@ -340,9 +334,7 @@ namespace Lucene.Net.Index
 
         private void OnMergeThreadCompleted(object sender, EventArgs e)
         {
-            var mergeThread = sender as MergeThread;
-
-            if (mergeThread == null)
+            if (!(sender is MergeThread mergeThread))
             {
                 return;
             }
@@ -636,10 +628,7 @@ namespace Lucene.Net.Index
                 {
                     _isDone = true;
 
-                    if (MergeThreadCompleted != null)
-                    {
-                        MergeThreadCompleted(this, EventArgs.Empty);
-                    }
+                    MergeThreadCompleted?.Invoke(this, EventArgs.Empty);
                 }
             }
 
@@ -664,9 +653,7 @@ namespace Lucene.Net.Index
 
             public override bool Equals(object obj)
             {
-                var compared = obj as MergeThread;
-
-                if (compared == null
+                if (!(obj is MergeThread compared)
                     || (Instance == null && compared.Instance != null)
                     || (Instance != null && compared.Instance == null))
                 {

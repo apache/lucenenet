@@ -37,13 +37,13 @@ namespace Lucene.Net.Sandbox.Queries
     [Obsolete("Use FuzzyQuery instead.")]
     public class SlowFuzzyQuery : MultiTermQuery
     {
-        public readonly static float defaultMinSimilarity = LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE;
-        public readonly static int defaultPrefixLength = 0;
-        public readonly static int defaultMaxExpansions = 50;
+        public const float defaultMinSimilarity = LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE;
+        public const int defaultPrefixLength = 0;
+        public const int defaultMaxExpansions = 50;
 
-        private float minimumSimilarity;
-        private int prefixLength;
-        private bool termLongEnough = false;
+        private readonly float minimumSimilarity; // LUCENENET: marked readonly
+        private readonly int prefixLength; // LUCENENET: marked readonly
+        private readonly bool termLongEnough = false; // LUCENENET: marked readonly
 
         protected Term m_term;
 

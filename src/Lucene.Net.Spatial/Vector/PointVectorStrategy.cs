@@ -85,8 +85,7 @@ namespace Lucene.Net.Spatial.Vector
 
         public override Field[] CreateIndexableFields(IShape shape)
         {
-            var point = shape as IPoint;
-            if (point != null)
+            if (shape is IPoint point)
                 return CreateIndexableFields(point);
 
             throw new NotSupportedException("Can only index IPoint, not " + shape);
@@ -140,9 +139,8 @@ namespace Lucene.Net.Spatial.Vector
                 var bbox = (IRectangle)shape;
                 return new ConstantScoreQuery(MakeWithin(bbox));
             }
-            else if (shape is ICircle)
+            else if (shape is ICircle circle)
             {
-                var circle = (ICircle)shape;
                 var bbox = circle.BoundingBox;
                 var vsf = new ValueSourceFilter(
                     new QueryWrapperFilter(MakeWithin(bbox)),
@@ -151,7 +149,7 @@ namespace Lucene.Net.Spatial.Vector
                     circle.Radius);
                 return new ConstantScoreQuery(vsf);
             }
-            
+
             throw new NotSupportedException("Only IRectangles and ICircles are currently supported, " +
                                             "found [" + shape.GetType().Name + "]"); //TODO
         }
@@ -187,10 +185,8 @@ namespace Lucene.Net.Spatial.Vector
               SpatialOperation.IsWithin))
             {
                 spatial = MakeWithin(bbox);
-                if (args.Shape is ICircle)
+                if (args.Shape is ICircle circle)
                 {
-                    var circle = (ICircle)args.Shape;
-
                     // Make the ValueSource
                     valueSource = MakeDistanceValueSource(shape.Center);
 
@@ -219,10 +215,11 @@ namespace Lucene.Net.Spatial.Vector
                 valueSource = MakeDistanceValueSource(shape.Center);
             }
             Query spatialRankingQuery = new FunctionQuery(valueSource);
-            var bq = new BooleanQuery();
-            bq.Add(spatial, Occur.MUST);
-            bq.Add(spatialRankingQuery, Occur.MUST);
-            return bq;
+            return new BooleanQuery
+            {
+                { spatial, Occur.MUST },
+                { spatialRankingQuery, Occur.MUST }
+            };
         }
 
         /// <summary>
@@ -268,10 +265,11 @@ namespace Lucene.Net.Spatial.Vector
             Query qX = RangeQuery(fieldNameX, bbox.MinX, bbox.MaxX);
             Query qY = RangeQuery(fieldNameY, bbox.MinY, bbox.MaxY);
 
-            var bq = new BooleanQuery();
-            bq.Add(qX, Occur.MUST_NOT);
-            bq.Add(qY, Occur.MUST_NOT);
-            return bq;
+            return new BooleanQuery
+            {
+                { qX, Occur.MUST_NOT },
+                { qY, Occur.MUST_NOT }
+            };
         }
     }
 }

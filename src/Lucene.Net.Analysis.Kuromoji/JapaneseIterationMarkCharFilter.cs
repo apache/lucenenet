@@ -60,10 +60,10 @@ namespace Lucene.Net.Analysis.Ja
         private const char FULL_STOP_PUNCTUATION = '\u3002';           // 。
 
         // Hiragana to dakuten map (lookup using code point - 0x30ab（か）*/
-        private static char[] h2d = new char[50];
+        private static readonly char[] h2d = new char[50]; // LUCENENET: marked readonly
 
         // Katakana to dakuten map (lookup using code point - 0x30ab（カ
-        private static char[] k2d = new char[50];
+        private static readonly char[] k2d = new char[50]; // LUCENENET: marked readonly
 
         private readonly RollingCharBuffer buffer = new RollingCharBuffer();
 
@@ -73,9 +73,9 @@ namespace Lucene.Net.Analysis.Ja
 
         private int iterationMarkSpanEndPosition = 0;
 
-        private bool normalizeKanji;
+        private readonly bool normalizeKanji; // LUCENENET: marked readonly
 
-        private bool normalizeKana;
+        private readonly bool normalizeKana; // LUCENENET: marked readonly
 
         static JapaneseIterationMarkCharFilter()
         {
@@ -327,7 +327,7 @@ namespace Lucene.Net.Analysis.Ja
         /// <param name="c">Hiragana character.</param>
         /// <param name="m">Repetition mark referring to <paramref name="c"/>.</param>
         /// <returns>Normalized character - return <paramref name="c"/> on illegal iteration marks.</returns>
-        private char NormalizedHiragana(char c, char m)
+        private static char NormalizedHiragana(char c, char m) // LUCENENET: CA1822: Mark members as static
         {
             switch (m)
             {
@@ -346,7 +346,7 @@ namespace Lucene.Net.Analysis.Ja
         /// <param name="c">Katakana character.</param>
         /// <param name="m">Repetition mark referring to <paramref name="c"/>.</param>
         /// <returns>Normalized character - return <paramref name="c"/> on illegal iteration marks.</returns>
-        private char NormalizedKatakana(char c, char m)
+        private static char NormalizedKatakana(char c, char m) // LUCENENET: CA1822: Mark members as static
         {
             switch (m)
             {
@@ -425,7 +425,7 @@ namespace Lucene.Net.Analysis.Ja
         /// </summary>
         /// <param name="c">Character to look up.</param>
         /// <returns>Hiragana dakuten variant of c or c itself if no dakuten variant exists.</returns>
-        private char LookupHiraganaDakuten(char c)
+        private static char LookupHiraganaDakuten(char c) // LUCENENET: CA1822: Mark members as static
         {
             return Lookup(c, h2d, '\u304b'); // Code point is for か
         }
@@ -435,7 +435,7 @@ namespace Lucene.Net.Analysis.Ja
         /// </summary>
         /// <param name="c">Character to look up.</param>
         /// <returns>Katakana dakuten variant of <paramref name="c"/> or <paramref name="c"/> itself if no dakuten variant exists.</returns>
-        private char LookupKatakanaDakuten(char c)
+        private static char LookupKatakanaDakuten(char c) // LUCENENET: CA1822: Mark members as static
         {
             return Lookup(c, k2d, '\u30ab'); // Code point is for カ
         }
@@ -445,7 +445,7 @@ namespace Lucene.Net.Analysis.Ja
         /// </summary>
         /// <param name="c">Character to check.</param>
         /// <returns><c>true</c> if c is a hiragana dakuten and otherwise <c>false</c>.</returns>
-        private bool IsHiraganaDakuten(char c)
+        private static bool IsHiraganaDakuten(char c) // LUCENENET: CA1822: Mark members as static
         {
             return Inside(c, h2d, '\u304b') && c == LookupHiraganaDakuten(c);
         }
@@ -455,7 +455,7 @@ namespace Lucene.Net.Analysis.Ja
         /// </summary>
         /// <param name="c">Character to check.</param>
         /// <returns><c>true</c> if c is a hiragana dakuten and otherwise <c>false</c>.</returns>
-        private bool IsKatakanaDakuten(char c)
+        private static bool IsKatakanaDakuten(char c) // LUCENENET: CA1822: Mark members as static
         {
             return Inside(c, k2d, '\u30ab') && c == LookupKatakanaDakuten(c);
         }
@@ -468,7 +468,7 @@ namespace Lucene.Net.Analysis.Ja
         /// <param name="map">Dakuten map.</param>
         /// <param name="offset">Code point offset from <paramref name="c"/>.</param>
         /// <returns>Mapped character or <paramref name="c"/> if no mapping exists.</returns>
-        private char Lookup(char c, char[] map, char offset)
+        private static char Lookup(char c, char[] map, char offset) // LUCENENET: CA1822: Mark members as static
         {
             if (!Inside(c, map, offset))
             {
@@ -487,7 +487,7 @@ namespace Lucene.Net.Analysis.Ja
         /// <param name="map">Dakuten map.</param>
         /// <param name="offset">Code point offset from <paramref name="c"/>.</param>
         /// <returns><c>true</c> if <paramref name="c"/> is mapped by map and otherwise <c>false</c>.</returns>
-        private bool Inside(char c, char[] map, char offset)
+        private static bool Inside(char c, char[] map, char offset) // LUCENENET: CA1822: Mark members as static
         {
             return c >= offset && c < offset + map.Length;
         }

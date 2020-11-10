@@ -3,7 +3,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using BytesRef = Lucene.Net.Util.BytesRef;
 using FieldInfos = Lucene.Net.Index.FieldInfos;
 
@@ -51,6 +51,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal int newSuffixStart; // only valid right after .read is called
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CompareTo(TermBuffer other)
         {
             if (field == other.field) // fields are interned
@@ -99,6 +100,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(Term term)
         {
             if (term == null)
@@ -113,6 +115,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             this.term = term;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(TermBuffer other)
         {
             field = other.field;
@@ -123,6 +126,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             bytes.CopyBytes(other.bytes);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset()
         {
             field = null;
@@ -130,6 +134,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             currentFieldNumber = -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Term ToTerm()
         {
             if (field == null) // unset
@@ -142,16 +147,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public object Clone()
         {
-            TermBuffer clone = null;
-            try
-            {
-                clone = (TermBuffer)base.MemberwiseClone();
-            }
-#pragma warning disable 168
-            catch (InvalidOperationException e)
-#pragma warning restore 168
-            {
-            }
+            // LUCENENET: MemberwiseClone() doesn't throw in .NET
+            TermBuffer clone = (TermBuffer)base.MemberwiseClone();
             clone.bytes = BytesRef.DeepCopyOf(bytes);
             return clone;
         }

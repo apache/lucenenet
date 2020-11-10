@@ -35,7 +35,7 @@ namespace Lucene.Net.Benchmarks.Quality
 
         private double maxGoodPoints;
         private double recall;
-        private double[] pAt;
+        private readonly double[] pAt; // LUCENENET: marked readonly
         private double pReleventSum = 0;
         private double numPoints = 0;
         private double numGoodPoints = 0;
@@ -48,8 +48,8 @@ namespace Lucene.Net.Benchmarks.Quality
         /// </summary>
         public class RecallPoint
         {
-            private int rank;
-            private double recall;
+            private readonly int rank; // LUCENENET: marked readonly
+            private readonly double recall; // LUCENENET: marked readonly
             internal RecallPoint(int rank, double recall)
             {
                 this.rank = rank;
@@ -63,7 +63,7 @@ namespace Lucene.Net.Benchmarks.Quality
             public virtual double Recall => recall;
         }
 
-        private IList<RecallPoint> recallPoints;
+        private readonly IList<RecallPoint> recallPoints; // LUCENENET: marked readonly
 
         /// <summary>
         /// Construct a QualityStats object with anticipated maximal number of relevant hits. 
@@ -162,7 +162,7 @@ namespace Lucene.Net.Benchmarks.Quality
             {
                 logger.WriteLine(title);
             }
-            prefix = prefix == null ? "" : prefix;
+            prefix = prefix ?? "";
             string nf = "{0:F3}";
             int M = 19;
             logger.WriteLine(prefix + Format("Search Seconds: ", M) +
@@ -192,10 +192,10 @@ namespace Lucene.Net.Benchmarks.Quality
             }
         }
 
-        private static string padd = "                                    ";
+        private const string padd = "                                    ";
         private string Format(string s, int minLen)
         {
-            s = (s == null ? "" : s);
+            s = (s ?? "");
             int n = Math.Max(minLen, s.Length);
             return (s + padd).Substring(0, n-0);
         }

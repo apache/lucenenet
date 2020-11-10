@@ -26,8 +26,8 @@ namespace Lucene.Net.Store
     public class NoLockFactory : LockFactory
     {
         // Single instance returned whenever makeLock is called.
-        private static NoLock singletonLock = new NoLock();
-        private static NoLockFactory singleton = new NoLockFactory();
+        private static readonly NoLock singletonLock = new NoLock(); // LUCENENET: marked readonly
+        private static readonly NoLockFactory singleton = new NoLockFactory(); // LUCENENET: marked readonly
 
         private NoLockFactory()
         {

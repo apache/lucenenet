@@ -186,32 +186,24 @@ namespace Lucene.Net.Analysis.Hunspell
                 FileInfo f = new FileInfo(System.IO.Path.Combine(DICTIONARY_HOME.FullName, tests[i]));
                 if (Debugging.AssertsEnabled) Debugging.Assert(f.Exists);
 
-                using (Stream fileStream = f.OpenRead())
-                {
-                    using (ZipArchive zip = new ZipArchive(fileStream, ZipArchiveMode.Read, false, Encoding.UTF8))
-                    {
-                        ZipArchiveEntry dicEntry = zip.GetEntry(tests[i + 1]);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(dicEntry != null);
-                        ZipArchiveEntry affEntry = zip.GetEntry(tests[i + 2]);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(affEntry != null);
+                using Stream fileStream = f.OpenRead();
+                using ZipArchive zip = new ZipArchive(fileStream, ZipArchiveMode.Read, false, Encoding.UTF8);
+                ZipArchiveEntry dicEntry = zip.GetEntry(tests[i + 1]);
+                if (Debugging.AssertsEnabled) Debugging.Assert(dicEntry != null);
+                ZipArchiveEntry affEntry = zip.GetEntry(tests[i + 2]);
+                if (Debugging.AssertsEnabled) Debugging.Assert(affEntry != null);
 
-                        using (Stream dictionary = dicEntry.Open())
-                        {
-                            using (Stream affix = affEntry.Open())
-                            {
-                                Dictionary dic = new Dictionary(affix, dictionary);
-                                Console.WriteLine(tests[i] + "\t" + RamUsageEstimator.HumanSizeOf(dic) + "\t(" +
-                                    "words=" + RamUsageEstimator.HumanSizeOf(dic.words) + ", " +
-                                    "flags=" + RamUsageEstimator.HumanSizeOf(dic.flagLookup) + ", " +
-                                    "strips=" + RamUsageEstimator.HumanSizeOf(dic.stripData) + ", " +
-                                    "conditions=" + RamUsageEstimator.HumanSizeOf(dic.patterns) + ", " +
-                                    "affixData=" + RamUsageEstimator.HumanSizeOf(dic.affixData) + ", " +
-                                    "prefixes=" + RamUsageEstimator.HumanSizeOf(dic.prefixes) + ", " +
-                                    "suffixes=" + RamUsageEstimator.HumanSizeOf(dic.suffixes) + ")");
-                            }
-                        }
-                    }
-                }
+                using Stream dictionary = dicEntry.Open();
+                using Stream affix = affEntry.Open();
+                Dictionary dic = new Dictionary(affix, dictionary);
+                Console.WriteLine(tests[i] + "\t" + RamUsageEstimator.HumanSizeOf(dic) + "\t(" +
+                    "words=" + RamUsageEstimator.HumanSizeOf(dic.words) + ", " +
+                    "flags=" + RamUsageEstimator.HumanSizeOf(dic.flagLookup) + ", " +
+                    "strips=" + RamUsageEstimator.HumanSizeOf(dic.stripData) + ", " +
+                    "conditions=" + RamUsageEstimator.HumanSizeOf(dic.patterns) + ", " +
+                    "affixData=" + RamUsageEstimator.HumanSizeOf(dic.affixData) + ", " +
+                    "prefixes=" + RamUsageEstimator.HumanSizeOf(dic.prefixes) + ", " +
+                    "suffixes=" + RamUsageEstimator.HumanSizeOf(dic.suffixes) + ")");
             }
         }
 
@@ -228,25 +220,16 @@ namespace Lucene.Net.Analysis.Hunspell
                     FileInfo f = new FileInfo(System.IO.Path.Combine(DICTIONARY_HOME.FullName, tests[i]));
                     if (Debugging.AssertsEnabled) Debugging.Assert(f.Exists);
 
-                    using (Stream fileStream = f.OpenRead())
-                    {
-                        using (ZipArchive zip = new ZipArchive(fileStream, ZipArchiveMode.Read, false, Encoding.UTF8))
-                        {
-                            ZipArchiveEntry dicEntry = zip.GetEntry(tests[i + 1]);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(dicEntry != null);
-                            ZipArchiveEntry affEntry = zip.GetEntry(tests[i + 2]);
-                            if (Debugging.AssertsEnabled) Debugging.Assert(affEntry != null);
+                    using Stream fileStream = f.OpenRead();
+                    using ZipArchive zip = new ZipArchive(fileStream, ZipArchiveMode.Read, false, Encoding.UTF8);
+                    ZipArchiveEntry dicEntry = zip.GetEntry(tests[i + 1]);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(dicEntry != null);
+                    ZipArchiveEntry affEntry = zip.GetEntry(tests[i + 2]);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(affEntry != null);
 
-                            using (Stream dictionary = dicEntry.Open())
-                            {
-                                using (Stream affix = affEntry.Open())
-                                {
-                                    new Dictionary(affix, dictionary);
-                                }
-                            }
-
-                        }
-                    }
+                    using Stream dictionary = dicEntry.Open();
+                    using Stream affix = affEntry.Open();
+                    new Dictionary(affix, dictionary);
                 }
             }
         }

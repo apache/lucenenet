@@ -6,6 +6,7 @@ using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -31,11 +32,13 @@ namespace Lucene.Net.Codecs.Compressing
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed class CompressingTermVectorsReader : TermVectorsReader, IDisposable
+    public sealed class CompressingTermVectorsReader : TermVectorsReader // LUCENENET specific - removed IDisposable, it is already implemented in base class
     {
         private readonly FieldInfos fieldInfos;
         internal readonly CompressingStoredFieldsIndexReader indexReader;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal readonly IndexInput vectorsStream;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly int version;
         private readonly int packedIntsVersion;
         private readonly CompressionMode compressionMode;
@@ -138,6 +141,7 @@ namespace Lucene.Net.Codecs.Compressing
         internal IndexInput VectorsStream => vectorsStream;
 
         /// <exception cref="ObjectDisposedException"> if this <see cref="TermVectorsReader"/> is disposed. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (closed)
@@ -146,6 +150,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (!closed)
@@ -155,6 +160,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object Clone()
         {
             return new CompressingTermVectorsReader(this);
@@ -313,7 +319,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 reader.Reset(vectorsStream, totalTerms);
                 // skip
-                toSkip = 0;
+                //toSkip = 0; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 for (int i = 0; i < skip; ++i)
                 {
                     for (int j = 0; j < numTerms.Get(i); ++j)
@@ -681,6 +687,7 @@ namespace Lucene.Net.Codecs.Compressing
                 this.suffixBytes = suffixBytes;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override IEnumerator<string> GetEnumerator()
             {
                 return GetFieldInfoNameEnumerable().GetEnumerator();
@@ -733,7 +740,7 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                 }
                 if (Debugging.AssertsEnabled) Debugging.Assert(fieldLen >= 0);
-                return new TVTerms(outerInstance, numTerms[idx], fieldFlags[idx], prefixLengths[idx], suffixLengths[idx], termFreqs[idx], positionIndex[idx], positions[idx], startOffsets[idx], lengths[idx], payloadIndex[idx], payloadBytes, new BytesRef(suffixBytes.Bytes, suffixBytes.Offset + fieldOff, fieldLen));
+                return new TVTerms(numTerms[idx], fieldFlags[idx], prefixLengths[idx], suffixLengths[idx], termFreqs[idx], positionIndex[idx], positions[idx], startOffsets[idx], lengths[idx], payloadIndex[idx], payloadBytes, new BytesRef(suffixBytes.Bytes, suffixBytes.Offset + fieldOff, fieldLen));
             }
 
             public override int Count => fieldNumOffs.Length;
@@ -741,15 +748,12 @@ namespace Lucene.Net.Codecs.Compressing
 
         private class TVTerms : Terms
         {
-            private readonly CompressingTermVectorsReader outerInstance;
-
             private readonly int numTerms, flags;
             private readonly int[] prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex;
             private readonly BytesRef termBytes, payloadBytes;
 
-            internal TVTerms(CompressingTermVectorsReader outerInstance, int numTerms, int flags, int[] prefixLengths, int[] suffixLengths, int[] termFreqs, int[] positionIndex, int[] positions, int[] startOffsets, int[] lengths, int[] payloadIndex, BytesRef payloadBytes, BytesRef termBytes)
+            internal TVTerms(int numTerms, int flags, int[] prefixLengths, int[] suffixLengths, int[] termFreqs, int[] positionIndex, int[] positions, int[] startOffsets, int[] lengths, int[] payloadIndex, BytesRef payloadBytes, BytesRef termBytes)
             {
-                this.outerInstance = outerInstance;
                 this.numTerms = numTerms;
                 this.flags = flags;
                 this.prefixLengths = prefixLengths;
@@ -764,6 +768,7 @@ namespace Lucene.Net.Codecs.Compressing
                 this.termBytes = termBytes;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetEnumerator()
             {
                 var termsEnum = new TVTermsEnum();
@@ -771,12 +776,10 @@ namespace Lucene.Net.Codecs.Compressing
                 return termsEnum;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetEnumerator(TermsEnum reuse)
             {
-                TVTermsEnum termsEnum;
-                if (!(reuse is null) && reuse is TVTermsEnum)
-                    termsEnum = (TVTermsEnum)reuse;
-                else
+                if (reuse is null || !(reuse is TVTermsEnum termsEnum))
                     termsEnum = new TVTermsEnum();
 
                 termsEnum.Reset(numTerms, flags, prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex, payloadBytes, new ByteArrayDataInput(termBytes.Bytes, termBytes.Offset, termBytes.Length));
@@ -832,6 +835,7 @@ namespace Lucene.Net.Codecs.Compressing
                 Reset();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual void Reset()
             {
                 term.Length = 0;
@@ -916,22 +920,17 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override long TotalTermFreq => termFreqs[ord];
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override sealed DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
-                TVDocsEnum docsEnum;
-                if (reuse != null && reuse is TVDocsEnum)
-                {
-                    docsEnum = (TVDocsEnum)reuse;
-                }
-                else
-                {
+                if (reuse is null || !(reuse is TVDocsEnum docsEnum))
                     docsEnum = new TVDocsEnum();
-                }
 
                 docsEnum.Reset(liveDocs, termFreqs[ord], positionIndex[ord], positions, startOffsets, lengths, payloads, payloadIndex);
                 return docsEnum;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 if (positions == null && startOffsets == null)
@@ -978,6 +977,7 @@ namespace Lucene.Net.Codecs.Compressing
                 doc = i = -1;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private void CheckDoc()
             {
                 if (doc == NO_MORE_DOCS)
@@ -990,6 +990,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private void CheckPosition()
             {
                 CheckDoc();
@@ -1100,17 +1101,20 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int Advance(int target)
             {
                 return SlowAdvance(target);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return 1;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int Sum(int[] arr)
         {
             int sum = 0;
@@ -1119,11 +1123,13 @@ namespace Lucene.Net.Codecs.Compressing
             return sum;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             return indexReader.RamBytesUsed();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
             if (version >= CompressingTermVectorsWriter.VERSION_CHECKSUM)

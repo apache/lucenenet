@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// <summary>
         /// End of sentence punctuation: 。，！？；,!?;
         /// </summary>
-        private readonly static string PUNCTION = "。，！？；,!?;";
+        private const string PUNCTION = "。，！？；,!?;";
 
         private readonly StringBuilder buffer = new StringBuilder();
 

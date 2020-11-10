@@ -126,15 +126,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         // *** CharSequence interface ***
 
-        // LUCENENET specific: Replaced with this[int] to .NETify
-        //public char CharAt(int index)
-        //{
-        //    if (index >= TermLength)
-        //    {
-        //        throw new IndexOutOfRangeException();
-        //    }
-        //    return TermBuffer[index];
-        //}
+        // LUCENENET specific: Replaced CharAt(int) with this[int] to .NETify
 
         char ICharSequence.this[int index] => this[index];
 

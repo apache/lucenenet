@@ -131,18 +131,16 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
 
         private static RuleBasedBreakIterator ReadBreakIterator(string filename)
         {
-            using (Stream @is = typeof(DefaultICUTokenizerConfig).FindAndGetManifestResourceStream(filename))
+            using Stream @is = typeof(DefaultICUTokenizerConfig).FindAndGetManifestResourceStream(filename);
+            try
             {
-                try
-                {
-                    RuleBasedBreakIterator bi =
-                        RuleBasedBreakIterator.GetInstanceFromCompiledRules(@is);
-                    return bi;
-                }
-                catch (IOException e)
-                {
-                    throw new Exception(e.ToString(), e);
-                }
+                RuleBasedBreakIterator bi =
+                    RuleBasedBreakIterator.GetInstanceFromCompiledRules(@is);
+                return bi;
+            }
+            catch (IOException e)
+            {
+                throw new Exception(e.ToString(), e);
             }
         }
     }

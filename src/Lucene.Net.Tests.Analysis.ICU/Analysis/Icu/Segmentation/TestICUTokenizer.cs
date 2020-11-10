@@ -338,19 +338,17 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         [Test]
         public void TestTokenAttributes()
         {
-            using (TokenStream ts = a.GetTokenStream("dummy", "This is a test"))
+            using TokenStream ts = a.GetTokenStream("dummy", "This is a test");
+            IScriptAttribute scriptAtt = ts.AddAttribute<IScriptAttribute>();
+            ts.Reset();
+            while (ts.IncrementToken())
             {
-                IScriptAttribute scriptAtt = ts.AddAttribute<IScriptAttribute>();
-                ts.Reset();
-                while (ts.IncrementToken())
-                {
-                    assertEquals(UScript.Latin, scriptAtt.Code);
-                    assertEquals(UScript.GetName(UScript.Latin), scriptAtt.GetName());
-                    assertEquals(UScript.GetShortName(UScript.Latin), scriptAtt.GetShortName());
-                    assertTrue(ts.ReflectAsString(false).Contains("script=Latin"));
-                }
-                ts.End();
+                assertEquals(UScript.Latin, scriptAtt.Code);
+                assertEquals(UScript.GetName(UScript.Latin), scriptAtt.GetName());
+                assertEquals(UScript.GetShortName(UScript.Latin), scriptAtt.GetShortName());
+                assertTrue(ts.ReflectAsString(false).Contains("script=Latin"));
             }
+            ts.End();
         }
 
         private class ThreadAnonymousHelper : ThreadJob

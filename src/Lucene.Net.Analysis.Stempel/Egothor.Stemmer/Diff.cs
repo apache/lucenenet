@@ -71,15 +71,15 @@ namespace Egothor.Stemmer
     /// </summary>
     public class Diff
     {
-        int sizex = 0;
-        int sizey = 0;
-        int[][] net;
-        int[][] way;
+        private int sizex = 0;
+        private int sizey = 0;
+        private int[][] net;
+        private int[][] way;
 
-        int INSERT;
-        int DELETE;
-        int REPLACE;
-        int NOOP;
+        private readonly int INSERT; // LUCENENET: marked readonly
+        private readonly int DELETE; // LUCENENET: marked readonly
+        private readonly int REPLACE; // LUCENENET: marked readonly
+        private readonly int NOOP; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructor for the Diff object.
@@ -324,7 +324,7 @@ namespace Egothor.Stemmer
             if (deletes != @base)
             {
                 result.Append("D" + (deletes));
-                deletes = @base;
+                //deletes = @base; // LUCENENET: IDE0059: Remove unnecessary value assignment
             }
 
             return result.ToString();

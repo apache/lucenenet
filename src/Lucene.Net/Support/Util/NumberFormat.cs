@@ -51,29 +51,29 @@ namespace Lucene.Net.Util
         {
             string format = GetNumberFormat();
 
-            if (number is int)
+            if (number is int i)
             {
-                return ((int)number).ToString(format, culture);
+                return i.ToString(format, culture);
             }
-            else if (number is long)
+            else if (number is long l)
             {
-                return ((long)number).ToString(format, culture);
+                return l.ToString(format, culture);
             }
-            else if (number is short)
+            else if (number is short s)
             {
-                return ((short)number).ToString(format, culture);
+                return s.ToString(format, culture);
             }
-            else if (number is float)
+            else if (number is float f)
             {
-                return ((float)number).ToString(format, culture);
+                return f.ToString(format, culture);
             }
-            else if (number is double)
+            else if (number is double d)
             {
-                return ((double)number).ToString(format, culture);
+                return d.ToString(format, culture);
             }
-            else if (number is decimal)
+            else if (number is decimal dec)
             {
-                return ((decimal)number).ToString(format, culture);
+                return dec.ToString(format, culture);
             }
 
             throw new ArgumentException("Cannot format given object as a Number");

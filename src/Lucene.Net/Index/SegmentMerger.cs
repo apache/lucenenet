@@ -330,9 +330,8 @@ namespace Lucene.Net.Index
                 // required?  But... this'd also require exposing
                 // bulk-copy (TVs and stored fields) API in foreign
                 // readers..
-                if (reader is SegmentReader)
+                if (reader is SegmentReader segmentReader)
                 {
-                    SegmentReader segmentReader = (SegmentReader)reader;
                     bool same = true;
                     FieldInfos segmentFieldInfos = segmentReader.FieldInfos;
                     foreach (FieldInfo fi in segmentFieldInfos)

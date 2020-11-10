@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Constructor. </summary>
         /// <param name="innerSet"> Underlying <see cref="DocIdSet"/> </param>
-        public FilteredDocIdSet(DocIdSet innerSet)
+        protected FilteredDocIdSet(DocIdSet innerSet) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.innerSet = innerSet;
         }
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
         {
             private readonly FilteredDocIdSet outerInstance;
 
-            private IBits bits;
+            private readonly IBits bits;
 
             public BitsAnonymousInnerClassHelper(FilteredDocIdSet outerInstance, IBits bits)
             {

@@ -58,8 +58,7 @@ namespace Lucene.Net.Search.Grouping.Function
         public override void Collect(int doc)
         {
             groupFiller.FillValue(doc);
-            GroupCount groupCount;
-            if (groupMap.TryGetValue(groupMval, out groupCount))
+            if (groupMap.TryGetValue(groupMval, out GroupCount groupCount))
             {
                 countFiller.FillValue(doc);
                 ((ISet<MutableValue>)groupCount.UniqueValues).Add(countMval.Duplicate());

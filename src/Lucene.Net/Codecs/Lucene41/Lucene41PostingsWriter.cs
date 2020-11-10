@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -62,9 +63,11 @@ namespace Lucene.Net.Codecs.Lucene41
         internal const int VERSION_CHECKSUM = 2;
         internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal IndexOutput docOut;
         internal IndexOutput posOut;
         internal IndexOutput payOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         internal static readonly Int32BlockTermState emptyState = new Int32BlockTermState();
         internal Int32BlockTermState lastState;
@@ -210,6 +213,7 @@ namespace Lucene.Net.Codecs.Lucene41
             // freq is always implicitly totalTermFreq in this case.
             internal int singletonDocID = -1;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override object Clone()
             {
                 Int32BlockTermState other = new Int32BlockTermState();
@@ -235,11 +239,13 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override BlockTermState NewTermState()
         {
             return new Int32BlockTermState();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Init(IndexOutput termsOut)
         {
             CodecUtil.WriteHeader(termsOut, TERMS_CODEC, VERSION_CURRENT);

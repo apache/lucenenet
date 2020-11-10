@@ -39,13 +39,13 @@ namespace Lucene.Net.Codecs.BlockTerms
         protected IndexOutput m_output;
 
         /// <summary>Extension of terms index file.</summary>
-        internal readonly static string TERMS_INDEX_EXTENSION = "tiv";
+        internal const string TERMS_INDEX_EXTENSION = "tiv";
 
-        internal readonly static string CODEC_NAME = "VARIABLE_GAP_TERMS_INDEX";
-        internal readonly static int VERSION_START = 0;
-        internal readonly static int VERSION_APPEND_ONLY = 1;
-        internal readonly static int VERSION_CHECKSUM = 2;
-        internal readonly static int VERSION_CURRENT = VERSION_CHECKSUM;
+        internal const string CODEC_NAME = "VARIABLE_GAP_TERMS_INDEX";
+        internal const int VERSION_START = 0;
+        internal const int VERSION_APPEND_ONLY = 1;
+        internal const int VERSION_CHECKSUM = 2;
+        internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
         private readonly IList<FSTFieldWriter> fields = new List<FSTFieldWriter>();
 

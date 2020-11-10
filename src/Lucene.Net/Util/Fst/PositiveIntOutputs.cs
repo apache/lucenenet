@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -109,12 +110,14 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Write(long? output, DataOutput @out)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Valid(output));
             @out.WriteVInt64(output.Value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long? Read(DataInput @in)
         {
             long v = @in.ReadVInt64();
@@ -137,11 +140,13 @@ namespace Lucene.Net.Util.Fst
 
         public override long? NoOutput => NO_OUTPUT;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string OutputToString(long? output)
         {
             return output.ToString(); // LUCENENET TODO: Invariant Culture?
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string ToString()
         {
             return "PositiveIntOutputs";

@@ -51,7 +51,9 @@ namespace Lucene.Net.Codecs.SimpleText
         internal static readonly BytesRef NUMVALUES = new BytesRef("  numvalues ");
         internal static readonly BytesRef ORDPATTERN = new BytesRef("  ordpattern ");
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput data;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly BytesRef scratch = new BytesRef();
         private readonly int numDocs;
         private readonly ISet<string> _fieldsSeen = new JCG.HashSet<string>(); // for asserting

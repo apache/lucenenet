@@ -81,8 +81,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                     f = filterFactory.GetFilter(childElement);
                     cacheKey = f;
                 }
-                Filter cachedFilter;
-                if (filterCache.TryGetValue(cacheKey, out cachedFilter) && cachedFilter != null)
+                if (filterCache.TryGetValue(cacheKey, out Filter cachedFilter) && cachedFilter != null)
                 {
                     return cachedFilter; // cache hit
                 }

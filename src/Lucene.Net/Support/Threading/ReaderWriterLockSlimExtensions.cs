@@ -29,7 +29,7 @@ namespace Lucene.Net.Support.Threading
     /// </summary>
     internal static class ReaderWriterLockSlimExtensions
     {
-        sealed class ReadLockToken : IDisposable
+        private sealed class ReadLockToken : IDisposable
         {
             private ReaderWriterLockSlim _readerWriterLockSlim;
 
@@ -49,7 +49,7 @@ namespace Lucene.Net.Support.Threading
             }
         }
 
-        sealed class WriteLockToken : IDisposable
+        private sealed class WriteLockToken : IDisposable
         {
             private ReaderWriterLockSlim _readerWriterLockSlim;
 

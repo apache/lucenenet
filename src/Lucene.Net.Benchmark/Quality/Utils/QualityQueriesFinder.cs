@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
     public class QualityQueriesFinder
     {
         private static readonly string newline = Environment.NewLine;
-        private Store.Directory dir;
+        private readonly Store.Directory dir; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructor over a directory containing the index.
@@ -63,7 +63,9 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             }
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         private string[] BestQueries(string field, int numQueries)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             string[] words = BestTerms("body", 4 * numQueries);
             int n = words.Length;
@@ -82,11 +84,11 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             return
               "<top>" + newline +
               "<num> Number: " + qnum + newline + newline +
-              "<title> " + (title == null ? "" : title) + newline + newline +
+              "<title> " + (title ?? "") + newline + newline +
               "<desc> Description:" + newline +
-              (description == null ? "" : description) + newline + newline +
+              (description ?? "") + newline + newline +
               "<narr> Narrative:" + newline +
-              (narrative == null ? "" : narrative) + newline + newline +
+              (narrative ?? "") + newline + newline +
               "</top>";
         }
 

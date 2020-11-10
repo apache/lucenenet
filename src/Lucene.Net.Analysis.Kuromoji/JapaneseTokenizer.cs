@@ -65,19 +65,21 @@ namespace Lucene.Net.Analysis.Ja
         // LUCENENET specific: de-nested Type and renamed JapaneseTokenizerType
 
 
-        private static readonly bool VERBOSE = false;
+#pragma warning disable CA1802 // Use literals where appropriate
+        private static readonly bool VERBOSE = false; // For debugging
+#pragma warning restore CA1802 // Use literals where appropriate
 
-        private static readonly int SEARCH_MODE_KANJI_LENGTH = 2;
+        private const int SEARCH_MODE_KANJI_LENGTH = 2;
 
-        private static readonly int SEARCH_MODE_OTHER_LENGTH = 7; // Must be >= SEARCH_MODE_KANJI_LENGTH
+        private const int SEARCH_MODE_OTHER_LENGTH = 7; // Must be >= SEARCH_MODE_KANJI_LENGTH
 
-        private static readonly int SEARCH_MODE_KANJI_PENALTY = 3000;
+        private const int SEARCH_MODE_KANJI_PENALTY = 3000;
 
-        private static readonly int SEARCH_MODE_OTHER_PENALTY = 1700;
+        private const int SEARCH_MODE_OTHER_PENALTY = 1700;
 
         // For safety:
-        private static readonly int MAX_UNKNOWN_WORD_LENGTH = 1024;
-        private static readonly int MAX_BACKTRACE_GAP = 1024;
+        private const int MAX_UNKNOWN_WORD_LENGTH = 1024;
+        private const int MAX_BACKTRACE_GAP = 1024;
 
         private readonly IDictionary<JapaneseTokenizerType, IDictionary> dictionaryMap = new Dictionary<JapaneseTokenizerType, IDictionary>();
 
@@ -1177,8 +1179,7 @@ namespace Lucene.Net.Analysis.Ja
 
         internal IDictionary GetDict(JapaneseTokenizerType type)
         {
-            IDictionary result;
-            dictionaryMap.TryGetValue(type, out result);
+            dictionaryMap.TryGetValue(type, out IDictionary result);
             return result;
         }
 

@@ -1,4 +1,5 @@
 using Lucene.Net.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -118,6 +119,7 @@ namespace Lucene.Net.Util.Fst
             set => current.Int32s[m_upto] = value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Grow()
         {
             current.Int32s = ArrayUtil.Grow(current.Int32s, m_upto + 1);

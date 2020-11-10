@@ -205,7 +205,7 @@ namespace Lucene.Net.Util
             return m1.GetImplementationDistance(clazz).CompareTo(m2.GetImplementationDistance(clazz));
         }
 
-        private MethodInfo GetMethod(Type clazz, string methodName, BindingFlags bindingFlags, Type[] methodParameters)
+        private static MethodInfo GetMethod(Type clazz, string methodName, BindingFlags bindingFlags, Type[] methodParameters) // LUCENENET: CA1822: Mark members as static
         {
 #if FEATURE_TYPE_GETMETHOD__BINDINGFLAGS_PARAMS
             return clazz.GetMethod(methodName, bindingFlags, null, methodParameters, null);
@@ -217,7 +217,7 @@ namespace Lucene.Net.Util
 
             if (methods.Length == 0)
             {
-                return default(MethodInfo);
+                return default;
             }
             else if (methods.Length == 1)
             {

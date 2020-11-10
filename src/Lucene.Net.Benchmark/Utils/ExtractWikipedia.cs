@@ -32,11 +32,11 @@ namespace Lucene.Net.Benchmarks.Utils
     /// </summary>
     public class ExtractWikipedia
     {
-        private DirectoryInfo outputDir;
+        private readonly DirectoryInfo outputDir; // LUCENENET: marked readonly
 
         public static int count = 0;
 
-        internal static readonly int BASE = 10;
+        internal const int BASE = 10;
         protected DocMaker m_docMaker;
 
         public ExtractWikipedia(DocMaker docMaker, DirectoryInfo outputDir)
@@ -88,8 +88,8 @@ namespace Lucene.Net.Benchmarks.Utils
 
             try
             {
-                using (TextWriter writer = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8))
-                    writer.Write(contents.ToString());
+                using TextWriter writer = new StreamWriter(new FileStream(f.FullName, FileMode.Create, FileAccess.Write), Encoding.UTF8);
+                writer.Write(contents.ToString());
             }
             catch (IOException ioe)
             {
@@ -99,7 +99,7 @@ namespace Lucene.Net.Benchmarks.Utils
 
         public virtual void Extract()
         {
-            Document doc = null;
+            Document doc; // LUCENENET: IDE0059: Remove unnecessary value assignment
             Console.WriteLine("Starting Extraction");
             long start = J2N.Time.CurrentTimeMilliseconds();
             try
@@ -143,10 +143,12 @@ namespace Lucene.Net.Benchmarks.Utils
                 }
             }
 
-            IDictionary<string, string> properties = new Dictionary<string, string>();
-            properties["docs.file"] = wikipedia.FullName;
-            properties["content.source.forever"] = "false";
-            properties["keep.image.only.docs"] = keepImageOnlyDocs.ToString();
+            IDictionary<string, string> properties = new Dictionary<string, string>
+            {
+                ["docs.file"] = wikipedia.FullName,
+                ["content.source.forever"] = "false",
+                ["keep.image.only.docs"] = keepImageOnlyDocs.ToString()
+            };
             Config config = new Config(properties);
 
             ContentSource source = new EnwikiContentSource();

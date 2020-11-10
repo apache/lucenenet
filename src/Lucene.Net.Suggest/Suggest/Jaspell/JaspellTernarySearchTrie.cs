@@ -275,70 +275,68 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         public JaspellTernarySearchTrie(FileInfo file, bool compression, CultureInfo culture)
             : this(culture)
         {
-            using (TextReader @in = (compression) ?
+            using TextReader @in = (compression) ?
                 IOUtils.GetDecodingReader(new GZipStream(new FileStream(file.FullName, FileMode.Open), CompressionMode.Decompress), Encoding.UTF8) :
-                IOUtils.GetDecodingReader(new FileStream(file.FullName, FileMode.Open), Encoding.UTF8))
+                IOUtils.GetDecodingReader(new FileStream(file.FullName, FileMode.Open), Encoding.UTF8);
+            string word;
+            int pos;
+            float? occur, one = new float?(1);
+            while ((word = @in.ReadLine()) != null)
             {
-                string word;
-                int pos;
-                float? occur, one = new float?(1);
-                while ((word = @in.ReadLine()) != null)
+                pos = word.IndexOf('\t');
+                occur = one;
+                if (pos != -1)
                 {
-                    pos = word.IndexOf('\t');
-                    occur = one;
-                    if (pos != -1)
+                    occur = Convert.ToSingle(word.Substring(pos + 1).Trim(), CultureInfo.InvariantCulture);
+                    word = word.Substring(0, pos);
+                }
+                string key = culture.TextInfo.ToLower(word);
+                if (rootNode == null)
+                {
+                    rootNode = new TSTNode(key[0], null);
+                }
+                TSTNode node = null;
+                if (key.Length > 0 && rootNode != null)
+                {
+                    TSTNode currentNode = rootNode;
+                    int charIndex = 0;
+                    while (true)
                     {
-                        occur = Convert.ToSingle(word.Substring(pos + 1).Trim(), CultureInfo.InvariantCulture);
-                        word = word.Substring(0, pos);
-                    }
-                    string key = culture.TextInfo.ToLower(word);
-                    if (rootNode == null)
-                    {
-                        rootNode = new TSTNode(key[0], null);
-                    }
-                    TSTNode node = null;
-                    if (key.Length > 0 && rootNode != null)
-                    {
-                        TSTNode currentNode = rootNode;
-                        int charIndex = 0;
-                        while (true)
+                        if (currentNode == null)
                         {
-                            if (currentNode == null)
+                            break;
+                        }
+                        int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar, culture);
+                        if (charComp == 0)
+                        {
+                            charIndex++;
+                            if (charIndex == key.Length)
                             {
+                                node = currentNode;
                                 break;
                             }
-                            int charComp = CompareCharsAlphabetically(key[charIndex], currentNode.splitchar, culture);
-                            if (charComp == 0)
-                            {
-                                charIndex++;
-                                if (charIndex == key.Length)
-                                {
-                                    node = currentNode;
-                                    break;
-                                }
-                                currentNode = currentNode.relatives[TSTNode.EQKID];
-                            }
-                            else if (charComp < 0)
-                            {
-                                currentNode = currentNode.relatives[TSTNode.LOKID];
-                            }
-                            else
-                            {
-                                currentNode = currentNode.relatives[TSTNode.HIKID];
-                            }
+                            currentNode = currentNode.relatives[TSTNode.EQKID];
                         }
-                        float? occur2 = null;
-                        if (node != null)
+                        else if (charComp < 0)
                         {
-                            occur2 = ((float?)(node.data));
+                            currentNode = currentNode.relatives[TSTNode.LOKID];
                         }
-                        if (occur2 != null)
+                        else
                         {
-                            occur += (float)occur2;
+                            currentNode = currentNode.relatives[TSTNode.HIKID];
                         }
-                        currentNode = GetOrCreateNode(culture.TextInfo.ToLower(word.Trim()));
-                        currentNode.data = occur;
                     }
+                    float? occur2 = null;
+                    if (node != null)
+                    {
+                        occur2 = ((float?)(node.data));
+                    }
+                    if (occur2 != null)
+                    {
+                        occur += (float)occur2;
+                    }
+                    currentNode = GetOrCreateNode(culture.TextInfo.ToLower(word.Trim()));
+                    currentNode.data = occur;
                 }
             }
         }

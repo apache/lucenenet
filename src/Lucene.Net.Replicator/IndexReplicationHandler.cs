@@ -168,8 +168,10 @@ namespace Lucene.Net.Replicator
 
                 if (commit != null && commit.SegmentsFileName.Equals(segmentsFile, StringComparison.Ordinal))
                 {
-                    ISet<string> commitFiles = new JCG.HashSet<string>(commit.FileNames);
-                    commitFiles.Add(IndexFileNames.SEGMENTS_GEN);
+                    ISet<string> commitFiles = new JCG.HashSet<string>(commit.FileNames)
+                    {
+                        IndexFileNames.SEGMENTS_GEN
+                    };
 
                     Regex matcher = IndexFileNames.CODEC_FILE_PATTERN;
                     foreach (string file in directory.ListAll())

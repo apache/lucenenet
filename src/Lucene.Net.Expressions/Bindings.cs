@@ -27,6 +27,7 @@ namespace Lucene.Net.Expressions
     /// relevance score, or other <see cref="ValueSource"/>s.
     /// @lucene.experimental
     /// </remarks>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1012:Abstract types should not have constructors", Justification = "Required for Reflection")]
     public abstract class Bindings
     {
         /// <summary>Sole constructor.</summary>
@@ -46,7 +47,7 @@ namespace Lucene.Net.Expressions
         /// <summary>
         /// Returns a <see cref="ValueSource"/> over relevance scores
         /// </summary>
-        protected ValueSource GetScoreValueSource()
+        protected static ValueSource GetScoreValueSource() // LUCENENET: CA1822: Mark members as static
         {
             return new ScoreValueSource();
         }

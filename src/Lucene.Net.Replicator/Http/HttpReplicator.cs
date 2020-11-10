@@ -71,10 +71,8 @@ namespace Lucene.Net.Replicator.Http
             HttpResponseMessage response = base.ExecuteGet(ReplicationService.ReplicationAction.UPDATE.ToString(), parameters);
             return DoAction(response, () =>
             {
-                using (DataInputStream inputStream = new DataInputStream(ResponseInputStream(response)))
-                {
-                    return inputStream.ReadByte() == 0 ? null : new SessionToken(inputStream);
-                }
+                using DataInputStream inputStream = new DataInputStream(ResponseInputStream(response));
+                return inputStream.ReadByte() == 0 ? null : new SessionToken(inputStream);
             });
         }
 

@@ -29,7 +29,7 @@ TODO: Comments need to be written for WeakDictionary
 TODO: Tests need to be written for IdentityDictionary -> Verify behavior
 
 
-PriorityQueue in InsertWithOverflow, java returns null, I set it to return default(T).  I don't think it's an issue.  We should, at least, document
+PriorityQueue in InsertWithOverflow, java returns null, I set it to return default.  I don't think it's an issue.  We should, at least, document
               that is may have unexpected results if used with a non-nullable type.
 
 BooleanClause.java - Can't override ToString on Enum or replace with Extension Method.  Leave type-safe, override with extension method, or create static class?

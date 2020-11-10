@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Codecs.Lucene40
 {
     /*
@@ -114,11 +116,13 @@ namespace Lucene.Net.Codecs.Lucene40
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override TermVectorsReader VectorsReader(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context)
         {
             return new Lucene40TermVectorsReader(directory, segmentInfo, fieldInfos, context);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override TermVectorsWriter VectorsWriter(Directory directory, SegmentInfo segmentInfo, IOContext context)
         {
             return new Lucene40TermVectorsWriter(directory, segmentInfo.Name, context);

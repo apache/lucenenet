@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 
         internal override InvertedDocEndConsumerPerField AddField(DocInverterPerField docInverterPerField, FieldInfo fieldInfo)
         {
-            return new NormsConsumerPerField(docInverterPerField, fieldInfo, this);
+            return new NormsConsumerPerField(docInverterPerField, fieldInfo /* , this // LUCENENET: Not referenced */);
         }
     }
 }

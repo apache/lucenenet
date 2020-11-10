@@ -115,8 +115,7 @@ namespace Lucene.Net.Analysis.Util
 
         public Type LookupClass(string name)
         {
-            Type service;
-            if (this.services.TryGetValue(name.ToLowerInvariant(), out service))
+            if (this.services.TryGetValue(name.ToLowerInvariant(), out Type service))
             {
                 return service;
             }

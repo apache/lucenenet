@@ -119,13 +119,13 @@ namespace Lucene.Net.Index
             Assert.IsTrue(allFieldNames.Count == DocHelper.All.Count);
             foreach (string s in allFieldNames)
             {
-                Assert.IsTrue(DocHelper.NameValues.ContainsKey(s) == true || s.Equals("", StringComparison.Ordinal));
+                Assert.IsTrue(DocHelper.NameValues.ContainsKey(s) == true || s.Length == 0); // LUCENENET: CA1820: Test for empty strings using string length
             }
 
             Assert.IsTrue(indexedFieldNames.Count == DocHelper.Indexed.Count);
             foreach (string s in indexedFieldNames)
             {
-                Assert.IsTrue(DocHelper.Indexed.ContainsKey(s) == true || s.Equals("", StringComparison.Ordinal));
+                Assert.IsTrue(DocHelper.Indexed.ContainsKey(s) == true || s.Length == 0); // LUCENENET: CA1820: Test for empty strings using string length
             }
 
             Assert.IsTrue(notIndexedFieldNames.Count == DocHelper.Unindexed.Count);

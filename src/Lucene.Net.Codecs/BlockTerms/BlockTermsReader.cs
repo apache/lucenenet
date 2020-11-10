@@ -235,8 +235,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
 
-            FieldReader result;
-            fields.TryGetValue(field, out result);
+            fields.TryGetValue(field, out FieldReader result);
             return result;
         }
 
@@ -725,7 +724,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                 /// decode all metadata up to the current term
                 /// </summary>
                 /// <returns></returns>
+#pragma warning disable IDE1006 // Naming Styles
                 private BytesRef _next()
+#pragma warning restore IDE1006 // Naming Styles
                 {
                     //System.out.println("BTR._next seg=" + segment + " this=" + this + " termCount=" + state.termBlockOrd + " (vs " + blockTermCount + ")");
                     if (state.TermBlockOrd == blockTermCount && !NextBlock())

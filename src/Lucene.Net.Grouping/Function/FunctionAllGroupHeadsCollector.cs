@@ -65,8 +65,7 @@ namespace Lucene.Net.Search.Grouping.Function
         protected override void RetrieveGroupHeadAndAddIfNotExist(int doc)
         {
             filler.FillValue(doc);
-            GroupHead groupHead;
-            if (!groups.TryGetValue(mval, out groupHead))
+            if (!groups.TryGetValue(mval, out GroupHead groupHead))
             {
                 MutableValue groupValue = mval.Duplicate();
                 groupHead = new GroupHead(this, groupValue, sortWithinGroup, doc);

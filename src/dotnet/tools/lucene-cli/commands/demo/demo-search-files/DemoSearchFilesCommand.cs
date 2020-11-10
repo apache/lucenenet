@@ -64,13 +64,7 @@ namespace Lucene.Net.Cli
                 this.OnExecute(() => new DemoSearchFilesCommand().Run(this));
             }
 
-            public override IEnumerable<string> SourceCodeFiles
-            {
-                get
-                {
-                    return new string[] { "SearchFiles.cs" };
-                }
-            }
+            public override IEnumerable<string> SourceCodeFiles => new string[] { "SearchFiles.cs" };
 
             public CommandArgument IndexDirectoryArgument { get; private set; }
             public CommandOption FieldOption { get; private set; }

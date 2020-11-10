@@ -400,10 +400,8 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 readerManager = null;
                 initializedReaderManager = false;
             }
-            if (cache != null)
-            {
-                cache.Dispose();
-            }
+            cache?.Dispose();
+            parentStream.Dispose(); // LUCENENET specific
         }
 
         /// <summary>
@@ -576,8 +574,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // in the reader (which knows that anyway only category 0 has a parent
             // -1).    
             parentStream.Set(Math.Max(parent + 1, 1));
-            Document d = new Document();
-            d.Add(parentStreamField);
+            Document d = new Document
+            {
+                parentStreamField
+            };
 
             fullPathField.SetStringValue(FacetsConfig.PathToString(categoryPath.Components, categoryPath.Length));
             d.Add(fullPathField);
@@ -1080,7 +1080,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
             }
 
-            int[] map = null;
+            private int[] map = null;
 
             public int[] GetMap()
             {

@@ -247,25 +247,17 @@ namespace Lucene.Net.Store
         public virtual IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
-            return new IndexInputSlicerAnonymousInnerClassHelper(this, name, context);
+            return new IndexInputSlicerAnonymousInnerClassHelper(OpenInput(name, context));
         }
 
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
-            private readonly Directory outerInstance;
-
-            private string name;
-            private IOContext context;
-
-            public IndexInputSlicerAnonymousInnerClassHelper(Directory outerInstance, string name, IOContext context)
-            {
-                this.outerInstance = outerInstance;
-                this.name = name;
-                this.context = context;
-                @base = outerInstance.OpenInput(name, context);
-            }
-
             private readonly IndexInput @base;
+
+            public IndexInputSlicerAnonymousInnerClassHelper(IndexInput @base)
+            {
+                this.@base = @base;
+            }
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {

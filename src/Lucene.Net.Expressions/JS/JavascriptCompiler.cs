@@ -144,10 +144,12 @@ namespace Lucene.Net.Expressions.JS
         /// If this method fails to compile, you also have to change the byte code generator to correctly
         /// use the <see cref="FunctionValues"/> class.
         /// </remarks>
+#pragma warning disable IDE0051 // Remove unused private members
         private static void UnusedTestCompile()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             FunctionValues f = null;
-            double ret = f.DoubleVal(2);
+            /*double ret = */f.DoubleVal(2); // LUCENENET: IDE0059: Remove unnecessary value assignment
         }
 
         /// <summary>Constructs a compiler for expressions.</summary>
@@ -237,8 +239,7 @@ namespace Lucene.Net.Expressions.JS
                         ITree identifier = current.GetChild(0);
                         string call = identifier.Text;
                         int arguments = current.ChildCount - 1;
-                        MethodInfo method;
-                        if (!functions.TryGetValue(call, out method) || method == null)
+                        if (!functions.TryGetValue(call, out MethodInfo method) || method == null)
                         {
                             throw new ArgumentException("Unrecognized method call (" + call + ").");
                         }
@@ -290,14 +291,13 @@ namespace Lucene.Net.Expressions.JS
 
                         if (bitwiseOps.Any(s => sourceText.Contains(s)))
                         {
-                            int val;
-                            if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out val))
+                            if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int val))
                             {
                                 gen.Emit(OpCodes.Ldc_I4, val);
                             }
                             else
                             {
-                                gen.Emit(OpCodes.Ldc_I8,long.Parse(text, CultureInfo.InvariantCulture));
+                                gen.Emit(OpCodes.Ldc_I8, long.Parse(text, CultureInfo.InvariantCulture));
                                 gen.Emit(OpCodes.Conv_Ovf_U4_Un);
                             }
                         }
@@ -511,7 +511,9 @@ namespace Lucene.Net.Expressions.JS
             gen.Emit(OpCodes.Conv_R8);
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         private void PushArith(OpCode op, ITree current, Type expected)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             PushBinaryOp(op, current, typeof(double), typeof(double));
         }

@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <summary>
         /// Large prime number for hash function
         /// </summary>
-        public static readonly int PRIME_INDEX_LENGTH = 12071;
+        public const int PRIME_INDEX_LENGTH = 12071;
 
         /// <summary>
         /// wordIndexTable guarantees to hash all Chinese characters in Unicode into 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         // static Logger log = Logger.getLogger(WordDictionary.class);
 
-        private static object syncLock = new object();
+        private static readonly object syncLock = new object();
 
         /// <summary>
         /// Get the singleton dictionary instance.
@@ -96,21 +96,6 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                     {
                         singleInstance.Load(dictRoot);
                     }
-
-
-                    //try
-                    //{
-                    //    singleInstance.Load();
-                    //}
-                    //catch (IOException e)
-                    //{
-                    //    string wordDictRoot = AnalyzerProfile.ANALYSIS_DATA_DIR;
-                    //    singleInstance.Load(wordDictRoot);
-                    //}
-                    //catch (TypeLoadException e)
-                    //{
-                    //    throw new Exception(e.ToString(), e);
-                    //}
                 }
                 return singleInstance;
             }
@@ -165,10 +150,8 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <exception cref="IOException">If there is a low-level I/O error.</exception>
         public virtual void Load()
         {
-            using (Stream input = this.GetType().FindAndGetManifestResourceStream("coredict.mem"))
-            {
-                LoadFromObjectInputStream(input);
-            }
+            using Stream input = this.GetType().FindAndGetManifestResourceStream("coredict.mem");
+            LoadFromObjectInputStream(input);
         }
 
         private bool LoadFromObj(FileInfo serialObj)
@@ -217,76 +200,65 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 
         private void LoadFromObjectInputStream(Stream serialObjectInputStream)
         {
-            //ObjectInputStream input = new ObjectInputStream(serialObjectInputStream);
-            //wordIndexTable = (short[])input.ReadObject();
-            //charIndexTable = (char[])input.ReadObject();
-            //wordItem_charArrayTable = (char[][][])input.ReadObject();
-            //wordItem_frequencyTable = (int[][])input.ReadObject();
-            //// log.info("load core dict from serialization.");
-            //input.close();
+            using var reader = new BinaryReader(serialObjectInputStream);
 
-            using (var reader = new BinaryReader(serialObjectInputStream))
-            //using (var reader = new DataInputStream(serialObjectInputStream))
+            // Read wordIndexTable
+            int wiLen = reader.ReadInt32();
+            wordIndexTable = new short[wiLen];
+            for (int i = 0; i < wiLen; i++)
             {
+                wordIndexTable[i] = reader.ReadInt16();
+            }
 
-                // Read wordIndexTable
-                int wiLen = reader.ReadInt32();
-                wordIndexTable = new short[wiLen];
-                for (int i = 0; i < wiLen; i++)
-                {
-                    wordIndexTable[i] = reader.ReadInt16();
-                }
+            // Read charIndexTable
+            int ciLen = reader.ReadInt32();
+            charIndexTable = new char[ciLen];
+            for (int i = 0; i < ciLen; i++)
+            {
+                charIndexTable[i] = reader.ReadChar();
+            }
 
-                // Read charIndexTable
-                int ciLen = reader.ReadInt32();
-                charIndexTable = new char[ciLen];
-                for (int i = 0; i < ciLen; i++)
+            // Read wordItem_charArrayTable
+            int caDim1 = reader.ReadInt32();
+            if (caDim1 > -1)
+            {
+                wordItem_charArrayTable = new char[caDim1][][];
+                for (int i = 0; i < caDim1; i++)
                 {
-                    charIndexTable[i] = reader.ReadChar();
-                }
-
-                // Read wordItem_charArrayTable
-                int caDim1 = reader.ReadInt32();
-                if (caDim1 > -1)
-                {
-                    wordItem_charArrayTable = new char[caDim1][][];
-                    for (int i = 0; i < caDim1; i++)
+                    int caDim2 = reader.ReadInt32();
+                    if (caDim2 > -1)
                     {
-                        int caDim2 = reader.ReadInt32();
-                        if (caDim2 > -1)
+                        wordItem_charArrayTable[i] = new char[caDim2][];
+                        for (int j = 0; j < caDim2; j++)
                         {
-                            wordItem_charArrayTable[i] = new char[caDim2][];
-                            for (int j = 0; j < caDim2; j++)
+                            int caDim3 = reader.ReadInt32();
+                            if (caDim3 > -1)
                             {
-                                int caDim3 = reader.ReadInt32();
-                                if (caDim3 > -1)
+                                wordItem_charArrayTable[i][j] = new char[caDim3];
+                                for (int k = 0; k < caDim3; k++)
                                 {
-                                    wordItem_charArrayTable[i][j] = new char[caDim3];
-                                    for (int k = 0; k < caDim3; k++)
-                                    {
-                                        wordItem_charArrayTable[i][j][k] = reader.ReadChar();
-                                    }
+                                    wordItem_charArrayTable[i][j][k] = reader.ReadChar();
                                 }
                             }
                         }
                     }
                 }
+            }
 
-                // Read wordItem_frequencyTable
-                int fDim1 = reader.ReadInt32();
-                if (fDim1 > -1)
+            // Read wordItem_frequencyTable
+            int fDim1 = reader.ReadInt32();
+            if (fDim1 > -1)
+            {
+                wordItem_frequencyTable = new int[fDim1][];
+                for (int i = 0; i < fDim1; i++)
                 {
-                    wordItem_frequencyTable = new int[fDim1][];
-                    for (int i = 0; i < fDim1; i++)
+                    int fDim2 = reader.ReadInt32();
+                    if (fDim2 > -1)
                     {
-                        int fDim2 = reader.ReadInt32();
-                        if (fDim2 > -1)
+                        wordItem_frequencyTable[i] = new int[fDim2];
+                        for (int j = 0; j < fDim2; j++)
                         {
-                            wordItem_frequencyTable[i] = new int[fDim2];
-                            for (int j = 0; j < fDim2; j++)
-                            {
-                                wordItem_frequencyTable[i][j] = reader.ReadInt32();
-                            }
+                            wordItem_frequencyTable[i][j] = reader.ReadInt32();
                         }
                     }
                 }
@@ -299,73 +271,60 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         {
             try
             {
-                //ObjectOutputStream output = new ObjectOutputStream(new FileStream(
-                //    serialObj.FullName, FileMode.Create, FileAccess.Write));
-                //output.writeObject(wordIndexTable);
-                //output.writeObject(charIndexTable);
-                //output.writeObject(wordItem_charArrayTable);
-                //output.writeObject(wordItem_frequencyTable);
-                //output.close();
-                //// log.info("serialize core dict.");
-
-                using (Stream stream = new FileStream(serialObj.FullName, FileMode.Create, FileAccess.Write))
+                using Stream stream = new FileStream(serialObj.FullName, FileMode.Create, FileAccess.Write);
+                using var writer = new BinaryWriter(stream);
+                // Write wordIndexTable
+                int wiLen = wordIndexTable.Length;
+                writer.Write(wiLen);
+                for (int i = 0; i < wiLen; i++)
                 {
-                    using (var writer = new BinaryWriter(stream))
+                    writer.Write(wordIndexTable[i]);
+                }
+
+                // Write charIndexTable
+                int ciLen = charIndexTable.Length;
+                writer.Write(ciLen);
+                for (int i = 0; i < ciLen; i++)
+                {
+                    writer.Write(charIndexTable[i]);
+                }
+
+                // Write wordItem_charArrayTable
+                int caDim1 = wordItem_charArrayTable == null ? -1 : wordItem_charArrayTable.Length;
+                writer.Write(caDim1);
+                for (int i = 0; i < caDim1; i++)
+                {
+                    int caDim2 = wordItem_charArrayTable[i] == null ? -1 : wordItem_charArrayTable[i].Length;
+                    writer.Write(caDim2);
+                    for (int j = 0; j < caDim2; j++)
                     {
-                        // Write wordIndexTable
-                        int wiLen = wordIndexTable.Length;
-                        writer.Write(wiLen);
-                        for (int i = 0; i < wiLen; i++)
+                        int caDim3 = wordItem_charArrayTable[i][j] == null ? -1 : wordItem_charArrayTable[i][j].Length;
+                        writer.Write(caDim3);
+                        for (int k = 0; k < caDim3; k++)
                         {
-                            writer.Write(wordIndexTable[i]);
+                            writer.Write(wordItem_charArrayTable[i][j][k]);
                         }
+                    }
+                }
 
-                        // Write charIndexTable
-                        int ciLen = charIndexTable.Length;
-                        writer.Write(ciLen);
-                        for (int i = 0; i < ciLen; i++)
-                        {
-                            writer.Write(charIndexTable[i]);
-                        }
-
-                        // Write wordItem_charArrayTable
-                        int caDim1 = wordItem_charArrayTable == null ? -1 : wordItem_charArrayTable.Length;
-                        writer.Write(caDim1);
-                        for (int i = 0; i < caDim1; i++)
-                        {
-                            int caDim2 = wordItem_charArrayTable[i] == null ? -1 : wordItem_charArrayTable[i].Length;
-                            writer.Write(caDim2);
-                            for (int j = 0; j < caDim2; j++)
-                            {
-                                int caDim3 = wordItem_charArrayTable[i][j] == null ? -1 : wordItem_charArrayTable[i][j].Length;
-                                writer.Write(caDim3);
-                                for (int k = 0; k < caDim3; k++)
-                                {
-                                    writer.Write(wordItem_charArrayTable[i][j][k]);
-                                }
-                            }
-                        }
-
-                        // Write wordItem_frequencyTable
-                        int fDim1 = wordItem_frequencyTable == null ? -1 : wordItem_frequencyTable.Length;
-                        writer.Write(fDim1);
-                        for (int i = 0; i < fDim1; i++)
-                        {
-                            int fDim2 = wordItem_frequencyTable[i] == null ? -1 : wordItem_frequencyTable[i].Length;
-                            writer.Write(fDim2);
-                            for (int j = 0; j < fDim2; j++)
-                            {
-                                writer.Write(wordItem_frequencyTable[i][j]);
-                            }
-                        }
+                // Write wordItem_frequencyTable
+                int fDim1 = wordItem_frequencyTable == null ? -1 : wordItem_frequencyTable.Length;
+                writer.Write(fDim1);
+                for (int i = 0; i < fDim1; i++)
+                {
+                    int fDim2 = wordItem_frequencyTable[i] == null ? -1 : wordItem_frequencyTable[i].Length;
+                    writer.Write(fDim2);
+                    for (int j = 0; j < fDim2; j++)
+                    {
+                        writer.Write(wordItem_frequencyTable[i][j]);
                     }
                 }
 
                 // log.info("serialize core dict.");
             }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
             catch (Exception e)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
             {
                 // log.warn(e.getMessage());
             }
@@ -386,7 +345,6 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             buffer = new int[3];
             byte[] intBuffer = new byte[4];
             string tmpword;
-            //using (RandomAccessFile dctFile = new RandomAccessFile(dctFilePath, "r"))
             using (var dctFile = new FileStream(dctFilePath, FileMode.Open, FileAccess.Read))
             {
 
@@ -430,11 +388,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
                         {
                             byte[] lchBuffer = new byte[length];
                             dctFile.Read(lchBuffer, 0, lchBuffer.Length);
-                            //tmpword = new String(lchBuffer, "GB2312");
                             tmpword = Encoding.GetEncoding("GB2312").GetString(lchBuffer);
-                            //tmpword = Encoding.GetEncoding("hz-gb-2312").GetString(lchBuffer);
-                            // indexTable[i].wordItems[j].word = tmpword;
-                            // wordItemTable[i][j].charArray = tmpword.toCharArray();
                             wordItem_charArrayTable[i][j] = tmpword.ToCharArray();
                         }
                         else

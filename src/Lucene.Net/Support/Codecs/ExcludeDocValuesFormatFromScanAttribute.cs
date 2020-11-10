@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs
     /// <see cref="DefaultDocValuesFormatFactory.PutDocValuesFormatType(Type)"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class ExcludeDocValuesFormatFromScanAttribute : ExcludeServiceAttribute
+    public sealed class ExcludeDocValuesFormatFromScanAttribute : ExcludeServiceAttribute
     {
     }
 }

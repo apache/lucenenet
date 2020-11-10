@@ -111,7 +111,7 @@ namespace Lucene.Net.Index
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        public LogMergePolicy()
+        protected LogMergePolicy() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(DEFAULT_NO_CFS_RATIO, MergePolicy.DEFAULT_MAX_CFS_SEGMENT_SIZE)
         {
         }
@@ -230,9 +230,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numSegments && numToMerge <= maxNumSegments; i++)
             {
                 SegmentCommitInfo info = infos.Info(i);
-                bool? isOriginal;
-                segmentsToMerge.TryGetValue(info, out isOriginal);
-                if (isOriginal != null)
+                if (segmentsToMerge.TryGetValue(info, out bool? isOriginal) && isOriginal != null)
                 {
                     segmentIsOriginal = isOriginal.Value;
                     numToMerge++;
@@ -243,15 +241,16 @@ namespace Lucene.Net.Index
             return numToMerge <= maxNumSegments && (numToMerge != 1 || !segmentIsOriginal || IsMerged(infos, mergeInfo));
         }
 
-        /// <summary>
-        /// Returns the merges necessary to merge the index, taking the max merge
-        /// size or max merge docs into consideration. this method attempts to respect
-        /// the <paramref name="maxNumSegments"/> parameter, however it might be, due to size
-        /// constraints, that more than that number of segments will remain in the
-        /// index. Also, this method does not guarantee that exactly
-        /// <paramref name="maxNumSegments"/> will remain, but &lt;= that number.
-        /// </summary>
-        private MergeSpecification FindForcedMergesSizeLimit(SegmentInfos infos, int maxNumSegments, int last)
+        // LUCENENET: This documentation ic clearly out of date because it refers to an unused parameter
+        ///// <summary>
+        ///// Returns the merges necessary to merge the index, taking the max merge
+        ///// size or max merge docs into consideration. this method attempts to respect
+        ///// the <paramref name="maxNumSegments"/> parameter, however it might be, due to size
+        ///// constraints, that more than that number of segments will remain in the
+        ///// index. Also, this method does not guarantee that exactly
+        ///// <paramref name="maxNumSegments"/> will remain, but &lt;= that number.
+        ///// </summary>
+        private MergeSpecification FindForcedMergesSizeLimit(SegmentInfos infos, /* int maxNumSegments, LUCENENET: Not referenced */ int last)
         {
             MergeSpecification spec = new MergeSpecification();
             IList<SegmentCommitInfo> segments = infos.AsList();
@@ -443,7 +442,7 @@ namespace Lucene.Net.Index
 
             if (anyTooLarge)
             {
-                return FindForcedMergesSizeLimit(infos, maxNumSegments, last);
+                return FindForcedMergesSizeLimit(infos, /* maxNumSegments, // LUCENENET: Not referenced */ last);
             }
             else
             {
@@ -526,13 +525,13 @@ namespace Lucene.Net.Index
         {
             internal readonly SegmentCommitInfo info;
             internal readonly float level;
-            private int index;
+            //private int index; // LUCENENET: Never read
 
-            public SegmentInfoAndLevel(SegmentCommitInfo info, float level, int index)
+            public SegmentInfoAndLevel(SegmentCommitInfo info, float level /*, int index // LUCENENET: Never read */)
             {
                 this.info = info;
                 this.level = level;
-                this.index = index;
+                //this.index = index; // LUCENENET: Never read
             }
 
             // Sorts largest to smallest
@@ -577,7 +576,7 @@ namespace Lucene.Net.Index
                     size = 1;
                 }
 
-                SegmentInfoAndLevel infoLevel = new SegmentInfoAndLevel(info, (float)Math.Log(size) / norm, i);
+                SegmentInfoAndLevel infoLevel = new SegmentInfoAndLevel(info, (float)Math.Log(size) / norm /*, i*/);  // LUCENENET: index is never read
                 levels.Add(infoLevel);
 
                 if (IsVerbose)

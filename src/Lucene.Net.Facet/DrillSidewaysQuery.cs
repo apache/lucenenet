@@ -160,12 +160,12 @@ namespace Lucene.Net.Facet
                 {
                     dims[dim] = new DrillSidewaysScorer.DocsAndCost();
                     dims[dim].sidewaysCollector = outerInstance.drillSidewaysCollectors[dim];
-                    if (drillDowns[dim] is Filter)
+                    if (drillDowns[dim] is Filter filter)
                     {
                         // Pass null for acceptDocs because we already
                         // passed it to baseScorer and baseScorer is
                         // MUST'd here
-                        DocIdSet dis = ((Filter)drillDowns[dim]).GetDocIdSet(context, null);
+                        DocIdSet dis = filter.GetDocIdSet(context, null);
 
                         if (dis == null)
                         {

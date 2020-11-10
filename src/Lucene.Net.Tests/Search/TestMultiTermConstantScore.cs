@@ -62,25 +62,22 @@ namespace Lucene.Net.Search
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 
             small = NewDirectory();
-            using (RandomIndexWriter writer = new RandomIndexWriter(Random, small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy())))
+            using RandomIndexWriter writer = new RandomIndexWriter(Random, small, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false)).SetMergePolicy(NewLogMergePolicy()));
+            FieldType customType = new FieldType(TextField.TYPE_STORED);
+            customType.IsTokenized = false;
+            for (int i = 0; i < data.Length; i++)
             {
-
-                FieldType customType = new FieldType(TextField.TYPE_STORED);
-                customType.IsTokenized = false;
-                for (int i = 0; i < data.Length; i++)
+                Document doc = new Document();
+                doc.Add(NewField("id", Convert.ToString(i), customType)); // Field.Keyword("id",String.valueOf(i)));
+                doc.Add(NewField("all", "all", customType)); // Field.Keyword("all","all"));
+                if (null != data[i])
                 {
-                    Document doc = new Document();
-                    doc.Add(NewField("id", Convert.ToString(i), customType)); // Field.Keyword("id",String.valueOf(i)));
-                    doc.Add(NewField("all", "all", customType)); // Field.Keyword("all","all"));
-                    if (null != data[i])
-                    {
-                        doc.Add(NewTextField("data", data[i], Field.Store.YES)); // Field.Text("data",data[i]));
-                    }
-                    writer.AddDocument(doc);
+                    doc.Add(NewTextField("data", data[i], Field.Store.YES)); // Field.Text("data",data[i]));
                 }
-
-                reader = writer.GetReader();
+                writer.AddDocument(doc);
             }
+
+            reader = writer.GetReader();
         }
 
         [OneTimeTearDown]

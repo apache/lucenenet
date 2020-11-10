@@ -34,9 +34,9 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
     /// </summary>
     public class LikeThisQueryBuilder : IQueryBuilder
     {
-        private static readonly int DEFAULT_MAX_QUERY_TERMS = 20;
-        private static readonly int DEFAULT_MIN_TERM_FREQUENCY = 1;
-        private static readonly float DEFAULT_PERCENT_TERMS_TO_MATCH = 30; //default is a 3rd of selected terms must match
+        private const int DEFAULT_MAX_QUERY_TERMS = 20;
+        private const int DEFAULT_MIN_TERM_FREQUENCY = 1;
+        private const float DEFAULT_PERCENT_TERMS_TO_MATCH = 30; //default is a 3rd of selected terms must match
 
         private readonly Analyzer analyzer;
         private readonly string[] defaultFieldNames;

@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Constructor </summary>
-            public SubReaderWrapper()
+            protected SubReaderWrapper() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
             }
 
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Create a new <see cref="FilterDirectoryReader"/> that filters a passed in <see cref="DirectoryReader"/>. </summary>
         /// <param name="input"> the <see cref="DirectoryReader"/> to filter </param>
-        public FilterDirectoryReader(DirectoryReader input)
+        protected FilterDirectoryReader(DirectoryReader input) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(input, new StandardReaderWrapper())
         {
         }
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
         /// using the supplied <see cref="SubReaderWrapper"/> to wrap its subreader. </summary>
         /// <param name="input"> the <see cref="DirectoryReader"/> to filter </param>
         /// <param name="wrapper"> the <see cref="SubReaderWrapper"/> to use to wrap subreaders </param>
-        public FilterDirectoryReader(DirectoryReader input, SubReaderWrapper wrapper)
+        protected FilterDirectoryReader(DirectoryReader input, SubReaderWrapper wrapper) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(input.Directory, wrapper.Wrap(input.GetSequentialSubReaders()))
         {
             this.m_input = input;

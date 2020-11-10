@@ -355,9 +355,9 @@ namespace Lucene.Net.Join
 
         public override bool Equals(object obj)
         {
-            if (obj is ToChildBlockJoinQuery)
+            if (obj is null) return false;
+            if (obj is ToChildBlockJoinQuery other)
             {
-                ToChildBlockJoinQuery other = (ToChildBlockJoinQuery)obj;
                 return _origParentQuery.Equals(other._origParentQuery) &&
                     _parentsFilter.Equals(other._parentsFilter) &&
                     _doScores == other._doScores &&

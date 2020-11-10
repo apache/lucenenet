@@ -37,7 +37,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     public class EnwikiQueryMaker : AbstractQueryMaker, IQueryMaker
     {
         // common and a few uncommon queries from wikipedia search logs
-        private static string[] STANDARD_QUERIES = { "Images catbox gif",
+        private static readonly string[] STANDARD_QUERIES = { "Images catbox gif", // LUCENENET: marked readonly
             "Imunisasi haram", "Favicon ico", "Michael jackson", "Unknown artist",
             "Lily Thai", "Neda", "The Last Song", "Metallica", "Nicola Tesla",
             "Max B", "Skil Corporation", "\"The 100 Greatest Artists of All Time\"",
@@ -98,18 +98,16 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             {
                 try
                 {
-
                     object query = qs[i];
                     Query q = null;
-                    if (query is string)
+                    if (query is string queryString)
                     {
-                        q = qp.Parse((string)query);
+                        q = qp.Parse(queryString);
 
                     }
-                    else if (query is Query)
+                    else if (query is Query queryObj)
                     {
-                        q = (Query)query;
-
+                        q = queryObj;
                     }
                     else
                     {

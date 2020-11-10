@@ -22,7 +22,7 @@ namespace Lucene.Net.Attributes
     /// <summary>
     /// An attribute to use as a placeholder when a test framework doesn't support such a behavior.
     /// </summary>
-    internal class NoOpAttribute : Attribute
+    internal sealed class NoOpAttribute : Attribute
     {
     }
 }

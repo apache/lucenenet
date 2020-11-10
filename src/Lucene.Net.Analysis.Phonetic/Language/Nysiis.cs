@@ -119,8 +119,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         private static readonly Regex PAT_EE_IE = new Regex("(EE|IE)$", RegexOptions.Compiled);
         private static readonly Regex PAT_DT_ETC = new Regex("(DT|RT|RD|NT|ND)$", RegexOptions.Compiled);
 
-        private static readonly char SPACE = ' ';
-        private static readonly int TRUE_LENGTH = 6;
+        private const char SPACE = ' ';
+        private const int TRUE_LENGTH = 6;
 
         /// <summary>
         /// Tests if the given character is a vowel.
@@ -234,28 +234,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             this.strict = strict;
         }
 
-        // LUCENENET specific - in .NET we don't need an object overload, since strings are sealed anyway.
-        //    /**
-        //     * Encodes an Object using the NYSIIS algorithm. This method is provided in order to satisfy the requirements of the
-        //     * Encoder interface, and will throw an <see cref="EncoderException"/> if the supplied object is not of type
-        //     * <see cref="string"/>.
-        //     *
-        //     * @param obj
-        //     *            Object to encode
-        //     * @return An object (or a <see cref="string"/>) containing the NYSIIS code which corresponds to the given String.
-        //     * @throws EncoderException
-        //     *            if the parameter supplied is not of a <see cref="string"/>
-        //     * @throws IllegalArgumentException
-        //     *            if a character is not mapped
-        //     */
-        //    @Override
-        //public object Encode(object obj) 
-        //    {
-        //    if (!(obj is String)) {
-        //            throw new EncoderException("Parameter supplied to Nysiis encode is not of type java.lang.String");
-        //        }
-        //    return this.nysiis((String) obj);
-        //    }
+        // LUCENENET specific - in .NET we don't need an object overload of Encode(), since strings are sealed anyway.
 
         /// <summary>
         /// Encodes a string using the NYSIIS algorithm.

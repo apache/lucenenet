@@ -900,11 +900,7 @@ namespace Lucene.Net.Search
                 return false;
             }
 
-            // LUCENENET NOTE: Not supported in .NET anyway
-            //public override void Remove()
-            //{
-            //  throw new NotSupportedException();
-            //}
+            // LUCENENET NOTE: Remove() excluded because it is not applicable in .NET
 
             public IEnumerator<T> GetEnumerator()
             {

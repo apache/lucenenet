@@ -89,7 +89,32 @@ namespace Lucene.Net.Analysis.Cn.Smart
         public override void Reset()
         {
             base.Reset();
+            tokens?.Dispose(); // LUCENENET specific: Dispose tokens before letting it go out of scope
             tokens = null;
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="HMMChineseTokenizer"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    tokens?.Dispose(); // LUCENENET specific - dispose tokens and set to null
+                    tokens = null;
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
     }
 }

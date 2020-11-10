@@ -178,14 +178,16 @@ namespace Sax.Ext
             declared = new bool[length];
             specified = new bool[length];
 
-            if (atts is Attributes2) {
-                Attributes2 a2 = (Attributes2)atts;
+            if (atts is Attributes2 a2)
+            {
                 for (int i = 0; i < length; i++)
                 {
                     declared[i] = a2.IsDeclared(i);
                     specified[i] = a2.IsSpecified(i);
                 }
-            } else {
+            }
+            else
+            {
                 for (int i = 0; i < length; i++)
                 {
                     declared[i] = !"CDATA".Equals(atts.GetType(i), StringComparison.Ordinal);

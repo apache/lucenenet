@@ -141,8 +141,7 @@ namespace Lucene.Net.Search.Highlight
             position += posIncAtt.PositionIncrement;
             string termText = termAtt.ToString();
 
-            WeightedSpanTerm weightedSpanTerm;
-            if (!fieldWeightedSpanTerms.TryGetValue(termText, out weightedSpanTerm) || weightedSpanTerm == null)
+            if (!fieldWeightedSpanTerms.TryGetValue(termText, out WeightedSpanTerm weightedSpanTerm) || weightedSpanTerm == null)
             {
                 return 0;
             }
@@ -187,8 +186,7 @@ namespace Lucene.Net.Search.Highlight
         /// <returns><see cref="WeightedSpanTerm"/> for token</returns>
         public virtual WeightedSpanTerm GetWeightedSpanTerm(string token)
         {
-            WeightedSpanTerm result;
-            fieldWeightedSpanTerms.TryGetValue(token, out result);
+            fieldWeightedSpanTerms.TryGetValue(token, out WeightedSpanTerm result);
             return result;
         }
 

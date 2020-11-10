@@ -44,7 +44,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public override int DoLogic()
         {
             Directory dir = RunData.Directory;
-            IndexReader r = null;
+            IndexReader r; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (userData == null)
                 r = DirectoryReader.Open(dir);
             else

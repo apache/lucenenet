@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Codecs.Lucene40
 {
     /*
@@ -82,11 +84,13 @@ namespace Lucene.Net.Codecs.Lucene40
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override StoredFieldsReader FieldsReader(Directory directory, SegmentInfo si, FieldInfos fn, IOContext context)
         {
             return new Lucene40StoredFieldsReader(directory, si, fn, context);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override StoredFieldsWriter FieldsWriter(Directory directory, SegmentInfo si, IOContext context)
         {
             return new Lucene40StoredFieldsWriter(directory, si.Name, context);

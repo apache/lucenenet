@@ -170,46 +170,41 @@ namespace Egothor.Stemmer
         private static void AssertTrie(Trie trie, string file, bool usefull,
             bool storeorig)
         {
-            using (TextReader @in =
-                new StreamReader(new FileStream(file, FileMode.Open), Encoding.UTF8))
+            using TextReader @in = new StreamReader(new FileStream(file, FileMode.Open), Encoding.UTF8);
+            for (string line = @in.ReadLine(); line != null; line = @in.ReadLine())
             {
-
-                for (string line = @in.ReadLine(); line != null; line = @in.ReadLine())
+                try
                 {
-                    try
+                    line = line.ToLowerInvariant();
+                    StringTokenizer st = new StringTokenizer(line);
+                    st.MoveNext();
+                    string stem = st.Current;
+                    if (storeorig)
                     {
-                        line = line.ToLowerInvariant();
-                        StringTokenizer st = new StringTokenizer(line);
-                        st.MoveNext();
-                        string stem = st.Current;
-                        if (storeorig)
-                        {
-                            string cmd = (usefull) ? trie.GetFully(stem) : trie
-                                .GetLastOnPath(stem);
-                            StringBuilder stm = new StringBuilder(stem);
-                            Diff.Apply(stm, cmd);
-                            assertEquals(stem.ToLowerInvariant(), stm.ToString().ToLowerInvariant());
-                        }
-                        while (st.MoveNext())
-                        {
-                            string token = st.Current;
-                            if (token.Equals(stem, StringComparison.Ordinal))
-                            {
-                                continue;
-                            }
-                            string cmd = (usefull) ? trie.GetFully(token) : trie
-                                .GetLastOnPath(token);
-                            StringBuilder stm = new StringBuilder(token);
-                            Diff.Apply(stm, cmd);
-                            assertEquals(stem.ToLowerInvariant(), stm.ToString().ToLowerInvariant());
-                        }
+                        string cmd = (usefull) ? trie.GetFully(stem) : trie
+                            .GetLastOnPath(stem);
+                        StringBuilder stm = new StringBuilder(stem);
+                        Diff.Apply(stm, cmd);
+                        assertEquals(stem.ToLowerInvariant(), stm.ToString().ToLowerInvariant());
                     }
-                    catch (InvalidOperationException /*x*/)
+                    while (st.MoveNext())
                     {
-                        // no base token (stem) on a line
+                        string token = st.Current;
+                        if (token.Equals(stem, StringComparison.Ordinal))
+                        {
+                            continue;
+                        }
+                        string cmd = (usefull) ? trie.GetFully(token) : trie
+                            .GetLastOnPath(token);
+                        StringBuilder stm = new StringBuilder(token);
+                        Diff.Apply(stm, cmd);
+                        assertEquals(stem.ToLowerInvariant(), stm.ToString().ToLowerInvariant());
                     }
                 }
-
+                catch (InvalidOperationException /*x*/)
+                {
+                    // no base token (stem) on a line
+                }
             }
         }
 

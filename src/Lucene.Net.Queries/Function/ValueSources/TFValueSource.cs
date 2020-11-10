@@ -101,20 +101,13 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
                 if (docs == null)
                 {
-                    docs = new DocsEnumAnonymousInnerClassHelper(this);
+                    docs = new DocsEnumAnonymousInnerClassHelper();
                 }
                 atDoc = -1;
             }
 
             private class DocsEnumAnonymousInnerClassHelper : DocsEnum
             {
-                private readonly SingleDocValuesAnonymousInnerClassHelper outerInstance;
-
-                public DocsEnumAnonymousInnerClassHelper(SingleDocValuesAnonymousInnerClassHelper outerInstance)
-                {
-                    this.outerInstance = outerInstance;
-                }
-
                 public override int Freq => 0;
 
                 public override int DocID => DocIdSetIterator.NO_MORE_DOCS;

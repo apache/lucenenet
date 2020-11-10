@@ -26,12 +26,11 @@ namespace Lucene.Net.QueryParsers.Xml
     /// </summary>
     public class FilterBuilderFactory : IFilterBuilder
     {
-        IDictionary<string, IFilterBuilder> builders = new Dictionary<string, IFilterBuilder>();
+        private readonly IDictionary<string, IFilterBuilder> builders = new Dictionary<string, IFilterBuilder>(); // LUCENENET: marked readonly
 
         public virtual Filter GetFilter(XmlElement n)
         {
-            IFilterBuilder builder;
-            if (!builders.TryGetValue(n.Name, out builder) || builder == null)
+            if (!builders.TryGetValue(n.Name, out IFilterBuilder builder) || builder == null)
             {
                 throw new ParserException("No FilterBuilder defined for node " + n.Name);
             }
@@ -45,8 +44,7 @@ namespace Lucene.Net.QueryParsers.Xml
 
         public virtual IFilterBuilder GetFilterBuilder(string nodeName)
         {
-            IFilterBuilder result;
-            builders.TryGetValue(nodeName, out result);
+            builders.TryGetValue(nodeName, out IFilterBuilder result);
             return result;
         }
     }

@@ -8,8 +8,6 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
-using System.Diagnostics;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 using Document = Lucene.Net.Documents.Document;
 
@@ -74,8 +72,10 @@ namespace Lucene.Net.Codecs.Compressing
         private readonly Directory directory;
         private readonly string segment;
         private readonly string segmentSuffix;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private CompressingStoredFieldsIndexWriter indexWriter;
         private IndexOutput fieldsStream;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         private readonly CompressionMode compressionMode;
         private readonly Compressor compressor;
@@ -234,6 +234,7 @@ namespace Lucene.Net.Codecs.Compressing
             SaveInt32s(lengths, numBufferedDocs, fieldsStream);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool TriggerFlush()
         {
             return bufferedDocs.Length >= chunkSize || numBufferedDocs >= MAX_DOCUMENTS_PER_CHUNK; // chunks of at least chunkSize bytes
@@ -275,7 +276,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override void WriteField(FieldInfo info, IIndexableField field)
         {
-            int bits = 0;
+            int bits/* = 0*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             BytesRef bytes;
             string @string;
 
@@ -402,9 +403,9 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     StoredFieldsReader fieldsReader = matchingSegmentReader.FieldsReader;
                     // we can only bulk-copy if the matching reader is also a CompressingStoredFieldsReader
-                    if (fieldsReader != null && fieldsReader is CompressingStoredFieldsReader)
+                    if (fieldsReader != null && fieldsReader is CompressingStoredFieldsReader compressingStoredFieldsReader)
                     {
-                        matchingFieldsReader = (CompressingStoredFieldsReader)fieldsReader;
+                        matchingFieldsReader = compressingStoredFieldsReader;
                     }
                 }
 
@@ -429,7 +430,7 @@ namespace Lucene.Net.Codecs.Compressing
                     {
                         // not all docs were deleted
                         CompressingStoredFieldsReader.ChunkIterator it = matchingFieldsReader.GetChunkIterator(docID);
-                        int[] startOffsets = new int[0];
+                        int[] startOffsets = Arrays.Empty<int>();
                         do
                         {
                             // go to the next chunk that contains docID
@@ -486,6 +487,7 @@ namespace Lucene.Net.Codecs.Compressing
             return docCount;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int NextLiveDoc(int doc, IBits liveDocs, int maxDoc)
         {
             if (liveDocs == null)
@@ -499,6 +501,7 @@ namespace Lucene.Net.Codecs.Compressing
             return doc;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int NextDeletedDoc(int doc, IBits liveDocs, int maxDoc)
         {
             if (liveDocs == null)

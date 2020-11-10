@@ -499,9 +499,11 @@ namespace Lucene.Net.QueryParsers.Simple
                 // this is necessary any time a term, phrase, or subquery is negated
                 if (state.Not % 2 == 1)
                 {
-                    BooleanQuery nq = new BooleanQuery();
-                    nq.Add(branch, Occur.MUST_NOT);
-                    nq.Add(new MatchAllDocsQuery(), Occur.SHOULD);
+                    BooleanQuery nq = new BooleanQuery
+                    {
+                        { branch, Occur.MUST_NOT },
+                        { new MatchAllDocsQuery(), Occur.SHOULD }
+                    };
                     branch = nq;
                 }
 
@@ -525,8 +527,10 @@ namespace Lucene.Net.QueryParsers.Simple
                     // the proper precedence and the current operation will take over as the top of the tree
                     if (!state.PreviousOperationIsSet || state.PreviousOperation != state.CurrentOperation)
                     {
-                        BooleanQuery bq = new BooleanQuery();
-                        bq.Add(state.Top, state.CurrentOperation);
+                        BooleanQuery bq = new BooleanQuery
+                        {
+                            { state.Top, state.CurrentOperation }
+                        };
                         state.Top = bq;
                     }
 
@@ -568,8 +572,7 @@ namespace Lucene.Net.QueryParsers.Simple
                         slopLength++;
                     }
                 }
-                int fuzziness = 0;
-                int.TryParse(new string(slopText, 0, slopLength), out fuzziness); // LUCENENET TODO: Find a way to pass culture
+                int.TryParse(new string(slopText, 0, slopLength), out int fuzziness); // LUCENENET TODO: Find a way to pass culture
                 // negative -> 0
                 if (fuzziness < 0)
                 {

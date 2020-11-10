@@ -6,6 +6,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -86,13 +87,10 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class BlockTreeTermsReader : FieldsProducer
     {
-        private void InitializeInstanceFields()
-        {
-            NO_OUTPUT = fstOutputs.NoOutput;
-        }
-
         // Open input to the main terms dict file (_X.tib)
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput @in;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         //private static final boolean DEBUG = BlockTreeTermsWriter.DEBUG;
 
@@ -111,7 +109,7 @@ namespace Lucene.Net.Codecs
         /// File offset where the directory starts in the index file. </summary>
         private long indexDirOffset;
 
-        private string segment;
+        private readonly string segment; // LUCENENET: marked readonly
 
         private readonly int version;
 
@@ -119,8 +117,7 @@ namespace Lucene.Net.Codecs
         /// Sole constructor. </summary>
         public BlockTreeTermsReader(Directory dir, FieldInfos fieldInfos, SegmentInfo info, PostingsReaderBase postingsReader, IOContext ioContext, string segmentSuffix, int indexDivisor)
         {
-            InitializeInstanceFields();
-
+            NO_OUTPUT = fstOutputs.NoOutput;
             this.postingsReader = postingsReader;
 
             this.segment = info.Name;
@@ -293,8 +290,7 @@ namespace Lucene.Net.Codecs
         public override Terms GetTerms(string field)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(field != null);
-            FieldReader ret;
-            fields.TryGetValue(field, out ret);
+            fields.TryGetValue(field, out FieldReader ret);
             return ret;
         }
 
@@ -606,6 +602,7 @@ namespace Lucene.Net.Codecs
             /// <summary>
             /// For debugging -- used by CheckIndex too </summary>
             // TODO: maybe push this into Terms?
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public Stats ComputeStats()
             {
                 return (new SegmentTermsEnum(this)).ComputeBlockStats();
@@ -1048,12 +1045,14 @@ namespace Lucene.Net.Codecs
                 }
 
                 // only for assert:
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 internal bool SetSavedStartTerm(BytesRef startTerm)
                 {
                     savedStartTerm = startTerm == null ? null : BytesRef.DeepCopyOf(startTerm);
                     return true;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 public override TermState GetTermState()
                 {
                     currentFrame.DecodeMetaData();
@@ -1149,12 +1148,14 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     currentFrame.DecodeMetaData();
                     return outerInstance.outerInstance.postingsReader.Docs(outerInstance.fieldInfo, currentFrame.termState, skipDocs, reuse, flags);
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 public override DocsAndPositionsEnum DocsAndPositions(IBits skipDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
                     // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
@@ -1549,10 +1550,10 @@ namespace Lucene.Net.Codecs
                         // Empty string prefix must have an output in the index!
                         if (Debugging.AssertsEnabled) Debugging.Assert(arc.IsFinal);
                     }
-                    else
-                    {
-                        arc = null;
-                    }
+                    //else
+                    //{
+                    //    arc = null; // LUCENENET: IDE0059: Remove unnecessary value assignment
+                    //}
                     currentFrame = staticFrame;
                     //currentFrame = pushFrame(arc, rootCode, 0);
                     //currentFrame.loadBlock();
@@ -1567,6 +1568,7 @@ namespace Lucene.Net.Codecs
                 }
 
                 // Not private to avoid synthetic access$NNN methods
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 internal void InitIndexInput()
                 {
                     if (this.@in == null)
@@ -2365,71 +2367,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
-                // LUCENENET NOTE: Not in use
-
-                //private void PrintSeekState(PrintStream @out)
-                //{
-                //    if (CurrentFrame == StaticFrame)
-                //    {
-                //        @out.println("  no prior seek");
-                //    }
-                //    else
-                //    {
-                //        @out.println("  prior seek state:");
-                //        int ord = 0;
-                //        bool isSeekFrame = true;
-                //        while (true)
-                //        {
-                //            Frame f = GetFrame(ord);
-                //            if (Debugging.AssertsEnabled) Debugging.Assert(f != null);
-                //            BytesRef prefix = new BytesRef(term.Bytes, 0, f.Prefix);
-                //            if (f.NextEnt == -1)
-                //            {
-                //                @out.println("    frame " + (isSeekFrame ? "(seek)" : "(next)") + " ord=" + ord + " fp=" + f.Fp + (f.IsFloor ? (" (fpOrig=" + f.FpOrig + ")") : "") + " prefixLen=" + f.Prefix + " prefix=" + prefix + (f.NextEnt == -1 ? "" : (" (of " + f.EntCount + ")")) + " hasTerms=" + f.HasTerms + " isFloor=" + f.IsFloor + " code=" + ((f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) + (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS : 0) + (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR : 0)) + " isLastInFloor=" + f.IsLastInFloor + " mdUpto=" + f.MetaDataUpto + " tbOrd=" + f.TermBlockOrd);
-                //            }
-                //            else
-                //            {
-                //                @out.println("    frame " + (isSeekFrame ? "(seek, loaded)" : "(next, loaded)") + " ord=" + ord + " fp=" + f.Fp + (f.IsFloor ? (" (fpOrig=" + f.FpOrig + ")") : "") + " prefixLen=" + f.Prefix + " prefix=" + prefix + " nextEnt=" + f.NextEnt + (f.NextEnt == -1 ? "" : (" (of " + f.EntCount + ")")) + " hasTerms=" + f.HasTerms + " isFloor=" + f.IsFloor + " code=" + ((f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) + (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS : 0) + (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR : 0)) + " lastSubFP=" + f.LastSubFP + " isLastInFloor=" + f.IsLastInFloor + " mdUpto=" + f.MetaDataUpto + " tbOrd=" + f.TermBlockOrd);
-                //            }
-                //            if (OuterInstance.Index != null)
-                //            {
-                //                if (Debugging.AssertsEnabled) Debugging.Assert(!isSeekFrame || f.Arc != null, "isSeekFrame={0} f.arc={1}", isSeekFrame, f.Arc);
-                //                if (f.Prefix > 0 && isSeekFrame && f.Arc.Label != (term.Bytes[f.Prefix - 1] & 0xFF))
-                //                {
-                //                    @out.println("      broken seek state: arc.label=" + (char)f.Arc.Label + " vs term byte=" + (char)(term.Bytes[f.Prefix - 1] & 0xFF));
-                //                    throw new Exception("seek state is broken");
-                //                }
-                //                BytesRef output = Util.Get(OuterInstance.Index, prefix);
-                //                if (output == null)
-                //                {
-                //                    @out.println("      broken seek state: prefix is not final in index");
-                //                    throw new Exception("seek state is broken");
-                //                }
-                //                else if (isSeekFrame && !f.IsFloor)
-                //                {
-                //                    ByteArrayDataInput reader = new ByteArrayDataInput(output.Bytes, output.Offset, output.Length);
-                //                    long codeOrig = reader.ReadVLong();
-                //                    long code = (f.Fp << BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS) | (f.HasTerms ? BlockTreeTermsWriter.OUTPUT_FLAG_HAS_TERMS : 0) | (f.IsFloor ? BlockTreeTermsWriter.OUTPUT_FLAG_IS_FLOOR : 0);
-                //                    if (codeOrig != code)
-                //                    {
-                //                        @out.println("      broken seek state: output code=" + codeOrig + " doesn't match frame code=" + code);
-                //                        throw new Exception("seek state is broken");
-                //                    }
-                //                }
-                //            }
-                //            if (f == CurrentFrame)
-                //            {
-                //                break;
-                //            }
-                //            if (f.Prefix == ValidIndexPrefix)
-                //            {
-                //                isSeekFrame = false;
-                //            }
-                //            ord++;
-                //        }
-                //    }
-                //}
-
+                // LUCENENET specific - Removed private void PrintSeekState(PrintStream @out) because it is not referenced
 
                 /* Decodes only the term bytes of the next term.  If caller then asks for
                    metadata, ie docFreq, totalTermFreq or pulls a D/&PEnum, we then (lazily)
@@ -2914,6 +2852,7 @@ namespace Lucene.Net.Codecs
                         */
                     }
 
+                    [MethodImpl(MethodImplOptions.AggressiveInlining)]
                     public bool Next()
                     {
                         return isLeafBlock ? NextLeaf() : NextNonLeaf();
@@ -3002,7 +2941,7 @@ namespace Lucene.Net.Codecs
 
                         if (Debugging.AssertsEnabled) Debugging.Assert(numFollowFloorBlocks != 0);
 
-                        long newFP = fpOrig;
+                        long newFP/* = fpOrig*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
                         while (true)
                         {
                             long code = floorDataReader.ReadVInt64();

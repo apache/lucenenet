@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -46,17 +47,17 @@ namespace Lucene.Net.Codecs.Lucene40
     [Obsolete("Only for reading old 4.0 segments")]
     public class Lucene40PostingsReader : PostingsReaderBase
     {
-        internal static readonly string TERMS_CODEC = "Lucene40PostingsWriterTerms";
-        internal static readonly string FRQ_CODEC = "Lucene40PostingsWriterFrq";
-        internal static readonly string PRX_CODEC = "Lucene40PostingsWriterPrx";
+        internal const string TERMS_CODEC = "Lucene40PostingsWriterTerms";
+        internal const string FRQ_CODEC = "Lucene40PostingsWriterFrq";
+        internal const string PRX_CODEC = "Lucene40PostingsWriterPrx";
 
         //private static boolean DEBUG = BlockTreeTermsWriter.DEBUG;
 
         // Increment version to change it:
-        internal static readonly int VERSION_START = 0;
+        internal const int VERSION_START = 0;
 
-        internal static readonly int VERSION_LONG_SKIP = 1;
-        internal static readonly int VERSION_CURRENT = VERSION_LONG_SKIP;
+        internal const int VERSION_LONG_SKIP = 1;
+        internal const int VERSION_CURRENT = VERSION_LONG_SKIP;
 
         private readonly IndexInput freqIn;
         private readonly IndexInput proxIn;
@@ -109,6 +110,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Init(IndexInput termsIn)
         {
             // Make sure we are talking to the matching past writer
@@ -126,6 +128,7 @@ namespace Lucene.Net.Codecs.Lucene40
             internal long proxOffset;
             internal long skipOffset;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override object Clone()
             {
                 StandardTermState other = new StandardTermState();
@@ -133,6 +136,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return other;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void CopyFrom(TermState other)
             {
                 base.CopyFrom(other);
@@ -142,12 +146,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 skipOffset = other2.skipOffset;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override string ToString()
             {
                 return base.ToString() + " freqFP=" + freqOffset + " proxFP=" + proxOffset + " skipOffset=" + skipOffset;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override BlockTermState NewTermState()
         {
             return new StandardTermState();
@@ -178,7 +184,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             StandardTermState termState2 = (StandardTermState)termState;
             // if (DEBUG) System.out.println("SPR: nextTerm seg=" + segment + " tbOrd=" + termState2.termBlockOrd + " bytesReader.fp=" + termState.bytesReader.getPosition());
-            bool isFirstTerm = termState2.TermBlockOrd == 0;
+            //bool isFirstTerm = termState2.TermBlockOrd == 0; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (absolute)
             {
                 termState2.freqOffset = 0;
@@ -223,23 +229,20 @@ namespace Lucene.Net.Codecs.Lucene40
             return NewDocsEnum(liveDocs, fieldInfo, (StandardTermState)termState);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool CanReuse(DocsEnum reuse, IBits liveDocs)
         {
-            if (reuse != null && (reuse is SegmentDocsEnumBase))
-            {
-                SegmentDocsEnumBase docsEnum = (SegmentDocsEnumBase)reuse;
-                // If you are using ParellelReader, and pass in a
-                // reused DocsEnum, it could have come from another
-                // reader also using standard codec
-                if (docsEnum.startFreqIn == freqIn)
-                {
-                    // we only reuse if the the actual the incoming enum has the same liveDocs as the given liveDocs
-                    return liveDocs == docsEnum.m_liveDocs;
-                }
-            }
+            // If you are using ParellelReader, and pass in a
+            // reused DocsEnum, it could have come from another
+            // reader also using standard codec
+            if (reuse != null && (reuse is SegmentDocsEnumBase docsEnum) && docsEnum.startFreqIn == freqIn)
+                // we only reuse if the the actual the incoming enum has the same liveDocs as the given liveDocs
+                return liveDocs == docsEnum.m_liveDocs;
+
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private DocsEnum NewDocsEnum(IBits liveDocs, FieldInfo fieldInfo, StandardTermState termState)
         {
             if (liveDocs == null)
@@ -263,47 +266,27 @@ namespace Lucene.Net.Codecs.Lucene40
             // TODO: refactor
             if (fieldInfo.HasPayloads || hasOffsets)
             {
-                SegmentFullPositionsEnum docsEnum;
-                if (reuse == null || !(reuse is SegmentFullPositionsEnum))
-                {
+                // If you are using ParellelReader, and pass in a
+                // reused DocsEnum, it could have come from another
+                // reader also using standard codec
+                if (reuse is null || !(reuse is SegmentFullPositionsEnum docsEnum) || docsEnum.startFreqIn != freqIn)
                     docsEnum = new SegmentFullPositionsEnum(this, freqIn, proxIn);
-                }
-                else
-                {
-                    docsEnum = (SegmentFullPositionsEnum)reuse;
-                    if (docsEnum.startFreqIn != freqIn)
-                    {
-                        // If you are using ParellelReader, and pass in a
-                        // reused DocsEnum, it could have come from another
-                        // reader also using standard codec
-                        docsEnum = new SegmentFullPositionsEnum(this, freqIn, proxIn);
-                    }
-                }
+
                 return docsEnum.Reset(fieldInfo, (StandardTermState)termState, liveDocs);
             }
             else
             {
-                SegmentDocsAndPositionsEnum docsEnum;
-                if (reuse == null || !(reuse is SegmentDocsAndPositionsEnum))
-                {
+                // If you are using ParellelReader, and pass in a
+                // reused DocsEnum, it could have come from another
+                // reader also using standard codec
+                if (reuse is null || !(reuse is SegmentDocsAndPositionsEnum docsEnum) || docsEnum.startFreqIn != freqIn)
                     docsEnum = new SegmentDocsAndPositionsEnum(this, freqIn, proxIn);
-                }
-                else
-                {
-                    docsEnum = (SegmentDocsAndPositionsEnum)reuse;
-                    if (docsEnum.startFreqIn != freqIn)
-                    {
-                        // If you are using ParellelReader, and pass in a
-                        // reused DocsEnum, it could have come from another
-                        // reader also using standard codec
-                        docsEnum = new SegmentDocsAndPositionsEnum(this, freqIn, proxIn);
-                    }
-                }
+
                 return docsEnum.Reset(fieldInfo, (StandardTermState)termState, liveDocs);
             }
         }
 
-        internal static readonly int BUFFERSIZE = 64;
+        internal const int BUFFERSIZE = 64;
 
         private abstract class SegmentDocsEnumBase : DocsEnum
         {
@@ -424,7 +407,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 return low - 1;
             }
 
-            internal int ReadFreq(IndexInput freqIn, int code)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            internal static int ReadFreq(IndexInput freqIn, int code) // LUCENENET: CA1822: Mark members as static
             {
                 if ((code & 1) != 0) // if low bit is set
                 {
@@ -465,6 +449,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             protected internal abstract int NextUnreadDoc();
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private int FillDocs(int size)
             {
                 IndexInput freqIn = this.freqIn;
@@ -479,6 +464,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return size;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private int FillDocsAndFreqs(int size)
             {
                 IndexInput freqIn = this.freqIn;
@@ -534,6 +520,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return ScanTo(target);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return m_limit;
@@ -542,12 +529,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private sealed class AllDocsSegmentDocsEnum : SegmentDocsEnumBase
         {
-            private readonly Lucene40PostingsReader outerInstance;
-
             internal AllDocsSegmentDocsEnum(Lucene40PostingsReader outerInstance, IndexInput startFreqIn)
                 : base(outerInstance, startFreqIn, null)
             {
-                this.outerInstance = outerInstance;
                 if (Debugging.AssertsEnabled) Debugging.Assert(m_liveDocs == null);
             }
 
@@ -635,12 +619,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private sealed class LiveDocsSegmentDocsEnum : SegmentDocsEnumBase
         {
-            private readonly Lucene40PostingsReader outerInstance;
-
             internal LiveDocsSegmentDocsEnum(Lucene40PostingsReader outerInstance, IndexInput startFreqIn, IBits liveDocs)
                 : base(outerInstance, startFreqIn, liveDocs)
             {
-                this.outerInstance = outerInstance;
                 if (Debugging.AssertsEnabled) Debugging.Assert(liveDocs != null);
             }
 
@@ -948,11 +929,13 @@ namespace Lucene.Net.Codecs.Lucene40
             /// Returns the payload at this position, or <c>null</c> if no
             /// payload was indexed.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override BytesRef GetPayload()
             {
                 return null;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return limit;
@@ -1280,17 +1263,20 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return limit;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
         }

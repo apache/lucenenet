@@ -169,8 +169,7 @@ namespace Lucene.Net.Index
                         ISet<string> visited = new JCG.HashSet<string>();
                         for (int i = 0; i < maxTermsPerDoc; i++)
                         {
-                            string token;
-                            if (!postings.TryDequeue(out token))
+                            if (!postings.TryDequeue(out string token))
                             {
                                 break;
                             }

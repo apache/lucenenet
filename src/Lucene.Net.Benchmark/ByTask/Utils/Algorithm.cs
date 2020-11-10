@@ -35,7 +35,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
     /// </summary>
     public class Algorithm
     {
-        private TaskSequence sequence;
+        private readonly TaskSequence sequence; // LUCENENET: marked readonly
         private readonly string[] taskPackages;
 
         /// <summary>
@@ -80,12 +80,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
                     case StreamTokenizer.TokenType_Word:
                         string s = stok.StringValue;
-                        PerfTask task = (PerfTask)Activator.CreateInstance(TaskClass(config, s), runData);
+                        PerfTask task = (PerfTask)Activator.CreateInstance(TaskClass(/*config, // LUCENENET: Not referenced */ s), runData);
                         task.AlgLineNum = stok.LineNumber;
                         task.DisableCounting = isDisableCountNextTask;
                         isDisableCountNextTask = false;
                         currSequence.AddTask(task);
-                        if (task is RepSumByPrefTask)
+                        if (task is RepSumByPrefTask repSumByPrefTask)
                         {
                             stok.NextToken();
                             string prefix = stok.StringValue;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                             {
                                 throw new Exception("named report prefix problem - " + stok.ToString());
                             }
-                          ((RepSumByPrefTask)task).SetPrefix(prefix);
+                            repSumByPrefTask.SetPrefix(prefix);
                         }
                         // check for task param: '(' someParam ')'
                         stok.NextToken();
@@ -185,7 +185,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
                             case ':':
                                 if (!colonOk) throw new Exception("colon unexpexted: - " + stok.ToString());
-                                colonOk = false;
+                                //colonOk = false; // LUCENENET: IDE0059: Remove unnecessary value assignment - this is assigned again below without being read
                                 // get repetitions number
                                 stok.NextToken();
                                 if ((char)stok.TokenType == '*')
@@ -346,9 +346,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 if (t != null && t.Count == 1)
                 {
                     PerfTask p = t[0];
-                    if (p is TaskSequence)
+                    if (p is TaskSequence taskSequence)
                     {
-                        sequence = (TaskSequence)p;
+                        sequence = taskSequence;
                         continue;
                     }
                 }
@@ -384,7 +384,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             return result.ToArray();
         }
 
-        private Type TaskClass(Config config, string taskName)
+        private Type TaskClass(/*Config config, // LUCENENET: Not referenced */ string taskName)
         {
             foreach (string pkg in taskPackages)
             {
@@ -398,7 +398,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
             throw new TypeLoadException(taskName + " not found in packages " + Collections.ToString(taskPackages));
         }
 
-        private Type LoadType(string assemblyName, string typeName)
+        private static Type LoadType(string assemblyName, string typeName) // LUCENENET: CA1822: Mark members as static
         {
             return Assembly.Load(new AssemblyName(assemblyName)).GetTypes().FirstOrDefault(t => t.Name == typeName);
         }
@@ -448,9 +448,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 return;
             foreach (PerfTask p in t)
             {
-                if (p is TaskSequence)
+                if (p is TaskSequence taskSequence)
                 {
-                    ExtractTasks(extrct, (TaskSequence)p);
+                    ExtractTasks(extrct, taskSequence);
                 }
                 else
                 {

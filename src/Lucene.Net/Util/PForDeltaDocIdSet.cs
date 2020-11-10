@@ -2,6 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -57,6 +58,7 @@ namespace Lucene.Net.Util
             return buffer;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Complexity")]
         static PForDeltaDocIdSet()
         {
             int maxByteBLockCount = 0;
@@ -148,6 +150,7 @@ namespace Lucene.Net.Util
                 return this;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual void ComputeFreqs()
             {
                 Arrays.Fill(freqs, 0);
@@ -172,6 +175,7 @@ namespace Lucene.Net.Util
                 return (int)blockSize;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual int UnaryBlockSize()
             {
                 int deltaSum = 0;
@@ -188,6 +192,7 @@ namespace Lucene.Net.Util
                 return blockSize;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual int ComputeOptimalNumberOfBits()
             {
                 ComputeFreqs();
@@ -216,6 +221,7 @@ namespace Lucene.Net.Util
                 return blockSize;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual void PforEncode()
             {
                 if (numExceptions > 0)
@@ -259,6 +265,7 @@ namespace Lucene.Net.Util
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual void UnaryEncode()
             {
                 int current = 0;
@@ -279,6 +286,7 @@ namespace Lucene.Net.Util
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual void EncodeBlock()
             {
                 int originalLength = data.Length;
@@ -467,6 +475,7 @@ namespace Lucene.Net.Util
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual void UnaryDecompress(byte token)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert((token & HAS_EXCEPTIONS) == 0);
@@ -482,6 +491,7 @@ namespace Lucene.Net.Util
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual void DecompressBlock()
             {
                 var token = data[offset++];
@@ -503,6 +513,7 @@ namespace Lucene.Net.Util
                 ++blockIdx;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual void SkipBlock()
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(i == BLOCK_SIZE);
@@ -520,6 +531,7 @@ namespace Lucene.Net.Util
                 return docID = nextDocs[i++];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual int ForwardBinarySearch(int target)
             {
                 // advance forward and double the window at each step
@@ -596,6 +608,7 @@ namespace Lucene.Net.Util
                 return SlowAdvance(target);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return cardinality;
@@ -604,6 +617,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Return the number of documents in this <see cref="DocIdSet"/> in constant time. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Cardinality()
         {
             return cardinality;
@@ -611,6 +625,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Return the memory usage of this instance. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long RamBytesUsed()
         {
             return RamUsageEstimator.AlignObjectSize(3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF) + docIDs.RamBytesUsed() + offsets.RamBytesUsed();

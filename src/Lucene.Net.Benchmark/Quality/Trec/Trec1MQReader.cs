@@ -35,7 +35,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
     /// </summary>
     public class Trec1MQReader
     {
-        private string name;
+        private readonly string name; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructor for Trec's 1MQ TopicsReader
@@ -72,8 +72,10 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                     // qtext
                     string qtext = line.Substring(k + 1).Trim();
                     // we got a topic!
-                    IDictionary<string, string> fields = new Dictionary<string, string>();
-                    fields[name] = qtext;
+                    IDictionary<string, string> fields = new Dictionary<string, string>
+                    {
+                        [name] = qtext
+                    };
                     //System.out.println("id: "+id+" qtext: "+qtext+"  line: "+line);
                     QualityQuery topic = new QualityQuery(id, fields);
                     res.Add(topic);

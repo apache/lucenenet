@@ -1,6 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
-using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -74,6 +74,7 @@ namespace Lucene.Net.Util.Packed
         /// If there are pending bits (at most 7), they will be ignored and the next
         /// value will be read starting at the next byte.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SkipToNextByte()
         {
             remainingBits = 0;

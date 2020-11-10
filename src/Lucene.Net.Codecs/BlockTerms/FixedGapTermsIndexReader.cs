@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         private readonly PagedBytes termBytes = new PagedBytes(PAGED_BYTES_BITS);
         private readonly PagedBytes.Reader termBytesReader;
 
-        readonly IDictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
+        private readonly IDictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
 
         // start of the field info data
         private long dirOffset;
@@ -129,7 +129,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                         throw new CorruptIndexException("invalid packedIndexStart: " + packedIndexStart + " indexStart: " + indexStart + "numIndexTerms: " + numIndexTerms + " (resource=" + input + ")");
                     }
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                    FieldIndexData previous = fields.Put(fieldInfo, new FieldIndexData(this, fieldInfo, numIndexTerms, indexStart, termsStart, packedIndexStart, packedOffsetsStart));
+                    FieldIndexData previous = fields.Put(fieldInfo, new FieldIndexData(this, /* fieldInfo, // LUCENENET: Not referenced */
+                        numIndexTerms, indexStart, termsStart, packedIndexStart, packedOffsetsStart));
                     if (previous != null)
                     {
                         throw new CorruptIndexException("duplicate field: " + fieldInfo.Name + " (resource=" + input + ")");
@@ -276,7 +277,8 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private readonly int numIndexTerms;
 
-            public FieldIndexData(FixedGapTermsIndexReader outerInstance, FieldInfo fieldInfo, int numIndexTerms, long indexStart, long termsStart,
+            public FieldIndexData(FixedGapTermsIndexReader outerInstance, /*FieldInfo fieldInfo, // LUCENENET: Not Referenced */
+                int numIndexTerms, long indexStart, long termsStart,
                 long packedIndexStart, long packedOffsetsStart)
             {
                 this.outerInstance = outerInstance;
@@ -444,8 +446,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
         {
-            FieldIndexData fieldData;
-            if (!fields.TryGetValue(fieldInfo, out fieldData) || fieldData == null || fieldData.coreIndex == null)
+            if (!fields.TryGetValue(fieldInfo, out FieldIndexData fieldData) || fieldData == null || fieldData.coreIndex == null)
             {
                 return null;
             }

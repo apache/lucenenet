@@ -102,9 +102,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
                     foreach (IQueryNode child in children)
                     {
 
-                        if (child is IFieldableNode)
+                        if (child is IFieldableNode fieldableNode)
                         {
-                            ((IFieldableNode)child).Field = value;
+                            fieldableNode.Field = value;
                         }
                     }
                 }

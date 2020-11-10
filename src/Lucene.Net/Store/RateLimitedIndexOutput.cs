@@ -34,9 +34,9 @@ namespace Lucene.Net.Store
         internal RateLimitedIndexOutput(RateLimiter rateLimiter, IndexOutput @delegate)
         {
             // TODO should we make buffer size configurable
-            if (@delegate is BufferedIndexOutput)
+            if (@delegate is BufferedIndexOutput bufferedIndexOutput)
             {
-                bufferedDelegate = (BufferedIndexOutput)@delegate;
+                bufferedDelegate = bufferedIndexOutput;
                 this.@delegate = @delegate;
             }
             else

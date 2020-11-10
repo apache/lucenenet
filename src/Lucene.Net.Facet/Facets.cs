@@ -29,7 +29,7 @@ namespace Lucene.Net.Facet
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public Facets()
+        protected Facets() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 

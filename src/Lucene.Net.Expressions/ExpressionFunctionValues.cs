@@ -35,16 +35,8 @@ namespace Lucene.Net.Expressions
         internal ExpressionFunctionValues(ValueSource parent, Expression expression, FunctionValues[] functionValues) 
             : base(parent)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException();
-            }
-            if (functionValues == null)
-            {
-                throw new ArgumentNullException();
-            }
-            this.expression = expression;
-            this.functionValues = functionValues;
+            this.expression = expression ?? throw new ArgumentNullException(nameof(expression));
+            this.functionValues = functionValues ?? throw new ArgumentNullException(nameof(functionValues));
         }
 
         public override double DoubleVal(int document)

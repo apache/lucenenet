@@ -39,10 +39,10 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             this.ordered = ordered;
         }
 
-        private int opDistance;
+        private readonly int opDistance; // LUCENENET: marked readonly
         public virtual int OpDistance => opDistance;
 
-        private bool ordered;
+        private readonly bool ordered; // LUCENENET: marked readonly
         public virtual bool QueriesOrdered => ordered;
 
 

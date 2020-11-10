@@ -2,6 +2,7 @@ using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -211,7 +212,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Compare two pps, but only by position and offset </summary>
-        private PhrasePositions Lesser(PhrasePositions pp, PhrasePositions pp2)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static PhrasePositions Lesser(PhrasePositions pp, PhrasePositions pp2) // LUCENENET: CA1822: Mark members as static
         {
             if (pp.position < pp2.position || (pp.position == pp2.position && pp.offset < pp2.offset))
             {
@@ -301,6 +303,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Move all PPs to their first position </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void PlaceFirstPositions()
         {
             for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
@@ -477,8 +480,10 @@ namespace Lucene.Net.Search
                         {
                             g = res.Count;
                             pp.rptGroup = g;
-                            List<PhrasePositions> rl = new List<PhrasePositions>(2);
-                            rl.Add(pp);
+                            List<PhrasePositions> rl = new List<PhrasePositions>(2)
+                            {
+                                pp
+                            };
                             res.Add(rl);
                         }
                         pp2.rptGroup = g;
@@ -521,7 +526,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Actual position in doc of a PhrasePosition, relies on that position = tpPos - offset) </summary>
-        private int TpPos(PhrasePositions pp)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int TpPos(PhrasePositions pp) // LUCENENET: CA1822: Mark members as static
         {
             return pp.position + pp.offset;
         }
@@ -536,8 +542,7 @@ namespace Lucene.Net.Search
             {
                 foreach (Term t in pp.terms)
                 {
-                    int? cnt0;
-                    tcnt.TryGetValue(t, out cnt0);
+                    tcnt.TryGetValue(t, out int? cnt0);
                     int? cnt = cnt0 == null ? new int?(1) : new int?(1 + (int)cnt0);
                     tcnt[t] = cnt;
                     if (cnt == 2)
@@ -571,16 +576,15 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// bit-sets - for each repeating pp, for each of its repeating terms, the term ordinal values is set </summary>
-        private IList<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, IDictionary<Term, int?> tord)
+        private static IList<FixedBitSet> PpTermsBitSets(PhrasePositions[] rpp, IDictionary<Term, int?> tord) // LUCENENET: CA1822: Mark members as static
         {
             List<FixedBitSet> bb = new List<FixedBitSet>(rpp.Length);
             foreach (PhrasePositions pp in rpp)
             {
                 FixedBitSet b = new FixedBitSet(tord.Count);
-                var ord = new int?();
                 foreach (var t in pp.terms)
                 {
-                    if (tord.TryGetValue(t, out ord) && ord != null)
+                    if (tord.TryGetValue(t, out int? ord) && ord.HasValue)
                         b.Set((int)ord);
                 }
                 bb.Add(b);
@@ -590,7 +594,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Union (term group) bit-sets until they are disjoint (O(n^^2)), and each group have different terms </summary>
-        private void UnionTermGroups(IList<FixedBitSet> bb)
+        private static void UnionTermGroups(IList<FixedBitSet> bb) // LUCENENET: CA1822: Mark members as static
         {
             int incr;
             for (int i = 0; i < bb.Count - 1; i += incr)
@@ -615,7 +619,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Map each term to the single group that contains it </summary>
-        private IDictionary<Term, int> TermGroups(JCG.LinkedDictionary<Term, int?> tord, IList<FixedBitSet> bb)
+        private static IDictionary<Term, int> TermGroups(JCG.LinkedDictionary<Term, int?> tord, IList<FixedBitSet> bb) // LUCENENET: CA1822: Mark members as static
         {
             Dictionary<Term, int> tg = new Dictionary<Term, int>();
             Term[] t = tord.Keys.ToArray(/*new Term[0]*/);
@@ -675,6 +679,7 @@ namespace Lucene.Net.Search
             return Advance(max.doc + 1); // advance to the next doc after #docID()
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override float GetScore()
         {
             return docScorer.Score(max.doc, sloppyFreq);
@@ -705,6 +710,7 @@ namespace Lucene.Net.Search
             return max.doc;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long GetCost()
         {
             return cost;

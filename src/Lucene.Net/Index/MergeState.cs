@@ -101,10 +101,10 @@ namespace Lucene.Net.Index
 
             private class DocMapAnonymousInnerClassHelper : DocMap
             {
-                private int maxDoc;
-                private IBits liveDocs;
-                private MonotonicAppendingInt64Buffer docMap;
-                private int numDeletedDocs;
+                private readonly int maxDoc;
+                private readonly IBits liveDocs;
+                private readonly MonotonicAppendingInt64Buffer docMap;
+                private readonly int numDeletedDocs;
 
                 public DocMapAnonymousInnerClassHelper(int maxDoc, IBits liveDocs, MonotonicAppendingInt64Buffer docMap, int numDeletedDocs)
                 {

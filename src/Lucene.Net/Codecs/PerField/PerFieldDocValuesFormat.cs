@@ -2,8 +2,8 @@ using J2N.Runtime.CompilerServices;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Codecs.PerField
@@ -76,11 +76,12 @@ namespace Lucene.Net.Codecs.PerField
 
         /// <summary>
         /// Sole constructor. </summary>
-        public PerFieldDocValuesFormat()
+        protected PerFieldDocValuesFormat() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base()
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed DocValuesConsumer FieldsConsumer(SegmentWriteState state)
         {
             return new FieldsWriter(this, state);
@@ -112,21 +113,25 @@ namespace Lucene.Net.Codecs.PerField
                 segmentWriteState = state;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
             {
                 GetInstance(field).AddNumericField(field, values);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
             {
                 GetInstance(field).AddBinaryField(field, values);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
             {
                 GetInstance(field).AddSortedField(field, values, docToOrd);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
             {
                 GetInstance(field).AddSortedSetField(field, values, docToOrdCount, ords);
@@ -159,8 +164,7 @@ namespace Lucene.Net.Codecs.PerField
 
                 int? suffix = null;
 
-                ConsumerAndSuffix consumer;
-                if (!formats.TryGetValue(format, out consumer) || consumer == null)
+                if (!formats.TryGetValue(format, out ConsumerAndSuffix consumer) || consumer == null)
                 {
                     // First time we are seeing this format; create a new instance
 
@@ -211,6 +215,7 @@ namespace Lucene.Net.Codecs.PerField
                 return consumer.Consumer;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
@@ -221,11 +226,13 @@ namespace Lucene.Net.Codecs.PerField
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetSuffix(string formatName, string suffix)
         {
             return formatName + "_" + suffix;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetFullSegmentSuffix(string outerSegmentSuffix, string segmentSuffix)
         {
             if (outerSegmentSuffix.Length == 0)
@@ -304,57 +311,56 @@ namespace Lucene.Net.Codecs.PerField
                 // Then rebuild fields:
                 foreach (KeyValuePair<string, DocValuesProducer> ent in other.fields)
                 {
-                    DocValuesProducer producer;
-                    oldToNew.TryGetValue(ent.Value, out producer);
+                    oldToNew.TryGetValue(ent.Value, out DocValuesProducer producer);
                     if (Debugging.AssertsEnabled) Debugging.Assert(producer != null);
                     fields[ent.Key] = producer;
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override NumericDocValues GetNumeric(FieldInfo field)
             {
-                DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out DocValuesProducer producer) && producer != null)
                 {
                     return producer.GetNumeric(field);
                 }
                 return null;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override BinaryDocValues GetBinary(FieldInfo field)
             {
-                DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out DocValuesProducer producer) && producer != null)
                 {
                     return producer.GetBinary(field);
                 }
                 return null;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override SortedDocValues GetSorted(FieldInfo field)
             {
-                DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out DocValuesProducer producer) && producer != null)
                 {
                     return producer.GetSorted(field);
                 }
                 return null;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override SortedSetDocValues GetSortedSet(FieldInfo field)
             {
-                DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out DocValuesProducer producer) && producer != null)
                 {
                     return producer.GetSortedSet(field);
                 }
                 return null;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override IBits GetDocsWithField(FieldInfo field)
             {
-                DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer) && producer != null)
+                if (fields.TryGetValue(field.Name, out DocValuesProducer producer) && producer != null)
                 {
                     return producer.GetDocsWithField(field);
                 }
@@ -369,11 +375,13 @@ namespace Lucene.Net.Codecs.PerField
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public object Clone()
             {
                 return new FieldsReader(outerInstance, this);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long RamBytesUsed()
             {
                 long size = 0;
@@ -385,6 +393,7 @@ namespace Lucene.Net.Codecs.PerField
                 return size;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void CheckIntegrity()
             {
                 foreach (DocValuesProducer format in formats.Values)
@@ -394,6 +403,7 @@ namespace Lucene.Net.Codecs.PerField
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed DocValuesProducer FieldsProducer(SegmentReadState state)
         {
             return new FieldsReader(this, state);

@@ -22,10 +22,10 @@
     /// </summary>
     public class Report
     {
-        private string text;
-        private int size;
-        private int outOf;
-        private int reported;
+        private readonly string text; // LUCENENET: marked readonly
+        private readonly int size; // LUCENENET: marked readonly
+        private readonly int outOf; // LUCENENET: marked readonly
+        private readonly int reported; // LUCENENET: marked readonly
 
         public Report(string text, int size, int reported, int outOf)
         {

@@ -46,17 +46,14 @@ namespace Lucene.Net.Codecs.Lucene3x
             // Whenever IW opens readers, eg for merging, we have to
             // keep terms order in UTF16:
 
-            return new Lucene3xFieldsAnonymousInnerClassHelper(this, state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, state.TermsIndexDivisor);
+            return new Lucene3xFieldsAnonymousInnerClassHelper(state.Directory, state.FieldInfos, state.SegmentInfo, state.Context, state.TermsIndexDivisor);
         }
 
         private class Lucene3xFieldsAnonymousInnerClassHelper : Lucene3xFields
         {
-            private readonly PreFlexRWPostingsFormat outerInstance;
-
-            public Lucene3xFieldsAnonymousInnerClassHelper(PreFlexRWPostingsFormat outerInstance, Store.Directory directory, Index.FieldInfos fieldInfos, Index.SegmentInfo segmentInfo, Store.IOContext context, int termsIndexDivisor)
+            public Lucene3xFieldsAnonymousInnerClassHelper(Store.Directory directory, FieldInfos fieldInfos, SegmentInfo segmentInfo, Store.IOContext context, int termsIndexDivisor)
                 : base(directory, fieldInfos, segmentInfo, context, termsIndexDivisor)
             {
-                this.outerInstance = outerInstance;
             }
 
             protected override bool SortTermsByUnicode

@@ -175,10 +175,9 @@ namespace Lucene.Net.Index
                 {
                     consumer.Abort();
                 }
-#pragma warning disable 168
-                catch (Exception t)
-#pragma warning restore 168
+                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
+                    // ignore
                 }
 
                 pendingUpdates.Clear();
@@ -211,7 +210,7 @@ namespace Lucene.Net.Index
         internal bool aborting = false; // True if an abort is pending
         internal bool hasAborted = false; // True if the last exception throws by #updateDocument was aborting
 
-        private FieldInfos.Builder fieldInfos;
+        private readonly FieldInfos.Builder fieldInfos; // LUCENENET: marked readonly
         private readonly InfoStream infoStream;
         private int numDocsInRAM;
         internal readonly DocumentsWriterDeleteQueue deleteQueue;

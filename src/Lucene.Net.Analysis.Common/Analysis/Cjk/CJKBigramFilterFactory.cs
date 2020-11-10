@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Cjk
             this.outputUnigrams = GetBoolean(args, "outputUnigrams", false);
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 

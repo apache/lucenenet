@@ -298,8 +298,7 @@ namespace Lucene.Net.Sandbox.Queries
                 ScoreTerm st = q.Pop();
                 //List<ScoreTerm> l = variantQueries.get(st.fuzziedSourceTerm);
                 //          if(l==null)
-                List<ScoreTerm> l;
-                if (!variantQueries.TryGetValue(st.FuzziedSourceTerm, out l) || l == null)
+                if (!variantQueries.TryGetValue(st.FuzziedSourceTerm, out List<ScoreTerm> l) || l == null)
                 {
                     l = new List<ScoreTerm>();
                     variantQueries[st.FuzziedSourceTerm] = l;

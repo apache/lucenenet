@@ -62,31 +62,35 @@ namespace Lucene.Net.Benchmarks.ByTask
     /// </remarks>
     public class PerfRunData : IDisposable
     {
-        private Points points;
+        private readonly Points points; // LUCENENET: marked readonly
 
         // objects used during performance test run
         // directory, analyzer, docMaker - created at startup.
-        // reader, writer, searcher - maintained by basic tasks. 
+        // reader, writer, searcher - maintained by basic tasks.
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private Store.Directory directory;
-        private IDictionary<string, AnalyzerFactory> analyzerFactories = new Dictionary<string, AnalyzerFactory>();
+#pragma warning restore CA2213 // Disposable fields should be disposed
+        private readonly IDictionary<string, AnalyzerFactory> analyzerFactories = new Dictionary<string, AnalyzerFactory>(); // LUCENENET: marked readonly
         private Analyzer analyzer;
-        private DocMaker docMaker;
-        private ContentSource contentSource;
-        private FacetSource facetSource;
+        private readonly DocMaker docMaker; // LUCENENET: marked readonly
+        private readonly ContentSource contentSource; // LUCENENET: marked readonly
+        private readonly FacetSource facetSource; // LUCENENET: marked readonly
         private CultureInfo locale;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private Store.Directory taxonomyDir;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private ITaxonomyWriter taxonomyWriter;
         private TaxonomyReader taxonomyReader;
 
         // we use separate (identical) instances for each "read" task type, so each can iterate the quries separately.
-        private IDictionary<Type, IQueryMaker> readTaskQueryMaker;
-        private Type qmkrClass;
+        private readonly IDictionary<Type, IQueryMaker> readTaskQueryMaker;
+        private readonly Type qmkrClass;
 
         private DirectoryReader indexReader;
         private IndexSearcher indexSearcher;
         private IndexWriter indexWriter;
-        private Config config;
+        private readonly Config config;
         private long startTimeMillis;
 
         private readonly IDictionary<string, object> perfObjects = new Dictionary<string, object>();
@@ -146,9 +150,9 @@ namespace Lucene.Net.Benchmarks.ByTask
                 List<IDisposable> perfObjectsToClose = new List<IDisposable>();
                 foreach (object obj in perfObjects.Values)
                 {
-                    if (obj is IDisposable)
+                    if (obj is IDisposable disposable)
                     {
-                        perfObjectsToClose.Add((IDisposable)obj);
+                        perfObjectsToClose.Add(disposable);
                     }
                 }
                 IOUtils.Dispose(perfObjectsToClose);
@@ -207,8 +211,7 @@ namespace Lucene.Net.Benchmarks.ByTask
         {
             lock (this)
             {
-                object result;
-                perfObjects.TryGetValue(key, out result);
+                perfObjects.TryGetValue(key, out object result);
                 return result;
             }
         }
@@ -443,8 +446,7 @@ namespace Lucene.Net.Benchmarks.ByTask
                 // mapping the query maker by task class allows extending/adding new search/read tasks
                 // without needing to modify this class.
                 Type readTaskClass = readTask.GetType();
-                IQueryMaker qm;
-                if (!readTaskQueryMaker.TryGetValue(readTaskClass, out qm) || qm == null)
+                if (!readTaskQueryMaker.TryGetValue(readTaskClass, out IQueryMaker qm) || qm == null)
                 {
                     try
                     {

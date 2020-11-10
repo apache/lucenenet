@@ -27,9 +27,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning disable 612, 618
     internal class PreFlexRWFieldsWriter : FieldsConsumer
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly TermInfosWriter termsOut;
         private readonly IndexOutput freqOut;
         private readonly IndexOutput proxOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly PreFlexRWSkipListWriter skipListWriter;
         private readonly int totalNumDocs;
 
@@ -101,11 +103,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private class PreFlexTermsWriter : TermsConsumer
         {
-            internal virtual void InitializeInstanceFields()
-            {
-                postingsWriter = new PostingsWriter(this);
-            }
-
             private readonly PreFlexRWFieldsWriter outerInstance;
 
             private readonly FieldInfo fieldInfo;
@@ -113,13 +110,13 @@ namespace Lucene.Net.Codecs.Lucene3x
             private readonly bool storePayloads;
 
             private readonly TermInfo termInfo = new TermInfo();
-            private PostingsWriter postingsWriter;
+            private readonly PostingsWriter postingsWriter; // LUCENENET: marked readonly
 
             public PreFlexTermsWriter(PreFlexRWFieldsWriter outerInstance, FieldInfo fieldInfo)
             {
                 this.outerInstance = outerInstance;
 
-                InitializeInstanceFields();
+                postingsWriter = new PostingsWriter(this);
                 this.fieldInfo = fieldInfo;
                 omitTF = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY;
                 storePayloads = fieldInfo.HasPayloads;

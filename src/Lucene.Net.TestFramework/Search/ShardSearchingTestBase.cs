@@ -10,6 +10,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 using Console = Lucene.Net.Util.SystemConsole;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
@@ -226,7 +227,7 @@ namespace Lucene.Net.Search
             }
             finally
             {
-                m_nodes[nodeID].Release(s);
+                NodeState.Release(s); // LUCENENET: made static per CA1822 and eliminated array lookup
             }
         }
 
@@ -306,7 +307,7 @@ namespace Lucene.Net.Search
                     this.outerInstance = nodeState;
                     this.nodeVersions = nodeVersions;
                     MyNodeID = nodeID;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(MyNodeID == nodeState.MyNodeID,"myNodeID={0} nodeState.MyNodeID={1}", nodeID, nodeState.MyNodeID);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(MyNodeID == nodeState.MyNodeID, "myNodeID={0} nodeState.MyNodeID={1}", nodeID, nodeState.MyNodeID);
                 }
 
                 public override Query Rewrite(Query original)
@@ -512,7 +513,7 @@ namespace Lucene.Net.Search
                             }
                             finally
                             {
-                                outerInstance.outerInstance.m_nodes[nodeID].Release(s);
+                                Release(s); // LUCENENET: Made static per CA1822 and eliminated array lookup
                             }
                         }
                         else if (nodeID == after.ShardIndex)
@@ -579,7 +580,9 @@ namespace Lucene.Net.Search
 
             internal volatile ShardIndexSearcher currentShardSearcher;
 
+#pragma warning disable IDE0060 // Remove unused parameter
             public NodeState(ShardSearchingTestBase shardSearchingTestBase, Random random, int nodeID, int numNodes)
+#pragma warning restore IDE0060 // Remove unused parameter
             {
                 this.outerInstance = shardSearchingTestBase;
                 MyNodeID = nodeID;
@@ -637,7 +640,8 @@ namespace Lucene.Net.Search
                 }
             }
 
-            public void Release(ShardIndexSearcher s)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static void Release(ShardIndexSearcher s) // LUCENENET: CA1822: Mark members as static
             {
                 s.IndexReader.DecRef();
             }

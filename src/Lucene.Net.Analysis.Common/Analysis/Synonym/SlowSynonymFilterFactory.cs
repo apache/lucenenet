@@ -74,7 +74,7 @@ namespace Lucene.Net.Analysis.Synonym
             }
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 
@@ -150,8 +150,10 @@ namespace Lucene.Net.Analysis.Synonym
                     else
                     {
                         // reduce to first argument
-                        target = new List<IList<string>>(1);
-                        target.Add(source[0]);
+                        target = new List<IList<string>>(1)
+                        {
+                            source[0]
+                        };
                     }
                 }
 
@@ -212,9 +214,9 @@ namespace Lucene.Net.Analysis.Synonym
             {
                 TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz, new object[] { tokArgs });
 
-                if (tokFactory is IResourceLoaderAware)
+                if (tokFactory is IResourceLoaderAware resourceLoaderAware)
                 {
-                    ((IResourceLoaderAware)tokFactory).Inform(loader);
+                    resourceLoaderAware.Inform(loader);
                 }
                 return tokFactory;
             }

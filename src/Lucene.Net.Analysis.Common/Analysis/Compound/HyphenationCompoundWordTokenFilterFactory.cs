@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Compound
             onlyLongestMatch = GetBoolean(args, "onlyLongestMatch", false);
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 

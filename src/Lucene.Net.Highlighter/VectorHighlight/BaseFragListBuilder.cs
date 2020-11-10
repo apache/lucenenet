@@ -34,7 +34,7 @@ namespace Lucene.Net.Search.VectorHighlight
         internal readonly int margin;
         internal readonly int minFragCharSize;
 
-        public BaseFragListBuilder(int margin)
+        protected BaseFragListBuilder(int margin) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             if (margin < 0)
                 throw new ArgumentException("margin(" + margin + ") is too small. It must be 0 or higher.");
@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.VectorHighlight
             this.minFragCharSize = Math.Max(1, margin * MIN_FRAG_CHAR_SIZE_FACTOR);
         }
 
-        public BaseFragListBuilder()
+        protected BaseFragListBuilder() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(MARGIN_DEFAULT)
         {
         }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 }
                 else
                 {
-                    top = default(T);
+                    top = default;
                 }
                 return currentTop;
             }

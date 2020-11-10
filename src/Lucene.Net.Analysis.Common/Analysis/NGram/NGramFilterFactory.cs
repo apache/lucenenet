@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.NGram
             maxGramSize = GetInt32(args, "maxGramSize", NGramTokenFilter.DEFAULT_MAX_NGRAM_SIZE);
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 

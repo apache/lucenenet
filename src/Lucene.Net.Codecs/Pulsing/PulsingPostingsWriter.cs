@@ -42,17 +42,17 @@ namespace Lucene.Net.Codecs.Pulsing
     /// </summary>
     public sealed class PulsingPostingsWriter : PostingsWriterBase
     {
-        internal static readonly string CODEC = "PulsedPostingsWriter";
-        internal static readonly string SUMMARY_EXTENSION = "smy";         // recording field summary
+        internal const string CODEC = "PulsedPostingsWriter";
+        internal const string SUMMARY_EXTENSION = "smy";         // recording field summary
 
         // To add a new version, increment from the last one, and
         // change VERSION_CURRENT to point to your new version:
-        internal static readonly int VERSION_START = 0;
-        internal static readonly int VERSION_META_ARRAY = 1;
-        internal static readonly int VERSION_CURRENT = VERSION_META_ARRAY;
+        internal const int VERSION_START = 0;
+        internal const int VERSION_META_ARRAY = 1;
+        internal const int VERSION_CURRENT = VERSION_META_ARRAY;
 
         private readonly SegmentWriteState _segmentState;
-        private IndexOutput _termsOut;
+        //private IndexOutput _termsOut; // LUCENENET: Never read
         private readonly List<FieldMetaData> _fields;
         private IndexOptions _indexOptions;
         private bool _storePayloads;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override void Init(IndexOutput termsOut)
         {
-            _termsOut = termsOut;
+            //_termsOut = termsOut; // LUCENENET: Never read
             CodecUtil.WriteHeader(termsOut, CODEC, VERSION_CURRENT);
             termsOut.WriteVInt32(_pending.Length); // encode maxPositions in header
             _wrappedPostingsWriter.Init(termsOut);
@@ -434,35 +434,41 @@ namespace Lucene.Net.Codecs.Pulsing
             }
         }
 
+        private bool disposed = false; // LUCENENET specific
         protected override void Dispose(bool disposing)
         {
-            _wrappedPostingsWriter.Dispose();
-
-            if (_wrappedPostingsWriter is PulsingPostingsWriter ||
-                VERSION_CURRENT < VERSION_META_ARRAY)
+            if (disposing && !disposed)
             {
-                return;
-            }
+                disposed = true;
+                _wrappedPostingsWriter.Dispose();
+                _buffer.Dispose(); // LUCENENET specific
 
-            var summaryFileName = IndexFileNames.SegmentFileName(_segmentState.SegmentInfo.Name,
-                _segmentState.SegmentSuffix, SUMMARY_EXTENSION);
-            IndexOutput output = null;
-            try
-            {
-                output =
-                    _segmentState.Directory.CreateOutput(summaryFileName, _segmentState.Context);
-                CodecUtil.WriteHeader(output, CODEC, VERSION_CURRENT);
-                output.WriteVInt32(_fields.Count);
-                foreach (var field in _fields)
+                if (_wrappedPostingsWriter is PulsingPostingsWriter ||
+                    VERSION_CURRENT < VERSION_META_ARRAY)
                 {
-                    output.WriteVInt32(field.FieldNumber);
-                    output.WriteVInt32(field.Int64sSize);
+                    return;
                 }
-                output.Dispose();
-            }
-            finally
-            {
-                IOUtils.DisposeWhileHandlingException(output);
+
+                var summaryFileName = IndexFileNames.SegmentFileName(_segmentState.SegmentInfo.Name,
+                    _segmentState.SegmentSuffix, SUMMARY_EXTENSION);
+                IndexOutput output = null;
+                try
+                {
+                    output =
+                        _segmentState.Directory.CreateOutput(summaryFileName, _segmentState.Context);
+                    CodecUtil.WriteHeader(output, CODEC, VERSION_CURRENT);
+                    output.WriteVInt32(_fields.Count);
+                    foreach (var field in _fields)
+                    {
+                        output.WriteVInt32(field.FieldNumber);
+                        output.WriteVInt32(field.Int64sSize);
+                    }
+                    output.Dispose();
+                }
+                finally
+                {
+                    IOUtils.DisposeWhileHandlingException(output);
+                }
             }
         }
 

@@ -26,17 +26,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// </summary>
     public class TrecFR94Parser : TrecDocParser
     {
-        private static readonly string TEXT = "<TEXT>";
+        private const string TEXT = "<TEXT>";
         private static readonly int TEXT_LENGTH = TEXT.Length;
-        private static readonly string TEXT_END = "</TEXT>";
+        private const string TEXT_END = "</TEXT>";
 
-        private static readonly string DATE = "<DATE>";
+        private const string DATE = "<DATE>";
         private static readonly string[] DATE_NOISE_PREFIXES = {
             "DATE:",
             "date:", //TODO improve date extraction for this format
             "t.c.",
         };
-        private static readonly string DATE_END = "</DATE>";
+        private const string DATE_END = "</DATE>";
 
         //TODO can we also extract title for this format?
 

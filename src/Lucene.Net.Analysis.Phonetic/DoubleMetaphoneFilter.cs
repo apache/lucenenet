@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Phonetic
                     if (saveState)
                     {
                         remainingTokens.Enqueue(CaptureState());
-                        saveState = false;
+                        //saveState = false; // LUCENENET: IDE0059: Remove unnecessary value assignment
                     }
                     posAtt.PositionIncrement = firstAlternativeIncrement;
                     termAtt.SetEmpty().Append(alternatePhoneticValue);

@@ -50,7 +50,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Processors
             if (!node.IsLeaf)
             {
                 IList<IQueryNode> children = node.GetChildren();
-                bool removeBoolean = false;
+                bool removeBoolean; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                 if (children == null || children.Count == 0)
                 {

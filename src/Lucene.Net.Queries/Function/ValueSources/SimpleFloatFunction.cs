@@ -28,7 +28,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// </summary>
     public abstract class SimpleSingleFunction : SingularFunction
     {
-        public SimpleSingleFunction(ValueSource source)
+        protected SimpleSingleFunction(ValueSource source) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(source)
         {
         }

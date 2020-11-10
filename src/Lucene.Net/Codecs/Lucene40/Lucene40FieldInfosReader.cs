@@ -1,6 +1,7 @@
 using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -186,11 +187,13 @@ namespace Lucene.Net.Codecs.Lucene40
 
     internal static class LegacyDocValuesTypeExtensions
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DocValuesType GetMapping(this LegacyDocValuesType legacyDocValuesType)
         {
             return mapping[legacyDocValuesType];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static LegacyDocValuesType ToLegacyDocValuesType(this string name) // Was ValueOf in Java
         {
             return (LegacyDocValuesType)Enum.Parse(typeof(LegacyDocValuesType), name);

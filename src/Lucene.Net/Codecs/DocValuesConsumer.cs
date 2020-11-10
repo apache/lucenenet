@@ -2,7 +2,6 @@ using J2N.Collections.Generic.Extensions;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace Lucene.Net.Codecs
@@ -27,10 +26,10 @@ namespace Lucene.Net.Codecs
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using BinaryDocValues = Lucene.Net.Index.BinaryDocValues;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
     using FilteredTermsEnum = Lucene.Net.Index.FilteredTermsEnum;
+    using IBits = Lucene.Net.Util.IBits;
     using Int64BitSet = Lucene.Net.Util.Int64BitSet;
     using MergeState = Lucene.Net.Index.MergeState;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
@@ -114,10 +113,10 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<IBits> docsWithField)
         {
-            AddNumericField(fieldInfo, GetMergeNumericFieldEnumerable(fieldInfo, mergeState, toMerge, docsWithField));
+            AddNumericField(fieldInfo, GetMergeNumericFieldEnumerable(/* fieldInfo, // LUCENENET: Never read */ mergeState, toMerge, docsWithField));
         }
 
-        private IEnumerable<long?> GetMergeNumericFieldEnumerable(FieldInfo fieldinfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<IBits> docsWithField)
+        private IEnumerable<long?> GetMergeNumericFieldEnumerable(/*FieldInfo fieldinfo, // LUCENENET: Never read */ MergeState mergeState, IList<NumericDocValues> toMerge, IList<IBits> docsWithField)
         {
             int readerUpto = -1;
             int docIDUpto = 0;
@@ -176,10 +175,10 @@ namespace Lucene.Net.Codecs
         /// </summary>
         public virtual void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<IBits> docsWithField)
         {
-            AddBinaryField(fieldInfo, GetMergeBinaryFieldEnumerable(fieldInfo, mergeState, toMerge, docsWithField));
+            AddBinaryField(fieldInfo, GetMergeBinaryFieldEnumerable(/*fieldInfo, // LUCENENET: Never read */ mergeState, toMerge, docsWithField));
         }
 
-        private IEnumerable<BytesRef> GetMergeBinaryFieldEnumerable(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<IBits> docsWithField)
+        private IEnumerable<BytesRef> GetMergeBinaryFieldEnumerable(/*FieldInfo fieldInfo, // LUCENENET: Never read */ MergeState mergeState, IList<BinaryDocValues> toMerge, IList<IBits> docsWithField)
         {
             int readerUpto = -1;
             int docIDUpto = 0;

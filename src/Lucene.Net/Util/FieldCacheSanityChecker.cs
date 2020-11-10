@@ -79,6 +79,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Quick and dirty convenience method </summary>
         /// <seealso cref="Check(FieldCache.CacheEntry[])"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Insanity[] CheckSanity(IFieldCache cache)
         {
             return CheckSanity(cache.GetCacheEntries());
@@ -88,6 +89,7 @@ namespace Lucene.Net.Util
         /// Quick and dirty convenience method that instantiates an instance with
         /// "good defaults" and uses it to test the <see cref="FieldCache.CacheEntry"/>s </summary>
         /// <seealso cref="Check(FieldCache.CacheEntry[])"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Insanity[] CheckSanity(params FieldCache.CacheEntry[] cacheEntries)
         {
             FieldCacheSanityChecker sanityChecker = new FieldCacheSanityChecker(estimateRam: true);
@@ -171,7 +173,10 @@ namespace Lucene.Net.Util
         /// instances accordingly.  The <see cref="MapOfSets{TKey, TValue}"/> are used to populate
         /// the <see cref="Insanity"/> objects. </summary>
         /// <seealso cref="InsanityType.VALUEMISMATCH"/>
-        private ICollection<Insanity> CheckValueMismatch(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds, ISet<ReaderField> valMismatchKeys)
+        private static ICollection<Insanity> CheckValueMismatch( // LUCENENET: CA1822: Mark members as static
+            MapOfSets<int, FieldCache.CacheEntry> valIdToItems,
+            MapOfSets<ReaderField, int> readerFieldToValIds,
+            ISet<ReaderField> valMismatchKeys)
         {
             List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
 
@@ -208,7 +213,7 @@ namespace Lucene.Net.Util
         /// found that have an ancestry relationships.
         /// </summary>
         /// <seealso cref="InsanityType.SUBREADER"/>
-        private ICollection<Insanity> CheckSubreaders(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds)
+        private static ICollection<Insanity> CheckSubreaders(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds) // LUCENENET: CA1822: Mark members as static
         {
             List<Insanity> insanity = new List<Insanity>(23);
 
@@ -289,7 +294,7 @@ namespace Lucene.Net.Util
         /// the hierarchy of subReaders building up a list of the objects
         /// returned by <c>seed.CoreCacheKey</c>
         /// </summary>
-        private IList<object> GetAllDescendantReaderKeys(object seed)
+        private static IList<object> GetAllDescendantReaderKeys(object seed) // LUCENENET: CA1822: Mark members as static
         {
             var all = new List<object>(17) {seed}; // will grow as we iter
             for (var i = 0; i < all.Count; i++)
@@ -297,8 +302,7 @@ namespace Lucene.Net.Util
                 var obj = all[i];
                 // TODO: We don't check closed readers here (as getTopReaderContext
                 // throws ObjectDisposedException), what should we do? Reflection?
-                var reader = obj as IndexReader;
-                if (reader != null)
+                if (obj is IndexReader reader)
                 {
                     try
                     {
@@ -336,6 +340,7 @@ namespace Lucene.Net.Util
                 this.FieldName = fieldName;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetHashCode()
             {
                 return RuntimeHelpers.GetHashCode(readerKey) * FieldName.GetHashCode();
@@ -441,6 +446,7 @@ namespace Lucene.Net.Util
                 this.label = label;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override string ToString()
             {
                 return label;

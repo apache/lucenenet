@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 // this file has been automatically generated, DO NOT EDIT
 
@@ -32,7 +33,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal sealed class Direct8 : PackedInt32s.MutableImpl
     {
-        readonly byte[] values;
+        private readonly byte[] values;
 
         internal Direct8(int valueCount)
             : base(valueCount, 8)
@@ -52,11 +53,13 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long Get(int index)
         {
             return values[index] & 0xFFL;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Set(int index, long value)
         {
             values[index] = (byte)(value);
@@ -71,11 +74,13 @@ namespace Lucene.Net.Util.Packed
                 + RamUsageEstimator.SizeOf(values);  
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Clear()
         {
             Arrays.Fill(values, (byte)0L);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object GetArray()
         {
             return values;
@@ -117,6 +122,7 @@ namespace Lucene.Net.Util.Packed
             return sets;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Fill(int fromIndex, int toIndex, long val)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(val == (val & 0xFFL));

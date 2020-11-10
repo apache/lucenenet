@@ -32,12 +32,12 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
 
         public virtual string GetReading()
         {
-            return token == null ? null : token.GetReading();
+            return token?.GetReading();
         }
 
         public virtual string GetPronunciation()
         {
-            return token == null ? null : token.GetPronunciation();
+            return token?.GetPronunciation();
         }
 
         public virtual void SetToken(Token token)

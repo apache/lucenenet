@@ -190,7 +190,7 @@ namespace Lucene.Net.Search.Suggest
         /// Sole constructor. (For invocation by subclass 
         /// constructors, typically implicit.)
         /// </summary>
-        public Lookup()
+        protected Lookup() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 

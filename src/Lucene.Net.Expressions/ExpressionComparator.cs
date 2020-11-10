@@ -33,7 +33,7 @@ namespace Lucene.Net.Expressions
         private double bottom;
         private double topValue;
 
-        private ValueSource source;
+        private readonly ValueSource source; // LUCENENET: marked readonly
         private FunctionValues scores;
         private AtomicReaderContext readerContext;
 

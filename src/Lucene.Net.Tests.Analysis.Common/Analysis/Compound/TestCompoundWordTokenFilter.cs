@@ -40,13 +40,11 @@ namespace Lucene.Net.Analysis.Compound
             CharArraySet dict = makeDictionary("læse", "hest");
 
             //InputSource @is = new InputSource(this.GetType().getResource("da_UTF8.xml").toExternalForm());
-            using (var @is = this.GetType().getResourceAsStream("da_UTF8.xml"))
-            {
-                HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
+            using var @is = this.GetType().getResourceAsStream("da_UTF8.xml");
+            HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
 
-                HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("min veninde som er lidt af en læsehest"), MockTokenizer.WHITESPACE, false), hyphenator, dict, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE, CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE, false);
-                AssertTokenStreamContents(tf, new string[] { "min", "veninde", "som", "er", "lidt", "af", "en", "læsehest", "læse", "hest" }, new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 });
-            }
+            HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("min veninde som er lidt af en læsehest"), MockTokenizer.WHITESPACE, false), hyphenator, dict, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE, CompoundWordTokenFilterBase.DEFAULT_MAX_SUBWORD_SIZE, false);
+            AssertTokenStreamContents(tf, new string[] { "min", "veninde", "som", "er", "lidt", "af", "en", "læsehest", "læse", "hest" }, new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 0, 0 });
         }
 
         [Test]
@@ -55,14 +53,12 @@ namespace Lucene.Net.Analysis.Compound
             CharArraySet dict = makeDictionary("basketball", "basket", "ball", "kurv");
 
             //InputSource @is = new InputSource(this.GetType().getResource("da_UTF8.xml").toExternalForm());
-            using (var @is = this.GetType().getResourceAsStream("da_UTF8.xml"))
-            {
-                HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
+            using var @is = this.GetType().getResourceAsStream("da_UTF8.xml");
+            HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
 
-                // the word basket will not be added due to the longest match option
-                HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("basketballkurv"), MockTokenizer.WHITESPACE, false), hyphenator, dict, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE, 40, true);
-                AssertTokenStreamContents(tf, new string[] { "basketballkurv", "basketball", "ball", "kurv" }, new int[] { 1, 0, 0, 0 });
-            }
+            // the word basket will not be added due to the longest match option
+            HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("basketballkurv"), MockTokenizer.WHITESPACE, false), hyphenator, dict, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, CompoundWordTokenFilterBase.DEFAULT_MIN_SUBWORD_SIZE, 40, true);
+            AssertTokenStreamContents(tf, new string[] { "basketballkurv", "basketball", "ball", "kurv" }, new int[] { 1, 0, 0, 0 });
         }
 
         /// <summary>
@@ -73,25 +69,23 @@ namespace Lucene.Net.Analysis.Compound
         public virtual void TestHyphenationOnly()
         {
             //InputSource @is = new InputSource(this.GetType().getResource("da_UTF8.xml").toExternalForm());
-            using (var @is = this.GetType().getResourceAsStream("da_UTF8.xml"))
-            {
-                HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
+            using var @is = this.GetType().getResourceAsStream("da_UTF8.xml");
+            HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
 
-                HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("basketballkurv"), MockTokenizer.WHITESPACE, false), hyphenator, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, 2, 4);
+            HyphenationCompoundWordTokenFilter tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("basketballkurv"), MockTokenizer.WHITESPACE, false), hyphenator, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, 2, 4);
 
-                // min=2, max=4
-                AssertTokenStreamContents(tf, new string[] { "basketballkurv", "ba", "sket", "bal", "ball", "kurv" });
+            // min=2, max=4
+            AssertTokenStreamContents(tf, new string[] { "basketballkurv", "ba", "sket", "bal", "ball", "kurv" });
 
-                tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("basketballkurv"), MockTokenizer.WHITESPACE, false), hyphenator, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, 4, 6);
+            tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("basketballkurv"), MockTokenizer.WHITESPACE, false), hyphenator, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, 4, 6);
 
-                // min=4, max=6
-                AssertTokenStreamContents(tf, new string[] { "basketballkurv", "basket", "sket", "ball", "lkurv", "kurv" });
+            // min=4, max=6
+            AssertTokenStreamContents(tf, new string[] { "basketballkurv", "basket", "sket", "ball", "lkurv", "kurv" });
 
-                tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("basketballkurv"), MockTokenizer.WHITESPACE, false), hyphenator, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, 4, 10);
+            tf = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, new MockTokenizer(new StringReader("basketballkurv"), MockTokenizer.WHITESPACE, false), hyphenator, CompoundWordTokenFilterBase.DEFAULT_MIN_WORD_SIZE, 4, 10);
 
-                // min=4, max=10
-                AssertTokenStreamContents(tf, new string[] { "basketballkurv", "basket", "basketbal", "basketball", "sket", "sketbal", "sketball", "ball", "ballkurv", "lkurv", "kurv" });
-            }
+            // min=4, max=10
+            AssertTokenStreamContents(tf, new string[] { "basketballkurv", "basket", "basketbal", "basketball", "sket", "sketbal", "sketball", "ball", "ballkurv", "lkurv", "kurv" });
         }
 
         [Test]
@@ -260,17 +254,15 @@ namespace Lucene.Net.Analysis.Compound
             CheckRandomData(Random, a, 1000 * RandomMultiplier);
 
             //InputSource @is = new InputSource(this.GetType().getResource("da_UTF8.xml").toExternalForm());
-            using (var @is = this.GetType().getResourceAsStream("da_UTF8.xml"))
+            using var @is = this.GetType().getResourceAsStream("da_UTF8.xml");
+            HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
+            Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
-                HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
-                Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
-                {
-                    Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                    TokenFilter filter = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, hyphenator);
-                    return new TokenStreamComponents(tokenizer, filter);
-                });
-                CheckRandomData(Random, b, 1000 * RandomMultiplier);
-            }
+                Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
+                TokenFilter filter = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, hyphenator);
+                return new TokenStreamComponents(tokenizer, filter);
+            });
+            CheckRandomData(Random, b, 1000 * RandomMultiplier);
         }
 
         [Test]
@@ -285,18 +277,15 @@ namespace Lucene.Net.Analysis.Compound
             CheckOneTerm(a, "", "");
 
             //InputSource @is = new InputSource(this.GetType().getResource("da_UTF8.xml").toExternalForm());
-            using (var @is = this.GetType().getResourceAsStream("da_UTF8.xml"))
+            using var @is = this.GetType().getResourceAsStream("da_UTF8.xml");
+            HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
+            Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
-
-                HyphenationTree hyphenator = HyphenationCompoundWordTokenFilter.GetHyphenationTree(@is);
-                Analyzer b = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
-                {
-                    Tokenizer tokenizer = new KeywordTokenizer(reader);
-                    TokenFilter filter = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, hyphenator);
-                    return new TokenStreamComponents(tokenizer, filter);
-                });
-                CheckOneTerm(b, "", "");
-            }
+                Tokenizer tokenizer = new KeywordTokenizer(reader);
+                TokenFilter filter = new HyphenationCompoundWordTokenFilter(TEST_VERSION_CURRENT, tokenizer, hyphenator);
+                return new TokenStreamComponents(tokenizer, filter);
+            });
+            CheckOneTerm(b, "", "");
         }
     }
 }

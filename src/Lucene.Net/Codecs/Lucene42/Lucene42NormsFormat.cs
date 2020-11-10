@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Codecs.Lucene42
 {
     /*
@@ -62,11 +64,13 @@ namespace Lucene.Net.Codecs.Lucene42
             this.acceptableOverheadRatio = acceptableOverheadRatio;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DocValuesConsumer NormsConsumer(SegmentWriteState state)
         {
             return new Lucene42NormsConsumer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION, acceptableOverheadRatio);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DocValuesProducer NormsProducer(SegmentReadState state)
         {
             return new Lucene42DocValuesProducer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION);

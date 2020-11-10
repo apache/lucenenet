@@ -36,15 +36,15 @@ namespace Lucene.Net.Codecs.Pulsing
         private readonly int _maxBlockSize;
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
 
-        public PulsingPostingsFormat(PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff) 
+        protected PulsingPostingsFormat(PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : this(wrappedPostingsBaseFormat, freqCutoff, BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE,
             BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE)
         {
         }
 
         /// <summary>Terms with freq less than or equal <paramref name="freqCutoff"/> are inlined into terms dict.</summary>
-        public PulsingPostingsFormat(PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff,
-            int minBlockSize, int maxBlockSize) 
+        protected PulsingPostingsFormat(PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff,
+            int minBlockSize, int maxBlockSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base()
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(minBlockSize > 1);

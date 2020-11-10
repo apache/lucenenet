@@ -2,6 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -90,6 +91,7 @@ namespace Lucene.Net.Util
 
             public override int DocID => doc;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return numBits;
@@ -167,6 +169,7 @@ namespace Lucene.Net.Util
         /// Returns the popcount or cardinality of the intersection of the two sets.
         /// Neither set is modified.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long IntersectionCount(FixedBitSet a, FixedBitSet b)
         {
             return BitUtil.Pop_Intersect(a.bits, b.bits, 0, Math.Min(a.numWords, b.numWords));
@@ -242,6 +245,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Expert. </summary>
         [WritableArray]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long[] GetBits()
         {
             return bits;
@@ -252,6 +256,7 @@ namespace Lucene.Net.Util
         /// <see cref="long"/> in the backing bits array, and the result is not
         /// internally cached!
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Cardinality()
         {
             return (int)BitUtil.Pop_Array(bits, 0, bits.Length);
@@ -370,17 +375,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public void Or(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID == -1)
+            if (iter.DocID == -1 && iter is OpenBitSetIterator obs)
             {
-                OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 Or(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
             }
-            else if (iter is FixedBitSetIterator && iter.DocID == -1)
+            else if (iter.DocID == -1 && iter is FixedBitSetIterator fbs)
             {
-                FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
                 Or(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
@@ -398,6 +401,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this OR other </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Or(FixedBitSet other)
         {
             Or(other.bits, other.numWords);
@@ -445,17 +449,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public void And(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID == -1)
+            if (iter.DocID == -1 && iter is OpenBitSetIterator obs)
             {
-                OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 And(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
             }
-            else if (iter is FixedBitSetIterator && iter.DocID == -1)
+            else if (iter.DocID == -1 && iter is FixedBitSetIterator fbs)
             {
-                FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
                 And(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
@@ -498,6 +500,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this AND other </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void And(FixedBitSet other)
         {
             And(other.bits, other.numWords);
@@ -523,17 +526,15 @@ namespace Lucene.Net.Util
         /// </summary>
         public void AndNot(DocIdSetIterator iter)
         {
-            if (iter is OpenBitSetIterator && iter.DocID == -1)
+            if (iter.DocID == -1 && iter is OpenBitSetIterator obs)
             {
-                OpenBitSetIterator obs = (OpenBitSetIterator)iter;
                 AndNot(obs.arr, obs.words);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
                 obs.Advance(numBits);
             }
-            else if (iter is FixedBitSetIterator && iter.DocID == -1)
+            else if (iter.DocID == -1 && iter is FixedBitSetIterator fbs)
             {
-                FixedBitSetIterator fbs = (FixedBitSetIterator)iter;
                 AndNot(fbs.bits, fbs.numWords);
                 // advance after last doc that would be accepted if standard
                 // iteration is used (to exhaust it):
@@ -551,6 +552,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// this = this AND NOT other </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AndNot(FixedBitSet other)
         {
             AndNot(other.bits, other.bits.Length);
@@ -694,6 +696,7 @@ namespace Lucene.Net.Util
             bits[endWord] &= endmask;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FixedBitSet Clone()
         {
             long[] bits = new long[this.bits.Length];

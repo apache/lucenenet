@@ -1,5 +1,6 @@
 using J2N.Collections;
 using Lucene.Net.Diagnostics;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util.Fst
@@ -48,6 +49,7 @@ namespace Lucene.Net.Util.Fst
             this.input = input;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool NodesEqual(Builder.UnCompiledNode<T> node, long address)
         {
             fst.ReadFirstRealTargetArc(address, scratchArc, input);
@@ -89,7 +91,8 @@ namespace Lucene.Net.Util.Fst
         /// hash code for an unfrozen node.  this must be identical
         /// to the frozen case (below)!!
         /// </summary>
-        private long Hash(Builder.UnCompiledNode<T> node)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static long Hash(Builder.UnCompiledNode<T> node) // LUCENENET: CA1822: Mark members as static
         {
             const int PRIME = 31;
             //System.out.println("hash unfrozen");
@@ -118,6 +121,7 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// hash code for a frozen node
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private long Hash(long node)
         {
             const int PRIME = 31;
@@ -191,6 +195,7 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// called only by rehash
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AddNew(long address)
         {
             long pos = Hash(address) & mask;
@@ -208,6 +213,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Rehash()
         {
             PagedGrowableWriter oldTable = table;

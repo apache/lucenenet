@@ -127,9 +127,9 @@ namespace Lucene.Net.Analysis.Core
                     {
                         instance = TokenizerFactory.ForName(simpleName, args);
                         assertNotNull(instance);
-                        if (instance is IResourceLoaderAware)
+                        if (instance is IResourceLoaderAware resourceLoaderAware)
                         {
-                            ((IResourceLoaderAware)instance).Inform(loader);
+                            resourceLoaderAware.Inform(loader);
                         }
                         assertSame(c, instance.Create(new StringReader("")).GetType());
                     }
@@ -154,9 +154,9 @@ namespace Lucene.Net.Analysis.Core
                     {
                         instance = TokenFilterFactory.ForName(simpleName, args);
                         assertNotNull(instance);
-                        if (instance is IResourceLoaderAware)
+                        if (instance is IResourceLoaderAware resourceLoaderAware)
                         {
-                            ((IResourceLoaderAware)instance).Inform(loader);
+                            resourceLoaderAware.Inform(loader);
                         }
                         Type createdClazz = instance.Create(new KeywordTokenizer(new StringReader(""))).GetType();
                         // only check instance if factory have wrapped at all!
@@ -186,9 +186,9 @@ namespace Lucene.Net.Analysis.Core
                     {
                         instance = CharFilterFactory.ForName(simpleName, args);
                         assertNotNull(instance);
-                        if (instance is IResourceLoaderAware)
+                        if (instance is IResourceLoaderAware resourceLoaderAware)
                         {
-                            ((IResourceLoaderAware)instance).Inform(loader);
+                            resourceLoaderAware.Inform(loader);
                         }
                         Type createdClazz = instance.Create(new StringReader("")).GetType();
                         // only check instance if factory have wrapped at all!

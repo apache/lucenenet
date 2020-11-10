@@ -43,11 +43,13 @@ namespace Lucene.Net.Util.Fst
             /// NodeHash calls hashCode for this output; we fix this
             /// so we get deterministic hashing.
             /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetHashCode()
             {
                 return 42;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override bool Equals(object other)
             {
                 return other == this;
@@ -62,6 +64,7 @@ namespace Lucene.Net.Util.Fst
 
         public static NoOutputs Singleton => singleton;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object Common(object output1, object output2)
         {
             if (Debugging.AssertsEnabled)
@@ -72,6 +75,7 @@ namespace Lucene.Net.Util.Fst
             return NO_OUTPUT;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object Subtract(object output, object inc)
         {
             if (Debugging.AssertsEnabled)
@@ -82,6 +86,7 @@ namespace Lucene.Net.Util.Fst
             return NO_OUTPUT;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object Add(object prefix, object output)
         {
             if (Debugging.AssertsEnabled)
@@ -103,11 +108,13 @@ namespace Lucene.Net.Util.Fst
             return NO_OUTPUT;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Write(object prefix, DataOutput @out)
         {
             //assert false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object Read(DataInput @in)
         {
             //assert false;
@@ -117,6 +124,7 @@ namespace Lucene.Net.Util.Fst
 
         public override object NoOutput => NO_OUTPUT;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string OutputToString(object output)
         {
             return "";

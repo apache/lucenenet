@@ -71,7 +71,7 @@ namespace Lucene.Net.Spatial.Vector
         {
             private readonly DistanceValueSource outerInstance;
             private readonly IDistanceCalculator calculator;
-            private readonly IPoint from;
+            //private readonly IPoint from; // LUCENENET: Never read
             private readonly double nullValue;
 
             private readonly FieldCache.Doubles ptX, ptY;
@@ -86,7 +86,7 @@ namespace Lucene.Net.Spatial.Vector
                 validX = FieldCache.DEFAULT.GetDocsWithField(reader, outerInstance.strategy.FieldNameX);
                 validY = FieldCache.DEFAULT.GetDocsWithField(reader, outerInstance.strategy.FieldNameY);
 
-                from = outerInstance.from;
+                //from = outerInstance.from; // LUCENENET: Never read
                 calculator = outerInstance.strategy.SpatialContext.DistCalc;
                 nullValue = (outerInstance.strategy.SpatialContext.IsGeo ? 180 * outerInstance.multiplier : double.MaxValue);
             }
@@ -121,10 +121,9 @@ namespace Lucene.Net.Spatial.Vector
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || GetType() != o.GetType()) return false;
+            if (o is null || GetType() != o.GetType()) return false;
 
-            var that = o as DistanceValueSource;
-            if (that == null) return false;
+            if (!(o is DistanceValueSource that)) return false;
 
             if (!from.Equals(that.from)) return false;
             if (!strategy.Equals(that.strategy)) return false;

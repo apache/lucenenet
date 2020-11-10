@@ -42,7 +42,7 @@ namespace Lucene.Net.Analysis.OpenNlp
         private int termNum = 0;
         private int sentenceStart = 0;
 
-        private readonly NLPSentenceDetectorOp sentenceOp = null;
+        //private readonly NLPSentenceDetectorOp sentenceOp = null; // LUCENENET: Never read
         private readonly NLPTokenizerOp tokenizerOp = null;
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.OpenNlp
             {
                 throw new ArgumentException("OpenNLPTokenizer: both a Sentence Detector and a Tokenizer are required");
             }
-            this.sentenceOp = sentenceOp;
+            //this.sentenceOp = sentenceOp; // LUCENENET: Never read
             this.tokenizerOp = tokenizerOp;
             this.termAtt = AddAttribute<ICharTermAttribute>();
             this.flagsAtt = AddAttribute<IFlagsAttribute>();

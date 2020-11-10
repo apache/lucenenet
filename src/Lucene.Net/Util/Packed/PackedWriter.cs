@@ -1,6 +1,5 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
-using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 

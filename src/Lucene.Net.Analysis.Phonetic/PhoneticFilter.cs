@@ -29,9 +29,9 @@ namespace Lucene.Net.Analysis.Phonetic
     public sealed class PhoneticFilter : TokenFilter
     {
         /// <summary>true if encoded tokens should be added as synonyms</summary>
-        private bool inject = true;
+        private readonly bool inject = true; // LUCENENET: marked readonly
         /// <summary>phonetic encoder</summary>
-        private IStringEncoder encoder = null;
+        private readonly IStringEncoder encoder = null; // LUCENENET: marked readonly
         /// <summary>captured state, non-null when <c>inject=true</c> and a token is buffered</summary>
         private State save = null;
         private readonly ICharTermAttribute termAtt;

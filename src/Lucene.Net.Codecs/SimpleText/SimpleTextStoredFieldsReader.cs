@@ -51,7 +51,9 @@ namespace Lucene.Net.Codecs.SimpleText
     public class SimpleTextStoredFieldsReader : StoredFieldsReader
     {
         private long[] _offsets; // docid -> offset in .fld file
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexInput _input;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly BytesRef _scratch = new BytesRef();
         private readonly CharsRef _scratchUtf16 = new CharsRef();
         private readonly FieldInfos _fieldInfos;

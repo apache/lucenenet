@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         internal class MapValue
         {
-            private TValue value = default(TValue);
+            private TValue value = default;
             public TValue Value
             {
                 get => value;
@@ -215,12 +215,10 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="arrayIndex">A 32-bit integer that represents the index in <paramref name="array"/> at which copying begins.</param>
         public virtual void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
         {
-            using (var iter = (EntryIterator)EntrySet().GetEnumerator())
+            using var iter = (EntryIterator)EntrySet().GetEnumerator();
+            for (int i = arrayIndex; iter.MoveNext(); i++)
             {
-                for (int i = arrayIndex; iter.MoveNext(); i++)
-                {
-                    array[i] = new KeyValuePair<string, TValue>(iter.Current.Key, iter.CurrentValue);
-                }
+                array[i] = new KeyValuePair<string, TValue>(iter.Current.Key, iter.CurrentValue);
             }
         }
 
@@ -231,12 +229,10 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="map"></param>
         public virtual void CopyTo(CharArrayMap<TValue> map)
         {
-            using (var iter = (EntryIterator)EntrySet().GetEnumerator())
+            using var iter = (EntryIterator)EntrySet().GetEnumerator();
+            while (iter.MoveNext())
             {
-                while (iter.MoveNext())
-                {
-                    map.Put(iter.Current.Key, iter.CurrentValue);
-                }
+                map.Put(iter.Current.Key, iter.CurrentValue);
             }
         }
 
@@ -286,7 +282,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (o == null)
             {
-                throw new ArgumentException("o can't be null", "o");
+                throw new ArgumentException("o can't be null", nameof(o));
             }
 
             var c = o as char[];
@@ -305,7 +301,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(char[] text, int offset, int length)
         {
             var value = values[GetSlot(text, offset, length)];
-            return (value != null) ? value.Value : default(TValue);
+            return (value != null) ? value.Value : default;
         }
 
         /// <summary>
@@ -314,7 +310,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(char[] text)
         {
             var value = values[GetSlot(text, 0, text.Length)];
-            return (value != null) ? value.Value : default(TValue);
+            return (value != null) ? value.Value : default;
         }
 
         /// <summary>
@@ -323,7 +319,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(ICharSequence text)
         {
             var value = values[GetSlot(text)];
-            return (value != null) ? value.Value : default(TValue);
+            return (value != null) ? value.Value : default;
         }
 
         /// <summary>
@@ -332,7 +328,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Get(string text)
         {
             var value = values[GetSlot(text)];
-            return (value != null) ? value.Value : default(TValue);
+            return (value != null) ? value.Value : default;
         }
 
         /// <summary>
@@ -417,7 +413,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(ICharSequence text, TValue value)
         {
             MapValue oldValue = PutImpl(text, new MapValue(value)); // could be more efficient
-            return (oldValue != null) ? oldValue.Value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default;
         }
 
         /// <summary>
@@ -427,7 +423,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(object o, TValue value)
         {
             MapValue oldValue = PutImpl(o, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default;
         }
 
         /// <summary>
@@ -436,7 +432,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(string text, TValue value)
         {
             MapValue oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default;
         }
 
         /// <summary>
@@ -447,7 +443,7 @@ namespace Lucene.Net.Analysis.Util
         public virtual TValue Put(char[] text, TValue value)
         {
             MapValue oldValue = PutImpl(text, new MapValue(value));
-            return (oldValue != null) ? oldValue.Value : default(TValue);
+            return (oldValue != null) ? oldValue.Value : default;
         }
 
         /// <summary>
@@ -802,7 +798,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (text == null)
             {
-                throw new ArgumentException("text can't be null", "text");
+                throw new ArgumentException("text can't be null", nameof(text));
             }
             int code = 0;
             int stop = offset + length;
@@ -829,7 +825,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (text == null)
             {
-                throw new ArgumentException("text can't be null", "text");
+                throw new ArgumentException("text can't be null", nameof(text));
             }
 
             int code = 0;
@@ -857,7 +853,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (text == null)
             {
-                throw new ArgumentException("text can't be null", "text");
+                throw new ArgumentException("text can't be null", nameof(text));
             }
 
             int code = 0;
@@ -943,7 +939,7 @@ namespace Lucene.Net.Analysis.Util
                 value = val.Value;
                 return true;
             }
-            value = default(TValue);
+            value = default;
             return false;
         }
 
@@ -963,7 +959,7 @@ namespace Lucene.Net.Analysis.Util
                 value = val.Value;
                 return true;
             }
-            value = default(TValue);
+            value = default;
             return false;
         }
 
@@ -983,7 +979,7 @@ namespace Lucene.Net.Analysis.Util
                 value = val.Value;
                 return true;
             }
-            value = default(TValue);
+            value = default;
             return false;
         }
 
@@ -1003,7 +999,7 @@ namespace Lucene.Net.Analysis.Util
                 value = val.Value;
                 return true;
             }
-            value = default(TValue);
+            value = default;
             return false;
         }
 
@@ -1144,12 +1140,10 @@ namespace Lucene.Net.Analysis.Util
 
             public void CopyTo(string[] array, int arrayIndex)
             {
-                using (var iter = GetEnumerator())
+                using var iter = GetEnumerator();
+                for (int i = arrayIndex; iter.MoveNext(); i++)
                 {
-                    for (int i = arrayIndex; iter.MoveNext(); i++)
-                    {
-                        array[i] = iter.Current;
-                    }
+                    array[i] = iter.Current;
                 }
             }
 
@@ -1260,25 +1254,23 @@ namespace Lucene.Net.Analysis.Util
 
             public override string ToString()
             {
-                using (var i = (ValueEnumerator)GetEnumerator())
+                using var i = (ValueEnumerator)GetEnumerator();
+                if (!i.HasNext)
+                    return "[]";
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append('[');
+                while (i.MoveNext())
                 {
-                    if (!i.HasNext)
-                        return "[]";
-
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append('[');
-                    while (i.MoveNext())
+                    TValue value = i.Current;
+                    if (sb.Length > 1)
                     {
-                        TValue value = i.Current;
-                        if (sb.Length > 1)
-                        {
-                            sb.Append(',').Append(' ');
-                        }
-                        sb.Append(value.ToString());
+                        sb.Append(',').Append(' ');
                     }
-
-                    return sb.Append(']').ToString();
+                    sb.Append(value.ToString());
                 }
+
+                return sb.Append(']').ToString();
             }
 
             /// <summary>
@@ -1520,7 +1512,7 @@ namespace Lucene.Net.Analysis.Util
                 get
                 {
                     var val = outerInstance.values[lastPos];
-                    return val != null ? val.Value : default(TValue);
+                    return val != null ? val.Value : default;
                 }
             }
 
@@ -1572,7 +1564,7 @@ namespace Lucene.Net.Analysis.Util
                     var val = outerInstance.values[lastPos];
                     return new KeyValuePair<string, TValue>(
                         new string(outerInstance.keys[lastPos]), 
-                        val != null ? val.Value : default(TValue));
+                        val != null ? val.Value : default);
                 }
             }
 
@@ -1735,12 +1727,8 @@ namespace Lucene.Net.Analysis.Util
         bool Put(string text);
     }
 
-    public class CharArrayMap
+    public static class CharArrayMap // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        // Prevent direct creation
-        private CharArrayMap()
-        { }
-
         /// <summary>
         /// Returns a copy of the given map as a <see cref="CharArrayMap{TValue}"/>. If the given map
         /// is a <see cref="CharArrayMap{TValue}"/> the ignoreCase property will be preserved.
@@ -1805,7 +1793,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (map == null)
             {
-                throw new ArgumentException("Given map is null", "map");
+                throw new ArgumentException("Given map is null", nameof(map));
             }
             if (map == CharArrayMap<TValue>.EmptyMap() || map.Count == 0)
             {
@@ -1826,7 +1814,7 @@ namespace Lucene.Net.Analysis.Util
         {
             if (map == null)
             {
-                throw new ArgumentException("Given map is null", "map");
+                throw new ArgumentException("Given map is null", nameof(map));
             }
             if (map == CharArrayMap<TValue>.EmptyMap() || map.Count == 0)
             {
@@ -1971,7 +1959,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
                 return false;
             }
@@ -1980,7 +1968,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
                 return false;
             }
@@ -1989,7 +1977,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
                 return false;
             }
@@ -1998,7 +1986,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (o == null)
                 {
-                    throw new ArgumentNullException("o");
+                    throw new ArgumentNullException(nameof(o));
                 }
                 return false;
             }
@@ -2007,36 +1995,36 @@ namespace Lucene.Net.Analysis.Util
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
-                return default(V);
+                return default;
             }
 
             public override V Get(char[] text)
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
-                return default(V);
+                return default;
             }
 
             public override V Get(ICharSequence text)
             {
                 if (text == null)
                 {
-                    throw new ArgumentNullException("text");
+                    throw new ArgumentNullException(nameof(text));
                 }
-                return default(V);
+                return default;
             }
 
             public override V Get(object o)
             {
                 if (o == null)
                 {
-                    throw new ArgumentNullException("o");
+                    throw new ArgumentNullException(nameof(o));
                 }
-                return default(V);
+                return default;
             }
         }
     }

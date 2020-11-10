@@ -46,11 +46,9 @@ namespace Lucene.Net.Cli.SourceCode
 
             foreach (var file in files)
             {
-                using (var input = typeof(Program).FindAndGetManifestResourceStream(file))
-                using (var output = new FileStream(Path.Combine(outputPath, file), FileMode.Create, FileAccess.Write))
-                {
-                    sectionParser.ParseSourceCodeFiles(input, output);
-                }
+                using var input = typeof(Program).FindAndGetManifestResourceStream(file);
+                using var output = new FileStream(Path.Combine(outputPath, file), FileMode.Create, FileAccess.Write);
+                sectionParser.ParseSourceCodeFiles(input, output);
             }
         }
     }

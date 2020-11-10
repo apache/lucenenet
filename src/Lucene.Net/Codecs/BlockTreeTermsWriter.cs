@@ -4,8 +4,8 @@ using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Codecs
@@ -233,8 +233,10 @@ namespace Lucene.Net.Codecs
 
         internal const string TERMS_INDEX_CODEC_NAME = "BLOCK_TREE_TERMS_INDEX";
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexOutput @out;
         private readonly IndexOutput indexOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         internal readonly int minItemsInBlock;
         internal readonly int maxItemsInBlock;
 
@@ -338,6 +340,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the terms file header. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteHeader(IndexOutput @out)
         {
             CodecUtil.WriteHeader(@out, TERMS_CODEC_NAME, VERSION_CURRENT);
@@ -345,6 +348,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the index file header. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteIndexHeader(IndexOutput @out)
         {
             CodecUtil.WriteHeader(@out, TERMS_INDEX_CODEC_NAME, VERSION_CURRENT);
@@ -352,6 +356,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the terms file trailer. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteTrailer(IndexOutput @out, long dirStart)
         {
             @out.WriteInt64(dirStart);
@@ -359,6 +364,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes the index file trailer. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual void WriteIndexTrailer(IndexOutput indexOut, long dirStart)
         {
             indexOut.WriteInt64(dirStart);
@@ -373,6 +379,7 @@ namespace Lucene.Net.Codecs
             return new TermsWriter(this, field);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static long EncodeOutput(long fp, bool hasTerms, bool isFloor)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(fp < (1L << 62));
@@ -459,31 +466,29 @@ namespace Lucene.Net.Codecs
                     if (blocks.Count == 0)
                         return "[]";
 
-                    using (var it = blocks.GetEnumerator())
+                    using var it = blocks.GetEnumerator();
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append('[');
+                    it.MoveNext();
+                    while (true)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append('[');
-                        it.MoveNext();
-                        while (true)
+                        var e = it.Current;
+                        // There is a chance that the Prefix will contain invalid UTF8,
+                        // so we catch that and use the alternative way of displaying it
+                        try
                         {
-                            var e = it.Current;
-                            // There is a chance that the Prefix will contain invalid UTF8,
-                            // so we catch that and use the alternative way of displaying it
-                            try
-                            {
-                                sb.Append(e.ToString());
-                            }
-                            catch (IndexOutOfRangeException)
-                            {
-                                sb.Append("BLOCK: ");
-                                sb.Append(e.Prefix.ToString());
-                            }
-                            if (!it.MoveNext())
-                            {
-                                return sb.Append(']').ToString();
-                            }
-                            sb.Append(',').Append(' ');
+                            sb.Append(e.ToString());
                         }
+                        catch (IndexOutOfRangeException)
+                        {
+                            sb.Append("BLOCK: ");
+                            sb.Append(e.Prefix.ToString());
+                        }
+                        if (!it.MoveNext())
+                        {
+                            return sb.Append(']').ToString();
+                        }
+                        sb.Append(',').Append(' ');
                     }
                 }
             }
@@ -580,7 +585,9 @@ namespace Lucene.Net.Codecs
             }
         }
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal readonly RAMOutputStream scratchBytes = new RAMOutputStream();
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         internal class TermsWriter : TermsConsumer
         {
@@ -688,7 +695,7 @@ namespace Lucene.Net.Codecs
                     // and we found 30 terms/sub-blocks starting w/ that
                     // prefix, and minItemsInBlock <= 30 <=
                     // maxItemsInBlock.
-                    PendingBlock nonFloorBlock = WriteBlock(prevTerm, prefixLength, prefixLength, count, count, 0, false, -1, true);
+                    PendingBlock nonFloorBlock = WriteBlock(prevTerm, prefixLength, prefixLength, count, count, /*0, LUCENENET: Never read */ false, -1, true);
                     nonFloorBlock.CompileIndex(null, outerInstance.scratchBytes);
                     pending.Add(nonFloorBlock);
                 }
@@ -864,7 +871,7 @@ namespace Lucene.Net.Codecs
                                 prevTerm.Int32s[prevTerm.Offset + prefixLength] = startLabel;
                             }
                             //System.out.println("  " + subCount + " subs");
-                            PendingBlock floorBlock = WriteBlock(prevTerm, prefixLength, curPrefixLength, curStart, pendingCount, subTermCountSums[1 + sub], true, startLabel, curStart == pendingCount);
+                            PendingBlock floorBlock = WriteBlock(prevTerm, prefixLength, curPrefixLength, curStart, pendingCount, /*subTermCountSums[1 + sub], LUCENENET: Never read */ true, startLabel, curStart == pendingCount);
                             if (firstBlock == null)
                             {
                                 firstBlock = floorBlock;
@@ -908,7 +915,7 @@ namespace Lucene.Net.Codecs
                                   System.out.println("      **");
                                 }
                                 */
-                                floorBlocks.Add(WriteBlock(prevTerm, prefixLength, prefixLength + 1, curStart, curStart, 0, true, startLabel, true));
+                                floorBlocks.Add(WriteBlock(prevTerm, prefixLength, prefixLength + 1, curStart,curStart, /* 0, LUCENENET: Never read */ true, startLabel, true));
                                 break;
                             }
                         }
@@ -926,7 +933,9 @@ namespace Lucene.Net.Codecs
             }
 
             // for debugging
+#pragma warning disable IDE0051 // Remove unused private members
             private string ToString(BytesRef b)
+#pragma warning restore IDE0051 // Remove unused private members
             {
                 try
                 {
@@ -943,7 +952,9 @@ namespace Lucene.Net.Codecs
 
             // Writes all entries in the pending slice as a single
             // block:
-            private PendingBlock WriteBlock(Int32sRef prevTerm, int prefixLength, int indexPrefixLength, int startBackwards, int length, int futureTermCount, bool isFloor, int floorLeadByte, bool isLastInFloor)
+            private PendingBlock WriteBlock(Int32sRef prevTerm, int prefixLength, int indexPrefixLength,
+                int startBackwards, int length, /*int futureTermCount, // LUCENENET: Not used*/
+                bool isFloor, int floorLeadByte, bool isLastInFloor)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(length > 0);
 
@@ -1180,6 +1191,7 @@ namespace Lucene.Net.Codecs
 
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override PostingsConsumer StartTerm(BytesRef text)
             {
                 //if (DEBUG) System.out.println("\nBTTW.startTerm term=" + fieldInfo.name + ":" + toString(text) + " seg=" + segment);
@@ -1306,7 +1318,7 @@ namespace Lucene.Net.Codecs
                 }
                 finally
                 {
-                    IOUtils.DisposeWhileHandlingException(ioe, @out, indexOut, postingsWriter);
+                    IOUtils.DisposeWhileHandlingException(ioe, @out, indexOut, postingsWriter, scratchBytes); // LUCENENET: Added scratchBytes
                 }
             }
         }

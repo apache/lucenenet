@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -46,11 +47,13 @@ namespace Lucene.Net.Util.Packed
             currentMask = Mask(current.BitsPerValue);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static long Mask(int bitsPerValue)
         {
             return bitsPerValue == 64 ? ~0L : PackedInt32s.MaxValue(bitsPerValue);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long Get(int index)
         {
             return current.Get(index);
@@ -62,6 +65,7 @@ namespace Lucene.Net.Util.Packed
 
         public virtual PackedInt32s.Mutable Mutable => current;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object GetArray()
         {
             return current.GetArray();
@@ -84,12 +88,14 @@ namespace Lucene.Net.Util.Packed
             currentMask = Mask(current.BitsPerValue);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Set(int index, long value)
         {
             EnsureCapacity(value);
             current.Set(index, value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Clear()
         {
             current.Clear();
@@ -103,6 +109,7 @@ namespace Lucene.Net.Util.Packed
             return next;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int Get(int index, long[] arr, int off, int len)
         {
             return current.Get(index, arr, off, len);
@@ -123,6 +130,7 @@ namespace Lucene.Net.Util.Packed
             return current.Set(index, arr, off, len);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Fill(int fromIndex, int toIndex, long val)
         {
             EnsureCapacity(val);
@@ -139,6 +147,7 @@ namespace Lucene.Net.Util.Packed
                 + current.RamBytesUsed();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Save(DataOutput @out)
         {
             current.Save(@out);

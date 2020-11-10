@@ -43,7 +43,9 @@ namespace Lucene.Net.Codecs.SimpleText
         private int _numDocsWritten;
         private readonly Directory _directory;
         private readonly string _segment;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput _output;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         internal const string FIELDS_EXTENSION = "fld";
 

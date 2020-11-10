@@ -33,7 +33,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     /// <seealso cref="IFieldConfigListener"/>
     public class FieldDateResolutionFCListener : IFieldConfigListener
     {
-        private QueryConfigHandler config = null;
+        private readonly QueryConfigHandler config = null; // LUCENENET: marked readonly
 
         public FieldDateResolutionFCListener(QueryConfigHandler config)
         {

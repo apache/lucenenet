@@ -31,14 +31,11 @@ namespace Lucene.Net.QueryParsers.Xml
     /// be easily changed/optimized by a DBA.
     /// The static methods can be used on their own or by creating an instance of this class you can store and
     /// re-use compiled stylesheets for fast use (e.g. in a server environment)
-    /// 
-    /// LUCENENET (.NET Core):  This is not compiled this because .NET Standard
-    /// does not currently support XSL Transform.
     /// </summary>
     public class QueryTemplateManager
     {
-        IDictionary<string, XslCompiledTransform> compiledTemplatesCache = new Dictionary<string, XslCompiledTransform>();
-        XslCompiledTransform defaultCompiledTemplates = null;
+        private readonly IDictionary<string, XslCompiledTransform> compiledTemplatesCache = new Dictionary<string, XslCompiledTransform>(); // LUCENENET: marked readonly
+        private XslCompiledTransform defaultCompiledTemplates;
 
         public QueryTemplateManager()
         {
@@ -87,14 +84,10 @@ namespace Lucene.Net.QueryParsers.Xml
         public static string GetQueryAsXmlString(IDictionary<string, string> formProperties, XslCompiledTransform template)
         {
             // TODO: Suppress XML header with encoding (as Strings have no encoding)
-            using (var stream = new MemoryStream())
-            {
-                TransformCriteria(formProperties, template, stream);
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
+            using var stream = new MemoryStream();
+            TransformCriteria(formProperties, template, stream);
+            using StreamReader reader = new StreamReader(stream);
+            return reader.ReadToEnd();
         }
 
         /// <summary>
@@ -103,14 +96,10 @@ namespace Lucene.Net.QueryParsers.Xml
         public static string GetQueryAsXmlString(IDictionary<string, string> formProperties, Stream xslIs)
         {
             // TODO: Suppress XML header with encoding (as Strings have no encoding)
-            using (var stream = new MemoryStream())
-            {
-                TransformCriteria(formProperties, xslIs, stream);
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
+            using var stream = new MemoryStream();
+            TransformCriteria(formProperties, xslIs, stream);
+            using StreamReader reader = new StreamReader(stream);
+            return reader.ReadToEnd();
         }
 
         /// <summary>
@@ -184,12 +173,10 @@ namespace Lucene.Net.QueryParsers.Xml
         /// </summary>
         public static XslCompiledTransform GetTemplates(Stream xslIs)
         {
-            using (var reader = XmlReader.Create(xslIs))
-            {
-                XslCompiledTransform xslt = new XslCompiledTransform();
-                xslt.Load(reader);
-                return xslt;
-            }
+            using var reader = XmlReader.Create(xslIs);
+            XslCompiledTransform xslt = new XslCompiledTransform();
+            xslt.Load(reader);
+            return xslt;
         }
     }
 }

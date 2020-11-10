@@ -55,7 +55,9 @@ namespace Lucene.Net.Codecs.SimpleText
     public class SimpleTextTermVectorsReader : TermVectorsReader
     {
         private long[] _offsets; // docid -> offset in .vec file
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexInput _input;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly BytesRef _scratch = new BytesRef();
         private readonly CharsRef _scratchUtf16 = new CharsRef();
 
@@ -226,7 +228,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
                 }
             }
-            return new SimpleTVFields(this, fields);
+            return new SimpleTVFields(fields);
         }
 
         public override object Clone()
@@ -275,12 +277,10 @@ namespace Lucene.Net.Codecs.SimpleText
 
         private class SimpleTVFields : Fields
         {
-            private readonly SimpleTextTermVectorsReader _outerInstance;
             private readonly IDictionary<string, SimpleTVTerms> _fields;
 
-            internal SimpleTVFields(SimpleTextTermVectorsReader outerInstance, IDictionary<string, SimpleTVTerms> fields)
+            internal SimpleTVFields(IDictionary<string, SimpleTVTerms> fields)
             {
-                _outerInstance = outerInstance;
                 _fields = fields;
             }
 
@@ -291,8 +291,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override Terms GetTerms(string field)
             {
-                SimpleTVTerms result;
-                _fields.TryGetValue(field, out result);
+                _fields.TryGetValue(field, out SimpleTVTerms result);
                 return result;
             }
 
@@ -542,7 +541,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override BytesRef GetPayload()
             {
-                return _payloads == null ? null : _payloads[_nextPos - 1];
+                return _payloads?[_nextPos - 1];
             }
 
             public override int NextPosition()
