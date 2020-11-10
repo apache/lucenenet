@@ -418,7 +418,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 for (int i = 0; i < threads.Length; i++)
                 {
                     line = br.ReadLine();
-                    assertNotNull($"line for index {i.ToString()} is missing", line); // LUCENENET specific - ensure the line is there before splitting
+                    assertNotNull($"line for index {i} is missing", line); // LUCENENET specific - ensure the line is there before splitting
                     String[] parts = line.Split(WriteLineDocTask.SEP).TrimEnd();
                     assertEquals(line, 3, parts.Length);
                     // check that all thread names written are the same in the same line

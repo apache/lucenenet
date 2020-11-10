@@ -1125,7 +1125,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during BeforeClass:\n{ex.ToString()}", ex);
+                throw new Exception($"An exception occurred during BeforeClass:\n{ex}", ex);
             }
         }
 
@@ -1178,7 +1178,7 @@ namespace Lucene.Net.Util
             catch (Exception ex)
             {
                 // Write the stack trace so we have something to go on if an error occurs here.
-                throw new Exception($"An exception occurred during AfterClass:\n{ex.ToString()}", ex);
+                throw new Exception($"An exception occurred during AfterClass:\n{ex}", ex);
             }
         }
 
