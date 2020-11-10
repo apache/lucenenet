@@ -503,7 +503,7 @@ namespace Lucene.Net.Util
         /// up after the suite is completed.
         /// </summary>
         /// <seealso cref="LuceneTestCase.CreateTempDir()"/>
-        /// <seealso cref="LuceneTestCase.CreateTempFile(String, String)"/>
+        /// <seealso cref="LuceneTestCase.CreateTempFile(string, string)"/>
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
         [SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "API looks better with this nested.")]
         public sealed class SuppressTempFileChecksAttribute : System.Attribute
@@ -3464,7 +3464,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Creates an empty temporary file.
         /// </summary>
-        /// <seealso cref="CreateTempFile(String, String)"/>
+        /// <seealso cref="CreateTempFile(string, string)"/>
         public static FileInfo CreateTempFile()
         {
             return CreateTempFile("tempFile", ".tmp");

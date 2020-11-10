@@ -51,7 +51,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private double runTimeSec;                      // how long to run for
         private readonly long logByTimeMsec;
 
-        public TaskSequence(PerfRunData runData, String name, TaskSequence parent, bool parallel)
+        public TaskSequence(PerfRunData runData, string name, TaskSequence parent, bool parallel)
             : base(runData)
         {
             collapsable = name == null;
