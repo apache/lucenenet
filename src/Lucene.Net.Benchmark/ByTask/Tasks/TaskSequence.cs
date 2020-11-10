@@ -54,8 +54,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public TaskSequence(PerfRunData runData, String name, TaskSequence parent, bool parallel)
             : base(runData)
         {
-            collapsable = (name == null);
-            name = (name != null ? name : (parallel ? "Par" : "Seq"));
+            collapsable = name == null;
+            name = name ?? (parallel ? "Par" : "Seq");
             SetName(name);
             SetSequenceName();
             this.parent = parent;

@@ -367,7 +367,7 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            return 31 * base.GetHashCode() + ((m_query == null) ? (object)m_filter : m_query).GetHashCode();
+            return 31 * base.GetHashCode() + (m_query ?? (object)m_filter).GetHashCode();
         }
     }
 }

@@ -483,7 +483,7 @@ namespace Lucene.Net.Index
 
                     // reader could be null e.g. for a just merged segment (from
                     // IndexWriter.commitMergedDeletes).
-                    SegmentReader reader = this.reader == null ? new SegmentReader(Info, writer.Config.ReaderTermsIndexDivisor, IOContext.READ_ONCE) : this.reader;
+                    SegmentReader reader = this.reader ?? new SegmentReader(Info, writer.Config.ReaderTermsIndexDivisor, IOContext.READ_ONCE);
                     try
                     {
                         // clone FieldInfos so that we can update their dvGen separately from

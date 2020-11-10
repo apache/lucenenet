@@ -27,7 +27,7 @@ namespace Lucene.Net.Support
         private static readonly object NULL = new object();
 
         public IdentityWeakReference(T target)
-            : base(target == null ? NULL : target)
+            : base(target ?? NULL)
         {
             hash = RuntimeHelpers.GetHashCode(target);
         }

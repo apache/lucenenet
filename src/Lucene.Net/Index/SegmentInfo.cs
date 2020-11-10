@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
         public string ToString(Directory dir, int delCount)
         {
             StringBuilder s = new StringBuilder();
-            s.Append(Name).Append('(').Append(version == null ? "?" : version).Append(')').Append(':');
+            s.Append(Name).Append('(').Append(version ?? "?").Append(')').Append(':');
             char cfs = UseCompoundFile ? 'c' : 'C';
             s.Append(cfs);
 

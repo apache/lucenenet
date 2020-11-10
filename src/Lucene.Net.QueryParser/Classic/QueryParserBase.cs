@@ -190,8 +190,7 @@ namespace Lucene.Net.QueryParsers.Classic
             try
             {
                 // TopLevelQuery is a Query followed by the end-of-input (EOF)
-                Query res = TopLevelQuery(m_field);
-                return res != null ? res : NewBooleanQuery(false);
+                return TopLevelQuery(m_field) ?? NewBooleanQuery(false);
             }
             catch (ParseException tme)
             {
@@ -295,7 +294,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public virtual CultureInfo Locale // LUCENENET TODO: API - Rename Culture
         {
-            get => this.locale == null ? CultureInfo.CurrentCulture : this.locale;
+            get => this.locale ?? CultureInfo.CurrentCulture;
             set => this.locale = value;
         }
 
@@ -309,7 +308,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// </summary>
         public virtual TimeZoneInfo TimeZone
         {
-            get => this.timeZone == null ? TimeZoneInfo.Local : this.timeZone;
+            get => this.timeZone ?? TimeZoneInfo.Local;
             set => this.timeZone = value;
         }
 

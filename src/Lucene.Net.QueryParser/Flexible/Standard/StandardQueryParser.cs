@@ -311,18 +311,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             get
             {
                 var culture = QueryConfigHandler.Get(ConfigurationKeys.LOCALE);
-                return culture == null ? CultureInfo.CurrentCulture : culture;
+                return culture ?? CultureInfo.CurrentCulture;
             }
             set => QueryConfigHandler.Set(ConfigurationKeys.LOCALE, value);
         }
 
         public virtual TimeZoneInfo TimeZone
         {
-            get
-            {
-                var timeZone = QueryConfigHandler.Get(ConfigurationKeys.TIMEZONE);
-                return timeZone == null ? TimeZoneInfo.Local : timeZone;
-            }
+            get => QueryConfigHandler.Get(ConfigurationKeys.TIMEZONE) ?? TimeZoneInfo.Local;
             set => QueryConfigHandler.Set(ConfigurationKeys.TIMEZONE, value);
         }
 

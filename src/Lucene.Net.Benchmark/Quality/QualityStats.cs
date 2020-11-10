@@ -162,7 +162,7 @@ namespace Lucene.Net.Benchmarks.Quality
             {
                 logger.WriteLine(title);
             }
-            prefix = prefix == null ? "" : prefix;
+            prefix = prefix ?? "";
             string nf = "{0:F3}";
             int M = 19;
             logger.WriteLine(prefix + Format("Search Seconds: ", M) +
@@ -195,7 +195,7 @@ namespace Lucene.Net.Benchmarks.Quality
         private const string padd = "                                    ";
         private string Format(string s, int minLen)
         {
-            s = (s == null ? "" : s);
+            s = (s ?? "");
             int n = Math.Max(minLen, s.Length);
             return (s + padd).Substring(0, n-0);
         }

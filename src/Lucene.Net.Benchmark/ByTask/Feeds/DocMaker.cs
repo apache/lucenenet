@@ -292,7 +292,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // Set TITLE_FIELD
             string title = docData.Title;
             Field titleField = ds.GetField(TITLE_FIELD, m_valType);
-            titleField.SetStringValue(title == null ? "" : title);
+            titleField.SetStringValue(title ?? "");
             doc.Add(titleField);
 
             string body = docData.Body;

@@ -84,11 +84,11 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             return
               "<top>" + newline +
               "<num> Number: " + qnum + newline + newline +
-              "<title> " + (title == null ? "" : title) + newline + newline +
+              "<title> " + (title ?? "") + newline + newline +
               "<desc> Description:" + newline +
-              (description == null ? "" : description) + newline + newline +
+              (description ?? "") + newline + newline +
               "<narr> Narrative:" + newline +
-              (narrative == null ? "" : narrative) + newline + newline +
+              (narrative ?? "") + newline + newline +
               "</top>";
         }
 

@@ -123,7 +123,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         // read until finding a line that starts with the specified prefix
         private StringBuilder Read(TextReader reader, string prefix, StringBuilder sb, bool collectMatchLine, bool collectAll)
         {
-            sb = (sb == null ? new StringBuilder() : sb);
+            sb = sb ?? new StringBuilder();
             string sep = "";
             while (true)
             {

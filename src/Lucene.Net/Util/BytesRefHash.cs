@@ -94,7 +94,7 @@ namespace Lucene.Net.Util
             Arrays.Fill(ids, -1);
             this.bytesStartArray = bytesStartArray;
             bytesStart = bytesStartArray.Init();
-            bytesUsed = bytesStartArray.BytesUsed() == null ? Counter.NewCounter() : bytesStartArray.BytesUsed();
+            bytesUsed = bytesStartArray.BytesUsed() ?? Counter.NewCounter();
             bytesUsed.AddAndGet(hashSize * RamUsageEstimator.NUM_BYTES_INT32);
         }
 

@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
         // initialize the per-field DocValuesProducer
         private void InitDocValuesProducers(Codec codec)
         {
-            Directory dir = core.cfsReader != null ? core.cfsReader : si.Info.Dir;
+            Directory dir = core.cfsReader ?? si.Info.Dir;
             DocValuesFormat dvFormat = codec.DocValuesFormat;
             IDictionary<long?, IList<FieldInfo>> genInfos = GetGenInfos();
 

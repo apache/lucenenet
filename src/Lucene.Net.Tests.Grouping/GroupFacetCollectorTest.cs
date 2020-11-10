@@ -689,7 +689,7 @@ namespace Lucene.Net.Search.Grouping
 
                 if (Verbose)
                 {
-                    Console.WriteLine("  doc content=" + contentStr + " group=" + (groupValue == null ? "null" : groupValue) + " facetVals=" + Collections.ToString(facetVals));
+                    Console.WriteLine("  doc content=" + contentStr + " group=" + (groupValue ?? "null") + " facetVals=" + Collections.ToString(facetVals));
                 }
 
                 if (groupValue != null)

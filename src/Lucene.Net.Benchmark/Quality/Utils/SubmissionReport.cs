@@ -90,7 +90,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
         private const string padd = "                                    ";
         private string Format(string s, int minLen)
         {
-            s = (s == null ? "" : s);
+            s = (s ?? "");
             int n = Math.Max(minLen, s.Length);
             return (s + padd).Substring(0, n - 0);
         }

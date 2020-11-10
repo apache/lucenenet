@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public static string GetDocStoreSegment(SegmentInfo si)
         {
             string v = si.GetAttribute(DS_NAME_KEY);
-            return v == null ? si.Name : v;
+            return v ?? si.Name;
         }
 
         /// <returns> Whether doc store files are stored in compound file (*.cfx). </returns>
