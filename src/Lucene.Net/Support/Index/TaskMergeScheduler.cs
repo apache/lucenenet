@@ -628,10 +628,7 @@ namespace Lucene.Net.Index
                 {
                     _isDone = true;
 
-                    if (MergeThreadCompleted != null)
-                    {
-                        MergeThreadCompleted(this, EventArgs.Empty);
-                    }
+                    MergeThreadCompleted?.Invoke(this, EventArgs.Empty);
                 }
             }
 
