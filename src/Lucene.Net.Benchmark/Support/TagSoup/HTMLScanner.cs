@@ -1,4 +1,4 @@
-﻿// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
 //
 // TagSoup is licensed under the Apache License,
 // Version 2.0.  You may obtain a copy of this license at
@@ -17,6 +17,7 @@ using Sax;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace TagSoup
 {
@@ -716,19 +717,20 @@ namespace TagSoup
             theOutputBuffer[theSize++] = (char)ch;
         }
 
-        /**
-        Test procedure.  Reads HTML from the standard input and writes
-        PYX to the standard output.
-        */
-
-        //	public static void main(string[] argv) {
-        //		IScanner s = new HTMLScanner();
-        //		TextReader r = new StreamReader(System.in, "UTF-8");
-        //		TextWriter w = new StreamWriter(System.out, "UTF-8");
-        //		PYXWriter pw = new PYXWriter(w);
-        //		s.scan(r, pw);
-        //		w.close();
-        //		}
+        ///// <summary>
+        ///// Test procedure.  Reads HTML from the standard input and writes
+        ///// PYX to the standard output.
+        ///// </summary>
+        ///// <param name="argv"></param>
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Optional argument")]
+        //public static void Main(string[] argv)
+        //{
+        //    IScanner s = new HTMLScanner();
+        //    TextReader r = Console.In;
+        //    TextWriter w = Console.Out;
+        //    PYXWriter pw = new PYXWriter(w);
+        //    s.Scan(r, pw);
+        //}
 
 
         //private static string NiceChar(int value) // LUCENENET: IDE0051: Remove unused private member
