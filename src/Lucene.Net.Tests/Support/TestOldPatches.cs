@@ -63,12 +63,13 @@ namespace Lucene.Net.Support
             //now serialize it 
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter serializer = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+#pragma warning disable SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
             serializer.Serialize(memoryStream, queryPreSerialized);
 
             //now deserialize 
             memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
             Lucene.Net.Search.BooleanQuery queryPostSerialized = (Lucene.Net.Search.BooleanQuery)serializer.Deserialize(memoryStream);
-
+#pragma warning restore SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
             memoryStream.Close();
 
             Assert.AreEqual(queryPreSerialized, queryPostSerialized, "See the issue: LUCENENET-170");

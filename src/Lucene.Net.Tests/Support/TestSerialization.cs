@@ -81,9 +81,11 @@ namespace Lucene.Net.Support
             
             System.Runtime.Serialization.Formatters.Binary.BinaryFormatter bf = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             System.IO.MemoryStream ms = new System.IO.MemoryStream();
+#pragma warning disable SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
             bf.Serialize(ms, lucQuery);
             ms.Seek(0, System.IO.SeekOrigin.Begin);
             Lucene.Net.Search.BooleanQuery lucQuery2 = (Lucene.Net.Search.BooleanQuery)bf.Deserialize(ms);
+#pragma warning restore SYSLIB0011 // Type or member is obsolete (BinaryFormatter)
             ms.Close();
 
             Assert.AreEqual(lucQuery, lucQuery2, "Error in serialization");

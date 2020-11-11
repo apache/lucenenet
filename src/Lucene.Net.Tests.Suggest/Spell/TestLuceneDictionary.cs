@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -37,9 +37,7 @@ namespace Lucene.Net.Search.Spell
 
         private IndexReader indexReader = null;
         private LuceneDictionary ld;
-#pragma warning disable CS0618 // Type or member is obsolete
-        private IBytesRefIterator it;
-#pragma warning restore CS0618 // Type or member is obsolete
+        private IBytesRefEnumerator it;
         private BytesRef spare = new BytesRef();
 
 
@@ -86,7 +84,6 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestFieldNonExistent()
         {
-            IBytesRefEnumerator it;
             try
             {
                 indexReader = DirectoryReader.Open(store);
@@ -105,7 +102,6 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestFieldAaa()
         {
-            IBytesRefEnumerator it;
             try
             {
                 indexReader = DirectoryReader.Open(store);
@@ -125,7 +121,6 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestFieldContents_1()
         {
-            IBytesRefEnumerator it;
             try
             {
                 indexReader = DirectoryReader.Open(store);
@@ -159,7 +154,6 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestFieldContents_2()
         {
-            IBytesRefEnumerator it;
             try
             {
                 indexReader = DirectoryReader.Open(store);
@@ -183,7 +177,6 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestFieldZzz()
         {
-            IBytesRefEnumerator it;
             try
             {
                 indexReader = DirectoryReader.Open(store);
