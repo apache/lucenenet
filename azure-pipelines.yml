@@ -508,8 +508,8 @@ stages:
         maximumParallelJobs: 8
         maximumAllowedFailures: 2 # Maximum allowed failures for a successful build
 
-  - job: Test_net48_Windows_x86
-    condition: and(succeeded(), ne(variables['RunTests'], 'false'))
+  - job: Test_net48_Windows_x86 # Only run Nightly
+    condition: and(succeeded(), ne(variables['RunTests'], 'false'), eq(variables['IsNightly'], 'true'))
     displayName: 'Test net48,x86 on Windows'
     pool:
       vmImage: 'windows-2019'
