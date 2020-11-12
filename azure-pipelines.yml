@@ -202,6 +202,20 @@ stages:
         Contents: '**/bin/$(BuildConfiguration)/**/*.pdb'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
 
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: $(NuGetArtifactName)'
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
+        artifact: '$(NuGetArtifactName)'
+        publishLocation: 'pipeline'
+    
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: $(DebugArtifactName)'
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
+        artifact: '$(DebugArtifactName)'
+        publishLocation: 'pipeline'
+
     - template: 'build/azure-templates/publish-test-binaries.yml'
       parameters:
         publishDirectory: $(PublishTempDirectory)
@@ -229,20 +243,6 @@ stages:
         framework: 'net48'
         binaryArtifactName: '$(BinaryArtifactName)'
         testSettingsFilePath: '$(Build.ArtifactStagingDirectory)/$(TestSettingsFileName)'
-
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: $(NuGetArtifactName)'
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
-        artifact: '$(NuGetArtifactName)'
-        publishLocation: 'pipeline'
-    
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: $(DebugArtifactName)'
-      inputs:
-        targetPath: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
-        artifact: '$(DebugArtifactName)'
-        publishLocation: 'pipeline'
         
   - job: Docs
     condition: and(succeeded(), eq(variables['GenerateDocs'], 'true'))
