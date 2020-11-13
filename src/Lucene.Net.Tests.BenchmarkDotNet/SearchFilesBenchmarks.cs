@@ -97,7 +97,7 @@ namespace Lucene.Net.Tests.BenchmarkDotNet
             string index = indexDirectory.FullName;
             string field = "contents";
             //string queries = null;
-            int repeat = 1000;
+            int repeat = 2000;
             //bool raw = false;
             string queryString = QueryString;
             //int hitsPerPage = 10;
