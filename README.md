@@ -167,7 +167,7 @@ Building on the Command Line is currently only supported on Windows.
 ##### Prerequisites
 
 1. [Powershell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) 3.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your Powershell version)
-2. [.NET Core SDK 3.1 or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
+2. [.NET 5.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
 3. [.NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 ##### Execution
@@ -237,7 +237,7 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 #### Prerequisites
 
 1. Visual Studio 2019 or higher
-2. [.NET Core SDK 3.1 or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
+2. [.NET 5.0 SDK or higher](https://dotnet.microsoft.com/download/visual-studio-sdks)
 3. [.NET Framework 4.8 Developer Pack](https://dotnet.microsoft.com/download/visual-studio-sdks)
 
 #### Execution
