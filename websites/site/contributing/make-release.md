@@ -134,10 +134,10 @@ Perform basic checks against the release binary:
 
 - On your local Git clone, tag the repository using the info in `RELEASE-TODO.txt`
 
-  - `git log`
-  - Verify the HEAD commit hash of the local repo matches that in `RELEASE-TODO.txt`
-  - `git tag -a <tag from RELEASE-TODO.txt> -m "<tag from RELEASE-TODO.txt>"`
-  - `git push <remote-name (defaults to origin)> master --tags`
+  ```powershell
+  git tag -a <tag from RELEASE-TODO.txt> <commit hash from RELEASE-TODO.txt> -m "<tag from RELEASE-TODO.txt>"
+  git push <remote-name (defaults to origin)> master --tags
+  ```
 
 - [Sign the `release` artifacts](https://infra.apache.org/release-signing.html) using GnuPG
 
