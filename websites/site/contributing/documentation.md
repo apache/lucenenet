@@ -18,12 +18,12 @@ To submit changes for the website, create a Pull Request to the [Lucene Git repo
 
 ### Build script
 
-To build the website and run it on your machine, run the powershell script: `/websites/site/site.ps1`. You don't have to pass any parameters in and it will build the site and host it at [http://localhost:8080](http://localhost:8080).
+To build the website and run it on your machine, run the Powershell script: `/websites/site/site.ps1`. You don't have to pass any parameters in and it will build the site and host it at [http://localhost:8081](http://localhost:8081).
 
 The script has 2 optional parameters:
 
 - `-ServeDocs` _(default is 1)_ The value of `1` means it will build the docs and host the site, if `0` is specified, it will build the static site to be hosted elsewhere.
-- `-Clean` _(default is 0)_ The value of `1` means that it will clear all caches and tool files before it builds again. This is handy if a new version of docfx is available or if there's odd things occuring with the incremental build.
+- `-Clean` _(default is 0)_ The value of `1` means that it will clear all caches and tool files before it builds again. This is handy if a new version of docfx is available or if there's odd things occurring with the incremental build.
 
 ### File/folder structure
 
@@ -42,7 +42,7 @@ The file/folder structure is within `/websites/site`:
 
 - The website is deployed via git
 - Checkout the Git repo that hosts the documentation: https://github.com/apache/lucenenet-site/tree/asf-site _(ensure you have `asf-site` branch checked out, not `master`)_
-- Copy the build output of the website to the root. The build output will be all of the files in the `/websites/site/_site` in your main lucene.net checked out Git repository.
+- Copy the build output of the website to the root. The build output will be all of the files in the `/websites/site/_site` in your main Lucene.NET checked out Git repository.
 - Commit and push these changes
 - The new version of the website will be live. If the amount of new files committed is large, the new files may take some time to become live.
 
@@ -50,13 +50,13 @@ The file/folder structure is within `/websites/site`:
 
 ### Build script
 
-To build the api docs and run it on your machine, run the powershell script: `/websites/apidocs/docs.ps1`. You don't have to pass any parameters in and it will build the site and host it at [http://localhost:8080](http://localhost:8080).
+To build the api docs and run it on your machine, run the Powershell script: `/websites/apidocs/docs.ps1`. You don't have to pass any parameters in and it will build the site and host it at [http://localhost:8080](http://localhost:8080).
 
 The script has 3 parameters:
 
 - `-LuceneNetVersion` _(mandatory)_ This is the Lucene.Net version including pre-release information that is being built. For example: `4.8.0-beta00008`. _(This value will correspond to the folder and branch name where the docs get hosted, see below)_
 - `-ServeDocs` _(default is 1)_ The value of `1` means it will build the docs and host the site, if `0` is specified, it will build the static site to be hosted elsewhere.
-- `-Clean` _(default is 0)_ The value of `1` means that it will clear all caches and tool files before it builds again. This is handy if a new version of docfx is available or if there's odd things occuring with the incremental build.
+- `-Clean` _(default is 0)_ The value of `1` means that it will clear all caches and tool files before it builds again. This is handy if a new version of docfx is available or if there's odd things occurring with the incremental build.
 
 ### File/folder structure
 
@@ -72,13 +72,13 @@ The file/folder structure is within `/websites/apidocs`:
 
 ### Process overview
 
-The documentation generation is a complex process because it needs to convert the Java Lucene project's documentation into a usable format to produce the output Lucene.Net's documentation.
+The documentation generation is a complex process because it needs to convert the Java Lucene project's documentation into a usable format to produce the output Lucene.NET's documentation.
 
 The process overview is:
 
-- Use the `JavaDocToMarkdownConverter` project within the `DocumentationTools.sln` solution to run the conversion of the Java Lucene projects docs into a useable format for DocFx. This tool takes uses a release tag output of the Java Lucene project as it's source to convert against the Lucene.Net's source.
+- Use the `JavaDocToMarkdownConverter` project within the `DocumentationTools.sln` solution to run the conversion of the Java Lucene projects docs into a useable format for DocFx. This tool takes uses a release tag output of the Java Lucene project as it's source to convert against the Lucene.NET's source.
 - Run the documentation build script to produce the documentation site
-- Publish the output to the [`lucenenet-site`](https://github.com/apache/lucenenet-site) repository into a correpsonding named version directory
+- Publish the output to the [`lucenenet-site`](https://github.com/apache/lucenenet-site) repository into a corresponding named version directory
 
 We don't want to manually change the converted resulting markdown files (`.md`) because they would get overwritten again when the conversion process is re-executed. Therefore to fix any formatting issues or customized output of the project docs, these customizations/fixes/tweaks are built directly into the conversion process itself in the `JavaDocToMarkdownConverter.csproj` project.
 
@@ -101,12 +101,12 @@ We don't want to manually change the converted resulting markdown files (`.md`) 
 
 - Checkout the Git repo that hosts the documentation: https://github.com/apache/lucenenet-site/tree/asf-site _(ensure you have `asf-site` branch checked out, not `master`)_
 - Create a new folder in this repo: `/docs/[Version]`, for example: `/docs/4.8.0-beta00008`
-- Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `/websites/apidocs/_site` in your main lucene.net checked out Git repository.
+- Copy the build output of the documentation site to this new folder. The build output will be all of the files in the `/websites/apidocs/_site` in your main Lucene.NET checked out Git repository.
 - Commit and push these changes
 - The new version documentation will be live. Due to the amount of new files committed, the new files may take up to 60 minutes to become live.
 - Next the website needs updating which is a manual process currently:
   - In the `/websites/site/download` folder there should be a document per release. It's normally fine to copy the document of the latest release for the same major version. For a new major version some modifications may be needed.
-  - Ensure the correct version number is listed in the header and the nuget download snippet.
+  - Ensure the correct version number is listed in the header and the NuGet download snippet.
   - Update the `Status` and `Released` heading information.
   - Ensure the download links are correct.
   - Update the `/websites/site/download/toc.yml` and `/websites/site/download/download.md` files to include a reference to the new page which should maintain descending version order.
