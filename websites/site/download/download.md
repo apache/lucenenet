@@ -6,6 +6,12 @@ uid: download
 
 ---
 
+## [Lucene 4.8.0-beta00013](xref:download/4.8.0-beta00013)
+
+_Status:_ **`Beta`**
+
+_Released:_ `2020-11-16`
+
 ## [Lucene 4.8.0-beta00012](xref:download/4.8.0-beta00012)
 
 _Status:_ **`Beta`**
