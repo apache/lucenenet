@@ -38,6 +38,7 @@ param (
 if ($BaseUrl -eq 'https://lucenenet.apache.org/docs/') {
     $BaseUrl += $LuceneNetVersion
 }
+$BaseUrl = $BaseUrl.TrimEnd('/') # Remove any trailing slash
 Write-Host "Base URL for xref map set to $BaseUrl"
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
