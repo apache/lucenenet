@@ -6,9 +6,9 @@
 # The ASF licenses this file to You under the Apache License, Version 2.0
 # (the ""License""); you may not use this file except in compliance with
 # the License.  You may obtain a copy of the License at
-# 
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an ""AS IS"" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,12 +18,8 @@
 # -----------------------------------------------------------------------------------
 
 param (
-	[Parameter(Mandatory=$false)]
-	[int]
-	$ServeDocs = 1,
-	[Parameter(Mandatory=$false)]
-	[int]
-	$Clean = 0,
+	[switch] $ServeDocs = $false,
+	[switch] $Clean = $false,
 	# LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
 	[Parameter(Mandatory=$false)]
 	[string]
@@ -56,7 +52,7 @@ if (-not (test-path $DocFxExe))
 {
 	Write-Host "Retrieving docfx..."
 	$DocFxZip = "$ToolsFolder\tmp\docfx.zip"
-	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.50/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60 
+	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.50/docfx.zip" -OutFile $DocFxZip -TimeoutSec 60
 	#unzip
 	Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
 }
@@ -75,9 +71,9 @@ if ($Clean -eq 1) {
 $DocFxJson = Join-Path -Path $SiteFolder "docfx.json"
 $DocFxLog = Join-Path -Path $SiteFolder "obj\docfx.log"
 
-if($?) { 
+if($?) {
 	if ($ServeDocs -eq 0){
-		# build the output		
+		# build the output
 		Write-Host "Building docs..."
 		& $DocFxExe build $DocFxJson -l "$DocFxLog" --loglevel $LogLevel
 	}
