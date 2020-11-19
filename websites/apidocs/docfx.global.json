@@ -1,14 +1,14 @@
 {
-    "_appTitle":  "Apache Lucene.NET 4.8.0-beta00012 Documentation",
-    "_disableContribution":  false,
-    "_appFaviconPath":  "logo/favicon.ico",
-    "_enableSearch":  true,
-    "_appLogoPath":  "logo/lucene-net-color.png",
-    "_appFooter":  "Copyright © 2020 Licensed to the Apache Software Foundation (ASF)",
-    "_gitContribute":  {
-                           "repo":  "https://github.com/apache/lucenenet",
-                           "branch":  "docs/4.8.0-beta00012",
-                           "apiSpecFolder":  "websites/apidocs/apiSpec"
-                       },
-    "_gitSource":  "https://github.com/apache/lucenenet.git"
+  "_appTitle": "Apache Lucene.NET 4.8.0-beta00012 Documentation",
+  "_disableContribution": false,
+  "_appFaviconPath": "logo/favicon.ico",
+  "_enableSearch": true,
+  "_appLogoPath": "logo/lucene-net-color.png",
+  "_appFooter": "Copyright © 2020 The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>",
+  "_gitContribute": {
+    "repo": "https://github.com/apache/lucenenet",
+    "branch": "docs/4.8.0-beta00012",
+    "apiSpecFolder": "websites/apidocs/apiSpec"
+  },
+  "_gitSource": "https://github.com/apache/lucenenet.git"
 }
