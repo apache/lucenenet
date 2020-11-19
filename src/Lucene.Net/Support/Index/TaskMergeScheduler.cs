@@ -31,12 +31,12 @@ namespace Lucene.Net.Index
     /// <summary>
     /// A <see cref="MergeScheduler"/> that runs each merge using
     /// <see cref="Task"/>s on the default <see cref="TaskScheduler"/>.
-    /// 
+    ///
     /// <para>If more than <see cref="MaxMergeCount"/> merges are
     /// requested then this class will forcefully throttle the
     /// incoming threads by pausing until one more more merges
     /// complete.</para>
-    ///  
+    ///
     /// LUCENENET specific
     /// </summary>
     public class TaskMergeScheduler : MergeScheduler, IConcurrentMergeScheduler
@@ -46,9 +46,11 @@ namespace Lucene.Net.Index
         private readonly TaskScheduler _taskScheduler = TaskScheduler.Default;
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private readonly ManualResetEventSlim _manualResetEvent = new ManualResetEventSlim();
+
         /// <summary>
         /// List of currently active <see cref="MergeThread"/>s.</summary>
-        private readonly IList<MergeThread> _mergeThreads = new List<MergeThread>();        
+        private readonly IList<MergeThread> _mergeThreads = new List<MergeThread>();
+
         /// <summary>
         /// How many <see cref="MergeThread"/>s have kicked off (this is use
         /// to name them).
@@ -118,7 +120,7 @@ namespace Lucene.Net.Index
                 return 2;
 #else
                 return (int)ThreadPriority.Normal;
-#endif 
+#endif
             }
         }
 
@@ -137,16 +139,15 @@ namespace Lucene.Net.Index
         /// that way, smaller merges are guaranteed to run before larger ones.
         /// </summary>
         private void UpdateMergeThreads()
-        {            
-            foreach(var merge in _mergeThreads.Where(c => !c.IsAlive))
+        {
+            foreach (var merge in _mergeThreads.Where(c => !c.IsAlive))
             {
                 using (_lock.Write())
                 {
                     _mergeThreads.Remove(merge);
                 }
-                 merge.Dispose();
-                //_manualResetEvent.Set();
-            }           
+                merge.Dispose();
+            }
         }
 
         /// <summary>
@@ -177,12 +178,12 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Wait for any running merge threads to finish. 
+        /// Wait for any running merge threads to finish.
         /// This call is not interruptible as used by <see cref="MergeScheduler.Dispose()"/>.
         /// </summary>
         public virtual void Sync()
         {
-          foreach(var merge in _mergeThreads.Where(merge => merge != null || !merge.IsAlive))
+            foreach (var merge in _mergeThreads.Where(merge => merge != null || !merge.IsAlive))
             {
                 try
                 {
@@ -205,7 +206,6 @@ namespace Lucene.Net.Index
                     });
                 }
             }
-                     
         }
 
         /// <summary>
@@ -370,24 +370,24 @@ namespace Lucene.Net.Index
                 return;
             }
 
-//#if FEATURE_THREAD_INTERRUPT
-//            try
-//            {
-//#endif
-                // When an exception is hit during merge, IndexWriter
-                // removes any partial files and then allows another
-                // merge to run.  If whatever caused the error is not
-                // transient then the exception will keep happening,
-                // so, we sleep here to avoid saturating CPU in such
-                // cases:
-                Thread.Sleep(250);
-//#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
-//            }
-//            catch (ThreadInterruptedException ie)
-//            {
-//                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-//            }
-//#endif
+            //#if FEATURE_THREAD_INTERRUPT
+            //            try
+            //            {
+            //#endif
+            // When an exception is hit during merge, IndexWriter
+            // removes any partial files and then allows another
+            // merge to run.  If whatever caused the error is not
+            // transient then the exception will keep happening,
+            // so, we sleep here to avoid saturating CPU in such
+            // cases:
+            Thread.Sleep(250);
+            //#if FEATURE_THREAD_INTERRUPT // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+            //            }
+            //            catch (ThreadInterruptedException ie)
+            //            {
+            //                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+            //            }
+            //#endif
             throw new MergePolicy.MergeException(exc, _directory);
         }
 
@@ -419,8 +419,8 @@ namespace Lucene.Net.Index
         {
             TaskMergeScheduler clone = (TaskMergeScheduler)base.Clone();
             clone._writer = null;
-            clone._directory = null;            
-            clone._mergeThreads.Clear();           
+            clone._directory = null;
+            clone._mergeThreads.Clear();
             return clone;
         }
 
@@ -492,7 +492,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Return the current merge, or <c>null</c> if this 
+            /// Return the current merge, or <c>null</c> if this
             /// <see cref="MergeThread"/> is done.
             /// </summary>
             public virtual MergePolicy.OneMerge CurrentMerge
@@ -583,9 +583,9 @@ namespace Lucene.Net.Index
                     while (true && !cancellationToken.IsCancellationRequested)
                     {
                         RunningMerge = merge;
-                        // LUCENENET NOTE: We MUST call DoMerge(merge) instead of 
+                        // LUCENENET NOTE: We MUST call DoMerge(merge) instead of
                         // _writer.Merge(merge) because the tests specifically look
-                        // for the method name DoMerge in the stack trace. 
+                        // for the method name DoMerge in the stack trace.
                         _doMerge(merge);
 
                         // Subsequent times through the loop we do any new

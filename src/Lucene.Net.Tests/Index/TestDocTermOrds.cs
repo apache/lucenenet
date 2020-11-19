@@ -391,12 +391,12 @@ namespace Lucene.Net.Index
                 }
                 return;
             }
-       
 
             if (Verbose)
             {
                 Console.WriteLine("TEST: TERMS:");
                 te.SeekExact(0);
+
                 while (true)
                 {
                     Console.WriteLine("  ord=" + te.Ord + " term=" + te?.Term?.Utf8ToString());
