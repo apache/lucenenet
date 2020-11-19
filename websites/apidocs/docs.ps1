@@ -124,7 +124,7 @@ if ($DisablePlugins -eq $false) {
 # update the docjx.global.json file based
 $DocFxGlobalJson = Join-Path -Path $ApiDocsFolder "docfx.global.json"
 $DocFxJsonContent = Get-Content $DocFxGlobalJson | ConvertFrom-Json
-$DocFxJsonContent._appFooter = "Copyright © $((Get-Date).Year) Licensed to the Apache Software Foundation (ASF)"
+$DocFxJsonContent._appFooter = "Copyright © $((Get-Date).Year) The Apache Software Foundation, Licensed under the <a href='http://www.apache.org/licenses/LICENSE-2.0' target='_blank'>Apache License, Version 2.0</a><br/> <small>Apache Lucene.Net, Lucene.Net, Apache, the Apache feather logo, and the Apache Lucene.Net project logo are trademarks of The Apache Software Foundation. <br/>All other marks mentioned may be trademarks or registered trademarks of their respective owners.</small>"
 $DocFxJsonContent._appTitle = "Apache Lucene.NET $LuceneNetVersion Documentation"
 $DocFxJsonContent._gitContribute.branch = "docs/$LuceneNetVersion"
 $DocFxJsonContent | ConvertTo-Json -depth 100 | Set-Content $DocFxGlobalJson
