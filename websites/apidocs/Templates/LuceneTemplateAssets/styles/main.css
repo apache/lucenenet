@@ -71,9 +71,18 @@ nav.navbar {
   border-color: #0095eb;
 }
 header ul.navbar-nav {
-  font-size: 1.2em;
+  /*font-size: 1.2em;*/
   float: right;
   font-weight: 600;
+}
+/* Keep Fork me on Github from overlapping menu */
+@media screen and (min-width: 768px) and (max-width: 1400px) {
+  header #navbar, header button.navbar-toggle {
+      margin-right: 150px !important;
+  }
+  header #navbar.in, header #navbar.collapsing {
+    margin-right: 0 !important;
+  }
 }
 
 .sidefilter {
