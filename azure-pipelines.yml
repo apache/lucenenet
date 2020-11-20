@@ -148,7 +148,7 @@ stages:
         $nightly = if ($Env:IsNightly -eq 'true') { 'true' } else { 'false' }
         $weekly = if ($Env:IsWeekly -eq 'true') { 'true' } else { 'false' }
         $slow = if ($Env:RunSlowTests -ne 'false') { 'true' } else { 'false' }
-        $awaitsFix = if ($Env:RunAwaitsFixTests -eq 'true') { 'true' } else { 'false' }
+        $awaitsFix = if ($Env:RunAwaitsFixTests -ne 'false') { 'true' } else { 'false' }
         $codec = if ($Env:Codec -eq $null) { 'random' } else { $Env:Codec }
         $docValuesFormat = if ($Env:DocValuesFormat -eq $null) { 'random' } else { $Env:DocValuesFormat }
         $postingsFormat = if ($Env:PostingsFormat -eq $null) { 'random' } else { $Env:PostingsFormat }
