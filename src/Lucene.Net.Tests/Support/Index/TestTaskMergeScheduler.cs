@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Attributes;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using Lucene.Net.Store;
@@ -79,6 +79,7 @@ namespace Lucene.Net.Index
         }
 
         [Test]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public void TestSubclassTaskMergeScheduler()
         {
             MockDirectoryWrapper dir = NewMockDirectory();

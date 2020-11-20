@@ -92,6 +92,7 @@ namespace Lucene.Net.Replicator.Http
 
 
         [Test]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public void TestBasic()
         {
             IReplicator replicator = new HttpReplicator(host, port, ReplicationService.REPLICATION_CONTEXT + "/s1", server.CreateHandler());
