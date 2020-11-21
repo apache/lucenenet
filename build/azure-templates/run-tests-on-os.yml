@@ -135,10 +135,6 @@ steps:
         Write-Host $testBinaries
         foreach ($testBinary in $testBinaries) {
             $testName = [System.IO.Path]::GetFileNameWithoutExtension($testBinary.FullName)
-            $testDirectory = $testBinary.Directory.Name
-    
-            # Safety check - only run tests for the DLL that matches the directory name so we don't run the same one twice
-            if (!($testName -eq $testDirectory)) { continue }
     
             if ($maximumParalellJobs -gt 1) {
                 # Pause if we have queued too many parallel jobs
