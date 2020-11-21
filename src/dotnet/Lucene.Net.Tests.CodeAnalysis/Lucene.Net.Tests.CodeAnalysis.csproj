@@ -24,6 +24,9 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>Lucene.Net.CodeAnalysis</RootNamespace>
+    
+    <IsPublishable>false</IsPublishable>
+    <IsPublishable Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">true</IsPublishable>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)build/TestReferences.Common.targets" />
