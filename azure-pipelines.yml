@@ -201,6 +201,7 @@ stages:
         SourceFolder: '$(System.DefaultWorkingDirectory)'
         Contents: '**/bin/$(BuildConfiguration)/**/*.pdb'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
+      condition: and(succeeded(), ne(variables['ArtifactFeedID'], ''))
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(NuGetArtifactName)'
@@ -215,6 +216,7 @@ stages:
         targetPath: '$(Build.ArtifactStagingDirectory)/$(DebugArtifactName)'
         artifact: '$(DebugArtifactName)'
         publishLocation: 'pipeline'
+      condition: and(succeeded(), ne(variables['ArtifactFeedID'], ''))
 
     - template: 'build/azure-templates/publish-test-binaries.yml'
       parameters:
