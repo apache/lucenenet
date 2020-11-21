@@ -30,9 +30,10 @@ namespace Lucene.Net.Analysis.Icu
     {
         /** basic tests to ensure the folding is working */
         [Test]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test fails only on Linux on GitHub Actions
         public void Test()
         {
-            TextReader reader = new StringReader("Résumé");
+            TextReader reader = new StringReader("RÃ©sumÃ©");
             ICUFoldingFilterFactory factory = new ICUFoldingFilterFactory(new Dictionary<string, string>());
             TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
             stream = factory.Create(stream);
