@@ -184,8 +184,8 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 }
 
 # Loops through each framework in the TestTargetFrameworks variable and
-# publishes the project in the artifact staging directory with the framework
-# and project name as part of the folder structure.
+# publishes the solution in the artifact staging directory with the framework
+# as part of the folder structure.
 task Publish -depends Compile -description "This task uses dotnet publish to package the binaries with all of their dependencies so they can be run xplat" {
     Write-Host "##teamcity[progressMessage 'Publishing']"
     Write-Host "##vso[task.setprogress]'Publishing'"
@@ -200,58 +200,43 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
         }
         
         foreach ($framework in $frameworksToTest) {
-            $testProjects = Get-ChildItem -Path "$source_directory/**/*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") } | Select -ExpandProperty FullName
-            foreach ($testProject in $testProjects) {
-                # Pause if we have queued too many parallel jobs
-                $running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
-                if ($running.Count -ge $maximumParalellJobs) {
-                    $running | Wait-Job -Any | Out-Null
-                }
 
-                $projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
+            # Pause if we have queued too many parallel jobs
+            #$running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
+            #if ($running.Count -ge $maximumParalellJobs) {
+            #    $running | Wait-Job -Any | Out-Null
+            #}
 
-                # Special case - our CLI tool only supports .NET Core 3.1
-                if ($projectName.Contains("Tests.Cli") -and (!$framework.StartsWith("netcoreapp3.1"))) {
-                    continue
-                }
+            $logPath = "$outDirectory/$framework"
+            $outputPath = "$logPath"
 
-                # Special case - OpenNLP.NET only supports .NET Framework
-                if ($projectName.Contains("Tests.Analysis.OpenNLP") -and (!$framework.StartsWith("net4"))) {
-                    continue
-                }
+            # Do this first so there is no conflict
+            Ensure-Directory-Exists $outputPath
+            
+            Write-Host "Configuration: $configuration"
+            
+            dotnet publish "$solutionFile" --output "$outputPath" --framework "$framework" --configuration "$configuration" --no-build --no-restore --verbosity Normal /p:TestFrameworks=true /p:Platform="$platform"
 
-                # Special case - Morfologik doesn't support .NET Standard 1.x
-                if ($projectName.Contains("Tests.Analysis.Morfologik") -and ($framework.StartsWith("netcoreapp1."))) {
-                    continue
-                }
+            #$scriptBlock = {
+            #    param([string]$solutionFile, [string]$outputPath, [string]$logPath, [string]$framework, [string]$configuration)
+            #    Write-Host "Publishing '$solutionFile' on '$framework' to '$outputPath'..."
+            #    # Note: Cannot use Psake Exec in background
+            #    dotnet publish "$solutionFile" --output "$outputPath" --framework "$framework" --configuration "$configuration" --no-build --no-restore --verbosity Normal /p:TestFrameworks=true /p:Platform="$platform" > "$logPath/dotnet-publish.log" 2> "$logPath/dotnet-publish-error.log"
+            #}
 
-                $logPath = "$outDirectory/$framework"
-                $outputPath = "$logPath/$projectName"
-
-                # Do this first so there is no conflict
-                Ensure-Directory-Exists $outputPath
-
-                $scriptBlock = {
-                    param([string]$testProject, [string]$outputPath, [string]$logPath, [string]$framework, [string]$configuration, [string]$projectName)
-                    Write-Host "Publishing '$testProject' on '$framework' to '$outputPath'..."
-                    # Note: Cannot use Psake Exec in background
-                    dotnet publish "$testProject" --output "$outputPath" --framework "$framework" --configuration "$configuration" --no-build --no-restore --verbosity Detailed /p:TestFrameworks=true /p:Platform="$platform" > "$logPath/$projectName-dotnet-publish.log" 2> "$logPath/$projectName-dotnet-publish-error.log"
-                }
-
-                # Execute the jobs in parallel
-                Start-Job $scriptBlock -ArgumentList $testProject,$outputPath,$logPath,$framework,$configuration,$projectName
-            }
+            # Execute the jobs in parallel
+            #Start-Job $scriptBlock -ArgumentList $solutionFile,$outputPath,$logPath,$framework,$configuration
         }
 
         # Wait for it all to complete
-        do {
-            $running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
-            if ($running.Count -gt 0) {
-                Write-Host ""
-                Write-Host "  Almost finished, only $($running.Count) projects left to publish..." -ForegroundColor Cyan
-                $running | Wait-Job -Any | Out-Null
-            }
-        } until ($running.Count -eq 0)
+        #do {
+        #    $running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
+        #    if ($running.Count -gt 0) {
+        #        Write-Host ""
+        #        Write-Host "  Almost finished, only $($running.Count) projects left to publish..." -ForegroundColor Cyan
+        #        $running | Wait-Job -Any | Out-Null
+        #    }
+        #} until ($running.Count -eq 0)
 
         # Getting the information back from the jobs (time consuming)
         #Get-Job | Receive-Job
