@@ -45,6 +45,10 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
+  <PropertyGroup Label="Assembly Publishing">
+    <IsPublishable>false</IsPublishable>
+  </PropertyGroup>
+
   <PropertyGroup Label="NuGet Package Defaults">
     <IsPackable>false</IsPackable>
     <IncludeSymbols>true</IncludeSymbols>

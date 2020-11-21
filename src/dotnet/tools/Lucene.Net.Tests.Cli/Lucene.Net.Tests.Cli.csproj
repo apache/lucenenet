@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -24,6 +24,9 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyTitle>Lucene.Net.Tests.Cli</AssemblyTitle>
+
+    <IsPublishable>false</IsPublishable>
+    <IsPublishable Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">true</IsPublishable>
   </PropertyGroup>
 
   <ItemGroup>

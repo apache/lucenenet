@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -29,6 +29,9 @@
 
     <AssemblyTitle>Lucene.Net.Tests.Analysis.OpenNLP</AssemblyTitle>
     <RootNamespace>Lucene.Net.Analysis.OpenNlp</RootNamespace>
+
+    <IsPublishable>false</IsPublishable>
+    <IsPublishable Condition=" '$(TargetFramework)' == 'net48' ">true</IsPublishable>
   </PropertyGroup>
 
   <!-- OpenNLP is not strong-named -->
