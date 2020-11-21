@@ -312,7 +312,7 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-16.04'
+          imageName: 'ubuntu-18.04'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
@@ -344,7 +344,7 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-16.04'
+          imageName: 'ubuntu-18.04'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
@@ -376,7 +376,7 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-16.04'
+          imageName: 'ubuntu-18.04'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
@@ -408,7 +408,7 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-16.04'
+          imageName: 'ubuntu-18.04'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
@@ -440,7 +440,7 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-16.04'
+          imageName: 'ubuntu-18.04'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
@@ -472,7 +472,7 @@ stages:
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         Linux:
           osName: 'Linux'
-          imageName: 'ubuntu-16.04'
+          imageName: 'ubuntu-18.04'
           maximumParallelJobs: 7
           maximumAllowedFailures: 4 # Maximum allowed failures for a successful build
         macOS:
