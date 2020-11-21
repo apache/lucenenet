@@ -1,4 +1,4 @@
-﻿# -----------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -296,6 +296,11 @@ try {
 foreach ($testProject in $TestProjects) {
     $projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
     [string[]]$frameworks = $TestFrameworks
+
+    # Special case - CodeAnalysis only supports .NET Core 2.1 for testing
+    if ($projectName.Contains("Tests.CodeAnalysis")) {
+        $frameworks = @('netcoreapp2.1')
+    }
 
     # Special case - our CLI tool only supports .NET Core 3.1
     if ($projectName.Contains("Tests.Cli")) {
