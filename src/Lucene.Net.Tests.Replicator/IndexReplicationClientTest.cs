@@ -39,7 +39,9 @@ namespace Lucene.Net.Replicator
         private class IndexReadyCallback : IDisposable
         {
             private readonly Directory indexDir;
+#pragma warning disable CA2213 // Disposable fields should be disposed
             private DirectoryReader reader;
+#pragma warning restore CA2213 // Disposable fields should be disposed
             private long lastGeneration = -1;
 
             public IndexReadyCallback(Directory indexDir)
@@ -367,7 +369,7 @@ namespace Lucene.Net.Replicator
                     {
                         // count-down number of failures
                         failures.DecrementAndGet();
-                        if (Debugging.AssertsEnabled) Debugging.Assert(failures >= 0, () => "handler failed too many times: " + failures);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(failures >= 0,"handler failed too many times: {0}", failures);
                         if (Verbose)
                         {
                             if (failures == 0)

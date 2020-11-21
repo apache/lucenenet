@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -57,14 +58,7 @@ namespace Lucene.Net.Util
         public int[] Int32s // LUCENENET TODO: API - change to indexer
         {
             get => ints;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("Ints should never be null");
-                }
-                ints = value;
-            }
+            set => ints = value ?? throw new ArgumentNullException(nameof(value), "Ints should never be null");
         }
         private int[] ints;
 
@@ -110,6 +104,7 @@ namespace Lucene.Net.Util
         /// object.
         /// </summary>
         /// <seealso cref="DeepCopyOf(Int32sRef)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object Clone()
         {
             return new Int32sRef(ints, Offset, Length);
@@ -127,15 +122,15 @@ namespace Lucene.Net.Util
             return result;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object obj)
         {
-            if (other == null)
+            if (obj is null)
             {
                 return false;
             }
-            if (other is Int32sRef)
+            if (obj is Int32sRef other)
             {
-                return this.Int32sEquals((Int32sRef)other);
+                return this.Int32sEquals(other);
             }
             return false;
         }
@@ -220,6 +215,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// @lucene.internal
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Grow(int newLength)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(Offset == 0);
@@ -253,6 +249,7 @@ namespace Lucene.Net.Util
         /// The returned <see cref="Int32sRef"/> will have a length of <c>other.Length</c>
         /// and an offset of zero.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Int32sRef DeepCopyOf(Int32sRef other)
         {
             Int32sRef clone = new Int32sRef();

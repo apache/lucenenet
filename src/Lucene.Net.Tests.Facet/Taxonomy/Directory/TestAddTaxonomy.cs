@@ -120,27 +120,23 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private void validate(Directory dest, Directory src, IOrdinalMap ordMap)
         {
-            using (var destTr = new DirectoryTaxonomyReader(dest))
+            using var destTr = new DirectoryTaxonomyReader(dest);
+            int destSize = destTr.Count;
+            using var srcTR = new DirectoryTaxonomyReader(src);
+            var map = ordMap.GetMap();
+
+            // validate taxo sizes
+            int srcSize = srcTR.Count;
+            Assert.True(destSize >= srcSize, "destination taxonomy expected to be larger than source; dest=" + destSize + " src=" + srcSize);
+
+            // validate that all source categories exist in destination, and their
+            // ordinals are as expected.
+            for (int j = 1; j < srcSize; j++)
             {
-                int destSize = destTr.Count;
-                using (var srcTR = new DirectoryTaxonomyReader(src))
-                {
-                    var map = ordMap.GetMap();
-
-                    // validate taxo sizes
-                    int srcSize = srcTR.Count;
-                    Assert.True(destSize >= srcSize, "destination taxonomy expected to be larger than source; dest=" + destSize + " src=" + srcSize);
-
-                    // validate that all source categories exist in destination, and their
-                    // ordinals are as expected.
-                    for (int j = 1; j < srcSize; j++)
-                    {
-                        FacetLabel cp = srcTR.GetPath(j);
-                        int destOrdinal = destTr.GetOrdinal(cp);
-                        Assert.True(destOrdinal > 0, cp + " not found in destination");
-                        Assert.AreEqual(destOrdinal, map[j]);
-                    }
-                }
+                FacetLabel cp = srcTR.GetPath(j);
+                int destOrdinal = destTr.GetOrdinal(cp);
+                Assert.True(destOrdinal > 0, cp + " not found in destination");
+                Assert.AreEqual(destOrdinal, map[j]);
             }
         }
 

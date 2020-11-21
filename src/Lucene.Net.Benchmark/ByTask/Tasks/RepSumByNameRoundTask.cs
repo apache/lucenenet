@@ -64,8 +64,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     reported++;
                     string name = stat1.Task.GetName();
                     string rname = stat1.Round + "." + name; // group by round
-                    TaskStats stat2;
-                    if (!p2.TryGetValue(rname, out stat2) || stat2 == null)
+                    if (!p2.TryGetValue(rname, out TaskStats stat2) || stat2 == null)
                     {
                         stat2 = (TaskStats)stat1.Clone();
 

@@ -27,11 +27,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// </summary>
     public class TrecGov2Parser : TrecDocParser
     {
-        private static readonly string DATE = "Date: ";
+        private const string DATE = "Date: ";
         private static readonly string DATE_END = TrecContentSource.NEW_LINE;
 
-        private static readonly string DOCHDR = "<DOCHDR>";
-        private static readonly string TERMINATING_DOCHDR = "</DOCHDR>";
+        private const string DOCHDR = "<DOCHDR>";
+        private const string TERMINATING_DOCHDR = "</DOCHDR>";
 
         public override DocData Parse(DocData docData, string name, TrecContentSource trecSrc,
             StringBuilder docBuf, ParsePathType pathType)

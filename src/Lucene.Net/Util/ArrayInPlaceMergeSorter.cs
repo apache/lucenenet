@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -37,11 +38,13 @@ namespace Lucene.Net.Util
             this.comparer = comparer;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override int Compare(int i, int j)
         {
             return comparer.Compare(arr[i], arr[j]);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Swap(int i, int j)
         {
             ArrayUtil.Swap(arr, i, j);

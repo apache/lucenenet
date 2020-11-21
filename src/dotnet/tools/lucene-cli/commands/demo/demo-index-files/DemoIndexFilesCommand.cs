@@ -46,13 +46,7 @@ namespace Lucene.Net.Cli
                 this.OnExecute(() => new DemoIndexFilesCommand().Run(this));
             }
 
-            public override IEnumerable<string> SourceCodeFiles
-            {
-                get
-                {
-                    return new string[] { "IndexFiles.cs" };
-                }
-            }
+            public override IEnumerable<string> SourceCodeFiles => new string[] { "IndexFiles.cs" };
 
             public CommandArgument IndexDirectoryArgument { get; private set; }
             public CommandArgument SourceDirectoryArgument { get; private set; }

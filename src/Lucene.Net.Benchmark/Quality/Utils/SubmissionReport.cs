@@ -31,9 +31,9 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
     public class SubmissionReport
     {
         //private NumberFormat nf;
-        private string nf;
-        private TextWriter logger;
-        private string name;
+        private readonly string nf; // LUCENENET: marked readonly
+        private readonly TextWriter logger; // LUCENENET: marked readonly
+        private readonly string name; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructor for <see cref="SubmissionReport"/>.
@@ -87,10 +87,10 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             }
         }
 
-        private static string padd = "                                    ";
+        private const string padd = "                                    ";
         private string Format(string s, int minLen)
         {
-            s = (s == null ? "" : s);
+            s = (s ?? "");
             int n = Math.Max(minLen, s.Length);
             return (s + padd).Substring(0, n - 0);
         }

@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.IntBlock
         private readonly IndexInput input;
         protected readonly int m_blockSize;
 
-        public FixedInt32BlockIndexInput(IndexInput @in)
+        protected FixedInt32BlockIndexInput(IndexInput @in) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             input = @in;
             m_blockSize = @in.ReadVInt32();

@@ -73,7 +73,7 @@ namespace Lucene.Net.Search.Spans
         private int matchDoc = -1;
         private int matchStart = -1;
         private int matchEnd = -1;
-        private List<byte[]> matchPayload;
+        private readonly List<byte[]> matchPayload; // LUCENENET: marked readonly
 
         private readonly Spans[] subSpansByDoc;
 
@@ -101,8 +101,8 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        private SpanNearQuery query;
-        private bool collectPayloads = true;
+        private readonly SpanNearQuery query; // LUCENENET: marked readonly
+        private readonly bool collectPayloads = true; // LUCENENET: marked readonly
 
         public NearSpansOrdered(SpanNearQuery spanNearQuery, AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
             : this(spanNearQuery, context, acceptDocs, termContexts, true)
@@ -285,7 +285,7 @@ namespace Lucene.Net.Search.Spans
             }
             for (int i = 0; i < subSpansByDoc.Length; i++)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(subSpansByDoc[i].Doc == maxDoc, () => " NearSpansOrdered.toSameDoc() spans " + subSpansByDoc[0] + "\n at doc " + subSpansByDoc[i].Doc + ", but should be at " + maxDoc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(subSpansByDoc[i].Doc == maxDoc, " NearSpansOrdered.ToSameDoc() spans {0}\n at doc {1}, but should be at {2}", subSpansByDoc[0], subSpansByDoc[i].Doc, maxDoc);
             }
             inSameDoc = true;
             return true;
@@ -298,7 +298,7 @@ namespace Lucene.Net.Search.Spans
         ///              and <paramref name="spans1"/> ends before <paramref name="spans2"/>. </returns>
         internal static bool DocSpansOrdered(Spans spans1, Spans spans2)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(spans1.Doc == spans2.Doc, () => "doc1 " + spans1.Doc + " != doc2 " + spans2.Doc);
+            if (Debugging.AssertsEnabled) Debugging.Assert(spans1.Doc == spans2.Doc,"doc1 {0} != doc2 {1}", spans1.Doc, spans2.Doc);
             int start1 = spans1.Start;
             int start2 = spans2.Start;
             /* Do not call docSpansOrdered(int,int,int,int) to avoid invoking .end() : */

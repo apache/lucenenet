@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Util.Packed
 {
     /*
@@ -55,16 +57,19 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override Mutable NewMutable(int valueCount, int bitsPerValue)
         {
             return new GrowableWriter(bitsPerValue, valueCount, acceptableOverheadRatio);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override PagedGrowableWriter NewUnfilledCopy(long newSize)
         {
             return new PagedGrowableWriter(newSize, PageSize, bitsPerValue, acceptableOverheadRatio, false);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override long BaseRamBytesUsed()
         {
             return base.BaseRamBytesUsed() + RamUsageEstimator.NUM_BYTES_SINGLE;

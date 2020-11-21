@@ -53,10 +53,10 @@ namespace Lucene.Net.Cli
             }
 
             // The first argument is the output - we need to use the -out switch
-            var args = new List<string>(cmd.GetNonNullArguments().Skip(1));
-
-            args.Add("-out");
-            args.Add(cmd.GetNonNullArguments().First());
+            var args = new List<string>(cmd.GetNonNullArguments().Skip(1)) {
+                "-out",
+                cmd.GetNonNullArguments().First()
+            };
 
             var input = cmd as Configuration;
 

@@ -80,8 +80,8 @@ namespace Lucene.Net.Support
             if (cmp == null)
                 return ReverseOrder<T>();
 
-            if (cmp is ReverseComparer2<T>)
-                return ((ReverseComparer2<T>)cmp).cmp;
+            if (cmp is ReverseComparer2<T> reverseComparer2)
+                return reverseComparer2.cmp;
 
             return new ReverseComparer2<T>(cmp);
         }
@@ -107,21 +107,19 @@ namespace Lucene.Net.Support
             }
 
             bool isValueType = typeof(T).IsValueType;
-            using (var it = collection.GetEnumerator())
+            using var it = collection.GetEnumerator();
+            StringBuilder sb = new StringBuilder();
+            sb.Append('[');
+            it.MoveNext();
+            while (true)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append('[');
-                it.MoveNext();
-                while (true)
+                T e = it.Current;
+                sb.Append(object.ReferenceEquals(e, collection) ? "(this Collection)" : (isValueType ? e.ToString() : ToString(e)));
+                if (!it.MoveNext())
                 {
-                    T e = it.Current;
-                    sb.Append(object.ReferenceEquals(e, collection) ? "(this Collection)" : (isValueType ? e.ToString() : ToString(e)));
-                    if (!it.MoveNext())
-                    {
-                        return sb.Append(']').ToString();
-                    }
-                    sb.Append(',').Append(' ');
+                    return sb.Append(']').ToString();
                 }
+                sb.Append(',').Append(' ');
             }
         }
 
@@ -133,10 +131,8 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string ToString<T>(ICollection<T> collection, CultureInfo culture)
         {
-            using (var context = new CultureContext(culture))
-            {
-                return ToString(collection);
-            }
+            using var context = new CultureContext(culture);
+            return ToString(collection);
         }
 
         /// <summary>
@@ -155,25 +151,23 @@ namespace Lucene.Net.Support
 
             bool keyIsValueType = typeof(TKey).IsValueType;
             bool valueIsValueType = typeof(TValue).IsValueType;
-            using (var i = dictionary.GetEnumerator())
+            using var i = dictionary.GetEnumerator();
+            StringBuilder sb = new StringBuilder();
+            sb.Append('{');
+            i.MoveNext();
+            while (true)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.Append('{');
-                i.MoveNext();
-                while (true)
+                KeyValuePair<TKey, TValue> e = i.Current;
+                TKey key = e.Key;
+                TValue value = e.Value;
+                sb.Append(object.ReferenceEquals(key, dictionary) ? "(this Dictionary)" : (keyIsValueType ? key.ToString() : ToString(key)));
+                sb.Append('=');
+                sb.Append(object.ReferenceEquals(value, dictionary) ? "(this Dictionary)" : (valueIsValueType ? value.ToString() : ToString(value)));
+                if (!i.MoveNext())
                 {
-                    KeyValuePair<TKey, TValue> e = i.Current;
-                    TKey key = e.Key;
-                    TValue value = e.Value;
-                    sb.Append(object.ReferenceEquals(key, dictionary) ? "(this Dictionary)" : (keyIsValueType ? key.ToString() : ToString(key)));
-                    sb.Append('=');
-                    sb.Append(object.ReferenceEquals(value, dictionary) ? "(this Dictionary)" : (valueIsValueType ? value.ToString() : ToString(value)));
-                    if (!i.MoveNext())
-                    {
-                        return sb.Append('}').ToString();
-                    }
-                    sb.Append(',').Append(' ');
+                    return sb.Append('}').ToString();
                 }
+                sb.Append(',').Append(' ');
             }
         }
 
@@ -185,10 +179,8 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string ToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary, CultureInfo culture)
         {
-            using (var context = new CultureContext(culture))
-            {
-                return ToString(dictionary);
-            }
+            using var context = new CultureContext(culture);
+            return ToString(dictionary);
         }
 
         /// <summary>
@@ -217,10 +209,8 @@ namespace Lucene.Net.Support
         /// </summary>
         public static string ToString(object obj, CultureInfo culture)
         {
-            using (var context = new CultureContext(culture))
-            {
-                return ToString(obj);
-            }
+            using var context = new CultureContext(culture);
+            return ToString(obj);
         }
 
         #region Nested Types
@@ -282,8 +272,8 @@ namespace Lucene.Net.Support
             public override bool Equals(object o)
             {
                 return (o == this) ||
-                    (o is ReverseComparer2<T> &&
-                     cmp.Equals(((ReverseComparer2<T>)o).cmp));
+                    (o is ReverseComparer2<T> reverseComparer2 &&
+                     cmp.Equals(reverseComparer2.cmp));
             }
 
             public override int GetHashCode()

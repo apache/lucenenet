@@ -98,26 +98,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return upperName;
         }
 
-        // LUCENENET specific - in .NET we don't need an object overload, since strings are sealed anyway.
-        // **
-        // * Encodes an Object using the Match Rating Approach algorithm. Method is here to satisfy the requirements of the
-        // * Encoder interface Throws an EncoderException if input object is not of type java.lang.string.
-        // *
-        // * @param pObject
-        // *            Object to encode
-        // * @return An object (or type java.lang.string) containing the Match Rating Approach code which corresponds to the
-        // *         string supplied.
-        // * @throws EncoderException
-        // *             if the parameter supplied is not of type java.lang.string
-        // */
-        //public Object encode(Object pObject) throws EncoderException
-        //{
-        //if (!(pObject instanceof string)) {
-        //        throw new EncoderException(
-        //                "Parameter supplied to Match Rating Approach encoder is not of type java.lang.string");
-        //    }
-        //return encode((string) pObject);
-        //}
+        // LUCENENET specific - in .NET we don't need an object overload of Encode(), since strings are sealed anyway.
 
         /// <summary>
         /// Encodes a string using the Match Rating Approach (MRA) algorithm.
@@ -178,7 +159,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>The min rating value.</returns>
         internal int GetMinRating(int sumLength)
         {
-            int minRating = 0;
+            int minRating; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             if (sumLength <= FOUR)
             {
@@ -259,7 +240,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             // 5. Obtain the minimum rating value by calculating the length sum of the
             // encoded strings and sending it down.
             int sumLength = Math.Abs(name1.Length + name2.Length);
-            int minRating = 0;
+            int minRating; // LUCENENET: IDE0059: Remove unnecessary value assignment
             minRating = GetMinRating(sumLength);
 
             // 6. Process the encoded strings from left to right and remove any
@@ -277,7 +258,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="letter">The letter under investiagtion.</param>
         /// <returns><c>true</c> if a vowel, else <c>false</c>.</returns>
-        internal bool IsVowel(string letter)
+        internal static bool IsVowel(string letter) // LUCENENET: CA1822: Mark members as static
         {
             return letter.Equals("E", StringComparison.OrdinalIgnoreCase) || letter.Equals("A", StringComparison.OrdinalIgnoreCase) || letter.Equals("O", StringComparison.OrdinalIgnoreCase) ||
                    letter.Equals("I", StringComparison.OrdinalIgnoreCase) || letter.Equals("U", StringComparison.OrdinalIgnoreCase);
@@ -298,11 +279,11 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             int name1Size = name1.Length - 1;
             int name2Size = name2.Length - 1;
 
-            string name1LtRStart = EMPTY;
-            string name1LtREnd = EMPTY;
+            string name1LtRStart/* = EMPTY*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            string name1LtREnd/* = EMPTY*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
-            string name2RtLStart = EMPTY;
-            string name2RtLEnd = EMPTY;
+            string name2RtLStart/* = EMPTY*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
+            string name2RtLEnd/* = EMPTY*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
             for (int i = 0; i < name1Char.Length; i++)
             {
@@ -353,7 +334,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         /// <param name="accentedWord">The word that may have accents in it.</param>
         /// <returns>De-accented word.</returns>
-        internal string RemoveAccents(string accentedWord)
+        internal static string RemoveAccents(string accentedWord) // LUCENENET: CA1822: Mark members as static
         {
             if (accentedWord == null)
             {

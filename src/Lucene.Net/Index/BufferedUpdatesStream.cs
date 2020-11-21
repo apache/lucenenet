@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
                     }
                     else if (packet != null && segGen == packet.DelGen)
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(packet.isSegmentPrivate, () => "Packet and Segments deletegen can only match on a segment private del packet gen=" + segGen);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(packet.isSegmentPrivate,"Packet and Segments deletegen can only match on a segment private del packet gen={0}", segGen);
                         //System.out.println("  eq");
 
                         // Lock order: IW -> BD -> RP
@@ -688,7 +688,7 @@ namespace Lucene.Net.Index
         {
             if (term != null)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(lastDeleteTerm == null || term.CompareTo(lastDeleteTerm) > 0, () => "lastTerm=" + lastDeleteTerm + " vs term=" + term);
+                if (Debugging.AssertsEnabled) Debugging.Assert(lastDeleteTerm == null || term.CompareTo(lastDeleteTerm) > 0, "lastTerm={0} vs term={1}", lastDeleteTerm, term);
             }
             // TODO: we re-use term now in our merged iterable, but we shouldn't clone, instead copy for this assert
             lastDeleteTerm = term == null ? null : new Term(term.Field, BytesRef.DeepCopyOf(term.Bytes));
@@ -707,8 +707,8 @@ namespace Lucene.Net.Index
             }
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(numTerms2 == numTerms, () => "numTerms2=" + numTerms2 + " vs " + numTerms);
-                Debugging.Assert(bytesUsed2 == bytesUsed, () => "bytesUsed2=" + bytesUsed2 + " vs " + bytesUsed);
+                Debugging.Assert(numTerms2 == numTerms,"numTerms2={0} vs {1}", numTerms2, numTerms);
+                Debugging.Assert(bytesUsed2 == bytesUsed,"bytesUsed2={0} vs {1}", bytesUsed2, bytesUsed);
             }
             return true;
         }

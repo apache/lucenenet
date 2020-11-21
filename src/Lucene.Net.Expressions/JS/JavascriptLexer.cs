@@ -26,6 +26,7 @@ using System;
 using System.Runtime.Serialization;
 #endif
 using Antlr.Runtime;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Expressions.JS
 {
@@ -125,7 +126,7 @@ namespace Lucene.Net.Expressions.JS
         // delegators
         public virtual Lexer[] GetDelegates()
         {
-            return new Lexer[] {  };
+            return Arrays.Empty<Lexer>();
         }
 
         public JavascriptLexer()
@@ -953,8 +954,7 @@ loop2_break: ;
                 int type = DECIMAL;
                 int channel = TokenChannels.Default;
                 // src/java/org/apache/lucene/expressions/js/Javascript.g:347:5: ( DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )? | AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )? | DECIMALINTEGER ( EXPONENT )? )
-                int alt9 = 3;
-                alt9 = m_dfa9.Predict(input);
+                int alt9 = m_dfa9.Predict(input); // LUCENENET: IDE0059: Remove unnecessary value assignment
                 switch (alt9)
                 {
                     case 1:
@@ -1191,7 +1191,7 @@ loop2_break: ;
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:357:5: ( ( '0x' | '0X' ) ( HEXDIGIT )+ )
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:357:7: ( '0x' | '0X' ) ( HEXDIGIT )+
                     // src/java/org/apache/lucene/expressions/js/Javascript.g:357:7: ( '0x' | '0X' )
-                    int alt11 = 2;
+                    int alt11/* = 2*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
                     int LA11_0 = input.LA(1);
                     if ((LA11_0 == '0'))
                     {
@@ -1305,7 +1305,7 @@ loop2_break: ;
             try
             {
                 // src/java/org/apache/lucene/expressions/js/Javascript.g:363:5: ( '0' | '1' .. '9' ( DECIMALDIGIT )* )
-                int alt14 = 2;
+                int alt14/* = 2*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 int LA14_0 = input.LA(1);
                 if ((LA14_0 == '0'))
                 {
@@ -1566,7 +1566,7 @@ loop2_break: ;
         public override void mTokens()
         {
             // src/java/org/apache/lucene/expressions/js/Javascript.g:1:8: ( AT_ADD | AT_BIT_AND | AT_BIT_NOT | AT_BIT_OR | AT_BIT_SHL | AT_BIT_SHR | AT_BIT_SHU | AT_BIT_XOR | AT_BOOL_AND | AT_BOOL_NOT | AT_BOOL_OR | AT_COLON | AT_COMMA | AT_COMP_EQ | AT_COMP_GT | AT_COMP_GTE | AT_COMP_LT | AT_COMP_LTE | AT_COMP_NEQ | AT_COND_QUE | AT_DIVIDE | AT_DOT | AT_LPAREN | AT_MODULO | AT_MULTIPLY | AT_RPAREN | AT_SUBTRACT | NAMESPACE_ID | WS | DECIMAL | OCTAL | HEX )
-            int alt17 = 32;
+            int alt17/* = 32*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
             switch (input.LA(1))
             {
                 case '+':
@@ -2111,17 +2111,17 @@ loop2_break: ;
 
         protected JavascriptLexer.DFA9 m_dfa9;
 
-        internal static readonly string DFA9_eotS = "\x1\uffff\x2\x4\x3\uffff\x1\x4";
+        internal const string DFA9_eotS = "\x1\uffff\x2\x4\x3\uffff\x1\x4";
 
-        internal static readonly string DFA9_eofS = "\x7\uffff";
+        internal const string DFA9_eofS = "\x7\uffff";
 
-        internal static readonly string DFA9_minS = "\x3\x30\x3\uffff\x1\x30";
+        internal const string DFA9_minS = "\x3\x30\x3\uffff\x1\x30";
 
-        internal static readonly string DFA9_maxS = "\x1\x49\x1\x30\x1\x49\x3\uffff\x1\x49";
+        internal const string DFA9_maxS = "\x1\x49\x1\x30\x1\x49\x3\uffff\x1\x49";
 
-        internal static readonly string DFA9_acceptS = "\x3\uffff\x1\x2\x1\x3\x1\x1\x1\uffff";
+        internal const string DFA9_acceptS = "\x3\uffff\x1\x2\x1\x3\x1\x1\x1\uffff";
 
-        internal static readonly string DFA9_specialS = "\x7\uffff}>";
+        internal const string DFA9_specialS = "\x7\uffff}>";
 
         internal static readonly string[] DFA9_transitionS = new string[] { "\x1\x3\x1\uffff\x1\x1\xb\x2"
             , "\x1\x5", "\x1\x5\x1\uffff\xc\x6", string.Empty, string.Empty, string.Empty, "\x1\x5\x1\uffff\xc\x6"
@@ -2173,7 +2173,9 @@ loop2_break: ;
             public override string Description
                 => "346:1: DECIMAL : ( DECIMALINTEGER AT_DOT ( DECIMALDIGIT )* ( EXPONENT )? | AT_DOT ( DECIMALDIGIT )+ ( EXPONENT )? | DECIMALINTEGER ( EXPONENT )? );";
 
+#pragma warning disable IDE0052 // Remove unread private members
             private readonly JavascriptLexer _enclosing;
+#pragma warning restore IDE0052 // Remove unread private members
         }
     }
 

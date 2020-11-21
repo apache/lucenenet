@@ -1,15 +1,15 @@
 ---
 uid: contributing/make-release
 ---
-Making a release of Lucene.Net
-===============
+
+# Making a release of Lucene.Net
 
 > [!NOTE]
 > This is a project-specific procedure, based on the [Apache Release Creation Process](https://infra.apache.org/release-publishing.html)
 
 ## Versioning
 
-For Package Version, NuGet version and branch naming guidelines see the [Versioning Procedure Overview](xref:contributing/versioning) document. 
+For Package Version, NuGet version and branch naming guidelines see the [Versioning Procedure Overview](xref:contributing/versioning) document.
 
 ## Release Preparation
 
@@ -69,6 +69,7 @@ The following steps need only to be performed once.
 - Checkout the Lucene.NET master branch: `git clone https://github.com/apache/lucenenet.git`
 
 - Add Missing License Headers
+
   - Run [Apache Release Audit Tool](https://creadur.apache.org/rat/):
 
     ```powershell
@@ -76,23 +77,22 @@ The following steps need only to be performed once.
     ```
 
   - Review and commit the changes to your local Git clone, adding exclusions to `.rat-excludes` and re-running as necessary
-	  - Exclude files that already have license headers
-	  - Exclude files that are automatically generated
-	  - Exclude files that don't work properly with licence headers included
+    - Exclude files that already have license headers
+    - Exclude files that are automatically generated
+    - Exclude files that don't work properly with licence headers included
   - Push the changes to the remote `lucenenet` repository (`https://gitbox.apache.org/repos/asf/lucenenet.gif`)
 
     ```powershell
     git push <remote> master --tags
     ```
 
-- Execute a complete test locally (it can take around 20 minutes, but you may do the next step in parallel): 
+- Execute a complete test locally (it can take around 20 minutes, but you may do the next step in parallel):
 
   ```powershell
   build -pv:<packageVersion> -t -mp:10
   ```
 
 - Execute a complete test on a temporary Azure DevOps organization (it can take around 30-40 minutes) (see [build instructions on README.md](https://github.com/apache/lucenenet#azure-devops)).
-
 
 ## Successful Release Preparation
 
@@ -112,7 +112,6 @@ The following steps need only to be performed once.
 
 - Click the `Run` button to begin the build (it will take about 40 minutes)
 
-
 ### Check the Release Artifacts
 
 - Upon successful Azure DevOps build, download the `release` build artifact and unzip it. Note you will need to copy the files in a later step.
@@ -122,7 +121,6 @@ Perform basic checks against the release binary:
 - Check presence and appropriateness of LICENSE, NOTICE, and README files.
 
 - Check the `nupkg` files to ensure they can be referenced in Visual Studio.
-
 
 ### Sign the Release
 
@@ -135,10 +133,11 @@ Perform basic checks against the release binary:
 - From the `release` build artifact that you downloaded from Azure DevOps in the **Check the Release Artifacts** section, copy both the `.src.zip` and `.bin.zip` files to a new folder named `<repo root>/svn-dev/<packageVersion>/`
 
 - On your local Git clone, tag the repository using the info in `RELEASE-TODO.txt`
-  - `git log`
-  - Verify the HEAD commit hash of the local repo matches that in `RELEASE-TODO.txt`
-  - `git tag -a <tag from RELEASE-TODO.txt> -m "<tag from RELEASE-TODO.txt>"`
-  - `git push <remote-name (defaults to origin)> master --tags`
+
+  ```powershell
+  git tag -a <tag from RELEASE-TODO.txt> <commit hash from RELEASE-TODO.txt> -m "<tag from RELEASE-TODO.txt>"
+  git push <remote-name (defaults to origin)> master --tags
+  ```
 
 - [Sign the `release` artifacts](https://infra.apache.org/release-signing.html) using GnuPG
 
@@ -150,7 +149,6 @@ Perform basic checks against the release binary:
   > You may be prompted for your password
 
 - Check signature of generated artifacts (the `SignReleaseCandidate` target above runs the commands)
-
 
 ### Add Release Artifacts to the SVN `dev` Distribution Repository
 
@@ -206,7 +204,6 @@ The vote passes if at least three binding +1 votes are cast.
 
 The vote is successful if at least 3 +1 votes are received from [Lucene.NET PMC members](https://people.apache.org/phonebook.html?ctte=lucenenet) after a minimum of 72 hours of sending the vote email. Acknowledge the voting results on the mailing list in the VOTE thread.
 
-
 ```txt
 To: dev@lucenenet.apache.org
 Message Subject: [RESULT] [VOTE] Apache Lucene.NET [version]
@@ -238,7 +235,6 @@ The vote is ***successful/not successful***
 
 - Upon clicking `Resume` again the release will finish, submitting the NuGet packages to NuGet.org
 
-
 ### Release Binaries to SVN
 
 Commit the distribution via SVN to [https://dist.apache.org/repos/dist/release](https://dist.apache.org/repos/dist/release):
@@ -249,14 +245,14 @@ dotnet msbuild -t:CommitRelease -p:PackageVersion=<packageVersion>
 
 > [!NOTE]
 > If preferred or if the above command fails, this step can be done manually using Windows Explorer/TortoiseSVN by doing the following steps:
-> 
-> * Copy `<repo root>/svn-dev/KEYS` to `<repo root>/svn-release/KEYS`
-> * Copy `<repo root>/svn-dev/<packageVersion>` to `<repo root>/svn-release/<packageVersion>`
-> * Right-click on `<repo root>/svn-release`, and click "SVN Commit..."
-> * Add the commit message `Added Apache-Lucene.Net-<packageVersion> to release/lucenenet` and click OK
-> * Right-click on `<repo root>/svn-dev/<packageVersion>` and click "TortoiseSVN > Delete"
-> * Right-click on `<repo root>/svn-dev` and click "SVN Commit..."
-> * Add the commit message `Removed Apache-Lucene.Net-<packageVersion> from dev/lucenenet` and click OK
+>
+> - Copy `<repo root>/svn-dev/KEYS` to `<repo root>/svn-release/KEYS`
+> - Copy `<repo root>/svn-dev/<packageVersion>` to `<repo root>/svn-release/<packageVersion>`
+> - Right-click on `<repo root>/svn-release`, and click "SVN Commit..."
+> - Add the commit message `Added Apache-Lucene.Net-<packageVersion> to release/lucenenet` and click OK
+> - Right-click on `<repo root>/svn-dev/<packageVersion>` and click "TortoiseSVN > Delete"
+> - Right-click on `<repo root>/svn-dev` and click "SVN Commit..."
+> - Add the commit message `Removed Apache-Lucene.Net-<packageVersion> from dev/lucenenet` and click OK
 
 ### Archive Old Release(s)
 
@@ -266,28 +262,28 @@ Remove the old releases from SVN under https://dist.apache.org/repos/dist/releas
 
 ### Update Website with new release
 
-* Update the `/websites/site/lucenetemplate/doap_Lucene_Net.rdf` file to reflect the new version and ensure other links/info in the file are correct.
+- Update the `/websites/site/lucenetemplate/doap_Lucene_Net.rdf` file to reflect the new version and ensure other links/info in the file are correct.
   > [!IMPORTANT]
-  > Only update the version if it's a new stable version. 
-* Create a new release page in the `/websites/site/download`, in most cases it's easiest to just copy the previous release page. 
-  * Ensure the `uid` in the header is correct
-  * Update all headers, status, release date to be correct
-  * Ensure supported frameworks and packages section is accurate for the new release
-* Add the new release page to the `/websites/site/download/toc.yml` file
-* Follow the instructions on how to [build, test & publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) and run/test the website locally. 
-* Commit changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website).
+  > Only update the version if it's a new stable version.
+- Create a new release page in the `/websites/site/download`, in most cases it's easiest to just copy the previous release page.
+  - Ensure the `uid` in the header is correct
+  - Update all headers, status, release date to be correct
+  - Ensure supported frameworks and packages section is accurate for the new release
+- Add the new release page to the `/websites/site/download/toc.yml` file
+- Follow the instructions on how to [build, test & publish the website](https://lucenenet.apache.org/contributing/documentation.html#website) and run/test the website locally.
+- Commit changes and [publish the website](https://lucenenet.apache.org/contributing/documentation.html#website).
 
 ### Update the API Documentation with new release
 
-* Create and push a new Git branch from the relese tag called `docs/[version]`, for example: `docs/4.8.0-beta00008`.
-* Update the DocFx config file `/websites/apidocs/docfx.json` and change the `globalMetadata` section:
-  * `_appTitle` should be: "Apache Lucene.NET [Version] Documentation"
-  * ensure the `_appFooter` has the correct copyright year
-  * the `_gitContribute.branch` should be the name of the branch just created
-* Follow the instructions on how to [build, test and publish the docs](https://lucenenet.apache.org/contributing/documentation.html#api-docs) and run/test the docs locally. When testing locally ensure that the "Improve this doc" button on each documentation page links to the newly created branch on GitHub.
-* Commit and push any changes done during the docs building process to the new branch.
-* Merge the new branch to the `master` branch, or create a Pull Request to target the `master` branch if you want to review changes that way or want another team member to review changes.
-* [Publish the docs](https://lucenenet.apache.org/contributing/documentation.html#api-docs).
+- Create and push a new Git branch from the relese tag called `docs/[version]`, for example: `docs/4.8.0-beta00008`.
+- Update the DocFx config file `/websites/apidocs/docfx.json` and change the `globalMetadata` section:
+  - `_appTitle` should be: "Apache Lucene.NET [Version] Documentation"
+  - ensure the `_appFooter` has the correct copyright year
+  - the `_gitContribute.branch` should be the name of the branch just created
+- Follow the instructions on how to [build, test and publish the docs](https://lucenenet.apache.org/contributing/documentation.html#api-docs) and run/test the docs locally. When testing locally ensure that the "Improve this doc" button on each documentation page links to the newly created branch on GitHub.
+- Commit and push any changes done during the docs building process to the new branch.
+- Merge the new branch to the `master` branch, or create a Pull Request to target the `master` branch if you want to review changes that way or want another team member to review changes.
+- [Publish the docs](https://lucenenet.apache.org/contributing/documentation.html#api-docs).
 
 ### Post-Release Steps
 
@@ -308,7 +304,7 @@ Remove the old releases from SVN under https://dist.apache.org/repos/dist/releas
 
   The Apache Lucene.NET team is pleased to announce the release of version [version] of Apache Lucene.NET. Apache Lucene.NET is a .NET full-text search engine framework, a C# port of the popular Apache Lucene project. Apache Lucene.NET is not a complete application, but rather a code library and API that can easily be used to add search capabilities to applications.
 
-  The Lucene.NET [version] binary and source distributions are available for download from our download page: 
+  The Lucene.NET [version] binary and source distributions are available for download from our download page:
   https://lucenenet.apache.org/download/download.html
 
   The Lucene.NET library is distributed by NuGet.org as well. See the README.md page for more details:

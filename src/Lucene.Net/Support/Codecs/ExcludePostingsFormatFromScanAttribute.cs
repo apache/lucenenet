@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs
     /// <see cref="DefaultPostingsFormatFactory.PutPostingsFormatType(Type)"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class ExcludePostingsFormatFromScanAttribute : ExcludeServiceAttribute
+    public sealed class ExcludePostingsFormatFromScanAttribute : ExcludeServiceAttribute
     {
     }
 }

@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene45
 {
@@ -51,7 +52,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
     /// <summary>
     /// Reader for <see cref="Lucene45DocValuesFormat"/>. </summary>
-    public class Lucene45DocValuesProducer : DocValuesProducer, IDisposable
+    public class Lucene45DocValuesProducer : DocValuesProducer // LUCENENET specific - removed IDisposable, it is already implemented in base class
     {
         private readonly IDictionary<int, NumericEntry> numerics;
         private readonly IDictionary<int, BinaryEntry> binaries;
@@ -85,7 +86,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 ordIndexes = new Dictionary<int, NumericEntry>();
                 binaries = new Dictionary<int, BinaryEntry>();
                 sortedSets = new Dictionary<int, SortedSetEntry>();
-                ReadFields(@in, state.FieldInfos);
+                ReadFields(@in /*, state.FieldInfos // LUCENENET: Not read */);
 
                 if (version >= Lucene45DocValuesFormat.VERSION_CHECKSUM)
                 {
@@ -136,7 +137,7 @@ namespace Lucene.Net.Codecs.Lucene45
             ramBytesUsed = new AtomicInt64(RamUsageEstimator.ShallowSizeOfInstance(this.GetType()));
         }
 
-        private void ReadSortedField(int fieldNumber, IndexInput meta, FieldInfos infos)
+        private void ReadSortedField(int fieldNumber, IndexInput meta /*, FieldInfos infos // LUCENENET: Never read */)
         {
             // sorted = binary + numeric
             if (meta.ReadVInt32() != fieldNumber)
@@ -162,7 +163,7 @@ namespace Lucene.Net.Codecs.Lucene45
             ords[fieldNumber] = n;
         }
 
-        private void ReadSortedSetFieldWithAddresses(int fieldNumber, IndexInput meta, FieldInfos infos)
+        private void ReadSortedSetFieldWithAddresses(int fieldNumber, IndexInput meta /*, FieldInfos infos // LUCENENET: Never read */)
         {
             // sortedset = binary + numeric (addresses) + ordIndex
             if (meta.ReadVInt32() != fieldNumber)
@@ -199,7 +200,7 @@ namespace Lucene.Net.Codecs.Lucene45
             ordIndexes[fieldNumber] = n2;
         }
 
-        private void ReadFields(IndexInput meta, FieldInfos infos)
+        private void ReadFields(IndexInput meta /*, FieldInfos infos // LUCENENET: Not read */)
         {
             int fieldNumber = meta.ReadVInt32();
             while (fieldNumber != -1)
@@ -224,7 +225,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
                 else if (type == Lucene45DocValuesFormat.SORTED)
                 {
-                    ReadSortedField(fieldNumber, meta, infos);
+                    ReadSortedField(fieldNumber, meta /*, infos // LUCENENET: Never read */);
                 }
                 else if (type == Lucene45DocValuesFormat.SORTED_SET)
                 {
@@ -232,7 +233,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     sortedSets[fieldNumber] = ss;
                     if (ss.Format == Lucene45DocValuesConsumer.SORTED_SET_WITH_ADDRESSES)
                     {
-                        ReadSortedSetFieldWithAddresses(fieldNumber, meta, infos);
+                        ReadSortedSetFieldWithAddresses(fieldNumber, meta/*, infos // LUCENENET: Never read */);
                     }
                     else if (ss.Format == Lucene45DocValuesConsumer.SORTED_SET_SINGLE_VALUED_SORTED)
                     {
@@ -244,7 +245,7 @@ namespace Lucene.Net.Codecs.Lucene45
                         {
                             throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
                         }
-                        ReadSortedField(fieldNumber, meta, infos);
+                        ReadSortedField(fieldNumber, meta/*, infos // LUCENENET: Never read */);
                     }
                     else
                     {
@@ -352,14 +353,17 @@ namespace Lucene.Net.Codecs.Lucene45
             return entry;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override NumericDocValues GetNumeric(FieldInfo field)
         {
             NumericEntry entry = numerics[field.Number];
             return GetNumeric(entry);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed() => ramBytesUsed;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
             if (version >= Lucene45DocValuesFormat.VERSION_CHECKSUM)
@@ -383,13 +387,13 @@ namespace Lucene.Net.Codecs.Lucene45
                     long min = entry.minValue;
                     long mult = entry.gcd;
                     BlockPackedReader quotientReader = new BlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, true);
-                    return new Int64ValuesAnonymousInnerClassHelper(this, min, mult, quotientReader);
+                    return new Int64ValuesAnonymousInnerClassHelper(min, mult, quotientReader);
 
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
                     long[] table = entry.table;
                     int bitsRequired = PackedInt32s.BitsRequired(table.Length - 1);
                     PackedInt32s.Reader ords = PackedInt32s.GetDirectReaderNoHeader(data, PackedInt32s.Format.PACKED, entry.PackedInt32sVersion, (int)entry.Count, bitsRequired);
-                    return new Int64ValuesAnonymousInnerClassHelper2(this, table, ords);
+                    return new Int64ValuesAnonymousInnerClassHelper2(table, ords);
 
                 default:
                     throw new Exception();
@@ -398,20 +402,18 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class Int64ValuesAnonymousInnerClassHelper : Int64Values
         {
-            private readonly Lucene45DocValuesProducer outerInstance;
+            private readonly long min;
+            private readonly long mult;
+            private readonly BlockPackedReader quotientReader;
 
-            private long min;
-            private long mult;
-            private BlockPackedReader quotientReader;
-
-            public Int64ValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long min, long mult, BlockPackedReader quotientReader)
+            public Int64ValuesAnonymousInnerClassHelper(long min, long mult, BlockPackedReader quotientReader)
             {
-                this.outerInstance = outerInstance;
                 this.min = min;
                 this.mult = mult;
                 this.quotientReader = quotientReader;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(long id)
             {
                 return min + mult * quotientReader.Get(id);
@@ -420,18 +422,16 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private class Int64ValuesAnonymousInnerClassHelper2 : Int64Values
         {
-            private readonly Lucene45DocValuesProducer outerInstance;
+            private readonly long[] table;
+            private readonly PackedInt32s.Reader ords;
 
-            private long[] table;
-            private PackedInt32s.Reader ords;
-
-            public Int64ValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer outerInstance, long[] table, PackedInt32s.Reader ords)
+            public Int64ValuesAnonymousInnerClassHelper2(long[] table, PackedInt32s.Reader ords)
             {
-                this.outerInstance = outerInstance;
                 this.table = table;
                 this.ords = ords;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(long id)
             {
                 return table[(int)ords.Get((int)id)];
@@ -444,7 +444,7 @@ namespace Lucene.Net.Codecs.Lucene45
             switch (bytes.format)
             {
                 case Lucene45DocValuesConsumer.BINARY_FIXED_UNCOMPRESSED:
-                    return GetFixedBinary(field, bytes);
+                    return GetFixedBinary(/*field, LUCENENET: Never read */ bytes);
 
                 case Lucene45DocValuesConsumer.BINARY_VARIABLE_UNCOMPRESSED:
                     return GetVariableBinary(field, bytes);
@@ -457,23 +457,21 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
-        private BinaryDocValues GetFixedBinary(FieldInfo field, BinaryEntry bytes)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private BinaryDocValues GetFixedBinary(/* FieldInfo field, // LUCENENET: Never read */ BinaryEntry bytes)
         {
             IndexInput data = (IndexInput)this.data.Clone();
 
-            return new Int64BinaryDocValuesAnonymousInnerClassHelper(this, bytes, data);
+            return new Int64BinaryDocValuesAnonymousInnerClassHelper(bytes, data);
         }
 
         private class Int64BinaryDocValuesAnonymousInnerClassHelper : Int64BinaryDocValues
         {
-            private readonly Lucene45DocValuesProducer outerInstance;
+            private readonly Lucene45DocValuesProducer.BinaryEntry bytes;
+            private readonly IndexInput data;
 
-            private Lucene45DocValuesProducer.BinaryEntry bytes;
-            private IndexInput data;
-
-            public Int64BinaryDocValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data)
+            public Int64BinaryDocValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data)
             {
-                this.outerInstance = outerInstance;
                 this.bytes = bytes;
                 this.data = data;
             }
@@ -509,8 +507,7 @@ namespace Lucene.Net.Codecs.Lucene45
             MonotonicBlockPackedReader addresses;
             lock (addressInstances)
             {
-                MonotonicBlockPackedReader addrInstance;
-                if (!addressInstances.TryGetValue(field.Number, out addrInstance) || addrInstance == null)
+                if (!addressInstances.TryGetValue(field.Number, out MonotonicBlockPackedReader addrInstance) || addrInstance == null)
                 {
                     data.Seek(bytes.AddressesOffset);
                     addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedInt32sVersion, bytes.BlockSize, bytes.Count, false);
@@ -522,26 +519,24 @@ namespace Lucene.Net.Codecs.Lucene45
             return addresses;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private BinaryDocValues GetVariableBinary(FieldInfo field, BinaryEntry bytes)
         {
             IndexInput data = (IndexInput)this.data.Clone();
 
             MonotonicBlockPackedReader addresses = GetAddressInstance(data, field, bytes);
 
-            return new Int64BinaryDocValuesAnonymousInnerClassHelper2(this, bytes, data, addresses);
+            return new Int64BinaryDocValuesAnonymousInnerClassHelper2(bytes, data, addresses);
         }
 
         private class Int64BinaryDocValuesAnonymousInnerClassHelper2 : Int64BinaryDocValues
         {
-            private readonly Lucene45DocValuesProducer outerInstance;
+            private readonly Lucene45DocValuesProducer.BinaryEntry bytes;
+            private readonly IndexInput data;
+            private readonly MonotonicBlockPackedReader addresses;
 
-            private Lucene45DocValuesProducer.BinaryEntry bytes;
-            private IndexInput data;
-            private MonotonicBlockPackedReader addresses;
-
-            public Int64BinaryDocValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer outerInstance, Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data, MonotonicBlockPackedReader addresses)
+            public Int64BinaryDocValuesAnonymousInnerClassHelper2(Lucene45DocValuesProducer.BinaryEntry bytes, IndexInput data, MonotonicBlockPackedReader addresses)
             {
-                this.outerInstance = outerInstance;
                 this.bytes = bytes;
                 this.data = data;
                 this.addresses = addresses;
@@ -581,8 +576,7 @@ namespace Lucene.Net.Codecs.Lucene45
             long interval = bytes.AddressInterval;
             lock (addressInstances)
             {
-                MonotonicBlockPackedReader addrInstance;
-                if (!addressInstances.TryGetValue(field.Number, out addrInstance))
+                if (!addressInstances.TryGetValue(field.Number, out MonotonicBlockPackedReader addrInstance))
                 {
                     data.Seek(bytes.AddressesOffset);
                     long size;
@@ -603,6 +597,7 @@ namespace Lucene.Net.Codecs.Lucene45
             return addresses;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private BinaryDocValues GetCompressedBinary(FieldInfo field, BinaryEntry bytes)
         {
             IndexInput data = (IndexInput)this.data.Clone();
@@ -621,30 +616,29 @@ namespace Lucene.Net.Codecs.Lucene45
             data.Seek(entry.Offset);
             BlockPackedReader ordinals = new BlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, true);
 
-            return new SortedDocValuesAnonymousInnerClassHelper(this, valueCount, binary, ordinals);
+            return new SortedDocValuesAnonymousInnerClassHelper(valueCount, binary, ordinals);
         }
 
         private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
         {
-            private readonly Lucene45DocValuesProducer outerInstance;
+            private readonly int valueCount;
+            private readonly BinaryDocValues binary;
+            private readonly BlockPackedReader ordinals;
 
-            private int valueCount;
-            private BinaryDocValues binary;
-            private BlockPackedReader ordinals;
-
-            public SortedDocValuesAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, int valueCount, BinaryDocValues binary, BlockPackedReader ordinals)
+            public SortedDocValuesAnonymousInnerClassHelper(int valueCount, BinaryDocValues binary, BlockPackedReader ordinals)
             {
-                this.outerInstance = outerInstance;
                 this.valueCount = valueCount;
                 this.binary = binary;
                 this.ordinals = ordinals;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetOrd(int docID)
             {
                 return (int)ordinals.Get(docID);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void LookupOrd(int ord, BytesRef result)
             {
                 binary.Get(ord, result);
@@ -652,11 +646,12 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override int ValueCount => valueCount;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int LookupTerm(BytesRef key)
             {
-                if (binary is CompressedBinaryDocValues)
+                if (binary is CompressedBinaryDocValues compressedBinaryDocValues)
                 {
-                    return (int)((CompressedBinaryDocValues)binary).LookupTerm(key);
+                    return (int)compressedBinaryDocValues.LookupTerm(key);
                 }
                 else
                 {
@@ -664,11 +659,12 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetTermsEnum()
             {
-                if (binary is CompressedBinaryDocValues)
+                if (binary is CompressedBinaryDocValues compressedBinaryDocValues)
                 {
-                    return ((CompressedBinaryDocValues)binary).GetTermsEnum();
+                    return compressedBinaryDocValues.GetTermsEnum();
                 }
                 else
                 {
@@ -687,8 +683,7 @@ namespace Lucene.Net.Codecs.Lucene45
             MonotonicBlockPackedReader ordIndex;
             lock (ordIndexInstances)
             {
-                MonotonicBlockPackedReader ordIndexInstance;
-                if (!ordIndexInstances.TryGetValue(field.Number, out ordIndexInstance))
+                if (!ordIndexInstances.TryGetValue(field.Number, out MonotonicBlockPackedReader ordIndexInstance))
                 {
                     data.Seek(entry.Offset);
                     ordIndexInstance = new MonotonicBlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, false);
@@ -721,21 +716,18 @@ namespace Lucene.Net.Codecs.Lucene45
             // but the addresses to the ord stream are in RAM
             MonotonicBlockPackedReader ordIndex = GetOrdIndexInstance(data, field, ordIndexes[field.Number]);
 
-            return new RandomAccessOrdsAnonymousInnerClassHelper(this, valueCount, binary, ordinals, ordIndex);
+            return new RandomAccessOrdsAnonymousInnerClassHelper(valueCount, binary, ordinals, ordIndex);
         }
 
         private class RandomAccessOrdsAnonymousInnerClassHelper : RandomAccessOrds
         {
-            private readonly Lucene45DocValuesProducer outerInstance;
+            private readonly long valueCount;
+            private readonly Lucene45DocValuesProducer.Int64BinaryDocValues binary;
+            private readonly Int64Values ordinals;
+            private readonly MonotonicBlockPackedReader ordIndex;
 
-            private long valueCount;
-            private Lucene45DocValuesProducer.Int64BinaryDocValues binary;
-            private Int64Values ordinals;
-            private MonotonicBlockPackedReader ordIndex;
-
-            public RandomAccessOrdsAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long valueCount, Lucene45DocValuesProducer.Int64BinaryDocValues binary, Int64Values ordinals, MonotonicBlockPackedReader ordIndex)
+            public RandomAccessOrdsAnonymousInnerClassHelper(long valueCount, Lucene45DocValuesProducer.Int64BinaryDocValues binary, Int64Values ordinals, MonotonicBlockPackedReader ordIndex)
             {
-                this.outerInstance = outerInstance;
                 this.valueCount = valueCount;
                 this.binary = binary;
                 this.ordinals = ordinals;
@@ -746,6 +738,7 @@ namespace Lucene.Net.Codecs.Lucene45
             internal long offset;
             internal long endOffset;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long NextOrd()
             {
                 if (offset == endOffset)
@@ -760,12 +753,14 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void SetDocument(int docID)
             {
                 startOffset = offset = (docID == 0 ? 0 : ordIndex.Get(docID - 1));
                 endOffset = ordIndex.Get(docID);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void LookupOrd(long ord, BytesRef result)
             {
                 binary.Get(ord, result);
@@ -773,11 +768,12 @@ namespace Lucene.Net.Codecs.Lucene45
 
             public override long ValueCount => valueCount;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long LookupTerm(BytesRef key)
             {
-                if (binary is CompressedBinaryDocValues)
+                if (binary is CompressedBinaryDocValues compressedBinaryDocValues)
                 {
-                    return ((CompressedBinaryDocValues)binary).LookupTerm(key);
+                    return compressedBinaryDocValues.LookupTerm(key);
                 }
                 else
                 {
@@ -785,11 +781,12 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetTermsEnum()
             {
-                if (binary is CompressedBinaryDocValues)
+                if (binary is CompressedBinaryDocValues compressedBinaryDocValues)
                 {
-                    return ((CompressedBinaryDocValues)binary).GetTermsEnum();
+                    return compressedBinaryDocValues.GetTermsEnum();
                 }
                 else
                 {
@@ -797,17 +794,20 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long OrdAt(int index)
             {
                 return ordinals.Get(startOffset + index);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int Cardinality()
             {
                 return (int)(endOffset - startOffset);
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private IBits GetMissingBits(long offset)
         {
             if (offset == -1)
@@ -825,8 +825,8 @@ namespace Lucene.Net.Codecs.Lucene45
         {
             private readonly Lucene45DocValuesProducer outerInstance;
 
-            private long offset;
-            private IndexInput @in;
+            private readonly long offset;
+            private readonly IndexInput @in;
 
             public BitsAnonymousInnerClassHelper(Lucene45DocValuesProducer outerInstance, long offset, IndexInput @in)
             {
@@ -874,6 +874,7 @@ namespace Lucene.Net.Codecs.Lucene45
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -1051,6 +1052,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual TermsEnum GetTermsEnum()
             {
                 try
@@ -1063,6 +1065,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             internal virtual TermsEnum GetTermsEnum(IndexInput input)
             {
                 input.Seek(bytes.offset);
@@ -1174,6 +1177,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     return TermsEnum.SeekStatus.END;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 public override void SeekExact(long ord)
                 {
                     DoSeek(ord);
@@ -1201,6 +1205,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 private void SetTerm()
                 {
                     // TODO: is there a cleaner way

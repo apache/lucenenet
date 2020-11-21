@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Similarities
         /// Sole constructor. (For invocation by subclass
         /// constructors, typically implicit.)
         /// </summary>
-        public BasicModel()
+        protected BasicModel() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 

@@ -87,11 +87,11 @@ namespace Lucene.Net.Search
                 {
                     return null;
                 }
-                if (docsWithField is DocIdSet)
+                if (docsWithField is DocIdSet docIdSetWithField)
                 {
                     // UweSays: this is always the case for our current impl - but who knows
                     // :-)
-                    return BitsFilteredDocIdSet.Wrap((DocIdSet)docsWithField, acceptDocs);
+                    return BitsFilteredDocIdSet.Wrap(docIdSetWithField, acceptDocs);
                 }
                 return new FieldCacheDocIdSet(context.AtomicReader.MaxDoc, acceptDocs, (doc) => docsWithField.Get(doc));
             }

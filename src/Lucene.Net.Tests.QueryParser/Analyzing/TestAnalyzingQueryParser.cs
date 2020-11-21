@@ -326,12 +326,10 @@ namespace Lucene.Net.QueryParsers.Analyzing
                     doc.Add(field);
                     writer.AddDocument(doc);
                 }
-                using (DirectoryReader ir = DirectoryReader.Open(ramDir))
-                {
-                    IndexSearcher @is = new IndexSearcher(ir);
+                using DirectoryReader ir = DirectoryReader.Open(ramDir);
+                IndexSearcher @is = new IndexSearcher(ir);
 
-                    hits = @is.Search(q, 10).TotalHits;
-                }
+                hits = @is.Search(q, 10).TotalHits;
             }
             if (hits == 1)
             {

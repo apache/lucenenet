@@ -58,14 +58,12 @@ namespace Lucene.Net.Analysis.Util
             string englishStopFile = "english_stop.txt";
             var file = CreateTempFile(System.IO.Path.GetFileNameWithoutExtension(englishStopFile), System.IO.Path.GetExtension(englishStopFile));
             using (var stream = typeof(Snowball.SnowballFilter).FindAndGetManifestResourceStream(englishStopFile))
+            using (var outputStream = new FileStream(file.FullName, FileMode.OpenOrCreate, FileAccess.Write))
             {
-                using (var outputStream = new FileStream(file.FullName, FileMode.OpenOrCreate, FileAccess.Write))
-                {
-                    stream.CopyTo(outputStream);
-                }
+                stream.CopyTo(outputStream);
             }
             // try a stopwords file from classpath
-            CharArraySet set = WordlistLoader.GetSnowballWordSet(new System.IO.StreamReader(rl.OpenResource(file.FullName), Encoding.UTF8), TEST_VERSION_CURRENT);
+            CharArraySet set = WordlistLoader.GetSnowballWordSet(new StreamReader(rl.OpenResource(file.FullName), Encoding.UTF8), TEST_VERSION_CURRENT);
             assertTrue(set.contains("you"));
             // try to load a class; we use string comparison because classloader may be different...
             assertEquals("Lucene.Net.Analysis.Util.RollingCharBuffer", rl.NewInstance<object>("Lucene.Net.Analysis.Util.RollingCharBuffer").ToString());
@@ -79,7 +77,7 @@ namespace Lucene.Net.Analysis.Util
             DirectoryInfo @base = CreateTempDir("fsResourceLoaderBase");
             try
             {
-                TextWriter os = new System.IO.StreamWriter(new System.IO.FileStream(System.IO.Path.Combine(@base.FullName, "template.txt"), System.IO.FileMode.Create, System.IO.FileAccess.Write), Encoding.UTF8);
+                TextWriter os = new StreamWriter(new FileStream(System.IO.Path.Combine(@base.FullName, "template.txt"), FileMode.Create, FileAccess.Write), Encoding.UTF8);
                 try
                 {
                     os.Write("foobar\n");

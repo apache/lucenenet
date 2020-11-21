@@ -2,7 +2,6 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
@@ -50,7 +49,7 @@ namespace Lucene.Net.Facet
     /// @lucene.experimental
     /// </para>
     /// </summary>
-    public sealed class DrillDownQuery : Query
+    public sealed class DrillDownQuery : Query // LUCENENET TODO: Add collection initializer to make populating easier
     {
         /// <summary>
         /// Creates a drill-down term.
@@ -86,7 +85,7 @@ namespace Lucene.Net.Facet
             {
                 throw new ArgumentException("cannot apply filter unless baseQuery isn't null; pass ConstantScoreQuery instead");
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(clauses.Length == 1 + other.drillDownDims.Count, () => clauses.Length + " vs " + (1 + other.drillDownDims.Count));
+            if (Debugging.AssertsEnabled) Debugging.Assert(clauses.Length == 1 + other.drillDownDims.Count, "{0} vs {1}", clauses.Length, (1 + other.drillDownDims.Count));
             drillDownDims.PutAll(other.drillDownDims);
             query.Add(new FilteredQuery(clauses[0].Query, filter), Occur.MUST);
             for (int i = 1; i < clauses.Length; i++)
@@ -186,8 +185,10 @@ namespace Lucene.Net.Facet
             }
             string indexedField = config.GetDimConfig(dim).IndexFieldName;
 
-            BooleanQuery bq = new BooleanQuery(true); // disable coord
-            bq.Add(new TermQuery(Term(indexedField, dim, path)), Occur.SHOULD);
+            BooleanQuery bq = new BooleanQuery(true)
+            {
+                { new TermQuery(Term(indexedField, dim, path)), Occur.SHOULD }
+            }; // disable coord
 
             Add(dim, bq);
         }
@@ -242,8 +243,7 @@ namespace Lucene.Net.Facet
 
         internal static Filter GetFilter(Query query)
         {
-            var scoreQuery = query as ConstantScoreQuery;
-            if (scoreQuery != null)
+            if (query is ConstantScoreQuery scoreQuery)
             {
                 ConstantScoreQuery csq = scoreQuery;
                 Filter filter = csq.Filter;

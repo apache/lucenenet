@@ -128,8 +128,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         /// </summary>
         public static string GetPOSTranslation(string s)
         {
-            string result;
-            posTranslations.TryGetValue(s, out result);
+            posTranslations.TryGetValue(s, out string result);
             return result;
         }
 
@@ -202,8 +201,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         /// </summary>
         public static string GetInflectionTypeTranslation(string s)
         {
-            string result;
-            inflTypeTranslations.TryGetValue(s, out result);
+            inflTypeTranslations.TryGetValue(s, out string result);
             return result;
         }
 
@@ -246,8 +244,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         /// </summary>
         public static string GetInflectedFormTranslation(string s)
         {
-            string result;
-            inflFormTranslations.TryGetValue(s, out result);
+            inflFormTranslations.TryGetValue(s, out string result);
             return result;
         }
 

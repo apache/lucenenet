@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -72,12 +73,12 @@ namespace Lucene.Net.Codecs.Lucene3x
         internal const int FORMAT_MINIMUM = FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS;
 
         // NOTE: bit 0 is free here!  You can steal it!
-        public static readonly int FIELD_IS_BINARY = 1 << 1;
+        public const int FIELD_IS_BINARY = 1 << 1;
 
         // the old bit 1 << 2 was compressed, is now left out
 
         private const int _NUMERIC_BIT_SHIFT = 3;
-        internal static readonly int FIELD_IS_NUMERIC_MASK = 0x07 << _NUMERIC_BIT_SHIFT;
+        internal const int FIELD_IS_NUMERIC_MASK = 0x07 << _NUMERIC_BIT_SHIFT;
 
         public const int FIELD_IS_NUMERIC_INT = 1 << _NUMERIC_BIT_SHIFT;
         public const int FIELD_IS_NUMERIC_LONG = 2 << _NUMERIC_BIT_SHIFT;
@@ -85,20 +86,24 @@ namespace Lucene.Net.Codecs.Lucene3x
         public const int FIELD_IS_NUMERIC_DOUBLE = 4 << _NUMERIC_BIT_SHIFT;
 
         private readonly FieldInfos fieldInfos;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput fieldsStream;
         private readonly IndexInput indexStream;
-        private int numTotalDocs;
-        private int size;
+#pragma warning restore CA2213 // Disposable fields should be disposed
+        private readonly int numTotalDocs; // LUCENENET: marked readonly
+        private readonly int size; // LUCENENET: marked readonly
         private bool closed;
         private readonly int format;
 
         // The docID offset where our docs begin in the index
         // file.  this will be 0 if we have our own private file.
-        private int docStoreOffset;
+        private readonly int docStoreOffset; // LUCENENET: marked readonly
 
         // when we are inside a compound share doc store (CFX),
         // (lucene 3.0 indexes only), we privately open our own fd.
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly CompoundFileDirectory storeCFSReader;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         /// <summary>
         /// Returns a cloned FieldsReader that shares open
@@ -107,6 +112,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// clones are called (eg, currently SegmentReader manages
         /// this logic).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object Clone()
         {
             EnsureOpen();
@@ -193,7 +199,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     // Verify the file is long enough to hold all of our
                     // docs
-                    if (Debugging.AssertsEnabled) Debugging.Assert(((int)(indexSize / 8)) >= size + this.docStoreOffset, () => "indexSize=" + indexSize + " size=" + size + " docStoreOffset=" + docStoreOffset);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(((int)(indexSize / 8)) >= size + this.docStoreOffset, "indexSize={0} size={1} docStoreOffset={2}", indexSize, size, docStoreOffset);
                 }
                 else
                 {
@@ -221,16 +227,16 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         Dispose();
                     } // keep our original exception
-#pragma warning disable 168
-                    catch (Exception t)
-#pragma warning restore 168
+                    catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                     {
+                        // ignored
                     }
                 }
             }
         }
 
         /// <exception cref="ObjectDisposedException"> If this FieldsReader is disposed. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (closed)
@@ -244,6 +250,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// This means that the Fields values will not be accessible.
         /// </summary>
         /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -256,6 +263,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SeekIndex(int docID)
         {
             indexStream.Seek(FORMAT_SIZE + (docID + docStoreOffset) * 8L);
@@ -273,7 +281,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = fieldsStream.ReadByte() & 0xFF;
-                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= (FIELD_IS_NUMERIC_MASK | FIELD_IS_BINARY), () => "bits=" + bits.ToString("x"));
+                if (Debugging.AssertsEnabled) Debugging.Assert(bits <= (FIELD_IS_NUMERIC_MASK | FIELD_IS_BINARY),"bits={0:x}", bits);
 
                 switch (visitor.NeedsField(fieldInfo))
                 {
@@ -362,12 +370,14 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             // everything is stored on disk
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
         }

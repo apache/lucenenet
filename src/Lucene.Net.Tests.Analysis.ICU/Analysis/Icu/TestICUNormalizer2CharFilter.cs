@@ -111,29 +111,26 @@ namespace Lucene.Net.Analysis.Icu
 
         public void DoTestMode(Normalizer2 normalizer, int maxLength, int iterations, int bufferSize)
         {
-            using (Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            using Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.KEYWORD, false));
             }, initReader: (fieldName, reader) =>
             {
                 return new ICUNormalizer2CharFilter(reader, normalizer, bufferSize);
-            }))
+            });
+            for (int i = 0; i < iterations; i++)
             {
-
-                for (int i = 0; i < iterations; i++)
+                String input = TestUtil.RandomUnicodeString(Random, maxLength);
+                if (input.Length == 0)
                 {
-                    String input = TestUtil.RandomUnicodeString(Random, maxLength);
-                    if (input.Length == 0)
-                    {
-                        continue;
-                    }
-                    String normalized = normalizer.Normalize(input);
-                    if (normalized.Length == 0)
-                    {
-                        continue; // MockTokenizer doesnt tokenize empty string...
-                    }
-                    CheckOneTerm(a, input, normalized);
+                    continue;
                 }
+                String normalized = normalizer.Normalize(input);
+                if (normalized.Length == 0)
+                {
+                    continue; // MockTokenizer doesnt tokenize empty string...
+                }
+                CheckOneTerm(a, input, normalized);
             }
         }
 
@@ -235,18 +232,16 @@ namespace Lucene.Net.Analysis.Icu
         public void TestCuriousString()
         {
             String text = "\udb40\udc3d\uf273\ue960\u06c8\ud955\udc13\ub7fc\u0692 \u2089\u207b\u2073\u2075";
-            using (Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            using Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
             }, initReader: (fieldName, reader) =>
             {
                 return new ICUNormalizer2CharFilter(reader, Normalizer2.GetInstance(null, "nfkc_cf", Normalizer2Mode.Compose));
-            }))
+            });
+            for (int i = 0; i < 1000; i++)
             {
-                for (int i = 0; i < 1000; i++)
-                {
-                    CheckAnalysisConsistency(Random, a, false, text);
-                }
+                CheckAnalysisConsistency(Random, a, false, text);
             }
         }
 
@@ -426,18 +421,16 @@ namespace Lucene.Net.Analysis.Icu
                 "\uda96\udfde \u0010\ufb41\u06dd\u06d0\ue4ef\u241b \ue1a3d\ub55d=\ud8fd\udd54\ueb5f\ud844" +
                 "\udf25 xnygolayn txnlsggei yhn \u0e5c\u0e02 \\ fornos oe epp ";
 
-            using (Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            using Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 return new TokenStreamComponents(new MockTokenizer(reader, MockTokenizer.WHITESPACE, false));
             }, initReader: (fieldName, reader) =>
             {
                 return new ICUNormalizer2CharFilter(reader, Normalizer2.GetInstance(null, "nfkc_cf", Normalizer2Mode.Compose));
-            }))
+            });
+            for (int i = 0; i < 25; i++)
             {
-                for (int i = 0; i < 25; i++)
-                {
-                    CheckAnalysisConsistency(Random, a, false, text);
-                }
+                CheckAnalysisConsistency(Random, a, false, text);
             }
         }
 
@@ -447,17 +440,15 @@ namespace Lucene.Net.Analysis.Icu
         {
             char[] text = new char[1000000];
             Arrays.Fill(text, 'a');
-            using (Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            using Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 return new TokenStreamComponents(new KeywordTokenizer(reader));
 
             }, initReader: (fieldName, reader) =>
             {
                 return new ICUNormalizer2CharFilter(reader, Normalizer2.GetInstance(null, "nfkc_cf", Normalizer2Mode.Compose));
-            }))
-            {
-                CheckAnalysisConsistency(Random, a, false, new string(text));
-            }
+            });
+            CheckAnalysisConsistency(Random, a, false, new string(text));
         }
     }
 }

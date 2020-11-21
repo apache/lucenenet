@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 
         private class BoolRefWrapper
         {
-            private bool value;
+            private readonly bool value;
 
             // .NET port: this is needed as bool is not a reference type
             public BoolRefWrapper(bool value)

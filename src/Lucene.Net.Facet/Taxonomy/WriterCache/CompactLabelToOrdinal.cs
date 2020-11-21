@@ -206,13 +206,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             this.collisionMap = new CollisionMap(oldCollisionMap.Capacity, this.labelRepository);
             this.threshold = (int)(this.capacity * this.loadFactor);
 
-            using (var it = oldCollisionMap.GetEnumerator())
+            using var it = oldCollisionMap.GetEnumerator();
+            while (it.MoveNext())
             {
-                while (it.MoveNext())
-                {
-                    var e = it.Current;
-                    AddLabelOffset(StringHashCode(this.labelRepository, e.offset), e.cid, e.offset);
-                }
+                var e = it.Current;
+                AddLabelOffset(StringHashCode(this.labelRepository, e.offset), e.cid, e.offset);
             }
         }
 
@@ -250,7 +248,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             }
         }
 
-        private bool AddLabelOffsetToHashArray(HashArray a, int hash, int ordinal, int knownOffset)
+        private static bool AddLabelOffsetToHashArray(HashArray a, int hash, int ordinal, int knownOffset) // LUCENENET: CA1822: Mark members as static
         {
             int index = CompactLabelToOrdinal.IndexFor(hash, a.offsets.Length);
             int offset = a.offsets[index];
@@ -479,13 +477,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal virtual void Flush(Stream stream)
         {
-            using (BinaryWriter dos = new BinaryWriter(stream))
-            {
-                dos.Write(this.m_counter);
+            using BinaryWriter dos = new BinaryWriter(stream);
+            dos.Write(this.m_counter);
 
-                // write the labelRepository
-                this.labelRepository.Flush(dos.BaseStream);
-            }
+            // write the labelRepository
+            this.labelRepository.Flush(dos.BaseStream);
         }
 
         private sealed class HashArray

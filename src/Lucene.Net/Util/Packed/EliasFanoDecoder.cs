@@ -2,6 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using System;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -92,12 +93,14 @@ namespace Lucene.Net.Util.Packed
         /// <para/>
         /// This is only intended for use after <see cref="AdvanceToIndex(long)"/> returned <c>true</c>. </summary>
         /// <returns> The value encoded at <see cref="CurrentIndex()"/>. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual long CurrentValue()
         {
             return CombineHighLowValues(CurrentHighValue(), CurrentLowValue());
         }
 
         ///  <returns> The high value for the current decoding index. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private long CurrentHighValue()
         {
             return setBitForIndex - efIndex; // sequence of unary gaps
@@ -124,14 +127,16 @@ namespace Lucene.Net.Util.Packed
         }
 
         ///  <returns> The low value for the current decoding index. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private long CurrentLowValue()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(((efIndex >= 0) && (efIndex < numEncoded)), () => $"efIndex {efIndex.ToString(CultureInfo.InvariantCulture)}");
+            if (Debugging.AssertsEnabled) Debugging.Assert(((efIndex >= 0) && (efIndex < numEncoded)), "efIndex {0}", efIndex);
             return UnPackValue(efEncoder.lowerLongs, efEncoder.numLowBits, efIndex, efEncoder.lowerBitsMask);
         }
 
         ///  <returns> The given <paramref name="highValue"/> shifted left by the number of low bits from by the EliasFanoSequence,
         ///           logically OR-ed with the given <paramref name="lowValue"/>. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private long CombineHighLowValues(long highValue, long lowValue)
         {
             return (highValue << efEncoder.numLowBits) | lowValue;
@@ -156,6 +161,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Set the decoding index to just before the first encoded value.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void ToBeforeSequence()
         {
             efIndex = -1;
@@ -220,6 +226,7 @@ namespace Lucene.Net.Util.Packed
         /// <see cref="setBitForIndex"/> and <see cref="efIndex"/> have just been incremented, scan to the next high set bit
         /// by incrementing <see cref="setBitForIndex"/>, and by setting <see cref="curHighLong"/> accordingly. </summary>
         /// <returns> The next encoded high value. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private long NextHighValue()
         {
             ToNextHighValue();
@@ -356,7 +363,7 @@ namespace Lucene.Net.Util.Packed
 
             // curHighLong has enough clear bits to reach highTarget, has at least 1 set bit, and may not have enough set bits.
             int rank = (int)(highTarget - (setBitForIndex - efIndex)); // the rank of the zero bit for highValue.
-            if (Debugging.AssertsEnabled) Debugging.Assert((rank <= (sizeof(long) * 8)), () => ("rank " + rank));
+            if (Debugging.AssertsEnabled) Debugging.Assert((rank <= (sizeof(long) * 8)), "rank {0}", rank);
             if (rank >= 1)
             {
                 long invCurHighLong = ~curHighLong;
@@ -414,6 +421,7 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Set the decoding index to just after the last encoded value.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void ToAfterSequence()
         {
             efIndex = numEncoded; // just after last index

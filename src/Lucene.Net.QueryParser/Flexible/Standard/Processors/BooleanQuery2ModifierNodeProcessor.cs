@@ -49,11 +49,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <seealso cref="Precedence.Processors.BooleanModifiersQueryNodeProcessor"/>
     public class BooleanQuery2ModifierNodeProcessor : IQueryNodeProcessor
     {
-        internal readonly static string TAG_REMOVE = "remove";
-        internal readonly static string TAG_MODIFIER = "wrapWithModifier";
-        internal readonly static string TAG_BOOLEAN_ROOT = "booleanRoot";
+        internal const string TAG_REMOVE = "remove";
+        internal const string TAG_MODIFIER = "wrapWithModifier";
+        internal const string TAG_BOOLEAN_ROOT = "booleanRoot";
 
-        QueryConfigHandler queryConfigHandler;
+        private QueryConfigHandler queryConfigHandler;
 
         private readonly List<IQueryNode> childrenBuffer = new List<IQueryNode>();
 
@@ -169,14 +169,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
         private IQueryNode ApplyModifier(IQueryNode node, Modifier mod)
         {
             // check if modifier is not already defined and is default
-            if (!(node is ModifierQueryNode))
+            if (!(node is ModifierQueryNode modNode))
             {
                 return new BooleanModifierNode(node, mod);
             }
             else
             {
-                ModifierQueryNode modNode = (ModifierQueryNode)node;
-
                 if (modNode.Modifier == Modifier.MOD_NONE)
                 {
                     return new ModifierQueryNode(modNode.GetChild(), mod);
@@ -188,9 +186,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected virtual void TagModifierButDoNotOverride(IQueryNode node, Modifier mod)
         {
-            if (node is ModifierQueryNode)
+            if (node is ModifierQueryNode modNode)
             {
-                ModifierQueryNode modNode = (ModifierQueryNode)node;
                 if (modNode.Modifier == Modifier.MOD_NONE)
                 {
                     node.SetTag(TAG_MODIFIER, mod);

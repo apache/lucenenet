@@ -27,9 +27,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning disable 612, 618
     internal class PreFlexRWFieldsWriter : FieldsConsumer
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly TermInfosWriter termsOut;
         private readonly IndexOutput freqOut;
         private readonly IndexOutput proxOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly PreFlexRWSkipListWriter skipListWriter;
         private readonly int totalNumDocs;
 
@@ -82,7 +84,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override TermsConsumer AddField(FieldInfo field)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(field.Number != -1);
-            if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            if (IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
                 throw new NotSupportedException("this codec cannot index offsets");
             }
@@ -100,11 +103,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private class PreFlexTermsWriter : TermsConsumer
         {
-            internal virtual void InitializeInstanceFields()
-            {
-                postingsWriter = new PostingsWriter(this);
-            }
-
             private readonly PreFlexRWFieldsWriter outerInstance;
 
             private readonly FieldInfo fieldInfo;
@@ -112,13 +110,13 @@ namespace Lucene.Net.Codecs.Lucene3x
             private readonly bool storePayloads;
 
             private readonly TermInfo termInfo = new TermInfo();
-            private PostingsWriter postingsWriter;
+            private readonly PostingsWriter postingsWriter; // LUCENENET: marked readonly
 
             public PreFlexTermsWriter(PreFlexRWFieldsWriter outerInstance, FieldInfo fieldInfo)
             {
                 this.outerInstance = outerInstance;
 
-                InitializeInstanceFields();
+                postingsWriter = new PostingsWriter(this);
                 this.fieldInfo = fieldInfo;
                 omitTF = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY;
                 storePayloads = fieldInfo.HasPayloads;
@@ -164,7 +162,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     lastDocID = docID;
 
-                    if (Debugging.AssertsEnabled) Debugging.Assert(docID < outerInstance.outerInstance.totalNumDocs, () => "docID=" + docID + " totalNumDocs=" + outerInstance.outerInstance.totalNumDocs);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(docID < outerInstance.outerInstance.totalNumDocs,"docID={0} totalNumDocs={1}", docID, outerInstance.outerInstance.totalNumDocs);
 
                     if (outerInstance.omitTF)
                     {

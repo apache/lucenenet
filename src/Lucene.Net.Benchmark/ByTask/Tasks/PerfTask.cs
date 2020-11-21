@@ -63,16 +63,16 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         , System.ICloneable
 #endif
     {
-        internal static readonly int DEFAULT_LOG_STEP = 1000;
+        internal const int DEFAULT_LOG_STEP = 1000;
 
-        private PerfRunData runData;
+        private readonly PerfRunData runData;
 
         // propeties that all tasks have
         private string name;
         private int depth = 0;
         protected int m_logStep;
         private int logStepCount = 0;
-        private int maxDepthLogStart = 0;
+        private readonly int maxDepthLogStart = 0; // LUCENENET: marked readonly
         private bool disableCounting = false;
         protected string m_params = null;
 
@@ -121,7 +121,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             stopNow = true;
         }
 
-        public PerfTask(PerfRunData runData)
+        protected PerfTask(PerfRunData runData)
             : this()
         {
             this.runData = runData;

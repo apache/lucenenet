@@ -365,9 +365,7 @@ namespace Lucene.Net.Index
             {
                 files = directory.ListAll();
             }
-#pragma warning disable 168
-            catch (DirectoryNotFoundException nsde)
-#pragma warning restore 168
+            catch (DirectoryNotFoundException /*nsde*/) // LUCENENET: IDE0059: Remove unnecessary value assignment
             {
                 // Directory does not exist --> no index exists
                 return false;

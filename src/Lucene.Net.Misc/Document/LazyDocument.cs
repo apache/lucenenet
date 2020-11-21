@@ -40,8 +40,8 @@ namespace Lucene.Net.Documents
         // null until first field is loaded
         private Document doc;
 
-        private IDictionary<int?, IList<LazyField>> fields = new Dictionary<int?, IList<LazyField>>();
-        private ISet<string> fieldNames = new JCG.HashSet<string>();
+        private readonly IDictionary<int?, IList<LazyField>> fields = new Dictionary<int?, IList<LazyField>>(); // LUCENENET: marked readonly
+        private readonly ISet<string> fieldNames = new JCG.HashSet<string>(); // LUCENENET: marked readonly
 
         public LazyDocument(IndexReader reader, int docID)
         {
@@ -67,8 +67,7 @@ namespace Lucene.Net.Documents
         public virtual IIndexableField GetField(FieldInfo fieldInfo)
         {
             fieldNames.Add(fieldInfo.Name);
-            IList<LazyField> values;
-            if (!fields.TryGetValue(fieldInfo.Number, out values) || null == values)
+            if (!fields.TryGetValue(fieldInfo.Number, out IList<LazyField> values) || null == values)
             {
                 values = new List<LazyField>();
                 fields[fieldInfo.Number] = values;
@@ -116,12 +115,11 @@ namespace Lucene.Net.Documents
         {
             Document d = GetDocument();
 
-            IList<LazyField> lazyValues;
-            fields.TryGetValue(fieldNum, out lazyValues);
+            fields.TryGetValue(fieldNum, out IList<LazyField> lazyValues);
             IIndexableField[] realValues = d.GetFields(name);
 
             if (Debugging.AssertsEnabled) Debugging.Assert(realValues.Length <= lazyValues.Count,
-                () => "More lazy values then real values for field: " + name);
+                "More lazy values then real values for field: {0}", name);
 
             for (int i = 0; i < lazyValues.Count; i++)
             {
@@ -166,8 +164,8 @@ namespace Lucene.Net.Documents
                 }
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(HasBeenLoaded, () => "field value was not lazy loaded");
-                    Debugging.Assert(realValue.Name.Equals(Name, StringComparison.Ordinal), () => "realvalue name != name: " + realValue.Name + " != " + Name);
+                    Debugging.Assert(HasBeenLoaded, "field value was not lazy loaded");
+                    Debugging.Assert(realValue.Name.Equals(Name, StringComparison.Ordinal), "realvalue name != name: {0} != {1}", realValue.Name, Name);
                 }
 
                 return realValue;

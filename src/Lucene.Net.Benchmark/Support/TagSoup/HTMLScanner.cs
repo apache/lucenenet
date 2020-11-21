@@ -1,4 +1,4 @@
-﻿// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
 //
 // TagSoup is licensed under the Apache License,
 // Version 2.0.  You may obtain a copy of this license at
@@ -17,6 +17,7 @@ using Sax;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace TagSoup
 {
@@ -96,7 +97,7 @@ namespace TagSoup
         private const int A_STAGC = 30;
         private const int A_UNGET = 31;
         private const int A_UNSAVE_PCDATA = 32;
-        private static int[] statetable = {
+        private static readonly int[] statetable = { // LUCENENET: marked readonly
             S_ANAME, '/', A_ANAME_ADUP, S_EMPTYTAG,
             S_ANAME, '=', A_ANAME, S_AVAL,
             S_ANAME, '>', A_ANAME_ADUP_STAGC, S_PCDATA,
@@ -247,8 +248,10 @@ namespace TagSoup
             S_XNCR, -1, A_ENTITY, S_DONE,
 
         };
-        private static readonly string[] debug_actionnames = { "", "A_ADUP", "A_ADUP_SAVE", "A_ADUP_STAGC", "A_ANAME", "A_ANAME_ADUP", "A_ANAME_ADUP_STAGC", "A_AVAL", "A_AVAL_STAGC", "A_CDATA", "A_CMNT", "A_DECL", "A_EMPTYTAG", "A_ENTITY", "A_ENTITY_START", "A_ETAG", "A_GI", "A_GI_STAGC", "A_LT", "A_LT_PCDATA", "A_MINUS", "A_MINUS2", "A_MINUS3", "A_PCDATA", "A_PI", "A_PITARGET", "A_PITARGET_PI", "A_SAVE", "A_SKIP", "A_SP", "A_STAGC", "A_UNGET", "A_UNSAVE_PCDATA" };
-        private static readonly string[] debug_statenames = { "", "S_ANAME", "S_APOS", "S_AVAL", "S_BB", "S_BBC", "S_BBCD", "S_BBCDA", "S_BBCDAT", "S_BBCDATA", "S_CDATA", "S_CDATA2", "S_CDSECT", "S_CDSECT1", "S_CDSECT2", "S_COM", "S_COM2", "S_COM3", "S_COM4", "S_DECL", "S_DECL2", "S_DONE", "S_EMPTYTAG", "S_ENT", "S_EQ", "S_ETAG", "S_GI", "S_NCR", "S_PCDATA", "S_PI", "S_PITARGET", "S_QUOT", "S_STAGC", "S_TAG", "S_TAGWS", "S_XNCR" };
+
+        // LUCENENET: Never read
+        //private static readonly string[] debug_actionnames = { "", "A_ADUP", "A_ADUP_SAVE", "A_ADUP_STAGC", "A_ANAME", "A_ANAME_ADUP", "A_ANAME_ADUP_STAGC", "A_AVAL", "A_AVAL_STAGC", "A_CDATA", "A_CMNT", "A_DECL", "A_EMPTYTAG", "A_ENTITY", "A_ENTITY_START", "A_ETAG", "A_GI", "A_GI_STAGC", "A_LT", "A_LT_PCDATA", "A_MINUS", "A_MINUS2", "A_MINUS3", "A_PCDATA", "A_PI", "A_PITARGET", "A_PITARGET_PI", "A_SAVE", "A_SKIP", "A_SP", "A_STAGC", "A_UNGET", "A_UNSAVE_PCDATA" };
+        //private static readonly string[] debug_statenames = { "", "S_ANAME", "S_APOS", "S_AVAL", "S_BB", "S_BBC", "S_BBCD", "S_BBCDA", "S_BBCDAT", "S_BBCDATA", "S_CDATA", "S_CDATA2", "S_CDSECT", "S_CDSECT1", "S_CDSECT2", "S_COM", "S_COM2", "S_COM3", "S_COM4", "S_DECL", "S_DECL2", "S_DONE", "S_EMPTYTAG", "S_ENT", "S_EQ", "S_ETAG", "S_GI", "S_NCR", "S_PCDATA", "S_PI", "S_PITARGET", "S_QUOT", "S_STAGC", "S_TAG", "S_TAGWS", "S_XNCR" };
 
         // End of state table
 
@@ -259,11 +262,11 @@ namespace TagSoup
         private int theCurrentLine;
         private int theCurrentColumn;
 
-        int theState;                   // Current state
-        int theNextState;               // Next state
-        char[] theOutputBuffer = new char[200]; // Output buffer
-        int theSize;                    // Current buffer size
-        int[] theWinMap = {             // Windows chars map
+        private int theState;                   // Current state
+        private int theNextState;               // Next state
+        private char[] theOutputBuffer = new char[200]; // Output buffer
+        private int theSize;                    // Current buffer size
+        private readonly int[] theWinMap = {    // Windows chars map // LUCENENET: marked readonly
         0x20AC, 0xFFFD, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
         0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0xFFFD, 0x017D, 0xFFFD,
         0xFFFD, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
@@ -294,14 +297,14 @@ namespace TagSoup
         ///   next state = statetable[value + 3]. That is, the value points
         ///   to the start of the answer 4-tuple in the statetable.
         /// </summary>
-        static short[][] statetableIndex;
+        private static short[][] statetableIndex;
 
         /// <summary>
         ///   The highest character value seen in the statetable.
         ///   See the doc comment for statetableIndex to see how this
         ///   is used.
         /// </summary>
-        static int statetableIndexMaxChar;
+        private static int statetableIndexMaxChar;
         public HTMLScanner()
         {
             int maxState = -1;
@@ -346,7 +349,7 @@ namespace TagSoup
                         else if (statetable[i + 1] == ch)
                         {
                             hit = i;
-                            action = statetable[i + 2];
+                            //action = statetable[i + 2]; // LUCENENET: IDE0059: Remove unnecessary value assignment
                             break;
                         }
                     }
@@ -537,12 +540,12 @@ namespace TagSoup
                             if (ent < 0x20)
                             {
                                 // Control becomes space
-                                ent = 0x20;
+                                //ent = 0x20; // LUCENENET: IDE0059: Remove unnecessary value assignment
                             }
                             else if (ent >= 0xD800 && ent <= 0xDFFF)
                             {
                                 // Surrogates get dropped
-                                ent = 0;
+                                //ent = 0; // LUCENENET: IDE0059: Remove unnecessary value assignment
                             }
                             else if (ent <= 0xFFFF)
                             {
@@ -714,26 +717,27 @@ namespace TagSoup
             theOutputBuffer[theSize++] = (char)ch;
         }
 
-        /**
-        Test procedure.  Reads HTML from the standard input and writes
-        PYX to the standard output.
-        */
+        ///// <summary>
+        ///// Test procedure.  Reads HTML from the standard input and writes
+        ///// PYX to the standard output.
+        ///// </summary>
+        ///// <param name="argv"></param>
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Optional argument")]
+        //public static void Main(string[] argv)
+        //{
+        //    IScanner s = new HTMLScanner();
+        //    TextReader r = Console.In;
+        //    TextWriter w = Console.Out;
+        //    PYXWriter pw = new PYXWriter(w);
+        //    s.Scan(r, pw);
+        //}
 
-        //	public static void main(string[] argv) {
-        //		IScanner s = new HTMLScanner();
-        //		TextReader r = new StreamReader(System.in, "UTF-8");
-        //		TextWriter w = new StreamWriter(System.out, "UTF-8");
-        //		PYXWriter pw = new PYXWriter(w);
-        //		s.scan(r, pw);
-        //		w.close();
-        //		}
 
-
-        private static string NiceChar(int value)
-        {
-            if (value == '\n') return "\\n";
-            if (value < 32) return "0x" + value.ToString("X", CultureInfo.InvariantCulture);
-            return "'" + ((char)value) + "'";
-        }
+        //private static string NiceChar(int value) // LUCENENET: IDE0051: Remove unused private member
+        //{
+        //    if (value == '\n') return "\\n";
+        //    if (value < 32) return "0x" + value.ToString("X", CultureInfo.InvariantCulture);
+        //    return "'" + ((char)value) + "'";
+        //}
     }
 }

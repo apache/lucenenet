@@ -50,7 +50,7 @@ namespace Lucene.Net.Index
         private bool CheckLength(int reader, int doc)
         {
             int length = starts[1 + reader] - starts[reader];
-            if (Debugging.AssertsEnabled) Debugging.Assert(doc - starts[reader] < length, () => "doc=" + doc + " reader=" + reader + " starts[reader]=" + starts[reader] + " length=" + length);
+            if (Debugging.AssertsEnabled) Debugging.Assert(doc - starts[reader] < length, "doc={0} reader={1} starts[reader]={2} length={3}", doc, reader, starts[reader], length);
             return true;
         }
 
@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             if (Debugging.AssertsEnabled)
             {
                 Debugging.Assert(reader != -1);
-                Debugging.Assert(reader < subs.Length, () => "slice=" + slice + " starts[-1]=" + starts[starts.Length - 1]);
+                Debugging.Assert(reader < subs.Length,"slice={0} starts[-1]={1}", slice, starts[starts.Length - 1]);
             }
             SubResult subResult = new SubResult();
             if (starts[reader] == slice.Start && starts[1 + reader] == slice.Start + slice.Length)

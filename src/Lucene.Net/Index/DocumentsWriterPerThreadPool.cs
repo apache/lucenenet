@@ -3,6 +3,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support.Threading;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Lucene.Net.Index
@@ -118,7 +119,7 @@ namespace Lucene.Net.Index
                     return IsActive && dwpt != null;
                 }
             }
-                
+
 
             /// <summary>
             /// Returns the number of currently active bytes in this ThreadState's
@@ -220,13 +221,13 @@ namespace Lucene.Net.Index
                 {
                     // unreleased thread states are deactivated during DW#close()
                     numThreadStatesActive++; // increment will publish the ThreadState
-                                                        //System.out.println("activeCount=" + numThreadStatesActive);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(threadState.dwpt == null);
+                                                    //System.out.println("activeCount=" + numThreadStatesActive);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(threadState.dwpt == null);
                     unlock = false;
                     return threadState;
                 }
                 // we are closed: unlock since the threadstate is not active anymore
-                    if (Debugging.AssertsEnabled) Debugging.Assert(AssertUnreleasedThreadStatesInactive());
+                if (Debugging.AssertsEnabled) Debugging.Assert(AssertUnreleasedThreadStatesInactive());
                 return null;
             }
             finally
@@ -282,7 +283,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal DocumentsWriterPerThread Reset(ThreadState threadState, bool closed)
+        internal static DocumentsWriterPerThread Reset(ThreadState threadState, bool closed) // LUCENENET: CA1822: Mark members as static
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(threadState.IsHeldByCurrentThread);
             DocumentsWriterPerThread dwpt = threadState.dwpt;
@@ -297,14 +298,15 @@ namespace Lucene.Net.Index
             return dwpt;
         }
 
-        internal void Recycle(DocumentsWriterPerThread dwpt)
-        {
-            // don't recycle DWPT by default
-        }
+        // LUCENENET: Called in one place, but since there is no implementation it is just wasted CPU
+        //internal void Recycle(DocumentsWriterPerThread dwpt)
+        //{
+        //    // don't recycle DWPT by default
+        //}
 
         // you cannot subclass this without being in o.a.l.index package anyway, so
         // the class is already pkg-private... fix me: see LUCENE-4013
-        public ThreadState GetAndLock(Thread requestingThread, DocumentsWriter documentsWriter)
+        public ThreadState GetAndLock(/* Thread requestingThread, DocumentsWriter documentsWriter // LUCENENET: Not referenced */)
         {
             ThreadState threadState = null;
             lock (this)
@@ -383,6 +385,7 @@ namespace Lucene.Net.Index
         ///          the ordinal of the <seealso cref="ThreadState"/> </param>
         /// <returns> the <i>i</i>th active <seealso cref="ThreadState"/> where <i>i</i> is the
         ///         given ord. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal ThreadState GetThreadState(int ord)
         {
             return threadStates[ord];
@@ -441,7 +444,8 @@ namespace Lucene.Net.Index
         /// if the parent <see cref="DocumentsWriter"/> is closed or aborted.
         /// </summary>
         /// <param name="threadState"> the state to deactivate </param>
-        internal void DeactivateThreadState(ThreadState threadState)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void DeactivateThreadState(ThreadState threadState) // LUCENENET: CA1822: Mark members as static
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(threadState.IsActive);
             threadState.Deactivate();

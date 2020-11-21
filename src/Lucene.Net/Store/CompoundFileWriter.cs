@@ -76,7 +76,9 @@ namespace Lucene.Net.Store
         // all entries that are written to a sep. file but not yet moved into CFS
         private readonly LinkedList<FileEntry> pendingEntries = new LinkedList<FileEntry>();
         private bool closed = false;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IndexOutput dataOut;
+#pragma warning restore CA2213 // Disposable fields should be disposed
         private readonly AtomicBoolean outputTaken = new AtomicBoolean(false);
         internal readonly string entryTableName;
         internal readonly string dataFileName;
@@ -89,17 +91,10 @@ namespace Lucene.Net.Store
         ///           if <paramref name="dir"/> or <paramref name="name"/> is <c>null</c> </exception>
         internal CompoundFileWriter(Directory dir, string name)
         {
-            if (dir == null)
-            {
-                throw new ArgumentNullException("directory cannot be null"); 
-            }
-            if (name == null)
-            {
-                throw new ArgumentNullException("name cannot be null"); 
-            }
-            directory = dir;
+            // LUCENENET specific - changed order to take advantage of throw expression
+            directory = dir ?? throw new ArgumentNullException(nameof(directory), $"{nameof(directory)} cannot be null");
+            dataFileName = name ?? throw new ArgumentNullException(nameof(name), $"{nameof(name)} cannot be null");
             entryTableName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
-            dataFileName = name;
         }
 
         private IndexOutput GetOutput()
@@ -186,6 +181,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (closed)
@@ -198,7 +194,7 @@ namespace Lucene.Net.Store
         /// Copy the contents of the file with specified extension into the provided
         /// output stream.
         /// </summary>
-        private long CopyFileEntry(IndexOutput dataOut, FileEntry fileEntry)
+        private static long CopyFileEntry(IndexOutput dataOut, FileEntry fileEntry) // LUCENENET: CA1822: Mark members as static
         {
             IndexInput @is = fileEntry.Dir.OpenInput(fileEntry.File, IOContext.READ_ONCE);
             bool success = false;
@@ -262,7 +258,7 @@ namespace Lucene.Net.Store
                 entry.File = name;
                 entries[name] = entry;
                 string id = IndexFileNames.StripSegmentName(name);
-                if (Debugging.AssertsEnabled) Debugging.Assert(!seenIDs.Contains(id), () => "file=\"" + name + "\" maps to id=\"" + id + "\", which was already written");
+                if (Debugging.AssertsEnabled) Debugging.Assert(!seenIDs.Contains(id), "file=\"{0}\" maps to id=\"{1}\", which was already written", name, id);
                 seenIDs.Add(id);
                 DirectCFSIndexOutput @out;
 
@@ -292,6 +288,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void ReleaseOutputLock()
         {
             outputTaken.CompareAndSet(true, false);
@@ -330,11 +327,13 @@ namespace Lucene.Net.Store
             return fileEntry.Length;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool FileExists(string name)
         {
             return entries.ContainsKey(name);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal string[] ListAll()
         {
             return entries.Keys.ToArray();
@@ -347,7 +346,7 @@ namespace Lucene.Net.Store
             private readonly IndexOutput @delegate;
             private readonly long offset;
             private bool closed;
-            private FileEntry entry;
+            private readonly FileEntry entry; // LUCENENET: marked readonly
             private long writtenBytes;
             private readonly bool isSeparate;
 
@@ -389,12 +388,14 @@ namespace Lucene.Net.Store
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetFilePointer()
             {
                 return @delegate.GetFilePointer() - offset;
             }
 
             [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Seek(long pos)
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(!closed);

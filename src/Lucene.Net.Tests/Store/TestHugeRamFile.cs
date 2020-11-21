@@ -46,8 +46,7 @@ namespace Lucene.Net.Store
                 if (capacity <= MAX_VALUE)
                 {
                     // below maxint we reuse buffers
-                    byte[] buf;
-                    singleBuffers.TryGetValue(Convert.ToInt32(size), out buf);
+                    singleBuffers.TryGetValue(Convert.ToInt32(size), out byte[] buf);
                     if (buf == null)
                     {
                         buf = new byte[size];

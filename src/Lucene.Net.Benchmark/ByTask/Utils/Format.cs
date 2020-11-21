@@ -22,15 +22,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
     /// <summary>
     /// Formatting utilities (for reports).
     /// </summary>
-    public class Formatter // LUCENENET specific - renamed from Format because of method name collision
+    public static class Formatter // LUCENENET specific - renamed from Format because of method name collision, CA1052 Static holder types should be Static or NotInheritable
     {
-        private static string[] numFormat = {
+        private static readonly string[] numFormat = {
             "N0",
             "N1",
             "N2"
         };
 
-        private static readonly string padd = "                                                 ";
+        private const string padd = "                                                 ";
 
         /// <summary>
         /// Padd a number from left.

@@ -258,7 +258,7 @@ namespace Lucene.Net.Support
             public WeakKey(T key)
             {
                 if (key == null)
-                    throw new ArgumentNullException("key");
+                    throw new ArgumentNullException(nameof(key));
 
                 hashCode = key.GetHashCode();
                 reference = new WeakReference(key);

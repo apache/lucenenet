@@ -30,7 +30,6 @@ namespace Lucene.Net.Analysis.OpenNlp
         private static readonly String[] SENTENCE_dict_punc = { "they", "send", "he", "run", "in", "the", "evening", "." };
         private static readonly String[] SENTENCE_maxent_punc = { "they", "send", "he", "runn", "in", "the", "evening", "." };
         private static readonly String[] SENTENCE_posTags = { "NNP", "VBD", "PRP", "VBG", "IN", "DT", "NN", "." };
-
         private static readonly String SENTENCES = "They sent him running in the evening. He did not come back.";
         private static readonly String[] SENTENCES_dict_punc
             = { "they", "send", "he", "run", "in", "the", "evening", ".", "he", "do", "not", "come", "back", "." };

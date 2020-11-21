@@ -84,13 +84,12 @@ namespace Lucene.Net.Spatial.Prefix
                 throw new ArgumentException("distErr must be > 0");
             }
             SpatialContext ctx = m_grid.SpatialContext;
-            if (shape is IPoint)
+            if (shape is IPoint point)
             {
-                return ctx.MakeCircle((IPoint)shape, distErr);
+                return ctx.MakeCircle(point, distErr);
             }
-            else if (shape is ICircle)
+            else if (shape is ICircle circle)
             {
-                var circle = (ICircle)shape;
                 double newDist = circle.Radius + distErr;
                 if (ctx.IsGeo && newDist > 180)
                 {

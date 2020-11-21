@@ -49,7 +49,7 @@ namespace Lucene.Net.Replicator
 
         public virtual void CleanupSession(string sessionId)
         {
-            if (string.IsNullOrEmpty(sessionId)) throw new ArgumentException("sessionID cannot be empty", "sessionId");
+            if (string.IsNullOrEmpty(sessionId)) throw new ArgumentException("sessionID cannot be empty", nameof(sessionId));
 
             string sessionDirectory = Path.Combine(workingDirectory, sessionId);
             System.IO.Directory.Delete(sessionDirectory, true);

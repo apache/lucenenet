@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -40,6 +41,7 @@ namespace Lucene.Net.Util
         /// <param name="zeroExp"> The zero-point in the range of exponent values. </param>
         /// <returns> The 8 bit float representation. </returns>
         // LUCENENET specific overload for CLS compliance
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte SingleToByte(float f, int numMantissaBits, int zeroExp)
         {
             return (byte)SingleToSByte(f, numMantissaBits, zeroExp);
@@ -86,6 +88,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was byteToFloat() in Lucene
         /// </summary>
         // LUCENENET specific overload for CLS compliance
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ByteToSingle(byte b, int numMantissaBits, int zeroExp)
         {
             return SByteToSingle((sbyte)b, numMantissaBits, zeroExp);
@@ -125,6 +128,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was floatToByte315() in Lucene
         /// </summary>
         // LUCENENET specific overload for CLS compliance
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte SingleToByte315(float f)
         {
             return (byte)SingleToSByte315(f);
@@ -160,6 +164,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was byte315ToFloat() in Lucene
         /// </summary>
         // LUCENENET specific overload for CLS compliance
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Byte315ToSingle(byte b)
         {
             return SByte315ToSingle((sbyte)b);
@@ -193,6 +198,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was floatToByte52() in Lucene
         /// </summary>
         // LUCENENET specific overload for CLS compliance
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte SingleToByte52(float f)
         {
             return (byte)SingleToSByte315(f);
@@ -228,6 +234,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was byte52ToFloat() in Lucene
         /// </summary>
         // LUCENENET specific overload for CLS compliance
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Byte52ToSingle(byte b)
         {
             return SByte52ToSingle((sbyte)b);

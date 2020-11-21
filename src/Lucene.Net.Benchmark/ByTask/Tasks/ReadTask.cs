@@ -48,7 +48,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     {
         private readonly IQueryMaker queryMaker;
 
-        public ReadTask(PerfRunData runData)
+        protected ReadTask(PerfRunData runData) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(runData)
         {
             if (WithSearch)
@@ -89,7 +89,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             // optionally warm and add num docs traversed to count
             if (WithWarm)
             {
-                Document doc = null;
+                Document doc; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 IBits liveDocs = MultiFields.GetLiveDocs(reader);
                 for (int m = 0; m < reader.MaxDoc; m++)
                 {
@@ -260,7 +260,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         /// </remarks>
         public virtual int TraversalSize => int.MaxValue;
 
-        internal static readonly int DEFAULT_SEARCH_NUM_HITS = 10;
+        internal const int DEFAULT_SEARCH_NUM_HITS = 10;
         private int numHits;
 
         public override void Setup()

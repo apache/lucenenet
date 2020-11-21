@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
     /// </summary>
     public class TrecJudge : IJudge
     {
-        IDictionary<string, QRelJudgement> judgements;
+        private readonly IDictionary<string, QRelJudgement> judgements; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructor from a reader.
@@ -73,7 +73,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                     st.MoveNext();
                     bool relevant = !zero.Equals(st.Current, StringComparison.Ordinal);
                     // LUCENENET: don't call st.NextToken() unless the condition fails.
-                    if (Debugging.AssertsEnabled) Debugging.Assert(st.RemainingTokens == 0, () => "wrong format: " + line + "  next: " + (st.MoveNext() ? st.Current : ""));
+                    if (Debugging.AssertsEnabled) Debugging.Assert(st.RemainingTokens == 0,"wrong format: {0}  next: {1}", line, (st.MoveNext() ? st.Current : ""));
                     if (relevant)
                     { // only keep relevant docs
                         if (curr == null || !curr.queryID.Equals(queryID, StringComparison.Ordinal))
@@ -97,8 +97,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         // inherit javadocs
         public virtual bool IsRelevant(string docName, QualityQuery query)
         {
-            QRelJudgement qrj;// = judgements.get(query.getQueryID());
-            judgements.TryGetValue(query.QueryID, out qrj);
+            judgements.TryGetValue(query.QueryID, out QRelJudgement qrj);
             return qrj != null && qrj.IsRelevant(docName);
         }
 
@@ -108,7 +107,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         private class QRelJudgement
         {
             internal string queryID;
-            private IDictionary<string, string> relevantDocs;
+            private readonly IDictionary<string, string> relevantDocs; // LUCENENET: marked readonly
 
             internal QRelJudgement(string queryID)
             {
@@ -171,8 +170,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         // inherit javadocs
         public virtual int MaxRecall(QualityQuery query)
         {
-            QRelJudgement qrj;
-            if (judgements.TryGetValue(query.QueryID, out qrj) && qrj != null)
+            if (judgements.TryGetValue(query.QueryID, out QRelJudgement qrj) && qrj != null)
             {
                 return qrj.MaxRecall;
             }

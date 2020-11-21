@@ -8,6 +8,7 @@ using IBits = Lucene.Net.Util.IBits;
 using BytesRef = Lucene.Net.Util.BytesRef;
 using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 using Directory = Lucene.Net.Store.Directory;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -80,21 +81,25 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private readonly FieldInfos fieldInfos;
 
-        private IndexInput tvx;
-        private IndexInput tvd;
-        private IndexInput tvf;
-        private int size;
-        private int numTotalDocs;
+#pragma warning disable CA2213 // Disposable fields should be disposed
+        private readonly IndexInput tvx; // LUCENENET: marked readonly
+        private readonly IndexInput tvd; // LUCENENET: marked readonly
+        private readonly IndexInput tvf; // LUCENENET: marked readonly
+#pragma warning restore CA2213 // Disposable fields should be disposed
+        private readonly int size; // LUCENENET: marked readonly
+        private readonly int numTotalDocs; // LUCENENET: marked readonly
 
         // The docID offset where our docs begin in the index
         // file.  this will be 0 if we have our own private file.
-        private int docStoreOffset;
+        private readonly int docStoreOffset; // LUCENENET: marked readonly
 
         // when we are inside a compound share doc store (CFX),
         // (lucene 3.0 indexes only), we privately open our own fd.
         // TODO: if we are worried, maybe we could eliminate the
         // extra fd somehow when you also have vectors...
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly CompoundFileDirectory storeCFSReader;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         private readonly int format;
 
@@ -160,7 +165,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     this.size = size;
                     // Verify the file is long enough to hold all of our
                     // docs
-                    if (Debugging.AssertsEnabled) Debugging.Assert(numTotalDocs >= size + docStoreOffset, () => "numTotalDocs=" + numTotalDocs + " size=" + size + " docStoreOffset=" + docStoreOffset);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(numTotalDocs >= size + docStoreOffset, "numTotalDocs={0} size={1} docStoreOffset={2}", numTotalDocs, size, docStoreOffset);
                 }
 
                 this.fieldInfos = fieldInfos;
@@ -187,11 +192,13 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         // Not private to avoid synthetic access$NNN methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void SeekTvx(int docNum)
         {
             tvx.Seek((docNum + docStoreOffset) * 16L + FORMAT_SIZE);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int CheckValidFormat(IndexInput @in)
         {
             int format = @in.ReadInt32();
@@ -206,6 +213,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             return format;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -266,6 +274,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override IEnumerator<string> GetEnumerator()
             {
                 return new IteratorAnonymousInnerClassHelper(this);
@@ -275,7 +284,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 private readonly TVFields outerInstance;
                 private string current;
-                private int i, upTo;
+                private int i;
+                private readonly int upTo;
 
                 public IteratorAnonymousInnerClassHelper(TVFields outerInstance)
                 {
@@ -284,6 +294,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     i = 0;
                 }
 
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 public bool MoveNext()
                 {
                     if (outerInstance.fieldNumbers != null && i < upTo)
@@ -317,8 +328,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     return null;
                 }
 
-                int fieldIndex;
-                if (!fieldNumberToIndex.TryGetValue(fieldInfo.Number, out fieldIndex))
+                if (!fieldNumberToIndex.TryGetValue(fieldInfo.Number, out int fieldIndex))
                 {
                     // Term vectors were not indexed for this field
                     return null;
@@ -365,6 +375,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 unicodeSortOrder = outerInstance.SortTermsByUnicode();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetEnumerator()
             {
                 var termsEnum = new TVTermsEnum(outerInstance);
@@ -372,23 +383,11 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return termsEnum;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetEnumerator(TermsEnum reuse)
             {
-                TVTermsEnum termsEnum;
-#pragma warning disable IDE0038 // Use pattern matching
-                if (reuse is null || !(reuse is TVTermsEnum))
-#pragma warning restore IDE0038 // Use pattern matching
-                {
+                if (reuse is null || !(reuse is TVTermsEnum termsEnum) || !termsEnum.CanReuse(outerInstance.tvf))
                     termsEnum = new TVTermsEnum(outerInstance);
-                }
-                else
-                {
-                    var reusable = (TVTermsEnum)reuse;
-                    if (reusable.CanReuse(outerInstance.tvf))
-                        termsEnum = reusable;
-                    else
-                        termsEnum = new TVTermsEnum(outerInstance);
-                }
 
                 termsEnum.Reset(numTerms, tvfFPStart, storePositions, storeOffsets, unicodeSortOrder);
                 return termsEnum;
@@ -406,6 +405,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override IComparer<BytesRef> Comparer
             {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 get
                 {
                     if (unicodeSortOrder)
@@ -456,6 +456,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 tvf = (IndexInput)origTVF.Clone();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual bool CanReuse(IndexInput tvf)
             {
                 return tvf == origTVF;
@@ -556,6 +557,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 throw new NotSupportedException();
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override bool MoveNext()
             {
                 if (++currentTerm >= numTerms)
@@ -581,21 +583,17 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override long TotalTermFreq => termAndPostings[currentTerm].Freq;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags) // ignored
             {
-                TVDocsEnum docsEnum;
-                if (reuse != null && reuse is TVDocsEnum)
-                {
-                    docsEnum = (TVDocsEnum)reuse;
-                }
-                else
-                {
+                if (reuse is null || !(reuse is TVDocsEnum docsEnum))
                     docsEnum = new TVDocsEnum();
-                }
+
                 docsEnum.Reset(liveDocs, termAndPostings[currentTerm]);
                 return docsEnum;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 if (!storePositions && !storeOffsets)
@@ -603,21 +601,16 @@ namespace Lucene.Net.Codecs.Lucene3x
                     return null;
                 }
 
-                TVDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse != null && reuse is TVDocsAndPositionsEnum)
-                {
-                    docsAndPositionsEnum = (TVDocsAndPositionsEnum)reuse;
-                }
-                else
-                {
+                if (reuse is null || !(reuse is TVDocsAndPositionsEnum docsAndPositionsEnum))
                     docsAndPositionsEnum = new TVDocsAndPositionsEnum();
-                }
+
                 docsAndPositionsEnum.Reset(liveDocs, termAndPostings[currentTerm]);
                 return docsAndPositionsEnum;
             }
 
             public override IComparer<BytesRef> Comparer
             {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 get
                 {
                     if (unicodeSortOrder)
@@ -645,6 +638,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int DocID => doc;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int NextDoc()
             {
                 if (!didNext && (liveDocs == null || liveDocs.Get(0)))
@@ -658,6 +652,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int Advance(int target)
             {
                 if (!didNext && target == 0)
@@ -670,6 +665,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void Reset(IBits liveDocs, TermAndPostings termAndPostings)
             {
                 this.liveDocs = liveDocs;
@@ -678,6 +674,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 didNext = false;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return 1;
@@ -696,6 +693,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int Freq
             {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 get
                 {
                     if (positions != null)
@@ -712,6 +710,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int DocID => doc;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int NextDoc()
             {
                 if (!didNext && (liveDocs == null || liveDocs.Get(0)))
@@ -725,6 +724,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int Advance(int target)
             {
                 if (!didNext && target == 0)
@@ -737,6 +737,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public virtual void Reset(IBits liveDocs, TermAndPostings termAndPostings)
             {
                 this.liveDocs = liveDocs;
@@ -748,6 +749,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 nextPos = 0;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override BytesRef GetPayload()
             {
                 return null;
@@ -780,6 +782,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int StartOffset
             {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 get
                 {
                     if (startOffsets != null)
@@ -795,6 +798,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int EndOffset
             {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 get
                 {
                     if (endOffsets != null)
@@ -808,12 +812,14 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return 1;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override Fields Get(int docID)
         {
             if (tvx != null)
@@ -860,17 +866,20 @@ namespace Lucene.Net.Codecs.Lucene3x
         // true when segments are used for "normal" searching;
         // it's only false during testing, to create a pre-flex
         // index, using the test-only PreFlexRW.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal virtual bool SortTermsByUnicode()
         {
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             // everything is disk-based
             return 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
         }

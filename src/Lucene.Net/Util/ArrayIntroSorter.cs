@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -36,24 +37,28 @@ namespace Lucene.Net.Util
         {
             this.arr = arr;
             this.comparer = comparer;
-            pivot = default(T);
+            pivot = default;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override int Compare(int i, int j)
         {
             return comparer.Compare(arr[i], arr[j]);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Swap(int i, int j)
         {
             ArrayUtil.Swap(arr, i, j);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void SetPivot(int i)
         {
-            pivot = (i < arr.Length) ? arr[i] : default(T);
+            pivot = (i < arr.Length) ? arr[i] : default;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override int ComparePivot(int i)
         {
             return comparer.Compare(pivot, arr[i]);

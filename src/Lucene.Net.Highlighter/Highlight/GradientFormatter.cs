@@ -25,7 +25,7 @@ namespace Lucene.Net.Search.Highlight
     /// </summary>
     public class GradientFormatter : IFormatter
     {
-        private float maxScore;
+        private readonly float maxScore; // LUCENENET: marked readonly
 
         protected int m_fgRMin, m_fgGMin, m_fgBMin;
         protected int m_fgRMax, m_fgGMax, m_fgBMax;
@@ -177,7 +177,8 @@ namespace Lucene.Net.Search.Highlight
             return Math.Min(colorMin, colorMax) + (int)colScore;
         }
 
-        private static char[] hexDigits = new char[] { '0', '1', '2', '3', '4', '5', '6', '7',
+        private static readonly char[] hexDigits = new char[] { // LUCENENET: marked readonly
+            '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
         /// <summary>

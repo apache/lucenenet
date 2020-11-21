@@ -138,11 +138,8 @@ namespace Lucene.Net.Search
 
         public override bool Equals(object o)
         {
-            var other = o as CachingWrapperFilter;
-            if (other == null)
-            {
-                return false;
-            }
+            if (o is null) return false;
+            if (!(o is CachingWrapperFilter other)) return false;
             return _filter.Equals(other._filter);
         }
 

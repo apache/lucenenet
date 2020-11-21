@@ -39,7 +39,7 @@
             /// <summary>
             /// Default constructor. 
             /// </summary>
-            public OrdinalsSegmentReader()
+            protected OrdinalsSegmentReader() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
             }
         }
@@ -47,7 +47,7 @@
         /// <summary>
         /// Default constructor. 
         /// </summary>
-        public OrdinalsReader()
+        protected OrdinalsReader() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 

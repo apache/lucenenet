@@ -29,7 +29,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// </summary>
     public abstract class ReportTask : PerfTask
     {
-        public ReportTask(PerfRunData runData)
+        protected ReportTask(PerfRunData runData) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(runData)
         {
         }

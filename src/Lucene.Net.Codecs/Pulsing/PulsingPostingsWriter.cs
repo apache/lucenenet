@@ -42,17 +42,17 @@ namespace Lucene.Net.Codecs.Pulsing
     /// </summary>
     public sealed class PulsingPostingsWriter : PostingsWriterBase
     {
-        internal static readonly string CODEC = "PulsedPostingsWriter";
-        internal static readonly string SUMMARY_EXTENSION = "smy";         // recording field summary
+        internal const string CODEC = "PulsedPostingsWriter";
+        internal const string SUMMARY_EXTENSION = "smy";         // recording field summary
 
         // To add a new version, increment from the last one, and
         // change VERSION_CURRENT to point to your new version:
-        internal static readonly int VERSION_START = 0;
-        internal static readonly int VERSION_META_ARRAY = 1;
-        internal static readonly int VERSION_CURRENT = VERSION_META_ARRAY;
+        internal const int VERSION_START = 0;
+        internal const int VERSION_META_ARRAY = 1;
+        internal const int VERSION_CURRENT = VERSION_META_ARRAY;
 
         private readonly SegmentWriteState _segmentState;
-        private IndexOutput _termsOut;
+        //private IndexOutput _termsOut; // LUCENENET: Never read
         private readonly List<FieldMetaData> _fields;
         private IndexOptions _indexOptions;
         private bool _storePayloads;
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override void Init(IndexOutput termsOut)
         {
-            _termsOut = termsOut;
+            //_termsOut = termsOut; // LUCENENET: Never read
             CodecUtil.WriteHeader(termsOut, CODEC, VERSION_CURRENT);
             termsOut.WriteVInt32(_pending.Length); // encode maxPositions in header
             _wrappedPostingsWriter.Init(termsOut);
@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override void StartDoc(int docId, int termDocFreq)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(docId >= 0, () => "Got DocID=" + docId);
+            if (Debugging.AssertsEnabled) Debugging.Assert(docId >= 0, "Got DocID={0}", docId);
 
             if (_pendingCount == _pending.Length)
             {
@@ -288,7 +288,8 @@ namespace Lucene.Net.Codecs.Pulsing
                 // given codec wants to store other interesting
                 // stuff, it could use this pulsing codec to do so
 
-                if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                if (IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
                 {
                     var lastDocID = 0;
                     var pendingIDX = 0;
@@ -341,7 +342,8 @@ namespace Lucene.Net.Codecs.Pulsing
                                 _buffer.WriteVInt32(posDelta);
                             }
 
-                            if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+                            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                            if (IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                             {
                                 //System.out.println("write=" + pos.startOffset + "," + pos.endOffset);
                                 var offsetDelta = pos.startOffset - lastOffset;
@@ -432,35 +434,41 @@ namespace Lucene.Net.Codecs.Pulsing
             }
         }
 
+        private bool disposed = false; // LUCENENET specific
         protected override void Dispose(bool disposing)
         {
-            _wrappedPostingsWriter.Dispose();
-
-            if (_wrappedPostingsWriter is PulsingPostingsWriter ||
-                VERSION_CURRENT < VERSION_META_ARRAY)
+            if (disposing && !disposed)
             {
-                return;
-            }
+                disposed = true;
+                _wrappedPostingsWriter.Dispose();
+                _buffer.Dispose(); // LUCENENET specific
 
-            var summaryFileName = IndexFileNames.SegmentFileName(_segmentState.SegmentInfo.Name,
-                _segmentState.SegmentSuffix, SUMMARY_EXTENSION);
-            IndexOutput output = null;
-            try
-            {
-                output =
-                    _segmentState.Directory.CreateOutput(summaryFileName, _segmentState.Context);
-                CodecUtil.WriteHeader(output, CODEC, VERSION_CURRENT);
-                output.WriteVInt32(_fields.Count);
-                foreach (var field in _fields)
+                if (_wrappedPostingsWriter is PulsingPostingsWriter ||
+                    VERSION_CURRENT < VERSION_META_ARRAY)
                 {
-                    output.WriteVInt32(field.FieldNumber);
-                    output.WriteVInt32(field.Int64sSize);
+                    return;
                 }
-                output.Dispose();
-            }
-            finally
-            {
-                IOUtils.DisposeWhileHandlingException(output);
+
+                var summaryFileName = IndexFileNames.SegmentFileName(_segmentState.SegmentInfo.Name,
+                    _segmentState.SegmentSuffix, SUMMARY_EXTENSION);
+                IndexOutput output = null;
+                try
+                {
+                    output =
+                        _segmentState.Directory.CreateOutput(summaryFileName, _segmentState.Context);
+                    CodecUtil.WriteHeader(output, CODEC, VERSION_CURRENT);
+                    output.WriteVInt32(_fields.Count);
+                    foreach (var field in _fields)
+                    {
+                        output.WriteVInt32(field.FieldNumber);
+                        output.WriteVInt32(field.Int64sSize);
+                    }
+                    output.Dispose();
+                }
+                finally
+                {
+                    IOUtils.DisposeWhileHandlingException(output);
+                }
             }
         }
 
@@ -474,7 +482,8 @@ namespace Lucene.Net.Codecs.Pulsing
             _wrappedPostingsWriter.StartTerm();
 
             // Flush all buffered docs
-            if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            if (IndexOptionsComparer.Default.Compare(_indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
             {
                 Position doc = null;
 

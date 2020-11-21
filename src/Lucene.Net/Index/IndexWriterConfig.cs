@@ -240,14 +240,7 @@ namespace Lucene.Net.Index
         new public IndexDeletionPolicy IndexDeletionPolicy
         {
             get => delPolicy;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("indexDeletionPolicy must not be null");
-                }
-                this.delPolicy = value;
-            }
+            set => delPolicy = value ?? throw new ArgumentNullException(nameof(value), "IndexDeletionPolicy must not be null");
         }
 
         /// <summary>
@@ -276,14 +269,7 @@ namespace Lucene.Net.Index
         new public Similarity Similarity
         {
             get => similarity;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("similarity must not be null");
-                }
-                this.similarity = value;
-            }
+            set => similarity = value ?? throw new ArgumentNullException(nameof(value), "Similarity must not be null");
         }
 
 
@@ -310,18 +296,8 @@ namespace Lucene.Net.Index
         // so must declare it new. See: http://stackoverflow.com/q/82437
         new public IMergeScheduler MergeScheduler
         {
-            get
-            {
-                return mergeScheduler;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("mergeScheduler must not be null");
-                }
-                this.mergeScheduler = value;
-            }
+            get => mergeScheduler;
+            set => mergeScheduler = value ?? throw new ArgumentNullException(nameof(value), "MergeScheduler must not be null");
         }
 
         /// <summary>
@@ -341,7 +317,6 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Gets or sets the <see cref="Codecs.Codec"/>.
-        ///
         /// <para/>
         /// Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
@@ -350,14 +325,7 @@ namespace Lucene.Net.Index
         new public Codec Codec
         {
             get => codec;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("codec must not be null");
-                }
-                this.codec = value;
-            }
+            set => codec = value ?? throw new ArgumentException(nameof(value), "Codec must not be null");
         }
 
         /// <summary>
@@ -373,14 +341,7 @@ namespace Lucene.Net.Index
         new public MergePolicy MergePolicy
         {
             get => mergePolicy;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("mergePolicy must not be null");
-                }
-                this.mergePolicy = value;
-            }
+            set => mergePolicy = value ?? throw new ArgumentNullException(nameof(value), "MergePolicy must not be null");
         }
 
         /// <summary>
@@ -403,14 +364,7 @@ namespace Lucene.Net.Index
         new internal DocumentsWriterPerThreadPool IndexerThreadPool
         {
             get => indexerThreadPool;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("threadPool must not be null");
-                }
-                this.indexerThreadPool = value;
-            }
+            set => indexerThreadPool = value ?? throw new ArgumentNullException(nameof(value), "IndexerThreadPool must not be null");
         }
 
         /// <summary>
@@ -436,10 +390,7 @@ namespace Lucene.Net.Index
                     throw new InvalidOperationException(cce.Message, cce);
                 }
             }
-            set
-            {
-                this.indexerThreadPool = new DocumentsWriterPerThreadPool(value);
-            }
+            set => this.indexerThreadPool = new DocumentsWriterPerThreadPool(value);
         }
 
         /// <summary>
@@ -472,14 +423,7 @@ namespace Lucene.Net.Index
         new internal IndexingChain IndexingChain
         {
             get => indexingChain;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("indexingChain must not be null");
-                }
-                this.indexingChain = value;
-            }
+            set => indexingChain = value ?? throw new ArgumentNullException(nameof(value), "IndexingChain must not be null");
         }
 
         /// <summary>
@@ -520,14 +464,7 @@ namespace Lucene.Net.Index
         new internal FlushPolicy FlushPolicy
         {
             get => flushPolicy;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentException("flushPolicy must not be null");
-                }
-                this.flushPolicy = value;
-            }
+            set => flushPolicy = value ?? throw new ArgumentNullException(nameof(value), "FlushPolicy must not be null");
         }
 
         // LUCENENT NOTE: The following properties would be pointless,
@@ -604,12 +541,9 @@ namespace Lucene.Net.Index
         /// </summary>
         public IndexWriterConfig SetInfoStream(InfoStream infoStream)
         {
-            if (infoStream == null)
-            {
-                throw new ArgumentException("Cannot set InfoStream implementation to null. " + 
+            this.infoStream = infoStream ?? throw new ArgumentNullException(nameof(infoStream),
+                    "Cannot set InfoStream implementation to null. " + 
                     "To disable logging use InfoStream.NO_OUTPUT");
-            }
-            this.infoStream = infoStream;
             return this;
         }
 

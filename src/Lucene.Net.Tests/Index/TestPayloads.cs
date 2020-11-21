@@ -398,8 +398,7 @@ namespace Lucene.Net.Index
 
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
-                PayloadData payload;
-                fieldToData.TryGetValue(fieldName, out payload);
+                fieldToData.TryGetValue(fieldName, out PayloadData payload);
                 Tokenizer ts = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream tokenStream = (payload != null) ? (TokenStream)new PayloadFilter(ts, payload.Data, payload.Offset, payload.Length) : ts;
                 return new TokenStreamComponents(ts, tokenStream);

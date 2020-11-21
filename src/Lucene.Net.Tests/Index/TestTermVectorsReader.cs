@@ -43,11 +43,6 @@ namespace Lucene.Net.Index
     {
         public TestTermVectorsReader()
         {
-            InitializeInstanceFields();
-        }
-
-        private void InitializeInstanceFields()
-        {
             positions = new int[testTerms.Length][];
             tokens = new TestToken[testTerms.Length * TERM_FREQ];
         }

@@ -356,19 +356,6 @@ namespace Lucene.Net.Analysis.Util
         }
 
         /// <summary>
-        /// Peeks at the next input character, refilling the buffer if necessary. If
-        /// this character is a newline character ("\n"), it is discarded.
-        /// </summary>
-        private void ChompNewline()
-        {
-            if ((pos != end || FillBuf() != -1)
-                && buf[pos] == '\n')
-            {
-                pos++;
-            }
-        }
-
-        /// <summary>
         /// Returns the next line of text available from this reader. A line is
         /// represented by zero or more characters followed by <c>'\n'</c>,
         /// <c>'\r'</c>, <c>"\r\n"</c> or the end of the reader. The string does

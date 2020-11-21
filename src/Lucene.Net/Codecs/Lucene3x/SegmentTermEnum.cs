@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using FieldInfos = Lucene.Net.Index.FieldInfos;
 using IndexFormatTooNewException = Lucene.Net.Index.IndexFormatTooNewException;
 using IndexFormatTooOldException = Lucene.Net.Index.IndexFormatTooOldException;
@@ -58,8 +59,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         internal TermInfo termInfo = new TermInfo();
 
-        private int format;
-        private bool isIndex = false;
+        private readonly int format; // LUCENENET: marked readonly
+        private readonly bool isIndex = false; // LUCENENET: marked readonly
         internal long indexPointer = 0;
         internal int indexInterval; // LUCENENET NOTE: Changed from public field to internal (class is internal anyway)
         internal int skipInterval;
@@ -107,24 +108,16 @@ namespace Lucene.Net.Codecs.Lucene3x
                 maxSkipLevels = input.ReadInt32();
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(indexInterval > 0, () => "indexInterval=" + indexInterval + " is negative; must be > 0");
-                    Debugging.Assert(skipInterval > 0, () => "skipInterval=" + skipInterval + " is negative; must be > 0");
+                    Debugging.Assert(indexInterval > 0, "indexInterval={0} is negative; must be > 0", indexInterval);
+                    Debugging.Assert(skipInterval > 0, "skipInterval={0} is negative; must be > 0", skipInterval);
                 }
             }
         }
 
         public object Clone()
         {
-            SegmentTermEnum clone = null;
-            try
-            {
-                clone = (SegmentTermEnum)base.MemberwiseClone();
-            }
-#pragma warning disable 168
-            catch (InvalidOperationException e)
-#pragma warning restore 168
-            {
-            }
+            // LUCENENET: MemberwiseClone() doesn't throw in .NET
+            SegmentTermEnum clone = (SegmentTermEnum)base.MemberwiseClone();
 
             clone.input = (IndexInput)input.Clone();
             clone.termInfo = new TermInfo(termInfo);
@@ -212,6 +205,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the current Term in the enumeration.
         /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Term Term()
         {
             return termBuffer.ToTerm();
@@ -219,6 +213,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns the previous Term enumerated. Initially <c>null</c>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal Term Prev()
         {
             return prevBuffer.ToTerm();
@@ -228,6 +223,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Returns the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
         /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal TermInfo TermInfo()
         {
             return new TermInfo(termInfo);
@@ -237,6 +233,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Sets the argument to the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
         /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void TermInfo(TermInfo ti)
         {
             ti.Set(termInfo);
@@ -262,6 +259,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Closes the enumeration to further activity, freeing resources. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispose()
         {
             input.Dispose();

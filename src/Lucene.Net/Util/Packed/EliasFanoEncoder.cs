@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Util.Packed
@@ -218,9 +219,10 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// NOTE: This was numLongsForBits() in Lucene.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static long NumInt64sForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(numBits >= 0, () => numBits.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.AssertsEnabled) Debugging.Assert(numBits >= 0, "{0}", numBits);
             return (long)((ulong)(numBits + (sizeof(long) * 8 - 1)) >> LOG2_INT64_SIZE);
         }
 
@@ -263,17 +265,20 @@ namespace Lucene.Net.Util.Packed
             numEncoded++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EncodeUpperBits(long highValue)
         {
             long nextHighBitNum = numEncoded + highValue; // sequence of unary gaps
             upperLongs[(int)((long)((ulong)nextHighBitNum >> LOG2_INT64_SIZE))] |= (1L << (int)(nextHighBitNum & ((sizeof(long) * 8) - 1)));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EncodeLowerBits(long lowValue)
         {
             PackValue(lowValue, lowerLongs, numLowBits, numEncoded);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void PackValue(long value, long[] longArray, int numBits, long packIndex)
         {
             if (numBits != 0)
@@ -318,6 +323,7 @@ namespace Lucene.Net.Util.Packed
         /// Returns an <see cref="EliasFanoDecoder"/> to access the encoded values.
         /// Perform all calls to <see cref="EncodeNext(long)"/> before calling <see cref="GetDecoder()"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual EliasFanoDecoder GetDecoder()
         {
             // decode as far as currently encoded as determined by numEncoded.

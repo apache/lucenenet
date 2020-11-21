@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
     {
         private const long MISSING = 0L;
 
-        private AppendingDeltaPackedInt64Buffer pending;
+        private readonly AppendingDeltaPackedInt64Buffer pending; // LUCENENET: marked readonly
         private readonly Counter iwBytesUsed;
         private long bytesUsed;
         private FixedBitSet docsWithField;

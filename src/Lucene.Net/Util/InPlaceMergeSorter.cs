@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Util
 {
     /*
@@ -28,7 +30,7 @@ namespace Lucene.Net.Util
     {
         /// <summary>
         /// Create a new <see cref="InPlaceMergeSorter"/> </summary>
-        public InPlaceMergeSorter()
+        protected InPlaceMergeSorter() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 
@@ -36,6 +38,7 @@ namespace Lucene.Net.Util
         /// Sort the slice which starts at <paramref name="from"/> (inclusive) and ends at
         /// <paramref name="to"/> (exclusive).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override sealed void Sort(int from, int to)
         {
             CheckRange(from, to);

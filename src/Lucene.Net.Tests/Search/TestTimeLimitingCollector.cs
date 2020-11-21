@@ -418,7 +418,7 @@ namespace Lucene.Net.Search
 //#endif
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(docId >= 0, () => " base=" + docBase + " doc=" + doc);
+                if (Debugging.AssertsEnabled) Debugging.Assert(docId >= 0," base={0} doc={1}", docBase, doc);
                 bits.Set(docId);
                 lastDocCollected = docId;
             }

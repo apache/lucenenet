@@ -192,8 +192,7 @@ namespace Lucene.Net.Index
                         int numTerms = threadRandom.Next(maxTermsPerDoc);
                         for (int i = 0; i < numTerms; i++)
                         {
-                            string token;
-                            if (!postings.TryDequeue(out token))
+                            if (!postings.TryDequeue(out string token))
                             {
                                 break;
                             }

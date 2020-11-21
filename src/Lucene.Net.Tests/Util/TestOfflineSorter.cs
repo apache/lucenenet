@@ -159,16 +159,14 @@ namespace Lucene.Net.Util
             byte[] buf1 = new byte[64 * 1024];
             byte[] buf2 = new byte[64 * 1024];
             int len;
-            using (Stream is1 = golden.Open(FileMode.Open, FileAccess.Read, FileShare.Delete))
-            using (Stream is2 = sorted.Open(FileMode.Open, FileAccess.Read, FileShare.Delete))
+            using Stream is1 = golden.Open(FileMode.Open, FileAccess.Read, FileShare.Delete);
+            using Stream is2 = sorted.Open(FileMode.Open, FileAccess.Read, FileShare.Delete);
+            while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
             {
-                while ((len = is1.Read(buf1, 0, buf1.Length)) > 0)
+                is2.Read(buf2, 0, len);
+                for (int i = 0; i < len; i++)
                 {
-                    is2.Read(buf2, 0, len);
-                    for (int i = 0; i < len; i++)
-                    {
-                        Assert.AreEqual(buf1[i], buf2[i]);
-                    }
+                    Assert.AreEqual(buf1[i], buf2[i]);
                 }
             }
         }

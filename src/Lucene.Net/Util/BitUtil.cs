@@ -1,4 +1,5 @@
 using J2N.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 {
@@ -99,6 +100,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 
         /// <summary>
         /// Return the number of bits sets in <paramref name="b"/>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int BitCount(byte b)
         {
             return BYTE_COUNTS[b & 0xFF];
@@ -115,6 +117,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         ///     <item><description><code>(0x43 >>> 8) &amp; 0x0F</code> is 0, meaning there is no more bit set in this byte.</description></item>
         /// </list>
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int BitList(byte b)
         {
             return BIT_LISTS[b & 0xFF];
@@ -126,6 +129,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 
         /// <summary>
         /// Returns the number of set bits in an array of <see cref="long"/>s. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Pop_Array(long[] arr, int wordOffset, int numWords)
         {
             long popCount = 0;
@@ -140,6 +144,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         /// Returns the popcount or cardinality of the two sets after an intersection.
         /// Neither array is modified.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Pop_Intersect(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
             long popCount = 0;
@@ -154,6 +159,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         /// Returns the popcount or cardinality of the union of two sets.
         /// Neither array is modified.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Pop_Union(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
             long popCount = 0;
@@ -168,6 +174,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         /// Returns the popcount or cardinality of A &amp; ~B.
         /// Neither array is modified.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Pop_AndNot(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
             long popCount = 0;
@@ -182,6 +189,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         /// Returns the popcount or cardinality of A ^ B
         /// Neither array is modified.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Pop_Xor(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
             long popCount = 0;
@@ -194,6 +202,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 
         /// <summary>
         /// Returns the next highest power of two, or the current value if it's already a power of two or zero </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int NextHighestPowerOfTwo(int v)
         {
             v--;
@@ -208,6 +217,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 
         /// <summary>
         /// Returns the next highest power of two, or the current value if it's already a power of two or zero </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long NextHighestPowerOfTwo(long v)
         {
             v--;

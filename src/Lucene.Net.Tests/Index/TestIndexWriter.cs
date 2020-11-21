@@ -1177,40 +1177,38 @@ namespace Lucene.Net.Index
                     outerInstance,
 #endif
                     this.random, TEST_VERSION_CURRENT, new MockAnalyzer(this.random));
-                using (IndexWriter w = new IndexWriter(adder, conf))
+                using IndexWriter w = new IndexWriter(adder, conf);
+                Document doc = new Document();
+                doc.Add(NewStringField(this.random, "id", "500", Field.Store.NO));
+                doc.Add(NewField(this.random, "field", "some prepackaged text contents", storedTextType));
+                if (DefaultCodecSupportsDocValues)
                 {
-                    Document doc = new Document();
-                    doc.Add(NewStringField(this.random, "id", "500", Field.Store.NO));
-                    doc.Add(NewField(this.random, "field", "some prepackaged text contents", storedTextType));
-                    if (DefaultCodecSupportsDocValues)
-                    {
-                        doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("500")));
-                        doc.Add(new NumericDocValuesField("numericdv", 500));
-                        doc.Add(new SortedDocValuesField("sorteddv", new BytesRef("500")));
-                    }
-                    if (DefaultCodecSupportsSortedSet)
-                    {
-                        doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("one")));
-                        doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("two")));
-                    }
-                    w.AddDocument(doc);
-                    doc = new Document();
-                    doc.Add(NewStringField(this.random, "id", "501", Field.Store.NO));
-                    doc.Add(NewField(this.random, "field", "some more contents", storedTextType));
-                    if (DefaultCodecSupportsDocValues)
-                    {
-                        doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("501")));
-                        doc.Add(new NumericDocValuesField("numericdv", 501));
-                        doc.Add(new SortedDocValuesField("sorteddv", new BytesRef("501")));
-                    }
-                    if (DefaultCodecSupportsSortedSet)
-                    {
-                        doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("two")));
-                        doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("three")));
-                    }
-                    w.AddDocument(doc);
-                    w.DeleteDocuments(new Term("id", "500"));
-                } // w.Dispose();
+                    doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("500")));
+                    doc.Add(new NumericDocValuesField("numericdv", 500));
+                    doc.Add(new SortedDocValuesField("sorteddv", new BytesRef("500")));
+                }
+                if (DefaultCodecSupportsSortedSet)
+                {
+                    doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("one")));
+                    doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("two")));
+                }
+                w.AddDocument(doc);
+                doc = new Document();
+                doc.Add(NewStringField(this.random, "id", "501", Field.Store.NO));
+                doc.Add(NewField(this.random, "field", "some more contents", storedTextType));
+                if (DefaultCodecSupportsDocValues)
+                {
+                    doc.Add(new BinaryDocValuesField("binarydv", new BytesRef("501")));
+                    doc.Add(new NumericDocValuesField("numericdv", 501));
+                    doc.Add(new SortedDocValuesField("sorteddv", new BytesRef("501")));
+                }
+                if (DefaultCodecSupportsSortedSet)
+                {
+                    doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("two")));
+                    doc.Add(new SortedSetDocValuesField("sortedsetdv", new BytesRef("three")));
+                }
+                w.AddDocument(doc);
+                w.DeleteDocuments(new Term("id", "500"));
             }
 
             public override void Run()
@@ -1410,10 +1408,8 @@ namespace Lucene.Net.Index
                     }
                     try
                     {
-                        using (IndexReader r = DirectoryReader.Open(dir))
-                        {
-                            //System.out.println("doc count=" + r.NumDocs);
-                        } // r.Dispose();
+                        using IndexReader r = DirectoryReader.Open(dir);
+                        //System.out.println("doc count=" + r.NumDocs);
                     }
                     catch (Exception e)
                     {
@@ -1443,6 +1439,7 @@ namespace Lucene.Net.Index
 
         [Test]
         [Slow]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public virtual void TestThreadInterruptDeadlock()
         {
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
@@ -1483,6 +1480,7 @@ namespace Lucene.Net.Index
         /// testThreadInterruptDeadlock but with 2 indexer threads </summary>
         [Test]
         [Slow]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public virtual void TestTwoThreadsInterruptDeadlock()
         {
             IndexerThreadInterrupt t1 = new IndexerThreadInterrupt(this);

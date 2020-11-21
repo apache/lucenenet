@@ -32,11 +32,11 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
     /// </summary>
     internal class BiSegGraph
     {
-        private IDictionary<int, IList<SegTokenPair>> tokenPairListTable = new Dictionary<int, IList<SegTokenPair>>();
+        private readonly IDictionary<int, IList<SegTokenPair>> tokenPairListTable = new Dictionary<int, IList<SegTokenPair>>(); // LUCENENET: marked readonly
 
         private IList<SegToken> segTokenList;
 
-        private static BigramDictionary bigramDict = BigramDictionary.GetInstance();
+        private static readonly BigramDictionary bigramDict = BigramDictionary.GetInstance(); // LUCENENET: marked readonly
 
         public BiSegGraph(SegGraph segGraph)
         {
@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         private void GenerateBiSegGraph(SegGraph segGraph)
         {
             double smooth = 0.1;
-            int wordPairFreq = 0;
+            int wordPairFreq; // LUCENENET: IDE0059: Remove unnecessary value assignment
             int maxStart = segGraph.MaxStart;
             double oneWordFreq, weight, tinyDouble = 1.0 / Utility.MAX_FREQUENCE;
 
@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             segTokenList = segGraph.MakeIndex();
             // Because the beginning position of startToken is -1, therefore startToken can be obtained when key = -1
             int key = -1;
-            IList<SegToken> nextTokens = null;
+            IList<SegToken> nextTokens; // LUCENENET: IDE0059: Remove unnecessary value assignment
             while (key < maxStart)
             {
                 if (segGraph.IsStartExist(key))
@@ -140,8 +140,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// <returns><see cref="T:IList{SegTokenPair}"/> of token pairs. </returns>
         public virtual IList<SegTokenPair> GetToList(int to)
         {
-            IList<SegTokenPair> result;
-            tokenPairListTable.TryGetValue(to, out result);
+            tokenPairListTable.TryGetValue(to, out IList<SegTokenPair> result);
             return result;
         }
 
@@ -154,8 +153,10 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             int to = tokenPair.To;
             if (!IsToExist(to))
             {
-                List<SegTokenPair> newlist = new List<SegTokenPair>();
-                newlist.Add(tokenPair);
+                List<SegTokenPair> newlist = new List<SegTokenPair>
+                {
+                    tokenPair
+                };
                 tokenPairListTable[to] = newlist;
             }
             else

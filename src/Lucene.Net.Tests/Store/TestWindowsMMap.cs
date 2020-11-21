@@ -79,30 +79,26 @@ namespace Lucene.Net.Store
 
             // plan to add a set of useful stopwords, consider changing some of the
             // interior filters.
-            using (var analyzer = new MockAnalyzer(Random))
+            using var analyzer = new MockAnalyzer(Random);
+            // TODO: something about lock timeouts and leftover locks.
+            using (var writer = new IndexWriter(dir,
+                new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(
+                    OpenMode.CREATE)))
             {
-                // TODO: something about lock timeouts and leftover locks.
-                using (var writer = new IndexWriter(dir,
-                    new IndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetOpenMode(
-                        OpenMode.CREATE)))
+                writer.Commit();
+                using IndexReader reader = DirectoryReader.Open(dir);
+                var searcher = NewSearcher(reader);
+                var num = AtLeast(1000);
+                for (int dx = 0; dx < num; dx++)
                 {
-                    writer.Commit();
-                    using (IndexReader reader = DirectoryReader.Open(dir))
-                    {
-                        var searcher = NewSearcher(reader);
-                        var num = AtLeast(1000);
-                        for (int dx = 0; dx < num; dx++)
-                        {
-                            var f = RandomField();
-                            var doc = new Document();
-                            doc.Add(NewTextField("data", f, Field.Store.YES));
-                            writer.AddDocument(doc);
-                        }
-                    }
+                    var f = RandomField();
+                    var doc = new Document();
+                    doc.Add(NewTextField("data", f, Field.Store.YES));
+                    writer.AddDocument(doc);
                 }
-
-                RmDir(dirPath.FullName);
             }
+
+            RmDir(dirPath.FullName);
         }
 
         private static void RmDir(string dir)

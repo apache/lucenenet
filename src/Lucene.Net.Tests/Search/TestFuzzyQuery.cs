@@ -248,6 +248,9 @@ namespace Lucene.Net.Search
         /// is not implemented correctly, there will be problems!
         /// </summary>
         [Test]
+#if NETFRAMEWORK
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test fails on x86 on .NET Framework in Release mode only
+#endif
         public virtual void TestTieBreaker()
         {
             Directory directory = NewDirectory();

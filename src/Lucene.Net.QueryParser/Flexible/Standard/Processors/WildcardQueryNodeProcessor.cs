@@ -76,7 +76,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             return node;
         }
 
-        private bool IsWildcard(string text)
+        private static bool IsWildcard(string text) // LUCENENET: CA1822: Mark members as static
         {
             if (text == null || text.Length <= 0) return false;
 

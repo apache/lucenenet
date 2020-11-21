@@ -432,31 +432,10 @@ namespace Lucene.Net.Index
 
         public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
-            MultiDocsEnum docsEnum;
             // Can only reuse if incoming enum is also a MultiDocsEnum
-            if (reuse != null && reuse is MultiDocsEnum)
-            {
-                docsEnum = (MultiDocsEnum)reuse;
-                // ... and was previously created w/ this MultiTermsEnum:
-                if (!docsEnum.CanReuse(this))
-                {
-                    docsEnum = new MultiDocsEnum(this, subs.Length);
-                }
-            }
-            else
-            {
+            // ... and was previously created w/ this MultiTermsEnum:
+            if (reuse is null || !(reuse is MultiDocsEnum docsEnum) || !docsEnum.CanReuse(this))
                 docsEnum = new MultiDocsEnum(this, subs.Length);
-            }
-
-            MultiBits multiLiveDocs;
-            if (liveDocs is MultiBits)
-            {
-                multiLiveDocs = (MultiBits)liveDocs;
-            }
-            else
-            {
-                multiLiveDocs = null;
-            }
 
             int upto = 0;
 
@@ -466,7 +445,7 @@ namespace Lucene.Net.Index
 
                 IBits b;
 
-                if (multiLiveDocs != null)
+                if (liveDocs is MultiBits multiLiveDocs)
                 {
                     // optimize for common case: requested skip docs is a
                     // congruent sub-slice of MultiBits: in this case, we
@@ -495,7 +474,7 @@ namespace Lucene.Net.Index
                     b = null;
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(entry.Index < docsEnum.subDocsEnum.Length, () => entry.Index + " vs " + docsEnum.subDocsEnum.Length + "; " + subs.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(entry.Index < docsEnum.subDocsEnum.Length, "{0} vs {1}; {2}", entry.Index, docsEnum.subDocsEnum.Length, subs.Length);
                 DocsEnum subDocsEnum = entry.Terms.Docs(b, docsEnum.subDocsEnum[entry.Index], flags);
                 if (subDocsEnum != null)
                 {
@@ -507,7 +486,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     // should this be an error?
-                    if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "One of our subs cannot provide a docsenum");
+                    if (Debugging.AssertsEnabled) Debugging.Assert(false, "One of our subs cannot provide a docsenum");
                 }
             }
 
@@ -523,31 +502,12 @@ namespace Lucene.Net.Index
 
         public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
-            MultiDocsAndPositionsEnum docsAndPositionsEnum;
             // Can only reuse if incoming enum is also a MultiDocsAndPositionsEnum
-            if (reuse != null && reuse is MultiDocsAndPositionsEnum)
-            {
-                docsAndPositionsEnum = (MultiDocsAndPositionsEnum)reuse;
-                // ... and was previously created w/ this MultiTermsEnum:
-                if (!docsAndPositionsEnum.CanReuse(this))
-                {
-                    docsAndPositionsEnum = new MultiDocsAndPositionsEnum(this, subs.Length);
-                }
-            }
-            else
-            {
-                docsAndPositionsEnum = new MultiDocsAndPositionsEnum(this, subs.Length);
-            }
+            // ... and was previously created w/ this MultiTermsEnum:
+            if (reuse is null || !(reuse is MultiDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(this))
 
-            MultiBits multiLiveDocs;
-            if (liveDocs is MultiBits)
-            {
-                multiLiveDocs = (MultiBits)liveDocs;
-            }
-            else
-            {
-                multiLiveDocs = null;
-            }
+                docsAndPositionsEnum = new MultiDocsAndPositionsEnum(this, subs.Length);
+
 
             int upto = 0;
 
@@ -557,7 +517,7 @@ namespace Lucene.Net.Index
 
                 IBits b;
 
-                if (multiLiveDocs != null)
+                if (liveDocs is MultiBits multiLiveDocs)
                 {
                     // Optimize for common case: requested skip docs is a
                     // congruent sub-slice of MultiBits: in this case, we
@@ -587,7 +547,7 @@ namespace Lucene.Net.Index
                     b = null;
                 }
 
-                if (Debugging.AssertsEnabled) Debugging.Assert(entry.Index < docsAndPositionsEnum.subDocsAndPositionsEnum.Length, () => entry.Index + " vs " + docsAndPositionsEnum.subDocsAndPositionsEnum.Length + "; " + subs.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(entry.Index < docsAndPositionsEnum.subDocsAndPositionsEnum.Length, "{0} vs {1}; {2}", entry.Index, docsAndPositionsEnum.subDocsAndPositionsEnum.Length, subs.Length);
                 DocsAndPositionsEnum subPostings = entry.Terms.DocsAndPositions(b, docsAndPositionsEnum.subDocsAndPositionsEnum[entry.Index], flags);
 
                 if (subPostings != null)
@@ -630,7 +590,7 @@ namespace Lucene.Net.Index
             {
                 this.SubSlice = subSlice;
                 this.Index = index;
-                if (Debugging.AssertsEnabled) Debugging.Assert(subSlice.Length >= 0, () => "length=" + subSlice.Length);
+                if (Debugging.AssertsEnabled) Debugging.Assert(subSlice.Length >= 0,"length={0}", subSlice.Length);
             }
 
             public void Reset(TermsEnum terms, BytesRef term)

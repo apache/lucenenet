@@ -160,7 +160,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// Whether position holes should appear in the automaton. </summary>
-        private bool preservePositionIncrements;
+        private readonly bool preservePositionIncrements; // LUCENENET: marked readonly
 
         /// <summary>
         /// Number of entries the lookup was built with </summary>
@@ -243,7 +243,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return fst == null ? 0 : fst.GetSizeInBytes();
         }
 
-        private void CopyDestTransitions(State from, State to, IList<Transition> transitions)
+        private static void CopyDestTransitions(State from, State to, IList<Transition> transitions) // LUCENENET: CA1822: Mark members as static
         {
             if (to.Accept)
             {
@@ -491,7 +491,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             output.WriteBytes(surfaceForm.Bytes, surfaceForm.Offset, surfaceForm.Length);
                         }
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(output.Position == requiredLength, () => output.Position + " vs " + requiredLength);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(output.Position == requiredLength, "{0} vs {1}", output.Position, requiredLength);
 
                         writer.Write(buffer, 0, output.Position);
                     }

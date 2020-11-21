@@ -193,8 +193,7 @@ namespace Lucene.Net.Codecs.Bloom
 
             public override Terms GetTerms(string field)
             {
-                FuzzySet filter;
-                if (!_bloomsByFieldName.TryGetValue(field, out filter) || filter == null)
+                if (!_bloomsByFieldName.TryGetValue(field, out FuzzySet filter) || filter == null)
                 {
                     return _delegateFieldsProducer.GetTerms(field);
                 }
@@ -234,18 +233,12 @@ namespace Lucene.Net.Codecs.Bloom
 
                 public override TermsEnum GetEnumerator(TermsEnum reuse)
                 {
-#pragma warning disable IDE0038 // Use pattern matching
-                    if (!(reuse is null) && reuse is BloomFilteredTermsEnum)
-#pragma warning restore IDE0038 // Use pattern matching
+                    if (!(reuse is null) && reuse is BloomFilteredTermsEnum bfte && bfte.filter == _filter)
                     {
-                        BloomFilteredTermsEnum bfte = (BloomFilteredTermsEnum)reuse;
-                        if (bfte.filter == _filter)
-                        {
-                            // recycle the existing BloomFilteredTermsEnum by asking the delegate
-                            // to recycle its contained TermsEnum
-                            bfte.Reset(_delegateTerms, bfte.delegateTermsEnum);
-                            return bfte;
-                        }
+                        // recycle the existing BloomFilteredTermsEnum by asking the delegate
+                        // to recycle its contained TermsEnum
+                        bfte.Reset(_delegateTerms, bfte.delegateTermsEnum);
+                        return bfte;
                     }
 
                     // We have been handed something we cannot reuse (either wrong

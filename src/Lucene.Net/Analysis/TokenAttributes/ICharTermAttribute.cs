@@ -1,6 +1,7 @@
 using J2N.Text;
 using Lucene.Net.Util;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Lucene.Net.Analysis.TokenAttributes
@@ -35,6 +36,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// <param name="length"> the number of characters to copy </param>
         void CopyBuffer(char[] buffer, int offset, int length);
 
+
         /// <summary>
         /// Returns the internal termBuffer character array which
         /// you can then directly alter.  If the array is too
@@ -48,6 +50,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         /// the valid <see cref="Length"/>.
         /// </para>
         /// </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         char[] Buffer { get; }
 
         /// <summary>

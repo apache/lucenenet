@@ -154,11 +154,8 @@ namespace Lucene.Net.Search
         ///           If the underlying reader of the current reference could not be disposed </exception>
         public void Dispose()
         {
-            lock (this)
-            {
-                Dispose(true);
-                GC.SuppressFinalize(this);
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -167,17 +164,25 @@ namespace Lucene.Net.Search
         protected abstract int GetRefCount(G reference);
 
         /// <summary>
-        /// Called after <see cref="Dispose()"/>, so subclass can free any resources. </summary>
+        /// Called after <see cref="Dispose()"/>, so subclass can free any resources.
+        /// <para/>
+        /// When overriding, be sure to include a call to <c>base.Dispose(disposing)</c> in your implementation.</summary>
         /// <exception cref="IOException"> if the after dispose operation in a sub-class throws an <see cref="IOException"/>
         /// </exception>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && current != null)
+            if (disposing)
             {
-                // make sure we can call this more than once
-                // closeable javadoc says:
-                // if this is already closed then invoking this method has no effect.
-                SwapReference(null);
+                lock (this)
+                {
+                    if (current != null)
+                    {
+                        // make sure we can call this more than once
+                        // closeable javadoc says:
+                        // if this is already closed then invoking this method has no effect.
+                        SwapReference(null);
+                    }
+                }
             }
         }
 

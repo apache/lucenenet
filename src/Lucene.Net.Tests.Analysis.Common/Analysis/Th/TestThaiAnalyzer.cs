@@ -1,4 +1,4 @@
-﻿#if FEATURE_BREAKITERATOR
+#if FEATURE_BREAKITERATOR
 using J2N.Threading;
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
@@ -355,6 +355,7 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// blast some random strings through the analyzer </summary>
         [Test]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public virtual void TestRandomStrings()
         {
             CheckRandomData(Random, new ThaiAnalyzer(TEST_VERSION_CURRENT), 1000 * RandomMultiplier);
@@ -364,6 +365,7 @@ namespace Lucene.Net.Analysis.Th
         /// blast some random large strings through the analyzer </summary>
         /// 
         [Test]
+        [AwaitsFix(BugUrl = "https://github.com/apache/lucenenet/issues/269")] // LUCENENET TODO: this test occasionally fails
         public virtual void TestRandomHugeStrings()
         {
             Random random = Random;

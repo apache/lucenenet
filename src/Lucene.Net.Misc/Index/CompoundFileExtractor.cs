@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Command-line tool for extracting sub-files out of a compound file.
     /// </summary>
-    public class CompoundFileExtractor
+    public static class CompoundFileExtractor // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// Prints the filename and size of each file within a given compound file.
@@ -105,24 +105,18 @@ namespace Lucene.Net.Index
                     if (extract)
                     {
                         Console.WriteLine("extract " + files[i] + " with " + len + " bytes to local directory...");
-                        using (IndexInput ii = cfr.OpenInput(files[i], context))
+                        using IndexInput ii = cfr.OpenInput(files[i], context);
+                        using FileStream f = new FileStream(files[i], FileMode.Open, FileAccess.ReadWrite);
+
+                        // read and write with a small buffer, which is more effective than reading byte by byte
+                        byte[] buffer = new byte[1024];
+                        int chunk = buffer.Length;
+                        while (len > 0)
                         {
-
-                            using (FileStream f = new FileStream(files[i], FileMode.Open, FileAccess.ReadWrite))
-                            {
-
-                                // read and write with a small buffer, which is more effective than reading byte by byte
-                                byte[] buffer = new byte[1024];
-                                int chunk = buffer.Length;
-                                while (len > 0)
-                                {
-                                    int bufLen = (int)Math.Min(chunk, len);
-                                    ii.ReadBytes(buffer, 0, bufLen);
-                                    f.Write(buffer, 0, bufLen);
-                                    len -= bufLen;
-                                }
-
-                            }
+                            int bufLen = (int)Math.Min(chunk, len);
+                            ii.ReadBytes(buffer, 0, bufLen);
+                            f.Write(buffer, 0, bufLen);
+                            len -= bufLen;
                         }
                     }
                     else

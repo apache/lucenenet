@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs
     /// <see cref="DefaultCodecFactory.PutCodecType(Type)"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class ExcludeCodecFromScanAttribute : ExcludeServiceAttribute
+    public sealed class ExcludeCodecFromScanAttribute : ExcludeServiceAttribute
     {
     }
 }

@@ -143,18 +143,13 @@ namespace Lucene.Net.Search
 
         internal sealed class ParallelArraysTermCollector : TermCollector
         {
-            internal void InitializeInstanceFields()
-            {
-                terms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, array);
-            }
-
             private readonly ScoringRewrite<Q> outerInstance;
 
             public ParallelArraysTermCollector(ScoringRewrite<Q> outerInstance)
             {
                 this.outerInstance = outerInstance;
 
-                InitializeInstanceFields();
+                terms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, array);
             }
 
             internal readonly TermFreqBoostByteStart array = new TermFreqBoostByteStart(16);

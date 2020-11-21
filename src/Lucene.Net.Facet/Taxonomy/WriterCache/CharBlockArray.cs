@@ -92,7 +92,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     // case 1L:
                     // LUCENENET TODO: When object fields change, increment serialVersionUID and move the above block here for legacy support...
                     default:
-                        throw new InvalidDataException($"Version {serialVersion} of {this.GetType().ToString()} deserialization is not supported.");
+                        throw new InvalidDataException($"Version {serialVersion} of {this.GetType()} deserialization is not supported.");
                 }
             }
         }
@@ -309,7 +309,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 // case 1L:
                 // LUCENENET TODO: When object fields change, increment serialVersionUID and move the above block here for legacy support...
                 default:
-                    throw new InvalidDataException($"Version {serialVersion} of {this.GetType().ToString()} deserialization is not supported.");
+                    throw new InvalidDataException($"Version {serialVersion} of {this.GetType()} deserialization is not supported.");
             }
         }
 

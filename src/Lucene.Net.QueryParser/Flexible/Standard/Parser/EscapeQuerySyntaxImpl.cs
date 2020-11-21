@@ -220,9 +220,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
             // anything else)
             // since we need to preserve the UnescapedCharSequence and escape the
             // original escape chars
-            if (text is UnescapedCharSequence)
+            if (text is UnescapedCharSequence unescapedCharSequence)
             {
-                text = ((UnescapedCharSequence)text).ToStringEscaped(wildcardChars);
+                text = unescapedCharSequence.ToStringEscaped(wildcardChars);
             }
             else
             {

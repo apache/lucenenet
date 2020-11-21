@@ -35,7 +35,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
     /// <seealso cref="MatchNoDocsQueryNode"/>
     public class RemoveEmptyNonLeafQueryNodeProcessor : QueryNodeProcessor
     {
-        private List<IQueryNode> childrenBuffer = new List<IQueryNode>();
+        private readonly List<IQueryNode> childrenBuffer = new List<IQueryNode>(); // LUCENENET: marked readonly
 
         public RemoveEmptyNonLeafQueryNodeProcessor()
         {

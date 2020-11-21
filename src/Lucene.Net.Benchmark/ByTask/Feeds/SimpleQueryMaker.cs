@@ -54,9 +54,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             qq.Add(q1);
             Query q2 = new TermQuery(new Term(DocMaker.BODY_FIELD, "simple"));
             qq.Add(q2);
-            BooleanQuery bq = new BooleanQuery();
-            bq.Add(q1, Occur.MUST);
-            bq.Add(q2, Occur.MUST);
+            BooleanQuery bq = new BooleanQuery
+            {
+                { q1, Occur.MUST },
+                { q2, Occur.MUST }
+            };
             qq.Add(bq);
             qq.Add(qp.Parse("synthetic body"));
             qq.Add(qp.Parse("\"synthetic body\""));

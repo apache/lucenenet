@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     int field = input.ReadVInt32();
                     long indexStart = input.ReadVInt64();
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                    FieldIndexData previous = fields.Put(fieldInfo, new FieldIndexData(this, fieldInfo, indexStart));
+                    FieldIndexData previous = fields.Put(fieldInfo, new FieldIndexData(this, /* fieldInfo, // LUCENENET: Not referenced */ indexStart));
                     if (previous != null)
                     {
                         throw new CorruptIndexException("duplicate field: " + fieldInfo.Name + " (resource=" + input + ")");
@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             // Set only if terms index is loaded:
             internal volatile FST<long?> fst;
 
-            public FieldIndexData(VariableGapTermsIndexReader outerInstance, FieldInfo fieldInfo, long indexStart)
+            public FieldIndexData(VariableGapTermsIndexReader outerInstance, /*FieldInfo fieldInfo, // LUCENENET: Not referenced */ long indexStart)
             {
                 this.outerInstance = outerInstance;
 

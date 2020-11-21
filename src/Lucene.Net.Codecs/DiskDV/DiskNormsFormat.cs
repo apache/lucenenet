@@ -35,9 +35,9 @@ namespace Lucene.Net.Codecs.DiskDV
             return new DiskDocValuesProducer(state, DATA_CODEC, DATA_EXTENSION, META_CODEC, META_EXTENSION);
         }
 
-        private static readonly string DATA_CODEC = "DiskNormsData";
-        private static readonly string DATA_EXTENSION = "dnvd";
-        private static readonly string META_CODEC = "DiskNormsMetadata";
-        private static readonly string META_EXTENSION = "dnvm";
+        private const string DATA_CODEC = "DiskNormsData";
+        private const string DATA_EXTENSION = "dnvd";
+        private const string META_CODEC = "DiskNormsMetadata";
+        private const string META_EXTENSION = "dnvm";
     }
 }

@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs
     /// A utility class to write missing values for SORTED as if they were the empty string
     /// (to simulate pre-Lucene4.5 dv behavior for testing old codecs).
     /// </summary>
-    public class MissingOrdRemapper
+    public static class MissingOrdRemapper // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
         /// <summary>
         /// Insert an empty byte[] to the front of this enumerable.</summary>
@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs
 
         private class IterableAnonymousInnerClassHelper : IEnumerable<BytesRef>
         {
-            private IEnumerable<BytesRef> iterable;
+            private readonly IEnumerable<BytesRef> iterable;
 
             public IterableAnonymousInnerClassHelper(IEnumerable<BytesRef> iterable)
             {
@@ -56,11 +56,8 @@ namespace Lucene.Net.Codecs
 
             private class IteratorAnonymousInnerClassHelper : IEnumerator<BytesRef>
             {
-                private readonly IterableAnonymousInnerClassHelper outerInstance;
-
                 public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance)
                 {
-                    this.outerInstance = outerInstance;
                     seenEmpty = false;
                     @in = outerInstance.iterable.GetEnumerator();
                 }
@@ -108,7 +105,7 @@ namespace Lucene.Net.Codecs
 
         private class IterableAnonymousInnerClassHelper2 : IEnumerable<long?>
         {
-            private IEnumerable<long?> iterable;
+            private readonly IEnumerable<long?> iterable;
 
             public IterableAnonymousInnerClassHelper2(IEnumerable<long?> iterable)
             {
@@ -125,11 +122,8 @@ namespace Lucene.Net.Codecs
 
             private class IteratorAnonymousInnerClassHelper2 : IEnumerator<long?>
             {
-                private readonly IterableAnonymousInnerClassHelper2 outerInstance;
-
                 public IteratorAnonymousInnerClassHelper2(IterableAnonymousInnerClassHelper2 outerInstance)
                 {
-                    this.outerInstance = outerInstance;
                     @in = outerInstance.iterable.GetEnumerator();
                 }
 
@@ -171,7 +165,7 @@ namespace Lucene.Net.Codecs
 
         private class IterableAnonymousInnerClassHelper3 : IEnumerable<long?>
         {
-            private IEnumerable<long?> iterable;
+            private readonly IEnumerable<long?> iterable;
 
             public IterableAnonymousInnerClassHelper3(IEnumerable<long?> iterable)
             {
@@ -188,11 +182,8 @@ namespace Lucene.Net.Codecs
 
             private class IteratorAnonymousInnerClassHelper3 : IEnumerator<long?>
             {
-                private readonly IterableAnonymousInnerClassHelper3 outerInstance;
-
                 public IteratorAnonymousInnerClassHelper3(IterableAnonymousInnerClassHelper3 outerInstance)
                 {
-                    this.outerInstance = outerInstance;
                     @in = outerInstance.iterable.GetEnumerator();
                 }
 

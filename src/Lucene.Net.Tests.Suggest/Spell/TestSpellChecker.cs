@@ -101,162 +101,147 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestBuild()
         {
-            using (IndexReader r = DirectoryReader.Open(userindex))
-            {
-                spellChecker.ClearIndex();
+            using IndexReader r = DirectoryReader.Open(userindex);
+            spellChecker.ClearIndex();
 
-                Addwords(r, spellChecker, "field1");
-                int num_field1 = this.NumDoc();
+            Addwords(r, spellChecker, "field1");
+            int num_field1 = this.NumDoc();
 
-                Addwords(r, spellChecker, "field2");
-                int num_field2 = this.NumDoc();
+            Addwords(r, spellChecker, "field2");
+            int num_field2 = this.NumDoc();
 
-                assertEquals(num_field2, num_field1 + 1);
+            assertEquals(num_field2, num_field1 + 1);
 
-                AssertLastSearcherOpen(4);
+            AssertLastSearcherOpen(4);
 
-                CheckCommonSuggestions(r);
-                CheckLevenshteinSuggestions(r);
+            CheckCommonSuggestions(r);
+            CheckLevenshteinSuggestions(r);
 
-                spellChecker.StringDistance = (new JaroWinklerDistance());
-                spellChecker.Accuracy = (0.8f);
-                CheckCommonSuggestions(r);
-                CheckJaroWinklerSuggestions();
-                // the accuracy is set to 0.8 by default, but the best result has a score of 0.925
-                string[] similar = spellChecker.SuggestSimilar("fvie", 2, 0.93f);
-                assertTrue(similar.Length == 0);
-                similar = spellChecker.SuggestSimilar("fvie", 2, 0.92f);
-                assertTrue(similar.Length == 1);
+            spellChecker.StringDistance = (new JaroWinklerDistance());
+            spellChecker.Accuracy = (0.8f);
+            CheckCommonSuggestions(r);
+            CheckJaroWinklerSuggestions();
+            // the accuracy is set to 0.8 by default, but the best result has a score of 0.925
+            string[] similar = spellChecker.SuggestSimilar("fvie", 2, 0.93f);
+            assertTrue(similar.Length == 0);
+            similar = spellChecker.SuggestSimilar("fvie", 2, 0.92f);
+            assertTrue(similar.Length == 1);
 
-                similar = spellChecker.SuggestSimilar("fiv", 2);
-                assertTrue(similar.Length > 0);
-                assertEquals(similar[0], "five");
+            similar = spellChecker.SuggestSimilar("fiv", 2);
+            assertTrue(similar.Length > 0);
+            assertEquals(similar[0], "five");
 
-                spellChecker.StringDistance = (new NGramDistance(2));
-                spellChecker.Accuracy = (0.5f);
-                CheckCommonSuggestions(r);
-                CheckNGramSuggestions();
-
-            }
+            spellChecker.StringDistance = (new NGramDistance(2));
+            spellChecker.Accuracy = (0.5f);
+            CheckCommonSuggestions(r);
+            CheckNGramSuggestions();
         }
 
         [Test]
         public void TestComparer()
         {
-            using (Directory compIdx = NewDirectory())
+            using Directory compIdx = NewDirectory();
+            SpellChecker compareSP = new SpellCheckerMock(compIdx, new LevensteinDistance(), new SuggestWordFrequencyComparer());
+            try
             {
-                SpellChecker compareSP = new SpellCheckerMock(compIdx, new LevensteinDistance(), new SuggestWordFrequencyComparer());
-                try
-                {
-                    using (IndexReader r = DirectoryReader.Open(userindex))
-                    {
+                using IndexReader r = DirectoryReader.Open(userindex);
+                Addwords(r, compareSP, "field3");
 
-                        Addwords(r, compareSP, "field3");
-
-                        string[] similar = compareSP.SuggestSimilar("fvie", 2, r, "field3",
-                            SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
-                        assertTrue(similar.Length == 2);
-                        //five and fvei have the same score, but different frequencies.
-                        assertEquals("fvei", similar[0]);
-                        assertEquals("five", similar[1]);
-                    }
-                }
-                finally
-                {
-                    if (!compareSP.IsDisposed)
-                        compareSP.Dispose();
-                }
+                string[] similar = compareSP.SuggestSimilar("fvie", 2, r, "field3",
+                    SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
+                assertTrue(similar.Length == 2);
+                //five and fvei have the same score, but different frequencies.
+                assertEquals("fvei", similar[0]);
+                assertEquals("five", similar[1]);
+            }
+            finally
+            {
+                if (!compareSP.IsDisposed)
+                    compareSP.Dispose();
             }
         }
 
         [Test]
         public void TestBogusField()
         {
-            using (Directory compIdx = NewDirectory())
+            using Directory compIdx = NewDirectory();
+            SpellChecker compareSP = new SpellCheckerMock(compIdx, new LevensteinDistance(), new SuggestWordFrequencyComparer());
+            try
             {
-                SpellChecker compareSP = new SpellCheckerMock(compIdx, new LevensteinDistance(), new SuggestWordFrequencyComparer());
-                try
-                {
-                    using (IndexReader r = DirectoryReader.Open(userindex))
-                    {
+                using IndexReader r = DirectoryReader.Open(userindex);
+                Addwords(r, compareSP, "field3");
 
-                        Addwords(r, compareSP, "field3");
-
-                        string[] similar = compareSP.SuggestSimilar("fvie", 2, r,
-                            "bogusFieldBogusField", SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
-                        assertEquals(0, similar.Length);
-                    }
-                }
-                finally
-                {
-                    if (!compareSP.IsDisposed)
-                        compareSP.Dispose();
-                }
+                string[] similar = compareSP.SuggestSimilar("fvie", 2, r,
+                    "bogusFieldBogusField", SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
+                assertEquals(0, similar.Length);
+            }
+            finally
+            {
+                if (!compareSP.IsDisposed)
+                    compareSP.Dispose();
             }
         }
 
         [Test]
         public void TestSuggestModes()
         {
-            using (IndexReader r = DirectoryReader.Open(userindex))
+            using IndexReader r = DirectoryReader.Open(userindex);
+            spellChecker.ClearIndex();
+            Addwords(r, spellChecker, "field1");
+
+
             {
-                spellChecker.ClearIndex();
-                Addwords(r, spellChecker, "field1");
+                string[] similar = spellChecker.SuggestSimilar("eighty", 2, r, "field1",
+                    SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
+                assertEquals(1, similar.Length);
+                assertEquals("eighty", similar[0]);
+            }
 
 
-                {
-                    string[] similar = spellChecker.SuggestSimilar("eighty", 2, r, "field1",
-                        SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
-                    assertEquals(1, similar.Length);
-                    assertEquals("eighty", similar[0]);
-                }
+            {
+                string[] similar = spellChecker.SuggestSimilar("eight", 2, r, "field1",
+                    SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
+                assertEquals(1, similar.Length);
+                assertEquals("eight", similar[0]);
+            }
 
 
-                {
-                    string[] similar = spellChecker.SuggestSimilar("eight", 2, r, "field1",
-                        SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
-                    assertEquals(1, similar.Length);
-                    assertEquals("eight", similar[0]);
-                }
+            {
+                string[] similar = spellChecker.SuggestSimilar("eighty", 5, r, "field1",
+                    SuggestMode.SUGGEST_MORE_POPULAR);
+                assertEquals(5, similar.Length);
+                assertEquals("eight", similar[0]);
+            }
 
 
-                {
-                    string[] similar = spellChecker.SuggestSimilar("eighty", 5, r, "field1",
-                        SuggestMode.SUGGEST_MORE_POPULAR);
-                    assertEquals(5, similar.Length);
-                    assertEquals("eight", similar[0]);
-                }
+            {
+                string[] similar = spellChecker.SuggestSimilar("twenty", 5, r, "field1",
+                    SuggestMode.SUGGEST_MORE_POPULAR);
+                assertEquals(1, similar.Length);
+                assertEquals("twenty-one", similar[0]);
+            }
 
 
-                {
-                    string[] similar = spellChecker.SuggestSimilar("twenty", 5, r, "field1",
-                        SuggestMode.SUGGEST_MORE_POPULAR);
-                    assertEquals(1, similar.Length);
-                    assertEquals("twenty-one", similar[0]);
-                }
+            {
+                string[] similar = spellChecker.SuggestSimilar("eight", 5, r, "field1",
+                    SuggestMode.SUGGEST_MORE_POPULAR);
+                assertEquals(0, similar.Length);
+            }
 
 
-                {
-                    string[] similar = spellChecker.SuggestSimilar("eight", 5, r, "field1",
-                        SuggestMode.SUGGEST_MORE_POPULAR);
-                    assertEquals(0, similar.Length);
-                }
+            {
+                string[] similar = spellChecker.SuggestSimilar("eighty", 5, r, "field1",
+                    SuggestMode.SUGGEST_ALWAYS);
+                assertEquals(5, similar.Length);
+                assertEquals("eight", similar[0]);
+            }
 
 
-                {
-                    string[] similar = spellChecker.SuggestSimilar("eighty", 5, r, "field1",
-                        SuggestMode.SUGGEST_ALWAYS);
-                    assertEquals(5, similar.Length);
-                    assertEquals("eight", similar[0]);
-                }
-
-
-                {
-                    string[] similar = spellChecker.SuggestSimilar("eight", 5, r, "field1",
-                        SuggestMode.SUGGEST_ALWAYS);
-                    assertEquals(5, similar.Length);
-                    assertEquals("eighty", similar[0]);
-                }
+            {
+                string[] similar = spellChecker.SuggestSimilar("eight", 5, r, "field1",
+                    SuggestMode.SUGGEST_ALWAYS);
+                assertEquals(5, similar.Length);
+                assertEquals("eighty", similar[0]);
             }
         }
         private void CheckCommonSuggestions(IndexReader r)
@@ -391,74 +376,72 @@ namespace Lucene.Net.Search.Spell
         [Test]
         public void TestClose()
         {
-            using (IndexReader r = DirectoryReader.Open(userindex))
+            using IndexReader r = DirectoryReader.Open(userindex);
+            spellChecker.ClearIndex();
+            string field = "field1";
+            Addwords(r, spellChecker, "field1");
+            int num_field1 = this.NumDoc();
+            Addwords(r, spellChecker, "field2");
+            int num_field2 = this.NumDoc();
+            assertEquals(num_field2, num_field1 + 1);
+            CheckCommonSuggestions(r);
+            AssertLastSearcherOpen(4);
+            spellChecker.Dispose();
+            AssertSearchersClosed();
+            // LUCENENET NOTE: Per MSDN, calling Dispose() multiple times
+            // should be a safe operation. http://stackoverflow.com/a/5306896/181087
+            // Certainly, there shouldn't be a problem with calling Dispose() within
+            // a using block if you decide to free up resources early.
+            //try
+            //{
+            //    spellChecker.Dispose();
+            //    fail("spellchecker was already closed");
+            //}
+            //catch (ObjectDisposedException e)
+            //{
+            //    // expected
+            //}
+            try
+            {
+                CheckCommonSuggestions(r);
+                fail("spellchecker was already closed");
+            }
+            catch (ObjectDisposedException /*e*/)
+            {
+                // expected
+            }
+
+            try
             {
                 spellChecker.ClearIndex();
-                string field = "field1";
-                Addwords(r, spellChecker, "field1");
-                int num_field1 = this.NumDoc();
-                Addwords(r, spellChecker, "field2");
-                int num_field2 = this.NumDoc();
-                assertEquals(num_field2, num_field1 + 1);
-                CheckCommonSuggestions(r);
-                AssertLastSearcherOpen(4);
-                spellChecker.Dispose();
-                AssertSearchersClosed();
-                // LUCENENET NOTE: Per MSDN, calling Dispose() multiple times
-                // should be a safe operation. http://stackoverflow.com/a/5306896/181087
-                // Certainly, there shouldn't be a problem with calling Dispose() within
-                // a using block if you decide to free up resources early.
-                //try
-                //{
-                //    spellChecker.Dispose();
-                //    fail("spellchecker was already closed");
-                //}
-                //catch (ObjectDisposedException e)
-                //{
-                //    // expected
-                //}
-                try
-                {
-                    CheckCommonSuggestions(r);
-                    fail("spellchecker was already closed");
-                }
-                catch (ObjectDisposedException /*e*/)
-                {
-                    // expected
-                }
-
-                try
-                {
-                    spellChecker.ClearIndex();
-                    fail("spellchecker was already closed");
-                }
-                catch (ObjectDisposedException /*e*/)
-                {
-                    // expected
-                }
-
-                try
-                {
-                    spellChecker.IndexDictionary(new LuceneDictionary(r, field), NewIndexWriterConfig(TEST_VERSION_CURRENT, null), false);
-                    fail("spellchecker was already closed");
-                }
-                catch (ObjectDisposedException /*e*/)
-                {
-                    // expected
-                }
-
-                try
-                {
-                    spellChecker.SetSpellIndex(spellindex);
-                    fail("spellchecker was already closed");
-                }
-                catch (ObjectDisposedException /*e*/)
-                {
-                    // expected
-                }
-                assertEquals(4, searchers.Count);
-                AssertSearchersClosed();
+                fail("spellchecker was already closed");
             }
+            catch (ObjectDisposedException /*e*/)
+            {
+                // expected
+            }
+
+            try
+            {
+                spellChecker.IndexDictionary(new LuceneDictionary(r, field), NewIndexWriterConfig(TEST_VERSION_CURRENT, null), false);
+                fail("spellchecker was already closed");
+            }
+            catch (ObjectDisposedException /*e*/)
+            {
+                // expected
+            }
+
+            try
+            {
+                spellChecker.SetSpellIndex(spellindex);
+                fail("spellchecker was already closed");
+            }
+            catch (ObjectDisposedException /*e*/)
+            {
+                // expected
+            }
+            assertEquals(4, searchers.Count);
+            AssertSearchersClosed();
         }
 
         /*
@@ -469,58 +452,56 @@ namespace Lucene.Net.Search.Spell
         public void TestConcurrentAccess()
         {
             assertEquals(1, searchers.Count);
-            using (IndexReader r = DirectoryReader.Open(userindex))
+            using IndexReader r = DirectoryReader.Open(userindex);
+            spellChecker.ClearIndex();
+            assertEquals(2, searchers.Count);
+            Addwords(r, spellChecker, "field1");
+            assertEquals(3, searchers.Count);
+            int num_field1 = this.NumDoc();
+            Addwords(r, spellChecker, "field2");
+            assertEquals(4, searchers.Count);
+            int num_field2 = this.NumDoc();
+            assertEquals(num_field2, num_field1 + 1);
+            int numThreads = 5 + Random.nextInt(5);
+            SpellCheckWorker[] workers = new SpellCheckWorker[numThreads];
+            var stop = new AtomicBoolean(false);
+            for (int i = 0; i < numThreads; i++)
             {
-                spellChecker.ClearIndex();
-                assertEquals(2, searchers.Count);
-                Addwords(r, spellChecker, "field1");
-                assertEquals(3, searchers.Count);
-                int num_field1 = this.NumDoc();
-                Addwords(r, spellChecker, "field2");
-                assertEquals(4, searchers.Count);
-                int num_field2 = this.NumDoc();
-                assertEquals(num_field2, num_field1 + 1);
-                int numThreads = 5 + Random.nextInt(5);
-                SpellCheckWorker[] workers = new SpellCheckWorker[numThreads];
-                var stop = new AtomicBoolean(false);
-                for (int i = 0; i < numThreads; i++)
-                {
-                    SpellCheckWorker spellCheckWorker = new SpellCheckWorker(this, r, stop);
-                    workers[i] = spellCheckWorker;
-                    spellCheckWorker.Start();
-                }
-                int iterations = 5 + Random.nextInt(5);
-                for (int i = 0; i < iterations; i++)
-                {
-                    Thread.Sleep(100);
-                    // concurrently reset the spell index
-                    spellChecker.SetSpellIndex(this.spellindex);
-                    // for debug - prints the internal open searchers 
-                    // showSearchersOpen();
-                }
-
-                spellChecker.Dispose();
-                stop.Value = true;
-
-                // wait for 60 seconds - usually this is very fast but coverage runs could take quite long
-                //executor.awaitTermination(60L, TimeUnit.SECONDS);
-                foreach (SpellCheckWorker worker in workers)
-                {
-                    worker.Join((long)TimeSpan.FromSeconds(60).TotalMilliseconds);
-                }
-
-                for (int i = 0; i < workers.Length; i++)
-                {
-                    assertFalse(string.Format(CultureInfo.InvariantCulture, "worker thread {0} failed \n" + workers[i].Error, i), workers[i].Error != null);
-                    assertTrue(string.Format(CultureInfo.InvariantCulture, "worker thread {0} is still running but should be terminated", i), workers[i].terminated);
-                }
-                // 4 searchers more than iterations
-                // 1. at creation
-                // 2. clearIndex()
-                // 2. and 3. during addwords
-                assertEquals(iterations + 4, searchers.Count);
-                AssertSearchersClosed();
+                SpellCheckWorker spellCheckWorker = new SpellCheckWorker(this, r, stop);
+                workers[i] = spellCheckWorker;
+                spellCheckWorker.Start();
             }
+            int iterations = 5 + Random.nextInt(5);
+            for (int i = 0; i < iterations; i++)
+            {
+                Thread.Sleep(100);
+                // concurrently reset the spell index
+                spellChecker.SetSpellIndex(this.spellindex);
+                // for debug - prints the internal open searchers 
+                // showSearchersOpen();
+            }
+
+            spellChecker.Dispose();
+            stop.Value = true;
+
+            // wait for 60 seconds - usually this is very fast but coverage runs could take quite long
+            //executor.awaitTermination(60L, TimeUnit.SECONDS);
+            foreach (SpellCheckWorker worker in workers)
+            {
+                worker.Join((long)TimeSpan.FromSeconds(60).TotalMilliseconds);
+            }
+
+            for (int i = 0; i < workers.Length; i++)
+            {
+                assertFalse(string.Format(CultureInfo.InvariantCulture, "worker thread {0} failed \n" + workers[i].Error, i), workers[i].Error != null);
+                assertTrue(string.Format(CultureInfo.InvariantCulture, "worker thread {0} is still running but should be terminated", i), workers[i].terminated);
+            }
+            // 4 searchers more than iterations
+            // 1. at creation
+            // 2. clearIndex()
+            // 2. and 3. during addwords
+            assertEquals(iterations + 4, searchers.Count);
+            AssertSearchersClosed();
         }
 
         private void AssertLastSearcherOpen(int numSearchers)

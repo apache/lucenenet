@@ -135,14 +135,9 @@ namespace Lucene.Net.Search
 
         internal sealed class CutOffTermCollector : TermCollector
         {
-            private void InitializeInstanceFields()
-            {
-                pendingTerms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, array);
-            }
-
             internal CutOffTermCollector(int docCountCutoff, int termCountLimit)
             {
-                InitializeInstanceFields();
+                pendingTerms = new BytesRefHash(new ByteBlockPool(new ByteBlockPool.DirectAllocator()), 16, array);
                 this.docCountCutoff = docCountCutoff;
                 this.termCountLimit = termCountLimit;
             }

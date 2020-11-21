@@ -111,10 +111,8 @@ namespace Lucene.Net.Search.Spans
 
         public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
         {
-            TermContext termContext;
-            termContexts.TryGetValue(m_term, out termContext);
             TermState state;
-            if (termContext == null)
+            if (!termContexts.TryGetValue(m_term, out TermContext termContext) || termContext == null)
             {
                 // this happens with span-not query, as it doesn't include the NOT side in extractTerms()
                 // so we seek to the term now in this segment..., this sucks because its ugly mostly!

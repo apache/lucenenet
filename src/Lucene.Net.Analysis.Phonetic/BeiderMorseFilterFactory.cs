@@ -57,9 +57,9 @@ namespace Lucene.Net.Analysis.Phonetic
             // LanguageSet: defaults to automagic, otherwise a comma-separated list.
             ISet<string> langs = GetSet(args, "languageSet");
             languageSet = (null == langs || (1 == langs.Count && langs.Contains("auto"))) ? null : LanguageSet.From(langs);
-            if (!(args.Count == 0))
+            if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 

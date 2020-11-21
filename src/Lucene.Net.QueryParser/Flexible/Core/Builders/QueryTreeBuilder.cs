@@ -126,9 +126,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         {
             IQueryBuilder<TQuery> builder = null;
 
-            if (this.fieldNameBuilders != null && node is IFieldableNode)
+            if (this.fieldNameBuilders != null && node is IFieldableNode fieldableNode)
             {
-                string field = ((IFieldableNode)node).Field;
+                string field = fieldableNode.Field;
                 this.fieldNameBuilders.TryGetValue(field, out builder);
             }
 
@@ -160,7 +160,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
             return builder;
         }
 
-        private void ProcessNode(IQueryNode node, IQueryBuilder<TQuery> builder)
+        private static void ProcessNode(IQueryNode node, IQueryBuilder<TQuery> builder) // LUCENENET: CA1822: Mark members as static
         {
             if (builder == null)
             {
@@ -183,8 +183,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Builders
         {
             if (typeof(IQueryNode).IsAssignableFrom(clazz))
             {
-                IQueryBuilder<TQuery> result;
-                this.queryNodeBuilders.TryGetValue(clazz, out result);
+                this.queryNodeBuilders.TryGetValue(clazz, out IQueryBuilder<TQuery> result);
                 return result;
             }
 

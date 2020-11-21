@@ -1,4 +1,5 @@
 using J2N.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -31,6 +32,7 @@ namespace Lucene.Net.Util
     /// </summary>
     public abstract class IntroSorter : Sorter
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int CeilLog2(int n)
         {
             //8bits in a byte
@@ -39,7 +41,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Create a new <see cref="IntroSorter"/>. </summary>
-        public IntroSorter()
+        protected IntroSorter() // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
         }
 
@@ -53,6 +55,7 @@ namespace Lucene.Net.Util
             Quicksort(from, to, CeilLog2(to - from));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void Quicksort(int from, int to, int maxDepth)
         {
             if (to - from < THRESHOLD)

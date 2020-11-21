@@ -325,7 +325,7 @@ namespace Lucene.Net.Search.Spell
             string text = term.Text();
             if (minQueryLength > 0 && text.CodePointCount(0, text.Length) < minQueryLength)
             {
-                return new SuggestWord[0];
+                return Arrays.Empty<SuggestWord>();
             }
 
             if (lowerCaseTerms)
@@ -337,18 +337,18 @@ namespace Lucene.Net.Search.Spell
 
             if (suggestMode == SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX && docfreq > 0)
             {
-                return new SuggestWord[0];
+                return Arrays.Empty<SuggestWord>();
             }
 
             int maxDoc = ir.MaxDoc;
 
             if (maxQueryFrequency >= 1f && docfreq > maxQueryFrequency)
             {
-                return new SuggestWord[0];
+                return Arrays.Empty<SuggestWord>();
             }
             else if (docfreq > (int)Math.Ceiling(maxQueryFrequency * maxDoc))
             {
-                return new SuggestWord[0];
+                return Arrays.Empty<SuggestWord>();
             }
 
             if (suggestMode != SuggestMode.SUGGEST_MORE_POPULAR)
@@ -365,7 +365,7 @@ namespace Lucene.Net.Search.Spell
                 docfreq = Math.Max(docfreq, (int)(thresholdFrequency * maxDoc) - 1);
             }
 
-            ICollection<ScoreTerm> terms = null;
+            ICollection<ScoreTerm> terms; // LUCENENET: IDE0059: Remove unnecessary value assignment
             int inspections = numSug * maxInspections;
 
             // try ed=1 first, in case we get lucky

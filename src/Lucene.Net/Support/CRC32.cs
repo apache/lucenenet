@@ -25,14 +25,14 @@ namespace Lucene.Net.Support
 {
     internal class CRC32 : IChecksum
     {
-        private static readonly UInt32[] crcTable = InitializeCRCTable();
+        private static readonly uint[] crcTable = InitializeCRCTable();
 
-        private static UInt32[] InitializeCRCTable()
+        private static uint[] InitializeCRCTable()
         {
-            UInt32[] crcTable = new UInt32[256];
-            for (UInt32 n = 0; n < 256; n++)
+            uint[] crcTable = new uint[256];
+            for (uint n = 0; n < 256; n++)
             {
-                UInt32 c = n;
+                uint c = n;
                 for (int k = 8; --k >= 0; )
                 {
                     if ((c & 1) != 0)
@@ -45,7 +45,7 @@ namespace Lucene.Net.Support
             return crcTable;
         }
 
-        private UInt32 crc = 0;
+        private uint crc = 0;
 
         public long Value => crc & 0xffffffffL;
 
@@ -56,14 +56,14 @@ namespace Lucene.Net.Support
 
         public void Update(int bval)
         {
-            UInt32 c = ~crc;
+            uint c = ~crc;
             c = crcTable[(c ^ bval) & 0xff] ^ (c >> 8);
             crc = ~c;
         }
 
         public void Update(byte[] buf, int off, int len)
         {
-            UInt32 c = ~crc;
+            uint c = ~crc;
             while (--len >= 0)
                 c = crcTable[(c ^ buf[off++]) & 0xff] ^ (c >> 8);
             crc = ~c;

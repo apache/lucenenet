@@ -431,7 +431,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             foreach (BytesRef v in values)
             {
-                w.Add(valueToAddress[v == null ? new BytesRef() : v]);
+                w.Add(valueToAddress[v ?? new BytesRef()]);
             }
             w.Finish();
         }

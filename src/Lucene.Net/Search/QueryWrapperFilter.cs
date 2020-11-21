@@ -1,22 +1,23 @@
+using System;
+
 namespace Lucene.Net.Search
 {
-    using System;
     /*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
 
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IBits = Lucene.Net.Util.IBits;
@@ -40,11 +41,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public QueryWrapperFilter(Query query)
         {
-            if (query == null)
-            {
-                throw new NullReferenceException("Query may not be null");
-            }
-            this.query = query;
+            this.query = query ?? throw new ArgumentNullException(nameof(query), "Query may not be null");
         }
 
         /// <summary>
@@ -56,20 +53,17 @@ namespace Lucene.Net.Search
             // get a private context that is used to rewrite, createWeight and score eventually
             AtomicReaderContext privateContext = context.AtomicReader.AtomicContext;
             Weight weight = (new IndexSearcher(privateContext)).CreateNormalizedWeight(query);
-            return new DocIdSetAnonymousInnerClassHelper(this, acceptDocs, privateContext, weight);
+            return new DocIdSetAnonymousInnerClassHelper(acceptDocs, privateContext, weight);
         }
 
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {
-            private readonly QueryWrapperFilter outerInstance;
+            private readonly IBits acceptDocs;
+            private readonly AtomicReaderContext privateContext;
+            private readonly Weight weight;
 
-            private IBits acceptDocs;
-            private AtomicReaderContext privateContext;
-            private Lucene.Net.Search.Weight weight;
-
-            public DocIdSetAnonymousInnerClassHelper(QueryWrapperFilter outerInstance, IBits acceptDocs, AtomicReaderContext privateContext, Lucene.Net.Search.Weight weight)
+            public DocIdSetAnonymousInnerClassHelper(IBits acceptDocs, AtomicReaderContext privateContext, Weight weight)
             {
-                this.outerInstance = outerInstance;
                 this.acceptDocs = acceptDocs;
                 this.privateContext = privateContext;
                 this.weight = weight;

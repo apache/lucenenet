@@ -427,6 +427,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             {
                 return stdAnalyzer.CreateComponents(fieldName, reader);
             }
+
+            // LUCENENET specific
+            protected override void Dispose(bool disposing)
+            {
+                try
+                {
+                    if (disposing)
+                    {
+                        stdAnalyzer?.Dispose(); // LUCENENET specific - dispose stdAnalyzer and set to null
+                        stdAnalyzer = null;
+                    }
+                }
+                finally
+                {
+                    base.Dispose(disposing);
+                }
+            }
         }
     }
 }

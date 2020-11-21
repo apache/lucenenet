@@ -1,5 +1,5 @@
 # Apache YAML Features for Git Repositories
-# See the documentation at: https://cwiki.apache.org/confluence/display/INFRA/.asf.yaml+features+for+git+repositories
+# See the documentation at: https://cwiki.apache.org/confluence/display/INFRA/git+-+.asf.yaml+features
 
 github:
   description: "Apache Lucene.NET"
@@ -15,7 +15,6 @@ github:
     - index
     - query
     - apache
-    - hacktoberfest
     
   features:
     # Enable wiki for documentation
@@ -24,3 +23,7 @@ github:
     issues: true
     # Enable projects for project management boards
     projects: false
+
+    # Disallow forced pushes
+  protected_branches:
+    master

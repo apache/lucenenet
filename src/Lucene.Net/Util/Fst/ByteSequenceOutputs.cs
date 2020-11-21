@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -103,7 +104,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(inc.Length < output.Length, () => "inc.length=" + inc.Length + " vs output.length=" + output.Length);
+                    Debugging.Assert(inc.Length < output.Length, "inc.length={0} vs output.length={1}", inc.Length, output.Length);
                     Debugging.Assert(inc.Length > 0);
                 }
                 return new BytesRef(output.Bytes, output.Offset + inc.Length, output.Length - inc.Length);
@@ -162,6 +163,7 @@ namespace Lucene.Net.Util.Fst
 
         public override BytesRef NoOutput => NO_OUTPUT;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string OutputToString(BytesRef output)
         {
             return output.ToString();

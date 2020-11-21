@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -57,14 +58,7 @@ namespace Lucene.Net.Util
         public long[] Int64s
         {
             get => longs;
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
-                longs = value;
-            }
+            set => longs = value ?? throw new ArgumentNullException(nameof(value));
         }
         private long[] longs;
 
@@ -110,6 +104,7 @@ namespace Lucene.Net.Util
         /// object.
         /// </summary>
         /// <seealso cref="DeepCopyOf(Int64sRef)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object Clone()
         {
             return new Int64sRef(longs, Offset, Length);
@@ -127,15 +122,15 @@ namespace Lucene.Net.Util
             return result;
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object obj)
         {
-            if (other == null)
+            if (obj == null)
             {
                 return false;
             }
-            if (other is Int64sRef)
+            if (obj is Int64sRef other)
             {
-                return this.Int64sEquals((Int64sRef)other);
+                return Int64sEquals(other);
             }
             return false;
         }
@@ -253,6 +248,7 @@ namespace Lucene.Net.Util
         /// The returned <see cref="Int64sRef"/> will have a length of <c>other.Length</c>
         /// and an offset of zero.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Int64sRef DeepCopyOf(Int64sRef other)
         {
             Int64sRef clone = new Int64sRef();

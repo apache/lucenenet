@@ -2,7 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -98,8 +98,8 @@ namespace Lucene.Net.Util
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(length >= 0, () => "length=" + length);
-                    Debugging.Assert(length <= blockSize + 1, () => "length=" + length);
+                    Debugging.Assert(length >= 0,"length={0}", length);
+                    Debugging.Assert(length <= blockSize + 1,"length={0}", length);
                 }
                 b.Length = length;
                 if (length == 0)
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public PagedBytes(int blockBits)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(blockBits > 0 && blockBits <= 31, () => blockBits.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.AssertsEnabled) Debugging.Assert(blockBits > 0 && blockBits <= 31, "{0}", blockBits);
             this.blockSize = 1 << blockBits;
             this.blockBits = blockBits;
             blockMask = blockSize - 1;
@@ -281,6 +281,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Return approx RAM usage in bytes. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long RamBytesUsed()
         {
             return (blocks.Count + (currentBlock != null ? 1 : 0)) * bytesUsedPerBlock;
@@ -353,6 +354,7 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Returns the current byte position. </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public long GetPosition()
             {
                 return (long)currentBlockIndex * outerInstance.blockSize + currentBlockUpto;
@@ -402,6 +404,7 @@ namespace Lucene.Net.Util
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private void NextBlock()
             {
                 currentBlockIndex++;
@@ -479,6 +482,7 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Return the current byte position. </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public long GetPosition()
             {
                 return outerInstance.GetPointer();
@@ -504,6 +508,7 @@ namespace Lucene.Net.Util
         /// not call the other writing methods (eg, copy);
         /// results are undefined.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public PagedBytesDataOutput GetDataOutput()
         {
             if (frozen)

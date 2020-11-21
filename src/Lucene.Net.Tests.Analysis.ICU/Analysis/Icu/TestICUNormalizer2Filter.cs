@@ -74,18 +74,16 @@ namespace Lucene.Net.Analysis.Icu
         [Test]
         public void TestAlternate()
         {
-            using (Analyzer a = Analysis.Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            using Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new ICUNormalizer2Filter(
                     tokenizer,
                     /* specify nfc with decompose to get nfd */
                     Normalizer2.GetInstance(null, "nfc", Normalizer2Mode.Decompose)));
-            }))
-            {
-                // decompose EAcute into E + combining Acute
-                AssertAnalyzesTo(a, "\u00E9", new String[] { "\u0065\u0301" });
-            }
+            });
+            // decompose EAcute into E + combining Acute
+            AssertAnalyzesTo(a, "\u00E9", new String[] { "\u0065\u0301" });
         }
 
         /** blast some random strings through the analyzer */
@@ -98,14 +96,12 @@ namespace Lucene.Net.Analysis.Icu
         [Test]
         public void TestEmptyTerm()
         {
-            using (Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            using Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new ICUNormalizer2Filter(tokenizer));
-            }))
-            {
-                CheckOneTerm(a, "", "");
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

@@ -145,9 +145,9 @@ namespace Lucene.Net.Index
             // If any errors occured, throw it.
             if (th != null)
             {
-                if (th is Exception)
+                if (th is Exception e)
                 {
-                    throw (Exception)th;
+                    throw e;
                 }
                 // defensive code - we should not hit unchecked exceptions
                 throw new Exception(th.Message, th);

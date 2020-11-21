@@ -73,8 +73,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     analyzerName = typeof(Lucene.Net.Analysis.Standard.StandardAnalyzer).AssemblyQualifiedName;
                 }
                 // First, lookup analyzerName as a named analyzer factory
-                AnalyzerFactory factory;
-                if (RunData.AnalyzerFactories.TryGetValue(analyzerName, out factory) && null != factory)
+                if (RunData.AnalyzerFactories.TryGetValue(analyzerName, out AnalyzerFactory factory) && null != factory)
                 {
                     analyzer = factory.Create();
                 }

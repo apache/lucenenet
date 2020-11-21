@@ -56,11 +56,11 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Shuffled list of postings formats to use for new mappings </summary>
-        private IList<PostingsFormat> formats = new List<PostingsFormat>();
+        private readonly IList<PostingsFormat> formats = new List<PostingsFormat>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Shuffled list of docvalues formats to use for new mappings </summary>
-        private IList<DocValuesFormat> dvFormats = new List<DocValuesFormat>();
+        private readonly IList<DocValuesFormat> dvFormats = new List<DocValuesFormat>(); // LUCENENET: marked readonly
 
         /// <summary>
         /// unique set of format names this codec knows about </summary>
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
         // cause concurrentmodificationexception if indexwriter's infostream is on
         private readonly IDictionary<string, PostingsFormat> previousMappings = new ConcurrentDictionary<string, PostingsFormat>(StringComparer.Ordinal);
 
-        private IDictionary<string, DocValuesFormat> previousDVMappings = new ConcurrentDictionary<string, DocValuesFormat>(StringComparer.Ordinal);
+        private readonly IDictionary<string, DocValuesFormat> previousDVMappings = new ConcurrentDictionary<string, DocValuesFormat>(StringComparer.Ordinal); // LUCENENET: marked readonly
         private readonly int perFieldSeed;
 
         public override PostingsFormat GetPostingsFormatForField(string name)

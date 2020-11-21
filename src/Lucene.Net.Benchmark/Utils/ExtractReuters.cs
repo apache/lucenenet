@@ -28,8 +28,8 @@ namespace Lucene.Net.Benchmarks.Utils
     /// </summary>
     public class ExtractReuters
     {
-        private DirectoryInfo reutersDir;
-        private DirectoryInfo outputDir;
+        private readonly DirectoryInfo reutersDir; // LUCENENET: marked readonly
+        private readonly DirectoryInfo outputDir; // LUCENENET: marked readonly
         private static readonly string LINE_SEPARATOR = Environment.NewLine;
 
         public ExtractReuters(DirectoryInfo reutersDir, DirectoryInfo outputDir)
@@ -59,11 +59,11 @@ namespace Lucene.Net.Benchmarks.Utils
             }
         }
 
-        internal Regex EXTRACTION_PATTERN = new Regex("<TITLE>(.*?)</TITLE>|<DATE>(.*?)</DATE>|<BODY>(.*?)</BODY>", RegexOptions.Compiled);
+        internal static readonly Regex EXTRACTION_PATTERN = new Regex("<TITLE>(.*?)</TITLE>|<DATE>(.*?)</DATE>|<BODY>(.*?)</BODY>", RegexOptions.Compiled);
 
-        private static string[] META_CHARS = { "&", "<", ">", "\"", "'" };
+        private static readonly string[] META_CHARS = { "&", "<", ">", "\"", "'" };
 
-        private static string[] META_CHARS_SERIALIZATIONS = { "&amp;", "&lt;",
+        private static readonly string[] META_CHARS_SERIALIZATIONS = { "&amp;", "&lt;",
             "&gt;", "&quot;", "&apos;" };
 
         /// <summary>
@@ -73,58 +73,56 @@ namespace Lucene.Net.Benchmarks.Utils
         {
             try
             {
-                using (TextReader reader = new StreamReader(new FileStream(sgmFile.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8))
+                using TextReader reader = new StreamReader(new FileStream(sgmFile.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8);
+                StringBuilder buffer = new StringBuilder(1024);
+                StringBuilder outBuffer = new StringBuilder(1024);
+
+                string line = null;
+                int docNumber = 0;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    StringBuilder buffer = new StringBuilder(1024);
-                    StringBuilder outBuffer = new StringBuilder(1024);
+                    // when we see a closing reuters tag, flush the file
 
-                    string line = null;
-                    int docNumber = 0;
-                    while ((line = reader.ReadLine()) != null)
+                    if (line.IndexOf("</REUTERS", StringComparison.Ordinal) == -1)
                     {
-                        // when we see a closing reuters tag, flush the file
+                        // Replace the SGM escape sequences
 
-                        if (line.IndexOf("</REUTERS", StringComparison.Ordinal) == -1)
+                        buffer.Append(line).Append(' ');// accumulate the strings for now,
+                                                        // then apply regular expression to
+                                                        // get the pieces,
+                    }
+                    else
+                    {
+                        // Extract the relevant pieces and write to a file in the output dir
+                        Match matcher = EXTRACTION_PATTERN.Match(buffer.ToString());
+                        if (matcher.Success)
                         {
-                            // Replace the SGM escape sequences
-
-                            buffer.Append(line).Append(' ');// accumulate the strings for now,
-                                                            // then apply regular expression to
-                                                            // get the pieces,
-                        }
-                        else
-                        {
-                            // Extract the relevant pieces and write to a file in the output dir
-                            Match matcher = EXTRACTION_PATTERN.Match(buffer.ToString());
-                            if (matcher.Success)
+                            do
                             {
-                                do
+                                for (int i = 1; i <= matcher.Groups.Count; i++)
                                 {
-                                    for (int i = 1; i <= matcher.Groups.Count; i++)
+                                    if (matcher.Groups[i] != null)
                                     {
-                                        if (matcher.Groups[i] != null)
-                                        {
-                                            outBuffer.Append(matcher.Groups[i].Value);
-                                        }
+                                        outBuffer.Append(matcher.Groups[i].Value);
                                     }
-                                    outBuffer.Append(LINE_SEPARATOR).Append(LINE_SEPARATOR);
-                                } while ((matcher = matcher.NextMatch()).Success);
-                            }
-
-                            string @out = outBuffer.ToString();
-                            for (int i = 0; i < META_CHARS_SERIALIZATIONS.Length; i++)
-                            {
-                                @out = @out.Replace(META_CHARS_SERIALIZATIONS[i], META_CHARS[i]);
-                            }
-                            string outFile = System.IO.Path.Combine(outputDir.FullName, sgmFile.Name + "-"
-                                + (docNumber++) + ".txt");
-                            // System.out.println("Writing " + outFile);
-                            StreamWriter writer = new StreamWriter(new FileStream(outFile, FileMode.Create, FileAccess.Write), Encoding.UTF8);
-                            writer.Write(@out);
-                            writer.Dispose();
-                            outBuffer.Length = 0;
-                            buffer.Length = 0;
+                                }
+                                outBuffer.Append(LINE_SEPARATOR).Append(LINE_SEPARATOR);
+                            } while ((matcher = matcher.NextMatch()).Success);
                         }
+
+                        string @out = outBuffer.ToString();
+                        for (int i = 0; i < META_CHARS_SERIALIZATIONS.Length; i++)
+                        {
+                            @out = @out.Replace(META_CHARS_SERIALIZATIONS[i], META_CHARS[i]);
+                        }
+                        string outFile = System.IO.Path.Combine(outputDir.FullName, sgmFile.Name + "-"
+                            + (docNumber++) + ".txt");
+                        // System.out.println("Writing " + outFile);
+                        StreamWriter writer = new StreamWriter(new FileStream(outFile, FileMode.Create, FileAccess.Write), Encoding.UTF8);
+                        writer.Write(@out);
+                        writer.Dispose();
+                        outBuffer.Length = 0;
+                        buffer.Length = 0;
                     }
                 }
             }

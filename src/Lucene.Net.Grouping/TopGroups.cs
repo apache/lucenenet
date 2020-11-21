@@ -93,13 +93,8 @@ namespace Lucene.Net.Search.Grouping
     /// LUCENENET specific class used to nest types to mimic the syntax used 
     /// by Lucene (that is, without specifying the generic closing type of <see cref="TopGroups{TGroupValue}"/>)
     /// </summary>
-    public class TopGroups
+    public static class TopGroups // LUCENENET specific: CA1052 Static holder types should be Static or NotInheritable
     {
-        /// <summary>
-        /// Prevent direct creation
-        /// </summary>
-        private TopGroups() { }
-
         /// <summary>
         /// How the GroupDocs score (if any) should be merged. </summary>
         public enum ScoreMergeMode
@@ -228,7 +223,7 @@ namespace Lucene.Net.Search.Grouping
                 }
                 else if (docOffset >= mergedTopDocs.ScoreDocs.Length)
                 {
-                    mergedScoreDocs = new ScoreDoc[0];
+                    mergedScoreDocs = Arrays.Empty<ScoreDoc>();
                 }
                 else
                 {
@@ -266,11 +261,11 @@ namespace Lucene.Net.Search.Grouping
 
             if (totalGroupCount != null)
             {
-                var result = new TopGroups<T>(groupSort.GetSort(), docSort == null ? null : docSort.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
+                var result = new TopGroups<T>(groupSort.GetSort(), docSort?.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
                 return new TopGroups<T>(result, totalGroupCount);
             }
 
-            return new TopGroups<T>(groupSort.GetSort(), docSort == null ? null : docSort.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
+            return new TopGroups<T>(groupSort.GetSort(), docSort?.GetSort(), totalHitCount, totalGroupedHitCount, mergedGroupDocs, totalMaxScore);
         }
     }
 
@@ -295,14 +290,17 @@ namespace Lucene.Net.Search.Grouping
 
         /// <summary>
         /// Group results in groupSort order </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         IGroupDocs<TGroupValue>[] Groups { get; }
 
         /// <summary>
         /// How groups are sorted against each other </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         SortField[] GroupSort { get; }
 
         /// <summary>
         /// How docs are sorted within each group </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "Lucene's design requires some array properties")]
         SortField[] WithinGroupSort { get; }
 
         /// <summary>

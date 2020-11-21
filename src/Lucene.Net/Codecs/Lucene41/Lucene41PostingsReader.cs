@@ -4,7 +4,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -34,12 +34,14 @@ namespace Lucene.Net.Codecs.Lucene41
     /// <seealso cref="Lucene41SkipReader"/>
     public sealed class Lucene41PostingsReader : PostingsReaderBase
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly IndexInput docIn;
         private readonly IndexInput posIn;
         private readonly IndexInput payIn;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         private readonly ForUtil forUtil;
-        private int version;
+        private readonly int version; // LUCENENET: marked readonly
 
         // public static boolean DEBUG = false;
 
@@ -83,6 +85,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Init(IndexInput termsIn)
         {
             // Make sure we are talking to the matching postings writer
@@ -126,11 +129,13 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override BlockTermState NewTermState()
         {
             return new Lucene41PostingsWriter.Int32BlockTermState();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -140,8 +145,9 @@ namespace Lucene.Net.Codecs.Lucene41
         public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState termState, bool absolute)
         {
             Lucene41PostingsWriter.Int32BlockTermState termState2 = (Lucene41PostingsWriter.Int32BlockTermState)termState;
-            bool fieldHasPositions = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-            bool fieldHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            bool fieldHasPositions = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            bool fieldHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool fieldHasPayloads = fieldInfo.HasPayloads;
 
             if (absolute)
@@ -195,8 +201,9 @@ namespace Lucene.Net.Codecs.Lucene41
 
         private void DecodeTerm(DataInput @in, FieldInfo fieldInfo, Lucene41PostingsWriter.Int32BlockTermState termState)
         {
-            bool fieldHasPositions = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-            bool fieldHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            bool fieldHasPositions = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            bool fieldHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool fieldHasPayloads = fieldInfo.HasPayloads;
             if (termState.DocFreq == 1)
             {
@@ -233,21 +240,12 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
-            BlockDocsEnum docsEnum;
-            if (reuse is BlockDocsEnum)
-            {
-                docsEnum = (BlockDocsEnum)reuse;
-                if (!docsEnum.CanReuse(docIn, fieldInfo))
-                {
-                    docsEnum = new BlockDocsEnum(this, fieldInfo);
-                }
-            }
-            else
-            {
+            if (reuse is null || !(reuse is BlockDocsEnum docsEnum) || !docsEnum.CanReuse(docIn, fieldInfo))
                 docsEnum = new BlockDocsEnum(this, fieldInfo);
-            }
+
             return docsEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState, flags);
         }
 
@@ -255,41 +253,22 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
-            bool indexHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            bool indexHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool indexHasPayloads = fieldInfo.HasPayloads;
 
             if ((!indexHasOffsets || (flags & DocsAndPositionsFlags.OFFSETS) == 0) && (!indexHasPayloads || (flags & DocsAndPositionsFlags.PAYLOADS) == 0))
             {
-                BlockDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse is BlockDocsAndPositionsEnum)
-                {
-                    docsAndPositionsEnum = (BlockDocsAndPositionsEnum)reuse;
-                    if (!docsAndPositionsEnum.CanReuse(docIn, fieldInfo))
-                    {
-                        docsAndPositionsEnum = new BlockDocsAndPositionsEnum(this, fieldInfo);
-                    }
-                }
-                else
-                {
+                if (reuse is null || !(reuse is BlockDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(docIn, fieldInfo))
                     docsAndPositionsEnum = new BlockDocsAndPositionsEnum(this, fieldInfo);
-                }
+
                 return docsAndPositionsEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState);
             }
             else
             {
-                EverythingEnum everythingEnum;
-                if (reuse is EverythingEnum)
-                {
-                    everythingEnum = (EverythingEnum)reuse;
-                    if (!everythingEnum.CanReuse(docIn, fieldInfo))
-                    {
-                        everythingEnum = new EverythingEnum(this, fieldInfo);
-                    }
-                }
-                else
-                {
+                if (reuse is null || !(reuse is EverythingEnum everythingEnum) || !everythingEnum.CanReuse(docIn, fieldInfo))
                     everythingEnum = new EverythingEnum(this, fieldInfo);
-                }
+
                 return everythingEnum.Reset(liveDocs, (Lucene41PostingsWriter.Int32BlockTermState)termState, flags);
             }
         }
@@ -345,18 +324,21 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.outerInstance = outerInstance;
                 this.startDocIn = outerInstance.docIn;
                 this.docIn = null;
-                indexHasFreq = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-                indexHasPos = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-                indexHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                indexHasFreq = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
+                indexHasPos = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                indexHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 indexHasPayloads = fieldInfo.HasPayloads;
                 encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
                 return docIn == startDocIn && 
-                    indexHasFreq == (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0) && 
-                    indexHasPos == (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0) && 
+                    indexHasFreq == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0) && 
+                    indexHasPos == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0) && 
                     indexHasPayloads == fieldInfo.HasPayloads;
             }
 
@@ -528,7 +510,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer());
                         // }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0, () => "got " + newDocUpto);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0,"got {0}", newDocUpto);
                         docUpto = newDocUpto;
 
                         // Force to read next block
@@ -589,6 +571,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return docFreq;
@@ -667,14 +650,16 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.docIn = null;
                 this.posIn = (IndexInput)outerInstance.posIn.Clone();
                 encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
-                indexHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                indexHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 indexHasPayloads = fieldInfo.HasPayloads;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
                 return docIn == startDocIn && 
-                    indexHasOffsets == (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) 
+                    indexHasOffsets == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) 
                     && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
@@ -894,7 +879,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         //   System.out.println("    skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer() + " pos.fp=" + skipper.getPosPointer() + " pos.bufferUpto=" + skipper.getPosBufferUpto());
                         // }
 
-                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0, () => "got " + newDocUpto);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0,"got {0}", newDocUpto);
                         docUpto = newDocUpto;
 
                         // Force to read next block
@@ -1037,11 +1022,13 @@ namespace Lucene.Net.Codecs.Lucene41
 
             public override int EndOffset => -1;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override BytesRef GetPayload()
             {
                 return null;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return docFreq;
@@ -1143,7 +1130,8 @@ namespace Lucene.Net.Codecs.Lucene41
                 this.posIn = (IndexInput)outerInstance.posIn.Clone();
                 this.payIn = (IndexInput)outerInstance.payIn.Clone();
                 encoded = new byte[ForUtil.MAX_ENCODED_SIZE];
-                indexHasOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                indexHasOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 if (indexHasOffsets)
                 {
                     offsetStartDeltaBuffer = new int[ForUtil.MAX_DATA_SIZE];
@@ -1172,10 +1160,12 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool CanReuse(IndexInput docIn, FieldInfo fieldInfo)
             {
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
                 return docIn == startDocIn && 
-                    indexHasOffsets == (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) && 
+                    indexHasOffsets == (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0) && 
                     indexHasPayloads == fieldInfo.HasPayloads;
             }
 
@@ -1468,7 +1458,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("    skipper moved to docUpto=" + newDocUpto + " vs current=" + docUpto + "; docID=" + skipper.getDoc() + " fp=" + skipper.getDocPointer() + " pos.fp=" + skipper.getPosPointer() + " pos.bufferUpto=" + skipper.getPosBufferUpto() + " pay.fp=" + skipper.getPayPointer() + " lastStartOffset=" + lastStartOffset);
                         // }
-                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0, () => "got " + newDocUpto);
+                        if (Debugging.AssertsEnabled) Debugging.Assert(newDocUpto % Lucene41PostingsFormat.BLOCK_SIZE == 0,"got {0}", newDocUpto);
                         docUpto = newDocUpto;
 
                         // Force to read next block
@@ -1675,6 +1665,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             public override int EndOffset => endOffset;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override BytesRef GetPayload()
             {
                 // if (DEBUG) {
@@ -1690,12 +1681,14 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long GetCost()
             {
                 return docFreq;
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long RamBytesUsed()
         {
             return 0;

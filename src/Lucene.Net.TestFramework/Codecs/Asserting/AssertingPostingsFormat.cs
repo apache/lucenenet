@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Asserting
             private AssertingPostingsConsumer lastPostingsConsumer = null;
             private long sumTotalTermFreq = 0;
             private long sumDocFreq = 0;
-            private OpenBitSet visitedDocs = new OpenBitSet();
+            private readonly OpenBitSet visitedDocs = new OpenBitSet(); // LUCENENET: marked readonly
 
             internal AssertingTermsConsumer(TermsConsumer @in, FieldInfo fieldInfo)
             {
@@ -274,7 +274,8 @@ namespace Lucene.Net.Codecs.Asserting
             {
                 if (Debugging.AssertsEnabled) Debugging.Assert(state == PostingsConsumerState.START);
                 state = PostingsConsumerState.INITIAL;
-                if (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                if (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
                     if (Debugging.AssertsEnabled) Debugging.Assert(positionCount == 0); // we should not have fed any positions!
                 }

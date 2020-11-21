@@ -36,18 +36,18 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
         /// First Chinese Character in GB2312 (15 * 94)
         /// Characters in GB2312 are arranged in a grid of 94 * 94, 0-14 are unassigned or punctuation.
         /// </summary>
-        public static readonly int GB2312_FIRST_CHAR = 1410;
+        public const int GB2312_FIRST_CHAR = 1410;
 
         /// <summary>
         /// Last Chinese Character in GB2312 (87 * 94). 
         /// Characters in GB2312 are arranged in a grid of 94 * 94, 88-94 are unassigned.
         /// </summary>
-        public static readonly int GB2312_CHAR_NUM = 87 * 94;
+        public const int GB2312_CHAR_NUM = 87 * 94;
 
         /// <summary>
         /// Dictionary data contains 6768 Chinese characters with frequency statistics.
         /// </summary>
-        public static readonly int CHAR_NUM_IN_FILE = 6768;
+        public const int CHAR_NUM_IN_FILE = 6768;
 
         // =====================================================
         // code +0 +1 +2 +3 +4 +5 +6 +7 +8 +9 +A +B +C +D +E +F

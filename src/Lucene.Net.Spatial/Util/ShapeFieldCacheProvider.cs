@@ -45,7 +45,7 @@ namespace Lucene.Net.Spatial.Util
         protected internal readonly int m_defaultSize;
         protected internal readonly string m_shapeField;
 
-        public ShapeFieldCacheProvider(string shapeField, int defaultSize)
+        protected ShapeFieldCacheProvider(string shapeField, int defaultSize) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             // it may be a List<T> or T
             this.m_shapeField = shapeField;

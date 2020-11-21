@@ -50,9 +50,9 @@ namespace Lucene.Net.Util.Automaton
                     new RegExp(regexp, RegExpSyntax.NONE);
                     return regexp;
                 }
-#pragma warning disable 168
+#pragma warning disable 168, IDE0059
                 catch (Exception e)
-#pragma warning restore 168
+#pragma warning restore 168, IDE0059
                 {
                 }
             }
@@ -191,7 +191,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            if (Debugging.AssertsEnabled) Debugging.Assert(code >= t.Min && code <= t.Max && (code < UnicodeUtil.UNI_SUR_HIGH_START || code > UnicodeUtil.UNI_SUR_LOW_END), () => "code=" + code + " min=" + t.Min + " max=" + t.Max);
+            if (Debugging.AssertsEnabled) Debugging.Assert(code >= t.Min && code <= t.Max && (code < UnicodeUtil.UNI_SUR_HIGH_START || code > UnicodeUtil.UNI_SUR_LOW_END), "code={0} min={1} max={2}", code, t.Min, t.Max);
             return code;
         }
 
@@ -399,7 +399,7 @@ namespace Lucene.Net.Util.Automaton
         {
             int numStates = a.GetNumberOfStates();
             a.ClearNumberedStates(); // force recomputation of cached numbered states
-            if (Debugging.AssertsEnabled) Debugging.Assert(numStates == a.GetNumberOfStates(), () => "automaton has " + (numStates - a.GetNumberOfStates()) + " detached states");
+            if (Debugging.AssertsEnabled) Debugging.Assert(numStates == a.GetNumberOfStates(), "automaton has {0} detached states", numStates - a.GetNumberOfStates());
         }
     }
 

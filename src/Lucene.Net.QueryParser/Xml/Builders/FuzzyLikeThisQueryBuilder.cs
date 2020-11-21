@@ -27,12 +27,12 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
     /// </summary>
     public class FuzzyLikeThisQueryBuilder : IQueryBuilder
     {
-        private static readonly int DEFAULT_MAX_NUM_TERMS = 50;
+        private const int DEFAULT_MAX_NUM_TERMS = 50;
 #pragma warning disable 612, 618
-        private static readonly float DEFAULT_MIN_SIMILARITY = SlowFuzzyQuery.defaultMinSimilarity;
+        private const float DEFAULT_MIN_SIMILARITY = SlowFuzzyQuery.defaultMinSimilarity;
 #pragma warning restore 612, 618
-        private static readonly int DEFAULT_PREFIX_LENGTH = 1;
-        private static readonly bool DEFAULT_IGNORE_TF = false;
+        private const int DEFAULT_PREFIX_LENGTH = 1;
+        private const bool DEFAULT_IGNORE_TF = false;
 
         private readonly Analyzer analyzer;
 

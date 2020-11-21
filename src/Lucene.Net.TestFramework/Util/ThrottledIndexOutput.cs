@@ -30,12 +30,12 @@ namespace Lucene.Net.Util
     {
         public const int DEFAULT_MIN_WRITTEN_BYTES = 1024;
         private readonly int bytesPerSecond;
-        private IndexOutput @delegate;
-        private long flushDelayMillis;
-        private long closeDelayMillis;
-        private long seekDelayMillis;
+        private readonly IndexOutput @delegate; // LUCENENET: marked readonly
+        private readonly long flushDelayMillis; // LUCENENET: marked readonly
+        private readonly long closeDelayMillis; // LUCENENET: marked readonly
+        private readonly long seekDelayMillis; // LUCENENET: marked readonly
         private long pendingBytes;
-        private long minBytesWritten;
+        private readonly long minBytesWritten; // LUCENENET: marked readonly
         private long timeElapsed;
         private readonly byte[] bytes = new byte[1];
 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Util
                 }
                 finally
                 {
-                    @delegate.Dispose();
+                    @delegate?.Dispose(); // LUCENENET specific - only call if non-null
                 }
             }
         }

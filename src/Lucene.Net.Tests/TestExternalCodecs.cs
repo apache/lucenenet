@@ -80,75 +80,71 @@ namespace Lucene.Net
                 Console.WriteLine("TEST: NUM_DOCS=" + NUM_DOCS);
             }
 
-            using (BaseDirectoryWrapper dir = NewDirectory())
+            using BaseDirectoryWrapper dir = NewDirectory();
+            dir.CheckIndexOnDispose = false; // we use a custom codec provider
+            using IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(new CustomPerFieldCodec()).SetMergePolicy(NewLogMergePolicy(3)));
+            Documents.Document doc = new Documents.Document();
+            // uses default codec:
+            doc.Add(NewTextField("field1", "this field uses the standard codec as the test", Field.Store.NO));
+            // uses pulsing codec:
+            Field field2 = NewTextField("field2", "this field uses the pulsing codec as the test", Field.Store.NO);
+            doc.Add(field2);
+
+            Field idField = NewStringField("id", "", Field.Store.NO);
+
+            doc.Add(idField);
+            for (int i = 0; i < NUM_DOCS; i++)
             {
-                dir.CheckIndexOnDispose = false; // we use a custom codec provider
-                using (IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetCodec(new CustomPerFieldCodec()).SetMergePolicy(NewLogMergePolicy(3))))
+                idField.SetStringValue("" + i);
+                w.AddDocument(doc);
+                if ((i + 1) % 10 == 0)
                 {
-                    Documents.Document doc = new Documents.Document();
-                    // uses default codec:
-                    doc.Add(NewTextField("field1", "this field uses the standard codec as the test", Field.Store.NO));
-                    // uses pulsing codec:
-                    Field field2 = NewTextField("field2", "this field uses the pulsing codec as the test", Field.Store.NO);
-                    doc.Add(field2);
+                    w.Commit();
+                }
+            }
+            if (Verbose)
+            {
+                Console.WriteLine("TEST: now delete id=77");
+            }
+            w.DeleteDocuments(new Term("id", "77"));
 
-                    Field idField = NewStringField("id", "", Field.Store.NO);
+            using (IndexReader r = DirectoryReader.Open(w, true))
+            {
+                Assert.AreEqual(NUM_DOCS - 1, r.NumDocs);
+                IndexSearcher s = NewSearcher(r);
+                Assert.AreEqual(NUM_DOCS - 1, s.Search(new TermQuery(new Term("field1", "standard")), 1).TotalHits);
+                Assert.AreEqual(NUM_DOCS - 1, s.Search(new TermQuery(new Term("field2", "pulsing")), 1).TotalHits);
+            }
 
-                    doc.Add(idField);
-                    for (int i = 0; i < NUM_DOCS; i++)
-                    {
-                        idField.SetStringValue("" + i);
-                        w.AddDocument(doc);
-                        if ((i + 1) % 10 == 0)
-                        {
-                            w.Commit();
-                        }
-                    }
-                    if (Verbose)
-                    {
-                        Console.WriteLine("TEST: now delete id=77");
-                    }
-                    w.DeleteDocuments(new Term("id", "77"));
+            if (Verbose)
+            {
+                Console.WriteLine("\nTEST: now delete 2nd doc");
+            }
+            w.DeleteDocuments(new Term("id", "44"));
 
-                    using (IndexReader r = DirectoryReader.Open(w, true))
-                    {
-                        Assert.AreEqual(NUM_DOCS - 1, r.NumDocs);
-                        IndexSearcher s = NewSearcher(r);
-                        Assert.AreEqual(NUM_DOCS - 1, s.Search(new TermQuery(new Term("field1", "standard")), 1).TotalHits);
-                        Assert.AreEqual(NUM_DOCS - 1, s.Search(new TermQuery(new Term("field2", "pulsing")), 1).TotalHits);
-                    }
+            if (Verbose)
+            {
+                Console.WriteLine("\nTEST: now force merge");
+            }
+            w.ForceMerge(1);
+            if (Verbose)
+            {
+                Console.WriteLine("\nTEST: now open reader");
+            }
+            using (IndexReader r = DirectoryReader.Open(w, true))
+            {
+                Assert.AreEqual(NUM_DOCS - 2, r.MaxDoc);
+                Assert.AreEqual(NUM_DOCS - 2, r.NumDocs);
+                IndexSearcher s = NewSearcher(r);
+                Assert.AreEqual(NUM_DOCS - 2, s.Search(new TermQuery(new Term("field1", "standard")), 1).TotalHits);
+                Assert.AreEqual(NUM_DOCS - 2, s.Search(new TermQuery(new Term("field2", "pulsing")), 1).TotalHits);
+                Assert.AreEqual(1, s.Search(new TermQuery(new Term("id", "76")), 1).TotalHits);
+                Assert.AreEqual(0, s.Search(new TermQuery(new Term("id", "77")), 1).TotalHits);
+                Assert.AreEqual(0, s.Search(new TermQuery(new Term("id", "44")), 1).TotalHits);
 
-                    if (Verbose)
-                    {
-                        Console.WriteLine("\nTEST: now delete 2nd doc");
-                    }
-                    w.DeleteDocuments(new Term("id", "44"));
-
-                    if (Verbose)
-                    {
-                        Console.WriteLine("\nTEST: now force merge");
-                    }
-                    w.ForceMerge(1);
-                    if (Verbose)
-                    {
-                        Console.WriteLine("\nTEST: now open reader");
-                    }
-                    using (IndexReader r = DirectoryReader.Open(w, true))
-                    {
-                        Assert.AreEqual(NUM_DOCS - 2, r.MaxDoc);
-                        Assert.AreEqual(NUM_DOCS - 2, r.NumDocs);
-                        IndexSearcher s = NewSearcher(r);
-                        Assert.AreEqual(NUM_DOCS - 2, s.Search(new TermQuery(new Term("field1", "standard")), 1).TotalHits);
-                        Assert.AreEqual(NUM_DOCS - 2, s.Search(new TermQuery(new Term("field2", "pulsing")), 1).TotalHits);
-                        Assert.AreEqual(1, s.Search(new TermQuery(new Term("id", "76")), 1).TotalHits);
-                        Assert.AreEqual(0, s.Search(new TermQuery(new Term("id", "77")), 1).TotalHits);
-                        Assert.AreEqual(0, s.Search(new TermQuery(new Term("id", "44")), 1).TotalHits);
-
-                        if (Verbose)
-                        {
-                            Console.WriteLine("\nTEST: now close NRT reader");
-                        }
-                    }
+                if (Verbose)
+                {
+                    Console.WriteLine("\nTEST: now close NRT reader");
                 }
             }
         }

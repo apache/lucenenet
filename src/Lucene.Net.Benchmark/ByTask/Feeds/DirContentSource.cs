@@ -82,7 +82,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             /* this seems silly ... there must be a better way ...
                not that this is good, but can it matter? */
 
-            private Comparer c = new Comparer();
+            private readonly Comparer c = new Comparer(); // LUCENENET: marked readonly
 
             private FileInfo current;
 
@@ -151,8 +151,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
         private DateTime? ParseDate(string dateStr)
         {
-            DateTime temp;
-            if (DateTime.TryParseExact(dateStr, "dd-MMM-yyyy hh:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out temp))
+            if (DateTime.TryParseExact(dateStr, "dd-MMM-yyyy hh:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime temp))
             {
                 return temp;
             }
@@ -164,10 +163,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             return null;
         }
 
+        /// <summary>
+        /// Releases resources used by the <see cref="DirContentSource"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
+                inputFiles?.Dispose(); // LUCENENET specific - dispose inputFiles
                 inputFiles = null;
             }
         }

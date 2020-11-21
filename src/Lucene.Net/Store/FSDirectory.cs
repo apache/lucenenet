@@ -210,10 +210,9 @@ namespace Lucene.Net.Store
 
             // for filesystem based LockFactory, delete the lockPrefix, if the locks are placed
             // in index dir. If no index dir is given, set ourselves
-            if (lockFactory is FSLockFactory)
+            if (lockFactory is FSLockFactory lf)
             {
-                FSLockFactory lf = (FSLockFactory)lockFactory;
-                DirectoryInfo dir = lf.LockDir;
+                var dir = lf.LockDir;
                 // if the lock factory has no lockDir set, use the this directory as lockDir
                 if (dir == null)
                 {
@@ -477,7 +476,9 @@ namespace Lucene.Net.Store
 
             private readonly FSDirectory parent;
             internal readonly string name;
+#pragma warning disable CA2213 // Disposable fields should be disposed
             private readonly FileStream file;
+#pragma warning restore CA2213 // Disposable fields should be disposed
             private volatile bool isOpen; // remember if the file is open, so that we don't try to close it more than once
             private readonly CRC32 crc = new CRC32();
 

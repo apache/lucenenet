@@ -44,10 +44,10 @@ namespace Lucene.Net.Search
 
     public class TermRangeQuery : MultiTermQuery
     {
-        private BytesRef lowerTerm;
-        private BytesRef upperTerm;
-        private bool includeLower;
-        private bool includeUpper;
+        private readonly BytesRef lowerTerm; // LUCENENET: marked readonly
+        private readonly BytesRef upperTerm; // LUCENENET: marked readonly
+        private readonly bool includeLower; // LUCENENET: marked readonly
+        private readonly bool includeUpper; // LUCENENET: marked readonly
 
         /// <summary>
         /// Constructs a query selecting all terms greater/equal than <paramref name="lowerTerm"/>

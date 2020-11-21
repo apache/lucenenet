@@ -108,8 +108,8 @@ namespace Lucene.Net.Codecs.Memory
             private readonly FieldInfo field;
             private readonly Builder<BytesRef> builder;
             private readonly ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
-            private readonly bool doPackFST;
-            private readonly float acceptableOverheadRatio;
+            //private readonly bool doPackFST; // LUCENENET: Never read
+            //private readonly float acceptableOverheadRatio; // LUCENENET: Never read
             private int termCount;
 
             public TermsWriter(IndexOutput @out, FieldInfo field, bool doPackFST, float acceptableOverheadRatio)
@@ -118,8 +118,8 @@ namespace Lucene.Net.Codecs.Memory
 
                 this.@out = @out;
                 this.field = field;
-                this.doPackFST = doPackFST;
-                this.acceptableOverheadRatio = acceptableOverheadRatio;
+                //this.doPackFST = doPackFST; // LUCENENET: Never read
+                //this.acceptableOverheadRatio = acceptableOverheadRatio; // LUCENENET: Never read
                 builder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, doPackFST, acceptableOverheadRatio, true, 15);
             }
 
@@ -200,7 +200,8 @@ namespace Lucene.Net.Codecs.Memory
                         buffer.WriteVInt32(delta);
                     }
 
-                    if (outerInstance.field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+                    // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                    if (IndexOptionsComparer.Default.Compare(outerInstance.field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                     {
                         // don't use startOffset - lastEndOffset, because this creates lots of negative vints for synonyms,
                         // and the numbers aren't that much smaller anyways.
@@ -309,7 +310,7 @@ namespace Lucene.Net.Codecs.Memory
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
         }
 
-        private static string EXTENSION = "ram";
+        private const string EXTENSION = "ram"; // LUCENENET specific - made into const
         private const string CODEC_NAME = "MemoryPostings";
         private const int VERSION_START = 0;
         private const int VERSION_CURRENT = VERSION_START;
@@ -340,7 +341,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             private readonly MemoryPostingsFormat outerInstance;
 
-            private IndexOutput @out;
+            private readonly IndexOutput @out;
 
             public FieldsConsumerAnonymousInnerClassHelper(MemoryPostingsFormat outerInstance, IndexOutput @out)
             {
@@ -377,7 +378,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly IndexOptions indexOptions;
             private readonly bool storePayloads;
             private byte[] buffer = new byte[16];
-            private ByteArrayDataInput @in;
+            private readonly ByteArrayDataInput @in; // LUCENENET: marked readonly
 
             private IBits liveDocs;
             private int docUpto;
@@ -523,7 +524,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             private readonly bool storePayloads;
             private byte[] buffer = new byte[16];
-            private ByteArrayDataInput @in;
+            private readonly ByteArrayDataInput @in; // LUCENENET: marked readonly
 
             private IBits liveDocs;
             private int docUpto;
@@ -734,7 +735,7 @@ namespace Lucene.Net.Codecs.Memory
             private int docFreq;
             private long totalTermFreq;
             private BytesRefFSTEnum.InputOutput<BytesRef> current;
-            private BytesRef postingsSpare = new BytesRef();
+            private readonly BytesRef postingsSpare = new BytesRef(); // LUCENENET: marked readonly
 
             public FSTTermsEnum(FieldInfo field, FST<BytesRef> fst)
             {
@@ -806,44 +807,25 @@ namespace Lucene.Net.Codecs.Memory
             public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 DecodeMetaData();
-                FSTDocsEnum docsEnum;
 
-                if (reuse == null || !(reuse is FSTDocsEnum))
-                {
+                if (reuse is null || !(reuse is FSTDocsEnum docsEnum) || !docsEnum.CanReuse(field.IndexOptions, field.HasPayloads))
                     docsEnum = new FSTDocsEnum(field.IndexOptions, field.HasPayloads);
-                }
-                else
-                {
-                    docsEnum = (FSTDocsEnum)reuse;
-                    if (!docsEnum.CanReuse(field.IndexOptions, field.HasPayloads))
-                    {
-                        docsEnum = new FSTDocsEnum(field.IndexOptions, field.HasPayloads);
-                    }
-                }
+
                 return docsEnum.Reset(this.postingsSpare, liveDocs, docFreq);
             }
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-                bool hasOffsets = field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-                if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                bool hasOffsets = IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                if (IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
                     return null;
                 }
                 DecodeMetaData();
-                FSTDocsAndPositionsEnum docsAndPositionsEnum;
-                if (reuse == null || !(reuse is FSTDocsAndPositionsEnum))
-                {
+                if (reuse is null || !(reuse is FSTDocsAndPositionsEnum docsAndPositionsEnum) || !docsAndPositionsEnum.CanReuse(field.HasPayloads, hasOffsets))
                     docsAndPositionsEnum = new FSTDocsAndPositionsEnum(field.HasPayloads, hasOffsets);
-                }
-                else
-                {
-                    docsAndPositionsEnum = (FSTDocsAndPositionsEnum)reuse;
-                    if (!docsAndPositionsEnum.CanReuse(field.HasPayloads, hasOffsets))
-                    {
-                        docsAndPositionsEnum = new FSTDocsAndPositionsEnum(field.HasPayloads, hasOffsets);
-                    }
-                }
+
                 //System.out.println("D&P reset this=" + this);
                 return docsAndPositionsEnum.Reset(postingsSpare, liveDocs, docFreq);
             }
@@ -948,11 +930,12 @@ namespace Lucene.Net.Codecs.Memory
 
             public override IComparer<BytesRef> Comparer => BytesRef.UTF8SortedAsUnicodeComparer;
 
-            public override bool HasFreqs => field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            public override bool HasFreqs => IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
 
-            public override bool HasOffsets => field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            public override bool HasOffsets => IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
-            public override bool HasPositions => field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            public override bool HasPositions => IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
             public override bool HasPayloads => field.HasPayloads;
 
@@ -1011,8 +994,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override Terms GetTerms(string field)
             {
-                TermsReader result;
-                _fields.TryGetValue(field, out result);
+                _fields.TryGetValue(field, out TermsReader result);
                 return result;
             }
 

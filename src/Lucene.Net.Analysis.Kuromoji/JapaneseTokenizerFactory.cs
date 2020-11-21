@@ -43,13 +43,13 @@ namespace Lucene.Net.Analysis.Ja
     /// </summary>
     public class JapaneseTokenizerFactory : TokenizerFactory, IResourceLoaderAware
     {
-        private static readonly string MODE = "mode";
+        private const string MODE = "mode";
 
-        private static readonly string USER_DICT_PATH = "userDictionary";
+        private const string USER_DICT_PATH = "userDictionary";
 
-        private static readonly string USER_DICT_ENCODING = "userDictionaryEncoding";
+        private const string USER_DICT_ENCODING = "userDictionaryEncoding";
 
-        private static readonly string DISCARD_PUNCTUATION = "discardPunctuation"; // Expert option
+        private const string DISCARD_PUNCTUATION = "discardPunctuation"; // Expert option
 
         private UserDictionary userDictionary;
 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Ja
             discardPunctuation = GetBoolean(args, DISCARD_PUNCTUATION, true);
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 

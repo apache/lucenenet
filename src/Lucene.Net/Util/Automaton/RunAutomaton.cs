@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 /*
@@ -108,6 +109,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns acceptance status for given state.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsAccept(int state)
         {
             return m_accept[state];
@@ -122,6 +124,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns array of codepoint class interval start points. The array should
         /// not be modified by the caller.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int[] GetCharIntervals()
         {
             return (int[])(Array)_points.Clone();
@@ -130,6 +133,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Gets character class of given codepoint.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal int GetCharClass(int c)
         {
             return SpecialOperations.FindIndex(c, _points);

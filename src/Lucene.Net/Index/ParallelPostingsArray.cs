@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
 
     internal class ParallelPostingsArray
     {
-        internal static readonly int BYTES_PER_POSTING = 3 * RamUsageEstimator.NUM_BYTES_INT32;
+        internal const int BYTES_PER_POSTING = 3 * RamUsageEstimator.NUM_BYTES_INT32;
 
         internal readonly int size;
         internal readonly int[] textStarts;

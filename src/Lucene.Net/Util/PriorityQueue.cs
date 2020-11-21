@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -145,6 +146,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <returns> The sentinel object to use to pre-populate the queue, or <c>null</c> if
         ///         sentinel objects are not supported. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual T GetSentinelObject()
         {
             return default;
@@ -260,6 +262,7 @@ namespace Lucene.Net.Util
         /// </code>
         /// </summary>
         /// <returns> The new 'top' element. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T UpdateTop()
         {
             DownHeap();
@@ -274,6 +277,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Removes all entries from the <see cref="PriorityQueue{T}"/>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
             for (int i = 0; i <= size; i++)

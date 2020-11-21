@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 using JCG = J2N.Collections.Generic;
 
 namespace Lucene.Net.Util
@@ -113,21 +113,25 @@ namespace Lucene.Net.Util
             return types;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool IsInvokableSubclassOf<T>(Type type)
         {
             return typeof(T).IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SPIClassIterator<S> Get()
         {
             return new SPIClassIterator<S>();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IEnumerator<Type> GetEnumerator()
         {
             return types.GetEnumerator();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

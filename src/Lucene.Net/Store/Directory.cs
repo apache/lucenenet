@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -246,25 +247,17 @@ namespace Lucene.Net.Store
         public virtual IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
-            return new IndexInputSlicerAnonymousInnerClassHelper(this, name, context);
+            return new IndexInputSlicerAnonymousInnerClassHelper(OpenInput(name, context));
         }
 
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
-            private readonly Directory outerInstance;
-
-            private string name;
-            private IOContext context;
-
-            public IndexInputSlicerAnonymousInnerClassHelper(Directory outerInstance, string name, IOContext context)
-            {
-                this.outerInstance = outerInstance;
-                this.name = name;
-                this.context = context;
-                @base = outerInstance.OpenInput(name, context);
-            }
-
             private readonly IndexInput @base;
+
+            public IndexInputSlicerAnonymousInnerClassHelper(IndexInput @base)
+            {
+                this.@base = @base;
+            }
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
@@ -391,6 +384,24 @@ namespace Lucene.Net.Store
             }
 
             public override long Length => length;
+        }
+
+        // LUCENENET specific - formatter to defer building the string of directory contents in string.Format().
+        // This struct is meant to wrap a directory parameter when passed as a string.Format() argument.
+        internal struct ListAllFormatter // For assert/test/debug
+        {
+#pragma warning disable IDE0044 // Add readonly modifier
+            private Directory directory;
+#pragma warning restore IDE0044 // Add readonly modifier
+            public ListAllFormatter(Directory directory)
+            {
+                this.directory = directory ?? throw new ArgumentNullException(nameof(directory));
+            }
+
+            public override string ToString()
+            {
+                return Arrays.ToString(directory.ListAll());
+            }
         }
     }
 }

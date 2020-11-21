@@ -68,7 +68,8 @@ namespace Lucene.Net.Analysis
 
         public override bool Equals(object other)
         {
-            return (other is CheckClearAttributesAttribute && ((CheckClearAttributesAttribute)other).clearCalled == this.clearCalled);
+            return other is CheckClearAttributesAttribute checkClearAttributesAttribute
+                && checkClearAttributesAttribute.clearCalled == this.clearCalled;
         }
 
         public override int GetHashCode()
@@ -420,7 +421,9 @@ namespace Lucene.Net.Analysis
             }
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         public static void AssertTokenStreamContents(TokenStream ts, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, int? finalOffset, bool[] keywordAtts, bool offsetsAreCorrect)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             AssertTokenStreamContents(ts, output, startOffsets, endOffsets, types, posIncrements, posLengths, finalOffset, null, null, offsetsAreCorrect, null);
         }
@@ -1123,9 +1126,9 @@ namespace Lucene.Net.Analysis
                         }
                         // Throw an errant exception from the Reader:
 
-                        MockReaderWrapper evilReader = new MockReaderWrapper(random, new StringReader(text));
+                        using MockReaderWrapper evilReader = new MockReaderWrapper(random, new StringReader(text));
                         evilReader.ThrowExcAfterChar(random.Next(text.Length)); // LUCENENET note, Next() is exclusive, so we don't need +1
-                        reader = evilReader;
+                        //reader = evilReader; // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                         try
                         {
@@ -1282,12 +1285,10 @@ namespace Lucene.Net.Analysis
 
         protected internal virtual void ToDotFile(Analyzer a, string inputText, string localFileName)
         {
-            using (StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), Encoding.UTF8))
-            {
-                TokenStream ts = a.GetTokenStream("field", new StringReader(inputText));
-                ts.Reset();
-                (new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();    
-            }
+            using StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), Encoding.UTF8);
+            TokenStream ts = a.GetTokenStream("field", new StringReader(inputText));
+            ts.Reset();
+            (new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();
         }
 
         [ExceptionToNetNumericConvention] // LUCENENET: Private API, keeping as-is

@@ -41,13 +41,13 @@ namespace Lucene.Net.Documents
     /// </summary>
     public static class DateTools
     {
-        private static readonly string YEAR_FORMAT = "yyyy";
-        private static readonly string MONTH_FORMAT = "yyyyMM";
-        private static readonly string DAY_FORMAT = "yyyyMMdd";
-        private static readonly string HOUR_FORMAT = "yyyyMMddHH";
-        private static readonly string MINUTE_FORMAT = "yyyyMMddHHmm";
-        private static readonly string SECOND_FORMAT = "yyyyMMddHHmmss";
-        private static readonly string MILLISECOND_FORMAT = "yyyyMMddHHmmssfff";
+        private const string YEAR_FORMAT = "yyyy";
+        private const string MONTH_FORMAT = "yyyyMM";
+        private const string DAY_FORMAT = "yyyyMMdd";
+        private const string HOUR_FORMAT = "yyyyMMddHH";
+        private const string MINUTE_FORMAT = "yyyyMMddHHmm";
+        private const string SECOND_FORMAT = "yyyyMMddHHmmss";
+        private const string MILLISECOND_FORMAT = "yyyyMMddHHmmssfff";
 
         // LUCENENET - not used
         //private static readonly System.Globalization.Calendar calInstance = new System.Globalization.GregorianCalendar();

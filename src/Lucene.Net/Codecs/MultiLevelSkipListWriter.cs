@@ -1,6 +1,6 @@
 using Lucene.Net.Diagnostics;
-using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
 {
@@ -61,11 +61,11 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// The skip interval in the list with level = 0. </summary>
-        private int skipInterval;
+        private readonly int skipInterval; // LUCENENET: marked readonly
 
         /// <summary>
         /// SkipInterval used for level &gt; 0. </summary>
-        private int skipMultiplier;
+        private readonly int skipMultiplier; // LUCENENET: marked readonly
 
         /// <summary>
         /// For every skip level a different buffer is used. </summary>
@@ -107,6 +107,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Allocates internal skip buffers. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void Init()
         {
             skipBuffer = new RAMOutputStream[m_numberOfSkipLevels];
@@ -118,6 +119,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Creates new buffers or empties the existing ones. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void ResetSkip()
         {
             if (skipBuffer == null)

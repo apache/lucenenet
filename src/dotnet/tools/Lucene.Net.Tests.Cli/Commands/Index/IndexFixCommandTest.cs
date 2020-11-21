@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Attributes;
 using Lucene.Net.Cli.CommandLine;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace Lucene.Net.Cli.Commands
             {
                 new Arg[] {
                     new Arg(inputPattern: "", output: new string[] { "-fix" }),
-                    new Arg(inputPattern: "--dry-run", output: new string[0]),
+                    new Arg(inputPattern: "--dry-run", output: Arrays.Empty<string>()),
                 },
                 new Arg[] { new Arg(inputPattern: "-c|--cross-check-term-vectors", output: new string[] { "-crossCheckTermVectors" }) },
                 new Arg[] { new Arg(inputPattern: "-v|--verbose", output: new string[] { "-verbose" }) },
@@ -77,7 +78,7 @@ namespace Lucene.Net.Cli.Commands
                     string command = string.Join(" ", requiredArg.Select(x => x.InputPattern).Union(optionalArg.Select(x => x.InputPattern).ToArray()));
                     string[] expected = requiredArg.SelectMany(x => x.Output)
                         // Special case: the -fix option must be specified when --dry-run is not
-                        .Concat(command.Contains("--dry-run") ? new string[0] : new string[] { "-fix" })
+                        .Concat(command.Contains("--dry-run") ? Arrays.Empty<string>() : new string[] { "-fix" })
                         .Union(optionalArg.SelectMany(x => x.Output)).ToArray();
                     AssertCommandTranslation(command, expected);
                 }

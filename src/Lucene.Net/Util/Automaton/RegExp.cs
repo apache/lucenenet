@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using JCG = J2N.Collections.Generic;
 
@@ -462,6 +463,7 @@ namespace Lucene.Net.Util.Automaton
         /// Constructs new <see cref="Automaton"/> from this <see cref="RegExp"/>. Same
         /// as <c>ToAutomaton(null)</c> (empty automaton map).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton ToAutomaton()
         {
             return ToAutomatonAllowMutate(null, null);
@@ -475,6 +477,7 @@ namespace Lucene.Net.Util.Automaton
         /// <param name="automaton_provider"> Provider of automata for named identifiers. </param>
         /// <exception cref="ArgumentException"> If this regular expression uses a named
         ///              identifier that is not available from the automaton provider. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton ToAutomaton(IAutomatonProvider automaton_provider)
         {
             return ToAutomatonAllowMutate(null, automaton_provider);
@@ -489,6 +492,7 @@ namespace Lucene.Net.Util.Automaton
         ///          <see cref="Automaton"/>). </param>
         /// <exception cref="ArgumentException"> If this regular expression uses a named
         ///              identifier that does not occur in the automaton map. </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual Automaton ToAutomaton(IDictionary<string, Automaton> automata)
         {
             return ToAutomatonAllowMutate(automata, null);
@@ -501,6 +505,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         /// <param name="flag"> If <c>true</c>, the flag is set </param>
         /// <returns> Previous value of the flag. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool SetAllowMutate(bool flag)
         {
             bool b = allow_mutation;
@@ -651,6 +656,7 @@ namespace Lucene.Net.Util.Automaton
             return ToStringBuilder(new StringBuilder()).ToString();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual StringBuilder ToStringBuilder(StringBuilder b)
         {
             switch (kind)
@@ -769,6 +775,7 @@ namespace Lucene.Net.Util.Automaton
             return set;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual void GetIdentifiers(ISet<string> set)
         {
             switch (kind)
@@ -797,6 +804,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeUnion(RegExp exp1, RegExp exp2)
         {
             return new RegExp
@@ -807,6 +815,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeConcatenation(RegExp exp1, RegExp exp2)
         {
             if ((exp1.kind == Kind.REGEXP_CHAR || exp1.kind == Kind.REGEXP_STRING) && (exp2.kind == Kind.REGEXP_CHAR || exp2.kind == Kind.REGEXP_STRING))
@@ -835,6 +844,7 @@ namespace Lucene.Net.Util.Automaton
             return r;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static RegExp MakeString(RegExp exp1, RegExp exp2)
         {
             StringBuilder b = new StringBuilder();
@@ -857,6 +867,7 @@ namespace Lucene.Net.Util.Automaton
             return MakeString(b.ToString());
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeIntersection(RegExp exp1, RegExp exp2)
         {
             return new RegExp
@@ -867,6 +878,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeOptional(RegExp exp)
         {
             return new RegExp
@@ -876,6 +888,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeRepeat(RegExp exp)
         {
             return new RegExp
@@ -885,6 +898,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeRepeat(RegExp exp, int min)
         {
             return new RegExp
@@ -895,6 +909,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeRepeat(RegExp exp, int min, int max)
         {
             return new RegExp
@@ -906,6 +921,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeComplement(RegExp exp)
         {
             return new RegExp
@@ -915,6 +931,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeChar(int c)
         {
             return new RegExp
@@ -924,6 +941,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeCharRange(int from, int to)
         {
             if (from > to)
@@ -938,6 +956,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeAnyChar()
         {
             return new RegExp
@@ -946,6 +965,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeEmpty()
         {
             return new RegExp
@@ -963,6 +983,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeAnyString()
         {
             return new RegExp
@@ -971,6 +992,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeAutomaton(string s)
         {
             return new RegExp
@@ -980,6 +1002,7 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static RegExp MakeInterval(int min, int max, int digits)
         {
             return new RegExp
@@ -991,11 +1014,13 @@ namespace Lucene.Net.Util.Automaton
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool Peek(string s)
         {
             return More() && s.IndexOf(b.CodePointAt(pos)) != -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool Match(int c)
         {
             if (pos >= b.Length)
@@ -1010,11 +1035,13 @@ namespace Lucene.Net.Util.Automaton
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool More()
         {
             return pos < b.Length;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int Next()
         {
             if (!More())
@@ -1026,11 +1053,13 @@ namespace Lucene.Net.Util.Automaton
             return ch;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool Check(RegExpSyntax flag)
         {
             return (flags & flag) != 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal RegExp ParseUnionExp()
         {
             RegExp e = ParseInterExp();
@@ -1041,6 +1070,7 @@ namespace Lucene.Net.Util.Automaton
             return e;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal RegExp ParseInterExp()
         {
             RegExp e = ParseConcatExp();
@@ -1051,6 +1081,7 @@ namespace Lucene.Net.Util.Automaton
             return e;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal RegExp ParseConcatExp()
         {
             RegExp e = ParseRepeatExp();
@@ -1061,6 +1092,7 @@ namespace Lucene.Net.Util.Automaton
             return e;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal RegExp ParseRepeatExp()
         {
             RegExp e = ParseComplExp();
@@ -1124,6 +1156,7 @@ namespace Lucene.Net.Util.Automaton
             return e;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal RegExp ParseComplExp()
         {
             if (Check(RegExpSyntax.COMPLEMENT) && Match('~'))
@@ -1136,6 +1169,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal RegExp ParseCharClassExp()
         {
             if (Match('['))
@@ -1162,6 +1196,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal RegExp ParseCharClasses()
         {
             RegExp e = ParseCharClass();
@@ -1172,6 +1207,7 @@ namespace Lucene.Net.Util.Automaton
             return e;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal RegExp ParseCharClass()
         {
             int c = ParseCharExp();
@@ -1185,6 +1221,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal RegExp ParseSimpleExp()
         {
             if (Match('.'))
@@ -1293,6 +1330,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal int ParseCharExp()
         {
             Match('\\');

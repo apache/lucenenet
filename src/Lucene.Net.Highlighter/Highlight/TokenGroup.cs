@@ -27,7 +27,7 @@ namespace Lucene.Net.Search.Highlight
     /// </summary>
     public class TokenGroup
     {
-        private static readonly int MAX_NUM_TOKENS_PER_GROUP = 50;
+        private const int MAX_NUM_TOKENS_PER_GROUP = 50;
 
         internal Token[] tokens = new Token[MAX_NUM_TOKENS_PER_GROUP];
         internal float[] scores = new float[MAX_NUM_TOKENS_PER_GROUP];
@@ -55,8 +55,8 @@ namespace Lucene.Net.Search.Highlight
         /// </summary>
         public virtual float TotalScore { get; private set; }
 
-        private IOffsetAttribute offsetAtt;
-        private ICharTermAttribute termAtt;
+        private readonly IOffsetAttribute offsetAtt; // LUCENENET: marked readonly
+        private readonly ICharTermAttribute termAtt; // LUCENENET: marked readonly
 
         public TokenGroup(TokenStream tokenStream)
         {

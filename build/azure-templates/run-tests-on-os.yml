@@ -61,6 +61,13 @@ steps:
 
 - powershell: | 
     Get-ChildItem -Path $(System.DefaultWorkingDirectory)
+
+- task: UseDotNet@2
+  displayName: 'Use .NET sdk 5.0.100'
+  inputs:
+    version: 5.0.100
+  condition: and(succeeded(), contains('${{ parameters.framework }}', 'net5.'))
+
 - task: UseDotNet@2
   displayName: 'Use .NET Core sdk 3.1.301'
   inputs:
@@ -92,12 +99,12 @@ steps:
     
     # Convert $framework (i.e. net461) into format for dotnet vstest (i.e. .NETFramework,Version=4.6.1)
     function ConvertFrameworkName([string]$framework) {
-        $match = [regex]::Match($framework, '^net(\d+)$') # .NET Framework
+        $match = [regex]::Match($framework, '^net(4\d+)$') # .NET Framework 4+
         if ($match.Success) {
             $ver = SeparateVersionDigits($match.Groups[1].Value)
             return ".NETFramework,Version=v$($ver)"
         }
-        $match = [regex]::Match($framework, '^netcoreapp(\d+\.\d+(?:\.\d+)?)$') # .NET Core
+        $match = [regex]::Match($framework, '^net(?:coreapp)?(\d+\.\d+(?:\.\d+)?)$') # .NET 5 / .NET Core
         if ($match.Success) {
             $ver = $match.Groups[1].Value
             return ".NETCoreApp,Version=v$($ver)"
@@ -115,7 +122,7 @@ steps:
         if ($IsWindows -eq $null) {
             $IsWindows = $env:OS.StartsWith('Win')
         }
-        if (!$IsWindows -and !$framework.StartsWith('netcoreapp')) {
+        if (!$IsWindows -and $framework.StartsWith('net4')) {
             return $false
         }
         return $true

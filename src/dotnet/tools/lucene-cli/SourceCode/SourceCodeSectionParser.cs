@@ -76,6 +76,7 @@ namespace Lucene.Net.Cli.SourceCode
     {
         public static readonly Encoding ENCODING = Encoding.UTF8;
 
+
         /// <summary>
         /// Parses the source code from the <paramref name="input"/> and places the
         /// valid lines (the lines that are not commented with a token,
@@ -84,16 +85,15 @@ namespace Lucene.Net.Cli.SourceCode
         /// </summary>
         /// <param name="input">A stream with the input data. This stream will still be open when the call completes.</param>
         /// <param name="output">A stream where the output data will be sent. This stream will still be open when the call completes.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Instance method allows swapping implementation at some point")]
         public void ParseSourceCodeFiles(Stream input, Stream output)
         {
-            using (var reader = new SourceCodeSectionReader(new StreamReader(input, ENCODING, false, 1024, true)))
-            using (TextWriter writer = new StreamWriter(output, ENCODING, 1024, true))
+            using var reader = new SourceCodeSectionReader(new StreamReader(input, ENCODING, false, 1024, true));
+            using TextWriter writer = new StreamWriter(output, ENCODING, 1024, true);
+            string line;
+            while ((line = reader.ReadLine()) != null)
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    writer.WriteLine(line);
-                }
+                writer.WriteLine(line);
             }
         }
     }

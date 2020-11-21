@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Util
@@ -164,6 +165,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="priorException">  <c>null</c> or an exception that will be rethrown after method completion. </param>
         /// <param name="objects">         Objects to call <see cref="IDisposable.Dispose()"/> on. </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void DisposeWhileHandlingException(Exception priorException, params IDisposable[] objects)
         {
             Exception th = null;
@@ -200,6 +202,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
         /// <seealso cref="DisposeWhileHandlingException(Exception, IDisposable[])"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void DisposeWhileHandlingException(Exception priorException, IEnumerable<IDisposable> objects) 
         {
             Exception th = null;
@@ -242,6 +245,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="objects">
         ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Dispose(params IDisposable[] objects) 
         {
             Exception th = null;
@@ -271,6 +275,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Disposes all given <see cref="IDisposable"/>s. </summary>
         /// <seealso cref="Dispose(IDisposable[])"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Dispose(IEnumerable<IDisposable> objects)
         {
             Exception th = null;
@@ -303,6 +308,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="objects">
         ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void DisposeWhileHandlingException(params IDisposable[] objects) 
         {
             foreach (var o in objects)
@@ -324,6 +330,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
         /// <seealso cref="DisposeWhileHandlingException(IDisposable[])"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void DisposeWhileHandlingException(IEnumerable<IDisposable> objects)
         {
             foreach (IDisposable @object in objects)
@@ -352,6 +359,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="exception"> this exception should get the suppressed one added </param>
         /// <param name="suppressed"> the suppressed exception </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void AddSuppressed(Exception exception, Exception suppressed)
         {
             if (exception != null && suppressed != null)
@@ -372,6 +380,7 @@ namespace Lucene.Net.Util
         /// <param name="stream"> The stream to wrap in a reader </param>
         /// <param name="charSet"> The expected charset </param>
         /// <returns> A wrapping reader </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TextReader GetDecodingReader(Stream stream, Encoding charSet)
         {
             return new StreamReader(stream, charSet);

@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -56,6 +57,7 @@ namespace Lucene.Net.Util
                 _len = len;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool Get(int index)
             {
                 return true;
@@ -76,6 +78,7 @@ namespace Lucene.Net.Util
                 _len = len;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool Get(int index)
             {
                 return false;

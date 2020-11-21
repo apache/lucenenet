@@ -432,6 +432,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> <c>true</c> if the type contains <see cref="SUBWORD_DELIM"/>, <c>false</c> otherwise </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Obsolete class, anyway")]
         private static bool IsSubwordDelim(int type)
         {
             return (type & SUBWORD_DELIM) != 0;
@@ -442,6 +443,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="type"> Word type to check </param>
         /// <returns> <c>true</c> if the type contains <see cref="UPPER"/>, <c>false</c> otherwise </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Obsolete class, anyway")]
         private static bool IsUpper(int type)
         {
             return (type & UPPER) != 0;

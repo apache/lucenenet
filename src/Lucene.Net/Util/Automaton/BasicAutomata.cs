@@ -2,6 +2,7 @@ using J2N;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 /*
@@ -57,6 +58,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns a new (deterministic) automaton that accepts only the empty string.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Automaton MakeEmptyString()
         {
             return new Automaton
@@ -83,6 +85,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns a new (deterministic) automaton that accepts any single codepoint.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Automaton MakeAnyChar()
         {
             return MakeCharRange(Character.MinCodePoint, Character.MaxCodePoint);
@@ -92,6 +95,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns a new (deterministic) automaton that accepts a single codepoint of
         /// the given value.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Automaton MakeChar(int c)
         {
             return new Automaton
@@ -128,6 +132,7 @@ namespace Lucene.Net.Util.Automaton
         /// Constructs sub-automaton corresponding to decimal numbers of length
         /// <c>x.Substring(n).Length</c>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static State AnyOfRightLength(string x, int n)
         {
             State s = new State();
@@ -146,6 +151,7 @@ namespace Lucene.Net.Util.Automaton
         /// Constructs sub-automaton corresponding to decimal numbers of value at least
         /// <c>x.Substring(n)</c> and length <c>x.Substring(n).Length</c>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static State AtLeast(string x, int n, ICollection<State> initials, bool zeros)
         {
             State s = new State();
@@ -173,6 +179,7 @@ namespace Lucene.Net.Util.Automaton
         /// Constructs sub-automaton corresponding to decimal numbers of value at most
         /// <c>x.Substring(n)</c> and length <c>x.Substring(n).Length</c>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static State AtMost(string x, int n)
         {
             State s = new State();
@@ -197,6 +204,7 @@ namespace Lucene.Net.Util.Automaton
         /// <c>x.Substring(n)</c> and <c>y.Substring(n)</c> and of length <c>x.Substring(n).Length</c>
         /// (which must be equal to <c>y.Substring(n).Length</c>).
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static State Between(string x, string y, int n, ICollection<State> initials, bool zeros)
         {
             State s = new State();
@@ -302,6 +310,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns a new (deterministic) automaton that accepts the single given
         /// string.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Automaton MakeString(string s)
         {
             return new Automaton
@@ -341,6 +350,7 @@ namespace Lucene.Net.Util.Automaton
         /// <returns> An <see cref="Automaton"/> accepting all input strings. The resulting
         ///         automaton is codepoint based (full unicode codepoints on
         ///         transitions). </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Automaton MakeStringUnion(ICollection<BytesRef> utf8Strings)
         {
             if (utf8Strings.Count == 0)

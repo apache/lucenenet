@@ -60,17 +60,14 @@ namespace Lucene.Net.Search
         public override Weight CreateNormalizedWeight(Query query)
         {
             Weight w = base.CreateNormalizedWeight(query);
-            return new AssertingWeightAnonymousInnerClassHelper(this, random, w);
+            return new AssertingWeightAnonymousInnerClassHelper(random, w);
         }
 
         private class AssertingWeightAnonymousInnerClassHelper : AssertingWeight
         {
-            private readonly AssertingIndexSearcher outerInstance;
-
-            public AssertingWeightAnonymousInnerClassHelper(AssertingIndexSearcher outerInstance, Random random, Weight w)
+            public AssertingWeightAnonymousInnerClassHelper(Random random, Weight w)
                 : base(random, w)
             {
-                this.outerInstance = outerInstance;
             }
 
             public override void Normalize(float norm, float topLevelBoost)

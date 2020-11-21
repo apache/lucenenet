@@ -66,8 +66,8 @@ namespace Lucene.Net.Search
     public class PhraseQuery : Query, IEnumerable<Term> // LUCENENET specific - implemented IEnumerable<Term>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
-        private IList<Term> terms = new JCG.List<Term>(4);
-        private IList<int?> positions = new JCG.List<int?>(4);
+        private readonly IList<Term> terms = new JCG.List<Term>(4); // LUCENENET: marked readonly
+        private readonly IList<int?> positions = new JCG.List<int?>(4); // LUCENENET: marked readonly
         private int maxPosition = 0;
         private int slop = 0;
 

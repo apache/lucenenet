@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
         /// <returns> The number of actually removed buffers. </returns>
         public int FreeBlocks(int num)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(num >= 0, () => "free blocks must be >= 0 but was: " + num);
+            if (Debugging.AssertsEnabled) Debugging.Assert(num >= 0, "free blocks must be >= 0 but was: {0}", num);
             int stop;
             int count;
             if (num > freeBlocks)

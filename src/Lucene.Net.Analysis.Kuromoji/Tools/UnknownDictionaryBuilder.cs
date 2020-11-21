@@ -89,53 +89,51 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         public virtual void ReadCharacterDefinition(string filename, UnknownDictionaryWriter dictionary)
         {
-            using (Stream inputStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
-            using (TextReader reader = new StreamReader(inputStream, Encoding.GetEncoding(encoding)))
+            using Stream inputStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+            using TextReader reader = new StreamReader(inputStream, Encoding.GetEncoding(encoding));
+            string line = null;
+
+            while ((line = reader.ReadLine()) != null)
             {
-                string line = null;
+                line = Regex.Replace(line, "^\\s", "");
+                line = Regex.Replace(line, "\\s*#.*", "");
+                line = Regex.Replace(line, "\\s+", " ");
 
-                while ((line = reader.ReadLine()) != null)
+                // Skip empty line or comment line
+                if (line.Length == 0)
                 {
-                    line = Regex.Replace(line, "^\\s", "");
-                    line = Regex.Replace(line, "\\s*#.*", "");
-                    line = Regex.Replace(line, "\\s+", " ");
+                    continue;
+                }
 
-                    // Skip empty line or comment line
-                    if (line.Length == 0)
+                if (line.StartsWith("0x", StringComparison.Ordinal))
+                {  // Category mapping
+                    string[] values = new Regex(" ").Split(line, 2);  // Split only first space
+
+                    if (!values[0].Contains(".."))
                     {
-                        continue;
-                    }
-
-                    if (line.StartsWith("0x", StringComparison.Ordinal))
-                    {  // Category mapping
-                        string[] values = new Regex(" ").Split(line, 2);  // Split only first space
-
-                        if (!values[0].Contains(".."))
-                        {
-                            int cp = Convert.ToInt32(values[0], 16);
-                            dictionary.PutCharacterCategory(cp, values[1]);
-                        }
-                        else
-                        {
-                            string[] codePoints = Regex.Split(values[0], "\\.\\.").TrimEnd();
-                            int cpFrom = Convert.ToInt32(codePoints[0], 16);
-                            int cpTo = Convert.ToInt32(codePoints[1], 16);
-
-                            for (int i = cpFrom; i <= cpTo; i++)
-                            {
-                                dictionary.PutCharacterCategory(i, values[1]);
-                            }
-                        }
+                        int cp = Convert.ToInt32(values[0], 16);
+                        dictionary.PutCharacterCategory(cp, values[1]);
                     }
                     else
-                    {  // Invoke definition
-                        string[] values = line.Split(' ').TrimEnd(); // Consecutive space is merged above
-                        string characterClassName = values[0];
-                        int invoke = int.Parse(values[1], CultureInfo.InvariantCulture);
-                        int group = int.Parse(values[2], CultureInfo.InvariantCulture);
-                        int length = int.Parse(values[3], CultureInfo.InvariantCulture);
-                        dictionary.PutInvokeDefinition(characterClassName, invoke, group, length);
+                    {
+                        string[] codePoints = Regex.Split(values[0], "\\.\\.").TrimEnd();
+                        int cpFrom = Convert.ToInt32(codePoints[0], 16);
+                        int cpTo = Convert.ToInt32(codePoints[1], 16);
+
+                        for (int i = cpFrom; i <= cpTo; i++)
+                        {
+                            dictionary.PutCharacterCategory(i, values[1]);
+                        }
                     }
+                }
+                else
+                {  // Invoke definition
+                    string[] values = line.Split(' ').TrimEnd(); // Consecutive space is merged above
+                    string characterClassName = values[0];
+                    int invoke = int.Parse(values[1], CultureInfo.InvariantCulture);
+                    int group = int.Parse(values[2], CultureInfo.InvariantCulture);
+                    int length = int.Parse(values[3], CultureInfo.InvariantCulture);
+                    dictionary.PutInvokeDefinition(characterClassName, invoke, group, length);
                 }
             }
         }

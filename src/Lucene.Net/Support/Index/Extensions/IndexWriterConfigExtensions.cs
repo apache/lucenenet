@@ -232,9 +232,10 @@ namespace Lucene.Net.Index.Extensions
         /// <param name="config">this <see cref="IndexWriterConfig"/> instance</param>
         /// <param name="writeLockTimeout"></param>
         /// <returns>this <see cref="IndexWriterConfig"/> instance</returns>
-        public static void SetDefaultWriteLockTimeout(this IndexWriterConfig config, long writeLockTimeout)
+        public static IndexWriterConfig SetDefaultWriteLockTimeout(this IndexWriterConfig config, long writeLockTimeout)
         {
             IndexWriterConfig.DefaultWriteLockTimeout = writeLockTimeout;
+            return config;
         }
 
         /// <summary>

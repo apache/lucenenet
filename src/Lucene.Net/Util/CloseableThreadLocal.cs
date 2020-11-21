@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Lucene.Net.Util
@@ -87,6 +88,7 @@ namespace Lucene.Net.Util
         /// <exception cref="ObjectDisposedException">The <see cref="DisposableThreadLocal{T}"/> instance has been disposed.</exception>
         public ICollection<T> Values
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 if (_disposed)
@@ -101,6 +103,7 @@ namespace Lucene.Net.Util
         /// <exception cref="ObjectDisposedException">The <see cref="DisposableThreadLocal{T}"/> instance has been disposed.</exception>
         public bool IsValueCreated
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 if (_disposed)
@@ -236,6 +239,7 @@ namespace Lucene.Net.Util
             private readonly WeakReference<TK> _weak;
             private readonly int _hashCode;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool TryGetTarget(out TK target)
             {
                 return _weak.TryGetTarget(out target);
@@ -281,6 +285,7 @@ namespace Lucene.Net.Util
                 return Equals((WeakReferenceCompareValue<TK>)obj);
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetHashCode()
             {
                 return _hashCode;

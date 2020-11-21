@@ -2,6 +2,7 @@ using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -87,6 +88,7 @@ namespace Lucene.Net.Util
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Clear()
         {
             Arrays.Fill(keys, EmptyVal);
@@ -97,6 +99,7 @@ namespace Lucene.Net.Util
         /// (internal) Return the hash for the key. The default implementation just returns the key,
         /// which is not appropriate for general purpose use.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual int Hash(int key)
         {
             return key;
@@ -163,6 +166,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Does this set contain the specified integer? </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool Exists(int key)
         {
             return Find(key) >= 0;

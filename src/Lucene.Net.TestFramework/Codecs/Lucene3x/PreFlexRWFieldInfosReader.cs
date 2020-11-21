@@ -123,9 +123,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public static void Files(Directory dir, SegmentInfo info, ISet<string> files)
-        {
-            files.Add(IndexFileNames.SegmentFileName(info.Name, "", PreFlexRWFieldInfosWriter.FIELD_INFOS_EXTENSION));
-        }
+        //public static void Files(Directory dir, SegmentInfo info, ISet<string> files) // LUCENENET: Not used
+        //{
+        //    files.Add(IndexFileNames.SegmentFileName(info.Name, "", PreFlexRWFieldInfosWriter.FIELD_INFOS_EXTENSION));
+        //}
     }
 }

@@ -74,7 +74,7 @@ namespace Lucene.Net.Search.Spans
     public class FieldMaskingSpanQuery : SpanQuery
     {
         private SpanQuery maskedQuery;
-        private string field;
+        private readonly string field; // LUCENENET: marked readonly
 
         public FieldMaskingSpanQuery(SpanQuery maskedQuery, string maskedField)
         {

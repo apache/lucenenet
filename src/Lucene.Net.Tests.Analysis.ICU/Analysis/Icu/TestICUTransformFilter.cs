@@ -92,27 +92,23 @@ namespace Lucene.Net.Analysis.Icu
         public void TestRandomStrings()
         {
             Transliterator transform = Transliterator.GetInstance("Any-Latin");
-            using (Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            using Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new ICUTransformFilter(tokenizer, transform));
-            }))
-            {
-                CheckRandomData(Random, a, 1000 * RandomMultiplier);
-            }
+            });
+            CheckRandomData(Random, a, 1000 * RandomMultiplier);
         }
 
         [Test]
         public void TestEmptyTerm()
         {
-            using (Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
+            using Analyzer a = Analyzer.NewAnonymous(createComponents: (fieldName, reader) =>
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new ICUTransformFilter(tokenizer, Transliterator.GetInstance("Any-Latin")));
-            }))
-            {
-                CheckOneTerm(a, "", "");
-            }
+            });
+            CheckOneTerm(a, "", "");
         }
     }
 }

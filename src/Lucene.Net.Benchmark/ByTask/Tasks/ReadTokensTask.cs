@@ -76,19 +76,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     continue;
                 }
 
-                using (TokenStream stream = field.GetTokenStream(analyzer))
-                {
-                    // reset the TokenStream to the first token
-                    stream.Reset();
+                using TokenStream stream = field.GetTokenStream(analyzer);
+                // reset the TokenStream to the first token
+                stream.Reset();
 
-                    ITermToBytesRefAttribute termAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
-                    while (stream.IncrementToken())
-                    {
-                        termAtt.FillBytesRef();
-                        tokenCount++;
-                    }
-                    stream.End();
+                ITermToBytesRefAttribute termAtt = stream.GetAttribute<ITermToBytesRefAttribute>();
+                while (stream.IncrementToken())
+                {
+                    termAtt.FillBytesRef();
+                    tokenCount++;
                 }
+                stream.End();
             }
             totalTokenCount += tokenCount;
             return tokenCount;
@@ -103,9 +101,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         internal sealed class ReusableStringReader : TextReader
         {
-            int upto;
-            int left;
-            string s;
+            private int upto;
+            private int left;
+            private string s;
             internal void Init(string s)
             {
                 this.s = s;
@@ -155,6 +153,30 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
 
             protected override void Dispose(bool disposing) { }
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="ReadTokensTask"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    stringReader?.Dispose(); // LUCENENET specific - dispose stringReader and set to null
+                    stringReader = null;
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
     }
 }

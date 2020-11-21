@@ -98,8 +98,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override Terms GetTerms(string field)
             {
-                RAMField result;
-                fieldToTerms.TryGetValue(field, out result);
+                fieldToTerms.TryGetValue(field, out RAMField result);
                 return result;
             }
 
@@ -171,14 +170,15 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override IComparer<BytesRef> Comparer => reverseUnicodeComparer;
 
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
             public override bool HasFreqs
-                => info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                => IndexOptionsComparer.Default.Compare(info.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
 
             public override bool HasOffsets
-                => info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                => IndexOptionsComparer.Default.Compare(info.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
             public override bool HasPositions
-                => info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                => IndexOptionsComparer.Default.Compare(info.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
 
             public override bool HasPayloads => info.HasPayloads;
         }
@@ -250,7 +250,8 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override TermsConsumer AddField(FieldInfo field)
             {
-                if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                if (IndexOptionsComparer.Default.Compare(field.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                 {
                     throw new NotSupportedException("this codec cannot index offsets");
                 }
@@ -450,9 +451,8 @@ namespace Lucene.Net.Codecs.RAMOnly
             private readonly IBits liveDocs;
             private RAMDoc current;
             private int upto = -1;
-#pragma warning disable 414
-            private int posUpto = 0; // LUCENENET NOTE: Not used
-#pragma warning restore 414
+            //private int posUpto = 0; // LUCENENET: Never read
+
 
             public RAMDocsEnum(RAMTerm ramTerm, IBits liveDocs)
             {
@@ -476,7 +476,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                         current = ramTerm.docs[upto];
                         if (liveDocs == null || liveDocs.Get(current.docID))
                         {
-                            posUpto = 0;
+                            //posUpto = 0; // LUCENENET: Never read
                             return current.docID;
                         }
                     }

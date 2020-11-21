@@ -2,6 +2,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index.Extensions;
 using NUnit.Framework;
+using System.Diagnostics.CodeAnalysis;
 using Assert = Lucene.Net.TestFramework.Assert;
 
 namespace Lucene.Net.Search
@@ -77,6 +78,7 @@ namespace Lucene.Net.Search
             d.Dispose();
         }
 
+        [SuppressMessage("Style", "IDE0025:Use expression body for properties", Justification = "Multiple lines")]
         public static Analyzer Analyzer
         {
             get

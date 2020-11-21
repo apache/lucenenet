@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
 
         public virtual string GetPartOfSpeech()
         {
-            return token == null ? null : token.GetPartOfSpeech();
+            return token?.GetPartOfSpeech();
         }
 
         public virtual void SetToken(Token token)

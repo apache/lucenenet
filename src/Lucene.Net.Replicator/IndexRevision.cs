@@ -103,7 +103,7 @@ namespace Lucene.Net.Replicator
         {
             sdp = writer.Config.IndexDeletionPolicy as SnapshotDeletionPolicy;
             if (sdp == null)
-                throw new ArgumentException("IndexWriter must be created with SnapshotDeletionPolicy", "writer");
+                throw new ArgumentException("IndexWriter must be created with SnapshotDeletionPolicy", nameof(writer));
 
             this.writer = writer;
             this.commit = sdp.Snapshot();
@@ -134,7 +134,7 @@ namespace Lucene.Net.Replicator
 
         public virtual Stream Open(string source, string fileName)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(source.Equals(SOURCE, StringComparison.Ordinal), () => string.Format("invalid source; expected={0} got={1}", SOURCE, source));
+            if (Debugging.AssertsEnabled) Debugging.Assert(source.Equals(SOURCE, StringComparison.Ordinal), "invalid source; expected={0} got={1}", SOURCE, source);
             return new IndexInputStream(commit.Directory.OpenInput(fileName, IOContext.READ_ONCE));
         }
 

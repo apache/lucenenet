@@ -39,9 +39,9 @@ namespace Lucene.Net.Search.Grouping.Terms
     /// </summary>
     public class TermAllGroupsCollector : AbstractAllGroupsCollector<BytesRef>
     {
-        private static readonly int DEFAULT_INITIAL_SIZE = 128;
+        private const int DEFAULT_INITIAL_SIZE = 128;
 
-        private readonly String groupField;
+        private readonly string groupField;
         private readonly SentinelInt32Set ordSet;
         private readonly IList<BytesRef> groups;
 

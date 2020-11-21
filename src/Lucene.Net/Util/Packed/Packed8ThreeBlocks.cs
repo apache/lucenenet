@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 // this file has been automatically generated, DO NOT EDIT
 
@@ -32,7 +33,7 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     internal sealed class Packed8ThreeBlocks : PackedInt32s.MutableImpl
     {
-        readonly byte[] blocks;
+        private readonly byte[] blocks;
 
         public const int MAX_SIZE = int.MaxValue / 3;
 
@@ -58,6 +59,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long Get(int index)
         {
             int o = index * 3;
@@ -68,7 +70,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                 Debugging.Assert(index >= 0 && index < m_valueCount);
                 Debugging.Assert(off + len <= arr.Length);
             }
@@ -93,7 +95,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                 Debugging.Assert(index >= 0 && index < m_valueCount);
                 Debugging.Assert(off + len <= arr.Length);
             }
@@ -122,6 +124,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Clear()
         {
             Arrays.Fill(blocks, (byte)0);

@@ -29,7 +29,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
     /// <seealso cref="Search.BooleanQuery"/>
     public class StandardBooleanQueryNode : BooleanQueryNode
     {
-        private bool disableCoord;
+        private readonly bool disableCoord; // LUCENENET: marked readonly
 
         public StandardBooleanQueryNode(IList<IQueryNode> clauses, bool disableCoord)
             : base(clauses)

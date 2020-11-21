@@ -79,7 +79,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             base.SetParams(@params);
             //language = country = variant = "";
             culture = "";
-            string ignore;
+            string _;
             StringTokenizer st = new StringTokenizer(@params, ",");
             if (st.MoveNext())
                 //language = st.nextToken();
@@ -87,7 +87,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             if (st.MoveNext())
                 culture += "-" + st.Current;
             if (st.MoveNext())
-                ignore = st.Current;
+                _ = st.Current;
         }
 
         public override bool SupportsParams => true;

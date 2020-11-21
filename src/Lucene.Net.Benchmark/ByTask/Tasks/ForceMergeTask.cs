@@ -33,7 +33,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
         }
 
-        int maxNumSegments = -1;
+        private int maxNumSegments = -1;
 
         public override int DoLogic()
         {

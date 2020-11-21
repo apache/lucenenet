@@ -452,18 +452,16 @@ namespace Lucene.Net.Index
             iwc.SetCodec(new StandardCodec(minTermsInBlock, maxTermsInBlock));
             */
 
-            using (var w = new RandomIndexWriter(Random, d, iwc))
+            using var w = new RandomIndexWriter(Random, d, iwc);
+            foreach (string term in terms)
             {
-                foreach (string term in terms)
-                {
-                    var doc = new Document();
-                    var f = NewStringField(FIELD, term, Field.Store.NO);
-                    doc.Add(f);
-                    w.AddDocument(doc);
-                }
-
-                return w.GetReader();
+                var doc = new Document();
+                var f = NewStringField(FIELD, term, Field.Store.NO);
+                doc.Add(f);
+                w.AddDocument(doc);
             }
+
+            return w.GetReader();
         }
 
         private int DocFreq(IndexReader r, string term)
@@ -475,59 +473,57 @@ namespace Lucene.Net.Index
         public virtual void TestEasy()
         {
             // No floor arcs:
-            using (var d = NewDirectory())
-            using (var r = MakeIndex(d, "aa0", "aa1", "aa2", "aa3", "bb0", "bb1", "bb2", "bb3", "aa"))
-            {
-                // First term in block:
-                Assert.AreEqual(1, DocFreq(r, "aa0"));
+            using var d = NewDirectory();
+            using var r = MakeIndex(d, "aa0", "aa1", "aa2", "aa3", "bb0", "bb1", "bb2", "bb3", "aa");
+            // First term in block:
+            Assert.AreEqual(1, DocFreq(r, "aa0"));
 
-                // Scan forward to another term in same block
-                Assert.AreEqual(1, DocFreq(r, "aa2"));
+            // Scan forward to another term in same block
+            Assert.AreEqual(1, DocFreq(r, "aa2"));
 
-                Assert.AreEqual(1, DocFreq(r, "aa"));
+            Assert.AreEqual(1, DocFreq(r, "aa"));
 
-                // Reset same block then scan forwards
-                Assert.AreEqual(1, DocFreq(r, "aa1"));
+            // Reset same block then scan forwards
+            Assert.AreEqual(1, DocFreq(r, "aa1"));
 
-                // Not found, in same block
-                Assert.AreEqual(0, DocFreq(r, "aa5"));
+            // Not found, in same block
+            Assert.AreEqual(0, DocFreq(r, "aa5"));
 
-                // Found, in same block
-                Assert.AreEqual(1, DocFreq(r, "aa2"));
+            // Found, in same block
+            Assert.AreEqual(1, DocFreq(r, "aa2"));
 
-                // Not found in index:
-                Assert.AreEqual(0, DocFreq(r, "b0"));
+            // Not found in index:
+            Assert.AreEqual(0, DocFreq(r, "b0"));
 
-                // Found:
-                Assert.AreEqual(1, DocFreq(r, "aa2"));
+            // Found:
+            Assert.AreEqual(1, DocFreq(r, "aa2"));
 
-                // Found, rewind:
-                Assert.AreEqual(1, DocFreq(r, "aa0"));
+            // Found, rewind:
+            Assert.AreEqual(1, DocFreq(r, "aa0"));
 
-                // First term in block:
-                Assert.AreEqual(1, DocFreq(r, "bb0"));
+            // First term in block:
+            Assert.AreEqual(1, DocFreq(r, "bb0"));
 
-                // Scan forward to another term in same block
-                Assert.AreEqual(1, DocFreq(r, "bb2"));
+            // Scan forward to another term in same block
+            Assert.AreEqual(1, DocFreq(r, "bb2"));
 
-                // Reset same block then scan forwards
-                Assert.AreEqual(1, DocFreq(r, "bb1"));
+            // Reset same block then scan forwards
+            Assert.AreEqual(1, DocFreq(r, "bb1"));
 
-                // Not found, in same block
-                Assert.AreEqual(0, DocFreq(r, "bb5"));
+            // Not found, in same block
+            Assert.AreEqual(0, DocFreq(r, "bb5"));
 
-                // Found, in same block
-                Assert.AreEqual(1, DocFreq(r, "bb2"));
+            // Found, in same block
+            Assert.AreEqual(1, DocFreq(r, "bb2"));
 
-                // Not found in index:
-                Assert.AreEqual(0, DocFreq(r, "b0"));
+            // Not found in index:
+            Assert.AreEqual(0, DocFreq(r, "b0"));
 
-                // Found:
-                Assert.AreEqual(1, DocFreq(r, "bb2"));
+            // Found:
+            Assert.AreEqual(1, DocFreq(r, "bb2"));
 
-                // Found, rewind:
-                Assert.AreEqual(1, DocFreq(r, "bb0"));
-            }
+            // Found, rewind:
+            Assert.AreEqual(1, DocFreq(r, "bb0"));
         }
 
         // tests:
@@ -539,55 +535,53 @@ namespace Lucene.Net.Index
         {
             var terms = new[] { "aa0", "aa1", "aa2", "aa3", "aa4", "aa5", "aa6", "aa7", "aa8", "aa9", "aa", "xx" };
 
-            using (var d = NewDirectory())
-            using (var r = MakeIndex(d, terms))
+            using var d = NewDirectory();
+            using var r = MakeIndex(d, terms);
+            // First term in first block:
+            Assert.AreEqual(1, DocFreq(r, "aa0"));
+            Assert.AreEqual(1, DocFreq(r, "aa4"));
+
+            // No block
+            Assert.AreEqual(0, DocFreq(r, "bb0"));
+
+            // Second block
+            Assert.AreEqual(1, DocFreq(r, "aa4"));
+
+            // Backwards to prior floor block:
+            Assert.AreEqual(1, DocFreq(r, "aa0"));
+
+            // Forwards to last floor block:
+            Assert.AreEqual(1, DocFreq(r, "aa9"));
+
+            Assert.AreEqual(0, DocFreq(r, "a"));
+            Assert.AreEqual(1, DocFreq(r, "aa"));
+            Assert.AreEqual(0, DocFreq(r, "a"));
+            Assert.AreEqual(1, DocFreq(r, "aa"));
+
+            // Forwards to last floor block:
+            Assert.AreEqual(1, DocFreq(r, "xx"));
+            Assert.AreEqual(1, DocFreq(r, "aa1"));
+            Assert.AreEqual(0, DocFreq(r, "yy"));
+
+            Assert.AreEqual(1, DocFreq(r, "xx"));
+            Assert.AreEqual(1, DocFreq(r, "aa9"));
+
+            Assert.AreEqual(1, DocFreq(r, "xx"));
+            Assert.AreEqual(1, DocFreq(r, "aa4"));
+
+            TermsEnum te = MultiFields.GetTerms(r, FIELD).GetEnumerator();
+            while (te.MoveNext())
             {
-                // First term in first block:
-                Assert.AreEqual(1, DocFreq(r, "aa0"));
-                Assert.AreEqual(1, DocFreq(r, "aa4"));
-
-                // No block
-                Assert.AreEqual(0, DocFreq(r, "bb0"));
-
-                // Second block
-                Assert.AreEqual(1, DocFreq(r, "aa4"));
-
-                // Backwards to prior floor block:
-                Assert.AreEqual(1, DocFreq(r, "aa0"));
-
-                // Forwards to last floor block:
-                Assert.AreEqual(1, DocFreq(r, "aa9"));
-
-                Assert.AreEqual(0, DocFreq(r, "a"));
-                Assert.AreEqual(1, DocFreq(r, "aa"));
-                Assert.AreEqual(0, DocFreq(r, "a"));
-                Assert.AreEqual(1, DocFreq(r, "aa"));
-
-                // Forwards to last floor block:
-                Assert.AreEqual(1, DocFreq(r, "xx"));
-                Assert.AreEqual(1, DocFreq(r, "aa1"));
-                Assert.AreEqual(0, DocFreq(r, "yy"));
-
-                Assert.AreEqual(1, DocFreq(r, "xx"));
-                Assert.AreEqual(1, DocFreq(r, "aa9"));
-
-                Assert.AreEqual(1, DocFreq(r, "xx"));
-                Assert.AreEqual(1, DocFreq(r, "aa4"));
-
-                TermsEnum te = MultiFields.GetTerms(r, FIELD).GetEnumerator();
-                while (te.MoveNext())
-                {
-                    //System.out.println("TEST: next term=" + te.Term().Utf8ToString());
-                }
-
-                Assert.IsTrue(SeekExact(te, "aa1"));
-                Assert.AreEqual("aa2", Next(te));
-                Assert.IsTrue(SeekExact(te, "aa8"));
-                Assert.AreEqual("aa9", Next(te));
-                Assert.AreEqual("xx", Next(te));
-
-                TestRandomSeeks(r, terms);
+                //System.out.println("TEST: next term=" + te.Term().Utf8ToString());
             }
+
+            Assert.IsTrue(SeekExact(te, "aa1"));
+            Assert.AreEqual("aa2", Next(te));
+            Assert.IsTrue(SeekExact(te, "aa8"));
+            Assert.AreEqual("aa9", Next(te));
+            Assert.AreEqual("xx", Next(te));
+
+            TestRandomSeeks(r, terms);
         }
 
         [Test]
@@ -673,11 +667,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-            using (var d = NewDirectory())
-            using (var r = MakeIndex(d, terms))
-            {
-                TestRandomSeeks(r, terms);
-            }
+            using var d = NewDirectory();
+            using var r = MakeIndex(d, terms);
+            TestRandomSeeks(r, terms);
         }
 
         // sugar

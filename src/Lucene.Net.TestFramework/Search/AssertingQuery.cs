@@ -62,11 +62,8 @@ namespace Lucene.Net.Search
 
         public override bool Equals(object obj)
         {
-            var that = obj as AssertingQuery;
-            if (that == null)
-            {
-                return false;
-            }
+            if (obj is null) return false;
+            if (!(obj is AssertingQuery that)) return false;
             return this.@in.Equals(that.@in);
         }
 

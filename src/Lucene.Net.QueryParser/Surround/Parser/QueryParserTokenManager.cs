@@ -24,10 +24,16 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     /// <summary>
     /// Token Manager.
     /// </summary>
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "This class is based on generated code")]
+    [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "This class is based on generated code")]
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "This class is based on generated code")]
     public class QueryParserTokenManager //: QueryParserConstants
     {
         /// <summary>Debug output. </summary>
+#pragma warning disable IDE0052 // Remove unread private members
         private TextWriter debugStream; // LUCENENET specific - made private, since we already have a setter
+#pragma warning restore IDE0052 // Remove unread private members
         /// <summary>Set debug output. </summary>
         public virtual void SetDebugStream(TextWriter ds)
         {
@@ -51,6 +57,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             jjmatchedPos = pos;
             return pos + 1;
         }
+
         private int jjMoveStringLiteralDfa0_1()
         {
             switch (m_curChar)
@@ -619,7 +626,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             int beginColumn;
             int endColumn;
             string im = jjstrLiteralImages[jjmatchedKind];
-            curTokenImage = (im == null) ? m_input_stream.Image : im;
+            curTokenImage = im ?? m_input_stream.Image;
             beginLine = m_input_stream.BeginLine;
             beginColumn = m_input_stream.BeginColumn;
             endLine = m_input_stream.EndLine;

@@ -43,7 +43,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public static readonly string SPATIAL_FIELD = "spatial";
 
         //cache spatialStrategy by round number
-        private static IDictionary<int, SpatialStrategy> spatialStrategyCache = new Dictionary<int, SpatialStrategy>();
+        private static readonly IDictionary<int, SpatialStrategy> spatialStrategyCache = new Dictionary<int, SpatialStrategy>(); // LUCENENET: marked readonly
 
         private SpatialStrategy strategy;
         private IShapeConverter shapeConverter;
@@ -55,8 +55,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// </summary>
         public static SpatialStrategy GetSpatialStrategy(int roundNumber)
         {
-            SpatialStrategy result;
-            if (!spatialStrategyCache.TryGetValue(roundNumber, out result) || result == null)
+            if (!spatialStrategyCache.TryGetValue(roundNumber, out SpatialStrategy result) || result == null)
             {
                 throw new InvalidOperationException("Strategy should have been init'ed by SpatialDocMaker by now");
             }
@@ -121,8 +120,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public override void SetConfig(Config config, ContentSource source)
         {
             base.SetConfig(config, source);
-            SpatialStrategy existing;
-            if (!spatialStrategyCache.TryGetValue(config.RoundNumber, out existing) || existing == null)
+            if (!spatialStrategyCache.TryGetValue(config.RoundNumber, out SpatialStrategy existing) || existing == null)
             {
                 //new round; we need to re-initialize
                 strategy = MakeSpatialStrategy(config);
@@ -164,9 +162,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             public IShape Convert(IShape shape)
             {
-                if (shape is IPoint && (radiusDegrees != 0.0 || plusMinus != 0.0))
+                if ((radiusDegrees != 0.0 || plusMinus != 0.0) && shape is IPoint point)
                 {
-                    IPoint point = (IPoint)shape;
                     double radius = radiusDegrees;
                     if (plusMinus > 0.0)
                     {

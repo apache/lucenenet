@@ -64,9 +64,7 @@ namespace Lucene.Net.Index
                     throw new ArgumentException("illegal field number: " + info.Number + " for field " + info.Name);
                 }
 
-                FieldInfo previous;
-
-                if (byNumber.TryGetValue(info.Number, out previous))
+                if (byNumber.TryGetValue(info.Number, out FieldInfo previous))
                 {
                     throw new ArgumentException("duplicate field numbers: " + previous.Name + " and " + info.Name + " have: " + info.Number);
                 }
@@ -81,9 +79,10 @@ namespace Lucene.Net.Index
                 byName[info.Name] = info;
 
                 hasVectors |= info.HasVectors;
-                hasProx |= info.IsIndexed && info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                hasProx |= info.IsIndexed && IndexOptionsComparer.Default.Compare(info.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
                 hasFreq |= info.IsIndexed && info.IndexOptions != IndexOptions.DOCS_ONLY;
-                hasOffsets |= info.IsIndexed && info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                hasOffsets |= info.IsIndexed && IndexOptionsComparer.Default.Compare(info.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 hasNorms |= info.HasNorms;
                 hasDocValues |= info.HasDocValues;
                 hasPayloads |= info.HasPayloads;
@@ -162,8 +161,7 @@ namespace Lucene.Net.Index
         /// doesn't exist. </returns>
         public virtual FieldInfo FieldInfo(string fieldName)
         {
-            FieldInfo ret;
-            byName.TryGetValue(fieldName, out ret);
+            byName.TryGetValue(fieldName, out FieldInfo ret);
             return ret;
         }
 
@@ -179,8 +177,7 @@ namespace Lucene.Net.Index
             {
                 throw new ArgumentException("Illegal field number: " + fieldNumber);
             }
-            Index.FieldInfo ret;
-            byNumber.TryGetValue(fieldNumber, out ret);
+            byNumber.TryGetValue(fieldNumber, out FieldInfo ret);
             return ret;
         }
 
@@ -218,9 +215,7 @@ namespace Lucene.Net.Index
                 {
                     if (dvType != DocValuesType.NONE)
                     {
-                        DocValuesType currentDVType;
-                        docValuesType.TryGetValue(fieldName, out currentDVType);
-                        if (currentDVType == DocValuesType.NONE) // default value in .NET (value type 0)
+                        if (!docValuesType.TryGetValue(fieldName, out DocValuesType currentDVType) || currentDVType == DocValuesType.NONE) // default value in .NET (value type 0)
                         {
                             docValuesType[fieldName] = dvType;
                         }
@@ -229,9 +224,7 @@ namespace Lucene.Net.Index
                             throw new ArgumentException("cannot change DocValues type from " + currentDVType + " to " + dvType + " for field \"" + fieldName + "\"");
                         }
                     }
-                    int? fieldNumber;
-                    nameToNumber.TryGetValue(fieldName, out fieldNumber);
-                    if (fieldNumber == null)
+                    if (!nameToNumber.TryGetValue(fieldName, out int? fieldNumber) || fieldNumber == null)
                     {
                         int? preferredBoxed = preferredFieldNumber;
 
@@ -263,17 +256,13 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    string numberToNameStr;
-                    int? nameToNumberVal;
-                    DocValuesType docValuesType_E;
-
-                    numberToName.TryGetValue(number, out numberToNameStr);
-                    nameToNumber.TryGetValue(name, out nameToNumberVal);
-                    docValuesType.TryGetValue(name, out docValuesType_E);
+                    numberToName.TryGetValue(number, out string numberToNameStr);
+                    nameToNumber.TryGetValue(name, out int? nameToNumberVal);
+                    this.docValuesType.TryGetValue(name, out DocValuesType docValuesType);
 
                     return name.Equals(numberToNameStr, StringComparison.Ordinal) 
                         && number.Equals(nameToNumber[name]) && 
-                        (dvType == DocValuesType.NONE || docValuesType_E == DocValuesType.NONE || dvType == docValuesType_E);
+                        (dvType == DocValuesType.NONE || docValuesType == DocValuesType.NONE || dvType == docValuesType);
                 }
             }
 
@@ -293,8 +282,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         // only return true if the field has the same dvType as the requested one
-                        DocValuesType dvCand;
-                        docValuesType.TryGetValue(fieldName, out dvCand);
+                        docValuesType.TryGetValue(fieldName, out DocValuesType dvCand); // LUCENENET NOTE: This could be NONE even if TryGetValue returns false
                         return dvType == dvCand;
                     }
                 }

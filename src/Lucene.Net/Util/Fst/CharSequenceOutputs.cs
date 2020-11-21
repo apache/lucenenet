@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -103,7 +104,7 @@ namespace Lucene.Net.Util.Fst
             {
                 if (Debugging.AssertsEnabled)
                 {
-                    Debugging.Assert(inc.Length < output.Length, () => "inc.Length=" + inc.Length + " vs output.Length=" + output.Length);
+                    Debugging.Assert(inc.Length < output.Length,"inc.Length={0} vs output.Length={1}", inc.Length, output.Length);
                     Debugging.Assert(inc.Length > 0);
                 }
                 return new CharsRef(output.Chars, output.Offset + inc.Length, output.Length - inc.Length);
@@ -172,6 +173,7 @@ namespace Lucene.Net.Util.Fst
 
         public override CharsRef NoOutput => NO_OUTPUT;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override string OutputToString(CharsRef output)
         {
             return output.ToString();

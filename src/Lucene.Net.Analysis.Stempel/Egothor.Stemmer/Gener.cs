@@ -77,7 +77,7 @@ namespace Egothor.Stemmer
         public override Trie Optimize(Trie orig)
         {
             IList<string> cmds = orig.cmds;
-            IList<Row> rows = new List<Row>();
+            IList<Row> rows; // LUCENENET: IDE0059: Remove unnecessary value assignment
             IList<Row> orows = orig.rows;
             int[] remap = new int[orows.Count];
 
@@ -103,6 +103,7 @@ namespace Egothor.Stemmer
         /// <param name="in">the Row to test</param>
         /// <param name="remap">Description of the Parameter</param>
         /// <returns><c>true</c> if the Row should remain; otherwise, <c>false</c></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This is a shipped public API")]
         public bool Eat(Row @in, int[] remap)
         {
             int sum = 0;

@@ -37,15 +37,17 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class FixedGapTermsIndexWriter : TermsIndexWriterBase
     {
+#pragma warning disable CA2213 // Disposable fields should be disposed
         protected IndexOutput m_output;
+#pragma warning restore CA2213 // Disposable fields should be disposed
 
         /// <summary>Extension of terms index file</summary>
-        internal readonly static string TERMS_INDEX_EXTENSION = "tii";
-        internal readonly static string CODEC_NAME = "SIMPLE_STANDARD_TERMS_INDEX";
-        internal readonly static int VERSION_START = 0;
-        internal readonly static int VERSION_APPEND_ONLY = 1;
-        internal readonly static int VERSION_CHECKSUM = 1000; // 4.x "skipped" trunk's monotonic addressing: give any user a nice exception
-        internal readonly static int VERSION_CURRENT = VERSION_CHECKSUM;
+        internal const string TERMS_INDEX_EXTENSION = "tii";
+        internal const string CODEC_NAME = "SIMPLE_STANDARD_TERMS_INDEX";
+        internal const int VERSION_START = 0;
+        internal const int VERSION_APPEND_ONLY = 1;
+        internal const int VERSION_CHECKSUM = 1000; // 4.x "skipped" trunk's monotonic addressing: give any user a nice exception
+        internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
         private readonly int termIndexInterval;
 

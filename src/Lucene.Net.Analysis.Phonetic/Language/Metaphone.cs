@@ -53,17 +53,17 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <summary>
         /// Five values in the English language
         /// </summary>
-        private static readonly string VOWELS = "AEIOU";
+        private const string VOWELS = "AEIOU";
 
         /// <summary>
         /// Variable used in Metaphone algorithm
         /// </summary>
-        private static readonly string FRONTV = "EIY";
+        private const string FRONTV = "EIY";
 
         /// <summary>
         /// Variable used in Metaphone algorithm
         /// </summary>
-        private static readonly string VARSON = "CSPTG";
+        private const string VARSON = "CSPTG";
 
         /// <summary>
         /// The max code length for metaphone is 4
@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>A metaphone code corresponding to the string supplied.</returns>
         public virtual string GetMetaphone(string txt)
         {
-            bool hard = false;
+            bool hard; // LUCENENET: IDE0059: Remove unnecessary value assignment
             if (txt == null || txt.Length == 0)
             {
                 return "";
@@ -442,27 +442,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return n + 1 == wdsz;
         }
 
-        // LUCENENET specific - in .NET we don't need an object overload, since strings are sealed anyway.
-        //    /**
-        //     * Encodes an Object using the metaphone algorithm.  This method
-        //     * is provided in order to satisfy the requirements of the
-        //     * Encoder interface, and will throw an EncoderException if the
-        //     * supplied object is not of type java.lang.String.
-        //     *
-        //     * @param obj Object to encode
-        //     * @return An object (or type java.lang.String) containing the
-        //     *         metaphone code which corresponds to the String supplied.
-        //     * @throws EncoderException if the parameter supplied is not
-        //     *                          of type java.lang.String
-        //     */
-        //    @Override
-        //public object encode(object obj) 
-        //    {
-        //    if (!(obj is String)) {
-        //            throw new EncoderException("Parameter supplied to Metaphone encode is not of type java.lang.String");
-        //        }
-        //    return GetMetaphone((String) obj);
-        //    }
+        // LUCENENET specific - in .NET we don't need an object overload of Encode(), since strings are sealed anyway.
 
         /// <summary>
         /// Encodes a string using the <see cref="Metaphone"/> algorithm.

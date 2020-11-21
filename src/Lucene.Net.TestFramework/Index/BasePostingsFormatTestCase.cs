@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             private readonly bool fixedPayloads;
             private readonly IBits liveDocs;
             private readonly BytesRef payload;
-            private readonly IndexOptions options;
+            //private readonly IndexOptions options; // LUCENENET: Never read
             private readonly bool doPositions;
 
             private int docID;
@@ -161,8 +161,9 @@ namespace Lucene.Net.Index
                 fixedPayloads = random.NextBoolean();
                 var payloadBytes = new byte[payloadSize];
                 payload = new BytesRef(payloadBytes);
-                this.options = options;
-                doPositions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS.CompareTo(options) <= 0;
+                //this.options = options; // LUCENENET: Never read
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                doPositions = IndexOptionsComparer.Default.Compare(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, options) <= 0;
             }
 
             public override int NextDoc()
@@ -177,7 +178,9 @@ namespace Lucene.Net.Index
                 }
             }
 
+#pragma warning disable IDE1006 // Naming Styles
             private int _nextDoc()
+#pragma warning restore IDE1006 // Naming Styles
             {
                 // Must consume random:
                 while (posUpto < freq)
@@ -570,7 +573,8 @@ namespace Lucene.Net.Index
                 // Randomly picked the IndexOptions to index this
                 // field with:
                 IndexOptions indexOptions = ALL_INDEX_OPTIONS[alwaysTestMax ? fieldMaxIndexOption : Random.Next(1, 1 + fieldMaxIndexOption)]; // LUCENENET: Skipping NONE option
-                bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
+                // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                bool doPayloads = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
 
                 newFieldInfoArray[fieldUpto] = new FieldInfo(oldFieldInfo.Name, true, fieldUpto, false, false, doPayloads, indexOptions, DocValuesType.NONE, DocValuesType.NUMERIC, null);
             }
@@ -601,10 +605,11 @@ namespace Lucene.Net.Index
                         Console.WriteLine("field=" + field + " indexOtions=" + indexOptions);
                     }
 
-                    bool doFreq = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-                    bool doPos = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-                    bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
-                    bool doOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                    // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                    bool doFreq = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
+                    bool doPos = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                    bool doPayloads = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
+                    bool doOffsets = IndexOptionsComparer.Default.Compare(indexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
                     TermsConsumer termsConsumer = fieldsConsumer.AddField(fieldInfo);
                     long sumTotalTF = 0;
@@ -748,16 +753,19 @@ namespace Lucene.Net.Index
                                                     maxIndexOptions);
             Assert.AreEqual(expected.DocFreq, termsEnum.DocFreq);
 
-            bool allowFreqs = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && 
-                maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            bool allowFreqs = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS) >= 0 &&
+                IndexOptionsComparer.Default.Compare(maxTestOptions, IndexOptions.DOCS_AND_FREQS) >= 0;
             bool doCheckFreqs = allowFreqs && (alwaysTestMax || Random.Next(3) <= 2);
 
-            bool allowPositions = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && 
-                maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            bool allowPositions = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && 
+                IndexOptionsComparer.Default.Compare(maxTestOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
             bool doCheckPositions = allowPositions && (alwaysTestMax || Random.Next(3) <= 2);
 
-            bool allowOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >=0 && 
-                maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+            bool allowOffsets = IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >=0 && 
+                IndexOptionsComparer.Default.Compare(maxTestOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool doCheckOffsets = allowOffsets && (alwaysTestMax || Random.Next(3) <= 2);
 
             bool doCheckPayloads = options.Contains(Option.PAYLOADS) && allowPositions && fieldInfo.HasPayloads && (alwaysTestMax || Random.Next(3) <= 2);
@@ -1085,7 +1093,8 @@ namespace Lucene.Net.Index
                                 }
                             }
                         }
-                        else if (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0)
+                        // LUCENENET specific - to avoid boxing, changed from CompareTo() to IndexOptionsComparer.Compare()
+                        else if (IndexOptionsComparer.Default.Compare(fieldInfo.IndexOptions, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0)
                         {
                             if (Verbose)
                             {
@@ -1102,10 +1111,10 @@ namespace Lucene.Net.Index
         private class TestThread : ThreadJob
         {
             private Fields fieldsSource;
-            private ISet<Option> options;
-            private IndexOptions maxIndexOptions;
-            private IndexOptions maxTestOptions;
-            private bool alwaysTestMax;
+            private readonly ISet<Option> options; // LUCENENET: marked readonly
+            private readonly IndexOptions maxIndexOptions; // LUCENENET: marked readonly
+            private readonly IndexOptions maxTestOptions; // LUCENENET: marked readonly
+            private readonly bool alwaysTestMax; // LUCENENET: marked readonly
             private BasePostingsFormatTestCase testCase;
 
             public TestThread(BasePostingsFormatTestCase testCase, Fields fieldsSource, ISet<Option> options, IndexOptions maxTestOptions, IndexOptions maxIndexOptions, bool alwaysTestMax)
@@ -1244,7 +1253,7 @@ namespace Lucene.Net.Index
                     // Save away this TermState:
                     termStates.Add(termsEnum.GetTermState());
                     termStateTerms.Add(fieldAndTerm);
-                    useTermState = true;
+                    //useTermState = true; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 }
 
                 // 10% of the time make sure you can pull another enum
@@ -1269,19 +1278,17 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void TestFields(Fields fields)
+        private static void TestFields(Fields fields) // LUCENENET: CA1822: Mark members as static
         {
-            using (IEnumerator<string> iterator = fields.GetEnumerator())
+            using IEnumerator<string> iterator = fields.GetEnumerator();
+            while (iterator.MoveNext())
             {
-                while (iterator.MoveNext())
-                {
-                    var dummy = iterator.Current;
-                    // .NET: Testing for iterator.Remove() isn't applicable
-                }
-                Assert.IsFalse(iterator.MoveNext());
-
-                // .NET: Testing for NoSuchElementException with .NET iterators isn't applicable
+                var _ = iterator.Current;
+                // .NET: Testing for iterator.Remove() isn't applicable
             }
+            Assert.IsFalse(iterator.MoveNext());
+
+            // .NET: Testing for NoSuchElementException with .NET iterators isn't applicable
         }
 
         /// <summary>
@@ -1291,39 +1298,33 @@ namespace Lucene.Net.Index
         private void TestFull(IndexOptions options, bool withPayloads)
         {
             DirectoryInfo path = CreateTempDir("testPostingsFormat.testExact");
-            using (Directory dir = NewFSDirectory(path))
+            using Directory dir = NewFSDirectory(path);
+            // TODO test thread safety of buildIndex too
+            using var fieldsProducer = BuildIndex(dir, options, withPayloads, true);
+            TestFields(fieldsProducer);
+
+            // LUCENENET: A bit of extra work required since we don't have an easy way to filter out
+            // the "NONE" option we added to avoid having to use null
+            IndexOptions[] allOptions = new IndexOptions[ALL_INDEX_OPTIONS.Length - 1];
+            Array.Copy(ALL_INDEX_OPTIONS, 1, allOptions, 0, allOptions.Length); // LUCENENET: Skip our NONE option
+            int maxIndexOption = Array.IndexOf(allOptions, options);
+
+            ISet<Option> allOptionsHashSet = new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option)));
+
+            for (int i = 0; i <= maxIndexOption; i++)
             {
-                // TODO test thread safety of buildIndex too
-                using (var fieldsProducer = BuildIndex(dir, options, withPayloads, true))
+                TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
+                if (withPayloads)
                 {
+                    // If we indexed w/ payloads, also test enums w/o accessing payloads:
 
-                    TestFields(fieldsProducer);
-
-                    // LUCENENET: A bit of extra work required since we don't have an easy way to filter out
-                    // the "NONE" option we added to avoid having to use null
-                    IndexOptions[] allOptions = new IndexOptions[ALL_INDEX_OPTIONS.Length - 1];
-                    Array.Copy(ALL_INDEX_OPTIONS, 1, allOptions, 0, allOptions.Length); // LUCENENET: Skip our NONE option
-                    int maxIndexOption = Array.IndexOf(allOptions, options);
-
-                    ISet<Option> allOptionsHashSet = new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option)));
-
-                    for (int i = 0; i <= maxIndexOption; i++)
-                    {
-                        TestTerms(fieldsProducer, allOptionsHashSet, allOptions[i], options, true);
-                        if (withPayloads)
-                        {
-                            // If we indexed w/ payloads, also test enums w/o accessing payloads:
-
-                            // LUCENENET: No EnumSet in .NET, so we have some extra work to do
-                            // to populate the options.
-                            ISet<Option> payloadsHashSet = new JCG.HashSet<Option>() { Option.PAYLOADS };
-                            var complementHashSet = new JCG.HashSet<Option>(allOptionsHashSet);
-                            complementHashSet.SymmetricExceptWith(payloadsHashSet); // Complement of
-                            TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
-                        }
-                    }
-
-                } // fieldsProducer.Dispose();
+                    // LUCENENET: No EnumSet in .NET, so we have some extra work to do
+                    // to populate the options.
+                    ISet<Option> payloadsHashSet = new JCG.HashSet<Option>() { Option.PAYLOADS };
+                    var complementHashSet = new JCG.HashSet<Option>(allOptionsHashSet);
+                    complementHashSet.SymmetricExceptWith(payloadsHashSet); // Complement of
+                    TestTerms(fieldsProducer, complementHashSet, allOptions[i], options, true);
+                }
             }
         }
 
@@ -1376,21 +1377,17 @@ namespace Lucene.Net.Index
 
                     bool indexPayloads = Random.NextBoolean();
                     // TODO test thread safety of buildIndex too
-                    using (FieldsProducer fieldsProducer = BuildIndex(dir, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, indexPayloads, false))
-                    {
+                    using FieldsProducer fieldsProducer = BuildIndex(dir, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, indexPayloads, false);
+                    TestFields(fieldsProducer);
 
-                        TestFields(fieldsProducer);
-
-                        // NOTE: you can also test "weaker" index options than
-                        // you indexed with:
-                        TestTerms(fieldsProducer,
-                            // LUCENENET: No need to skip options here
-                            new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option))),
-                            IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
-                            IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
-                            false);
-
-                    } // fieldsProducer.Dispose();
+                    // NOTE: you can also test "weaker" index options than
+                    // you indexed with:
+                    TestTerms(fieldsProducer,
+                        // LUCENENET: No need to skip options here
+                        new JCG.HashSet<Option>((Option[])Enum.GetValues(typeof(Option))),
+                        IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+                        IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+                        false);
                     // fieldsProducer = null; // LUCENENET: No can do - out of scope
 
                 } // dir.Dispose();

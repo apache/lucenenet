@@ -128,14 +128,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// The file format version for the segments_N codec header, since 4.8+ </summary>
-        public static readonly int VERSION_48 = 2;
+        public const int VERSION_48 = 2;
 
         // Used for the segments.gen file only!
         // Whenever you add a new format, make it 1 smaller (negative version logic)!
-        private static readonly int FORMAT_SEGMENTS_GEN_47 = -2;
+        private const int FORMAT_SEGMENTS_GEN_47 = -2;
 
-        private static readonly int FORMAT_SEGMENTS_GEN_CHECKSUM = -3;
-        private static readonly int FORMAT_SEGMENTS_GEN_START = FORMAT_SEGMENTS_GEN_47;
+        private const int FORMAT_SEGMENTS_GEN_CHECKSUM = -3;
+        private const int FORMAT_SEGMENTS_GEN_START = FORMAT_SEGMENTS_GEN_47;
 
         /// <summary>
         /// Current format of segments.gen </summary>
@@ -799,7 +799,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Sole constructor. </summary>
-            public FindSegmentsFile(Directory directory)
+            protected FindSegmentsFile(Directory directory) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             {
                 this.directory = directory;
             }
@@ -826,7 +826,7 @@ namespace Lucene.Net.Index
                     return DoBody(commit.SegmentsFileName);
                 }
 
-                string segmentFileName = null;
+                string segmentFileName/* = null*/; // LUCENENET: IDE0059: Remove unnecessary value assignment
                 long lastGen = -1;
                 long gen = 0;
                 int genLookaheadCount = 0;
@@ -860,11 +860,9 @@ namespace Lucene.Net.Index
                         // as there is no stale caching on the directory
                         // contents (NOTE: NFS clients often have such stale
                         // caching):
-                        string[] files = null;
+                        string[] files = directory.ListAll(); // LUCENENET: IDE0059: Remove unnecessary value assignment
 
                         long genA = -1;
-
-                        files = directory.ListAll();
 
                         if (files != null)
                         {
@@ -1041,9 +1039,7 @@ namespace Lucene.Net.Index
                                 directory.OpenInput(prevSegmentFileName, IOContext.DEFAULT).Dispose();
                                 prevExists = true;
                             }
-#pragma warning disable 168
-                            catch (IOException ioe)
-#pragma warning restore 168
+                            catch (IOException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                             {
                                 prevExists = false;
                             }

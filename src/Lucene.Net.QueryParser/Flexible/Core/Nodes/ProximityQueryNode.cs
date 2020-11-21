@@ -48,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
         private ProximityQueryNode.Type proximityType = ProximityQueryNode.Type.SENTENCE;
         private int distance = -1;
-        private bool inorder = false;
+        private readonly bool inorder = false; // LUCENENET: marked readonly
         private string field = null;
 
         /// <summary>
@@ -103,10 +103,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
 
             foreach (IQueryNode clause in nodes)
             {
-                if (clause is FieldQueryNode)
+                if (clause is FieldQueryNode fieldQueryNode)
                 {
-                    ((FieldQueryNode)clause).m_toQueryStringIgnoreFields = true;
-                    ((FieldQueryNode)clause).Field = field;
+                    fieldQueryNode.m_toQueryStringIgnoreFields = true;
+                    fieldQueryNode.Field = field;
                 }
             }
         }
@@ -218,7 +218,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     {
         internal int pDistance = 0;
 
-        ProximityQueryNode.Type pType/* = null*/;
+#pragma warning disable IDE0052 // Assigned never read
+        internal ProximityQueryNode.Type pType/* = null*/; // LUCENENET: Not nullable
+#pragma warning restore IDE0052 // Assigned never read
 
         public ProximityType(ProximityQueryNode.Type type)
                 : this(type, 0)

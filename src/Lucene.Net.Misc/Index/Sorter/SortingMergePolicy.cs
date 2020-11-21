@@ -143,8 +143,8 @@ namespace Lucene.Net.Index.Sorter
             {
                 private readonly SortingOneMerge outerInstance;
 
-                private MergeState mergeState;
-                private MonotonicAppendingInt64Buffer deletes;
+                private readonly MergeState mergeState;
+                private readonly MonotonicAppendingInt64Buffer deletes;
 
                 public DocMapAnonymousInnerClassHelper(SortingOneMerge outerInstance, MergeState mergeState, MonotonicAppendingInt64Buffer deletes)
                 {
@@ -189,13 +189,11 @@ namespace Lucene.Net.Index.Sorter
         /// </summary>
         public static bool IsSorted(AtomicReader reader, Sort sort)
         {
-            if (reader is SegmentReader)
+            if (reader is SegmentReader segReader)
             {
-                SegmentReader segReader = (SegmentReader)reader;
                 IDictionary<string, string> diagnostics = segReader.SegmentInfo.Info.Diagnostics;
-                string diagnosticsSort;
-                if (diagnostics != null 
-                    && diagnostics.TryGetValue(SORTER_ID_PROP, out diagnosticsSort)
+                if (diagnostics != null
+                    && diagnostics.TryGetValue(SORTER_ID_PROP, out string diagnosticsSort)
                     && sort.ToString().Equals(diagnosticsSort, StringComparison.Ordinal))
                 {
                     return true;

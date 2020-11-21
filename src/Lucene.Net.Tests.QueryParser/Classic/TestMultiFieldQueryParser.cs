@@ -310,26 +310,22 @@ namespace Lucene.Net.QueryParsers.Classic
         public virtual void TestStopWordSearching()
         {
             Analyzer analyzer = new MockAnalyzer(Random);
-            using (var ramDir = NewDirectory())
+            using var ramDir = NewDirectory();
+            using (IndexWriter iw = new IndexWriter(ramDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)))
             {
-                using (IndexWriter iw = new IndexWriter(ramDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer)))
-                {
-                    Document doc = new Document();
-                    doc.Add(NewTextField("body", "blah the footest blah", Field.Store.NO));
-                    iw.AddDocument(doc);
-                }
-
-                MultiFieldQueryParser mfqp =
-                  new MultiFieldQueryParser(TEST_VERSION_CURRENT, new string[] { "body" }, analyzer);
-                mfqp.DefaultOperator = Operator.AND;
-                Query q = mfqp.Parse("the footest");
-                using (IndexReader ir = DirectoryReader.Open(ramDir))
-                {
-                    IndexSearcher @is = NewSearcher(ir);
-                    ScoreDoc[] hits = @is.Search(q, null, 1000).ScoreDocs;
-                    assertEquals(1, hits.Length);
-                }
+                Document doc = new Document();
+                doc.Add(NewTextField("body", "blah the footest blah", Field.Store.NO));
+                iw.AddDocument(doc);
             }
+
+            MultiFieldQueryParser mfqp =
+              new MultiFieldQueryParser(TEST_VERSION_CURRENT, new string[] { "body" }, analyzer);
+            mfqp.DefaultOperator = Operator.AND;
+            Query q = mfqp.Parse("the footest");
+            using IndexReader ir = DirectoryReader.Open(ramDir);
+            IndexSearcher @is = NewSearcher(ir);
+            ScoreDoc[] hits = @is.Search(q, null, 1000).ScoreDocs;
+            assertEquals(1, hits.Length);
         }
 
         private class AnalyzerReturningNull : Analyzer
@@ -340,7 +336,7 @@ namespace Lucene.Net.QueryParsers.Classic
                 : base(PER_FIELD_REUSE_STRATEGY)
             { }
 
-            protected internal override System.IO.TextReader InitReader(string fieldName, TextReader reader)
+            protected internal override TextReader InitReader(string fieldName, TextReader reader)
             {
                 if ("f1".Equals(fieldName, StringComparison.Ordinal))
                 {
@@ -358,6 +354,23 @@ namespace Lucene.Net.QueryParsers.Classic
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return stdAnalyzer.CreateComponents(fieldName, reader);
+            }
+
+            // LUCENENET specific
+            protected override void Dispose(bool disposing)
+            {
+                try
+                {
+                    if (disposing)
+                    {
+                        stdAnalyzer?.Dispose(); // LUCENENET specific - dispose stdAnalyzer and set to null
+                        stdAnalyzer = null;
+                    }
+                }
+                finally
+                {
+                    base.Dispose(disposing);
+                }
             }
         }
 

@@ -31,9 +31,9 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
     /// </summary>
     public class UserInputQueryBuilder : IQueryBuilder
     {
-        private QueryParser unSafeParser;
-        private Analyzer analyzer;
-        private string defaultField;
+        private readonly QueryParser unSafeParser; // LUCENENET: marked readonly
+        private readonly Analyzer analyzer; // LUCENENET: marked readonly
+        private readonly string defaultField; // LUCENENET: marked readonly
 
         /// <summary>
         /// This constructor has the disadvantage of not being able to change choice of default field name

@@ -79,9 +79,9 @@
             return new DirectDocValuesProducer(state, DATA_CODEC, DATA_EXTENSION, METADATA_CODEC, METADATA_EXTENSION);
         }
 
-        internal static readonly string DATA_CODEC = "DirectDocValuesData";
-        internal static readonly string DATA_EXTENSION = "dvdd";
-        internal static readonly string METADATA_CODEC = "DirectDocValuesMetadata";
-        internal static readonly string METADATA_EXTENSION = "dvdm";
+        internal const string DATA_CODEC = "DirectDocValuesData";
+        internal const string DATA_EXTENSION = "dvdd";
+        internal const string METADATA_CODEC = "DirectDocValuesMetadata";
+        internal const string METADATA_EXTENSION = "dvdm";
     }
 }

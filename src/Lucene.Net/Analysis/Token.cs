@@ -399,16 +399,15 @@ namespace Lucene.Net.Analysis
                 return true;
             }
 
-            
-            if (obj is Token)
+
+            if (obj is Token other)
             {
-                var other = (Token)obj;
-                return (startOffset == other.startOffset && 
-                    endOffset == other.endOffset && 
-                    flags == other.flags && 
-                    positionIncrement == other.positionIncrement && 
-                    (type == null ? other.type == null : type.Equals(other.type, StringComparison.Ordinal)) && 
-                    (payload == null ? other.payload == null : payload.Equals(other.payload)) && 
+                return (startOffset == other.startOffset &&
+                    endOffset == other.endOffset &&
+                    flags == other.flags &&
+                    positionIncrement == other.positionIncrement &&
+                    (type == null ? other.type == null : type.Equals(other.type, StringComparison.Ordinal)) &&
+                    (payload == null ? other.payload == null : payload.Equals(other.payload)) &&
                     base.Equals(obj)
                 );
             }
@@ -598,8 +597,7 @@ namespace Lucene.Net.Analysis
 
         public override void CopyTo(IAttribute target)
         {
-            var to = target as Token;
-            if (to != null)
+            if (target is Token to)
             {
                 to.Reinit(this);
                 // reinit shares the payload, so clone it:
@@ -677,8 +675,7 @@ namespace Lucene.Net.Analysis
                     return true;
                 }
 
-                var af = other as TokenAttributeFactory;
-                if (af != null)
+                if (other is TokenAttributeFactory af)
                 {
                     return this.@delegate.Equals(af.@delegate);
                 }

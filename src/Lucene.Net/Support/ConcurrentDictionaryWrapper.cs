@@ -123,10 +123,7 @@ namespace Lucene.Net.Support
                 _lock.EnterReadLock();
                 try
                 {
-                    TValue result;
-                    if (!_dict.TryGetValue(key, out result))
-                        return default(TValue);
-                    return result;
+                    return _dict.TryGetValue(key, out TValue result) ? result : default;
                 }
                 finally
                 {

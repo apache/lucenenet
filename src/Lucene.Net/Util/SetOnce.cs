@@ -1,5 +1,6 @@
 using J2N.Threading.Atomic;
 using System;
+using System.Runtime.CompilerServices;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
@@ -79,11 +80,13 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the object set by <see cref="Set(T)"/>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Get()
         {
             return obj;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object Clone()
         {
             return obj == null ? new SetOnce<T>() : new SetOnce<T>(obj);

@@ -27,8 +27,8 @@
 
   </PropertyGroup>
   
-  <!-- Features in .NET Standard and .NET Core only (no .NET Framework support) -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) ">
+  <!-- Features in .NET Standard, .NET Core, and .NET 5 only (no .NET Framework support) -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard')) Or $(TargetFramework.StartsWith('netcoreapp')) Or '$(TargetFramework)' == 'net5.0' ">
     
     <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_ARRAYEMPTY</DefineConstants>
@@ -39,7 +39,7 @@
   </PropertyGroup>
 
   <!-- Features in .NET Standard 2.1 only -->
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' ">
 
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ENUMERATOR</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_CONDITIONALWEAKTABLE_ADDORUPDATE</DefineConstants>
@@ -47,15 +47,15 @@
     
   </PropertyGroup>
 
-  <!-- Features in .NET Standard 2.x, .NET Core 2.x, and .NET Core 3.x -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) ">
+  <!-- Features in .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, and .NET 5 -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' ">
 
     <DefineConstants>$(DefineConstants);FEATURE_ICONFIGURATIONROOT_PROVIDERS</DefineConstants>
 
   </PropertyGroup>
 
-    <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, and .NET Core 3.x -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) ">
+  <!-- Features in .NET Framework 4.5+, .NET Standard 2.x, .NET Core 2.x, .NET Core 3.x, and .NET 5  -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('netstandard2.')) Or $(TargetFramework.StartsWith('netcoreapp2.')) Or $(TargetFramework.StartsWith('netcoreapp3.')) Or '$(TargetFramework)' == 'net5.0' ">
 
     <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_BASEDIRECTORY</DefineConstants>
     <DefineConstants>$(DefineConstants);FEATURE_APPDOMAIN_GETASSEMBLIES</DefineConstants>

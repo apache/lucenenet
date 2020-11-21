@@ -79,8 +79,7 @@ namespace Lucene.Net.Util
                 long l1 = RandomLong();
                 long l2 = RandomLong();
                 long gcd = MathUtil.Gcd(l1, l2);
-                long actualGcd;
-                if (TryGetGcd(l1, l2, out actualGcd))
+                if (TryGetGcd(l1, l2, out long actualGcd))
                 {
                     Assert.AreEqual(actualGcd, gcd);
                     if (gcd != 0)

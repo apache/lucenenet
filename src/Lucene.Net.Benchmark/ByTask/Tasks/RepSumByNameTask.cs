@@ -63,8 +63,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 { // consider only tasks that ended
                     reported++;
                     string name = stat1.Task.GetName();
-                    TaskStats stat2;
-                    if (!p2.TryGetValue(name, out stat2) || stat2 == null)
+                    if (!p2.TryGetValue(name, out TaskStats stat2) || stat2 == null)
                     {
                         stat2 = (TaskStats)stat1.Clone();
                         p2[name] = stat2;

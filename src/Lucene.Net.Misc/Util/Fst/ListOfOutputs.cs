@@ -89,13 +89,12 @@ namespace Lucene.Net.Util.Fst
         public override object Add(object prefix, object output)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(!(prefix is IList));
-            if (!(output is IList))
+            if (!(output is IList outputList))
             {
                 return outputs.Add((T)prefix, (T)output);
             }
             else
             {
-                IList outputList = (IList)output;
                 IList<T> addedList = new JCG.List<T>(outputList.Count);
                 foreach (object _output in outputList)
                 {
@@ -113,14 +112,13 @@ namespace Lucene.Net.Util.Fst
 
         public override void WriteFinalOutput(object output, DataOutput @out)
         {
-            if (!(output is IList))
+            if (!(output is IList outputList))
             {
                 @out.WriteVInt32(1);
                 outputs.Write((T)output, @out);
             }
             else
             {
-                IList outputList = (IList)output;
                 @out.WriteVInt32(outputList.Count);
                 foreach (var eachOutput in outputList)
                 {
@@ -156,14 +154,12 @@ namespace Lucene.Net.Util.Fst
 
         public override string OutputToString(object output)
         {
-            if (!(output is IList))
+            if (!(output is IList outputList))
             {
                 return outputs.OutputToString((T)output);
             }
             else
             {
-                IList outputList = (IList)output;
-
                 StringBuilder b = new StringBuilder();
                 b.Append('[');
 

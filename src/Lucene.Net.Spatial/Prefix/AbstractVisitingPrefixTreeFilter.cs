@@ -47,8 +47,8 @@ namespace Lucene.Net.Spatial.Prefix
 
         protected readonly int m_prefixGridScanLevel;//at least one less than grid.getMaxLevels()
 
-        public AbstractVisitingPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
-                                                int detailLevel, int prefixGridScanLevel)
+        protected AbstractVisitingPrefixTreeFilter(IShape queryShape, string fieldName, SpatialPrefixTree grid, 
+                                                int detailLevel, int prefixGridScanLevel) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
             : base(queryShape, fieldName, grid, detailLevel)
         {
             this.m_prefixGridScanLevel = Math.Max(0, Math.Min(prefixGridScanLevel, grid.MaxLevels - 1));
@@ -121,13 +121,13 @@ namespace Lucene.Net.Spatial.Prefix
             protected readonly bool m_hasIndexedLeaves;//if false then we can skip looking for them
 
             private VNode curVNode;//current pointer, derived from query shape
-            private BytesRef curVNodeTerm = new BytesRef();//curVNode.cell's term.
+            private readonly BytesRef curVNodeTerm = new BytesRef();//curVNode.cell's term. // LUCENENET: marked readonly
             private Cell scanCell;
 
             private BytesRef thisTerm; //the result of termsEnum.term()
 
-            public VisitorTemplate(AbstractVisitingPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs,
-                                   bool hasIndexedLeaves)
+            protected VisitorTemplate(AbstractVisitingPrefixTreeFilter outerInstance, AtomicReaderContext context, IBits acceptDocs,
+                                   bool hasIndexedLeaves) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
                 : base(outerInstance, context, acceptDocs)
             {
                 this.m_hasIndexedLeaves = hasIndexedLeaves;
@@ -294,7 +294,7 @@ namespace Lucene.Net.Spatial.Prefix
                     {
                         return;//not expected
                     }
-                    curVNode.children = new VNodeCellIterator(this, subCellsIter, new VNode(curVNode));
+                    curVNode.children = new VNodeCellIterator(subCellsIter, new VNode(curVNode));
                 }
                 else
                 {
@@ -360,15 +360,12 @@ namespace Lucene.Net.Spatial.Prefix
             /// </summary>
             private class VNodeCellIterator : IEnumerator<VNode>
             {
-                private readonly VisitorTemplate outerInstance;
-
                 internal readonly IEnumerator<Cell> cellIter;
                 private readonly VNode vNode;
                 private bool first = true;
 
-                internal VNodeCellIterator(VisitorTemplate outerInstance, IEnumerator<Cell> cellIter, VNode vNode)
+                internal VNodeCellIterator(IEnumerator<Cell> cellIter, VNode vNode)
                 {
-                    this.outerInstance = outerInstance;
                     //term loop
                     this.cellIter = cellIter;
                     this.vNode = vNode;

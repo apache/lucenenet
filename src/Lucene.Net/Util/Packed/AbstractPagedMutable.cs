@@ -1,5 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -59,6 +60,7 @@ namespace Lucene.Net.Util.Packed
 
         protected abstract PackedInt32s.Mutable NewMutable(int valueCount, int bitsPerValue);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal int LastPageSize(long size)
         {
             int sz = IndexInPage(size);
@@ -74,11 +76,13 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public long Count => size;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal int PageIndex(long index)
         {
             return (int)((long)((ulong)index >> pageShift));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal int IndexInPage(long index)
         {
             return (int)index & pageMask;
@@ -167,6 +171,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Similar to <see cref="ArrayUtil.Grow(long[])"/>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Grow()
         {
             return Grow(Count + 1);

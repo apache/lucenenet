@@ -468,8 +468,7 @@ namespace Lucene.Net.Index
                                 SegmentReader segReader = (SegmentReader)sub.Reader;
                                 IDictionary<string, string> diagnostics = segReader.SegmentInfo.Info.Diagnostics;
                                 assertNotNull(diagnostics);
-                                string source;
-                                diagnostics.TryGetValue("source", out source);
+                                diagnostics.TryGetValue("source", out string source);
                                 assertNotNull(source);
                                 if (source.Equals("merge", StringComparison.Ordinal))
                                 {
@@ -572,9 +571,9 @@ namespace Lucene.Net.Index
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues);
             DirectoryInfo tempDir = CreateTempDir(testName);
             m_dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW
-            if (m_dir is BaseDirectoryWrapper)
+            if (m_dir is BaseDirectoryWrapper baseDirectoryWrapper)
             {
-                ((BaseDirectoryWrapper)m_dir).CheckIndexOnDispose = false; // don't double-checkIndex, we do it ourselves.
+                baseDirectoryWrapper.CheckIndexOnDispose = false; // don't double-checkIndex, we do it ourselves.
             }
             MockAnalyzer analyzer = new MockAnalyzer(LuceneTestCase.Random);
             analyzer.MaxTokenLength = TestUtil.NextInt32(LuceneTestCase.Random, 1, IndexWriter.MAX_TERM_LENGTH);
@@ -586,20 +585,20 @@ namespace Lucene.Net.Index
                 // results in tons and tons of segments for this test
                 // when run nightly:
                 MergePolicy mp = conf.MergePolicy;
-                if (mp is TieredMergePolicy)
+                if (mp is TieredMergePolicy tieredMergePolicy)
                 {
-                    //((TieredMergePolicy)mp).MaxMergedSegmentMB = 5000.0;
-                    ((TieredMergePolicy)mp).MaxMergedSegmentMB = 2500.0; // LUCENENET specific - reduced each number by 50% to keep testing time under 1 hour
+                    //tieredMergePolicy.MaxMergedSegmentMB = 5000.0;
+                    tieredMergePolicy.MaxMergedSegmentMB = 2500.0; // LUCENENET specific - reduced each number by 50% to keep testing time under 1 hour
                 }
-                else if (mp is LogByteSizeMergePolicy)
+                else if (mp is LogByteSizeMergePolicy logByteSizeMergePolicy)
                 {
-                    //((LogByteSizeMergePolicy)mp).MaxMergeMB = 1000.0;
-                    ((LogByteSizeMergePolicy)mp).MaxMergeMB = 500.0; // LUCENENET specific - reduced each number by 50% to keep testing time under 1 hour
+                    //logByteSizeMergePolicy.MaxMergeMB = 1000.0;
+                    logByteSizeMergePolicy.MaxMergeMB = 500.0; // LUCENENET specific - reduced each number by 50% to keep testing time under 1 hour
                 }
-                else if (mp is LogMergePolicy)
+                else if (mp is LogMergePolicy logMergePolicy)
                 {
-                    //((LogMergePolicy)mp).MaxMergeDocs = 100000;
-                    ((LogMergePolicy)mp).MaxMergeDocs = 50000; // LUCENENET specific - reduced each number by 50% to keep testing time under 1 hour
+                    //logMergePolicy.MaxMergeDocs = 100000;
+                    logMergePolicy.MaxMergeDocs = 50000; // LUCENENET specific - reduced each number by 50% to keep testing time under 1 hour
                 }
             }
 

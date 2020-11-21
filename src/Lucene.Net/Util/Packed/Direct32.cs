@@ -1,6 +1,7 @@
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 // this file has been automatically generated, DO NOT EDIT
 
@@ -55,11 +56,13 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override long Get(int index)
         {
             return values[index] & 0xFFFFFFFFL;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Set(int index, long value)
         {
             values[index] = (int)(value);
@@ -74,11 +77,13 @@ namespace Lucene.Net.Util.Packed
                 + RamUsageEstimator.SizeOf(values);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Clear()
         {
             Arrays.Fill(values, (int)0L);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override object GetArray()
         {
             return values;
@@ -90,7 +95,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                 Debugging.Assert(index >= 0 && index < m_valueCount);
                 Debugging.Assert(off + len <= arr.Length);
             }
@@ -107,7 +112,7 @@ namespace Lucene.Net.Util.Packed
         {
             if (Debugging.AssertsEnabled)
             {
-                Debugging.Assert(len > 0, () => "len must be > 0 (got " + len + ")");
+                Debugging.Assert(len > 0, "len must be > 0 (got {0})", len);
                 Debugging.Assert(index >= 0 && index < m_valueCount);
                 Debugging.Assert(off + len <= arr.Length);
             }
@@ -120,6 +125,7 @@ namespace Lucene.Net.Util.Packed
             return sets;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Fill(int fromIndex, int toIndex, long val)
         {
             if (Debugging.AssertsEnabled) Debugging.Assert(val == (val & 0xFFFFFFFFL));

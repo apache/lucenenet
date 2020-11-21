@@ -31,11 +31,11 @@ namespace Lucene.Net.Analysis.Ja
     /// </summary>
     public class GraphvizFormatter
     {
-        private readonly static string BOS_LABEL = "BOS";
+        private const string BOS_LABEL = "BOS";
 
-        private readonly static string EOS_LABEL = "EOS";
+        private const string EOS_LABEL = "EOS";
 
-        private readonly static string FONT_NAME = "Helvetica";
+        private const string FONT_NAME = "Helvetica";
 
         private readonly ConnectionCosts costs;
 
@@ -135,8 +135,7 @@ namespace Lucene.Net.Analysis.Ja
                     sb.Append(toNodeID);
 
                     string attrs;
-                    string path;
-                    bestPathMap.TryGetValue(fromNodeID, out path);
+                    bestPathMap.TryGetValue(fromNodeID, out string path);
                     if (toNodeID.Equals(path, StringComparison.Ordinal))
                     {
                         // This arc is on best path
@@ -193,7 +192,7 @@ namespace Lucene.Net.Analysis.Ja
             return "}";
         }
 
-        private string GetNodeID(int pos, int idx)
+        private static string GetNodeID(int pos, int idx) // LUCENENET: CA1822: Mark members as static
         {
             return pos + "." + idx;
         }

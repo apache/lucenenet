@@ -37,10 +37,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is FieldQueryNode)
+            if (node is FieldQueryNode fqn)
             {
-                FieldQueryNode fqn = (FieldQueryNode)node;
-
                 if (fqn.Field.ToString().Equals("*", StringComparison.Ordinal)
                     && fqn.Text.ToString().Equals("*", StringComparison.Ordinal))
                 {

@@ -110,14 +110,12 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                using (IndexWriter w = new IndexWriter(outputs[i], 
-                    new IndexWriterConfig(version, null) { OpenMode = OpenMode.CREATE }))
-                {
-                    Console.Error.WriteLine("Writing part " + (i + 1) + " ...");
-                    // pass the subreaders directly, as our wrapper's numDocs/hasDeletetions are not up-to-date
-                    IList<IndexReader> sr = input.GetSequentialSubReaders();
-                    w.AddIndexes(sr.ToArray()); // TODO: maybe take List<IR> here?
-                }
+                using IndexWriter w = new IndexWriter(outputs[i],
+                    new IndexWriterConfig(version, null) { OpenMode = OpenMode.CREATE });
+                Console.Error.WriteLine("Writing part " + (i + 1) + " ...");
+                // pass the subreaders directly, as our wrapper's numDocs/hasDeletetions are not up-to-date
+                IList<IndexReader> sr = input.GetSequentialSubReaders();
+                w.AddIndexes(sr.ToArray()); // TODO: maybe take List<IR> here?
             }
             Console.Error.WriteLine("Done.");
         }
@@ -163,23 +161,21 @@ namespace Lucene.Net.Index
                             Console.Error.WriteLine("Invalid input path - skipping: " + file);
                             continue;
                         }
-                        using (Store.Directory dir = FSDirectory.Open(new DirectoryInfo(args[i])))
+                        using Store.Directory dir = FSDirectory.Open(new DirectoryInfo(args[i]));
+                        try
                         {
-                            try
-                            {
-                                if (!DirectoryReader.IndexExists(dir))
-                                {
-                                    Console.Error.WriteLine("Invalid input index - skipping: " + file);
-                                    continue;
-                                }
-                            }
-                            catch (Exception)
+                            if (!DirectoryReader.IndexExists(dir))
                             {
                                 Console.Error.WriteLine("Invalid input index - skipping: " + file);
                                 continue;
                             }
-                            indexes.Add(DirectoryReader.Open(dir));
                         }
+                        catch (Exception)
+                        {
+                            Console.Error.WriteLine("Invalid input index - skipping: " + file);
+                            continue;
+                        }
+                        indexes.Add(DirectoryReader.Open(dir));
                     }
                 }
                 if (outDir == null)

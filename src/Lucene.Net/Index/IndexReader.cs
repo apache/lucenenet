@@ -207,6 +207,7 @@ namespace Lucene.Net.Index
         /// </summary>
         /// <seealso cref="DecRef"/>
         /// <seealso cref="TryIncRef"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void IncRef()
         {
             if (!TryIncRef())
@@ -303,6 +304,7 @@ namespace Lucene.Net.Index
         /// Throws <see cref="ObjectDisposedException"/> if this <see cref="IndexReader"/> or any
         /// of its child readers is disposed, otherwise returns.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected internal void EnsureOpen()
         {
             if (refCount <= 0)

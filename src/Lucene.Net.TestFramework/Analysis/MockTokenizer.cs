@@ -135,12 +135,12 @@ namespace Lucene.Net.Analysis
         /// Calls <c>MockTokenizer(AttributeFactory, TextReader, WHITESPACE, true)</c>
         /// </summary>
         public MockTokenizer(AttributeFactory factory, TextReader input)
-            : this(input, WHITESPACE, true)
+            : this(factory, input, WHITESPACE, true) // LUCENENET specific - added missing factory parameter, as it is clearly a bug
         { }
 
         public sealed override bool IncrementToken()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || (streamState == State.RESET || streamState == State.INCREMENT), () => "IncrementToken() called while in wrong state: " + streamState);
+            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || (streamState == State.RESET || streamState == State.INCREMENT),"IncrementToken() called while in wrong state: {0}", streamState);
             ClearAttributes();
             for (; ; )
             {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Analysis
             }
             else
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(!char.IsLowSurrogate((char)ch), () => "unpaired low surrogate: " + ch.ToString("x"));
+                if (Debugging.AssertsEnabled) Debugging.Assert(!char.IsLowSurrogate((char)ch),"unpaired low surrogate: {0:x}", ch);
                 off++;
                 if (char.IsHighSurrogate((char)ch))
                 {
@@ -227,12 +227,12 @@ namespace Lucene.Net.Analysis
                     if (ch2 >= 0)
                     {
                         off++;
-                        if (Debugging.AssertsEnabled) Debugging.Assert(char.IsLowSurrogate((char)ch2), () => "unpaired high surrogate: " + ch.ToString("x") + ", followed by: " + ch2.ToString("x"));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(char.IsLowSurrogate((char)ch2),"unpaired high surrogate: {0:x}, followed by: {1:x}", ch, ch2);
                         return Character.ToCodePoint((char)ch, (char)ch2);
                     }
                     else
                     {
-                        if (Debugging.AssertsEnabled) Debugging.Assert(false, () => "stream ends with unpaired high surrogate: " + ch.ToString("x"));
+                        if (Debugging.AssertsEnabled) Debugging.Assert(false,"stream ends with unpaired high surrogate: {0:x}", ch);
                     }
                 }
                 return ch;
@@ -312,14 +312,14 @@ namespace Lucene.Net.Analysis
                 // in some exceptional cases (e.g. TestIndexWriterExceptions) a test can prematurely close()
                 // these tests should disable this check, by default we check the normal workflow.
                 // TODO: investigate the CachingTokenFilter "double-close"... for now we ignore this
-                if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState == State.END || streamState == State.CLOSE, () => "Dispose() called in wrong state: " + streamState);
+                if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState == State.END || streamState == State.CLOSE,"Dispose() called in wrong state: {0}", streamState);
                 streamState = State.CLOSE;
             }
         }
 
         internal override bool SetReaderTestPoint()
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState == State.CLOSE, () => "SetReader() called in wrong state: " + streamState);
+            if (Debugging.AssertsEnabled) Debugging.Assert(!enableChecks || streamState == State.CLOSE,"SetReader() called in wrong state: {0}", streamState);
             streamState = State.SETREADER;
             return true;
         }

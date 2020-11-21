@@ -156,9 +156,7 @@ namespace Lucene.Net.Index
                         {
                             r.DecRef();
                         }
-#pragma warning disable 168
-                        catch (Exception th)
-#pragma warning restore 168
+                        catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                         {
                             // ignore any exception that is thrown here to not mask any original
                             // exception.
@@ -195,9 +193,7 @@ namespace Lucene.Net.Index
             for (int i = infos.Count - 1; i >= 0; i--)
             {
                 // find SegmentReader for this segment
-                int? oldReaderIndex;
-                segmentReaders.TryGetValue(infos.Info(i).Info.Name, out oldReaderIndex);
-                if (oldReaderIndex == null)
+                if (!segmentReaders.TryGetValue(infos.Info(i).Info.Name, out int? oldReaderIndex) || oldReaderIndex == null)
                 {
                     // this is a new segment, no old SegmentReader can be reused
                     newReaders[i] = null;
@@ -487,9 +483,7 @@ namespace Lucene.Net.Index
                 {
                     writer.DecRefDeleter(segmentInfos);
                 }
-#pragma warning disable 168
-                catch (ObjectDisposedException ex)
-#pragma warning restore 168
+                catch (ObjectDisposedException) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
                     // this is OK, it just means our original writer was
                     // closed before we were, and this may leave some

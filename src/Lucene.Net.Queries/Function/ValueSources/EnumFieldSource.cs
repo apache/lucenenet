@@ -126,10 +126,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 this.outerInstance = outerInstance;
                 this.arr = arr;
                 this.valid = valid;
-                val = new MutableValueInt32();
+                //val = new MutableValueInt32(); // LUCENENET: Never read
             }
 
-            private readonly MutableValueInt32 val;
+            //private readonly MutableValueInt32 val; // LUCENENET: Never read
 
             /// <summary>
             /// NOTE: This was floatVal() in Lucene

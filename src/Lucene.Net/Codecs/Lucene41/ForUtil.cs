@@ -3,8 +3,8 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Packed;
 using System;
-using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene41
 {
@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// Special number of bits per value used whenever all values to encode are equal.
         /// </summary>
-        private static readonly int ALL_VALUES_EQUAL = 0;
+        private const int ALL_VALUES_EQUAL = 0;
 
         /// <summary>
         /// Upper limit of the number of bytes that might be required to stored
@@ -76,6 +76,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// Compute the number of iterations required to decode <see cref="Lucene41PostingsFormat.BLOCK_SIZE"/>
         /// values with the provided <see cref="PackedInt32s.IDecoder"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int ComputeIterations(PackedInt32s.IDecoder decoder)
         {
             return (int)Math.Ceiling((float)Lucene41PostingsFormat.BLOCK_SIZE / decoder.ByteValueCount);
@@ -85,10 +86,11 @@ namespace Lucene.Net.Codecs.Lucene41
         /// Compute the number of bytes required to encode a block of values that require
         /// <paramref name="bitsPerValue"/> bits per value with format <paramref name="format"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int EncodedSize(PackedInt32s.Format format, int packedIntsVersion, int bitsPerValue)
         {
             long byteCount = format.ByteCount(packedIntsVersion, Lucene41PostingsFormat.BLOCK_SIZE, bitsPerValue);
-            if (Debugging.AssertsEnabled) Debugging.Assert(byteCount >= 0 && byteCount <= int.MaxValue, byteCount.ToString);
+            if (Debugging.AssertsEnabled) Debugging.Assert(byteCount >= 0 && byteCount <= int.MaxValue, byteCount.ToString());
             return (int)byteCount;
         }
 
@@ -169,7 +171,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
 
             int numBits = BitsRequired(data);
-            if (Debugging.AssertsEnabled) Debugging.Assert(numBits > 0 && numBits <= 32, numBits.ToString);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
             PackedInt32s.IEncoder encoder = encoders[numBits];
             int iters = iterations[numBits];
             if (Debugging.AssertsEnabled) Debugging.Assert(iters * encoder.ByteValueCount >= Lucene41PostingsFormat.BLOCK_SIZE);
@@ -192,7 +194,7 @@ namespace Lucene.Net.Codecs.Lucene41
         internal void ReadBlock(IndexInput @in, byte[] encoded, int[] decoded)
         {
             int numBits = @in.ReadByte();
-            if (Debugging.AssertsEnabled) Debugging.Assert(numBits <= 32, numBits.ToString);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numBits <= 32, numBits.ToString());
 
             if (numBits == ALL_VALUES_EQUAL)
             {
@@ -224,11 +226,12 @@ namespace Lucene.Net.Codecs.Lucene41
                 @in.ReadVInt32();
                 return;
             }
-            if (Debugging.AssertsEnabled) Debugging.Assert(numBits > 0 && numBits <= 32, numBits.ToString);
+            if (Debugging.AssertsEnabled) Debugging.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
             int encodedSize = encodedSizes[numBits];
             @in.Seek(@in.GetFilePointer() + encodedSize);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsAllEqual(int[] data)
         {
             int v = data[0];
@@ -246,6 +249,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// Compute the number of bits required to serialize any of the longs in
         /// <paramref name="data"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int BitsRequired(int[] data)
         {
             long or = 0;

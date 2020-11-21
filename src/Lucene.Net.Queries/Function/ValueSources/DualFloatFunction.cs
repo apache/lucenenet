@@ -35,7 +35,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         /// <param name="a">  the base. </param>
         /// <param name="b">  the exponent. </param>
-        public DualSingleFunction(ValueSource a, ValueSource b)
+        protected DualSingleFunction(ValueSource a, ValueSource b) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_a = a;
             this.m_b = b;

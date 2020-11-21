@@ -226,9 +226,8 @@ namespace Lucene.Net.Index
                     return true;
                 }
 
-                if (other is PermissiveOffsetAttribute)
+                if (other is PermissiveOffsetAttribute o)
                 {
-                    PermissiveOffsetAttribute o = (PermissiveOffsetAttribute)other;
                     return o.start == start && o.end == end;
                 }
 
@@ -250,8 +249,6 @@ namespace Lucene.Net.Index
         // TODO: use CannedTokenStream?
         protected internal class RandomTokenStream : TokenStream
         {
-            private readonly BaseTermVectorsFormatTestCase outerInstance;
-
             internal readonly string[] terms;
             internal readonly BytesRef[] termBytes;
             internal readonly int[] positionsIncrements;
@@ -269,15 +266,13 @@ namespace Lucene.Net.Index
             internal readonly IPayloadAttribute pAtt;
             internal int i = 0;
 
-            protected internal RandomTokenStream(BaseTermVectorsFormatTestCase outerInstance, int len, string[] sampleTerms, BytesRef[] sampleTermBytes)
-                : this(outerInstance, len, sampleTerms, sampleTermBytes, Rarely())
+            protected internal RandomTokenStream(BaseTermVectorsFormatTestCase baseTermVectorsFormatTestCase, int len, string[] sampleTerms, BytesRef[] sampleTermBytes)
+                : this(baseTermVectorsFormatTestCase, len, sampleTerms, sampleTermBytes, Rarely())
             {
-                this.outerInstance = outerInstance;
             }
 
-            protected internal RandomTokenStream(BaseTermVectorsFormatTestCase outerInstance, int len, string[] sampleTerms, BytesRef[] sampleTermBytes, bool offsetsGoBackwards)
+            protected internal RandomTokenStream(BaseTermVectorsFormatTestCase baseTermVectorsFormatTestCase, int len, string[] sampleTerms, BytesRef[] sampleTermBytes, bool offsetsGoBackwards)
             {
-                this.outerInstance = outerInstance;
                 terms = new string[len];
                 termBytes = new BytesRef[len];
                 positionsIncrements = new int[len];
@@ -323,13 +318,13 @@ namespace Lucene.Net.Index
                 }
                 if (Rarely())
                 {
-                    Arrays.Fill(payloads, outerInstance.RandomPayload());
+                    Arrays.Fill(payloads, baseTermVectorsFormatTestCase.RandomPayload());
                 }
                 else
                 {
                     for (int i = 0; i < len; ++i)
                     {
-                        payloads[i] = outerInstance.RandomPayload();
+                        payloads[i] = baseTermVectorsFormatTestCase.RandomPayload();
                     }
                 }
 
@@ -402,15 +397,12 @@ namespace Lucene.Net.Index
 
         protected internal class RandomDocument
         {
-            private readonly BaseTermVectorsFormatTestCase outerInstance;
-
             internal readonly string[] fieldNames;
             internal readonly FieldType[] fieldTypes;
             internal readonly RandomTokenStream[] tokenStreams;
 
-            protected internal RandomDocument(BaseTermVectorsFormatTestCase outerInstance, int fieldCount, int maxTermCount, Options options, string[] fieldNames, string[] sampleTerms, BytesRef[] sampleTermBytes)
+            protected internal RandomDocument(BaseTermVectorsFormatTestCase baseTermVectorsFormaTestCase, int fieldCount, int maxTermCount, Options options, string[] fieldNames, string[] sampleTerms, BytesRef[] sampleTermBytes)
             {
-                this.outerInstance = outerInstance;
                 if (fieldCount > fieldNames.Length)
                 {
                     throw new ArgumentException();
@@ -418,7 +410,7 @@ namespace Lucene.Net.Index
                 this.fieldNames = new string[fieldCount];
                 fieldTypes = new FieldType[fieldCount];
                 tokenStreams = new RandomTokenStream[fieldCount];
-                Arrays.Fill(fieldTypes, outerInstance.FieldType(options));
+                Arrays.Fill(fieldTypes, baseTermVectorsFormaTestCase.FieldType(options));
                 ISet<string> usedFileNames = new JCG.HashSet<string>();
                 for (int i = 0; i < fieldCount; ++i)
                 {
@@ -431,7 +423,7 @@ namespace Lucene.Net.Index
                     //} while (usedFileNames.Contains(this.FieldNames[i]));
 
                     usedFileNames.Add(this.fieldNames[i]);
-                    tokenStreams[i] = new RandomTokenStream(outerInstance, TestUtil.NextInt32(Random, 1, maxTermCount), sampleTerms, sampleTermBytes);
+                    tokenStreams[i] = new RandomTokenStream(baseTermVectorsFormaTestCase, TestUtil.NextInt32(Random, 1, maxTermCount), sampleTerms, sampleTermBytes);
                 }
             }
 
@@ -454,9 +446,9 @@ namespace Lucene.Net.Index
             private readonly string[] terms;
             private readonly BytesRef[] termBytes;
 
-            protected internal RandomDocumentFactory(BaseTermVectorsFormatTestCase outerInstance, int distinctFieldNames, int disctinctTerms)
+            protected internal RandomDocumentFactory(BaseTermVectorsFormatTestCase baseTermVectorsFormatTestCase, int distinctFieldNames, int disctinctTerms)
             {
-                this.outerInstance = outerInstance;
+                this.outerInstance = baseTermVectorsFormatTestCase;
                 ISet<string> fieldNames = new JCG.HashSet<string>();
                 while (fieldNames.Count < distinctFieldNames)
                 {
@@ -700,45 +692,41 @@ namespace Lucene.Net.Index
                 int numDocs = AtLeast(200);
                 int docWithVectors = Random.Next(numDocs);
                 Document emptyDoc = new Document();
-                using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(
+                using Directory dir = NewDirectory();
+                using RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
-                    Random, dir))
+                    Random, dir);
+                RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), 20, options);
+                for (int i = 0; i < numDocs; ++i)
                 {
-                    RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), 20, options);
-                    for (int i = 0; i < numDocs; ++i)
+                    if (i == docWithVectors)
                     {
-                        if (i == docWithVectors)
-                        {
-                            writer.AddDocument(AddId(doc.ToDocument(), "42"));
-                        }
-                        else
-                        {
-                            writer.AddDocument(emptyDoc);
-                        }
+                        writer.AddDocument(AddId(doc.ToDocument(), "42"));
                     }
-                    using (IndexReader reader = writer.GetReader())
+                    else
                     {
-                        int docWithVectorsID = DocID(reader, "42");
-                        for (int i = 0; i < 10; ++i)
-                        {
-                            int docID = Random.Next(numDocs);
-                            Fields fields = reader.GetTermVectors(docID);
-                            if (docID == docWithVectorsID)
-                            {
-                                AssertEquals(doc, fields);
-                            }
-                            else
-                            {
-                                Assert.IsNull(fields);
-                            }
-                        }
-                        Fields fields_ = reader.GetTermVectors(docWithVectorsID);
-                        AssertEquals(doc, fields_);
-                    } // reader.Dispose();
-                } // writer.Dispose();, dir.Dispose();
+                        writer.AddDocument(emptyDoc);
+                    }
+                }
+                using IndexReader reader = writer.GetReader();
+                int docWithVectorsID = DocID(reader, "42");
+                for (int i = 0; i < 10; ++i)
+                {
+                    int docID = Random.Next(numDocs);
+                    Fields fields = reader.GetTermVectors(docID);
+                    if (docID == docWithVectorsID)
+                    {
+                        AssertEquals(doc, fields);
+                    }
+                    else
+                    {
+                        Assert.IsNull(fields);
+                    }
+                }
+                Fields fields_ = reader.GetTermVectors(docWithVectorsID);
+                AssertEquals(doc, fields_);
             }
         }
 
@@ -752,19 +740,17 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
-                using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(
+                using Directory dir = NewDirectory();
+                using RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
-                    Random, dir))
-                {
-                    RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 2), AtLeast(20000),
-                        options);
-                    writer.AddDocument(doc.ToDocument());
-                    using (IndexReader reader = writer.GetReader())
-                        AssertEquals(doc, reader.GetTermVectors(0));
-                }
+                    Random, dir);
+                RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 2), AtLeast(20000),
+                    options);
+                writer.AddDocument(doc.ToDocument());
+                using IndexReader reader = writer.GetReader();
+                AssertEquals(doc, reader.GetTermVectors(0));
             }
         }
 
@@ -774,19 +760,16 @@ namespace Lucene.Net.Index
             RandomDocumentFactory docFactory = new RandomDocumentFactory(this, 5000, 10);
             foreach (Options options in ValidOptions())
             {
-                using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(
+                using Directory dir = NewDirectory();
+                using RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
-                    Random, dir))
-                {
-                    RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
-                    writer.AddDocument(doc.ToDocument());
-                    using (IndexReader reader = writer.GetReader())
-                        AssertEquals(doc, reader.GetTermVectors(0));
-                    //reader.Dispose();
-                } // writer.Dispose();, dir.Dispose();
+                    Random, dir);
+                RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
+                writer.AddDocument(doc.ToDocument());
+                using IndexReader reader = writer.GetReader();
+                AssertEquals(doc, reader.GetTermVectors(0));
             }
         }
 
@@ -804,25 +787,21 @@ namespace Lucene.Net.Index
                     {
                         continue;
                     }
-                    using (Directory dir = NewDirectory())
-                    using (var writer = new RandomIndexWriter(
+                    using Directory dir = NewDirectory();
+                    using var writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                         this,
 #endif
-                        Random, dir))
-                    {
-                        RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
-                        RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
-                        writer.AddDocument(AddId(doc1.ToDocument(), "1"));
-                        writer.AddDocument(AddId(doc2.ToDocument(), "2"));
-                        using (IndexReader reader = writer.GetReader())
-                        {
-                            int doc1ID = DocID(reader, "1");
-                            AssertEquals(doc1, reader.GetTermVectors(doc1ID));
-                            int doc2ID = DocID(reader, "2");
-                            AssertEquals(doc2, reader.GetTermVectors(doc2ID));
-                        }
-                    }
+                        Random, dir);
+                    RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
+                    RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
+                    writer.AddDocument(AddId(doc1.ToDocument(), "1"));
+                    writer.AddDocument(AddId(doc2.ToDocument(), "2"));
+                    using IndexReader reader = writer.GetReader();
+                    int doc1ID = DocID(reader, "1");
+                    AssertEquals(doc1, reader.GetTermVectors(doc1ID));
+                    int doc2ID = DocID(reader, "2");
+                    AssertEquals(doc2, reader.GetTermVectors(doc2ID));
                 }
             }
         }
@@ -837,26 +816,22 @@ namespace Lucene.Net.Index
             {
                 docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), TestUtil.NextInt32(Random, 10, 50), RandomOptions());
             }
-            using (Directory dir = NewDirectory())
-            using (RandomIndexWriter writer = new RandomIndexWriter(
+            using Directory dir = NewDirectory();
+            using RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                 this,
 #endif
-                Random, dir))
+                Random, dir);
+            for (int i = 0; i < numDocs; ++i)
             {
-                for (int i = 0; i < numDocs; ++i)
-                {
-                    writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
-                }
-                using (IndexReader reader = writer.GetReader())
-                {
-                    for (int i = 0; i < numDocs; ++i)
-                    {
-                        int docID = DocID(reader, "" + i);
-                        AssertEquals(docs[i], reader.GetTermVectors(docID));
-                    }
-                } // reader.Dispose();
-            } // writer.Dispose();, dir.Dispose();
+                writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
+            }
+            using IndexReader reader = writer.GetReader();
+            for (int i = 0; i < numDocs; ++i)
+            {
+                int docID = DocID(reader, "" + i);
+                AssertEquals(docs[i], reader.GetTermVectors(docID));
+            }
         }
 
         [Test]
@@ -877,40 +852,35 @@ namespace Lucene.Net.Index
                 {
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt32(Random, 1, 3), AtLeast(10), options);
                 }
-                using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(
+                using Directory dir = NewDirectory();
+                using RandomIndexWriter writer = new RandomIndexWriter(
 #if FEATURE_INSTANCE_TESTDATA_INITIALIZATION
                     this,
 #endif
-                    Random, dir))
+                    Random, dir);
+                for (int i = 0; i < numDocs; ++i)
                 {
-                    for (int i = 0; i < numDocs; ++i)
+                    writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
+                    if (Rarely())
                     {
-                        writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
-                        if (Rarely())
-                        {
-                            writer.Commit();
-                        }
+                        writer.Commit();
                     }
-                    foreach (int delete in deletes)
+                }
+                foreach (int delete in deletes)
+                {
+                    writer.DeleteDocuments(new Term("id", "" + delete));
+                }
+                // merge with deletes
+                writer.ForceMerge(1);
+                using IndexReader reader = writer.GetReader();
+                for (int i = 0; i < numDocs; ++i)
+                {
+                    if (!deletes.Contains(i))
                     {
-                        writer.DeleteDocuments(new Term("id", "" + delete));
+                        int docID = DocID(reader, "" + i);
+                        AssertEquals(docs[i], reader.GetTermVectors(docID));
                     }
-                    // merge with deletes
-                    writer.ForceMerge(1);
-                    using (IndexReader reader = writer.GetReader())
-                    {
-                        for (int i = 0; i < numDocs; ++i)
-                        {
-                            if (!deletes.Contains(i))
-                            {
-                                int docID = DocID(reader, "" + i);
-                                AssertEquals(docs[i], reader.GetTermVectors(docID));
-                            }
-                        }
-                    } // reader.Dispose();
-
-                } // writer.Dispose();, dir.Dispose();
+                }
             }
         }
 
@@ -940,28 +910,26 @@ namespace Lucene.Net.Index
                     {
                         writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
                     }
-                    using (IndexReader reader = writer.GetReader())
+                    using IndexReader reader = writer.GetReader();
+                    for (int i = 0; i < numDocs; ++i)
                     {
-                        for (int i = 0; i < numDocs; ++i)
-                        {
-                            int docID = DocID(reader, "" + i);
-                            AssertEquals(docs[i], reader.GetTermVectors(docID));
-                        }
+                        int docID = DocID(reader, "" + i);
+                        AssertEquals(docs[i], reader.GetTermVectors(docID));
+                    }
 
-                        ThreadJob[] threads = new ThreadJob[2];
-                        for (int i = 0; i < threads.Length; ++i)
-                        {
-                            threads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, docs, reader, exception, i);
-                        }
-                        foreach (ThreadJob thread in threads)
-                        {
-                            thread.Start();
-                        }
-                        foreach (ThreadJob thread in threads)
-                        {
-                            thread.Join();
-                        }
-                    } // reader.Dispose();
+                    ThreadJob[] threads = new ThreadJob[2];
+                    for (int i = 0; i < threads.Length; ++i)
+                    {
+                        threads[i] = new ThreadAnonymousInnerClassHelper(this, numDocs, docs, reader, exception);
+                    }
+                    foreach (ThreadJob thread in threads)
+                    {
+                        thread.Start();
+                    }
+                    foreach (ThreadJob thread in threads)
+                    {
+                        thread.Join();
+                    }
                 } // writer.Dispose();, dir.Dispose();
                 Assert.IsNull(exception.Value, "One thread threw an exception");
             }
@@ -975,16 +943,14 @@ namespace Lucene.Net.Index
             private readonly RandomDocument[] docs;
             private readonly IndexReader reader;
             private readonly AtomicReference<Exception> exception;
-            private readonly int i;
 
-            public ThreadAnonymousInnerClassHelper(BaseTermVectorsFormatTestCase outerInstance, int numDocs, RandomDocument[] docs, IndexReader reader, AtomicReference<Exception> exception, int i)
+            public ThreadAnonymousInnerClassHelper(BaseTermVectorsFormatTestCase outerInstance, int numDocs, RandomDocument[] docs, IndexReader reader, AtomicReference<Exception> exception)
             {
                 this.outerInstance = outerInstance;
                 this.numDocs = numDocs;
                 this.docs = docs;
                 this.reader = reader;
                 this.exception = exception;
-                this.i = i;
             }
 
             public override void Run()

@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Create a new <see cref="CharFilter"/> wrapping the provided reader. </summary>
         /// <param name="input"> a <see cref="TextReader"/>, can also be a <see cref="CharFilter"/> for chaining. </param>
-        public CharFilter(TextReader input)
+        protected CharFilter(TextReader input) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_input = input;
         }
@@ -82,7 +82,7 @@ namespace Lucene.Net.Analysis
         public int CorrectOffset(int currentOff)
         {
             int corrected = Correct(currentOff);
-            return (m_input is CharFilter) ? ((CharFilter)m_input).CorrectOffset(corrected) : corrected;
+            return (m_input is CharFilter charFilter) ? charFilter.CorrectOffset(corrected) : corrected;
         }
 
         // LUCENENET specific - force subclasses to implement Read(char[] buffer, int index, int count),

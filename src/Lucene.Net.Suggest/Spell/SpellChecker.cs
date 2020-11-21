@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Search.Spell
@@ -46,7 +47,6 @@ namespace Lucene.Net.Search.Spell
     /// </summary>
     public class SpellChecker : IDisposable
     {
-
         /// <summary>
         /// The default minimum score to use, if not specified by setting <see cref="Accuracy"/>
         /// or overriding with <see cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/> .
@@ -67,9 +67,9 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Boost value for start and end grams
         /// </summary>
-        private float bStart = 2.0f;
+        private readonly float bStart = 2.0f; // LUCENENET: marked readonly
 
-        private float bEnd = 1.0f;
+        private readonly float bEnd = 1.0f; // LUCENENET: marked readonly
 
         // don't use this searcher directly - see SwapSearcher()
         private IndexSearcher searcher;
@@ -151,9 +151,7 @@ namespace Lucene.Net.Search.Spell
                 if (!DirectoryReader.IndexExists(spellIndexDir))
                 {
 #pragma warning disable 612, 618
-                    using (var writer = new IndexWriter(spellIndexDir, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null)))
-                    {
-                    }
+                    using var writer = new IndexWriter(spellIndexDir, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null));
 #pragma warning restore 612, 618
                 }
                 SwapSearcher(spellIndexDir);
@@ -214,6 +212,7 @@ namespace Lucene.Net.Search.Spell
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
         /// of the suggest words in the field of the user index</returns>
         /// <seealso cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string[] SuggestSimilar(string word, int numSug)
         {
             return this.SuggestSimilar(word, numSug, null, null, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX);
@@ -241,6 +240,7 @@ namespace Lucene.Net.Search.Spell
         /// first criteria: the edit distance, second criteria (only if restricted mode): the popularity
         /// of the suggest words in the field of the user index</returns>
         /// <seealso cref="SuggestSimilar(string, int, IndexReader, string, SuggestMode, float)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string[] SuggestSimilar(string word, int numSug, float accuracy)
         {
             return this.SuggestSimilar(word, numSug, null, null, SuggestMode.SUGGEST_WHEN_NOT_IN_INDEX, accuracy);
@@ -251,6 +251,7 @@ namespace Lucene.Net.Search.Spell
         ///       SuggestSimilar(word, numSug, ir, suggestMode, field, this.accuracy)
         /// 
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string[] SuggestSimilar(string word, int numSug, IndexReader ir, string field, SuggestMode suggestMode)
         {
             return SuggestSimilar(word, numSug, ir, field, suggestMode, this.accuracy);
@@ -559,6 +560,7 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetMin(int l)
         {
             if (l > 5)
@@ -572,6 +574,7 @@ namespace Lucene.Net.Search.Spell
             return 1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int GetMax(int l)
         {
             if (l > 5)
@@ -639,36 +642,49 @@ namespace Lucene.Net.Search.Spell
             }
         }
 
-        private void ReleaseSearcher(IndexSearcher aSearcher)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void ReleaseSearcher(IndexSearcher aSearcher) // LUCENENET: CA1822: Mark members as static
         {
             // don't check if open - always decRef 
             // don't decrement the private searcher - could have been swapped
             aSearcher.IndexReader.DecRef();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EnsureOpen()
         {
             if (disposed)
             {
-                throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been closed");
+                throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been disposed.");
             }
         }
 
         /// <summary>
-        /// Dispose the underlying IndexSearcher used by this SpellChecker </summary>
+        /// Dispose the underlying <see cref="IndexSearcher"/> used by this <see cref="SpellChecker"/>. </summary>
         /// <exception cref="IOException"> if the close operation causes an <see cref="IOException"/> </exception>
         /// <exception cref="ObjectDisposedException"> if the <see cref="SpellChecker"/> is already disposed </exception>
         public void Dispose()
         {
-            if (!disposed)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="SpellChecker"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific - implemented proper dispose pattern
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && !disposed)
             {
                 lock (searcherLock)
                 {
                     disposed = true;
-                    if (searcher != null)
-                    {
-                        searcher.IndexReader.Dispose();
-                    }
+                    searcher?.IndexReader?.Dispose();
                     searcher = null;
                 }
             }
@@ -687,12 +703,9 @@ namespace Lucene.Net.Search.Spell
                 if (disposed)
                 {
                     indexSearcher.IndexReader.Dispose();
-                    throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been closed");
+                    throw new ObjectDisposedException(this.GetType().FullName, "Spellchecker has been disposed.");
                 }
-                if (searcher != null)
-                {
-                    searcher.IndexReader.Dispose();
-                }
+                searcher?.IndexReader?.Dispose();
                 // set the spellindex in the sync block - ensure consistency.
                 searcher = indexSearcher;
                 this.spellIndex = dir;
@@ -705,6 +718,7 @@ namespace Lucene.Net.Search.Spell
         /// <returns> a new read-only IndexSearcher </returns>
         /// <exception cref="IOException"> f there is a low-level IO error </exception>
         // for testing purposes
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal virtual IndexSearcher CreateSearcher(Directory dir)
         {
             return new IndexSearcher(DirectoryReader.Open(dir));

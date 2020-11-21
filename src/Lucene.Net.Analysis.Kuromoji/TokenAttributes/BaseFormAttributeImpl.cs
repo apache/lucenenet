@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
 
         public virtual string GetBaseForm()
         {
-            return token == null ? null : token.GetBaseForm();
+            return token?.GetBaseForm();
         }
 
         public virtual void SetToken(Token token)

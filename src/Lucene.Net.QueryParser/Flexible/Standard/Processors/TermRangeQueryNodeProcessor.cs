@@ -55,9 +55,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
         protected override IQueryNode PostProcessNode(IQueryNode node)
         {
-            if (node is TermRangeQueryNode)
+            if (node is TermRangeQueryNode termRangeNode)
             {
-                TermRangeQueryNode termRangeNode = (TermRangeQueryNode)node;
                 FieldQueryNode upper = (FieldQueryNode)termRangeNode.UpperBound;
                 FieldQueryNode lower = (FieldQueryNode)termRangeNode.LowerBound;
 
@@ -105,16 +104,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 try
                 {
                     string shortDateFormat = locale.DateTimeFormat.ShortDatePattern;
-                    DateTime d1;
-                    DateTime d2 = DateTime.MaxValue; // We really don't care what we set this to, but we need something or the compiler will complain below
 
-                    if (DateTime.TryParseExact(part1, shortDateFormat, locale, DateTimeStyles.None, out d1))
+                    if (DateTime.TryParseExact(part1, shortDateFormat, locale, DateTimeStyles.None, out DateTime d1))
                     {
                         part1 = DateTools.DateToString(d1, dateRes);
                         lower.Text = new StringCharSequence(part1);
                     }
 
-                    if (DateTime.TryParseExact(part2, shortDateFormat, locale, DateTimeStyles.None, out d2))
+                    if (DateTime.TryParseExact(part2, shortDateFormat, locale, DateTimeStyles.None, out DateTime d2))
                     {
                         if (inclusive)
                         {
@@ -143,9 +140,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                     }
 
                 }
-#pragma warning disable 168
-                catch (Exception e)
-#pragma warning restore 168
+                catch (Exception) // LUCENENET: IDE0059: Remove unnecessary value assignment
                 {
                     // do nothing
                 }

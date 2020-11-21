@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
     /// </summary>
     public class HHMMSegmenter
     {
-        private static WordDictionary wordDict = WordDictionary.GetInstance();
+        private static readonly WordDictionary wordDict = WordDictionary.GetInstance(); // LUCENENET: marked readonly
 
         /// <summary>
         /// Create the <see cref="SegGraph"/> for a sentence.
@@ -43,7 +43,7 @@ namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
             CharType[] charTypeArray = GetCharTypes(sentence);
             StringBuilder wordBuf = new StringBuilder();
             SegToken token;
-            int frequency = 0; // the number of times word appears.
+            int frequency; // the number of times word appears. // LUCENENET: IDE0059: Remove unnecessary value assignment
             bool hasFullWidth;
             WordType wordType;
             char[] charArray;

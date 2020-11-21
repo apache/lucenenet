@@ -82,10 +82,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// File extension used to store <see cref="SegmentInfo"/>. </summary>
-        public readonly static string SI_EXTENSION = "si";
+        public const string SI_EXTENSION = "si";
 
-        internal readonly static string CODEC_NAME = "Lucene40SegmentInfo";
-        internal readonly static int VERSION_START = 0;
-        internal readonly static int VERSION_CURRENT = VERSION_START;
+        internal const string CODEC_NAME = "Lucene40SegmentInfo";
+        internal const int VERSION_START = 0;
+        internal const int VERSION_CURRENT = VERSION_START;
     }
 }

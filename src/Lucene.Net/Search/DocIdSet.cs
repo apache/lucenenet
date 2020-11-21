@@ -206,10 +206,7 @@ namespace Lucene.Net.Search
 
             public AnonymousDocIdSet(Func<DocIdSetIterator> getIterator, Func<IBits> bits, Func<bool> isCacheable)
             {
-                if (getIterator == null)
-                    throw new ArgumentNullException("getIterator");
-
-                this.getIterator = getIterator;
+                this.getIterator = getIterator ?? throw new ArgumentNullException(nameof(getIterator));
                 this.bits = bits;
                 this.isCacheable = isCacheable;
             }

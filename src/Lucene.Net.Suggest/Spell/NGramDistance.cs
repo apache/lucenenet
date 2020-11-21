@@ -34,8 +34,7 @@ namespace Lucene.Net.Search.Spell
     /// </summary>
     public class NGramDistance : IStringDistance
     {
-
-        private int n;
+        private readonly int n; // LUCENENET: marked readonly
 
         /// <summary>
         /// Creates an N-Gram distance measure using n-grams of the specified size. </summary>

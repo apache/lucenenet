@@ -4,6 +4,7 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene42
 {
@@ -105,7 +106,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 numerics = new Dictionary<int, NumericEntry>();
                 binaries = new Dictionary<int, BinaryEntry>();
                 fsts = new Dictionary<int, FSTEntry>();
-                ReadFields(@in, state.FieldInfos);
+                ReadFields(@in /*, state.FieldInfos // LUCENENET: Never read */);
 
                 if (version >= VERSION_CHECKSUM)
                 {
@@ -154,7 +155,7 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        private void ReadFields(IndexInput meta, FieldInfos infos)
+        private void ReadFields(IndexInput meta /*, FieldInfos infos // LUCENENET: Never read */)
         {
             int fieldNumber = meta.ReadVInt32();
             while (fieldNumber != -1)
@@ -223,8 +224,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             lock (this)
             {
-                NumericDocValues instance;
-                if (!numericInstances.TryGetValue(field.Number, out instance) || instance == null)
+                if (!numericInstances.TryGetValue(field.Number, out NumericDocValues instance) || instance == null)
                 {
                     instance = LoadNumeric(field);
                     numericInstances[field.Number] = instance;
@@ -235,6 +235,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
         public override long RamBytesUsed() => ramBytesUsed;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void CheckIntegrity()
         {
             if (version >= VERSION_CHECKSUM)
@@ -276,7 +277,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     byte[] bytes = new byte[maxDoc];
                     data.ReadBytes(bytes, 0, bytes.Length);
                     ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(bytes));
-                    return new NumericDocValuesAnonymousInnerClassHelper2(this, bytes);
+                    return new NumericDocValuesAnonymousInnerClassHelper2(bytes);
 
                 case GCD_COMPRESSED:
                     long min = data.ReadInt64();
@@ -302,6 +303,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 this.ordsReader = ordsReader;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 return decode[(int)ordsReader.Get(docID)];
@@ -312,11 +314,12 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             private readonly byte[] bytes;
 
-            public NumericDocValuesAnonymousInnerClassHelper2(Lucene42DocValuesProducer outerInstance, byte[] bytes)
+            public NumericDocValuesAnonymousInnerClassHelper2(byte[] bytes)
             {
                 this.bytes = bytes;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 return (sbyte)bytes[docID];
@@ -336,6 +339,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 this.quotientReader = quotientReader;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long Get(int docID)
             {
                 return min + mult * quotientReader.Get(docID);
@@ -346,8 +350,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             lock (this)
             {
-                BinaryDocValues instance;
-                if (!binaryInstances.TryGetValue(field.Number, out instance) || instance == null)
+                if (!binaryInstances.TryGetValue(field.Number, out BinaryDocValues instance) || instance == null)
                 {
                     instance = LoadBinary(field);
                     binaryInstances[field.Number] = instance;
@@ -388,6 +391,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 this.fixedLength = fixedLength;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Get(int docID, BytesRef result)
             {
                 bytesReader.FillSlice(result, fixedLength * (long)docID, fixedLength);
@@ -405,6 +409,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 this.addresses = addresses;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void Get(int docID, BytesRef result)
             {
                 long startAddress = docID == 0 ? 0 : addresses.Get(docID - 1);
@@ -463,6 +468,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 this.fstEnum = fstEnum;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override int GetOrd(int docID)
             {
                 return (int)docToOrd.Get(docID);
@@ -512,6 +518,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override int ValueCount => (int)entry.NumOrds;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetTermsEnum()
             {
                 return new FSTTermsEnum(fst);
@@ -579,6 +586,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
             private long currentOrd;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override long NextOrd()
             {
                 if (input.Eof)
@@ -592,6 +600,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override void SetDocument(int docID)
             {
                 docToOrds.Get(docID, @ref);
@@ -643,12 +652,14 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override long ValueCount => entry.NumOrds;
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override TermsEnum GetTermsEnum()
             {
                 return new FSTTermsEnum(fst);
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override IBits GetDocsWithField(FieldInfo field)
         {
             if (field.DocValuesType == DocValuesType.SORTED_SET)
@@ -661,6 +672,7 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -752,6 +764,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public override bool SeekExact(BytesRef text)
             {
                 if (@in.SeekExact(text) == null)

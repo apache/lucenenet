@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
                     termsHash = perField.termsHash;
                     int numPostings = perField.bytesHash.Count;
                     perField.Reset();
-                    perField.ShrinkHash(numPostings);
+                    perField.ShrinkHash(/* numPostings // LUCENENET: Not used */);
                     fieldWriter.Reset();
                 }
 

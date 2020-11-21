@@ -53,11 +53,11 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Prefix used for the save file. </summary>
-        public static readonly string SNAPSHOTS_PREFIX = "snapshots_";
+        public const string SNAPSHOTS_PREFIX = "snapshots_";
 
-        private static readonly int VERSION_START = 0;
-        private static readonly int VERSION_CURRENT = VERSION_START;
-        private static readonly string CODEC_NAME = "snapshots";
+        private const int VERSION_START = 0;
+        private const int VERSION_CURRENT = VERSION_START;
+        private const string CODEC_NAME = "snapshots";
 
         // The index writer which maintains the snapshots metadata
         private long nextWriteGen;

@@ -2,6 +2,7 @@ using J2N.Numerics;
 using Lucene.Net.Diagnostics;
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util
 {
@@ -168,6 +169,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Expert: returns the <see cref="T:long[]"/> storing the bits. </summary>
         [WritableArray]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual long[] GetBits()
         {
             return m_bits;
@@ -651,6 +653,7 @@ namespace Lucene.Net.Util
         /// Get the number of set bits.
         /// </summary>
         /// <returns> The number of set bits. </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual long Cardinality()
         {
             return BitUtil.Pop_Array(m_bits, 0, m_wlen);
@@ -660,6 +663,7 @@ namespace Lucene.Net.Util
         /// Returns the popcount or cardinality of the intersection of the two sets.
         /// Neither set is modified.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long IntersectionCount(OpenBitSet a, OpenBitSet b)
         {
             return BitUtil.Pop_Intersect(a.m_bits, b.m_bits, 0, Math.Min(a.m_wlen, b.m_wlen));
@@ -872,6 +876,7 @@ namespace Lucene.Net.Util
             return -1;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public object Clone()
         {
             //OpenBitSet obs = (OpenBitSet)base.Clone();
@@ -971,18 +976,21 @@ namespace Lucene.Net.Util
         // some BitSet compatability methods
 
         /// <summary>see <see cref="Intersect(OpenBitSet)"/></summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void And(OpenBitSet other)
         {
             Intersect(other);
         }
 
         /// <summary>see <see cref="Union(OpenBitSet)"/></summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Or(OpenBitSet other)
         {
             Union(other);
         }
 
         /// <summary>see <see cref="AndNot(OpenBitSet)"/></summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void AndNot(OpenBitSet other)
         {
             Remove(other);
@@ -1018,6 +1026,7 @@ namespace Lucene.Net.Util
         /// Ensure that the <see cref="T:long[]"/> is big enough to hold numBits, expanding it if
         /// necessary.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void EnsureCapacity(long numBits)
         {
             EnsureCapacityWords(Bits2words(numBits));
@@ -1042,6 +1051,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the number of 64 bit words it would take to hold <paramref name="numBits"/>. </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Bits2words(long numBits)
         {
             return (int)(((numBits - 1) >> 6) + 1);

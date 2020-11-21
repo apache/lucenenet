@@ -49,15 +49,15 @@ namespace Lucene.Net.Search
         private string field;
         private SortFieldType type; // defaults to determining type dynamically
         internal bool reverse = false; // defaults to natural order
-        private FieldCache.IParser parser;
+        private readonly FieldCache.IParser parser; // LUCENENET: marked readonly
 
         // Used for CUSTOM sort
-        private FieldComparerSource comparerSource;
+        private readonly FieldComparerSource comparerSource; // LUCENENET: marked readonly
 
         // Used for 'sortMissingFirst/Last'
         public virtual object MissingValue
         {
-            get { return m_missingValue; }
+            get => m_missingValue;
             set
             {
                 if (type == SortFieldType.STRING)

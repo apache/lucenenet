@@ -41,8 +41,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
 
         public virtual SpanQuery GetSpanQuery(XmlElement e)
         {
-            ISpanQueryBuilder builder;
-            if (!builders.TryGetValue(e.Name, out builder) || builder == null)
+            if (!builders.TryGetValue(e.Name, out ISpanQueryBuilder builder) || builder == null)
             {
                 throw new ParserException("No SpanQueryObjectBuilder defined for node " + e.Name);
             }

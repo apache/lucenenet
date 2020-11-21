@@ -68,9 +68,9 @@ namespace Lucene.Net.Join
             {
                 _childDocuments = null;
             }
-            else if (innerDocuments is FixedBitSet)
+            else if (innerDocuments is FixedBitSet fixedBitSet)
             {
-                _childDocuments = (FixedBitSet)innerDocuments;
+                _childDocuments = fixedBitSet;
             }
             else
             {
@@ -82,9 +82,9 @@ namespace Lucene.Net.Join
             {
                 _parentDocuments = null;
             }
-            else if (rootDocuments is FixedBitSet)
+            else if (rootDocuments is FixedBitSet fixedBitSet)
             {
-                _parentDocuments = (FixedBitSet)rootDocuments;
+                _parentDocuments = fixedBitSet;
             }
             else
             {

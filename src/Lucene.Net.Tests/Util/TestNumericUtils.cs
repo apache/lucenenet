@@ -265,8 +265,8 @@ namespace Lucene.Net.Util
         {
             // Cannot use FixedBitSet since the range could be long:
             Int64BitSet bits = useBitSet ? new Int64BitSet(upper - lower + 1) : null;
-            IEnumerator<long> neededBounds = (expectedBounds == null) ? null : expectedBounds.GetEnumerator();
-            IEnumerator<int> neededShifts = (expectedShifts == null) ? null : expectedShifts.GetEnumerator();
+            using IEnumerator<long> neededBounds = expectedBounds?.GetEnumerator();
+            using IEnumerator<int> neededShifts = expectedShifts?.GetEnumerator();
 
             NumericUtils.SplitInt64Range(new LongRangeBuilderAnonymousInnerClassHelper(lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
 

@@ -24,7 +24,7 @@
     {
         private int docID = 0;
 
-        internal static readonly string DOC_TEXT =
+        internal const string DOC_TEXT =
             "Well, this is just some plain text we use for creating the " +
             "test documents. It used to be a text from an online collection " +
             "devoted to first aid, but if there was there an (online) lawyers " +

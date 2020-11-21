@@ -33,73 +33,61 @@ namespace Lucene.Net.Index
         {
             string format = "{0:000000000}";
             IndexWriter w;
-            using (Directory dir = NewDirectory())
+            using Directory dir = NewDirectory();
+            using (w = new IndexWriter(dir, NewIndexWriterConfig(
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
+                .SetOpenMode(OpenMode.CREATE).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
             {
-                using (w = new IndexWriter(dir, NewIndexWriterConfig(
-                    TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
-                    .SetOpenMode(OpenMode.CREATE).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
+                for (int x = 0; x < 11; x++)
                 {
-                    for (int x = 0; x < 11; x++)
-                    {
-                        Document doc = CreateDocument(x, "1", 3, format);
-                        w.AddDocument(doc);
-                        if (x % 3 == 0) w.Commit();
-                    }
-                    for (int x = 11; x < 20; x++)
-                    {
-                        Document doc = CreateDocument(x, "2", 3, format);
-                        w.AddDocument(doc);
-                        if (x % 3 == 0) w.Commit();
-                    }
+                    Document doc = CreateDocument(x, "1", 3, format);
+                    w.AddDocument(doc);
+                    if (x % 3 == 0) w.Commit();
                 }
-
-                Term midTerm = new Term("id", string.Format(CultureInfo.InvariantCulture, format, 11));
-
-
-                CheckSplitting(dir, midTerm, 11, 9);
-
-                // delete some documents
-                using (w = new IndexWriter(dir, NewIndexWriterConfig(
-
-                    TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
-                        .SetOpenMode(OpenMode.APPEND).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
+                for (int x = 11; x < 20; x++)
                 {
-                    w.DeleteDocuments(midTerm);
-                    w.DeleteDocuments(new Term("id", string.Format(CultureInfo.InvariantCulture, format, 2)));
+                    Document doc = CreateDocument(x, "2", 3, format);
+                    w.AddDocument(doc);
+                    if (x % 3 == 0) w.Commit();
                 }
-
-
-                CheckSplitting(dir, midTerm, 10, 8);
-
             }
+
+            Term midTerm = new Term("id", string.Format(CultureInfo.InvariantCulture, format, 11));
+
+
+            CheckSplitting(dir, midTerm, 11, 9);
+
+            // delete some documents
+            using (w = new IndexWriter(dir, NewIndexWriterConfig(
+
+                TEST_VERSION_CURRENT, new MockAnalyzer(Random, MockTokenizer.WHITESPACE, false))
+                    .SetOpenMode(OpenMode.APPEND).SetMergePolicy(NoMergePolicy.COMPOUND_FILES)))
+            {
+                w.DeleteDocuments(midTerm);
+                w.DeleteDocuments(new Term("id", string.Format(CultureInfo.InvariantCulture, format, 2)));
+            }
+
+
+            CheckSplitting(dir, midTerm, 10, 8);
         }
 
         private void CheckSplitting(Directory dir, Term splitTerm, int leftCount, int rightCount)
         {
-            using (Directory dir1 = NewDirectory())
-            {
-                using (Directory dir2 = NewDirectory())
-                {
-                    PKIndexSplitter splitter = new PKIndexSplitter(dir, dir1, dir2, splitTerm,
-                        NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)),
-                        NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
-                    splitter.Split();
+            using Directory dir1 = NewDirectory();
+            using Directory dir2 = NewDirectory();
+            PKIndexSplitter splitter = new PKIndexSplitter(dir, dir1, dir2, splitTerm,
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)),
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)));
+            splitter.Split();
 
-                    using (IndexReader ir1 = DirectoryReader.Open(dir1))
-                    {
-                        using (IndexReader ir2 = DirectoryReader.Open(dir2))
-                        {
-                            assertEquals(leftCount, ir1.NumDocs);
-                            assertEquals(rightCount, ir2.NumDocs);
+            using IndexReader ir1 = DirectoryReader.Open(dir1);
+            using IndexReader ir2 = DirectoryReader.Open(dir2);
+            assertEquals(leftCount, ir1.NumDocs);
+            assertEquals(rightCount, ir2.NumDocs);
 
 
-                            CheckContents(ir1, "1");
-                            CheckContents(ir2, "2");
-
-                        }
-                    }
-                }
-            }
+            CheckContents(ir1, "1");
+            CheckContents(ir2, "2");
         }
 
         private void CheckContents(IndexReader ir, string indexname)

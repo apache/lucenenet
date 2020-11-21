@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis.Ja.Util
         private int[] targetMapOffsets = new int[8192];
         private readonly List<string> posDict = new List<string>();
 
-        public BinaryDictionaryWriter(Type implClazz, int size)
+        protected BinaryDictionaryWriter(Type implClazz, int size) // LUCENENET: CA1012: Abstract types should not have constructors (marked protected)
         {
             this.m_implClazz = implClazz;
             m_buffer = ByteBuffer.Allocate(size);
@@ -240,11 +240,11 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         public virtual void AddMapping(int sourceId, int wordId)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(wordId > lastWordId, () => "words out of order: " + wordId + " vs lastID: " + lastWordId);
+            if (Debugging.AssertsEnabled) Debugging.Assert(wordId > lastWordId,"words out of order: {0} vs lastID: {1}", wordId, lastWordId);
 
             if (sourceId > lastSourceId)
             {
-                if (Debugging.AssertsEnabled) Debugging.Assert(sourceId > lastSourceId, () => "source ids out of order: lastSourceId=" + lastSourceId + " vs sourceId=" + sourceId);
+                if (Debugging.AssertsEnabled) Debugging.Assert(sourceId > lastSourceId,"source ids out of order: lastSourceId={0} vs sourceId={1}", lastSourceId, sourceId);
                 targetMapOffsets = ArrayUtil.Grow(targetMapOffsets, sourceId + 1);
                 for (int i = lastSourceId + 1; i <= sourceId; i++)
                 {
@@ -296,59 +296,55 @@ namespace Lucene.Net.Analysis.Ja.Util
         {
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(filename));
-            using (Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write))
-            {
-                DataOutput @out = new OutputStreamDataOutput(os);
-                CodecUtil.WriteHeader(@out, BinaryDictionary.TARGETMAP_HEADER, BinaryDictionary.VERSION);
+            using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            DataOutput @out = new OutputStreamDataOutput(os);
+            CodecUtil.WriteHeader(@out, BinaryDictionary.TARGETMAP_HEADER, BinaryDictionary.VERSION);
 
-                int numSourceIds = lastSourceId + 1;
-                @out.WriteVInt32(targetMapEndOffset); // <-- size of main array
-                @out.WriteVInt32(numSourceIds + 1); // <-- size of offset array (+ 1 more entry)
-                int prev = 0, sourceId = 0;
-                for (int ofs = 0; ofs < targetMapEndOffset; ofs++)
+            int numSourceIds = lastSourceId + 1;
+            @out.WriteVInt32(targetMapEndOffset); // <-- size of main array
+            @out.WriteVInt32(numSourceIds + 1); // <-- size of offset array (+ 1 more entry)
+            int prev = 0, sourceId = 0;
+            for (int ofs = 0; ofs < targetMapEndOffset; ofs++)
+            {
+                int val = targetMap[ofs], delta = val - prev;
+                if (Debugging.AssertsEnabled) Debugging.Assert(delta >= 0);
+                if (ofs == targetMapOffsets[sourceId])
                 {
-                    int val = targetMap[ofs], delta = val - prev;
-                    if (Debugging.AssertsEnabled) Debugging.Assert(delta >= 0);
-                    if (ofs == targetMapOffsets[sourceId])
-                    {
-                        @out.WriteVInt32((delta << 1) | 0x01);
-                        sourceId++;
-                    }
-                    else
-                    {
-                        @out.WriteVInt32((delta << 1));
-                    }
-                    prev += delta;
+                    @out.WriteVInt32((delta << 1) | 0x01);
+                    sourceId++;
                 }
-                if (Debugging.AssertsEnabled) Debugging.Assert(sourceId == numSourceIds, () => "sourceId:" + sourceId + " != numSourceIds:" + numSourceIds);
+                else
+                {
+                    @out.WriteVInt32((delta << 1));
+                }
+                prev += delta;
             }
+            if (Debugging.AssertsEnabled) Debugging.Assert(sourceId == numSourceIds, "sourceId:{0} != numSourceIds:{1}", sourceId, numSourceIds);
         }
 
         protected virtual void WritePosDict(string filename)
         {
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(filename));
-            using (Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write))
+            using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            DataOutput @out = new OutputStreamDataOutput(os);
+            CodecUtil.WriteHeader(@out, BinaryDictionary.POSDICT_HEADER, BinaryDictionary.VERSION);
+            @out.WriteVInt32(posDict.Count);
+            foreach (string s in posDict)
             {
-                DataOutput @out = new OutputStreamDataOutput(os);
-                CodecUtil.WriteHeader(@out, BinaryDictionary.POSDICT_HEADER, BinaryDictionary.VERSION);
-                @out.WriteVInt32(posDict.Count);
-                foreach (string s in posDict)
+                if (s == null)
                 {
-                    if (s == null)
-                    {
-                        @out.WriteByte((byte)0);
-                        @out.WriteByte((byte)0);
-                        @out.WriteByte((byte)0);
-                    }
-                    else
-                    {
-                        string[] data = CSVUtil.Parse(s);
-                        if (Debugging.AssertsEnabled) Debugging.Assert(data.Length == 3, () => "malformed pos/inflection: " + s);
-                        @out.WriteString(data[0]);
-                        @out.WriteString(data[1]);
-                        @out.WriteString(data[2]);
-                    }
+                    @out.WriteByte((byte)0);
+                    @out.WriteByte((byte)0);
+                    @out.WriteByte((byte)0);
+                }
+                else
+                {
+                    string[] data = CSVUtil.Parse(s);
+                    if (Debugging.AssertsEnabled) Debugging.Assert(data.Length == 3, "malformed pos/inflection: {0}", s);
+                    @out.WriteString(data[0]);
+                    @out.WriteString(data[1]);
+                    @out.WriteString(data[2]);
                 }
             }
         }
@@ -357,24 +353,22 @@ namespace Lucene.Net.Analysis.Ja.Util
         {
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(filename));
-            using (Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write))
+            using Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write);
+            DataOutput @out = new OutputStreamDataOutput(os);
+            CodecUtil.WriteHeader(@out, BinaryDictionary.DICT_HEADER, BinaryDictionary.VERSION);
+            @out.WriteVInt32(m_buffer.Position);
+
+            //WritableByteChannel channel = Channels.newChannel(os);
+            // Write Buffer
+            m_buffer.Flip();  // set position to 0, set limit to current position
+                              //channel.write(buffer);
+
+            while (m_buffer.HasRemaining)
             {
-                DataOutput @out = new OutputStreamDataOutput(os);
-                CodecUtil.WriteHeader(@out, BinaryDictionary.DICT_HEADER, BinaryDictionary.VERSION);
-                @out.WriteVInt32(m_buffer.Position);
-
-                //WritableByteChannel channel = Channels.newChannel(os);
-                // Write Buffer
-                m_buffer.Flip();  // set position to 0, set limit to current position
-                //channel.write(buffer);
-
-                while (m_buffer.HasRemaining)
-                {
-                    @out.WriteByte(m_buffer.Get());
-                }
-
-                if (Debugging.AssertsEnabled) Debugging.Assert(m_buffer.Remaining == 0L);
+                @out.WriteByte(m_buffer.Get());
             }
+
+            if (Debugging.AssertsEnabled) Debugging.Assert(m_buffer.Remaining == 0L);
         }
     }
 }

@@ -1,6 +1,6 @@
 using Lucene.Net.Diagnostics;
 using System;
-using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -53,7 +53,7 @@ namespace Lucene.Net.Util.Packed
         /// </summary>
         public long ReadInt64(int bitsPerValue)
         {
-            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, () => bitsPerValue.ToString(CultureInfo.InvariantCulture));
+            if (Debugging.AssertsEnabled) Debugging.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "{0}", bitsPerValue);
             long r = 0;
             while (bitsPerValue > 0)
             {
@@ -74,6 +74,7 @@ namespace Lucene.Net.Util.Packed
         /// If there are pending bits (at most 7), they will be ignored and the next
         /// value will be read starting at the next byte.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SkipToNextByte()
         {
             remainingBits = 0;

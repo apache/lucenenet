@@ -93,20 +93,17 @@ namespace Lucene.Net.Index
             }
             else
             {
-                return new AutomatonTermsEnumAnonymousInnerClassHelper(this, GetEnumerator(), compiled, startTerm);
+                return new AutomatonTermsEnumAnonymousInnerClassHelper(GetEnumerator(), compiled, startTerm);
             }
         }
 
         private class AutomatonTermsEnumAnonymousInnerClassHelper : AutomatonTermsEnum
         {
-            private readonly Terms outerInstance;
+            private readonly BytesRef startTerm;
 
-            private BytesRef startTerm;
-
-            public AutomatonTermsEnumAnonymousInnerClassHelper(Terms outerInstance, Lucene.Net.Index.TermsEnum iterator, CompiledAutomaton compiled, BytesRef startTerm)
+            public AutomatonTermsEnumAnonymousInnerClassHelper(TermsEnum iterator, CompiledAutomaton compiled, BytesRef startTerm)
                 : base(iterator, compiled)
             {
-                this.outerInstance = outerInstance;
                 this.startTerm = startTerm;
             }
 

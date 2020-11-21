@@ -23,7 +23,7 @@ namespace Lucene.Net.Support
     /// Use this attribute to make an exception to the class naming rules (which should not be named like Interfaces).
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    internal class ExceptionToClassNameConventionAttribute : Attribute
+    internal sealed class ExceptionToClassNameConventionAttribute : Attribute
     {
     }
 }

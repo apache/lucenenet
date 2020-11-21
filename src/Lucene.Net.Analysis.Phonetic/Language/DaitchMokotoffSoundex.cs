@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -200,11 +201,13 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 return replacementDefault;
             }
 
-            private bool IsVowel(char ch)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private static bool IsVowel(char ch) // LUCENENET: CA1822: Mark members as static
             {
                 return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public bool Matches(string context)
             {
                 return context.StartsWith(pattern, StringComparison.Ordinal);
@@ -240,6 +243,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
         private class DaitchMokotoffRuleComparer : IComparer<Rule>
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public int Compare(Rule rule1, Rule rule2)
             {
                 return rule2.PatternLength - rule1.PatternLength;
@@ -275,7 +279,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
             string rawLine;
             while ((rawLine = scanner.ReadLine()) != null)
-            { 
+            {
                 currentLine++;
                 string line = rawLine;
 
@@ -352,8 +356,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
                                 Rule r = new Rule(pattern, replacement1, replacement2, replacement3);
                                 char patternKey = r.Pattern[0];
-                                IList<Rule> rules;
-                                if (!ruleMapping.TryGetValue(patternKey, out rules) || rules == null)
+                                if (!ruleMapping.TryGetValue(patternKey, out IList<Rule> rules) || rules == null)
                                 {
                                     rules = new List<Rule>();
                                     ruleMapping[patternKey] = rules;
@@ -437,34 +440,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             return sb.ToString();
         }
 
-        // LUCENENET specific - in .NET we don't need an object overload, since strings are sealed anyway.
-        //**
-        // * Encodes an Object using the Daitch-Mokotoff soundex algorithm without branching.
-        // * <p>
-        // * This method is provided in order to satisfy the requirements of the Encoder interface, and will throw an
-        // * EncoderException if the supplied object is not of type java.lang.String.
-        // * </p>
-        // *
-        // * @see #soundex(String)
-        // *
-        // * @param obj
-        // *            Object to encode
-        // * @return An object (of type java.lang.String) containing the DM soundex code, which corresponds to the String
-        // *         supplied.
-        // * @throws EncoderException
-        // *             if the parameter supplied is not of type java.lang.String
-        // * @throws IllegalArgumentException
-        // *             if a character is not mapped
-        // */
-        //@Override
-        //    public Object encode(object obj) 
-        //{
-        //        if (!(obj instanceof String)) {
-        //        throw new EncoderException(
-        //                "Parameter supplied to DaitchMokotoffSoundex encode is not of type java.lang.String");
-        //    }
-        //        return encode((String) obj);
-        //}
+        // LUCENENET specific - in .NET we don't need an object overload of Encode(), since strings are sealed anyway.
 
         /// <summary>
         /// Encodes a string using the Daitch-Mokotoff soundex algorithm without branching.
@@ -473,6 +449,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// <returns>A DM Soundex code corresponding to the string supplied.</returns>
         /// <exception cref="ArgumentException">If a character is not mapped.</exception>
         /// <seealso cref="GetSoundex(string)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual string Encode(string source)
         {
             if (source == null)
@@ -532,8 +509,10 @@ namespace Lucene.Net.Analysis.Phonetic.Language
             string input = Cleanup(source);
 
             // LinkedHashSet preserves input order. In .NET we can use List for that purpose.
-            IList<Branch> currentBranches = new List<Branch>();
-            currentBranches.Add(new Branch());
+            IList<Branch> currentBranches = new List<Branch>
+            {
+                new Branch()
+            };
 
             char lastChar = '\0';
             for (int index = 0; index < input.Length; index++)
@@ -547,8 +526,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                 }
 
                 string inputContext = input.Substring(index);
-                IList<Rule> rules;
-                if (!RULES.TryGetValue(ch, out rules) || rules == null)
+                if (!RULES.TryGetValue(ch, out IList<Rule> rules) || rules == null)
                 {
                     continue;
                 }

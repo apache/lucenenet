@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Ja
     /// </summary>
     public class JapaneseReadingFormFilterFactory : TokenFilterFactory
     {
-        private static readonly string ROMAJI_PARAM = "useRomaji";
+        private const string ROMAJI_PARAM = "useRomaji";
         private readonly bool useRomaji;
 
         /// <summary>Creates a new <see cref="JapaneseReadingFormFilterFactory"/>.</summary>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Analysis.Ja
             useRomaji = GetBoolean(args, ROMAJI_PARAM, false);
             if (args.Count > 0)
             {
-                throw new ArgumentException("Unknown parameters: " + args);
+                throw new ArgumentException(string.Format(J2N.Text.StringFormatter.CurrentCulture, "Unknown parameters: {0}", args));
             }
         }
 

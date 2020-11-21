@@ -57,7 +57,7 @@ namespace Lucene.Net.Spatial.Queries
         {
             if (distErrPct < 0 || distErrPct > 0.5)
             {
-                throw new ArgumentException("distErrPct " + distErrPct + " must be between [0 to 0.5]", "distErrPct");
+                throw new ArgumentException($"distErrPct {distErrPct} must be between [0 to 0.5]", nameof(distErrPct));
             }
             if (distErrPct == 0 || shape is IPoint)
             {

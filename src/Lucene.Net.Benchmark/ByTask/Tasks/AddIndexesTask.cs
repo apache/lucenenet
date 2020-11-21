@@ -94,8 +94,33 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
         public override void TearDown()
         {
-            inputDir.Dispose();
+            inputDir?.Dispose();
+            inputDir = null; // LUCENENET specific
             base.TearDown();
+        }
+
+        /// <summary>
+        /// Releases resources used by the <see cref="AddIndexesTask"/> and
+        /// if overridden in a derived class, optionally releases unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+        /// <c>false</c> to release only unmanaged resources.</param>
+
+        // LUCENENET specific
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing)
+                {
+                    inputDir?.Dispose(); // LUCENENET specific - dispose tokens and set to null
+                    inputDir = null;
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
     }
 }
