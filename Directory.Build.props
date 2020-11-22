@@ -47,6 +47,7 @@
 
   <PropertyGroup Label="Assembly Publishing">
     <IsPublishable>false</IsPublishable>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package Defaults">
