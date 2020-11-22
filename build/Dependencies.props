@@ -65,7 +65,7 @@
     <MSTestTestFrameworkPackageVersion>2.0.0</MSTestTestFrameworkPackageVersion>
     <MSTestTestAdapterPackageVersion>$(MSTestTestFrameworkPackageVersion)</MSTestTestAdapterPackageVersion>
     <NETStandardLibrary20PackageVersion>2.0.3</NETStandardLibrary20PackageVersion>
-    <NewtonsoftJsonPackageVersion>10.0.3</NewtonsoftJsonPackageVersion>
+    <NewtonsoftJsonPackageVersion>10.0.1</NewtonsoftJsonPackageVersion>
     <NUnit3TestAdapterPackageVersion>3.16.1</NUnit3TestAdapterPackageVersion>
     <NUnitPackageVersion>3.12.0</NUnitPackageVersion>
     <OpenNLPNETPackageVersion>1.9.1</OpenNLPNETPackageVersion>
