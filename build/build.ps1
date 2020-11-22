@@ -141,11 +141,12 @@ task Compile -depends Clean, Init, Restore -description "This task compiles the 
             # instead it is output to the Version.props file. This file is then
             # used during a release to "freeze" the build at a specific version
             # so it is always a constant in release distributions.
-            & dotnet.exe msbuild $solutionFile /t:Build `
-                /p:Configuration=$configuration `
-                /p:Platform=$platform `
-                /p:PortableDebugTypeOnly=true `
-                /p:TestFrameworks=true # workaround for parsing issue: https://github.com/Microsoft/msbuild/issues/471#issuecomment-181963350
+            & dotnet build "$solutionFile" `
+                --configuration "$configuration" `
+                --no-restore `
+                -p:Platform=$platform `
+                -p:PortableDebugTypeOnly=true `
+                -p:TestFrameworks=true # workaround for parsing issue: https://github.com/Microsoft/msbuild/issues/471#issuecomment-181963350
         }
 
         $success = $true
