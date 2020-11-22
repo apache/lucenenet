@@ -202,10 +202,10 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
         foreach ($framework in $frameworksToTest) {
 
             # Pause if we have queued too many parallel jobs
-            #$running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
-            #if ($running.Count -ge $maximumParalellJobs) {
-            #    $running | Wait-Job -Any | Out-Null
-            #}
+            $running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
+            if ($running.Count -ge $maximumParalellJobs) {
+                $running | Wait-Job -Any | Out-Null
+            }
 
             $logPath = "$outDirectory/$framework"
             $outputPath = "$logPath"
@@ -214,29 +214,31 @@ task Publish -depends Compile -description "This task uses dotnet publish to pac
             Ensure-Directory-Exists $outputPath
             
             Write-Host "Configuration: $configuration"
-            
-            dotnet publish "$solutionFile" --output "$outputPath" --framework "$framework" --configuration "$configuration" --no-build --no-restore --verbosity Normal /p:TestFrameworks=true /p:Platform="$platform"
 
-            #$scriptBlock = {
-            #    param([string]$solutionFile, [string]$outputPath, [string]$logPath, [string]$framework, [string]$configuration)
-            #    Write-Host "Publishing '$solutionFile' on '$framework' to '$outputPath'..."
-            #    # Note: Cannot use Psake Exec in background
-            #    dotnet publish "$solutionFile" --output "$outputPath" --framework "$framework" --configuration "$configuration" --no-build --no-restore --verbosity Normal /p:TestFrameworks=true /p:Platform="$platform" > "$logPath/dotnet-publish.log" 2> "$logPath/dotnet-publish-error.log"
-            #}
+            $expression = "dotnet publish `"$solutionFile`" --configuration `"$configuration`" --framework `"$framework`" --output `"$outputPath`""
+            $expression = "$expression --no-build --no-restore --verbosity Normal /p:TestFrameworks=true /p:Platform=`"$platform`""
+            $expression = "$expression > `"$logPath/dotnet-publish.log`" 2> `"$logPath/dotnet-publish-error.log`""
+
+            $scriptBlock = {
+                param([string]$expression)
+                Write-Host $expression
+                # Note: Cannot use Psake Exec in background
+                Invoke-Expression $expression
+            }
 
             # Execute the jobs in parallel
-            #Start-Job $scriptBlock -ArgumentList $solutionFile,$outputPath,$logPath,$framework,$configuration
+            Start-Job -Name "$framework" -ScriptBlock $scriptBlock -ArgumentList @($expression)
         }
 
         # Wait for it all to complete
-        #do {
-        #    $running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
-        #    if ($running.Count -gt 0) {
-        #        Write-Host ""
-        #        Write-Host "  Almost finished, only $($running.Count) projects left to publish..." -ForegroundColor Cyan
-        #        $running | Wait-Job -Any | Out-Null
-        #    }
-        #} until ($running.Count -eq 0)
+        do {
+            $running = @(Get-Job | Where-Object { $_.State -eq 'Running' })
+            if ($running.Count -gt 0) {
+                Write-Host ""
+                Write-Host "  Almost finished, only $($running.Count) projects left to publish..." -ForegroundColor Cyan
+                $running | Wait-Job -Any | Out-Null
+            }
+        } until ($running.Count -eq 0)
 
         # Getting the information back from the jobs (time consuming)
         #Get-Job | Receive-Job
