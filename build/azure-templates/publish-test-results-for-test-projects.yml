@@ -54,7 +54,7 @@ parameters:
   testResultsFileName: 'TestResults.trx' # The name of the file (not path) of the test results. Default 'TestResults.trx'.
 
 steps:
-#- powershell: |
+#- pwsh: |
 #    function EnsureNotNullOrEmpty([string]$param, [string]$nameOfParam) {
 #        if ([string]::IsNullOrEmpty($param)) {
 #            Write-Host "##vso[task.logissue type=error;]Missing template parameter \"$nameOfParam\""

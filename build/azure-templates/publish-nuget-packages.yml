@@ -27,7 +27,7 @@ parameters:
   testSymbolFilesConvention: '**/*.Tests*.pdb' # The glob pattern (within the debugArtifactName) where to look for test project symbols (.pdb) files, so they can be distinguished from other project file types.
 
 steps:
-- powershell: |
+- pwsh: |
     function EnsureNotNullOrEmpty([string]$param, [string]$nameOfParam) {
         if ([string]::IsNullOrEmpty($param)) {
             Write-Host "##vso[task.logissue type=error;]Missing template parameter \"$nameOfParam\""

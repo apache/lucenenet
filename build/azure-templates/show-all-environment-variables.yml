@@ -18,7 +18,7 @@
 # Writes all environment variables to the host (helpful for debugging)
 
 steps:
-- powershell: |
+- pwsh: |
     $environmentVars = Get-ChildItem -path env:* | sort Name
     foreach($var in $environmentVars) {
         $keyname = $var.Key
