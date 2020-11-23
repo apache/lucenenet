@@ -54,7 +54,7 @@ steps:
 
 
 - task:  DownloadPipelineArtifact@2
-  displayName: 'Download Build Artifacts: ${{ parameters.binaryArtifactName }} to $(System.DefaultWorkingDirectory)\$(parameters.framework)'
+  displayName: 'Download Build Artifacts: ${{ parameters.binaryArtifactName }} to $(System.DefaultWorkingDirectory)/$(parameters.framework)'
   inputs:
     artifactName: '${{ parameters.binaryArtifactName }}_${{ parameters.framework }}'
     targetPath: '$(System.DefaultWorkingDirectory)/${{ parameters.framework }}'
@@ -91,31 +91,7 @@ steps:
     $testResultsFileName = '${{ parameters.testResultsFileName }}'
     $maximumParalellJobs = '${{ parameters.maximumParallelJobs }}'
     $where = '${{ parameters.where }}'
-    
-    function SeparateVersionDigits([string]$digits) {
-        return (&{ for ($i = 0;$i -lt $digits.Length;$i++) { $digits.Substring($i,1) }}) -join '.'
-    }
-    
-    # Convert $framework (i.e. net461) into format for dotnet vstest (i.e. .NETFramework,Version=4.6.1)
-    function ConvertFrameworkName([string]$framework) {
-        $match = [regex]::Match($framework, '^net(4\d+)$') # .NET Framework 4+
-        if ($match.Success) {
-            $ver = SeparateVersionDigits($match.Groups[1].Value)
-            return ".NETFramework,Version=v$($ver)"
-        }
-        $match = [regex]::Match($framework, '^net(?:coreapp)?(\d+\.\d+(?:\.\d+)?)$') # .NET 5 / .NET Core
-        if ($match.Success) {
-            $ver = $match.Groups[1].Value
-            return ".NETCoreApp,Version=v$($ver)"
-        } 
-        $match = [regex]::Match($framework, '^uap(\d+\.\d+)?$') # Universal Windows Platform
-        if ($match.Success) {
-            $ver = $match.Groups[1].Value
-            $ver = if ([string]::IsNullOrEmpty($ver)) { '10' } else { $ver.Replace('.0','').Replace('.','') }
-            return "FrameworkUap$($ver)"
-        }
-        return $framework
-    }
+    $tempDirectory = "$(Agent.TempDirectory)"
     
     function IsSupportedFramework([string]$framework) {
         if ($IsWindows -eq $null) {
@@ -146,21 +122,31 @@ steps:
                 }
             }
     
-            $fwork = ConvertFrameworkName($framework)
             $testResultDirectory = "$testResultsArtifactDirectory/$testOSName/$framework/$testPlatform/$testName"
             if (!(Test-Path "$testResultDirectory")) {
                 New-Item "$testResultDirectory" -ItemType Directory -Force
             }
-    
-            $testExpression = "dotnet vstest ""$($testBinary.FullName)"" --Framework:""$fwork"" --Platform:""$testPlatform""" + `
+            # Test binaries are copied to a temp directory so locking behavior of other processes doesn't interfere with this test run
+            $tempTestDirectory = "$tempDirectory/$framework/$testName"
+            if (!(Test-Path "$tempTestDirectory")) {
+                New-Item "$tempTestDirectory" -ItemType Directory -Force
+            }
+            $testTarget = "$tempTestDirectory/$($testBinary.Name)"
+            $sourceDirectory = $testBinary.Directory.FullName
+
+            Copy-Item -Path "$sourceDirectory/*" -Destination "$tempTestDirectory" -Recurse -Force
+
+            $testExpression = "dotnet test ""$testTarget"" --framework ""$framework"" --blame --no-build --no-restore" + `
                 " --logger:""console;verbosity=normal"" --logger:""trx;LogFileName=$testResultsFileName""" + `
-                " --ResultsDirectory:""$testResultDirectory"" --Blame"
-    
+                " --results-directory:""$testResultDirectory"""
+
             if (![string]::IsNullOrEmpty($where)) {
-                $testExpression = "$testExpression --TestCaseFilter:""$where"""
+                $testExpression = "$testExpression --filter ""$where"""
             }
     
-            Write-Host "Testing '$($testBinary.FullName)' on framework '$fwork' and outputting test results to '$testResultDirectory/$testResultsFileName'..."
+            $testExpression = "$testExpression -- RunConfiguration.TargetPlatform=$testPlatform"
+    
+            Write-Host "Testing '$($testBinary.FullName)' on framework '$framework' and outputting test results to '$testResultDirectory/$testResultsFileName'..."
             Write-Host $testExpression -ForegroundColor Magenta
             if ($maximumParalellJobs -le 1) {
                 Invoke-Expression $testExpression # For running in the foreground
