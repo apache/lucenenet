@@ -34,24 +34,24 @@ Fragmenter, fragment Scorer, and Formatter classes.
       QueryParser parser = new QueryParser("notv", analyzer);
       Query query = parser.parse("million");
     
-  TopDocs hits = searcher.search(query, 10);
-    
-  SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter();
-      Highlighter highlighter = new Highlighter(htmlFormatter, new QueryScorer(query));
-      for (int i = 0; i < 10;="" i++)="" {="" int="" id="hits.scoreDocs[i].doc;" document="" doc="searcher.doc(id);" string="" text="doc.get(" notv");"="" tokenstream="" tokenstream="TokenSources.getAnyTokenStream(searcher.getIndexReader()," id,="" "notv",="" analyzer);="" textfragment[]="" frag="highlighter.getBestTextFragments(tokenStream," text,="" false,="" 10);//highlighter.getbestfragments(tokenstream,="" text,="" 3,="" "...");="" for="" (int="" j="0;" j="">< frag.length;="" j++)="" {="" if="" ((frag[j]="" !="null)" &&="" (frag[j].getscore()=""> 0)) {
-            System.out.println((frag[j].toString()));
+      TopDocs hits = searcher.search(query, 10);
+        
+      SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter();
+          Highlighter highlighter = new Highlighter(htmlFormatter, new QueryScorer(query));
+          for (int i = 0; i < 10;="" i++)="" {="" int="" id="hits.scoreDocs[i].doc;" document="" doc="searcher.doc(id);" string="" text="doc.get(" notv");"="" tokenstream="" tokenstream="TokenSources.getAnyTokenStream(searcher.getIndexReader()," id,="" "notv",="" analyzer);="" textfragment[]="" frag="highlighter.getBestTextFragments(tokenStream," text,="" false,="" 10);//highlighter.getbestfragments(tokenstream,="" text,="" 3,="" "...");="" for="" (int="" j="0;" j="">< frag.length;="" j++)="" {="" if="" ((frag[j]="" !="null)" &&="" (frag[j].getscore()=""> 0)) {
+                System.out.println((frag[j].toString()));
+              }
+            }
+            //Term vector
+            text = doc.get("tv");
+            tokenStream = TokenSources.getAnyTokenStream(searcher.getIndexReader(), hits.scoreDocs[i].doc, "tv", analyzer);
+            frag = highlighter.getBestTextFragments(tokenStream, text, false, 10);
+            for (int j = 0; j < frag.length;="" j++)="" {="" if="" ((frag[j]="" !="null)" &&="" (frag[j].getscore()=""> 0)) {
+                System.out.println((frag[j].toString()));
+              }
+            }
+            System.out.println("-------------");
           }
-        }
-        //Term vector
-        text = doc.get("tv");
-        tokenStream = TokenSources.getAnyTokenStream(searcher.getIndexReader(), hits.scoreDocs[i].doc, "tv", analyzer);
-        frag = highlighter.getBestTextFragments(tokenStream, text, false, 10);
-        for (int j = 0; j < frag.length;="" j++)="" {="" if="" ((frag[j]="" !="null)" &&="" (frag[j].getscore()=""> 0)) {
-            System.out.println((frag[j].toString()));
-          }
-        }
-        System.out.println("-------------");
-      }
 
 ## New features 06/02/2005
 
