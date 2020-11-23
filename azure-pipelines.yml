@@ -25,6 +25,7 @@ name: 'vNext$(rev:.r)' # Format for build number (will be overridden)
 # GenerateDocs: (Optional. Only builds documentation website if set to 'true'.)
 # GenerateWebsite: (Optional. Only builds lucene.net website if set to 'true'.)
 # IsRelease: (Optional. By default the Release job is disabled, setting this to 'true' will enable it)
+# GeneratePackages: (Optional. Defaults to 'true'. Setting to 'false' will cut about 1 minute from the build time by skipping packing the NuGet files and subsequent artiact upload. If ArtifactFeedID is provided or IsRelease is 'true', this setting has no effect.)
 
 # Versioning Variables
 
@@ -107,6 +108,8 @@ stages:
     - powershell: |
         $configuration = if ($env:BUILDCONFIGURATION) { $env:BUILDCONFIGURATION } else { "Release" }
         Write-Host "##vso[task.setvariable variable=BuildConfiguration;]$configuration"
+        $runPack = if ($env:ISRELEASE -eq 'true' -or $env:ARTIFACTFEEDID -ne '' -or $env:GENERATEPACKAGES -ne 'false') { 'true' } else { 'false' }
+        Write-Host "##vso[task.setvariable variable=RunPack;]$runPack"
       displayName: 'Setup Default Variable Values'
 
     - task: UseDotNet@2
@@ -117,6 +120,7 @@ stages:
     - powershell: |
         Import-Module "$(BuildDirectory)/psake.psm1"
         $generateBuildBat = if ($Env:ISRELEASE -eq 'true') { 'true' } else { 'false' }
+        $primaryCommand = if ($env:RUNPACK -ne 'false') { 'Pack' } else { 'Compile' }
         $parameters = @{}
         $properties = @{
             backup_files='false';
@@ -126,9 +130,9 @@ stages:
             generateBuildBat=$generateBuildBat;
             skipSdkInstallation='true'
         }
-        [string[]]$tasks = 'Pack'
+        [string[]]$tasks = @($primaryCommand)
         if ($Env:RunTests -ne 'false') {
-            [string[]]$tasks = 'Pack','Publish'
+            [string[]]$tasks = $primaryCommand,'Publish'
         }
         Invoke-psake $(BuildDirectory)/build.ps1 -Task $tasks -properties $properties -parameters $parameters
         exit !($psake.build_success)
@@ -210,6 +214,7 @@ stages:
         targetPath: '$(Build.ArtifactStagingDirectory)/$(NuGetArtifactName)'
         artifact: '$(NuGetArtifactName)'
         publishLocation: 'pipeline'
+      condition: and(succeeded(), ne(variables['RunPack'], 'false'))
     
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Artifact: $(DebugArtifactName)'
