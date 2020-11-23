@@ -108,6 +108,12 @@ stages:
     - powershell: |
         $configuration = if ($env:BUILDCONFIGURATION) { $env:BUILDCONFIGURATION } else { "Release" }
         Write-Host "##vso[task.setvariable variable=BuildConfiguration;]$configuration"
+        $isRelease = if ($env:ISRELEASE -eq 'true') { 'true' } else { 'false' }
+        Write-Host "##vso[task.setvariable variable=IsRelease;]$isRelease"
+        $isNightly = if ($env:ISNIGHTLY -eq 'true') { 'true' } else { 'false' }
+        Write-Host "##vso[task.setvariable variable=IsNightly;]$isNightly"
+        $isWeekly = if ($env:ISWEEKLY -eq 'true') { 'true' } else { 'false' }
+        Write-Host "##vso[task.setvariable variable=IsWeekly;]$isWeekly"
         $runPack = if ($env:ISRELEASE -eq 'true' -or $env:ARTIFACTFEEDID -ne '' -or $env:GENERATEPACKAGES -ne 'false') { 'true' } else { 'false' }
         Write-Host "##vso[task.setvariable variable=RunPack;]$runPack"
       displayName: 'Setup Default Variable Values'
@@ -119,7 +125,7 @@ stages:
 
     - powershell: |
         Import-Module "$(BuildDirectory)/psake.psm1"
-        $generateBuildBat = if ($Env:ISRELEASE -eq 'true') { 'true' } else { 'false' }
+        $generateBuildBat = $env:ISRELEASE
         $primaryCommand = if ($env:RUNPACK -ne 'false') { 'Pack' } else { 'Compile' }
         $parameters = @{}
         $properties = @{
