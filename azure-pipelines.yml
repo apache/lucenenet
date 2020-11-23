@@ -143,7 +143,8 @@ stages:
         Invoke-psake $(BuildDirectory)/build.ps1 -Task $tasks -properties $properties -parameters $parameters
         exit !($psake.build_success)
       displayName: 'PSake Build, Pack, and Publish'
-    - template: 'build/azure-templates/show-all-environment-variables.yml'
+
+    #- template: 'build/azure-templates/show-all-environment-variables.yml' # Uncomment for debugging
         
     - pwsh: |
         $dir = '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)'
@@ -563,10 +564,9 @@ stages:
         targetPath: '$(System.DefaultWorkingDirectory)/$(VersionArtifactName)'
 
       # For debugging this pipeline
-    - pwsh: | 
-        Get-ChildItem -Path $(System.DefaultWorkingDirectory)
-    - pwsh: | 
-        Get-ChildItem -Path '$(VersionArtifactName)'
+    #- pwsh: | 
+    #    Get-ChildItem -Path $(System.DefaultWorkingDirectory)
+    #    Get-ChildItem -Path '$(VersionArtifactName)'
 
       # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
       # the version cannot be passed to the Index Sources & Publish Symbols task.
