@@ -61,8 +61,7 @@ steps:
     artifactName: '${{ parameters.binaryArtifactName }}_${{ parameters.framework }}'
     targetPath: '$(System.DefaultWorkingDirectory)/${{ parameters.framework }}'
 
-- powershell: | 
-    Get-ChildItem -Path $(System.DefaultWorkingDirectory)
+#- powershell: Get-ChildItem -Path $(System.DefaultWorkingDirectory) # Uncomment for debugging
 
 - task: UseDotNet@2
   displayName: 'Use .NET Core sdk 2.1.807'
