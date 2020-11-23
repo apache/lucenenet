@@ -98,7 +98,7 @@ stages:
       vmImage: 'windows-2019'
 
     variables:
-      PublishTempDirectory: '$(Build.BinariesDirectory)/publish'
+      PublishTempDirectory: '$(Build.ArtifactStagingDirectory)/publish'
 
     steps:
     
