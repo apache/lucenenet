@@ -19,6 +19,8 @@
 # runs the tests for each project on a background job in parallel,
 # then uploads the results to Azure DevOps pipelines
 
+# NOTE: Depends on environment variables $(IsNightly) and $(IsWeekly)
+
 parameters:
   osName: 'Windows' # The name of the operating system for display purposes.
   framework: '' # The target framework indicating which framework tests will be run on. See: https://docs.microsoft.com/en-us/dotnet/standard/frameworks.
@@ -80,7 +82,6 @@ steps:
     version: 5.0.100
 
 #- template: 'show-all-files.yml' # Uncomment for debugging
-
 - powershell: |
     $framework = '${{ parameters.framework }}'
     $testBinaryRootDirectory = "$(System.DefaultWorkingDirectory)"
@@ -92,6 +93,8 @@ steps:
     $maximumParalellJobs = '${{ parameters.maximumParallelJobs }}'
     $where = '${{ parameters.where }}'
     $tempDirectory = "$(Agent.TempDirectory)"
+    $isNightly = if ($env:ISNIGHTLY -eq 'true') { 'true' } else { 'false' }
+    $isWeekly = if ($env:ISWEEKLY -eq 'true') { 'true' } else { 'false' }
     
     function IsSupportedFramework([string]$framework) {
         if ($IsWindows -eq $null) {
@@ -136,9 +139,16 @@ steps:
 
             Copy-Item -Path "$sourceDirectory/*" -Destination "$tempTestDirectory" -Recurse -Force
 
+            if ($isNighly -ne 'true' -and $isWeekly -ne 'true') {
+                $blameHangTimeout = "--blame-hang-timeout 10minutes"
+            } else {
+                $blameHangTimeout = "--blame-hang-timeout 35minutes"
+            }
+
             $testExpression = "dotnet test ""$testTarget"" --framework ""$framework"" --blame --no-build --no-restore" + `
                 " --logger:""console;verbosity=normal"" --logger:""trx;LogFileName=$testResultsFileName""" + `
-                " --results-directory:""$testResultDirectory"""
+                " --results-directory:""$testResultDirectory""" + `
+                " --blame-hang --blame-hang-dump-type mini $blameHangTimeout"
 
             if (![string]::IsNullOrEmpty($where)) {
                 $testExpression = "$testExpression --filter ""$where"""
