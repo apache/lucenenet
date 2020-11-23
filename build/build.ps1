@@ -28,6 +28,7 @@ properties {
     [string]$solutionFile = "$base_directory/Lucene.Net.sln"
     [string]$sdkPath = "$env:programfiles/dotnet/sdk"
     [string]$sdkVersion = "5.0.100"
+    [bool]$skipSdkInstallation = $false
     [string]$globalJsonFile = "$base_directory/global.json"
     [string]$versionPropsFile = "$base_directory/Version.props"
     [string]$build_bat = "$base_directory/build.bat"
@@ -74,19 +75,21 @@ task UpdateLocalSDKVersion -description "Backs up the project.json file and pins
 }
 
 task InstallSDK -description "This task makes sure the correct SDK version is installed to build" -ContinueOnError {
-    Write-Host "##teamcity[progressMessage 'Installing SDK $sdkVersion']"
-    Write-Host "##vso[task.setprogress]'Installing SDK $sdkVersion'"
-    $installed = Is-Sdk-Version-Installed $sdkVersion
-    if (!$installed) {
-        Write-Host "Requires SDK version $sdkVersion, installing..." -ForegroundColor Red
-        Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version $sdkVersion"
-    }
+    if (!$skipSdkInstallation) {
+        Write-Host "##teamcity[progressMessage 'Installing SDK $sdkVersion']"
+        Write-Host "##vso[task.setprogress]'Installing SDK $sdkVersion'"
+        $installed = Is-Sdk-Version-Installed $sdkVersion
+        if (!$installed) {
+            Write-Host "Requires SDK version $sdkVersion, installing..." -ForegroundColor Red
+            Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version $sdkVersion"
+        }
 
-    # Safety check - this should never happen
-    & where.exe dotnet.exe
+        # Safety check - this should never happen
+        & where.exe dotnet.exe
 
-    if ($LASTEXITCODE -ne 0) {
-        throw "Could not find dotnet CLI in PATH. Please install the .NET Core 3.1 SDK, version $sdkVersion."
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not find dotnet CLI in PATH. Please install the .NET SDK, version $sdkVersion."
+        }
     }
 }
 
