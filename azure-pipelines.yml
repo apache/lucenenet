@@ -105,7 +105,7 @@ stages:
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       fetchDepth: '1'  # the depth of commits to ask Git to fetch
 
-    - powershell: |
+    - pwsh: |
         $configuration = if ($env:BUILDCONFIGURATION) { $env:BUILDCONFIGURATION } else { "Release" }
         Write-Host "##vso[task.setvariable variable=BuildConfiguration;]$configuration"
         $isRelease = if ($env:ISRELEASE -eq 'true') { 'true' } else { 'false' }
@@ -123,7 +123,7 @@ stages:
       inputs:
         version: 5.0.100
 
-    - powershell: |
+    - pwsh: |
         Import-Module "$(BuildDirectory)/psake.psm1"
         $generateBuildBat = $env:ISRELEASE
         $primaryCommand = if ($env:RUNPACK -ne 'false') { 'Pack' } else { 'Compile' }
@@ -264,7 +264,7 @@ stages:
       vmImage: 'vs2017-win2016'
 
     steps:
-    - powershell: |
+    - pwsh: |
          $(Build.SourcesDirectory)/websites/apidocs/docs.ps1 -LuceneNetVersion $(PackageVersion) -Clean -BaseUrl https://lucenenet.apache.org/docs/
       errorActionPreference: 'continue'
       ignoreLASTEXITCODE: 'true'
@@ -290,7 +290,7 @@ stages:
       vmImage: 'vs2017-win2016'
 
     steps:
-    - powershell: |
+    - pwsh: |
          $(Build.SourcesDirectory)/websites/site/site.ps1 0 1
       errorActionPreference: 'continue'
       ignoreLASTEXITCODE: 'true'
@@ -563,14 +563,14 @@ stages:
         targetPath: '$(System.DefaultWorkingDirectory)/$(VersionArtifactName)'
 
       # For debugging this pipeline
-    - powershell: | 
+    - pwsh: | 
         Get-ChildItem -Path $(System.DefaultWorkingDirectory)
-    - powershell: | 
+    - pwsh: | 
         Get-ChildItem -Path '$(VersionArtifactName)'
 
       # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
       # the version cannot be passed to the Index Sources & Publish Symbols task.
-    - powershell: |
+    - pwsh: |
         $version = Get-Content '$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
         Write-Host "##vso[build.updatebuildnumber]$version"
@@ -617,14 +617,14 @@ stages:
 
       # NOTE: We are setting Build.BuildNumber here to the NuGet package version to work around the limitation that
       # the version cannot be passed to the Index Sources & Publish Symbols task.
-    - powershell: |
+    - pwsh: |
         $version = Get-Content '$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$(PackageVersionFileName)' -Raw
         $vcsLabel = 'Lucene.Net_' + $version.Replace('.', '_').Replace('-', '_')
         Write-Host "##vso[task.setvariable variable=VCSLabel;]$vcsLabel"
         Write-Host "##vso[task.setvariable variable=PackageVersion;]$version"
         Write-Host "##vso[build.updatebuildnumber]$version"
       displayName: 'Build VCS Label and Rehydrate Version Variables'
-    - powershell: |
+    - pwsh: |
         $files = 'build.bat','Version.props'
         foreach ($file in $files) {
             Copy-Item -Path "$(Build.ArtifactStagingDirectory)/$(VersionArtifactName)/$file" -Destination "$(Build.SourcesDirectory)/$file" -Force -ErrorAction Continue
@@ -669,7 +669,7 @@ stages:
         includeRootFolder: false
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)/Apache-Lucene.Net-$(PackageVersion).bin.zip'
 
-    - powershell: |
+    - pwsh: |
         $dir = '$(Build.ArtifactStagingDirectory)/$(ReleaseArtifactName)'
         if (!(Test-Path $dir)) { New-Item -ItemType Directory -Path "$dir" -Force }
         $nl = [Environment]::NewLine

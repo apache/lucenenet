@@ -22,5 +22,5 @@
 # Writes all file names (from the parent directory) to the host (helpful for debugging)
 
 steps:
-- powershell: cd ..;dir -r  | Where-Object {$_.PsIsContainer -eq $false} | % { $_.FullName }
+- pwsh: cd ..;dir -r  | Where-Object {$_.PsIsContainer -eq $false} | % { $_.FullName }
   displayName: 'Show all Files'
