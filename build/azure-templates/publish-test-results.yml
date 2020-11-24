@@ -46,23 +46,43 @@ steps:
 #- template: 'show-all-files.yml' # Uncomment for debugging
 
 - pwsh: |
-    $testResultsFileName = "$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}/${{ parameters.osName }}/${{ parameters.framework }}/${{ parameters.vsTestPlatform }}/${{ parameters.testProjectName }}/${{ parameters.testResultsFileName }}"
+    $testProjectName = "${{ parameters.testProjectName }}"
+    $testResultsFileName = "$(Build.ArtifactStagingDirectory)/${{ parameters.testResultsArtifactName }}/${{ parameters.osName }}/${{ parameters.framework }}/${{ parameters.vsTestPlatform }}/$testProjectName/${{ parameters.testResultsFileName }}"
     $testResultsFileExists = Test-Path $testResultsFileName
     if ($testResultsFileExists) {
-
+    
         $reader = [System.Xml.XmlReader]::Create($testResultsFileName)
         try {
+            $countersFound = $false
+            $crashed = $false
+            $inRunInfos = $false
             while ($reader.Read()) {
-                if ($reader.NodeType -eq [System.Xml.XmlNodeType]::Element -and $reader.Name -eq 'Counters') {
-                    $failed = $reader.GetAttribute('failed')
-                    $passed = $reader.GetAttribute('passed')
-                    $ignored = (([int]$reader.GetAttribute('total')) - ([int]$reader.GetAttribute('executed'))).ToString()
-                    $testResults = "Tests failed: $failed, passed: $passed, ignored: $ignored"
-                    Write-Host "##vso[task.setvariable variable=TestResults;]$testResults"
-                    # Report a running total of failures
-                    $totalFailures = ([int]$env:TOTALFAILURES + [int]$failed).ToString()
-                    Write-Host "##vso[task.setvariable variable=TotalFailures;]$totalFailures"
-                    break;
+                if ($reader.NodeType -eq [System.Xml.XmlNodeType]::Element) {
+                    if (!$countersFound -and $reader.Name -eq 'Counters') {
+                        $failed = $reader.GetAttribute('failed')
+                        $passed = $reader.GetAttribute('passed')
+                        $ignored = (([int]$reader.GetAttribute('total')) - ([int]$reader.GetAttribute('executed'))).ToString()
+                        $testResults = "Tests failed: $failed, passed: $passed, ignored: $ignored"
+                        Write-Host "##vso[task.setvariable variable=TestResults;]$testResults"
+                        # Report a running total of failures
+                        $totalFailures = ([int]$env:TOTALFAILURES + [int]$failed).ToString()
+                        Write-Host "##vso[task.setvariable variable=TotalFailures;]$totalFailures"
+                        $countersFound = $true
+                    }
+                    # Report a crash of the test runner
+                    if ($reader.Name -eq 'RunInfos') {
+                        $inRunInfos = $true
+                    }
+                    if ($inRunInfos -and !$crashed -and $reader.Name -eq 'Text' -and $reader.ReadInnerXml().Contains('Test host process crashed')) {
+                        Write-Host "##vso[task.setvariable variable=HostCrashed;]true"
+                        # Report all of the test projects that crashed
+                        $crashedRuns = "$env:CRASHEDRUNS,$testProjectName".TrimStart(',')
+                        Write-Host "##vso[task.setvariable variable=CrashedRuns;]$crashedRuns"
+                        $crashed = $true
+                    }
+                }
+                if ($reader.NodeType -eq [System.Xml.XmlNodeType]::EndElement -and $reader.Name -eq 'RunInfos') {
+                    $inRunInfos = $false
                 }
             }
         } finally {

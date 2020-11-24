@@ -223,8 +223,16 @@ steps:
     vsTestPlatform: '${{ parameters.vsTestPlatform }}'
 
 - pwsh: |
+    $failed = $false
+    if ($env:HOSTCRASHED -eq 'true') {
+        Write-Host "##vso[task.logissue type=error;]Test host process(es) crashed:  $($env:CRASHEDRUNS)."
+        $failed = $true
+    }
     $maximumAllowedFailures = '${{ parameters.maximumAllowedFailures }}'
     if ([int]$env:TOTALFAILURES -gt [int]$maximumAllowedFailures) {
         Write-Host "##vso[task.logissue type=error;]Test run failed due to too many failed tests. Maximum failures allowed: $maximumAllowedFailures, total failures: $($env:TOTALFAILURES)."
+        $failed = $true
+    }
+    if ($failed) {
         Write-Host "##vso[task.complete result=Failed;]"
     }
