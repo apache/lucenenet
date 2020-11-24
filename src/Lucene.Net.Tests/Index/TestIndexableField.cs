@@ -225,11 +225,6 @@ namespace Lucene.Net.Index
             {
                 return GetReaderValue() != null ? analyzer.GetTokenStream(Name, GetReaderValue()) : analyzer.GetTokenStream(Name, new StringReader(GetStringValue()));
             }
-
-            public virtual string ToString(IFormatProvider provider)
-            {
-                return GetStringValue().ToString(provider);
-            }
         }
 
         // Silly test showing how to index documents w/o using Lucene's core

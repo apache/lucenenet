@@ -47,7 +47,7 @@ namespace Lucene.Net.Documents
     /// Field it is used in.  It is strongly recommended that no
     /// changes be made after <see cref="Field"/> instantiation.
     /// </summary>
-    public partial class Field : IIndexableField
+    public partial class Field : IIndexableField, IFormattable
     {
         /// <summary>
         /// Field's type
@@ -780,6 +780,37 @@ namespace Lucene.Net.Documents
         /// Prints a <see cref="Field"/> for human consumption. </summary>
         public override string ToString()
         {
+            return ToString(null, J2N.Text.StringFormatter.CurrentCulture);
+        }
+
+        /// <summary>
+        /// Prints a <see cref="Field"/> for human consumption. 
+        /// </summary>
+        /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+        // LUCENENET specific - method added for better .NET compatibility
+        public virtual string ToString(string format)
+        {
+            return ToString(null, J2N.Text.StringFormatter.CurrentCulture);
+        }
+
+        /// <summary>
+        /// Prints a <see cref="Field"/> for human consumption.
+        /// </summary>
+        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        // LUCENENET specific - method added for better .NET compatibility
+        public virtual string ToString(IFormatProvider provider)
+        {
+            return ToString(null, J2N.Text.StringFormatter.CurrentCulture);
+        }
+
+        /// <summary>
+        /// Prints a <see cref="Field"/> for human consumption.
+        /// </summary>
+        /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        // LUCENENET specific - method added for better .NET compatibility
+        public virtual string ToString(string format, IFormatProvider provider)
+        {
             StringBuilder result = new StringBuilder();
             result.Append(m_type.ToString());
             result.Append('<');
@@ -788,30 +819,13 @@ namespace Lucene.Net.Documents
 
             if (FieldsData != null)
             {
-                result.Append(FieldsData);
+                if (FieldsData is IFormattable formattable)
+                    result.Append(formattable.ToString(format, provider));
+                else
+                    result.Append(FieldsData.ToString());
             }
 
             result.Append('>');
-            return result.ToString();
-        }
-
-        /// <summary>
-        /// Prints a <see cref="Field"/> for human consumption.
-        /// </summary>
-        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
-        public virtual string ToString(IFormatProvider provider)
-        {
-            StringBuilder result = new StringBuilder();
-
-            if(FieldsData != null)
-            {
-                result.AppendFormat(provider, "{0}<{1}:{3}>", m_type.ToString(), m_name.ToString(), FieldsData);
-            }
-            else
-            {
-                result.AppendFormat(provider, "{0}<{1}:>", m_type.ToString(), m_name.ToString());
-            }
-
             return result.ToString();
         }
 
