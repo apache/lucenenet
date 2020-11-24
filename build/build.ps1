@@ -55,7 +55,7 @@ properties {
 
 $backedUpFiles = New-Object System.Collections.ArrayList
 if ($IsWindows -eq $null) {
-    $IsWindows = $Env:OS.StartsWith('Windows')
+    $IsWindows = $env:OS.StartsWith('Windows')
 }
 
 task default -depends Pack
