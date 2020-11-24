@@ -137,7 +137,7 @@ stages:
             skipSdkInstallation='true'
         }
         [string[]]$tasks = @($primaryCommand)
-        if ($Env:RunTests -ne 'false') {
+        if ($env:RunTests -ne 'false') {
             [string[]]$tasks = $primaryCommand,'Publish'
         }
         Invoke-psake $(BuildDirectory)/build.ps1 -Task $tasks -properties $properties -parameters $parameters
@@ -156,17 +156,17 @@ stages:
 
     - pwsh: |
         # Generate a lucene.testsettings.json file for use with the test framework
-        $assert = if ($Env:AssertsEnabled -ne 'false') { 'true' } else { 'false' }
-        $nightly = if ($Env:IsNightly -eq 'true') { 'true' } else { 'false' }
-        $weekly = if ($Env:IsWeekly -eq 'true') { 'true' } else { 'false' }
-        $slow = if ($Env:RunSlowTests -ne 'false') { 'true' } else { 'false' }
-        $awaitsFix = if ($Env:RunAwaitsFixTests -ne 'false') { 'true' } else { 'false' }
-        $codec = if ($Env:Codec -eq $null) { 'random' } else { $Env:Codec }
-        $docValuesFormat = if ($Env:DocValuesFormat -eq $null) { 'random' } else { $Env:DocValuesFormat }
-        $postingsFormat = if ($Env:PostingsFormat -eq $null) { 'random' } else { $Env:PostingsFormat }
-        $directory = if ($Env:Directory -eq $null) { 'random' } else { $Env:Directory }
-        $verbose = if ($Env:Verbose -eq 'true') { 'true' } else { 'false' }
-        $multiplier = if ($Env:Multiplier -eq $null) { '1' } else { $Env:Multiplier }
+        $assert = if ($env:AssertsEnabled -ne 'false') { 'true' } else { 'false' }
+        $nightly = if ($env:IsNightly -eq 'true') { 'true' } else { 'false' }
+        $weekly = if ($env:IsWeekly -eq 'true') { 'true' } else { 'false' }
+        $slow = if ($env:RunSlowTests -ne 'false') { 'true' } else { 'false' }
+        $awaitsFix = if ($env:RunAwaitsFixTests -ne 'false') { 'true' } else { 'false' }
+        $codec = if ($env:Codec -eq $null) { 'random' } else { $env:Codec }
+        $docValuesFormat = if ($env:DocValuesFormat -eq $null) { 'random' } else { $env:DocValuesFormat }
+        $postingsFormat = if ($env:PostingsFormat -eq $null) { 'random' } else { $env:PostingsFormat }
+        $directory = if ($env:Directory -eq $null) { 'random' } else { $env:Directory }
+        $verbose = if ($env:Verbose -eq 'true') { 'true' } else { 'false' }
+        $multiplier = if ($env:Multiplier -eq $null) { '1' } else { $env:Multiplier }
         $fileText = "{`n`t" +
             """assert"": ""$assert"",`n`t" +
             """tests"": {`n`t`t" +

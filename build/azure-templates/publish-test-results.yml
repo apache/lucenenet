@@ -60,7 +60,7 @@ steps:
                     $testResults = "Tests failed: $failed, passed: $passed, ignored: $ignored"
                     Write-Host "##vso[task.setvariable variable=TestResults;]$testResults"
                     # Report a running total of failures
-                    $totalFailures = ([int]$Env:TOTALFAILURES + [int]$failed).ToString()
+                    $totalFailures = ([int]$env:TOTALFAILURES + [int]$failed).ToString()
                     Write-Host "##vso[task.setvariable variable=TotalFailures;]$totalFailures"
                     break;
                 }

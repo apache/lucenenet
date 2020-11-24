@@ -224,7 +224,7 @@ steps:
 
 - pwsh: |
     $maximumAllowedFailures = '${{ parameters.maximumAllowedFailures }}'
-    if ([int]$Env:TOTALFAILURES -gt [int]$maximumAllowedFailures) {
-        Write-Host "##vso[task.logissue type=error;]Test run failed due to too many failed tests. Maximum failures allowed: $maximumAllowedFailures, total failures: $($Env:TOTALFAILURES)."
+    if ([int]$env:TOTALFAILURES -gt [int]$maximumAllowedFailures) {
+        Write-Host "##vso[task.logissue type=error;]Test run failed due to too many failed tests. Maximum failures allowed: $maximumAllowedFailures, total failures: $($env:TOTALFAILURES)."
         Write-Host "##vso[task.complete result=Failed;]"
     }
