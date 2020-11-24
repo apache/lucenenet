@@ -135,7 +135,7 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// @lucene.internal 
         /// </summary>
-        public class LazyField : IIndexableField
+        public class LazyField : IIndexableField, IFormattable
         {
             private readonly LazyDocument outerInstance;
 
@@ -355,9 +355,30 @@ namespace Lucene.Net.Documents
                 return GetRealValue().GetTokenStream(analyzer);
             }
 
+            // LUCENENET specific - method added for better .NET compatibility
+            public override string ToString()
+                => ToString(null, J2N.Text.StringFormatter.CurrentCulture);
+
+            // LUCENENET specific - method added for better .NET compatibility
+            public virtual string ToString(string format)
+                => ToString(format, J2N.Text.StringFormatter.CurrentCulture);
+
+            // LUCENENET specific - method added for better .NET compatibility
             public virtual string ToString(IFormatProvider provider)
+                => ToString(null, provider);
+
+            // LUCENENET specific - method added for better .NET compatibility
+            public virtual string ToString(string format,IFormatProvider provider)
             {
-                return GetRealValue().ToString(provider);
+                IIndexableField realValue = GetRealValue();
+                if(realValue is IFormattable formattable)
+                {
+                    return formattable.ToString(format, provider);
+                }
+                else
+                {
+                    return realValue.ToString();
+                }
             }
         }
     }

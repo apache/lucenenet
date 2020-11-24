@@ -29,7 +29,7 @@ namespace Lucene.Net.Documents
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        protected abstract class Number
+        protected abstract class Number : IFormattable
         {
             /// <summary>
             /// Returns this object's value as a <see cref="byte"/>. Might involve rounding and/or

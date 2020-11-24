@@ -201,11 +201,5 @@ namespace Lucene.Net.Index
         ///         a non-null value if the field is to be indexed </returns>
         /// <exception cref="IOException"> Can be thrown while creating the <see cref="TokenStream"/> </exception>
         TokenStream GetTokenStream(Analyzer analyzer);
-
-        /// <summary>
-        /// Prints a <see cref="Field"/> for human consumption.
-        /// </summary>
-        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
-        string ToString(IFormatProvider provider);
     }
 }

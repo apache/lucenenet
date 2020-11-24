@@ -38,7 +38,7 @@ namespace Lucene.Net.Documents
     /// <i>not</i> available in documents retrieved from the index, e.g. with 
     /// <see cref="Search.ScoreDoc.Doc"/> or <see cref="IndexReader.Document(int)"/>.
     /// </summary>
-    public sealed class Document : IEnumerable<IIndexableField>
+    public sealed class Document : IEnumerable<IIndexableField>, IFormattable
     {
         private readonly List<IIndexableField> fields = new List<IIndexableField>();
 
@@ -235,8 +235,8 @@ namespace Lucene.Net.Documents
             var result = new List<string>();
             foreach (IIndexableField field in fields)
             {
-                string fieldStringValue = field.GetStringValue();
-                if (field.Name.Equals(name, StringComparison.Ordinal) && fieldStringValue != null)
+                string fieldStringValue;
+                if (field.Name.Equals(name, StringComparison.Ordinal) && (fieldStringValue = field.GetStringValue()) != null)
                 {
                     result.Add(fieldStringValue);
                 }
@@ -260,13 +260,14 @@ namespace Lucene.Net.Documents
         /// <param name="name"> the name of the field </param>
         /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
         /// <returns> a <see cref="T:string[]"/> of field values </returns>
+        // LUCENENET specific - method added for better .NET compatibility
         public string[] GetValues(string name, string format)
         {
             var result = new List<string>();
             foreach (IIndexableField field in fields)
             {
-                string fieldStringValue = field.GetStringValue(format);
-                if (field.Name.Equals(name, StringComparison.Ordinal) && fieldStringValue != null)
+                string fieldStringValue;
+                if (field.Name.Equals(name, StringComparison.Ordinal) && (fieldStringValue = field.GetStringValue(format)) != null)
                 {
                     result.Add(fieldStringValue);
                 }
@@ -290,13 +291,14 @@ namespace Lucene.Net.Documents
         /// <param name="name"> the name of the field </param>
         /// <param name = "provider" > An object that supplies culture-specific formatting information.This parameter has no effect if this field is non-numeric.</param>
         /// <returns> a <see cref="T:string[]"/> of field values </returns>
+        // LUCENENET specific - method added for better .NET compatibility
         public string[] GetValues(string name, IFormatProvider provider)
         {
             var result = new List<string>();
             foreach (IIndexableField field in fields)
             {
-                string fieldStringValue = field.GetStringValue(provider);
-                if (field.Name.Equals(name, StringComparison.Ordinal) && fieldStringValue != null)
+                string fieldStringValue;
+                if (field.Name.Equals(name, StringComparison.Ordinal) && (fieldStringValue = field.GetStringValue(provider)) != null)
                 {
                     result.Add(fieldStringValue);
                 }
@@ -321,13 +323,14 @@ namespace Lucene.Net.Documents
         /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
         /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
         /// <returns> a <see cref="T:string[]"/> of field values </returns>
+        // LUCENENET specific - method added for better .NET compatibility
         public string[] GetValues(string name, string format, IFormatProvider provider)
         {
             var result = new List<string>();
             foreach (IIndexableField field in fields)
             {
-                string fieldStringValue = field.GetStringValue(format, provider);
-                if (field.Name.Equals(name, StringComparison.Ordinal) && fieldStringValue != null)
+                string fieldStringValue;
+                if (field.Name.Equals(name, StringComparison.Ordinal) && (fieldStringValue = field.GetStringValue(format, provider)) != null)
                 {
                     result.Add(fieldStringValue);
                 }
@@ -354,8 +357,8 @@ namespace Lucene.Net.Documents
         {
             foreach (IIndexableField field in fields)
             {
-                string fieldStringValue = field.GetStringValue();
-                if (field.Name.Equals(name, StringComparison.Ordinal) && fieldStringValue != null)
+                string fieldStringValue;
+                if (field.Name.Equals(name, StringComparison.Ordinal) && (fieldStringValue = field.GetStringValue()) != null)
                 {
                     return fieldStringValue;
                 }
@@ -373,12 +376,13 @@ namespace Lucene.Net.Documents
         /// the actual numeric field instance back, use <see cref="GetField(string)"/>.
         /// </summary>
         /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+        // LUCENENET specific - method added for better .NET compatibility
         public string Get(string name, string format)
         {
             foreach (IIndexableField field in fields)
             {
-                string fieldStringValue = field.GetStringValue(format);
-                if (field.Name.Equals(name, StringComparison.Ordinal) && fieldStringValue != null)
+                string fieldStringValue;
+                if (field.Name.Equals(name, StringComparison.Ordinal) && (fieldStringValue = field.GetStringValue(format)) != null)
                 {
                     return fieldStringValue;
                 }
@@ -396,12 +400,13 @@ namespace Lucene.Net.Documents
         /// the actual numeric field instance back, use <see cref="GetField(string)"/>.
         /// </summary>
         /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        // LUCENENET specific - method added for better .NET compatibility
         public string Get(string name, IFormatProvider provider)
         {
             foreach (IIndexableField field in fields)
             {
-                string fieldStringValue = field.GetStringValue(provider);
-                if (field.Name.Equals(name, StringComparison.Ordinal) && fieldStringValue != null)
+                string fieldStringValue;
+                if (field.Name.Equals(name, StringComparison.Ordinal) && (fieldStringValue = field.GetStringValue(provider)) != null)
                 {
                     return fieldStringValue;
                 }
@@ -420,12 +425,13 @@ namespace Lucene.Net.Documents
         /// </summary>
         /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
         /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        // LUCENENET specific - method added for better .NET compatibility
         public string Get(string name, string format, IFormatProvider provider)
         {
             foreach (IIndexableField field in fields)
             {
-                string fieldStringValue = field.GetStringValue(format, provider);
-                if (field.Name.Equals(name, StringComparison.Ordinal) && fieldStringValue != null)
+                string fieldStringValue;
+                if (field.Name.Equals(name, StringComparison.Ordinal) && (fieldStringValue = field.GetStringValue(format, provider)) != null)
                 {
                     return fieldStringValue;
                 }
@@ -437,33 +443,36 @@ namespace Lucene.Net.Documents
         /// Prints the fields of a document for human consumption. </summary>
         public override string ToString()
         {
-            var buffer = new StringBuilder();
-            buffer.Append("Document<");
-            for (int i = 0; i < fields.Count; i++)
-            {
-                IIndexableField field = fields[i];
-                buffer.Append(field.ToString());
-                if (i != fields.Count - 1)
-                {
-                    buffer.Append(" ");
-                }
-            }
-            buffer.Append(">");
-            return buffer.ToString();
+            return (this as IFormattable).ToString(null, J2N.Text.StringFormatter.CurrentCulture);
         }
 
         /// <summary>
         /// Prints the fields of a document for human consumption. 
         /// </summary>
         /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        // LUCENENET specific - method added for better .NET compatibility
         public string ToString(IFormatProvider provider)
+        {
+            return (this as IFormattable).ToString(null, provider);
+        }
+
+        /// <summary>
+        /// Prints the fields of a document for human consumption. 
+        /// </summary>
+        /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        // LUCENENET specific - method added for better .NET compatibility
+        string IFormattable.ToString(string format, IFormatProvider provider)
         {
             var buffer = new StringBuilder();
             buffer.Append("Document<");
             for (int i = 0; i < fields.Count; i++)
             {
                 IIndexableField field = fields[i];
-                buffer.Append(field.ToString(provider));
+                if (field is IFormattable formattable)
+                    buffer.Append(formattable.ToString(format, provider));
+                else
+                    buffer.Append(field.ToString());
                 if (i != fields.Count - 1)
                 {
                     buffer.Append(" ");
