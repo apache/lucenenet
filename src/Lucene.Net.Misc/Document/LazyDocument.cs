@@ -357,15 +357,21 @@ namespace Lucene.Net.Documents
 
             // LUCENENET specific - method added for better .NET compatibility
             public override string ToString()
-                => ToString(null, J2N.Text.StringFormatter.CurrentCulture);
+            {
+                return ToString(null, J2N.Text.StringFormatter.CurrentCulture);
+            }
 
             // LUCENENET specific - method added for better .NET compatibility
             public virtual string ToString(string format)
-                => ToString(format, J2N.Text.StringFormatter.CurrentCulture);
+            {
+                return ToString(format, J2N.Text.StringFormatter.CurrentCulture);
+            }
 
             // LUCENENET specific - method added for better .NET compatibility
             public virtual string ToString(IFormatProvider provider)
-                => ToString(null, provider);
+            {
+                return ToString(null, provider);
+            }
 
             // LUCENENET specific - method added for better .NET compatibility
             public virtual string ToString(string format,IFormatProvider provider)

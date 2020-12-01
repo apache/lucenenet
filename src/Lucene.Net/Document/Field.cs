@@ -790,7 +790,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - method added for better .NET compatibility
         public virtual string ToString(string format)
         {
-            return ToString(null, J2N.Text.StringFormatter.CurrentCulture);
+            return ToString(format, J2N.Text.StringFormatter.CurrentCulture);
         }
 
         /// <summary>
@@ -800,7 +800,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - method added for better .NET compatibility
         public virtual string ToString(IFormatProvider provider)
         {
-            return ToString(null, J2N.Text.StringFormatter.CurrentCulture);
+            return ToString(null, provider);
         }
 
         /// <summary>
