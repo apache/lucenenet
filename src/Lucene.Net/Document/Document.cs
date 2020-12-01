@@ -443,7 +443,7 @@ namespace Lucene.Net.Documents
         /// Prints the fields of a document for human consumption. </summary>
         public override string ToString()
         {
-            return (this as IFormattable).ToString(null, J2N.Text.StringFormatter.CurrentCulture);
+            return ToString(null, J2N.Text.StringFormatter.CurrentCulture);
         }
 
         /// <summary>
@@ -453,7 +453,18 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - method added for better .NET compatibility
         public string ToString(IFormatProvider provider)
         {
-            return (this as IFormattable).ToString(null, provider);
+            return ToString(null, provider);
+        }
+
+        /// <summary>
+        /// Prints the fields of a document for human consumption. 
+        /// </summary>
+        /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        // LUCENENET specific - method added for better .NET compatibility
+        private string ToString(string format, IFormatProvider provider)
+        {
+            return (this as IFormattable).ToString(format, provider);
         }
 
         /// <summary>
