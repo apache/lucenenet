@@ -38,7 +38,7 @@
     <ICU4NLanguageDataPackageVersion>$(ICU4NPackageVersion)</ICU4NLanguageDataPackageVersion>
     <ICU4NRegionDataPackageVersion>$(ICU4NPackageVersion)</ICU4NRegionDataPackageVersion>
     <ICU4NTransliteratorPackageVersion>$(ICU4NPackageVersion)</ICU4NTransliteratorPackageVersion>
-    <J2NPackageVersion>2.0.0-beta-0010</J2NPackageVersion>
+    <J2NPackageVersion>2.0.0-beta-0011</J2NPackageVersion>
     <LiquidTestReportsMarkdownPackageVersion>1.0.9</LiquidTestReportsMarkdownPackageVersion>
     <MicrosoftAspNetCoreHttpAbstractionsPackageVersion>2.0.0</MicrosoftAspNetCoreHttpAbstractionsPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>2.0.0</MicrosoftAspNetCoreTestHostPackageVersion>
