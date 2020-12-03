@@ -464,7 +464,26 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - method added for better .NET compatibility
         private string ToString(string format, IFormatProvider provider)
         {
-            return (this as IFormattable).ToString(format, provider);
+            var buffer = new StringBuilder();
+            buffer.Append("Document<");
+            for (int i = 0; i < fields.Count; i++)
+            {
+                IIndexableField field = fields[i];
+                if (field is IFormattable formattable)
+                {
+                    buffer.Append(formattable.ToString(format, provider));
+                }
+                else
+                {
+                    buffer.Append(field.ToString());
+                }
+                if (i != fields.Count - 1)
+                {
+                    buffer.Append(" ");
+                }
+            }
+            buffer.Append(">");
+            return buffer.ToString();
         }
 
         /// <summary>
@@ -475,22 +494,7 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - method added for better .NET compatibility
         string IFormattable.ToString(string format, IFormatProvider provider)
         {
-            var buffer = new StringBuilder();
-            buffer.Append("Document<");
-            for (int i = 0; i < fields.Count; i++)
-            {
-                IIndexableField field = fields[i];
-                if (field is IFormattable formattable)
-                    buffer.Append(formattable.ToString(format, provider));
-                else
-                    buffer.Append(field.ToString());
-                if (i != fields.Count - 1)
-                {
-                    buffer.Append(" ");
-                }
-            }
-            buffer.Append(">");
-            return buffer.ToString();
+            return ToString(format, provider);
         }
     }
 }
