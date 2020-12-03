@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Lucene.Net.Documents
 {
@@ -77,13 +78,35 @@ namespace Lucene.Net.Documents
                 return (short)GetInt32Value();
             }
 
-            public abstract override string ToString(); 
+            public override string ToString()
+            {
+                return ToString(null, J2N.Text.StringFormatter.CurrentCulture);
+            }
 
-            public abstract string ToString(string format);
+            public virtual string ToString(string format)
+            {
+                return ToString(format, J2N.Text.StringFormatter.CurrentCulture);
+            }
 
-            public abstract string ToString(IFormatProvider provider);
+            public virtual string ToString(IFormatProvider provider)
+            {
+                return ToString(null, provider);
+            }
 
             public abstract string ToString(string format, IFormatProvider provider);
+
+            internal string ToString(string format, IFormatProvider provider, IFormattable value)
+            {
+                // Fast path: For standard .NET formatting using cultures, call IFormattable.ToString() to eliminate
+                // boxing associated with string.Format().
+                if (provider is null || provider is CultureInfo || provider is NumberFormatInfo)
+                {
+                    return value.ToString(format, provider);
+                }
+                // Built-in .NET numeric types don't support custom format providers, so we resort
+                // to using string.Format with some hacky format conversion in order to support them.
+                return string.Format(provider, format is null ? "{0}" : "{0:" + format + '}', value);
+            }
         }
 
 #if FEATURE_SERIALIZABLE
@@ -121,24 +144,9 @@ namespace Lucene.Net.Documents
                 return value;
             }
 
-            public override string ToString()
-            {
-                return value.ToString();
-            }
-
-            public override string ToString(string format)
-            {
-                return value.ToString(format);
-            }
-
-            public override string ToString(IFormatProvider provider)
-            {
-                return value.ToString(provider);
-            }
-
             public override string ToString(string format, IFormatProvider provider)
             {
-                return value.ToString(format, provider);
+                return ToString(format, provider, value);
             }
         }
 
@@ -182,24 +190,9 @@ namespace Lucene.Net.Documents
                 return value;
             }
 
-            public override string ToString()
-            {
-                return value.ToString();
-            }
-
-            public override string ToString(string format)
-            {
-                return value.ToString(format);
-            }
-
-            public override string ToString(IFormatProvider provider)
-            {
-                return value.ToString(provider);
-            }
-
             public override string ToString(string format, IFormatProvider provider)
             {
-                return value.ToString(format, provider);
+                return ToString(format, provider, value);
             }
         }
 
@@ -238,24 +231,9 @@ namespace Lucene.Net.Documents
                 return value;
             }
 
-            public override string ToString()
-            {
-                return value.ToString();
-            }
-
-            public override string ToString(string format)
-            {
-                return value.ToString(format);
-            }
-
-            public override string ToString(IFormatProvider provider)
-            {
-                return value.ToString(provider);
-            }
-
             public override string ToString(string format, IFormatProvider provider)
             {
-                return value.ToString(format, provider);
+                return ToString(format, provider, value);
             }
         }
 
@@ -294,24 +272,9 @@ namespace Lucene.Net.Documents
                 return value;
             }
 
-            public override string ToString()
-            {
-                return value.ToString();
-            }
-
-            public override string ToString(string format)
-            {
-                return value.ToString(format);
-            }
-
-            public override string ToString(IFormatProvider provider)
-            {
-                return value.ToString(provider);
-            }
-
             public override string ToString(string format, IFormatProvider provider)
             {
-                return value.ToString(format, provider);
+                return ToString(format, provider, value);
             }
         }
 
@@ -350,24 +313,9 @@ namespace Lucene.Net.Documents
                 return (long)value;
             }
 
-            public override string ToString()
-            {
-                return value.ToString();
-            }
-
-            public override string ToString(string format)
-            {
-                return value.ToString(format);
-            }
-
-            public override string ToString(IFormatProvider provider)
-            {
-                return value.ToString(provider);
-            }
-
             public override string ToString(string format, IFormatProvider provider)
             {
-                return value.ToString(format, provider);
+                return ToString(format, provider, value);
             }
         }
 
@@ -406,24 +354,9 @@ namespace Lucene.Net.Documents
                 return (long)value;
             }
 
-            public override string ToString()
-            {
-                return value.ToString();
-            }
-
-            public override string ToString(string format)
-            {
-                return value.ToString(format);
-            }
-
-            public override string ToString(IFormatProvider provider)
-            {
-                return value.ToString(provider);
-            }
-
             public override string ToString(string format, IFormatProvider provider)
             {
-                return value.ToString(format, provider);
+                return ToString(format, provider, value);
             }
         }
     }
