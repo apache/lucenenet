@@ -1,3 +1,4 @@
+using J2N.Globalization;
 using J2N.Text;
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
@@ -9,6 +10,8 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Assert = Lucene.Net.TestFramework.Assert;
@@ -709,7 +712,7 @@ namespace Lucene.Net.Documents
         //        assertEquals(false, fieldType.tokenized());
 
         //        assertEquals(FieldType.NumericType.DOUBLE, fieldType.numericType());
-    
+
         //        doc.add(field);
         //        writer.addDocument(doc);
         //        writer.commit();
@@ -734,5 +737,83 @@ namespace Lucene.Net.Documents
 
         //    dir.close();
         //}
+
+        public enum ToStringCulture
+        {
+            Invariant,
+            France
+        }
+
+        public static IEnumerable<TestCaseData> ToStringData(ToStringCulture cultureEnum)
+        {
+            CultureInfo culture = cultureEnum switch
+            {
+                ToStringCulture.France => new CultureInfo("fr-FR"),
+                _ => CultureInfo.InvariantCulture
+            };
+
+            string sep = culture.NumberFormat.NumberDecimalSeparator;
+
+            yield return new TestCaseData(new DoubleField("foo", 5d, Field.Store.NO), $"indexed,tokenized,omitNorms,indexOptions=DOCS_ONLY,numericType=DOUBLE,numericPrecisionStep=4<foo:5{sep}0>");
+            yield return new TestCaseData(new DoubleField("foo", 5d, Field.Store.YES), $"stored,indexed,tokenized,omitNorms,indexOptions=DOCS_ONLY,numericType=DOUBLE,numericPrecisionStep=4<foo:5{sep}0>");
+            yield return new TestCaseData(new DoubleDocValuesField("foo", 5d), "docValueType=NUMERIC<foo:4617315517961601024>");
+            yield return new TestCaseData(new SingleDocValuesField("foo", 5f), "docValueType=NUMERIC<foo:1084227584>");
+            yield return new TestCaseData(new SingleField("foo", 5f, Field.Store.NO), $"indexed,tokenized,omitNorms,indexOptions=DOCS_ONLY,numericType=SINGLE,numericPrecisionStep=4<foo:5{sep}0>");
+            yield return new TestCaseData(new SingleField("foo", 5f, Field.Store.YES), $"stored,indexed,tokenized,omitNorms,indexOptions=DOCS_ONLY,numericType=SINGLE,numericPrecisionStep=4<foo:5{sep}0>");
+            yield return new TestCaseData(new Int32Field("foo", 5, Field.Store.NO), "indexed,tokenized,omitNorms,indexOptions=DOCS_ONLY,numericType=INT32,numericPrecisionStep=4<foo:5>");
+            yield return new TestCaseData(new Int32Field("foo", 5, Field.Store.YES), "stored,indexed,tokenized,omitNorms,indexOptions=DOCS_ONLY,numericType=INT32,numericPrecisionStep=4<foo:5>");
+            yield return new TestCaseData(new NumericDocValuesField("foo", 5L), "docValueType=NUMERIC<foo:5>");
+            yield return new TestCaseData(new Int64Field("foo", 5L, Field.Store.NO), "indexed,tokenized,omitNorms,indexOptions=DOCS_ONLY,numericType=INT64,numericPrecisionStep=4<foo:5>");
+            yield return new TestCaseData(new Int64Field("foo", 5L, Field.Store.YES), "stored,indexed,tokenized,omitNorms,indexOptions=DOCS_ONLY,numericType=INT64,numericPrecisionStep=4<foo:5>");
+            yield return new TestCaseData(new SortedDocValuesField("foo", new BytesRef("bar")), "docValueType=SORTED<foo:[62 61 72]>");
+            yield return new TestCaseData(new BinaryDocValuesField("foo", new BytesRef("bar")), "docValueType=BINARY<foo:[62 61 72]>");
+            yield return new TestCaseData(new StringField("foo", "bar", Field.Store.NO), "indexed,omitNorms,indexOptions=DOCS_ONLY<foo:bar>");
+            yield return new TestCaseData(new StringField("foo", "bar", Field.Store.YES), "stored,indexed,omitNorms,indexOptions=DOCS_ONLY<foo:bar>");
+            yield return new TestCaseData(new TextField("foo", "bar", Field.Store.NO), "indexed,tokenized<foo:bar>");
+            yield return new TestCaseData(new TextField("foo", "bar", Field.Store.YES), "stored,indexed,tokenized<foo:bar>");
+            yield return new TestCaseData(new TextField("foo", new StringReader("bar")), "indexed,tokenized<foo:System.IO.StringReader>");
+            yield return new TestCaseData(new StoredField("foo", "bar".GetBytes(Encoding.UTF8)), "stored<foo:[62 61 72]>");
+            yield return new TestCaseData(new StoredField("foo", "bar".GetBytes(Encoding.UTF8), 0, 3), "stored<foo:[62 61 72]>");
+            yield return new TestCaseData(new StoredField("foo", new BytesRef("bar")), "stored<foo:[62 61 72]>");
+            yield return new TestCaseData(new StoredField("foo", "bar"), "stored<foo:bar>");
+            yield return new TestCaseData(new StoredField("foo", 1), "stored<foo:1>");
+            yield return new TestCaseData(new StoredField("foo", 1D), $"stored<foo:1{sep}0>");
+            yield return new TestCaseData(new StoredField("foo", 1F), $"stored<foo:1{sep}0>");
+            yield return new TestCaseData(new StoredField("foo", 1L), "stored<foo:1>");
+
+            // Negative Zero
+            yield return new TestCaseData(new DoubleField("foo", -0.0d, Field.Store.NO), $"indexed,tokenized,omitNorms,indexOptions=DOCS_ONLY,numericType=DOUBLE,numericPrecisionStep=4<foo:-0{sep}0>");
+            yield return new TestCaseData(new DoubleDocValuesField("foo", -0.0d), "docValueType=NUMERIC<foo:-9223372036854775808>");
+            yield return new TestCaseData(new DoubleDocValuesField("foo", 0.0d), "docValueType=NUMERIC<foo:0>");
+            yield return new TestCaseData(new SingleDocValuesField("foo", -0.0f), "docValueType=NUMERIC<foo:-2147483648>");
+            yield return new TestCaseData(new SingleDocValuesField("foo", 0.0f), "docValueType=NUMERIC<foo:0>");
+            yield return new TestCaseData(new SingleField("foo", -0.0f, Field.Store.NO), $"indexed,tokenized,omitNorms,indexOptions=DOCS_ONLY,numericType=SINGLE,numericPrecisionStep=4<foo:-0{sep}0>");
+            yield return new TestCaseData(new StoredField("foo", -0D), $"stored<foo:-0{sep}0>");
+            yield return new TestCaseData(new StoredField("foo", -0F), $"stored<foo:-0{sep}0>");
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        [TestCaseSource("ToStringData", new object[] { ToStringCulture.Invariant })]
+        public void TestToStringInvariant(Field field, string expected)
+        {
+            using (var cultureContext = new CultureContext(CultureInfo.InvariantCulture))
+            {
+                string actual = field.ToString();
+                Assert.AreEqual(expected, actual);
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        [TestCaseSource("ToStringData", new object[] { ToStringCulture.France })]
+        public void TestToStringFrance(Field field, string expected)
+        {
+            using (var cultureContext = new CultureContext(new CultureInfo("fr-FR")))
+            {
+                string actual = field.ToString();
+                Assert.AreEqual(expected, actual);
+            }
+        }
     }
 }
