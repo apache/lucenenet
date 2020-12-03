@@ -141,7 +141,7 @@ steps:
             if ($isNighly -ne 'true' -and $isWeekly -ne 'true') {
                 $blameHangTimeout = "--blame-hang-timeout 10minutes"
             } else {
-                $blameHangTimeout = "--blame-hang-timeout 35minutes"
+                $blameHangTimeout = "--blame-hang-timeout 50minutes"
             }
 
             $testExpression = "dotnet test ""$testTarget"" --framework ""$framework"" --blame --no-build --no-restore" + `
