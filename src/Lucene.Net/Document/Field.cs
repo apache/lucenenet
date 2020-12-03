@@ -301,9 +301,16 @@ namespace Lucene.Net.Documents
         /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
         public virtual string GetStringValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            if (FieldsData is string || FieldsData is Number)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is string str)
             {
-                return FieldsData.ToString();
+                return str;
+            }
+            else if (FieldsData is Number number)
+            {
+                return number.ToString();
             }
             else
             {
@@ -321,13 +328,16 @@ namespace Lucene.Net.Documents
         // LUCENENET specific overload.
         public virtual string GetStringValue(IFormatProvider provider) 
         {
-            if (FieldsData is string)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is string str)
             {
-                return FieldsData.ToString();
+                return str;
             }
-            else if (FieldsData is Number)
+            else if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).ToString(provider);
+                return number.ToString(provider);
             }
             else
             {
@@ -345,13 +355,16 @@ namespace Lucene.Net.Documents
         // LUCENENET specific overload.
         public virtual string GetStringValue(string format) 
         {
-            if (FieldsData is string)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is string str)
             {
-                return FieldsData.ToString();
+                return str;
             }
-            else if (FieldsData is Number)
+            else if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).ToString(format);
+                return number.ToString(format);
             }
             else
             {
@@ -370,13 +383,16 @@ namespace Lucene.Net.Documents
         // LUCENENET specific overload.
         public virtual string GetStringValue(string format, IFormatProvider provider)
         {
-            if (FieldsData is string)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is string str)
             {
-                return FieldsData.ToString();
+                return str;
             }
-            else if (FieldsData is Number)
+            else if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).ToString(format, provider);
+                return number.ToString(format, provider);
             }
             else
             {
@@ -391,7 +407,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual TextReader GetReaderValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            return FieldsData is TextReader ? (TextReader)FieldsData : null;
+            return FieldsData != null && FieldsData is TextReader reader ? reader : null;
         }
 
         /// <summary>
@@ -606,6 +622,9 @@ namespace Lucene.Net.Documents
             // wrong StoredFieldsVisitor method will be called (in this case it was calling Int64Field() instead of StringField()).
             // This is an extremely difficult thing to track down and very confusing to end users.
 
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
             if (FieldsData is Int32)
             {
                 return ((Int32)FieldsData).GetInt32Value();
@@ -662,9 +681,12 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
         public virtual byte? GetByteValue()
         {
-            if (FieldsData is Number)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).GetByteValue();
+                return number.GetByteValue();
             }
             else
             {
@@ -680,9 +702,12 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Short, since we have no Number class in .NET
         public virtual short? GetInt16Value()
         {
-            if (FieldsData is Number)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).GetInt16Value();
+                return number.GetInt16Value();
             }
             else
             {
@@ -698,9 +723,12 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Int32, since we have no Number class in .NET
         public virtual int? GetInt32Value()
         {
-            if (FieldsData is Number)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).GetInt32Value();
+                return number.GetInt32Value();
             }
             else
             {
@@ -716,9 +744,12 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Int64, since we have no Number class in .NET
         public virtual long? GetInt64Value()
         {
-            if (FieldsData is Number)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).GetInt64Value();
+                return number.GetInt64Value();
             }
             else
             {
@@ -734,9 +765,12 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Single, since we have no Number class in .NET
         public virtual float? GetSingleValue()
         {
-            if (FieldsData is Number)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).GetSingleValue();
+                return number.GetSingleValue();
             }
             else
             {
@@ -752,9 +786,12 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Double, since we have no Number class in .NET
         public virtual double? GetDoubleValue()
         {
-            if (FieldsData is Number)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is Number number)
             {
-                return ((Number)FieldsData).GetDoubleValue();
+                return number.GetDoubleValue();
             }
             else
             {
@@ -766,9 +803,12 @@ namespace Lucene.Net.Documents
         /// Non-null if this field has a binary value. </summary>
         public virtual BytesRef GetBinaryValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            if (FieldsData is BytesRef)
+            // LUCENENET: Fast path
+            if (FieldsData is null) return null;
+
+            if (FieldsData is BytesRef bytes)
             {
-                return (BytesRef)FieldsData;
+                return bytes;
             }
             else
             {
@@ -848,7 +888,8 @@ namespace Lucene.Net.Documents
             NumericType numericType = FieldType.NumericType;
             if (numericType != Documents.NumericType.NONE)
             {
-                if (!(internalTokenStream is NumericTokenStream))
+                // LUCENENET: Added null check for performance
+                if (internalTokenStream is null || internalTokenStream is not NumericTokenStream)
                 {
                     // lazy init the TokenStream as it is heavy to instantiate
                     // (attributes,...) if not needed (stored field loading)
